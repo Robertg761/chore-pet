@@ -4,6 +4,9 @@ import { POSES, type PoseName } from '../character/poses'
 import { SPECIES, type MessStage, type Mood } from '../domain/types'
 import { isoPoints } from '../room/iso'
 import { sinkArt } from '../room/objects/sink'
+import { OBJECT_SCALE, tileCorner } from '../room/shell/geometry'
+import { RoomShell } from '../room/shell/RoomShell'
+import { FLOOR_STYLES, WALL_STYLES } from '../room/shell/styles'
 import type { ObjectArt } from '../room/objects/types'
 
 // Dev-only review sheet (open /?art). Every species in every mood, items on
@@ -65,14 +68,15 @@ export default function ArtGallery() {
         )}
       </section>
 
-      <h2>Body colours</h2>
-      <section className="gallery-row">
-        {SPECIES.flatMap((s) =>
-          [PALETTE.petDefault, PALETTE.blush, PALETTE.sky, PALETTE.white].map((c) => (
-            <Character key={s + c} species={s} mood="happy" bodyColour={c} size={90} />
-          )),
-        )}
-      </section>
+      <h2>Every pose on every body colour</h2>
+      {SPECIES.map((s) => (
+        <section key={s} className="gallery-row">
+          <h3>{s}</h3>
+          {[PALETTE.petDefault, PALETTE.blush, PALETTE.sky, PALETTE.white].flatMap((c) =>
+            poseNames(s).map((p) => <Character key={c + p} species={s} mood={p === 'idle' || p === 'sleeping' || p === 'cheering' ? 'happy' : p} pose={p} bodyColour={c} size={90} />),
+          )}
+        </section>
+      ))}
 
       <h2>Objects</h2>
       {OBJECTS.map((o) => (
@@ -89,6 +93,27 @@ export default function ArtGallery() {
           ))}
         </section>
       ))}
+
+      <h2>Room shell</h2>
+      <section className="gallery-row">
+        <h3>Default room with the sink at tile (0, 2)</h3>
+        <RoomShell floorStyle="wood" wallStyle="peach" width={520}>
+          <g transform={`translate(${tileCorner(0, 2).x} ${tileCorner(0, 2).y}) scale(${OBJECT_SCALE})`}>{sinkArt.render('clean')}</g>
+        </RoomShell>
+      </section>
+      <section className="gallery-row">
+        <h3>Floor x wall styles</h3>
+        {FLOOR_STYLES.flatMap((f) =>
+          WALL_STYLES.map((w) => (
+            <figure key={f.id + w.id}>
+              <RoomShell floorStyle={f.id} wallStyle={w.id} width={260} />
+              <figcaption>
+                {f.id} + {w.id}
+              </figcaption>
+            </figure>
+          )),
+        )}
+      </section>
     </main>
   )
 }

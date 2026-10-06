@@ -21,6 +21,15 @@ export const PALETTE = {
   steel: '#C9D3E6',
   steelDark: '#97A3BE',
   white: '#FFFFFF',
+  // Room shell styles (docs/ART.md, "Room shell styles")
+  floorWoodSide: '#BC8559',
+  floorCarpetLight: '#F0B8C6',
+  floorCarpet: '#E29BAE',
+  floorCarpetDark: '#C27D93',
+  wallMintLeft: '#9FD4B6',
+  wallMintRight: '#C4EAD3',
+  wallLavenderLeft: '#BFAEE8',
+  wallLavenderRight: '#D9CDF5',
 } as const
 
 /** Outline weight in a 200x200 character viewBox. */

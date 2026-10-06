@@ -34,6 +34,14 @@ Every asset is hand-authored SVG, designed from scratch. No asset packs, no rast
 | steel | #C9D3E6 | taps, basins, metal |
 | steel-dark | #97A3BE | basin insides, pot insides |
 | white | #FFFFFF | eye highlights, plates, fly wings |
+| floor-wood-side | #BC8559 | wood floor slab, right-front edge |
+| floor-carpet-light | #F0B8C6 | carpet floor top |
+| floor-carpet | #E29BAE | carpet slab right-front edge, rug border |
+| floor-carpet-dark | #C27D93 | carpet slab left-front edge |
+| wall-mint-left | #9FD4B6 | mint wall style, left wall |
+| wall-mint-right | #C4EAD3 | mint wall style, right wall |
+| wall-lavender-left | #BFAEE8 | lavender wall style, left wall |
+| wall-lavender-right | #D9CDF5 | lavender wall style, right wall |
 
 The tokens live in `src/art/palette.ts`; art code uses those names, never raw hex.
 
@@ -52,6 +60,10 @@ The tokens live in `src/art/palette.ts`; art code uses those names, never raw he
 - Face shading: left-front face darker, right-front lighter, top lightest (same light as the walls).
 - Mess goes on top of the clean drawing: `messy1` is one or two things (a couple of plates, one fly), `messy2` is a funny pile (stacked dishes, three flies, stink lines, a drip). Use the shared pieces in `src/room/objects/mess.tsx` (`fly`, `stink`, `smudge`, `plate`) so mess looks like one world.
 - **Reference object: the sink** (`src/room/objects/sink.tsx`). Copy its structure: cabinet faces, fixtures, then mess layers.
+
+### Room shell styles
+
+`src/room/shell/` draws the room: back walls, floor and a window. Floor styles: `wood` (default, planks), `tile` (cream and steel checker), `carpet` (rose, with a rug border). Wall styles: `peach` (default), `mint` (faint stripes), `lavender`. Every wall style is a darker left wall plus a lighter right wall. Wall tops, baseboards and the window sill use `cream` / `cream-dark` in every style. Floor slab edges are drawn below the diamond so the room reads as a diorama.
 
 ## Characters
 

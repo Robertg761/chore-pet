@@ -67,6 +67,6 @@ body { margin: 0; }
 .gallery { padding: 20px; }
 .gallery h2 { margin: 28px 0 8px; }
 .gallery-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-bottom: 8px; }
-.gallery-row h3 { width: 100%; margin: 8px 0 0; text-transform: capitalize; }
+.gallery-row h3 { width: 100%; margin: 8px 0 0; }
 .gallery figure { margin: 0; text-align: center; }
 .gallery figcaption { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
