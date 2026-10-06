@@ -42,7 +42,7 @@ Parallel batch B:
 - [SONNET: test-writer] Extra tests for edge cases: month ends, leap years, chores created mid-week, vacations spanning due dates. **Done** (found and fixed: everyNDays could be due before the chore was created)
 - [SONNET: ui-builder] PWA polish: app icons drawn as SVG and PNG exports, install prompt hook. **Done** (`npm run icons` regenerates the PNGs; hook in `src/pwa/useInstallPrompt.ts`)
 
-**Done when:** you can create chores, complete them, and watch the pet's mood change on the right days, with data surviving a reload and a new device sign-in. **Met**, except the new-device check: guests are anonymous, so a real second-device sign-in waits for account linking in Phase 7 (the sync engine already handles it; see `src/data/store.test.ts`).
+**Done when:** you can create chores, complete them, and watch the pet's mood change on the right days, with data surviving a reload and a new device sign-in. **Met.** The new-device check landed with Phase 7 account linking: in a two-browser run against a mocked Supabase, a second device that signs in to the first device's account drops its guest home and shows the first home with its chores, completions and rewards (see also `src/data/store.test.ts`).
 
 ## Phase 2: The room and build mode
 
@@ -121,6 +121,10 @@ Parallel batch H:
 - [SONNET: ui-builder] Shareable "my home" card image. **Done** (`src/screens/ShareCard.tsx`: PNG save and native share)
 
 - [LEAD] Accessibility and performance pass, account linking flow (guest to email or Google), final QA on a real phone.
+  - Accessibility: **Done.** axe (WCAG 2.1 AA and best practice) reports nothing on all 20 screens and states checked, including onboarding, the object sheet and the gift. Every keyboard stop has a visible focus ring, and the pet is a real button.
+  - Performance: **Done.** Supabase loads after first paint, so first-load JS in a configured build drops from 197 to 142 kB gzipped.
+  - Account linking: **Done** (`src/lib/account.ts`, `src/screens/AccountSection.tsx`). A guest saves with email (confirmation link) or Google, linking the same user id so nothing moves. "Sign in" on another device switches accounts and syncs to follow.
+  - Final QA: browser emulation at 390 px only. There is no real phone in this environment.
 - [LEAD] Submission: live link, repo, write-up, in-app demo video.
 
 **Done when:** a stranger can open the link on a phone, build a room, finish a chore and get an unlock with no help.
