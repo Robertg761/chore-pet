@@ -46,8 +46,8 @@ Parallel batch B:
 
 ## Phase 2: The room and build mode
 
-- [LEAD] Isometric renderer core: tile maths, depth sorting, hit testing, the room component.
-- [LEAD] Placement interaction: drag, snap, rotate, footprint validation (green fits, red overlaps).
+- [LEAD] Isometric renderer core: tile maths, depth sorting, hit testing, the room component. **Done** (`src/room/grid.ts`, `src/room/Room.tsx`).
+- [LEAD] Placement interaction: drag, snap, rotate, footprint validation (green fits, red overlaps). **Done** (`src/room/BuildRoom.tsx`); placing an object creates its default chores.
 
 Parallel batch C:
 
@@ -55,7 +55,7 @@ Parallel batch C:
 - [SONNET: svg-artist] Objects batch 1: stove, fridge, dishwasher, trash can (clean, messy1, messy2 each), copying the reference sink.
 - [SONNET: svg-artist] Objects batch 2: recycling, bed, washer, toilet.
 - [SONNET: svg-artist] Objects batch 3: shower, couch, floor rug, table.
-- [SONNET: ui-builder] Catalog tray and object sheet (edit chore frequency, add custom chore, move, remove), matching the build mode mockups.
+- [SONNET: ui-builder] Catalog tray and object sheet (edit chore frequency, add custom chore, move, remove). There are no build mode mockups in the repo; the task brief describes the design.
 - [SONNET: test-writer] Tests for footprint validation and tile maths.
 
 **Done when:** a new user can build one room and get a working chore schedule without seeing a form.
