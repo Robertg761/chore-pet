@@ -66,7 +66,17 @@ const completions: Mapper<Completion> = {
 }
 
 const pets: Mapper<Pet> = {
-  toRow: (p) => ({ id: p.id, home_id: p.homeId, name: p.name, species: p.species, body_colour: p.bodyColour, equipped: p.equipped }),
+  toRow: (p) => ({
+    id: p.id,
+    home_id: p.homeId,
+    name: p.name,
+    species: p.species,
+    body_colour: p.bodyColour,
+    equipped: p.equipped,
+    eyes: p.eyes ?? 'classic',
+    cheeks: p.cheeks ?? 'round',
+    outfits: p.outfits ?? [],
+  }),
   fromRow: (r) => ({
     id: r.id as string,
     homeId: r.home_id as string,
@@ -74,6 +84,9 @@ const pets: Mapper<Pet> = {
     species: (r.species as Pet['species']) ?? 'mochi',
     bodyColour: r.body_colour as string,
     equipped: (r.equipped as Pet['equipped']) ?? {},
+    eyes: (r.eyes as Pet['eyes']) ?? 'classic',
+    cheeks: (r.cheeks as Pet['cheeks']) ?? 'round',
+    outfits: (r.outfits as Pet['outfits']) ?? [],
   }),
 }
 

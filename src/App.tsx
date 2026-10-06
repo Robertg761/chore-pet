@@ -36,6 +36,7 @@ import { checkPlacement, footprintOf, freeTile, turned } from './room/grid'
 import { lookup } from './room/placement'
 import { LivingRoom, type Celebration } from './pet/LivingRoom'
 import { CatalogTray } from './screens/CatalogTray'
+import { CharacterCreator } from './screens/CharacterCreator'
 import { ChoreEditor } from './screens/ChoreEditor'
 import { ChoreList } from './screens/ChoreList'
 import { sparkleSpot, type SparkleSpot } from './screens/doneMoment'
@@ -49,9 +50,10 @@ import { rewardsButtonLabel } from './screens/rewardsModel'
 import { SampleBanner } from './screens/SampleBanner'
 import { RoomStylePicker } from './screens/RoomStylePicker'
 import { VacationScreen } from './screens/VacationScreen'
+import { Wardrobe } from './screens/Wardrobe'
 import { WeekView } from './screens/WeekView'
 
-type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; chore?: Chore } | { name: 'vacation' } | { name: 'rewards' } | { name: 'week' }
+type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; chore?: Chore } | { name: 'vacation' } | { name: 'rewards' } | { name: 'week' } | { name: 'creator' } | { name: 'wardrobe' }
 
 const SYNC_LABEL: Record<SyncStatus, string> = {
   'local-only': 'Saved on this device',
@@ -141,6 +143,22 @@ export default function App() {
     )
   }
 
+  if (view.name === 'creator') {
+    return (
+      <main className="shell">
+        <CharacterCreator pet={pet} onSave={(patch) => appStore.apply(...updatePet(pet, patch))} onClose={back} />
+      </main>
+    )
+  }
+
+  if (view.name === 'wardrobe') {
+    return (
+      <main className="shell">
+        <Wardrobe pet={pet} progress={progress} onChange={(patch) => appStore.apply(...updatePet(pet, patch))} onClose={back} />
+      </main>
+    )
+  }
+
   if (view.name === 'week') {
     return (
       <main className="shell">
@@ -177,7 +195,7 @@ export default function App() {
   const petTile = freeTile(solid)
   const petInRoom = petTile && {
     tile: petTile,
-    art: <CharacterArt species={pet.species} mood={condition.mood} pose={away ? 'sleeping' : undefined} bodyColour={pet.bodyColour} equipped={pet.equipped} />,
+    art: <CharacterArt species={pet.species} mood={condition.mood} pose={away ? 'sleeping' : undefined} bodyColour={pet.bodyColour} equipped={pet.equipped} look={{ eyes: pet.eyes, cheeks: pet.cheeks }} />,
   }
 
   if (view.name === 'build' && room) {
@@ -252,7 +270,17 @@ export default function App() {
   return (
     <main className="shell">
       <header className="pet-header">
-        <h1>{pet.name}</h1>
+        <div className="pet-title">
+          <h1>{pet.name}</h1>
+          <div className="pet-actions">
+            <button type="button" className="chip-button" onClick={() => setView({ name: 'wardrobe' })}>
+              Wardrobe
+            </button>
+            <button type="button" className="chip-button" onClick={() => setView({ name: 'creator' })}>
+              Change look
+            </button>
+          </div>
+        </div>
         <HealthBar health={condition.health} mood={condition.mood} away={away} />
       </header>
 

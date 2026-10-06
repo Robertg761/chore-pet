@@ -1,3 +1,4 @@
+import { UNLOCKS } from '../domain/unlocks'
 import { describe, expect, it } from 'vitest'
 import type { Progress } from '../domain/types'
 import { giftTitle, nextLines, requirementLabel, rewardsButtonLabel, withEquipped } from './rewardsModel'
@@ -50,5 +51,5 @@ describe('rewardsModel', () => {
 })
 
 function nextLinesAll(): string[] {
-  return ['item:beanie-red', 'decor:plant', 'wall:mint', 'item:bow', 'decor:lamp', 'floor:tile', 'item:glasses', 'decor:poster', 'wall:lavender', 'item:scarf', 'decor:fish-tank', 'item:bow-tie', 'floor:carpet', 'item:backpack']
+  return UNLOCKS.map((x) => x.id)
 }

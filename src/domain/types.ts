@@ -84,6 +84,23 @@ export interface Pet {
   species: Species
   bodyColour: string
   equipped: Partial<Record<CharacterSlot, string>> // slot -> item id
+  /** Face options (src/character/look.ts). Missing on pets saved before Phase 6: use the defaults. */
+  eyes?: EyeStyle
+  cheeks?: CheekStyle
+  /** Outfits the player saved in the wardrobe, newest last. */
+  outfits?: SavedOutfit[]
+}
+
+export const EYE_STYLES = ['classic', 'sparkly', 'button', 'lashes'] as const
+export type EyeStyle = (typeof EYE_STYLES)[number]
+
+export const CHEEK_STYLES = ['round', 'hearts', 'freckles', 'none'] as const
+export type CheekStyle = (typeof CHEEK_STYLES)[number]
+
+export interface SavedOutfit {
+  id: string
+  name: string
+  equipped: Partial<Record<CharacterSlot, string>>
 }
 
 export interface Progress {

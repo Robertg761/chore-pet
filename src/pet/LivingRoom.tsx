@@ -141,7 +141,7 @@ export function LivingRoom({ room, objects, stages, pet, mood, away, chores, sta
           facing: state.facing,
           label: `${pet.name}, feeling ${mood}. Tap to say hi.`,
           onTap,
-          art: <CharacterArt species={pet.species} mood={mood} pose={poseFor(state)} bodyColour={pet.bodyColour} equipped={pet.equipped} />,
+          art: <CharacterArt species={pet.species} mood={mood} pose={poseFor(state)} bodyColour={pet.bodyColour} equipped={pet.equipped} look={{ eyes: pet.eyes, cheeks: pet.cheeks }} />,
         }}
       />
       {line && (

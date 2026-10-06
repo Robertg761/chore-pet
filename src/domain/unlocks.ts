@@ -40,13 +40,19 @@ export const UNLOCKS: Unlock[] = [
   u('item', 'bow-tie', 'Bow tie', { type: 'chores', count: 30 }),
   u('floor', 'carpet', 'Carpet', { type: 'streak', days: 14 }),
   u('item', 'backpack', 'Backpack', { type: 'chores', count: 40 }),
+  // The autumn set: a seasonal outfit and a matching hat.
+  u('item', 'knit-sweater', 'Cosy knit sweater', { type: 'streak', days: 10 }),
+  u('item', 'leaf-crown', 'Autumn leaf crown', { type: 'chores', count: 50 }),
 ]
 
 /** Styles every home has from the start. */
 export const FREE_STYLES = ['wall:peach', 'floor:wood']
 
+/** Outfits every pet has from the start, so dressing up can begin on day one. */
+export const FREE_ITEMS = ['item:hoodie', 'item:overalls', 'item:dress']
+
 export function isUnlocked(progress: Pick<Progress, 'unlockedItems'> | null, id: string): boolean {
-  return FREE_STYLES.includes(id) || Boolean(progress?.unlockedItems.includes(id))
+  return FREE_STYLES.includes(id) || FREE_ITEMS.includes(id) || Boolean(progress?.unlockedItems.includes(id))
 }
 
 /** How far back a streak is counted, in active (non-vacation) days. Long enough for every streak reward. */

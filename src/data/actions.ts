@@ -13,7 +13,7 @@ const id = () => crypto.randomUUID()
 /** First launch: the home, the chosen pet, an empty kitchen and an empty progress row. */
 export function createHousehold(input: { species: Species; petName: string; userId: string | null }): NewOp[] {
   const home: Home = { id: id(), ownerId: input.userId ?? '', name: 'Home', vacations: [] }
-  const pet: Pet = { id: id(), homeId: home.id, name: input.petName.trim() || 'Pip', species: input.species, bodyColour: SPECIES_COLOUR[input.species], equipped: {} }
+  const pet: Pet = { id: id(), homeId: home.id, name: input.petName.trim() || 'Pip', species: input.species, bodyColour: SPECIES_COLOUR[input.species], equipped: {}, eyes: 'classic', cheeks: 'round', outfits: [] }
   const progress: Progress = { homeId: home.id, choreCount: 0, currentStreak: 0, bestStreak: 0, unlockedItems: [] }
   return [upsertOp('homes', home), upsertOp('pets', pet), upsertOp('progress', progress), ...createRoom(home)]
 }

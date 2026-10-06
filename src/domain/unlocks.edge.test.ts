@@ -267,7 +267,9 @@ describe('streak lookback cap', () => {
 
 describe('applyUnlocks edge cases', () => {
   it('several rewards at once come out in UNLOCKS order', () => {
-    const { unlocked, progress: p } = applyUnlocks(progress({ choreCount: 40 }), 14)
+    const maxChores = Math.max(...UNLOCKS.map((x) => (x.rule.type === 'chores' ? x.rule.count : 0)))
+    const maxStreak = Math.max(...UNLOCKS.map((x) => (x.rule.type === 'streak' ? x.rule.days : 0)))
+    const { unlocked, progress: p } = applyUnlocks(progress({ choreCount: maxChores }), maxStreak)
     expect(ids(unlocked)).toEqual(ids(UNLOCKS))
     expect(p.unlockedItems).toEqual(ids(UNLOCKS))
   })
