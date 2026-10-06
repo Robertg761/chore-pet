@@ -1,19 +1,38 @@
 import { useEffect, useState } from 'react'
-import { Character } from './character/Character'
+import { catalogEntry } from './catalog/objects'
+import type { CatalogEntry } from './catalog/types'
+import { CharacterArt } from './character/Character'
 import { isInVacation } from './domain/dates'
 import { petCondition } from './domain/health'
 import type { Chore } from './domain/types'
-import { addChore, completeChore, createHousehold, removeChore, setVacations, updateChore } from './data/actions'
+import {
+  addChore,
+  completeChore,
+  createHousehold,
+  createRoom,
+  moveObject,
+  placeObject,
+  removeChore,
+  removeObject,
+  setVacations,
+  updateChore,
+} from './data/actions'
 import { appStore, startAppStore, useDataState, useHome } from './data/appStore'
 import type { SyncStatus } from './data/store'
 import { useToday } from './lib/useToday'
 import { useInstallPrompt } from './pwa/useInstallPrompt'
+import { BuildRoom, type BuildChange } from './room/BuildRoom'
+import { checkPlacement, footprintOf, freeTile, turned } from './room/grid'
+import { lookup } from './room/placement'
+import { Room } from './room/Room'
+import { CatalogTray } from './screens/CatalogTray'
 import { ChoreEditor } from './screens/ChoreEditor'
 import { ChoreList } from './screens/ChoreList'
+import { ObjectSheet } from './screens/ObjectSheet'
 import { PetPicker } from './screens/PetPicker'
 import { VacationScreen } from './screens/VacationScreen'
 
-type View = { name: 'home' } | { name: 'edit'; chore?: Chore } | { name: 'vacation' }
+type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; chore?: Chore } | { name: 'vacation' }
 
 const SYNC_LABEL: Record<SyncStatus, string> = {
   'local-only': 'Saved on this device',
@@ -29,7 +48,15 @@ export default function App() {
   const data = useHome()
   const today = useToday()
   const [view, setView] = useState<View>({ name: 'home' })
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [placing, setPlacing] = useState<CatalogEntry | null>(null)
   const { canInstall, install } = useInstallPrompt()
+
+  // Homes made before rooms existed get their first room.
+  const needsRoom = Boolean(data.home && data.rooms.length === 0)
+  useEffect(() => {
+    if (needsRoom && data.home) appStore.apply(...createRoom(data.home))
+  }, [needsRoom, data.home])
 
   if (!ready) return <main className="shell" aria-busy="true" />
 
@@ -41,7 +68,8 @@ export default function App() {
     )
   }
 
-  const { home, pet, progress, chores, completions } = data
+  const { home, pet, progress, rooms, objects, chores, completions } = data
+  const room = rooms[0]
   const back = () => setView({ name: 'home' })
 
   if (view.name === 'edit') {
@@ -77,17 +105,84 @@ export default function App() {
 
   const condition = petCondition(chores, completions, today, home.vacations)
   const away = isInVacation(today, home.vacations)
+  const roomObjects = room ? objects.filter((o) => o.roomId === room.id) : []
+  const solid = roomObjects.flatMap((o) => {
+    const e = catalogEntry(o.catalogId)
+    return e && e.layer === 'solid' ? [footprintOf(o, e)] : []
+  })
+  const petTile = freeTile(solid)
+  const petInRoom = petTile && {
+    tile: petTile,
+    art: <CharacterArt species={pet.species} mood={condition.mood} pose={away ? 'sleeping' : undefined} bodyColour={pet.bodyColour} equipped={pet.equipped} />,
+  }
+
+  if (view.name === 'build' && room) {
+    const selected = roomObjects.find((o) => o.id === selectedId) ?? null
+    const selectedEntry = selected ? catalogEntry(selected.catalogId) : undefined
+    const commit = (change: BuildChange) => {
+      if (change.kind === 'add') appStore.apply(...placeObject(room, change.entry, change.placement, today))
+      else {
+        const obj = roomObjects.find((o) => o.id === change.id)
+        if (obj) appStore.apply(...moveObject(obj, change.placement))
+      }
+    }
+    const turnTo = selected && selectedEntry ? turned(selectedEntry, selected) : null
+    const canTurn = Boolean(selected && selectedEntry && turnTo && checkPlacement(selectedEntry, turnTo, roomObjects, lookup, selected.id).ok)
+
+    return (
+      <main className="shell shell-wide">
+        <header className="build-header">
+          <h1>Build</h1>
+          <button type="button" className="build-done" onClick={() => (setSelectedId(null), setPlacing(null), back())}>
+            Done
+          </button>
+        </header>
+        <BuildRoom
+          room={room}
+          objects={roomObjects}
+          pet={petInRoom}
+          selectedId={selectedId}
+          onSelect={(id) => (setSelectedId(id), setPlacing(null))}
+          placing={placing}
+          onCommit={commit}
+          onPlacingDone={() => setPlacing(null)}
+        />
+        {selected && selectedEntry ? (
+          <ObjectSheet
+            object={selected}
+            entry={selectedEntry}
+            chores={chores.filter((c) => c.objectId === selected.id)}
+            completions={completions}
+            vacations={home.vacations}
+            today={today}
+            canTurn={canTurn}
+            onSaveChore={(chore, value) =>
+              appStore.apply(...(chore ? updateChore(chore, value) : addChore(home, { ...value, objectId: selected.id }, today)))
+            }
+            onRemoveChore={(chore) => appStore.apply(...removeChore(chore.id))}
+            onTurn={() => turnTo && canTurn && appStore.apply(...moveObject(selected, turnTo))}
+            onRemove={() => (appStore.apply(...removeObject(selected.id)), setSelectedId(null))}
+            onClose={() => setSelectedId(null)}
+          />
+        ) : (
+          <CatalogTray roomType={room.type} objects={roomObjects} onPick={(entry) => (setSelectedId(null), setPlacing(entry))} />
+        )}
+      </main>
+    )
+  }
 
   return (
     <main className="shell">
       <header className="pet-header">
         <h1>{pet.name}</h1>
-        <p className="health">
-          {away ? 'On vacation' : `Health ${condition.health}% · feeling ${condition.mood}`}
-        </p>
+        <p className="health">{away ? 'On vacation' : `Health ${condition.health}% · feeling ${condition.mood}`}</p>
       </header>
 
-      <Character species={pet.species} mood={condition.mood} pose={away ? 'sleeping' : undefined} bodyColour={pet.bodyColour} equipped={pet.equipped} size={220} />
+      {room && <Room room={room} objects={roomObjects} pet={petInRoom} className="home-room" />}
+
+      <button type="button" className="build-open" onClick={() => setView({ name: 'build' })}>
+        {roomObjects.length ? 'Build' : 'Build your room'}
+      </button>
 
       <ChoreList
         chores={chores}

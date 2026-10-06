@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode, Ref, SVGProps } from 'react'
 import { PALETTE, ROOM_STROKE } from '../../art/palette'
 import {
   ROOM_TILES as N,
@@ -228,9 +228,13 @@ export interface RoomShellProps {
   children?: ReactNode
   width?: number
   className?: string
+  /** For mapping pointer positions into room coordinates. */
+  svgRef?: Ref<SVGSVGElement>
+  /** Extra attributes for the <svg> (pointer handlers, aria). */
+  svgProps?: SVGProps<SVGSVGElement>
 }
 
-export function RoomShell({ floorStyle = 'wood', wallStyle = 'peach', children, width, className }: RoomShellProps) {
+export function RoomShell({ floorStyle = 'wood', wallStyle = 'peach', children, width, className, svgRef, svgProps }: RoomShellProps) {
   const floor = floorStyleOf(floorStyle)
   const wall = wallStyleOf(wallStyle)
   const { x, y, width: w, height: h } = ROOM_VIEWBOX
@@ -242,6 +246,8 @@ export function RoomShell({ floorStyle = 'wood', wallStyle = 'peach', children, 
       className={className}
       role="img"
       aria-label={`Room with ${floor.label} floor and ${wall.label} walls`}
+      {...svgProps}
+      ref={svgRef}
     >
       <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
         {floorLayer(floor)}

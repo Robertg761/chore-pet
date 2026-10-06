@@ -21,15 +21,24 @@ export interface CharacterProps {
   title?: string
 }
 
-export function Character({ species, mood, bodyColour, equipped = {}, pose, items = ITEMS, size = 200, title }: CharacterProps) {
+/** The pet as SVG content in its 200x200 box (feet near y = 180), for use inside another SVG. */
+export function CharacterArt({ species, mood, bodyColour, equipped = {}, pose, items = ITEMS }: Omit<CharacterProps, 'size' | 'title'>) {
   const p = poseFor(species, pose ?? poseNameFor(mood))
   return (
-    <svg width={size} height={size} viewBox="0 0 200 200" role="img" aria-label={title ?? `Pet, feeling ${mood}`}>
+    <>
       {SLOT_RENDER_ORDER.map((slot) => {
         if (slot === 'body') return <g key={slot}>{p.renderBody(bodyColour, mood)}</g>
         const item = items.find((i) => i.id === equipped[slot] && i.slot === slot)
         return item ? <g key={slot}>{placed(p.anchors[slot], item.render())}</g> : null
       })}
+    </>
+  )
+}
+
+export function Character({ size = 200, title, ...art }: CharacterProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 200 200" role="img" aria-label={title ?? `Pet, feeling ${art.mood}`}>
+      <CharacterArt {...art} />
     </svg>
   )
 }
