@@ -24,7 +24,7 @@ Parallel batch A (after the base poses and reference sink exist):
 - [SONNET: svg-artist] Sprout mood poses: same list, output `src/character/species/sprout-poses.tsx`. Leaves keep doing the mood work (`WILT`). **Done**
 - [SONNET: svg-artist] Room shell: walls, floor tiles, window, in 3 floor styles and 3 wall styles. Output: `src/room/shell/*`. **Done**
 
-**Done when:** all moods exist for all three species, anchors line up in every pose (check the beanie on each in `/?art`), and the reference sink is approved.
+**Done when:** all moods exist for all three species, anchors line up in every pose (check the beanie on each in `/?art`), and the reference sink is approved. **Met.** The sick pose uses one shared bed, thermometer and ice pack from `src/character/parts.tsx`.
 
 The three pose files are pre-registered in `src/character/poses.ts`, so the pose tasks share no files.
 
