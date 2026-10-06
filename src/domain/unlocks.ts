@@ -49,8 +49,10 @@ export function isUnlocked(progress: Pick<Progress, 'unlockedItems'> | null, id:
   return FREE_STYLES.includes(id) || Boolean(progress?.unlockedItems.includes(id))
 }
 
-/** How far back a streak is counted. Long enough for every streak reward. */
+/** How far back a streak is counted, in active (non-vacation) days. Long enough for every streak reward. */
 const STREAK_LOOKBACK = 120
+/** Vacation days skipped while looking back, at most. */
+const MAX_VACATION_DAYS = 400
 
 /**
  * A past day is clean when, by its end, every chore that had fallen due was
@@ -79,10 +81,13 @@ export function currentStreak(chores: Chore[], completions: Completion[], today:
   if (chores.length === 0) return 0
   const firstDay = chores.reduce((min, c) => (c.createdOn < min ? c.createdOn : min), chores[0].createdOn)
   let streak = 0
-  for (let i = 0; i <= STREAK_LOOKBACK; i++) {
+  let active = 0
+  // The lookback counts active days only, so a long vacation can't hide the streak before it.
+  for (let i = 0; i <= STREAK_LOOKBACK + MAX_VACATION_DAYS && active <= STREAK_LOOKBACK; i++) {
     const day = addDays(today, -i)
     if (day < firstDay) break
     if (isInVacation(day, vacations)) continue
+    active++
     const clean = i === 0 ? cleanSoFar(chores, completions, day, vacations) : cleanPastDay(chores, completions, day, vacations)
     if (!clean) {
       if (i === 0) continue // something is overdue now; judge the streak up to yesterday

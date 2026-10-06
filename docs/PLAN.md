@@ -95,7 +95,7 @@ Parallel batch F:
 - [SONNET: svg-artist] Accessories: beanie, bow, glasses, scarf, bow tie, backpack (one per slot at least), checked on every pose of every species. Bun's ears and Sprout's leaves stick up through head items; draw hats so that looks intentional.
 - [SONNET: ui-builder] Gift box unlock moment and rewards screen with progress to next unlock.
 - [SONNET: ui-builder] Week view: chores completed per day and pet health over time.
-- [SONNET: test-writer] Tests for streak and unlock rules.
+- [SONNET: test-writer] Tests for streak and unlock rules. **Done** (found and fixed: a vacation longer than the lookback hid the streak before it)
 
 **Done when:** completing chores visibly unlocks at least 4 decor items and 4 accessories, the first in the first session.
 
