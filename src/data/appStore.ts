@@ -1,6 +1,6 @@
 import { useMemo, useSyncExternalStore } from 'react'
 import { indexedDbStore, memoryStore } from './local'
-import { supabase } from '../lib/supabase'
+import { getSupabase } from '../lib/supabase'
 import { appRemote } from './remote'
 import { selectHome, type HomeData } from './state'
 import { createStore, type DataState } from './store'
@@ -26,9 +26,11 @@ export function startAppStore() {
     if (document.visibilityState === 'visible') void appStore.sync()
   })
   // Signing in, out or saving the account changes whose data this is: sync to follow it.
-  supabase?.auth.onAuthStateChange((event) => {
-    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') void appStore.sync()
-  })
+  void getSupabase().then((supabase) =>
+    supabase?.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') void appStore.sync()
+    }),
+  )
 }
 
 export function useDataState(): DataState {

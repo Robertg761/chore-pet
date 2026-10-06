@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { ensureSession, supabase } from '../lib/supabase'
+import { ensureSession, getSupabase, supabaseConfigured } from '../lib/supabase'
 import { KEY_COLUMN, MAPPERS } from './mappers'
 import { emptyTables, type Tables } from './state'
 import { TABLES, keyOf, type TableMap, type TableName } from './tables'
@@ -26,7 +26,7 @@ function result(error: { code?: string; message: string } | null): RemoteResult 
   return { ok: false, transient: !permanent, message: error.message }
 }
 
-export function supabaseRemote(client: SupabaseClient): Remote {
+export function supabaseRemote(getClient: () => Promise<SupabaseClient>): Remote {
   return {
     async session() {
       const s = await ensureSession()
@@ -34,6 +34,7 @@ export function supabaseRemote(client: SupabaseClient): Remote {
       return s.user.id
     },
     async pull() {
+      const client = await getClient()
       const tables = emptyTables()
       await Promise.all(
         TABLES.map(async (table) => {
@@ -49,15 +50,23 @@ export function supabaseRemote(client: SupabaseClient): Remote {
       return tables
     },
     async upsert(table, rows) {
+      const client = await getClient()
       const mapper = MAPPERS[table]
       const { error } = await client.from(table).upsert(rows.map((r) => mapper.toRow(r)), { onConflict: KEY_COLUMN[table] })
       return result(error)
     },
     async remove(table, keys) {
+      const client = await getClient()
       const { error } = await client.from(table).delete().in(KEY_COLUMN[table], keys)
       return result(error)
     },
   }
 }
 
-export const appRemote: Remote | null = supabase ? supabaseRemote(supabase) : null
+async function configuredClient(): Promise<SupabaseClient> {
+  const client = await getSupabase()
+  if (!client) throw new Error('Supabase is not configured')
+  return client
+}
+
+export const appRemote: Remote | null = supabaseConfigured ? supabaseRemote(configuredClient) : null

@@ -51,6 +51,15 @@ export function AccountSection() {
     )
   }
 
+  if (account.kind === 'offline') {
+    return (
+      <>
+        <h2>Your progress</h2>
+        <p className="account-note">Your home is saved on this device. Connect to the internet to save it to an account too.</p>
+      </>
+    )
+  }
+
   if (account.kind === 'saved') {
     return (
       <>

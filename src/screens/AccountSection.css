@@ -5,7 +5,7 @@
 .account-input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .account-primary,
 .account-secondary { min-height: 44px; width: 100%; font: inherit; font-weight: 800; border: 2px solid var(--ink); border-radius: 999px; cursor: pointer; color: var(--ink); }
-.account-primary { background: var(--accent); }
+.account-primary { background: var(--accent); color: #fff; }
 .account-secondary { background: var(--card); }
 .account-primary:disabled,
 .account-secondary:disabled { opacity: 0.55; cursor: default; }
