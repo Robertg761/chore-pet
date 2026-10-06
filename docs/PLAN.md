@@ -126,8 +126,11 @@ Parallel batch H:
   - Account linking: **Done** (`src/lib/account.ts`, `src/screens/AccountSection.tsx`). A guest saves with email (confirmation link) or Google, linking the same user id so nothing moves. "Sign in" on another device switches accounts and syncs to follow.
   - Final QA: browser emulation at 390 px only. There is no real phone in this environment.
 - [LEAD] Submission: live link, repo, write-up, in-app demo video.
+  - **Write-up drafted** (`docs/SUBMISSION.md`).
+  - **Demo video recorded** in the app (`npm run demo:record`; about 85 s, sample home and time skip).
+  - **Still needed:** deploy the build to Robert's host and paste the live link, repo and video links into the write-up.
 
-**Done when:** a stranger can open the link on a phone, build a room, finish a chore and get an unlock with no help.
+**Done when:** a stranger can open the link on a phone, build a room, finish a chore and get an unlock with no help. **Met in phone emulation** (Pixel 7 profile, touch only, production build): landing to picking Sprout, building a kitchen, finishing a chore and putting on the red beanie, with no help and no errors. It also reloads offline from the service worker. Not yet tried on a physical phone or a live URL.
 
 ## Stretch
 
