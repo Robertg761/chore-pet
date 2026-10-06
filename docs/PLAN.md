@@ -115,10 +115,10 @@ Parallel batch G:
 
 Parallel batch H:
 
-- [SONNET: ui-builder] Onboarding: meet your pet (polish the Phase 1 picker into the first moment), then build your first room.
-- [SONNET: ui-builder] Reminders: notifications in the pet's voice; nudge iPhone users to add to home screen.
-- [SONNET: ui-builder] Sounds generated with the Web Audio API (no audio files): click, sparkle, chirp.
-- [SONNET: ui-builder] Shareable "my home" card image.
+- [SONNET: ui-builder] Onboarding: meet your pet (polish the Phase 1 picker into the first moment), then build your first room. **Done** (`src/screens/Onboarding.tsx`: welcome beat, three-step build coach, first-chore hint)
+- [SONNET: ui-builder] Reminders: notifications in the pet's voice; nudge iPhone users to add to home screen. **Done** (`src/reminders/`; opt-in daily nudge while the app is open or backgrounded; no push server)
+- [SONNET: ui-builder] Sounds generated with the Web Audio API (no audio files): click, sparkle, chirp. **Done** (`src/audio/`)
+- [SONNET: ui-builder] Shareable "my home" card image. **Done** (`src/screens/ShareCard.tsx`: PNG save and native share)
 
 - [LEAD] Accessibility and performance pass, account linking flow (guest to email or Google), final QA on a real phone.
 - [LEAD] Submission: live link, repo, write-up, in-app demo video.
