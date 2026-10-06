@@ -43,10 +43,12 @@ import { Landing } from './screens/Landing'
 import { GiftBox } from './screens/GiftBox'
 import { ObjectSheet } from './screens/ObjectSheet'
 import { PetPicker } from './screens/PetPicker'
+import { RewardsScreen } from './screens/RewardsScreen'
+import { rewardsButtonLabel } from './screens/rewardsModel'
 import { SampleBanner } from './screens/SampleBanner'
 import { VacationScreen } from './screens/VacationScreen'
 
-type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; chore?: Chore } | { name: 'vacation' }
+type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; chore?: Chore } | { name: 'vacation' } | { name: 'rewards' }
 
 const SYNC_LABEL: Record<SyncStatus, string> = {
   'local-only': 'Saved on this device',
@@ -132,6 +134,23 @@ export default function App() {
     return (
       <main className="shell">
         <VacationScreen vacations={home.vacations} today={today} onChange={(v) => appStore.apply(...setVacations(home, v))} onClose={back} />
+      </main>
+    )
+  }
+
+  if (view.name === 'rewards') {
+    return (
+      <main className="shell">
+        <RewardsScreen
+          pet={pet}
+          progress={progress}
+          chores={chores}
+          completions={completions}
+          vacations={home.vacations}
+          today={today}
+          onEquip={(equipped) => appStore.apply(...updatePet(pet, { equipped }))}
+          onBack={back}
+        />
       </main>
     )
   }
@@ -244,6 +263,9 @@ export default function App() {
 
       <button type="button" className="build-open" onClick={() => setView({ name: 'build' })}>
         {roomObjects.length ? 'Build' : 'Build your room'}
+      </button>
+      <button type="button" className="build-open" onClick={() => setView({ name: 'rewards' })}>
+        {rewardsButtonLabel(progress)}
       </button>
 
       <ChoreList

@@ -1,0 +1,81 @@
+.rewards { align-self: stretch; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.rewards-back { align-self: flex-start; margin-left: -12px; }
+.rewards-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.rewards-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px 10px 6px;
+  background: var(--card);
+  border: var(--outline);
+  border-radius: var(--radius);
+}
+.rewards-pet { flex: none; width: 128px; height: 128px; display: block; }
+.rewards-stats { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rewards-title { margin: 0 0 4px; font-size: 28px; line-height: 1.1; }
+.rewards-stat { margin: 0; font-size: 18px; font-weight: 800; }
+.rewards-best { font-size: 15px; color: var(--ink-soft); }
+
+.rewards-block { display: flex; flex-direction: column; gap: 10px; }
+.rewards-sub { margin: 0; font-size: 20px; }
+.rewards-all { margin: 0; font-weight: 700; color: var(--ink-soft); }
+
+.rewards-nexts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.rewards-next {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--due-bg);
+  color: var(--due-ink);
+  border: var(--outline);
+  border-radius: var(--radius);
+}
+.rewards-next-text { margin: 0; font-weight: 800; font-size: 17px; }
+.rewards-bar { height: 18px; overflow: hidden; background: var(--card); border: 2.5px solid var(--ink); border-radius: 999px; }
+.rewards-bar-fill { height: 100%; min-width: 6px; background: var(--accent); border-radius: 999px; border-right: 2.5px solid var(--ink); transition: width 0.4s ease; }
+
+.rewards-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.rewards-tile {
+  min-width: 0;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  background: var(--card);
+  border: var(--outline);
+  border-radius: var(--radius);
+}
+.rewards-tile-locked { background: var(--due-bg); border-style: dashed; border-color: var(--ink-soft); color: var(--ink-soft); }
+.rewards-tile-art { width: 72px; height: 72px; flex: none; display: block; }
+.rewards-tile-name { font-size: 15px; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
+.rewards-tile-meta { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+
+.rewards-wear {
+  min-height: 44px;
+  min-width: 44px;
+  margin-top: 2px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--ink);
+  border: var(--outline);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.rewards-wear-on { color: var(--ink); background: var(--card); }
+.rewards-wear:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+@media (min-width: 420px) {
+  .rewards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rewards-bar-fill { transition: none; }
+}
+
+.rewards-tile:not(.rewards-tile-locked) .rewards-tile-art { padding: 2px; background: #f6f2ff; border-radius: 18px; }

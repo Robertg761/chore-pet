@@ -83,7 +83,7 @@ Parallel batch E:
 
 - [LEAD] Review the first-minute experience end to end.
 
-**Done when:** a first-time visitor sees a messy room, cleans something and gets an unlock within a minute.
+**Done when:** a first-time visitor sees a messy room, cleans something and gets an unlock within a minute. **Met:** "Try a sample home" opens a kitchen with dirty dishes; washing them sparkles the sink clean and opens a gift with the red beanie.
 
 ## Phase 5: Rewards and unlocks
 
@@ -93,7 +93,7 @@ Parallel batch F:
 
 - [SONNET: svg-artist] Decor set: rug, lamp, plant, poster, fish tank, wallpaper and floor variants.
 - [SONNET: svg-artist] Accessories: beanie, bow, glasses, scarf, bow tie, backpack (one per slot at least), checked on every pose of every species. Bun's ears and Sprout's leaves stick up through head items; draw hats so that looks intentional.
-- [SONNET: ui-builder] Gift box unlock moment and rewards screen with progress to next unlock.
+- [SONNET: ui-builder] Gift box unlock moment and rewards screen with progress to next unlock. **Done**
 - [SONNET: ui-builder] Week view: chores completed per day and pet health over time.
 - [SONNET: test-writer] Tests for streak and unlock rules. **Done** (found and fixed: a vacation longer than the lookback hid the streak before it)
 
