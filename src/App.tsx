@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { catalogEntry } from './catalog/objects'
 import type { CatalogEntry } from './catalog/types'
 import { CharacterArt } from './character/Character'
@@ -23,12 +23,15 @@ import type { SyncStatus } from './data/store'
 import { useToday } from './lib/useToday'
 import { useInstallPrompt } from './pwa/useInstallPrompt'
 import { BuildRoom, type BuildChange } from './room/BuildRoom'
+import { Sparkle } from './effects'
 import { checkPlacement, footprintOf, freeTile, turned } from './room/grid'
 import { lookup } from './room/placement'
-import { LivingRoom } from './pet/LivingRoom'
+import { LivingRoom, type Celebration } from './pet/LivingRoom'
 import { CatalogTray } from './screens/CatalogTray'
 import { ChoreEditor } from './screens/ChoreEditor'
 import { ChoreList } from './screens/ChoreList'
+import { sparkleSpot, type SparkleSpot } from './screens/doneMoment'
+import { HealthBar } from './screens/HealthBar'
 import { ObjectSheet } from './screens/ObjectSheet'
 import { PetPicker } from './screens/PetPicker'
 import { VacationScreen } from './screens/VacationScreen'
@@ -52,6 +55,10 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [placing, setPlacing] = useState<CatalogEntry | null>(null)
   const { canInstall, install } = useInstallPrompt()
+  // The completion moment: the pet cheers and each cleaned object gets its own sparkle.
+  const [celebrate, setCelebrate] = useState<Celebration | null>(null)
+  const [sparkles, setSparkles] = useState<(SparkleSpot & { id: number })[]>([])
+  const momentKey = useRef(0)
 
   // Homes made before rooms existed get their first room.
   const needsRoom = Boolean(data.home && data.rooms.length === 0)
@@ -183,7 +190,7 @@ export default function App() {
     <main className="shell">
       <header className="pet-header">
         <h1>{pet.name}</h1>
-        <p className="health">{away ? 'On vacation' : `Health ${condition.health}% · feeling ${condition.mood}`}</p>
+        <HealthBar health={condition.health} mood={condition.mood} away={away} />
       </header>
 
       {room && (
@@ -196,6 +203,10 @@ export default function App() {
           away={away}
           chores={chores}
           statuses={condition.statuses}
+          celebrate={celebrate}
+          overlay={sparkles.map((s) => (
+            <Sparkle key={s.id} x={s.x} y={s.y} size={s.size} onDone={() => setSparkles((list) => list.filter((o) => o.id !== s.id))} />
+          ))}
         />
       )}
 
@@ -208,7 +219,14 @@ export default function App() {
         completions={completions}
         vacations={home.vacations}
         today={today}
-        onComplete={(chore) => appStore.apply(...completeChore(chore, progress))}
+        onComplete={(chore) => {
+          appStore.apply(...completeChore(chore, progress))
+          const key = ++momentKey.current
+          setCelebrate({ key, choreName: chore.name })
+          const placed = roomObjects.find((o) => o.id === chore.objectId)
+          const entry = placed && catalogEntry(placed.catalogId)
+          if (placed && entry) setSparkles((list) => [...list, { id: key, ...sparkleSpot(placed, entry) }])
+        }}
         onEdit={(chore) => setView({ name: 'edit', chore })}
         onAdd={() => setView({ name: 'edit' })}
       />

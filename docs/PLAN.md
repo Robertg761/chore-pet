@@ -69,9 +69,9 @@ Parallel batch D:
 
 - [SONNET: svg-artist] Cleaned sparkle effect and cheer animation frames. **Done** (`src/effects/`)
 - [SONNET: catalog-curator] Pet reaction lines per mood and per worst chore ("the sink is getting to me"). Friendly, short, never guilt-trippy. **Done**
-- [SONNET: ui-builder] Completion moment: object swaps to clean with sparkle, health bar ticks up.
+- [SONNET: ui-builder] Completion moment: object swaps to clean with sparkle, health bar ticks up. **Done**
 
-**Done when:** you can see which chores are late just by looking at the room.
+**Done when:** you can see which chores are late just by looking at the room. **Met:** late objects show messy1/messy2 art, the pet walks over to the worst one and comments kindly, and finishing a chore sparkles it clean.
 
 ## Phase 4: Demo path for voters
 

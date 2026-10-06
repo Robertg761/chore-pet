@@ -1,0 +1,53 @@
+.hb { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+
+.hb-track {
+  height: 20px;
+  border: var(--outline);
+  border-radius: 999px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.hb-fill {
+  height: 100%;
+  min-width: 8px; /* a sliver stays visible at 0 so the bar still reads as a bar */
+  border-radius: 999px;
+  background: var(--hb-colour, #d5cfe0);
+  border-right: 3px solid var(--ink);
+  box-sizing: border-box;
+  transition: width 600ms ease-out, background-color 600ms ease-out;
+}
+
+.hb-away .hb-fill { background: #d5cfe0; border-right: 0; }
+
+.hb-row { position: relative; min-height: 22px; }
+.hb-text { margin: 0; font-weight: 700; color: var(--ink-soft); line-height: 22px; }
+
+/* Floats up from the bar; absolutely placed so nothing around it moves. */
+.hb-gain {
+  position: absolute;
+  right: 4px;
+  top: 0;
+  padding: 0 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #e4f5d2;
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 22px;
+  pointer-events: none;
+  animation: hb-float 1300ms ease-out forwards;
+}
+
+@keyframes hb-float {
+  0% { opacity: 0; transform: translateY(6px) scale(0.8); }
+  15% { opacity: 1; transform: translateY(0) scale(1.08); }
+  35% { transform: translateY(-3px) scale(1); }
+  100% { opacity: 0; transform: translateY(-14px) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hb-fill { transition: none; }
+  .hb-gain { display: none; }
+}
