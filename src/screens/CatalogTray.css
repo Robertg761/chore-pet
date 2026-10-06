@@ -1,0 +1,67 @@
+.tray {
+  align-self: stretch;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tray-title { margin: 0; font-size: 22px; line-height: 1.2; }
+.tray-group { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.tray-subheading { margin: 0; font-size: 14px; font-weight: 800; color: var(--ink-soft); }
+
+/* Only this row scrolls sideways; the page never does. */
+.tray-row {
+  list-style: none;
+  margin: 0;
+  padding: 3px 3px 8px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+.tray-row > li { flex: none; scroll-snap-align: start; }
+
+.tray-tile {
+  width: 104px;
+  min-height: 132px;
+  padding: 8px 6px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font: inherit;
+  color: var(--ink);
+  text-align: center;
+  background: var(--card);
+  border: var(--outline);
+  border-radius: var(--radius);
+  box-shadow: 0 3px 0 var(--ink);
+  cursor: pointer;
+}
+.tray-tile:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.tray-tile:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.tray-tile:disabled { cursor: default; background: var(--due-bg); box-shadow: none; color: var(--ink-soft); }
+.tray-tile:disabled .tray-art { opacity: 0.45; }
+
+.tray-art { width: 64px; height: 64px; flex: none; display: block; }
+.tray-name { font-size: 14px; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
+.tray-meta { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
+
+/* Wider screens: a 3-column grid instead of a scrolling row. */
+@media (min-width: 520px) {
+  .tray-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+    padding-bottom: 6px;
+  }
+  .tray-tile { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tray-row { scroll-behavior: auto; }
+  .tray-tile { transition: none; }
+  .tray-tile:active:not(:disabled) { transform: none; }
+}

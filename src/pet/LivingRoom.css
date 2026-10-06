@@ -1,0 +1,45 @@
+.living-room { position: relative; align-self: stretch; }
+.pet-bubble {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  max-width: 50%;
+  width: max-content;
+  margin: 0;
+  padding: 6px 10px;
+  background: var(--card);
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1.3;
+  text-align: center;
+  pointer-events: none;
+  animation: bubble-in 220ms ease-out;
+}
+.pet-bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 14px;
+  height: 14px;
+  background: var(--card);
+  border-right: 2.5px solid var(--ink);
+  border-bottom: 2.5px solid var(--ink);
+  transform: translateX(-50%) rotate(45deg);
+}
+@keyframes bubble-in {
+  from { opacity: 0; transform: translate(-50%, -90%) scale(0.9); }
+  to { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pet-bubble { animation: none; }
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

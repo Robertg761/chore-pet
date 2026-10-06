@@ -1,0 +1,119 @@
+/* Design tokens from docs/ART.md (Style A: cozy outline). */
+:root {
+  --ink: #2b1e2f;
+  --ink-soft: #4a3e58;
+  --ground: #efe9ff;
+  --card: #ffffff;
+  --accent: #6f5cf0;
+  --late-bg: #ffd9c2;
+  --late-ink: #8a3410;
+  --due-bg: #e4dcf7;
+  --due-ink: #3e2a5c;
+  --radius: 14px;
+  --outline: 3px solid var(--ink);
+  color: var(--ink);
+  background: var(--ground);
+  font-family: 'Nunito', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+.shell {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.pet-header { align-self: stretch; }
+.pet-header h1 { margin: 0; font-size: 32px; }
+.health { margin: 4px 0 0; font-weight: 700; color: var(--ink-soft); }
+
+.chores { align-self: stretch; display: flex; flex-direction: column; gap: 10px; }
+.chore {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  font-weight: 800;
+}
+.tag { font-size: 13px; padding: 3px 9px; border-radius: 10px; }
+.tag-overdue { background: var(--late-bg); color: var(--late-ink); }
+.tag-due, .tag-upcoming { background: var(--due-bg); color: var(--due-ink); }
+.chore button {
+  min-height: 44px;
+  padding: 0 14px;
+  font: inherit;
+  border: var(--outline);
+  border-radius: 12px;
+  background: var(--ink);
+  color: #fff;
+  cursor: pointer;
+}
+.chore button:disabled { opacity: 0.4; cursor: default; }
+.chore button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.dev-note { font-size: 13px; color: var(--ink-soft); }
+
+/* Dev art gallery (/?art) */
+.gallery { padding: 20px; }
+.gallery h2 { margin: 28px 0 8px; }
+.gallery-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-bottom: 8px; }
+.gallery-row h3 { width: 100%; margin: 8px 0 0; }
+.gallery figure { margin: 0; text-align: center; }
+.gallery figcaption { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+
+.link-button {
+  min-height: 44px;
+  padding: 0 12px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--ink-soft);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.link-button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Room on the home screen and build mode */
+.home-room { width: 100%; height: auto; display: block; }
+.shell-wide { max-width: 560px; }
+.build-header { align-self: stretch; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.build-header h1 { margin: 0; font-size: 32px; }
+.build-done, .build-open {
+  min-height: 44px;
+  padding: 0 20px;
+  font: inherit;
+  font-weight: 800;
+  border: var(--outline);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.build-done { background: var(--accent); color: #fff; }
+.build-open { align-self: stretch; background: var(--card); color: var(--ink); }
+.build-done:focus-visible, .build-open:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.pet-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.pet-actions { display: flex; gap: 6px; }
+.chip-button {
+  min-height: 44px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.chip-button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }

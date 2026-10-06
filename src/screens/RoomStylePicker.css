@@ -1,0 +1,22 @@
+.rsp { align-self: stretch; display: flex; flex-wrap: wrap; gap: 12px; }
+.rsp-group { flex: 1 1 160px; min-width: 0; margin: 0; padding: 10px 12px 12px; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--card); display: flex; gap: 8px; flex-wrap: wrap; }
+.rsp-group legend { padding: 0 6px; font-weight: 800; }
+.rsp-option {
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--ground);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.rsp-option[aria-pressed='true'] { border-color: var(--accent); background: #fff; }
+.rsp-option:disabled { opacity: 0.45; cursor: default; }
+.rsp-option:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }

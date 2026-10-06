@@ -1,0 +1,61 @@
+# Checks every pull request, and deploys main to GitHub Pages
+# (https://<owner>.github.io/<repo>/). The deploy job tries to switch Pages on;
+# if it can't, set Settings > Pages > Source: GitHub Actions once. Optional repository secrets VITE_SUPABASE_URL and
+# VITE_SUPABASE_ANON_KEY turn on cloud sync; without them the app keeps
+# everything on the device.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      # The demo video is served next to the app (not precached by the service worker).
+      - run: cp docs/media/chore-pet-demo.mp4 dist/
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Switches Pages on (source: GitHub Actions) if it isn't yet. If the
+      # workflow token isn't allowed to, turn it on once in Settings > Pages.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - id: deployment
+        uses: actions/deploy-pages@v4
