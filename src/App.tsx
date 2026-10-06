@@ -4,6 +4,7 @@ import type { CatalogEntry } from './catalog/types'
 import { CharacterArt } from './character/Character'
 import { isInVacation } from './domain/dates'
 import { petCondition } from './domain/health'
+import { objectMessStages } from './domain/mess'
 import type { Chore } from './domain/types'
 import {
   addChore,
@@ -105,6 +106,7 @@ export default function App() {
 
   const condition = petCondition(chores, completions, today, home.vacations)
   const away = isInVacation(today, home.vacations)
+  const stages = objectMessStages(chores, condition.statuses)
   const roomObjects = room ? objects.filter((o) => o.roomId === room.id) : []
   const solid = roomObjects.flatMap((o) => {
     const e = catalogEntry(o.catalogId)
@@ -145,6 +147,7 @@ export default function App() {
         <BuildRoom
           room={room}
           objects={roomObjects}
+          stages={stages}
           pet={petInRoom}
           selectedId={selectedId}
           onSelect={(id) => (setSelectedId(id), setPlacing(null))}
@@ -183,7 +186,7 @@ export default function App() {
         <p className="health">{away ? 'On vacation' : `Health ${condition.health}% · feeling ${condition.mood}`}</p>
       </header>
 
-      {room && <Room room={room} objects={roomObjects} pet={petInRoom} className="home-room" />}
+      {room && <Room room={room} objects={roomObjects} stages={stages} pet={petInRoom} className="home-room" />}
 
       <button type="button" className="build-open" onClick={() => setView({ name: 'build' })}>
         {roomObjects.length ? 'Build' : 'Build your room'}

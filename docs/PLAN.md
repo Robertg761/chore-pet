@@ -63,12 +63,12 @@ Parallel batch C:
 ## Phase 3: Mess and pet life
 
 - [LEAD] Pet behaviour state machine: wander, idle, look at mess, react to tap, sick in bed.
-- [LEAD] Connect overdue status to each object's mess stage.
+- [LEAD] Connect overdue status to each object's mess stage. **Done** (`src/domain/mess.ts`: due today is clean, 1 day late messy1, 3+ days messy2; vacation days don't count).
 
 Parallel batch D:
 
 - [SONNET: svg-artist] Cleaned sparkle effect and cheer animation frames.
-- [SONNET: catalog-curator] Pet reaction lines per mood and per worst chore ("the sink is getting to me"). Friendly, short, never guilt-trippy.
+- [SONNET: catalog-curator] Pet reaction lines per mood and per worst chore ("the sink is getting to me"). Friendly, short, never guilt-trippy. **Done**
 - [SONNET: ui-builder] Completion moment: object swaps to clean with sparkle, health bar ticks up.
 
 **Done when:** you can see which chores are late just by looking at the room.
