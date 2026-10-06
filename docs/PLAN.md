@@ -87,7 +87,7 @@ Parallel batch E:
 
 ## Phase 5: Rewards and unlocks
 
-- [LEAD] Unlock engine: chore-count milestones and streaks (days with nothing overdue, vacation protects streaks). First unlock within the first few chores.
+- [LEAD] Unlock engine: chore-count milestones and streaks (days with nothing overdue, vacation protects streaks). First unlock within the first few chores. **Done** (`src/domain/unlocks.ts`; the first chore unlocks the red beanie; the sample home's history doesn't count toward milestones).
 
 Parallel batch F:
 

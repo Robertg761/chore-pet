@@ -178,8 +178,9 @@ export function sampleHome(input: SampleHomeInput): NewOp[] {
     }
   }
 
-  // One progress row at the end, counting exactly the completions above.
+  // Progress counts chores the player finishes (unlock milestones run on it),
+  // so the seeded history doesn't count: a visitor's first tap is chore 1.
   const progress: Progress = rowsOf(ops, 'progress')[0]
-  ops.push(upsertOp('progress', { ...progress, homeId: home.id, choreCount: count }))
+  ops.push(upsertOp('progress', { ...progress, homeId: home.id, choreCount: 0 }))
   return ops
 }

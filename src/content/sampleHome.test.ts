@@ -129,9 +129,9 @@ describe('sampleHome', () => {
     expect(new Set(data.completions.map((c) => c.completedOn)).size).toBeGreaterThanOrEqual(10)
   })
 
-  it.each(TODAYS)('on %s progress counts exactly the completions', (today) => {
+  it.each(TODAYS)("on %s progress starts at zero so the visitor's first chore is chore 1", (today) => {
     const { data, ops } = build('bun', today)
-    expect(data.progress?.choreCount).toBe(data.completions.length)
+    expect(data.progress?.choreCount).toBe(0)
     expect(ops.filter((o) => o.table === 'completions')).toHaveLength(data.completions.length)
     expect(data.progress).toMatchObject({ homeId: data.home!.id, unlockedItems: [] })
   })
