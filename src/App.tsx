@@ -25,7 +25,7 @@ import { useInstallPrompt } from './pwa/useInstallPrompt'
 import { BuildRoom, type BuildChange } from './room/BuildRoom'
 import { checkPlacement, footprintOf, freeTile, turned } from './room/grid'
 import { lookup } from './room/placement'
-import { Room } from './room/Room'
+import { LivingRoom } from './pet/LivingRoom'
 import { CatalogTray } from './screens/CatalogTray'
 import { ChoreEditor } from './screens/ChoreEditor'
 import { ChoreList } from './screens/ChoreList'
@@ -186,7 +186,18 @@ export default function App() {
         <p className="health">{away ? 'On vacation' : `Health ${condition.health}% · feeling ${condition.mood}`}</p>
       </header>
 
-      {room && <Room room={room} objects={roomObjects} stages={stages} pet={petInRoom} className="home-room" />}
+      {room && (
+        <LivingRoom
+          room={room}
+          objects={roomObjects}
+          stages={stages}
+          pet={pet}
+          mood={condition.mood}
+          away={away}
+          chores={chores}
+          statuses={condition.statuses}
+        />
+      )}
 
       <button type="button" className="build-open" onClick={() => setView({ name: 'build' })}>
         {roomObjects.length ? 'Build' : 'Build your room'}

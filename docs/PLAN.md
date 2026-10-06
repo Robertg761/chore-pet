@@ -62,7 +62,7 @@ Parallel batch C:
 
 ## Phase 3: Mess and pet life
 
-- [LEAD] Pet behaviour state machine: wander, idle, look at mess, react to tap, sick in bed.
+- [LEAD] Pet behaviour state machine: wander, idle, look at mess, react to tap, sick in bed. **Done** (`src/pet/behaviour.ts`, `src/pet/LivingRoom.tsx`).
 - [LEAD] Connect overdue status to each object's mess stage. **Done** (`src/domain/mess.ts`: due today is clean, 1 day late messy1, 3+ days messy2; vacation days don't count).
 
 Parallel batch D:

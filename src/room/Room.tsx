@@ -1,4 +1,4 @@
-import type { ReactNode, Ref, SVGProps } from 'react'
+import type { KeyboardEvent, ReactNode, Ref, SVGProps } from 'react'
 import { PALETTE, ROOM_STROKE } from '../art/palette'
 import { catalogEntry } from '../catalog/objects'
 import type { CatalogEntry } from '../catalog/types'
@@ -35,8 +35,13 @@ export interface RoomProps {
   ghost?: Ghost | null
   /** Hide this placed object (it is being dragged, the ghost stands in for it). */
   hiddenId?: string | null
-  /** The pet's art in its 200x200 box (e.g. <CharacterArt />) and the tile it stands on. */
-  pet?: { tile: { tx: number; ty: number }; art: ReactNode } | null
+  /**
+   * The pet's art in its 200x200 box (e.g. <CharacterArt />) and the tile it
+   * stands on (fractional while walking). `facing` -1 mirrors it to face left.
+   */
+  pet?: { tile: { tx: number; ty: number }; art: ReactNode; facing?: 1 | -1; label?: string; onTap?: () => void } | null
+  /** Effects drawn on top of everything, in room coordinates (sparkles). */
+  overlay?: ReactNode
   width?: number
   className?: string
   svgRef?: Ref<SVGSVGElement>
@@ -84,7 +89,7 @@ function footprintPolygon(f: Footprint, fill: string, opacity: number, dashed = 
   )
 }
 
-export function Room({ room, objects, stages = {}, selectedId, ghost, hiddenId, pet, width, className, svgRef, svgProps }: RoomProps) {
+export function Room({ room, objects, stages = {}, selectedId, ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
   const items: Item[] = []
 
   for (const o of objects) {
@@ -119,11 +124,28 @@ export function Room({ room, objects, stages = {}, selectedId, ghost, hiddenId, 
     const feet = roomPoint(pet.tile.tx + 0.5, pet.tile.ty + 0.5)
     items.push({
       id: '__pet',
-      footprint: { tx: pet.tile.tx, ty: pet.tile.ty, w: 1, d: 1 },
+      // Sorted as the tile it is mostly on, so it slips behind and in front of things as it walks.
+      footprint: { tx: Math.round(pet.tile.tx), ty: Math.round(pet.tile.ty), w: 1, d: 1 },
       layer: 'solid',
       draw: () => (
-        <g key="__pet" transform={`translate(${feet.x - 100 * PET_SCALE} ${feet.y - 182 * PET_SCALE}) scale(${PET_SCALE})`} style={{ pointerEvents: 'none' }}>
-          {pet.art}
+        <g
+          key="__pet"
+          transform={`translate(${feet.x - 100 * PET_SCALE} ${feet.y - 182 * PET_SCALE}) scale(${PET_SCALE})`}
+          style={{ pointerEvents: pet.onTap ? 'auto' : 'none', cursor: pet.onTap ? 'pointer' : undefined }}
+          {...(pet.onTap && {
+            role: 'button',
+            tabIndex: 0,
+            'aria-label': pet.label ?? 'Your pet',
+            onClick: pet.onTap,
+            onKeyDown: (e: KeyboardEvent<SVGGElement>) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                pet.onTap?.()
+              }
+            },
+          })}
+        >
+          <g transform={pet.facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined}>{pet.art}</g>
         </g>
       ),
     })
@@ -137,6 +159,7 @@ export function Room({ room, objects, stages = {}, selectedId, ghost, hiddenId, 
       {selected && selectedEntry && footprintPolygon(footprintOf(selected, selectedEntry), accent, 0.3)}
       {ghost && footprintPolygon(footprintOf(ghost.placement, ghost.entry), ghost.ok ? FITS : BLOCKED, 0.4, true)}
       {depthOrder(items).map((i) => i.draw())}
+      {overlay}
     </RoomShell>
   )
 }
