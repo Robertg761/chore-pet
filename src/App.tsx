@@ -7,6 +7,7 @@ import { addChore, completeChore, createHousehold, removeChore, setVacations, up
 import { appStore, startAppStore, useDataState, useHome } from './data/appStore'
 import type { SyncStatus } from './data/store'
 import { useToday } from './lib/useToday'
+import { useInstallPrompt } from './pwa/useInstallPrompt'
 import { ChoreEditor } from './screens/ChoreEditor'
 import { ChoreList } from './screens/ChoreList'
 import { PetPicker } from './screens/PetPicker'
@@ -28,6 +29,7 @@ export default function App() {
   const data = useHome()
   const today = useToday()
   const [view, setView] = useState<View>({ name: 'home' })
+  const { canInstall, install } = useInstallPrompt()
 
   if (!ready) return <main className="shell" aria-busy="true" />
 
@@ -100,6 +102,12 @@ export default function App() {
       <button type="button" className="link-button" onClick={() => setView({ name: 'vacation' })}>
         Vacation mode
       </button>
+
+      {canInstall && (
+        <button type="button" className="link-button" onClick={() => void install()}>
+          Add to home screen
+        </button>
+      )}
 
       <footer className="dev-note">{SYNC_LABEL[sync]}</footer>
     </main>
