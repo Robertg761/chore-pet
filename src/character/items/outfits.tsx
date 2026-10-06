@@ -1,114 +1,173 @@
 import { mix } from '../../art/color'
-import { PALETTE } from '../../art/palette'
+import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
 import { Garment } from '../Garment'
 import { pair, type Fit } from './shared'
 
-const { ink, warmRed, fabricBlue, cream, petDefault, woodDark } = PALETTE
+// Outfits are drawn around the outfit anchor (the lower belly) and clipped to
+// the pose's body outline, which is re-inked on top. So every shape here is
+// drawn generously wide and only its inner edges (neckline, hem, pocket, bib,
+// straps) carry an outline. The face ends about y = -13 in this space, so
+// nothing may rise above that between x = -46 and 46.
 
+const { ink, warmRed, fabricBlue, cream, petDefault } = PALETTE
 
-/** Top edge of every garment: just under the cheeks and mouth. */
-const WAIST = -9
-/** The body's lower outline in outfit space (right half, then left half), as an open path. */
-const HEM = `M-55 ${WAIST} C-56 6 -33 19 0 19 C33 19 56 6 55 ${WAIST}`
-/** A garment that follows the body: flat top edge at `top`, rounded hem hugging the belly. */
-const fitted = (top: number) => `M-55 ${top} L55 ${top} C56 6 33 19 0 19 C-33 19 -56 6 -55 ${top} Z`
+/** Half-width of each pet's body near the neckline (Mochi is a wide dumpling). */
+const SHOULDER: Record<Fit['species'], number> = { mochi: 62, bun: 56, sprout: 58 }
 
-/** A tiny round button. */
-function button(x: number, y: number) {
-  return <circle cx={x} cy={y} r={2.6} fill={petDefault} strokeWidth={2.5} />
+const shade = (colour: string, by = 0.28) => mix(colour, ink, by)
+const line = { fill: 'none', stroke: ink, strokeWidth: CHARACTER_STROKE, strokeLinecap: 'round', strokeLinejoin: 'round' } as const
+
+/** The belly's lower outline, lifted by `y0`: a parabola that follows the round body bottom. */
+const hemY = (x: number, y0: number) => y0 - (x * x) / 180
+const hemCurve = (y0: number, a = 90) => `M${-a} ${hemY(-a, y0)} Q0 ${y0 + (a * a) / 180} ${a} ${hemY(a, y0)}`
+
+/** A flat band between two belly-following curves, `y0` and `y1` (centre heights). */
+const hemBand = (y0: number, y1: number, a = 90) =>
+  `${hemCurve(y0, a)} L${a} ${hemY(a, y1)} Q0 ${y1 + (a * a) / 180} ${-a} ${hemY(-a, y1)} Z`
+
+/** A small round button. */
+function button(x: number, y: number, fill = petDefault) {
+  return <circle cx={x} cy={y} r={2.7} fill={fill} stroke={ink} strokeWidth={2.4} />
 }
 
-const hoodieShade = mix(fabricBlue, ink, 0.28)
-const denim = mix(fabricBlue, ink, 0.3)
-const denimShade = mix(fabricBlue, ink, 0.45)
-const knit = mix(petDefault, warmRed, 0.45)
-const knitRust = mix(warmRed, woodDark, 0.4)
-
-/** Cosy hoodie: hood bunched round the neck, two drawstrings, kangaroo pocket. */
-export function hoodie(_fit: Fit) {
-  const neck = `M-55 ${WAIST} C-55 -15 -43 -16 -36 -12 Q-20 -4 0 -4 Q20 -4 36 -12 C43 -16 55 -15 55 ${WAIST}`
-  const body = `${neck} C56 6 33 19 0 19 C-33 19 -56 6 -55 ${WAIST} Z`
-  const lace = 'M-7 -3 Q-9 0 -8 3'
+/** A bow: two loops and a knot. */
+function bow(x: number, y: number, fill: string, size = 1) {
   return (
-    <Garment d={body} fill={fabricBlue}>
-      {/* kangaroo pocket */}
-      <path d="M-23 6 Q0 3.5 23 6 L33 28 L-33 28 Z" fill={fabricBlue} />
-      <path d="M-23 6 L-28 11 M23 6 L28 11" fill="none" strokeWidth={3} />
-      {/* the hood, rolled along the neckline */}
-      <path d={neck} fill="none" stroke={ink} strokeWidth={12} />
-      <path d={neck} fill="none" stroke={hoodieShade} strokeWidth={8} />
+    <g transform={`translate(${x} ${y}) scale(${size})`} stroke={ink} strokeWidth={3} strokeLinejoin="round">
+      {pair(<path d="M0 0 C-4 -7 -12 -7 -12 -1 C-12 5 -4 6 0 0 Z" fill={fill} />)}
+      <circle r={2.8} fill={fill} />
+    </g>
+  )
+}
+
+// ---------------------------------------------------------------- hoodie
+
+const hoodieBody = fabricBlue
+const hoodieHood = mix(fabricBlue, PALETTE.white, 0.32)
+
+/** Cosy hoodie: a solid blue body, a hood rolled round the neck and up the flanks, two drawstrings and one big pocket. */
+export function hoodie({ species }: Fit) {
+  const w = SHOULDER[species]
+  // Upper edge of the hood: climbs outside the cheeks, dips under the chin.
+  const top = `M-90 -46 C-72 -40 -58 -30 ${-w + 6} -16 C-52 -9 -40 -5 -22 -4 Q0 -3 22 -4 C40 -5 52 -9 ${w - 6} -16 C58 -30 72 -40 90 -46`
+  // Lower edge of the hood where it meets the body.
+  const low = 'M-90 -18 C-72 -12 -60 -3 -44 0.5 C-32 3.5 -16 4.5 0 4.5 C16 4.5 32 3.5 44 0.5 C60 -3 72 -12 90 -18'
+  const lace = 'M-6 4.5 Q-8 7.5 -7.5 11'
+  return (
+    <Garment d={`${top} L90 40 L-90 40 Z`} fill={hoodieBody}>
+      {/* the hood, rolled round the neck */}
+      <path d={`${top} ${reversed(low)} Z`} fill={hoodieHood} stroke="none" />
+      <path d={low} {...line} strokeWidth={3} />
+      {/* kangaroo pocket: one rounded shape running off the bottom */}
+      <path d="M-24 9 Q0 6.5 24 9 Q28 14 30 30 L-30 30 Q-28 14 -24 9 Z" {...line} fill={hoodieBody} strokeWidth={3} />
       {/* drawstrings */}
       {pair(
         <>
-          <path d={lace} fill="none" stroke={ink} strokeWidth={6} />
-          <path d={lace} fill="none" stroke={cream} strokeWidth={2.5} />
-          <circle cx={-8} cy={4.5} r={2.6} fill={cream} strokeWidth={2.5} />
+          <path d={lace} {...line} strokeWidth={5.4} />
+          <path d={lace} {...line} stroke={cream} strokeWidth={2} />
+          <circle cx={-7.5} cy={11.5} r={2} fill={cream} stroke={ink} strokeWidth={2} />
         </>,
       )}
     </Garment>
   )
 }
 
-/** Denim overalls: bib with a pocket, two straps and a button on each. */
-export function overalls(_fit: Fit) {
-  const strap = <rect x={-4.5} y={-10} width={9} height={12} rx={3.5} fill={denim} transform="translate(-14 -5) rotate(-14)" />
+/** The same cubic path walked backwards, as a continuation (no leading M). */
+function reversed(path: string): string {
+  const nums = path.match(/-?\d+(\.\d+)?/g)!.map(Number)
+  const pts: [number, number][] = []
+  for (let i = 0; i < nums.length; i += 2) pts.push([nums[i], nums[i + 1]])
+  // pts = start, then groups of three (c1, c2, end) per C segment.
+  const segs: string[] = []
+  for (let i = pts.length - 1; i >= 3; i -= 3) {
+    const [c2, c1, start] = [pts[i - 1], pts[i - 2], pts[i - 3]]
+    segs.push(`C${c2[0]} ${c2[1]} ${c1[0]} ${c1[1]} ${start[0]} ${start[1]}`)
+  }
+  return `L${pts[pts.length - 1][0]} ${pts[pts.length - 1][1]} ${segs.join(' ')}`
+}
+
+// -------------------------------------------------------------- overalls
+
+const denim = shade(fabricBlue, 0.3)
+const denimShade = shade(fabricBlue, 0.48)
+
+/** Denim overalls: a bib with a pocket, straps over the shoulders, a button on each, trousers below. */
+export function overalls({ species }: Fit) {
+  const w = SHOULDER[species]
+  // Each strap leaves the bib's top corner, slips under the cheek, then climbs the side of the body.
+  const strap = `M-13 -6 Q-30 -5 -${w - 14} -12 L-${w + 8} -34`
   return (
     <>
-      {pair(strap)}
-      <Garment d={fitted(-4)} fill={denim}>
-        <path d="M-18 -9 Q-18 -11 -16 -11 H16 Q18 -11 18 -9 V30 H-18 Z" fill={denim} />
-        <rect x={-8.5} y={0} width={17} height={12} rx={3.5} fill={denimShade} strokeWidth={3} />
+      {/* trousers */}
+      <Garment d="M-90 1 Q0 8 90 1 V40 H-90 Z" fill={denim}>
+        <path d="M0 11 V30" {...line} strokeWidth={3} />
+        {pair(<path d="M-33 11 Q-40 14 -42 18" {...line} strokeWidth={3} />)}
       </Garment>
-      {pair(button(-15.5, -10))}
+      {/* straps */}
+      {pair(
+        <>
+          <path d={strap} {...line} strokeWidth={10} />
+          <path d={strap} {...line} stroke={denim} strokeWidth={5.6} />
+        </>,
+      )}
+      {/* bib */}
+      <path d="M-17 -7 Q-17 -10 -14 -10 H14 Q17 -10 17 -7 V4 Q0 8 -17 4 Z" {...line} fill={denim} />
+      <rect x={-8} y={-5} width={16} height={8} rx={3} {...line} fill={denimShade} strokeWidth={2.8} />
+      {pair(button(-14.5, -6.5))}
     </>
   )
 }
 
-/** A warm-red dress: cream dots, a cream hem trim, a skirt that flares past the body. */
-export function dress(_fit: Fit) {
-  const d = `M-54 ${WAIST} L54 ${WAIST} C55 -2 56 5 60 15 Q0 29 -60 15 C-56 5 -55 -2 -54 ${WAIST} Z`
+// ----------------------------------------------------------------- dress
+
+/** Half-width of each pet's body at the waist line (y = 1). */
+const WAIST: Record<Fit['species'], number> = { mochi: 58, bun: 52, sprout: 54 }
+
+/** A warm-red dress. The clipped part is the bodice with a cream collar and a waist bow; the flared skirt is `dressSkirt`. */
+export function dress({ species }: Fit) {
+  const w = SHOULDER[species]
+  const top = `M-90 -40 C-72 -36 -60 -26 -${w - 6} -14 Q-44 -8 -32 -8 Q-14 -7 0 -3 Q14 -7 32 -8 Q44 -8 ${w - 6} -14 C60 -26 72 -36 90 -40`
   return (
-    <Garment d={d} fill={warmRed}>
-      <path d="M-70 14 Q0 28 70 14 L70 6 Q0 20 -70 6 Z" fill={cream} />
-      <path d="M-70 6 Q0 20 70 6" fill="none" strokeWidth={3} />
-      <g fill={cream} stroke="none">
-        {[[-30, 4], [-12, 9], [14, 8], [31, 3], [-4, 1], [-44, -2], [44, -2]].map(([x, y]) => (
-          <circle key={`${x}`} cx={x} cy={y} r={2.4} />
-        ))}
-      </g>
+    <Garment d={`${top} L90 40 L-90 40 Z`} fill={warmRed}>
+      {pair(<path d="M0 -3 C-6 -9 -20 -11 -26 -7 C-25 -1 -10 1 0 0 Z" {...line} fill={cream} strokeWidth={3} />)}
     </Garment>
   )
 }
 
-/** A cable-knit sweater: ribbed neck and hem, braided cables down the front. */
-export function sweater(_fit: Fit) {
-  const braid = (x: number, y0: number, y1: number) => {
-    const h = (y1 - y0) / 2
-    return (
-      <>
-        <path d={`M${x - 3.5} ${y0} q7 ${h / 2} 0 ${h} t0 ${h}`} />
-        <path d={`M${x + 3.5} ${y0} q-7 ${h / 2} 0 ${h} t0 ${h}`} />
-      </>
-    )
-  }
-  const neck = 'M-55 -11 Q0 1 55 -11'
-  const top = `${neck} C56 6 33 19 0 19 C-33 19 -56 6 -55 -11 Z`
-  /** A ribbed band along `path`: dark band, light ticks. */
-  const rib = (path: string, w: number) => (
+/** The dress's skirt, drawn unclipped so it flares out past the body's sides, with a scalloped hem and the waist bow. */
+export function dressSkirt({ species }: Fit) {
+  const a = WAIST[species]
+  const b = a + 14
+  const n = 9
+  const base = (x: number) => 13 + 2.5 * (1 - (x / b) ** 2)
+  const xs = Array.from({ length: n }, (_, i) => b - ((i + 1) * 2 * b) / n)
+  const skirt = `M${-a} 0.5 Q0 6 ${a} 0.5 L${b} ${base(b)} ${xs.map((x) => `A8 8 0 0 1 ${x} ${base(x)}`).join(' ')} Z`
+  return (
     <>
-      <path d={path} fill="none" stroke={ink} strokeWidth={w + 4} />
-      <path d={path} fill="none" stroke={knitRust} strokeWidth={w} />
-      <path d={path} fill="none" stroke={knit} strokeWidth={w} strokeDasharray="2 5" strokeLinecap="butt" />
+      <path {...line} d={skirt} fill={warmRed} />
+      {pair(<path d="M-16 9 Q-20 14 -23 18 M-34 6 Q-40 12 -45 18" {...line} stroke={shade(warmRed, 0.2)} strokeWidth={2.4} />)}
+      {bow(0, 3, cream, 1.2)}
     </>
   )
+}
+
+// --------------------------------------------------------------- sweater
+
+const sage = mix(PALETTE.leaf, cream, 0.35)
+const sageDark = PALETTE.leafDark
+
+/** A cosy sage sweater: a thick ribbed collar and one bold cream stripe across the chest. */
+export function sweater({ species }: Fit) {
+  const w = SHOULDER[species]
+  const collar = `M-90 -26 C-72 -19 -60 -11 -${w - 14} -8 Q-40 -4 -22 -4 Q0 -2.5 22 -4 Q40 -4 ${w - 14} -8 C60 -11 72 -19 90 -26`
   return (
-    <Garment d={top} fill={knit}>
-      <g fill="none" stroke={knitRust} strokeWidth={3.5}>
-        {braid(0, -1, 11)}
-        {pair(braid(-26, 0, 8))}
-      </g>
-      {rib(HEM, 10)}
-      {rib(neck, 9)}
+    <Garment d={`${collar} L90 40 L-90 40 Z`} fill={sage}>
+      {/* the chest stripe */}
+      <path d={hemBand(7, 12)} fill={cream} stroke="none" />
+      {/* ribbed collar */}
+      <path d={collar} {...line} strokeWidth={14} />
+      <path d={collar} {...line} stroke={sageDark} strokeWidth={10} />
+      <path d={collar} {...line} stroke={ink} strokeOpacity={0.3} strokeWidth={10} strokeDasharray="2 7" strokeLinecap="butt" />
     </Garment>
   )
 }

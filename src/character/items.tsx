@@ -1,6 +1,6 @@
 import { backpack, backpackStraps, bowTie, glasses, scarf } from './items/extras'
 import { beanie, bow, leafCrown } from './items/hats'
-import { dress, hoodie, overalls, sweater } from './items/outfits'
+import { dress, dressSkirt, hoodie, overalls, sweater } from './items/outfits'
 import type { Item } from './slots'
 
 // Every wearable item. The drawings live in ./items/, grouped by who owns them:
@@ -16,7 +16,7 @@ export const ITEMS: Item[] = [
   { id: 'backpack', slot: 'back', name: 'Backpack', render: backpack, front: backpackStraps },
   { id: 'hoodie', slot: 'outfit', name: 'Hoodie', render: hoodie },
   { id: 'overalls', slot: 'outfit', name: 'Overalls', render: overalls },
-  { id: 'dress', slot: 'outfit', name: 'Dress', render: dress },
+  { id: 'dress', slot: 'outfit', name: 'Dress', render: dress, front: dressSkirt },
   { id: 'knit-sweater', slot: 'outfit', name: 'Cosy knit sweater', render: sweater },
   { id: 'leaf-crown', slot: 'head', name: 'Autumn leaf crown', render: leafCrown },
 ]
