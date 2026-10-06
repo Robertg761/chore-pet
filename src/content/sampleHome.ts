@@ -173,15 +173,14 @@ export function sampleHome(input: SampleHomeInput): NewOp[] {
     const late = SAMPLE_LATE_CHORES.find((l) => l.catalogId === catalogId && l.choreName === chore.name)
     const dates = late ? lateHistory(chore, late, start, input.today) : upToDateHistory(chore, start, yesterday)
     for (const date of dates) {
-      ops.push(...completeChore(chore, null, momentOn(date, count)))
+      ops.push(...completeChore(chore, null, momentOn(date, count), { counts: false }))
       count++
     }
   }
 
   // Progress counts chores the player finishes (unlock milestones run on it),
-  // so the seeded history doesn't count: counting starts today, and a
-  // visitor's first tap is chore 1.
+  // so the seeded history is marked as not counting: a visitor's first tap is chore 1.
   const progress: Progress = rowsOf(ops, 'progress')[0]
-  ops.push(upsertOp('progress', { ...progress, homeId: home.id, choreCount: 0, countedFrom: input.today }))
+  ops.push(upsertOp('progress', { ...progress, homeId: home.id, choreCount: 0 }))
   return ops
 }

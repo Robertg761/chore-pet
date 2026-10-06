@@ -13,7 +13,7 @@ interface Row {
   chore_count: number
   best_streak: number
   unlocked_items: string[]
-  counted_from: string | null
+  retired: Record<string, number>
 }
 
 describe('supabase migrations', () => {
@@ -31,28 +31,37 @@ describe('supabase migrations', () => {
   }, 30_000)
 
   // The same upsert PostgREST sends (insert ... on conflict do update).
-  const upsert = (count: number, best: number, items: string[], from: string | null) =>
+  const upsert = (count: number, best: number, items: string[], retired: Record<string, number>) =>
     db.query(
-      `insert into progress (home_id, chore_count, current_streak, best_streak, unlocked_items, counted_from)
+      `insert into progress (home_id, chore_count, current_streak, best_streak, unlocked_items, retired)
        values ($1, $2, 0, $3, $4, $5)
        on conflict (home_id) do update set chore_count = excluded.chore_count, best_streak = excluded.best_streak,
-         unlocked_items = excluded.unlocked_items, counted_from = excluded.counted_from`,
-      [HOME, count, best, items, from],
+         unlocked_items = excluded.unlocked_items, retired = excluded.retired`,
+      [HOME, count, best, items, JSON.stringify(retired)],
     )
   const read = async () =>
-    (await db.query<Row>(`select chore_count, best_streak, unlocked_items, counted_from::text from progress where home_id = $1`, [HOME])).rows[0]
+    (await db.query<Row>(`select chore_count, best_streak, unlocked_items, retired from progress where home_id = $1`, [HOME])).rows[0]
 
   it('merges progress written by two devices instead of letting the last write win', async () => {
-    await upsert(1, 1, ['item:beanie-red'], '2026-10-06')
-    await upsert(3, 4, ['item:beanie-red', 'decor:plant'], '2026-10-06') // phone
-    await upsert(2, 2, ['item:beanie-red', 'wall:mint'], null) // tablet, last
-    expect(await read()).toEqual({ chore_count: 3, best_streak: 4, unlocked_items: ['item:beanie-red', 'decor:plant', 'wall:mint'], counted_from: '2026-10-06' })
+    await upsert(1, 1, ['item:beanie-red'], {})
+    await upsert(3, 4, ['item:beanie-red', 'decor:plant'], { sink: 2 }) // phone deleted the sink
+    await upsert(2, 2, ['item:beanie-red', 'wall:mint'], { bed: 1 }) // tablet deleted the bed, and wrote last
+    expect(await read()).toEqual({ chore_count: 3, best_streak: 4, unlocked_items: ['item:beanie-red', 'decor:plant', 'wall:mint'], retired: { sink: 2, bed: 1 } })
   })
 
-  it('keeps the earliest counting day and never forgets an unlock', async () => {
-    await upsert(0, 0, [], '2026-10-01')
+  it('never forgets an unlock or a retired chore, keeping the higher count per chore', async () => {
+    await upsert(0, 0, [], { sink: 1, oven: 4 })
     const row = await read()
-    expect(row.counted_from).toBe('2026-10-01')
     expect(row.unlocked_items).toEqual(['item:beanie-red', 'decor:plant', 'wall:mint'])
+    expect(row.retired).toEqual({ sink: 2, bed: 1, oven: 4 })
+  })
+
+  it('marks completions as counting unless told otherwise', async () => {
+    const chore = '33333333-3333-4333-8333-333333333333'
+    await db.query(`insert into chores (id, home_id, name, schedule) values ($1, $2, 'Dishes', '{"kind":"daily"}')`, [chore, HOME])
+    await db.query(`insert into completions (id, chore_id, completed_on) values (gen_random_uuid(), $1, '2026-10-06')`, [chore])
+    await db.query(`insert into completions (id, chore_id, completed_on, counts) values (gen_random_uuid(), $1, '2026-10-05', false)`, [chore])
+    const counts = (await db.query<{ counts: boolean }>(`select counts from completions order by completed_on`)).rows.map((r) => r.counts)
+    expect(counts).toEqual([false, true])
   })
 })

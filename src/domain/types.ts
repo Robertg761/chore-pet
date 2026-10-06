@@ -59,6 +59,8 @@ export interface Completion {
   choreId: string
   completedAt: string // ISO timestamp
   completedOn: ISODate // local calendar date of completion
+  /** Whether this completion counts toward rewards (false for a sample home's seeded history). Missing means true. */
+  counts?: boolean
 }
 
 export type Mood = 'happy' | 'content' | 'meh' | 'scruffy' | 'sick'
@@ -105,13 +107,10 @@ export interface SavedOutfit {
 
 export interface Progress {
   homeId: string
-  /**
-   * Chore occurrences done since `countedFrom`. Worked out from the completions
-   * (see countedOccurrences); the stored value is only a cache of that.
-   */
+  /** Chores done that count toward rewards. Worked out by choreCountOf; the stored value is only a cache. */
   choreCount: number
-  /** Count chores from this day on. Set on sample homes so their seeded history doesn't count; null counts everything. */
-  countedFrom?: ISODate | null
+  /** Counted chores of chores since deleted, by chore id, so removing a chore never takes progress away. */
+  retired?: Record<string, number>
   currentStreak: number
   bestStreak: number
   unlockedItems: string[]

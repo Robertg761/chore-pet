@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { weekdayOf } from './dates'
-import { choreStatus, completionCounts, countedOccurrences, nextDueDate } from './schedule'
+import { choreStatus, completionCounts, nextDueDate } from './schedule'
 import type { Chore, Completion, Schedule } from './types'
 
 // Reference: 2026-10-06 is a Tuesday, 2026-10-10 is a Saturday.
@@ -110,39 +110,5 @@ describe('completionCounts', () => {
   it('does not count a second early completion in the same period', () => {
     const weekly = chore({ kind: 'weekdays', days: [1] })
     expect(completionCounts(weekly, [on('2026-09-28'), on('2026-10-01')], '2026-10-02')).toBe(false)
-  })
-})
-
-describe('countedOccurrences', () => {
-  const chore = (id: string, schedule: Schedule): Chore => ({ id, homeId: 'h', objectId: null, name: id, schedule, createdOn: '2026-09-01', photoProof: false })
-  const on = (choreId: string, completedOn: string, id = `${choreId}-${completedOn}`): Completion => ({ id, choreId, completedAt: '', completedOn })
-  const daily = chore('a', { kind: 'daily' })
-  const mondays = chore('b', { kind: 'weekdays', days: [1] })
-
-  it('counts each satisfied occurrence once, across chores', () => {
-    expect(countedOccurrences([daily, mondays], [on('a', '2026-10-01'), on('a', '2026-10-02'), on('b', '2026-10-05')])).toBe(3)
-  })
-
-  it('counts the same occurrence ticked off twice (two devices) once', () => {
-    expect(countedOccurrences([daily], [on('a', '2026-10-06', 'x'), on('a', '2026-10-06', 'y')])).toBe(1)
-  })
-
-  it('ignores a second early completion in the same period', () => {
-    expect(countedOccurrences([mondays], [on('b', '2026-09-28'), on('b', '2026-10-01'), on('b', '2026-10-02')])).toBe(2)
-  })
-
-  it('only counts from the given day (seeded history before it is skipped)', () => {
-    const done = [on('a', '2026-10-01'), on('a', '2026-10-02'), on('a', '2026-10-06')]
-    expect(countedOccurrences([daily], done, '2026-10-06')).toBe(1)
-    expect(countedOccurrences([daily], done, null)).toBe(3)
-  })
-
-  it('agrees with completionCounts: a completion that counts adds exactly one', () => {
-    const done = [on('b', '2026-09-28')]
-    for (const day of ['2026-09-28', '2026-09-29', '2026-10-05', '2026-10-06']) {
-      const before = countedOccurrences([mondays], done)
-      const after = countedOccurrences([mondays], [...done, on('b', day)])
-      expect(after - before, day).toBe(completionCounts(mondays, done, day) ? 1 : 0)
-    }
   })
 })

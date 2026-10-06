@@ -61,8 +61,14 @@ const chores: Mapper<Chore> = {
 }
 
 const completions: Mapper<Completion> = {
-  toRow: (c) => ({ id: c.id, chore_id: c.choreId, completed_at: c.completedAt, completed_on: c.completedOn }),
-  fromRow: (r) => ({ id: r.id as string, choreId: r.chore_id as string, completedAt: r.completed_at as string, completedOn: r.completed_on as string }),
+  toRow: (c) => ({ id: c.id, chore_id: c.choreId, completed_at: c.completedAt, completed_on: c.completedOn, counts: c.counts !== false }),
+  fromRow: (r) => ({
+    id: r.id as string,
+    choreId: r.chore_id as string,
+    completedAt: r.completed_at as string,
+    completedOn: r.completed_on as string,
+    counts: r.counts !== false,
+  }),
 }
 
 const pets: Mapper<Pet> = {
@@ -94,7 +100,7 @@ const progress: Mapper<Progress> = {
   toRow: (p) => ({
     home_id: p.homeId,
     chore_count: p.choreCount,
-    counted_from: p.countedFrom ?? null,
+    retired: p.retired ?? {},
     current_streak: p.currentStreak,
     best_streak: p.bestStreak,
     unlocked_items: p.unlockedItems,
@@ -102,7 +108,7 @@ const progress: Mapper<Progress> = {
   fromRow: (r) => ({
     homeId: r.home_id as string,
     choreCount: r.chore_count as number,
-    countedFrom: (r.counted_from as string | null) ?? null,
+    retired: (r.retired as Record<string, number> | null) ?? {},
     currentStreak: r.current_streak as number,
     bestStreak: r.best_streak as number,
     unlockedItems: (r.unlocked_items as string[]) ?? [],

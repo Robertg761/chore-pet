@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { addDays } from './dates'
 import type { Chore, Completion, Progress } from './types'
-import { applyUnlocks, currentStreak, isUnlocked, nextUnlocks, UNLOCKS } from './unlocks'
+import { applyUnlocks, choreCountOf, currentStreak, isUnlocked, nextUnlocks, UNLOCKS } from './unlocks'
 
 const TODAY = '2026-10-06'
 const daily = (id: string, createdOn = '2026-09-20'): Chore => ({ id, homeId: 'h', objectId: null, name: id, schedule: { kind: 'daily' }, createdOn, photoProof: false })
@@ -85,5 +85,25 @@ describe('unlocks', () => {
     expect(isUnlocked(progress(), 'wall:peach')).toBe(true)
     expect(isUnlocked(progress(), 'wall:mint')).toBe(false)
     expect(isUnlocked(progress({ unlockedItems: ['wall:mint'] }), 'wall:mint')).toBe(true)
+  })
+})
+
+describe('choreCountOf', () => {
+  const on = (choreId: string, completedOn: string, over: Partial<Completion> = {}): Completion => ({ id: `${choreId}-${completedOn}-${over.id ?? ''}`, choreId, completedAt: '', completedOn, ...over })
+
+  it('counts completions that counted, once per chore per day', () => {
+    expect(choreCountOf([on('a', '2026-10-01'), on('a', '2026-10-02'), on('b', '2026-10-02')])).toBe(3)
+  })
+
+  it('counts the same chore ticked off on two devices the same day once', () => {
+    expect(choreCountOf([on('a', '2026-10-06', { id: 'phone' }), on('a', '2026-10-06', { id: 'tablet' })])).toBe(1)
+  })
+
+  it("skips seeded history that doesn't count", () => {
+    expect(choreCountOf([on('a', '2026-10-01', { counts: false }), on('a', '2026-10-06')])).toBe(1)
+  })
+
+  it('adds the banked counts of deleted chores', () => {
+    expect(choreCountOf([on('a', '2026-10-06')], { sink: 4, bed: 2 })).toBe(7)
   })
 })

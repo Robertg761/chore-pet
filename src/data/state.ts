@@ -1,5 +1,5 @@
 import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room } from '../domain/types'
-import { countedOccurrences } from '../domain/schedule'
+import { choreCountOf } from '../domain/unlocks'
 import { CASCADES, TABLES, keyOf, type TableMap, type TableName } from './tables'
 
 // Pure state for the offline-first data layer. No IO here, so it's all testable.
@@ -160,7 +160,7 @@ export function selectHome(tables: Tables): HomeData {
     home,
     pet: Object.values(tables.pets).find((p) => p.homeId === home.id) ?? null,
     // The chore count comes from the completions themselves, so it is right whichever device recorded them.
-    progress: stored && { ...stored, choreCount: countedOccurrences(chores, completions, stored.countedFrom ?? null) },
+    progress: stored && { ...stored, choreCount: choreCountOf(completions, stored.retired) },
     rooms,
     objects: Object.values(tables.placed_objects).filter((o) => roomIds.has(o.roomId)),
     chores,

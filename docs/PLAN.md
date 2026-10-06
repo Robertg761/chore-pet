@@ -126,10 +126,10 @@ Parallel batch H:
   - Account linking: **Done** (`src/lib/account.ts`, `src/screens/AccountSection.tsx`). A guest saves with email (confirmation link) or Google, linking the same user id so nothing moves. "Sign in" on another device switches accounts and syncs to follow.
   - Final QA: browser emulation at 390 px only. There is no real phone in this environment.
   - Progress across devices: **Done.**
-    - The chore count is worked out from the completions (`countedOccurrences`), so nothing can overwrite it, and the same chore occurrence ticked off on two devices counts once.
-    - The `progress_merge` trigger (migration 0004) merges unlocks and the best streak atomically on the server.
+    - The chore count comes from completions that counted when they were recorded, one per chore per day (`choreCountOf`). Completion rows are never edited, so devices can't overwrite each other's count, and schedule edits don't rewrite history.
+    - Deleting a chore banks its count in `progress.retired`, so progress never goes backwards.
+    - The `progress_merge` trigger (migration 0004) merges unlocks, the best streak and retired counts atomically.
     - `supabase/migrations.test.ts` runs every migration on PGlite.
-    - Known trade-off: deleting a chore removes its history, so the count drops. Rewards already earned stay.
 - [LEAD] Submission: live link, repo, write-up, in-app demo video.
   - **Write-up drafted** (`docs/SUBMISSION.md`).
   - **Demo video recorded** in the app (`npm run demo:record`; about 85 s, sample home and time skip).

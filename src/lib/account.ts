@@ -28,18 +28,35 @@ function stateFrom(session: Session | null): AccountState {
 export function useAccount(): AccountState {
   const [state, setState] = useState<AccountState>(supabaseConfigured ? { kind: 'loading' } : { kind: 'local' })
   useEffect(() => {
+    if (!supabaseConfigured) return
     let live = true
+    let connected = false
     let unsubscribe = () => {}
-    void getSupabase().then(async (supabase) => {
-      if (!supabase || !live) return
-      const { data } = supabase.auth.onAuthStateChange((_event, session) => live && setState(stateFrom(session)))
-      unsubscribe = () => data.subscription.unsubscribe()
-      const { data: current } = await supabase.auth.getSession()
-      if (live) setState(stateFrom(current.session))
-    })
+    // Load the client and follow the session. If the download fails (offline),
+    // say so and try again when the connection or the tab comes back.
+    const attempt = () => {
+      if (connected) return
+      getSupabase().then(
+        async (supabase) => {
+          if (!supabase || !live || connected) return
+          connected = true
+          const { data } = supabase.auth.onAuthStateChange((_event, session) => live && setState(stateFrom(session)))
+          unsubscribe = () => data.subscription.unsubscribe()
+          const { data: current } = await supabase.auth.getSession()
+          if (live) setState(stateFrom(current.session))
+        },
+        () => live && setState({ kind: 'offline' }),
+      )
+    }
+    const onVisible = () => document.visibilityState === 'visible' && attempt()
+    attempt()
+    window.addEventListener('online', attempt)
+    document.addEventListener('visibilitychange', onVisible)
     return () => {
       live = false
       unsubscribe()
+      window.removeEventListener('online', attempt)
+      document.removeEventListener('visibilitychange', onVisible)
     }
   }, [])
   return state

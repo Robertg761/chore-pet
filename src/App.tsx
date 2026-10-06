@@ -6,7 +6,7 @@ import { isInVacation } from './domain/dates'
 import { petCondition } from './domain/health'
 import { objectMessStages } from './domain/mess'
 import type { Chore } from './domain/types'
-import type { Unlock } from './domain/unlocks'
+import { currentStreak, type Unlock } from './domain/unlocks'
 import { ITEMS } from './character/items'
 import {
   addChore,
@@ -184,7 +184,7 @@ export default function App() {
           onDelete={
             chore &&
             (() => {
-              appStore.apply(...removeChore(chore.id))
+              appStore.apply(...removeChore(chore.id, data))
               back()
             })
           }
@@ -218,7 +218,8 @@ export default function App() {
           room={rooms[0]}
           objects={objects.filter((o) => o.roomId === rooms[0].id)}
           choreCount={progress?.choreCount ?? 0}
-          streak={progress?.currentStreak ?? 0}
+          // Worked out for today, like the rewards screen: the stored streak is from the last chore done.
+          streak={currentStreak(chores, completions, today, home.vacations)}
           onClose={back}
         />
       </main>
@@ -349,9 +350,9 @@ export default function App() {
             onSaveChore={(chore, value) =>
               appStore.apply(...(chore ? updateChore(chore, value) : addChore(home, { ...value, objectId: selected.id }, today)))
             }
-            onRemoveChore={(chore) => appStore.apply(...removeChore(chore.id))}
+            onRemoveChore={(chore) => appStore.apply(...removeChore(chore.id, data))}
             onTurn={() => turnTo && canTurn && appStore.apply(...moveObject(selected, turnTo))}
-            onRemove={() => (appStore.apply(...removeObject(selected.id)), setSelectedId(null))}
+            onRemove={() => (appStore.apply(...removeObject(selected.id, data)), setSelectedId(null))}
             onClose={() => setSelectedId(null)}
           />
         ) : (

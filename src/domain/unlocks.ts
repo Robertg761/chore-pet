@@ -51,6 +51,18 @@ export const FREE_STYLES = ['wall:peach', 'floor:wood']
 /** Outfits every pet has from the start, so dressing up can begin on day one. */
 export const FREE_ITEMS = ['item:hoodie', 'item:overalls', 'item:dress']
 
+/**
+ * The chore count rewards run on: completions that counted when they were
+ * recorded, once per chore per day (so the same chore ticked off on two
+ * devices counts once), plus the banked counts of deleted chores. Completion
+ * rows are never edited, so devices can't overwrite each other's count, and
+ * editing a chore's schedule doesn't rewrite its history.
+ */
+export function choreCountOf(completions: Completion[], retired: Record<string, number> = {}): number {
+  const days = new Set(completions.filter((c) => c.counts !== false).map((c) => `${c.choreId}:${c.completedOn}`))
+  return days.size + Object.values(retired).reduce((a, b) => a + b, 0)
+}
+
 export function isUnlocked(progress: Pick<Progress, 'unlockedItems'> | null, id: string): boolean {
   return FREE_STYLES.includes(id) || FREE_ITEMS.includes(id) || Boolean(progress?.unlockedItems.includes(id))
 }

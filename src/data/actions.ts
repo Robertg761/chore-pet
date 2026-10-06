@@ -1,8 +1,8 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
-import { completionCounts, countedOccurrences } from '../domain/schedule'
+import { completionCounts } from '../domain/schedule'
 import type { CatalogEntry } from '../catalog/types'
-import { applyUnlocks, currentStreak, type Unlock } from '../domain/unlocks'
+import { applyUnlocks, choreCountOf, currentStreak, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
 import { deleteOp, upsertOp, type NewOp } from './state'
 
@@ -49,8 +49,28 @@ export function moveObject(object: PlacedObject, to: Pick<PlacedObject, 'tileX' 
 }
 
 /** Also removes its chores and their history (the database cascades the same way). */
-export function removeObject(objectId: string): NewOp[] {
-  return [deleteOp('placed_objects', objectId)]
+/** What a removal needs to keep the player's progress: their completions, and the chores going away with an object. */
+export interface History {
+  progress: Progress | null
+  chores: Chore[]
+  completions: Completion[]
+}
+
+/** Bank the counted chores of chores about to be deleted (their completions go with them). */
+function retire(choreIds: string[], history?: History): NewOp[] {
+  if (!history?.progress) return []
+  const retired = { ...history.progress.retired }
+  for (const choreId of choreIds) {
+    const own = history.completions.filter((c) => c.choreId === choreId)
+    const counted = choreCountOf(own)
+    if (counted > 0) retired[choreId] = Math.max(retired[choreId] ?? 0, counted)
+  }
+  return [upsertOp('progress', { ...history.progress, retired })]
+}
+
+export function removeObject(objectId: string, history?: History): NewOp[] {
+  const going = history?.chores.filter((c) => c.objectId === objectId).map((c) => c.id) ?? []
+  return [...retire(going, history), deleteOp('placed_objects', objectId)]
 }
 
 export function updateRoom(room: Room, patch: Partial<Pick<Room, 'type' | 'floorStyle' | 'wallStyle'>>): NewOp[] {
@@ -67,13 +87,13 @@ export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 's
 }
 
 /** Also removes its completions (the database cascades the same way). */
-export function removeChore(choreId: string): NewOp[] {
-  return [deleteOp('chores', choreId)]
+export function removeChore(choreId: string, history?: History): NewOp[] {
+  return [...retire([choreId], history), deleteOp('chores', choreId)]
 }
 
-/** Record a completion on the local calendar date of `now`, and count it. */
-export function completeChore(chore: Chore, progress: Progress | null, now: Date = new Date()): NewOp[] {
-  const ops: NewOp[] = [upsertOp('completions', { id: id(), choreId: chore.id, completedAt: now.toISOString(), completedOn: toISODate(now) })]
+/** Record a completion on the local calendar date of `now`, and count it (seeded sample history passes counts: false). */
+export function completeChore(chore: Chore, progress: Progress | null, now: Date = new Date(), { counts = true } = {}): NewOp[] {
+  const ops: NewOp[] = [upsertOp('completions', { id: id(), choreId: chore.id, completedAt: now.toISOString(), completedOn: toISODate(now), counts })]
   if (progress) ops.push(upsertOp('progress', { ...progress, choreCount: progress.choreCount + 1 }))
   return ops
 }
@@ -89,13 +109,13 @@ export function completeChoreWithRewards(
   context: { chores: Chore[]; completions: Completion[]; vacations: VacationWindow[] },
   now: Date = new Date(),
 ): { ops: NewOp[]; unlocked: Unlock[] } {
-  const completion: Completion = { id: id(), choreId: chore.id, completedAt: now.toISOString(), completedOn: toISODate(now) }
+  const completion: Completion = { id: id(), choreId: chore.id, completedAt: now.toISOString(), completedOn: toISODate(now), counts: true }
   // A repeat the schedule ignores (same day, or a second early one) is neither recorded nor counted.
   if (!completionCounts(chore, context.completions, completion.completedOn)) return { ops: [], unlocked: [] }
   const ops: NewOp[] = [upsertOp('completions', completion)]
   if (!progress) return { ops, unlocked: [] }
   const streak = currentStreak(context.chores, [...context.completions, completion], completion.completedOn, context.vacations)
-  const choreCount = countedOccurrences(context.chores, [...context.completions, completion], progress.countedFrom ?? null)
+  const choreCount = choreCountOf([...context.completions, completion], progress.retired)
   const result = applyUnlocks({ ...progress, choreCount }, streak)
   ops.push(upsertOp('progress', result.progress))
   return { ops, unlocked: result.unlocked }

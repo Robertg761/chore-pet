@@ -4,7 +4,7 @@ import { addDays } from '../domain/dates'
 import { choreStatus } from '../domain/schedule'
 import type { Chore, Completion, Progress } from '../domain/types'
 import { UNLOCKS } from '../domain/unlocks'
-import { completeChoreWithRewards } from './actions'
+import { completeChoreWithRewards, removeChore, removeObject, updateChore } from './actions'
 import { change, emptySnapshot, selectHome, type NewOp, type Snapshot } from './state'
 
 // 2026-10-06 is a Tuesday. Dates passed to completeChoreWithRewards are local-time Dates.
@@ -165,5 +165,41 @@ describe('completeChoreWithRewards repeats', () => {
     const completions = upsertOf(first.ops, 'completions').map((o) => o.value)
     const again = completeChoreWithRewards(chore, progress({ choreCount: 1 }), ctx([chore], completions), at(10))
     expect(again).toEqual({ ops: [], unlocked: [] })
+  })
+})
+
+describe('progress that chores take with them', () => {
+  const homeData = () => {
+    let s = apply(emptySnapshot('u1'), sampleHome({ species: 'mochi', userId: 'u1', today: TODAY }))
+    let data = selectHome(s.tables)
+    for (const [i, c] of data.chores.slice(0, 3).entries()) {
+      data = selectHome(s.tables)
+      s = apply(s, completeChoreWithRewards(c, data.progress, ctx(data.chores, data.completions), at(8 + i)).ops)
+    }
+    return s
+  }
+
+  it('starts at zero on a sample home and counts only what the visitor does', () => {
+    expect(selectHome(homeData().tables).progress!.choreCount).toBe(3)
+  })
+
+  it("keeps the count when a chore's schedule changes", () => {
+    let s = homeData()
+    const data = selectHome(s.tables)
+    const done = data.chores.find((c) => data.completions.some((x) => x.choreId === c.id && x.completedOn === TODAY))!
+    s = apply(s, updateChore(done, { schedule: { kind: 'monthly', dayOfMonth: 1 } }))
+    expect(selectHome(s.tables).progress!.choreCount).toBe(3)
+  })
+
+  it('keeps the count when a chore or a whole object is removed', () => {
+    let s = homeData()
+    let data = selectHome(s.tables)
+    const done = data.chores.find((c) => data.completions.some((x) => x.choreId === c.id && x.completedOn === TODAY))!
+    s = apply(s, removeChore(done.id, data))
+    data = selectHome(s.tables)
+    expect(data.progress!.choreCount).toBe(3)
+    const object = data.objects.find((o) => data.chores.some((c) => c.objectId === o.id && data.completions.some((x) => x.choreId === c.id && x.counts !== false)))!
+    s = apply(s, removeObject(object.id, data))
+    expect(selectHome(s.tables).progress!.choreCount).toBe(3)
   })
 })

@@ -14,7 +14,9 @@ function mergeLikeTrigger(old: Progress, row: Progress): Progress {
     unlockedItems: [...new Set([...old.unlockedItems, ...row.unlockedItems])],
     bestStreak: Math.max(old.bestStreak, row.bestStreak),
     choreCount: Math.max(old.choreCount, row.choreCount),
-    countedFrom: [old.countedFrom, row.countedFrom].filter(Boolean).sort()[0] ?? null,
+    retired: Object.fromEntries(
+      [...new Set([...Object.keys(old.retired ?? {}), ...Object.keys(row.retired ?? {})])].map((k) => [k, Math.max(old.retired?.[k] ?? 0, row.retired?.[k] ?? 0)]),
+    ),
   }
 }
 
