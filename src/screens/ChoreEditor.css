@@ -1,21 +1,32 @@
+/* The editor fits the view: compact on phones, a centred two-column card on wide screens. */
 .editor {
   align-self: stretch;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
   min-width: 0;
 }
+.app-view > .screen:has(> .editor) { padding: 8px 14px; }
 
-.editor-title { margin: 4px 0 0; font-size: 30px; line-height: 1.1; }
+@media (max-height: 700px) {
+  .editor { gap: 8px; }
+}
+
+/* On phones the two columns are just one list. */
+.editor-cols,
+.editor-col { display: contents; }
+
+.editor-title { margin: 0; font-size: 24px; line-height: 1.1; }
 
 .editor-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .editor-field > label,
 .editor-group > legend { font-weight: 800; }
 .editor-group { margin: 0; padding: 0; border: none; min-width: 0; }
-.editor-group > legend { padding: 0; margin-bottom: 8px; }
+.editor-group > legend { padding: 0; margin-bottom: 4px; }
 
 .editor-input {
-  min-height: 48px;
+  min-height: 44px;
   padding: 0 14px;
   font: inherit;
   font-weight: 700;
@@ -34,14 +45,17 @@
 .editor-error { margin: 0; font-size: 14px; font-weight: 800; color: var(--late-ink); }
 
 /* Schedule kind: a radio list of big cards. */
-.editor-kinds { display: flex; flex-direction: column; gap: 8px; }
+.editor-kinds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.editor-kinds > .editor-kind:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .editor-kind {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-height: 48px;
-  padding: 6px 14px;
+  gap: 8px;
+  min-height: 44px;
+  padding: 4px 10px;
+  font-size: 15px;
+  line-height: 1.15;
   font-weight: 800;
   background: var(--card);
   border: var(--outline);
@@ -68,7 +82,7 @@
 .editor-step {
   flex: none;
   width: 48px;
-  min-height: 48px;
+  min-height: 44px;
   padding: 0;
   font: inherit;
   font-size: 26px;
@@ -86,17 +100,18 @@
 .editor-unit { font-weight: 800; color: var(--ink-soft); }
 
 /* Weekday chips (checkbox or radio under the hood). */
-.editor-chips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.editor-chips { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; }
 .editor-chip {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
+  min-height: 44px;
+  font-size: 14px;
   font-weight: 800;
   background: var(--card);
-  border: var(--outline);
-  border-radius: 12px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
   cursor: pointer;
   user-select: none;
 }
@@ -118,7 +133,7 @@
 
 .editor-summary {
   margin: 0;
-  padding: 10px 14px;
+  padding: 6px 12px;
   font-weight: 800;
   color: var(--due-ink);
   background: var(--due-bg);
@@ -126,22 +141,22 @@
 }
 .editor-summary-label { margin-right: 6px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.75; }
 
-.editor-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.editor-actions { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; padding-bottom: 4px; }
 .editor-save,
 .editor-cancel,
 .editor-delete {
-  min-height: 52px;
-  padding: 0 20px;
+  min-height: 48px;
+  padding: 0 16px;
   font: inherit;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 800;
   border: var(--outline);
   border-radius: var(--radius);
   cursor: pointer;
 }
-.editor-save { grid-column: 1 / -1; color: #fff; background: var(--accent); box-shadow: 0 4px 0 var(--ink); }
+.editor-save { color: #fff; background: var(--accent); box-shadow: 0 3px 0 var(--ink); }
 .editor-save:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
-.editor-cancel { grid-column: 1 / -1; color: var(--ink); background: var(--card); }
+.editor-cancel { color: var(--ink); background: var(--card); }
 .editor-delete { color: var(--late-ink); background: var(--late-bg); }
 .editor-save:focus-visible,
 .editor-cancel:focus-visible,
@@ -153,8 +168,8 @@
   align-self: stretch;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 14px;
+  gap: 8px;
+  padding: 10px 12px;
   background: var(--late-bg);
   border: var(--outline);
   border-radius: var(--radius);
@@ -163,6 +178,11 @@
 .editor-confirm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .editor-confirm .editor-delete { background: var(--card); }
 .editor-confirm .editor-cancel { grid-column: auto; }
+.editor-danger > .editor-confirm { flex: 1; }
+.editor-confirm .editor-delete,
+.editor-confirm .editor-cancel { min-height: 44px; }
+/* While asking about deleting, the summary steps aside so everything still fits. */
+.editor:has(.editor-confirm) .editor-summary { display: none; }
 
 .editor .sr-only {
   position: absolute;
@@ -181,4 +201,33 @@
   .editor *::after { transition: none !important; animation: none !important; }
   .editor-step:active,
   .editor-save:active { transform: none; }
+}
+
+@media (min-width: 900px) {
+  .app-view > .screen:has(> .editor) { padding: 24px 28px; justify-content: center; }
+  .editor {
+    align-self: center;
+    max-width: 800px;
+    gap: 20px;
+    padding: 24px 28px 28px;
+    background: var(--card);
+    border: var(--outline);
+    border-radius: 20px;
+  }
+  .editor-title { font-size: 30px; }
+  .editor-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; align-items: stretch; }
+  .editor-col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .editor-col + .editor-col .editor-actions { margin-top: auto; }
+  .editor-input { min-height: 48px; }
+  .editor-kinds { grid-template-columns: 1fr; gap: 8px; }
+  .editor-kind { min-height: 48px; font-size: 16px; padding: 6px 14px; gap: 12px; }
+  .editor-chips { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .editor-chip { min-height: 48px; font-size: 16px; border: var(--outline); border-radius: 12px; }
+  .editor-step { min-height: 48px; }
+  .editor-summary { padding: 10px 14px; }
+  .editor-actions { grid-template-columns: 1fr; gap: 10px; padding-bottom: 4px; }
+  .editor-save,
+  .editor-cancel,
+  .editor-delete { min-height: 52px; font-size: 18px; }
+  .editor-save { box-shadow: 0 4px 0 var(--ink); }
 }

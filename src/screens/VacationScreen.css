@@ -1,32 +1,54 @@
+/* Vacation mode: the form first, the trips below it (phones) or beside it (wide).
+   A long trip list scrolls in its own box, never the page. */
 .vacation {
   align-self: stretch;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 8px;
 }
-.vacation-back { align-self: flex-start; margin-left: -12px; }
-.vacation-title { margin: 0; font-size: 28px; }
+.app-view > .screen:has(> .vacation) { height: 100%; min-height: 0; padding: 8px 14px; }
+.screen > .vacation { flex: 1 1 0; min-height: 0; }
+
+.vacation-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.vacation-back { padding: 0 8px; }
+.vacation-title { margin: 0; font-size: 24px; line-height: 1.1; }
 .vacation-lede { margin: 0; font-weight: 700; color: var(--ink-soft); }
-.vacation-subtitle { margin: 0; font-size: 18px; }
+.vacation-subtitle { margin: 0; font-size: 17px; line-height: 1.2; }
+
+.vacation-main { display: flex; flex-direction: column; gap: 8px; }
+.vacation-side {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+  margin: -4px;
+}
 
 .vacation-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 14px;
+  gap: 8px;
+  padding: 10px 12px;
   background: var(--card);
   border: var(--outline);
   border-radius: var(--radius);
 }
 .vacation-now { background: var(--due-bg); color: var(--due-ink); }
-.vacation-now-text { margin: 0; font-size: 18px; font-weight: 800; }
+.vacation-now-text { margin: 0; font-size: 17px; font-weight: 800; }
 
-.vacation-field { display: flex; flex-direction: column; gap: 6px; }
+.vacation-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.vacation-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .vacation-field label { font-weight: 800; }
 .vacation-field input {
   min-height: 44px;
   width: 100%;
-  padding: 0 12px;
+  min-width: 0;
+  padding: 0 10px;
   font: inherit;
   font-weight: 700;
   color: var(--ink);
@@ -39,7 +61,7 @@
 .vacation-past summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 .vacation-error { margin: 0; font-weight: 700; font-size: 14px; color: var(--late-ink); }
-.vacation-notice:empty { margin-top: -12px; }
+.vacation-notice:empty { margin-top: -8px; }
 .vacation-notice { margin: 0; font-weight: 700; font-size: 14px; color: var(--ink-soft); }
 
 .vacation-btn {
@@ -56,21 +78,21 @@
 .vacation-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .vacation-btn-quiet { color: var(--ink); background: var(--card); }
 
-.vacation-group { display: flex; flex-direction: column; gap: 8px; }
+.vacation-group { display: flex; flex-direction: column; gap: 6px; }
 .vacation-empty { margin: 0; font-weight: 700; color: var(--ink-soft); }
-.vacation-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.vacation-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .vacation-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 8px 8px 8px 14px;
+  padding: 4px 4px 4px 14px;
   background: var(--card);
   border: 2px solid var(--ink);
   border-radius: var(--radius);
   font-weight: 800;
 }
-.vacation-item-past { padding: 12px 14px; font-weight: 700; color: var(--ink-soft); }
+.vacation-item-past { padding: 10px 14px; font-weight: 700; color: var(--ink-soft); }
 
 .vacation-past summary {
   min-height: 44px;
@@ -80,7 +102,29 @@
   color: var(--ink-soft);
   cursor: pointer;
 }
-.vacation-past[open] summary { margin-bottom: 8px; }
+.vacation-past[open] summary { margin-bottom: 6px; }
+
+@media (min-width: 900px) {
+  .app-view > .screen:has(> .vacation) { padding: 24px 28px; }
+  .vacation {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-areas: 'head head' 'lede lede' 'main side';
+    column-gap: 32px;
+    row-gap: 8px;
+  }
+  .vacation-head { grid-area: head; }
+  .vacation-lede { grid-area: lede; font-size: 17px; }
+  .vacation-main { grid-area: main; align-self: start; gap: 14px; }
+  .vacation-side { grid-area: side; }
+  .vacation-title { font-size: 30px; }
+  .vacation-subtitle { font-size: 20px; }
+  .vacation-card { padding: 18px 20px; gap: 12px; }
+  .vacation-fields { gap: 12px; }
+  .vacation-group { gap: 10px; }
+  .vacation-list { gap: 8px; }
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .vacation-btn { transition: transform 0.1s ease; }
