@@ -1138,3 +1138,15 @@ describe('freeTile', () => {
     expect(freeTile([fp(7, 7, 2, 2)])).toEqual({ tx: 5, ty: 5 })
   })
 })
+
+describe('the window', () => {
+  const poster = { footprint: { w: 1, d: 1 }, placement: 'wall' as const, layer: 'hung' as const }
+  const none = () => undefined
+  it("keeps hung things off the window on the left wall, but allows them beside it and on the right wall", () => {
+    expect(checkPlacement(poster, { tileX: 0, tileY: 2, rotation: 0 }, [], none).problem).toBe('window')
+    expect(checkPlacement(poster, { tileX: 0, tileY: 1, rotation: 0 }, [], none).problem).toBe('window')
+    expect(checkPlacement(poster, { tileX: 0, tileY: 0, rotation: 0 }, [], none).ok).toBe(true)
+    expect(checkPlacement(poster, { tileX: 0, tileY: 4, rotation: 0 }, [], none).ok).toBe(true)
+    expect(checkPlacement(poster, { tileX: 2, tileY: 0, rotation: 1 }, [], none).ok).toBe(true)
+  })
+})

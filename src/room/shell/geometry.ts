@@ -48,3 +48,6 @@ export function roomPoints(...corners: [number, number, number?][]): string {
 
 /** Scale to apply to object art (drawn at 64 px tiles) so it fits room tiles. */
 export const OBJECT_SCALE = ROOM_TILE_W / TILE_W
+
+/** The window on the left wall: tiles u0..u1 along ty (sill included), heights z0..z1 in room px. */
+export const WINDOW = { u0: 1.8, u1: 3.6, z0: 76, z1: 140 }

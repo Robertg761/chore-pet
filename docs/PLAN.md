@@ -91,7 +91,7 @@ Parallel batch E:
 
 Parallel batch F:
 
-- [SONNET: svg-artist] Decor set: rug, lamp, plant, poster, fish tank, wallpaper and floor variants.
+- [SONNET: svg-artist] Decor set: rug, lamp, plant, poster, fish tank, wallpaper and floor variants. **Done** (plant, lamp, poster, fish tank; wall and floor variants come from the room shell styles)
 - [SONNET: svg-artist] Accessories: beanie, bow, glasses, scarf, bow tie, backpack (one per slot at least), checked on every pose of every species. Bun's ears and Sprout's leaves stick up through head items; draw hats so that looks intentional.
 - [SONNET: ui-builder] Gift box unlock moment and rewards screen with progress to next unlock. **Done**
 - [SONNET: ui-builder] Week view: chores completed per day and pet health over time.

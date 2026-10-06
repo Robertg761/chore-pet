@@ -42,6 +42,7 @@ interface Drag {
 const PROBLEM_TEXT: Record<PlacementProblem, string> = {
   outside: "That's outside the room.",
   needsWall: 'This one goes against a wall.',
+  window: "That's where the window is.",
   overlap: "Something's in the way.",
 }
 

@@ -1,6 +1,6 @@
 import type { CatalogEntry, Layer } from '../catalog/types'
 import type { PlacedObject } from '../domain/types'
-import { ROOM_ORIGIN, ROOM_TILE_H, ROOM_TILE_W, ROOM_TILES } from './shell/geometry'
+import { ROOM_ORIGIN, ROOM_TILE_H, ROOM_TILE_W, ROOM_TILES, WINDOW } from './shell/geometry'
 
 // Pure tile maths for the room: footprints, placement rules, depth order and
 // screen <-> tile conversion. No React, so it is all unit-testable.
@@ -50,13 +50,18 @@ export function insideRoom(f: Footprint): boolean {
 }
 
 /** True when a wall object's back touches the wall its rotation faces away from. */
+/** Hung things on the left wall can't go over the window (sill included). */
+function coversWindow(f: Footprint, rotation: Rotation): boolean {
+  return rotation === 0 && f.ty < WINDOW.u1 + 0.15 && f.ty + f.d > WINDOW.u0 - 0.15
+}
+
 export function againstWall(p: Placement): boolean {
   if (p.rotation === 0) return p.tileX === 0
   if (p.rotation === 1) return p.tileY === 0
   return false
 }
 
-export type PlacementProblem = 'outside' | 'needsWall' | 'overlap'
+export type PlacementProblem = 'outside' | 'needsWall' | 'window' | 'overlap'
 
 export interface PlacementCheck {
   ok: boolean
@@ -83,6 +88,7 @@ export function checkPlacement(
   const fp = footprintOf(p, entry)
   if (!insideRoom(fp)) return { ok: false, problem: 'outside', blockers: [] }
   if (entry.placement === 'wall' && !againstWall(p)) return { ok: false, problem: 'needsWall', blockers: [] }
+  if (entry.layer === 'hung' && coversWindow(fp, p.rotation)) return { ok: false, problem: 'window', blockers: [] }
   const blockers = others
     .filter((o) => o.id !== movingId)
     .filter((o) => {

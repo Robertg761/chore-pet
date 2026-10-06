@@ -8,6 +8,7 @@ import {
   WALL_THICKNESS as T,
   roomPoint,
   roomPoints,
+  WINDOW,
 } from './geometry'
 import { floorStyleOf, wallStyleOf, type FloorStyle, type FloorStyleId, type WallStyle, type WallStyleId } from './styles'
 
@@ -177,7 +178,7 @@ function walls(wall: WallStyle) {
 
 // ---- window ----------------------------------------------------------------
 
-const WIN = { u0: 1.8, u1: 3.6, z0: 76, z1: 140 }
+const WIN = WINDOW
 
 function windowLayer() {
   const { u0, u1, z0, z1 } = WIN
