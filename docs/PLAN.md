@@ -14,23 +14,28 @@ Already done in the scaffold: domain types, schedule logic, health and mood logi
 
 ## Phase 0: Art foundation (runs alongside Phase 1)
 
-- [LEAD] Pick the final character with Robert from Mochi, Bun, Sprout. Draw the base idle pose and define its six anchors. This sets the bar for every other asset.
-- [LEAD] Draw one reference object (the sink) in `clean`, `messy1`, `messy2`. This is the template every object task copies.
+- [LEAD] ~~Pick the final character with Robert~~ Decision: all three ship and the player picks. Draw the base idle pose for Mochi, Bun and Sprout with their six anchors. This sets the bar for every other asset. **Done**, see `src/character/species/` and `/?art`.
+- [LEAD] Draw one reference object (the sink) in `clean`, `messy1`, `messy2`. This is the template every object task copies. **Done** (`src/room/objects/sink.tsx`), awaiting Robert's approval.
 
-Parallel batch A (after the base pose and reference sink exist):
+Parallel batch A (after the base poses and reference sink exist):
 
-- [SONNET: svg-artist] Mood poses for the chosen character: content, meh, scruffy, sick, sleeping, cheering. Same anchors as the idle pose. Output: `src/character/poses/*.tsx`.
+- [SONNET: svg-artist] Mochi mood poses: content, meh, scruffy, sick (in bed, thermometer), sleeping, cheering. Same anchors as the idle pose and the shared parts in `src/character/parts.tsx`. Output: `src/character/species/mochi-poses.tsx`, registered in `src/character/poses.ts`.
+- [SONNET: svg-artist] Bun mood poses: same list, output `src/character/species/bun-poses.tsx`. Ears keep doing the mood work (`EAR_DROOP`).
+- [SONNET: svg-artist] Sprout mood poses: same list, output `src/character/species/sprout-poses.tsx`. Leaves keep doing the mood work (`WILT`).
 - [SONNET: svg-artist] Room shell: walls, floor tiles, window, in 3 floor styles and 3 wall styles. Output: `src/room/shell/*`.
 
-**Done when:** all moods exist, anchors line up in every pose, and the reference sink is approved.
+**Done when:** all moods exist for all three species, anchors line up in every pose (check the beanie on each in `/?art`), and the reference sink is approved.
+
+The three pose tasks each add one line to `POSES` in `src/character/poses.ts`; that is the only shared file, so merge them one at a time.
 
 ## Phase 1: Core loop
 
 - [LEAD] Data layer: repository functions over Supabase for every table, plus an offline cache (IndexedDB) that syncs on reconnect. Define the sync and conflict rule (last write wins per row is fine).
-- [LEAD] Wire `ensureSession()` into app start; create the home, pet and progress rows on first launch.
+- [LEAD] Wire `ensureSession()` into app start; create the home, pet and progress rows on first launch. The pet row gets the species from the picker below.
 
 Parallel batch B:
 
+- [SONNET: ui-builder] Pet picker: first-launch screen showing Mochi, Bun and Sprout side by side (happy pose, tap to choose, then name it). Returns `{ species, name }`; the lead wires it to pet creation.
 - [SONNET: ui-builder] Chore list screen: today, overdue, upcoming, with the done action. Uses `petCondition()`.
 - [SONNET: ui-builder] Chore editor: name and every schedule type, with validation.
 - [SONNET: ui-builder] Vacation mode screen: set and clear date ranges on the home.
@@ -87,7 +92,7 @@ Parallel batch E:
 Parallel batch F:
 
 - [SONNET: svg-artist] Decor set: rug, lamp, plant, poster, fish tank, wallpaper and floor variants.
-- [SONNET: svg-artist] Accessories: beanie, bow, glasses, scarf, bow tie, backpack (one per slot at least), checked on every pose.
+- [SONNET: svg-artist] Accessories: beanie, bow, glasses, scarf, bow tie, backpack (one per slot at least), checked on every pose of every species. Bun's ears and Sprout's leaves stick up through head items; draw hats so that looks intentional.
 - [SONNET: ui-builder] Gift box unlock moment and rewards screen with progress to next unlock.
 - [SONNET: ui-builder] Week view: chores completed per day and pet health over time.
 - [SONNET: test-writer] Tests for streak and unlock rules.
@@ -98,11 +103,11 @@ Parallel batch F:
 
 Parallel batch G:
 
-- [SONNET: ui-builder] Character creator: name, body colour, eye and cheek variants.
+- [SONNET: ui-builder] Character creator: species (switching keeps the outfit), name, body colour, eye and cheek variants.
 - [SONNET: ui-builder] Wardrobe: equip per slot, live preview, saved outfits.
 - [SONNET: svg-artist] Full outfits for the outfit slot (hoodie, overalls, dress, a seasonal set).
 
-- [LEAD] Review every item on every pose.
+- [LEAD] Review every item on every pose of every species.
 
 **Done when:** a user can dress a character that feels like theirs, with every item wearable in every pose.
 
@@ -110,7 +115,7 @@ Parallel batch G:
 
 Parallel batch H:
 
-- [SONNET: ui-builder] Onboarding: meet your pet, then build your first room.
+- [SONNET: ui-builder] Onboarding: meet your pet (polish the Phase 1 picker into the first moment), then build your first room.
 - [SONNET: ui-builder] Reminders: notifications in the pet's voice; nudge iPhone users to add to home screen.
 - [SONNET: ui-builder] Sounds generated with the Web Audio API (no audio files): click, sparkle, chirp.
 - [SONNET: ui-builder] Shareable "my home" card image.

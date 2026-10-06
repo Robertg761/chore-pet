@@ -27,6 +27,7 @@ Hackyard: "The real task has to get done." A game about laundry doesn't count; a
 | Frontend | Vite + React + TypeScript |
 | Rendering | SVG + DOM (no canvas engine) |
 | Backend | Supabase: anonymous auth, Postgres with row-level security |
+| Pet character | All three concepts ship: Mochi (dumpling), Bun (bunny), Sprout (seedling). Each player picks one at first launch and can switch later in the character creator. Every item works on every species |
 | Pet death | Never. Lowest state is sick in bed; always recovers |
 | Vacation | Pauses chores, health decay and streaks |
 | Photo proof | On hold (schema keeps a `photo_proof` flag) |
@@ -42,4 +43,3 @@ Hackyard: "The real task has to get done." A game about laundry doesn't count; a
 ## Open decisions
 
 - Name of the game
-- Final pet concept (concepts: Mochi, Bun, Sprout)

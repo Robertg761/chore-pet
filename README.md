@@ -6,7 +6,7 @@ A tiny pet that lives in a home you build. Every object brings real chores; keep
 
 1. `npm install`
 2. Create a Supabase project, then in Authentication settings turn on **Allow anonymous sign-ins**.
-3. Run `supabase/migrations/0001_init.sql` in the Supabase SQL editor (or with the Supabase CLI).
+3. Run the files in `supabase/migrations/` in order in the Supabase SQL editor (or with the Supabase CLI).
 4. Copy `.env.example` to `.env` and fill in your project URL and anon key.
 5. `npm run dev`
 

@@ -10,7 +10,7 @@ A cute virtual pet that lives in an isometric home you build. Placed objects bri
 
 ## Commands
 
-- `npm run dev`: local dev server
+- `npm run dev`: local dev server (open `/?art` for the art gallery)
 - `npm test`: Vitest unit tests (domain logic)
 - `npm run build`: typecheck + production build (PWA)
 - `npm run lint`: oxlint
@@ -20,7 +20,7 @@ A cute virtual pet that lives in an isometric home you build. Placed objects bri
 1. Follow docs/PLAN.md in phase order. Don't start a phase until the previous one's "Done when" is met (Phase 0 art may run alongside Phase 1).
 2. You are the lead. Do every [LEAD] task yourself.
 3. Delegate every [SONNET: agent] task to that project subagent (`.claude/agents/`). Dispatch all tasks in a "Parallel batch" together, in parallel, with the task text, the files it owns, and its check.
-4. Review each subagent result before moving on: run `npm run build` and `npm test`, look at the diff, and for art compare against docs/ART.md. Send it back with specific notes if it misses the bar. Cuteness and consistency are the product.
+4. Review each subagent result before moving on: run `npm run build` and `npm test`, look at the diff, and for art compare against docs/ART.md in the `/?art` gallery. Send it back with specific notes if it misses the bar. Cuteness and consistency are the product.
 5. Tick tasks off in docs/PLAN.md as they land. Commit after each task with a clear message.
 
 Subagents are configured with `model: claude-sonnet-5-5`. Run `/agents` to confirm they're picked up; if a subagent reports running on a different model, mention it to Robert rather than working around it.

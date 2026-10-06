@@ -63,6 +63,13 @@ export interface Completion {
 
 export type Mood = 'happy' | 'content' | 'meh' | 'scruffy' | 'sick'
 
+/** The three pet characters. Each player picks one; every item works on all of them. */
+export const SPECIES = ['mochi', 'bun', 'sprout'] as const
+export type Species = (typeof SPECIES)[number]
+
+/** How a placed object looks: clean, a little behind, very behind. */
+export type MessStage = 'clean' | 'messy1' | 'messy2'
+
 /** Every slot an item can occupy. See docs/ART.md. */
 export const CHARACTER_SLOTS = ['body', 'outfit', 'neck', 'face', 'head', 'back'] as const
 export type CharacterSlot = (typeof CHARACTER_SLOTS)[number]
@@ -74,6 +81,7 @@ export interface Pet {
   id: string
   homeId: string
   name: string
+  species: Species
   bodyColour: string
   equipped: Partial<Record<CharacterSlot, string>> // slot -> item id
 }

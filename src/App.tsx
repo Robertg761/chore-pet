@@ -46,7 +46,7 @@ export default function App() {
         </p>
       </header>
 
-      <Character mood={condition.mood} bodyColour="#FFD65C" equipped={{ head: 'beanie-red' }} size={220} />
+      <Character species="mochi" mood={condition.mood} bodyColour="#FFD65C" equipped={{ head: 'beanie-red' }} size={220} />
 
       <section className="chores" aria-label="Today's chores">
         {condition.statuses.map((s) => {
