@@ -97,7 +97,7 @@ Parallel batch F:
 - [SONNET: ui-builder] Week view: chores completed per day and pet health over time.
 - [SONNET: test-writer] Tests for streak and unlock rules. **Done** (found and fixed: a vacation longer than the lookback hid the streak before it)
 
-**Done when:** completing chores visibly unlocks at least 4 decor items and 4 accessories, the first in the first session.
+**Done when:** completing chores visibly unlocks at least 4 decor items and 4 accessories, the first in the first session. **Met:** 4 decor and 6 accessories unlock through chore milestones and streaks (plus 4 room styles); in the sample home, chore 1 gives the beanie, chore 3 the plant (which then appears in Build), chore 5 the bow.
 
 ## Phase 6: Personalization
 
