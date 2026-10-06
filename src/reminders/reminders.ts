@@ -14,7 +14,7 @@ export interface ReminderContext {
 }
 
 const CHECK_EVERY_MS = 60_000
-const ICON = '/icons/icon-192.png'
+const ICON = `${import.meta.env.BASE_URL}icons/icon-192.png`
 
 /** True when the browser can show notifications and the player has said yes. */
 function canNotify(): boolean {

@@ -2,9 +2,9 @@
 
 **Theme:** Gamification. **Rule:** the real task has to get done.
 
-- **Live link:** _to add once deployed_
-- **Repo:** _to add_
-- **Demo video:** _to add_ (recorded in the app with `npm run demo:record`)
+- **Live link:** https://robertg761.github.io/chore-pet/
+- **Repo:** https://github.com/Robertg761/chore-pet
+- **Demo video:** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (85 s, recorded in the app with `npm run demo:record`)
 
 ## What it is
 

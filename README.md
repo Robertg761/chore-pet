@@ -28,7 +28,12 @@ Everyone starts as a guest (an anonymous Supabase user). In Settings a guest can
 
 ### Deploy
 
-`npm run build` produces a static PWA in `dist/`, which any static host can serve (Vercel, Netlify, Cloudflare Pages). Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in the host's build settings. The anon key is public by design: row-level security in the migrations protects the data.
+Live at https://robertg761.github.io/chore-pet/. `.github/workflows/pages.yml` checks every pull request (lint, tests, build) and deploys `main` to GitHub Pages:
+
+- One-time setup: Settings > Pages > Source: **GitHub Actions**.
+- For cloud sync, add the repository secrets `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (Settings > Secrets and variables > Actions), then re-run the workflow. Without them the live app keeps everything on the device.
+
+The anon key is public by design: row-level security in the migrations protects the data. To host somewhere else, `npm run build` produces a static PWA in `dist/`. Set `BASE_PATH` when it is served from a sub-path.
 
 ### Dev tools
 
