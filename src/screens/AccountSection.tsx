@@ -8,16 +8,20 @@ import {
   useAccount,
   type AccountResult,
 } from '../lib/account'
+import { useDataState } from '../data/appStore'
 import './AccountSection.css'
 
 // Keep progress on every device: a guest saves their home to an email or
 // Google account, or signs in to one they already have.
+
+const NOT_SAVING = "This browser isn't saving your home, so it will be gone after a reload. Try a regular (not private) window."
 
 type Mode = 'save' | 'sign-in'
 type Sent = { kind: 'email'; email: string } | null
 
 export function AccountSection() {
   const account = useAccount()
+  const { savedLocally } = useDataState()
   const [mode, setMode] = useState<Mode>('save')
   const [email, setEmail] = useState('')
   const [busy, setBusy] = useState(false)
@@ -37,7 +41,7 @@ export function AccountSection() {
     return (
       <>
         <h2>Your progress</h2>
-        <p className="account-note">Your home is saved on this device.</p>
+        <p className="account-note">{savedLocally ? 'Your home is saved on this device.' : NOT_SAVING}</p>
       </>
     )
   }
@@ -55,7 +59,9 @@ export function AccountSection() {
     return (
       <>
         <h2>Your progress</h2>
-        <p className="account-note">Your home is saved on this device. Connect to the internet to save it to an account too.</p>
+        <p className="account-note">
+          {savedLocally ? 'Your home is saved on this device. Connect to the internet to save it to an account too.' : NOT_SAVING}
+        </p>
       </>
     )
   }

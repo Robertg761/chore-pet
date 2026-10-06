@@ -165,4 +165,26 @@ describe('reminderStore', () => {
     expect(loadPrefs(null)).toEqual(DEFAULT_PREFS)
     expect(PREFS_KEY).toBeTruthy()
   })
+
+  it('keeps choices for the visit when storage refuses to save them', () => {
+    const refusing = { getItem: () => null, setItem: () => { throw new Error('QuotaExceededError') } }
+    savePrefs(on, refusing)
+    expect(loadPrefs(refusing)).toEqual(on)
+    saveLastSent('2026-10-06', refusing)
+    expect(loadLastSent(refusing)).toBe('2026-10-06')
+    // With no storage at all, too.
+    savePrefs(on, null)
+    expect(loadPrefs(null)).toEqual(on)
+  })
+
+  it('prefers storage again once a save goes through', () => {
+    let refuse = true
+    const values = new Map<string, string>()
+    const flaky = { getItem: (k: string) => values.get(k) ?? null, setItem: (k: string, v: string) => { if (refuse) throw new Error('no'); values.set(k, v) } }
+    savePrefs(on, flaky)
+    refuse = false
+    savePrefs({ ...on, time: '07:15' }, flaky)
+    values.set(PREFS_KEY, JSON.stringify({ ...on, time: '08:00' })) // another tab writes
+    expect(loadPrefs(flaky)).toEqual({ ...on, time: '08:00' })
+  })
 })
