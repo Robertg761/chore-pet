@@ -218,7 +218,7 @@ body { margin: 0; }
   gap: 8px;
 }
 .build .build-header h1 { font-size: 26px; }
-.build-stage { flex: 1 1 0; min-height: 200px; display: flex; flex-direction: column; }
+.build-stage { flex: 1 1 0; min-height: 150px; display: flex; flex-direction: column; }
 .build-stage .build-room { flex: 1 1 0; min-height: 0; gap: 6px; }
 .build-stage .build-room-svg { flex: 1 1 0; min-height: 0; height: 100%; }
 .build-panel { flex: none; max-height: 52%; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 10px; padding: 2px; }
@@ -256,3 +256,17 @@ body { margin: 0; }
 
 /* First-run screens (landing, picker, welcome) sit in the middle of the window. */
 #root > .shell { min-height: 100vh; min-height: 100dvh; justify-content: safe center; }
+
+/* The object sheet in build mode's panel: tighter, and the panel grows a little while it's open. */
+.build-panel:has(.sheet) { max-height: 58%; }
+.build-panel .sheet { padding: 10px 12px; gap: 8px; box-shadow: none; }
+.build-panel .sheet-art { width: 40px; height: 40px; }
+.build-panel .sheet-title { font-size: 20px; }
+.build-panel .sheet-hint { font-size: 13px; }
+.build-panel .sheet-block { gap: 8px; }
+.build-panel .sheet-subheading { font-size: 15px; }
+.build-panel .sheet-chore-main { min-height: 48px; padding: 4px 10px; }
+.build-panel .os-btn { min-height: 44px; font-size: 15px; padding: 0 10px; }
+@media (min-width: 900px) {
+  .build-panel:has(.sheet) { max-height: none; }
+}
