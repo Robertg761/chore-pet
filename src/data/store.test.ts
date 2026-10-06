@@ -267,3 +267,33 @@ describe('first sync for an account', () => {
     expect(store.getState().hydrated).toBe(true)
   })
 })
+
+describe('signing in to a saved account on a flaky connection', () => {
+  it('keeps waiting for the saved home when its first pull fails, then shows it', async () => {
+    const { server, remote } = fakeServer('u2')
+    // The account u2 already has a home on the server.
+    const other = createStore({ local: memoryStore(), remote })
+    await other.start()
+    await other.sync()
+    other.apply(...createHousehold({ species: 'mochi', petName: 'Mo', userId: 'u2' }))
+    await other.sync()
+
+    // This device was a guest (u1) and now signs in as u2; the first pull fails.
+    const local = memoryStore()
+    const guest = await onboarded(fakeServer('u1').remote, local)
+    expect(selectHome(guest.getState().snapshot.tables).home).not.toBeNull()
+    let failPull = true
+    const flaky: Remote = { ...remote, pull: () => (failPull ? Promise.reject(new Error('Failed to fetch')) : remote.pull()) }
+    const device = createStore({ local, remote: flaky })
+    await device.start()
+    await device.sync()
+    expect(device.getState()).toMatchObject({ hydrated: false, sync: 'error' })
+    expect(selectHome(device.getState().snapshot.tables).home).toBeNull()
+
+    failPull = false
+    await device.sync()
+    expect(device.getState().hydrated).toBe(true)
+    expect(selectHome(device.getState().snapshot.tables).pet?.name).toBe('Mo')
+    expect(server.tables.homes).not.toEqual({})
+  })
+})

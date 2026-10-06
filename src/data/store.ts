@@ -44,6 +44,8 @@ export interface StoreDeps {
 export function createStore({ local, remote, isOnline = () => true }: StoreDeps): Store {
   let state: DataState = { ready: false, snapshot: emptySnapshot(), sync: remote ? 'offline' : 'local-only', lastError: null, savedLocally: true, hydrated: !remote }
   const listeners = new Set<() => void>()
+  /** Signed in to a different account and its home hasn't been pulled yet. */
+  let switching = false
   let saving: Promise<void> = Promise.resolve()
 
   function set(patch: Partial<DataState>) {
@@ -76,13 +78,16 @@ export function createStore({ local, remote, isOnline = () => true }: StoreDeps)
   }
 
   async function run(r: Remote) {
-    if (!isOnline()) return set({ sync: 'offline', hydrated: true })
+    if (!isOnline()) return set({ sync: 'offline', hydrated: !switching })
     set({ sync: 'syncing' })
     try {
       const before = state.snapshot.userId
       commit(claim(state.snapshot, await r.session()))
       // Signed in to another account: its home is on the way, so don't offer an empty one meanwhile.
-      if (before !== null && before !== state.snapshot.userId) set({ hydrated: false })
+      if (before !== null && before !== state.snapshot.userId) {
+        switching = true
+        set({ hydrated: false })
+      }
 
       // Another device may have moved progress on; merge before overwriting it.
       if (Object.values(state.snapshot.outbox).some((o) => o.table === 'progress' && o.kind === 'upsert')) {
@@ -108,10 +113,12 @@ export function createStore({ local, remote, isOnline = () => true }: StoreDeps)
 
       const server = await r.pull()
       commit({ ...state.snapshot, tables: rebase(server, state.snapshot.outbox), progressBase: progressBaseOf(server.progress) })
+      switching = false
       set({ sync: 'synced', lastError: null, hydrated: true })
     } catch (e) {
-      // Offline or failing: let the player carry on with what this device has.
-      set({ sync: isOnline() ? 'error' : 'offline', lastError: e instanceof Error ? e.message : String(e), hydrated: true })
+      // Offline or failing: carry on with what this device has, unless it just
+      // signed in to an account whose home hasn't arrived yet (keep waiting for that).
+      set({ sync: isOnline() ? 'error' : 'offline', lastError: e instanceof Error ? e.message : String(e), hydrated: !switching })
     }
   }
 

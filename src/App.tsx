@@ -71,7 +71,7 @@ const SYNC_LABEL: Record<SyncStatus, string> = {
 
 export default function App() {
   useEffect(startAppStore, [])
-  const { ready, hydrated, sync, snapshot, savedLocally } = useDataState()
+  const { ready, hydrated, sync, snapshot, savedLocally, lastError } = useDataState()
   const data = useHome()
   const today = useToday()
   const [view, setView] = useState<View>({ name: 'home' })
@@ -109,8 +109,15 @@ export default function App() {
   // Signed in on a new device: wait for the saved home rather than offering a fresh one.
   if (!data.home && !hydrated) {
     return (
-      <main className="shell" aria-busy="true">
-        <p className="dev-note" role="status">Finding your home…</p>
+      <main className="shell" aria-busy={!lastError}>
+        <p className="dev-note" role="status">
+          {lastError ? "Couldn't reach your saved home yet." : 'Finding your home…'}
+        </p>
+        {lastError && (
+          <button type="button" className="link-button" onClick={() => void appStore.sync()}>
+            Try again
+          </button>
+        )}
       </main>
     )
   }
