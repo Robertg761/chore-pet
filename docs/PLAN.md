@@ -104,7 +104,7 @@ Parallel batch F:
 Parallel batch G:
 
 - [SONNET: ui-builder] Character creator: species (switching keeps the outfit), name, body colour, eye and cheek variants. **Done**
-- [SONNET: ui-builder] Wardrobe: equip per slot, live preview, saved outfits.
+- [SONNET: ui-builder] Wardrobe: equip per slot, live preview, saved outfits. **Done**
 - [SONNET: svg-artist] Full outfits for the outfit slot (hoodie, overalls, dress, a seasonal set).
 
 - [LEAD] Review every item on every pose of every species.
