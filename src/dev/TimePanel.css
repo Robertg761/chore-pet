@@ -1,0 +1,49 @@
+/* Dev time panel: small, tucked bottom right, out of the room's way. */
+.time-panel {
+  position: fixed;
+  right: max(8px, env(safe-area-inset-right));
+  bottom: max(8px, env(safe-area-inset-bottom));
+  z-index: 1000;
+  width: 188px;
+  padding: 8px;
+  background: var(--card);
+  color: var(--ink);
+  border: var(--outline);
+  border-radius: var(--radius);
+  box-shadow: 0 3px 0 var(--ink);
+  font-weight: 800;
+}
+.time-panel-pill { width: auto; padding: 0; border-radius: 22px; overflow: hidden; }
+
+.time-head { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+.time-date { flex: 1; min-width: 0; white-space: nowrap; display: flex; flex-direction: column; font-size: 14px; line-height: 1.2; }
+.time-offset { font-size: 12px; color: var(--accent); }
+
+.time-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+.time-btn, .time-icon, .time-pill {
+  min-height: 44px;
+  font: inherit;
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--due-bg);
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.time-btn { padding: 0 6px; font-size: 14px; }
+.time-btn-wide { grid-column: 1 / -1; background: var(--card); }
+.time-btn:disabled { opacity: 0.5; cursor: default; }
+.time-icon { min-width: 44px; padding: 0; background: var(--card); }
+.time-pill { padding: 0 16px; background: var(--accent); color: #fff; border: none; border-radius: 22px; }
+
+.time-btn:focus-visible, .time-icon:focus-visible, .time-pill:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.time-pill:focus-visible { outline-color: var(--ink); outline-offset: -5px; }
+.time-btn:active:not(:disabled), .time-icon:active { transform: translateY(1px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .time-btn:active:not(:disabled), .time-icon:active { transform: none; }
+}
