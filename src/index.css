@@ -253,3 +253,6 @@ body { margin: 0; }
   .build-stage { grid-area: stage; min-height: 0; }
   .build-panel { grid-area: panel; max-height: none; min-height: 0; }
 }
+
+/* First-run screens (landing, picker, welcome) sit in the middle of the window. */
+#root > .shell { min-height: 100vh; min-height: 100dvh; justify-content: safe center; }
