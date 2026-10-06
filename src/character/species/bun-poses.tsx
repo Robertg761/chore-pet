@@ -3,13 +3,13 @@ import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
 import type { Mood } from '../../domain/types'
 import type { MoodPoses } from '../poses'
 import type { Anchor, Pose } from '../slots'
-import { Cheeks, Face, MoodTint, Nub, Shadow, type Expression } from '../parts'
+import { Cheeks, Face, IcePack, MoodTint, Nub, Shadow, SickBedBack, SickBedFront, Thermometer, type Expression } from '../parts'
 import { BODY, ear } from './bun'
 
 // Bun mood poses. Ears carry the mood (see EAR_DROOP in bun.tsx); posture does
 // the rest by squashing, tilting and lowering the same idle silhouette.
 
-const { ink, white, sky, fabricBlue, woodDark, cream, creamDark, warmRed } = PALETTE
+const { ink } = PALETTE
 
 /** Scruffy and sick are always tinted: the pose itself implies the mood. */
 const EAR_TINT: Partial<Record<Mood, number>> = { scruffy: 0.18, sick: 0.32 }
@@ -130,8 +130,8 @@ const bunContent: Pose = {
       behind: feet(colour),
       front: (
         <>
-          <Nub cx={80} cy={163} rx={9} ry={10} rotate={-35} fill={colour} />
-          <Nub cx={120} cy={163} rx={9} ry={10} rotate={35} fill={colour} />
+          <Nub cx={90} cy={167} rx={10} ry={7} rotate={14} fill={colour} />
+          <Nub cx={110} cy={167} rx={10} ry={7} rotate={-14} fill={colour} />
         </>
       ),
     }),
@@ -278,38 +278,12 @@ const SICK_BOTTOM = 168
 /** Idle space -> sick-bed space. */
 const sickY = (y: number) => SICK_BOTTOM - (GROUND - y) * SICK_SCALE
 
-function thermometer() {
-  return (
-    <g>
-      <path d="M104 139 L130 150" strokeWidth={9} />
-      <path d="M104 139 L130 150" stroke={white} strokeWidth={4} />
-      <path d="M118 142.5 L128 147" stroke={warmRed} strokeWidth={4} />
-      <circle cx={134} cy={152} r={5.5} fill={warmRed} strokeWidth={3} />
-    </g>
-  )
-}
-
-function icePack() {
-  return (
-    <g transform="translate(100 86) rotate(-8)">
-      <rect x={-21} y={-11} width={42} height={22} rx={8} fill={sky} />
-      <path d="M-13 -3 H4" stroke={white} strokeWidth={3} fill="none" opacity={0.9} />
-      <path d="M-13 3 H-6" stroke={white} strokeWidth={3} fill="none" opacity={0.9} />
-    </g>
-  )
-}
-
 const bunSick: Pose = {
   id: 'bun-sick',
   renderBody: (colour) => (
     <g stroke={ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" strokeLinecap="round">
       <Shadow rx={80} />
-      {/* headboard and pillow */}
-      <rect x={22} y={54} width={156} height={122} rx={16} fill={woodDark} />
-      <circle cx={32} cy={54} r={9} fill={woodDark} />
-      <circle cx={168} cy={54} r={9} fill={woodDark} />
-      <rect x={30} y={90} width={140} height={66} rx={22} fill={creamDark} />
-      <rect x={30} y={84} width={140} height={66} rx={22} fill={cream} />
+      <SickBedBack />
       {/* Bun, shrunk into the bed */}
       <g transform={`translate(100 ${SICK_BOTTOM}) scale(${SICK_SCALE}) translate(-100 ${-GROUND})`}>
         {ear(128, colour, 0.32)}
@@ -320,19 +294,11 @@ const bunSick: Pose = {
       <Cheeks y={sickY(143)} spread={31} />
       <Face mood="sick" eyeY={sickY(126)} mouthY={sickY(145)} />
       <path d="M95.5 134.5 h9 l-4.5 4.5 Z" fill={PALETTE.blush} strokeWidth={2.5} transform={`translate(0 ${sickY(134.5) - 134.5})`} />
-      {icePack()}
-      {/* blanket, tucked in at the bed base */}
-      <path d="M20 152 C36 142 62 148 100 148 C138 148 164 142 180 152 L180 174 L20 174 Z" fill={fabricBlue} />
-      <path d="M20 152 C36 142 62 148 100 148 C138 148 164 142 180 152 L180 162 C160 156 138 158 100 158 C62 158 40 156 20 162 Z" fill={white} opacity={0.28} stroke="none" />
-      <g fill={white} opacity={0.5} stroke="none">
-        <circle cx={48} cy={166} r={3} />
-        <circle cx={100} cy={168} r={3} />
-        <circle cx={152} cy={166} r={3} />
-      </g>
-      <rect x={16} y={168} width={168} height={14} rx={6} fill={woodDark} />
-      <Nub cx={64} cy={151} rx={11} ry={8} rotate={-10} fill={colour} />
-      <Nub cx={148} cy={152} rx={11} ry={8} rotate={10} fill={colour} />
-      {thermometer()}
+      <IcePack x={100} y={86} rotate={-8} />
+      <SickBedFront />
+      <Nub cx={54} cy={151} rx={11} ry={8} rotate={-10} fill={colour} />
+      <Nub cx={152} cy={152} rx={11} ry={8} rotate={10} fill={colour} />
+      <Thermometer x={103} y={139} rotate={18} />
     </g>
   ),
   anchors: {

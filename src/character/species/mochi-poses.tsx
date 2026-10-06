@@ -1,14 +1,14 @@
 import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
 import type { Mood } from '../../domain/types'
 import type { MoodPoses } from '../poses'
-import { Cheeks, Face, MoodTint, Nub, Shadow } from '../parts'
+import { Cheeks, Face, IcePack, MoodTint, Nub, Shadow, SickBedBack, SickBedFront, Thermometer } from '../parts'
 import type { Anchor, Pose } from '../slots'
 import { BODY, PINCH } from './mochi'
 
 // Mochi mood poses (Phase 0 batch A). Each reuses the idle dumpling, squashed,
 // leaned or lifted around the ground point, so they stay one family.
 
-const { ink, white, cream, creamDark, fabricBlue, sky, warmRed, woodDark, floorWood } = PALETTE
+const { ink, white } = PALETTE
 
 const GROUND_Y = 181
 const IDLE_ANCHORS = {
@@ -280,29 +280,6 @@ const mochiCheering: Pose = {
 // size in final coordinates so eyes and strokes match the other poses.
 const SICK_SCALE = 0.86
 const SICK: Shape = { sx: SICK_SCALE, sy: SICK_SCALE, rotate: -3, lift: 6 }
-const BLANKET = 'M16 156 C16 148 40 146 66 149 C86 144 114 144 134 149 C160 146 184 148 184 156 L184 170 C184 176 176 178 168 178 L32 178 C24 178 16 176 16 170 Z'
-const BLANKET_FOLD = 'M18 154 C18 147 42 145 66 148 C86 143 114 143 134 148 C158 145 182 147 182 154 C182 162 170 160 160 158 C130 155 108 160 98 158 C80 155 50 160 36 160 C26 160 18 160 18 154 Z'
-
-function thermometer() {
-  return (
-    <g transform="rotate(12 101 138)">
-      <rect x={100} y={134} width={46} height={9} rx={4.5} fill={white} />
-      <path d="M101 138.5 h17" stroke={warmRed} strokeWidth={4} />
-      <path d="M126 134 v3 M133 134 v3 M140 134 v3" strokeWidth={2} />
-    </g>
-  )
-}
-
-function icePack() {
-  return (
-    <g transform="rotate(-24 62 100)">
-      <rect x={44} y={88} width={36} height={25} rx={9} fill={sky} />
-      <path d="M51 96 h10" stroke={white} strokeWidth={3.5} />
-      <path d="M51 103 h5" stroke={white} strokeWidth={3.5} />
-    </g>
-  )
-}
-
 const sickAnchors = anchorsFor(SICK)
 
 const mochiSick: Pose = {
@@ -310,13 +287,7 @@ const mochiSick: Pose = {
   renderBody: (colour, mood) => (
     <g stroke={ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" strokeLinecap="round">
       <Shadow rx={84} />
-      {/* bed: headboard, legs, mattress */}
-      <rect x={20} y={88} width={160} height={84} rx={22} fill={woodDark} />
-      <rect x={26} y={170} width={14} height={11} rx={4} fill={woodDark} />
-      <rect x={160} y={170} width={14} height={11} rx={4} fill={woodDark} />
-      <rect x={14} y={152} width={172} height={22} rx={11} fill={floorWood} />
-      {/* pillow */}
-      <rect x={30} y={108} width={140} height={44} rx={22} fill={cream} />
+      <SickBedBack />
       {/* Mochi, propped up on the pillow */}
       <g transform={transformOf(SICK)} strokeWidth={CHARACTER_STROKE / SICK_SCALE}>
         <path d={PINCH} fill={colour} />
@@ -331,17 +302,11 @@ const mochiSick: Pose = {
         <Cheeks y={139} spread={34} />
         <Face mood="sick" eyeY={126} mouthY={138} />
       </g>
-      {icePack()}
-      {/* blanket tucked up to the chest, arms resting on top */}
-      <path d={BLANKET} fill={fabricBlue} />
-      <path d={BLANKET_FOLD} fill={cream} />
-      <g fill="none" stroke={creamDark} strokeWidth={3}>
-        <path d="M34 170 q6 -5 12 0" />
-        <path d="M150 170 q6 -5 12 0" />
-      </g>
-      <Nub cx={56} cy={153} rx={12} ry={9} rotate={-15} fill={colour} />
-      <Nub cx={144} cy={153} rx={12} ry={9} rotate={15} fill={colour} />
-      {thermometer()}
+      <IcePack x={62} y={100} rotate={-24} />
+      <SickBedFront />
+      <Nub cx={54} cy={153} rx={12} ry={9} rotate={-15} fill={colour} />
+      <Nub cx={150} cy={153} rx={12} ry={9} rotate={15} fill={colour} />
+      <Thermometer x={101} y={138} rotate={12} />
     </g>
   ),
   anchors: { ...sickAnchors, head: { x: sickAnchors.head.x + 8, y: sickAnchors.head.y, scale: 0.88, rotate: 8 } },

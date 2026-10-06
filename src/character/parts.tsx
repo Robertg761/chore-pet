@@ -4,7 +4,7 @@ import type { Mood } from '../domain/types'
 // Shared building blocks for every species, so Mochi, Bun and Sprout read as
 // one family: same eyes, cheeks, feet, shadow and mood tint.
 
-const { ink, blush, sickTint, dirt, white, sky } = PALETTE
+const { ink, blush, sickTint, dirt, white, sky, woodDark, floorWood, cream, creamDark, fabricBlue, warmRed } = PALETTE
 
 /** Soft ground shadow under the feet. */
 export function Shadow({ rx }: { rx: number }) {
@@ -116,6 +116,64 @@ export function MoodTint({ d, mood, smudges }: { d: string; mood: Mood; smudges:
           <ellipse key={i} cx={x} cy={y} rx={i % 2 ? 5 : 7} ry={i % 2 ? 3.5 : 4.5} transform={`rotate(${i % 2 ? 20 : -15} ${x} ${y})`} />
         ))}
       </g>
+    </g>
+  )
+}
+
+// ---- Shared sick bed. Every species lies in the same bed with the same props;
+// only the pet differs. Draw order: SickBedBack, the pet, IcePack, SickBedFront,
+// the pet's paws, Thermometer. Draw inside a group that already has the ink
+// stroke (CHARACTER_STROKE, round joins) set, and add <Shadow rx={84} /> first.
+
+const BLANKET = 'M16 156 C16 148 40 146 66 149 C86 144 114 144 134 149 C160 146 184 148 184 156 L184 170 C184 176 176 178 168 178 L32 178 C24 178 16 176 16 170 Z'
+const BLANKET_FOLD = 'M18 154 C18 147 42 145 66 148 C86 143 114 143 134 148 C158 145 182 147 182 154 C182 162 170 160 160 158 C130 155 108 160 98 158 C80 155 50 160 36 160 C26 160 18 160 18 154 Z'
+
+/** Headboard, legs, mattress and pillow: everything behind the pet. */
+export function SickBedBack() {
+  return (
+    <g>
+      <rect x={20} y={88} width={160} height={84} rx={22} fill={woodDark} />
+      <rect x={26} y={170} width={14} height={11} rx={4} fill={woodDark} />
+      <rect x={160} y={170} width={14} height={11} rx={4} fill={woodDark} />
+      <rect x={14} y={152} width={172} height={22} rx={11} fill={floorWood} />
+      <rect x={30} y={108} width={140} height={44} rx={22} fill={cream} />
+    </g>
+  )
+}
+
+/** Blanket with a turned-down sheet, tucked in at the bed base. Paws go on top. */
+export function SickBedFront() {
+  return (
+    <g>
+      <path d={BLANKET} fill={fabricBlue} />
+      <path d={BLANKET_FOLD} fill={cream} />
+      <g fill="none" stroke={creamDark} strokeWidth={3}>
+        <path d="M34 170 q6 -5 12 0" />
+        <path d="M150 170 q6 -5 12 0" />
+      </g>
+    </g>
+  )
+}
+
+/** Thermometer with its mouth end at (x, y), pointing right, turned by `rotate` degrees. */
+export function Thermometer({ x, y, rotate = 10 }: { x: number; y: number; rotate?: number }) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${rotate})`}>
+      <rect x={0} y={-4.5} width={28} height={9} rx={4.5} fill={white} />
+      <path d="M2.5 0 h12" stroke={warmRed} strokeWidth={4} />
+      <path d="M18.5 -4.5 v3 M23 -4.5 v3" strokeWidth={2} />
+      <circle cx={31} cy={0} r={5.5} fill={warmRed} strokeWidth={3} />
+    </g>
+  )
+}
+
+/** Ice pack centred on (x, y), turned by `rotate` degrees. */
+export function IcePack({ x, y, rotate = 0 }: { x: number; y: number; rotate?: number }) {
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${rotate})`}>
+      <rect x={-21} y={-11} width={42} height={22} rx={8} fill={sky} />
+      <path d="M-13 -3 H4" stroke={white} strokeWidth={3} fill="none" opacity={0.9} />
+      <path d="M-13 3 H-6" stroke={white} strokeWidth={3} fill="none" opacity={0.9} />
     </g>
   )
 }

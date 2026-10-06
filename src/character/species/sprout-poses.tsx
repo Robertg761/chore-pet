@@ -3,7 +3,7 @@ import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
 import type { Mood } from '../../domain/types'
 import type { MoodPoses } from '../poses'
 import type { Anchor, Pose } from '../slots'
-import { Cheeks, Face, MoodTint, Nub, Shadow, type Expression } from '../parts'
+import { Cheeks, Face, IcePack, MoodTint, Nub, Shadow, SickBedBack, SickBedFront, Thermometer, type Expression } from '../parts'
 import { BODY, WILT, sproutIdle, stemAndLeaves } from './sprout'
 
 // Sprout mood poses (Phase 0 batch A). Leaves do the mood work: they sway when
@@ -240,71 +240,28 @@ const cheering: Pose = {
 // sick: propped up in a little bed under a blue blanket, thermometer in mouth,
 // ice pack on the head, leaves limp. Cosy and recoverable.
 const SICK_TF: Tf = { dy: -18, sx: 0.8, sy: 0.8 }
-const { white, cream, creamDark, woodDark, fabricBlue, sky, warmRed } = PALETTE
-
-function bed() {
-  return (
-    <>
-      {/* headboard and pillow sit behind the pet */}
-      <path d="M24 176 V98 C24 84 36 82 50 82 H150 C164 82 176 84 176 98 V176 Z" fill={woodDark} />
-      <rect x={52} y={92} width={96} height={40} rx={16} fill={cream} />
-      <path d="M62 110 q38 8 76 0" fill="none" stroke={creamDark} strokeWidth={3} />
-    </>
-  )
-}
-
-function bedFront(colour: string) {
-  return (
-    <>
-      <path d="M26 160 C26 142 60 140 100 144 C140 140 174 142 174 160 V176 H26 Z" fill={fabricBlue} />
-            <path d="M30 153 C60 145 140 145 170 153 L172 162 C140 154 60 154 28 162 Z" fill={cream} />
-      <path d="M44 168 q10 -6 20 0 M92 170 q10 -6 20 0 M138 167 q10 -6 20 0" fill="none" stroke={white} strokeWidth={2.5} opacity={0.7} />
-      {/* hands rest on the blanket edge */}
-      <Nub cx={68} cy={147} rx={9} ry={7} rotate={-15} fill={colour} />
-      <Nub cx={132} cy={147} rx={9} ry={7} rotate={15} fill={colour} />
-      {/* footboard with stubby legs */}
-      <rect x={20} y={170} width={160} height={12} rx={6} fill={woodDark} />
-    </>
-  )
-}
-
-function thermometer() {
-  return (
-    <g>
-      <path d="M104 132 L134 123" strokeWidth={8} fill="none" />
-      <path d="M104 132 L134 123" stroke={white} strokeWidth={3.5} fill="none" />
-      <path d="M118 127.8 L131.5 123.8" stroke={warmRed} strokeWidth={3.5} fill="none" />
-      <circle cx={137} cy={122} r={5} fill={warmRed} />
-    </g>
-  )
-}
-
-function icePack() {
-  return (
-    <g transform="translate(112 86) rotate(14)">
-      <rect x={-17} y={-11} width={34} height={22} rx={8} fill={sky} />
-      <path d="M-10 -5 h20 M-10 5 h20" fill="none" stroke={white} strokeWidth={2.5} strokeDasharray="1 5" />
-    </g>
-  )
-}
-
+/** Idle y -> y inside the sick bed (the scale and lift of SICK_TF). */
+const sickY = (y: number) => PIVOT.y - (PIVOT.y - y) * 0.8 - 18
 const sick: Pose = {
   id: 'sprout-sick',
-  renderBody: (colour, mood) => (
+  renderBody: (colour) => (
     outlined(
     <>
       <Shadow rx={78} />
-      {bed()}
+      <SickBedBack />
       <g transform={tfString(SICK_TF)} strokeWidth={CHARACTER_STROKE / 0.8}>
         {stemAndLeaves(WILT.sick + 8, WILT.sick + 16, { x: 0, y: -8 })}
         <path d={BODY} fill={colour} />
-        <MoodTint d={BODY} mood={mood} smudges={[[64, 160], [132, 108], [130, 166]]} />
-        <Cheeks y={142} spread={36} />
-        <Face mood="sick" eyeY={126} mouthY={140} />
+        <MoodTint d={BODY} mood="sick" smudges={[[64, 160], [132, 108], [130, 166]]} />
       </g>
-      {bedFront(colour)}
-      {thermometer()}
-      {icePack()}
+      {/* face drawn at full size in final coordinates so its strokes match the other poses */}
+      <Cheeks y={sickY(142)} spread={32} />
+      <Face mood="sick" eyeY={sickY(126)} mouthY={sickY(140)} />
+      <IcePack x={112} y={92} rotate={14} />
+      <SickBedFront />
+      <Nub cx={56} cy={151} rx={10} ry={8} rotate={-15} fill={colour} />
+      <Nub cx={144} cy={151} rx={10} ry={8} rotate={15} fill={colour} />
+      <Thermometer x={104} y={131} rotate={12} />
     </>,
   )
   ),
