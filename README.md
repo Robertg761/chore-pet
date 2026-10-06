@@ -10,7 +10,7 @@ Open the app and tap **Try a sample home**: a furnished kitchen with two late ch
 
 1. `npm install`
 2. Create a Supabase project, then in Authentication settings turn on **Allow anonymous sign-ins**.
-3. Run the files in `supabase/migrations/` in order (`0001` to `0004`) in the Supabase SQL editor (or with the Supabase CLI).
+3. Run the files in `supabase/migrations/` in order (`0001` to `0005`) in the Supabase SQL editor (or with the Supabase CLI).
 4. Copy `.env.example` to `.env` and fill in your project URL and anon key.
 5. `npm run dev`
 
