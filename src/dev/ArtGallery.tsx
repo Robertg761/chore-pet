@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react'
 import { PALETTE, SPECIES_COLOUR } from '../art/palette'
-import { Character } from '../character/Character'
+import { Character, CharacterArt } from '../character/Character'
+import { Cheer } from '../effects/Cheer'
+import { Sparkle } from '../effects/Sparkle'
 import { POSES, type PoseName } from '../character/poses'
 import { SPECIES, type MessStage, type Mood } from '../domain/types'
 import { isoPoints } from '../room/iso'
@@ -121,6 +124,50 @@ export default function ArtGallery() {
           )),
         )}
       </section>
+
+      <EffectsSection />
     </main>
+  )
+}
+
+/** Bumps every `ms` so effects keyed on it replay forever. */
+function useReplay(ms: number) {
+  const [n, setN] = useState(0)
+  useEffect(() => {
+    const t = setInterval(() => setN((v) => v + 1), ms)
+    return () => clearInterval(t)
+  }, [ms])
+  return n
+}
+
+function EffectsSection() {
+  const sparkleRun = useReplay(2000)
+  const cheerRun = useReplay(2500)
+  const sink = OBJECT_ART.sink
+  // The sink's top, in room px around its back corner; the sparkle sits just above the counter.
+  const sparkleAt = { x: 0, y: -22 * OBJECT_SCALE }
+  return (
+    <>
+      <h2>Effects</h2>
+      <section className="gallery-row">
+        <figure>
+          <svg width={220} height={200} viewBox="-70 -90 140 128" style={{ overflow: 'visible' }} role="img" aria-label="Sparkle over the sink">
+            <g transform={`scale(${OBJECT_SCALE})`}>{sink.render('clean')}</g>
+            <Sparkle key={sparkleRun} x={sparkleAt.x} y={sparkleAt.y} size={56.67} />
+          </svg>
+          <figcaption>sparkle, replays every 2 s</figcaption>
+        </figure>
+        {SPECIES.map((s) => (
+          <figure key={s}>
+            <svg width={220} height={260} viewBox="-10 -60 220 260" style={{ overflow: 'visible' }} role="img" aria-label={`${s} cheering`}>
+              <Cheer key={cheerRun}>
+                <CharacterArt species={s} mood="happy" pose="cheering" bodyColour={SPECIES_COLOUR[s]} />
+              </Cheer>
+            </svg>
+            <figcaption>{s} cheer, replays every 2.5 s</figcaption>
+          </figure>
+        ))}
+      </section>
+    </>
   )
 }

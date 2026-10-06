@@ -67,7 +67,7 @@ Parallel batch C:
 
 Parallel batch D:
 
-- [SONNET: svg-artist] Cleaned sparkle effect and cheer animation frames.
+- [SONNET: svg-artist] Cleaned sparkle effect and cheer animation frames. **Done** (`src/effects/`)
 - [SONNET: catalog-curator] Pet reaction lines per mood and per worst chore ("the sink is getting to me"). Friendly, short, never guilt-trippy. **Done**
 - [SONNET: ui-builder] Completion moment: object swaps to clean with sparkle, health bar ticks up.
 
