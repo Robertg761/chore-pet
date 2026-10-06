@@ -5,10 +5,10 @@ import { Cheeks, Face, MoodTint, Nub, Shadow } from '../parts'
 
 // Bun: a round bunny whose ears show how it feels.
 
-const BODY = 'M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z'
+export const BODY = 'M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z'
 
 /** Outward droop in degrees for the [left, right] ear. 0 is straight up. */
-const EAR_DROOP: Record<Mood, [number, number]> = {
+export const EAR_DROOP: Record<Mood, [number, number]> = {
   happy: [6, 6],
   content: [14, 14],
   meh: [12, 80],
@@ -17,9 +17,9 @@ const EAR_DROOP: Record<Mood, [number, number]> = {
 }
 
 /** The left ear, pivoting at its base. The right ear is this mirrored. */
-const EAR = 'M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z'
+export const EAR = 'M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z'
 
-function ear(droop: number, fill: string, tint: number) {
+export function ear(droop: number, fill: string, tint: number) {
   return (
     <g transform={`rotate(${-droop} 82 98)`}>
       <path d={EAR} fill={fill} />
