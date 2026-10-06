@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import { setSoundOn, soundOn } from '../audio/sfx'
 import { ReminderSettings } from '../reminders/ReminderSettings'
+import { AccountSection } from './AccountSection'
 import './SettingsScreen.css'
 
-// Settings: sound, reminders, and (Phase 7, lead) saving progress to an account.
+// Settings: sound, reminders, and saving progress to an account.
 
 export interface SettingsScreenProps {
   petName: string
   onClose: () => void
-  /** The account section (sign in to keep progress on every device). */
+  /** Replaces the account section (sign in to keep progress on every device). */
   account?: React.ReactNode
 }
 
@@ -40,7 +41,7 @@ export function SettingsScreen({ petName, onClose, account }: SettingsScreenProp
         <ReminderSettings petName={petName} />
       </div>
 
-      {account && <div className="settings-card">{account}</div>}
+      <div className="settings-card">{account ?? <AccountSection />}</div>
     </section>
   )
 }
