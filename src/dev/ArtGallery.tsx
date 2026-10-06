@@ -12,6 +12,7 @@ import { RoomShell } from '../room/shell/RoomShell'
 import { FLOOR_STYLES, WALL_STYLES } from '../room/shell/styles'
 import type { ObjectArt } from '../room/objects/types'
 import { WeekView } from '../screens/WeekView'
+import { play, type Sound } from '../audio/sfx'
 import type { Chore, Completion } from '../domain/types'
 
 // Dev-only review sheet (open /?art). Every species in every mood, items on
@@ -131,6 +132,7 @@ export default function ArtGallery() {
       <WeekViewSection />
       <WardrobeCheck />
       <FaceOptions />
+      <SoundsSection />
     </main>
   )
 }
@@ -306,6 +308,24 @@ function FaceOptions() {
           ])}
         </section>
       ))}
+    </>
+  )
+}
+
+const AUDITION_SOUNDS: Sound[] = ['click', 'sparkle', 'chirp']
+
+/** Audition the synthesised sounds (they play only if sound is on in Settings). */
+function SoundsSection() {
+  return (
+    <>
+      <h2>Sounds</h2>
+      <section className="gallery-row" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        {AUDITION_SOUNDS.map((s) => (
+          <button key={s} type="button" data-sound="none" style={{ minHeight: 44, minWidth: 88 }} onClick={() => play(s)}>
+            {s}
+          </button>
+        ))}
+      </section>
     </>
   )
 }
