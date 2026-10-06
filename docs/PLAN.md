@@ -124,7 +124,7 @@ Parallel batch H:
   - Accessibility: **Done.** axe (WCAG 2.1 AA and best practice) reports nothing on all 20 screens and states checked, including onboarding, the object sheet and the gift. Every keyboard stop has a visible focus ring, and the pet is a real button.
   - Performance: **Done.** Supabase loads after first paint, so first-load JS in a configured build drops from 197 to 142 kB gzipped.
   - Account linking: **Done** (`src/lib/account.ts`, `src/screens/AccountSection.tsx`). A guest saves with email (confirmation link) or Google, linking the same user id so nothing moves. "Sign in" on another device switches accounts and syncs to follow.
-  - Final QA: browser emulation at 390 px only. There is no real phone in this environment.
+  - Final QA: run against the live site (https://robertg761.github.io/chore-pet/) in Pixel 7 emulation at 390 px. Still to do on a physical phone, which this environment doesn't have.
   - Progress across devices: **Done.**
     - The chore count comes from completions that counted when they were recorded, one per chore per day (`choreCountOf`). Completion rows are never edited, so devices can't overwrite each other's count, and schedule edits don't rewrite history.
     - Deleting a chore banks its count in `progress.retired`, so progress never goes backwards.
@@ -133,9 +133,9 @@ Parallel batch H:
 - [LEAD] Submission: live link, repo, write-up, in-app demo video.
   - **Write-up drafted** (`docs/SUBMISSION.md`).
   - **Demo video recorded** in the app (`npm run demo:record`; about 85 s, sample home and time skip).
-  - **Hosting:** GitHub Pages via `.github/workflows/pages.yml`, at https://robertg761.github.io/chore-pet/ (the app works under a sub-path; QA passed at `/chore-pet/`). The video is served at `/chore-pet/chore-pet-demo.mp4`, and the links are in the write-up.
+  - **Hosting: Live** at https://robertg761.github.io/chore-pet/ on GitHub Pages. `.github/workflows/pages.yml` lints, tests and builds every PR, and deploys every push to main. The video is served at `/chore-pet/chore-pet-demo.mp4`, and the links are in the write-up.
 
-**Done when:** a stranger can open the link on a phone, build a room, finish a chore and get an unlock with no help. **Met in phone emulation** (Pixel 7 profile, touch only, production build): landing to picking Sprout, building a kitchen, finishing a chore and putting on the red beanie, with no help and no errors. It also reloads offline from the service worker. Not yet tried on a physical phone or a live URL.
+**Done when:** a stranger can open the link on a phone, build a room, finish a chore and get an unlock with no help. **Met in phone emulation** (Pixel 7 profile, touch only, production build): landing to picking Sprout, building a kitchen, finishing a chore and putting on the red beanie, with no help and no errors. It also reloads offline from the service worker. Re-checked on the live URL after launch: the same flow passes with no errors, and the sample home's seeded history doesn't count. Not yet tried on a physical phone.
 
 ## Stretch
 
