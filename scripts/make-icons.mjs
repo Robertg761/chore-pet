@@ -1,7 +1,7 @@
 // Generates the app icons: public/favicon.svg plus PNG exports in public/icons.
-// Run with `npm run icons`. The art is Mochi's happy face and body, copied by
-// hand from src/character/species/mochi.tsx and src/character/parts.tsx (static
-// SVG, no React), with a heavier outline and no tiny details so it reads at 48px.
+// Run with `npm run icons`. The art is sakura Mochi's happy face and body, copied
+// by hand from src/character/species/mochi.tsx and src/character/parts.tsx
+// (static SVG, no React), with a heavier outline and fewer pleats so it reads at 48px.
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -14,37 +14,54 @@ const iconsDir = join(publicDir, 'icons')
 // Palette tokens (src/art/palette.ts)
 const INK = '#2B1E2F'
 const GROUND = '#EFE9FF'
-const PET = '#FFD65C'
+const PET = '#FFCFDA' // sakura, Mochi's own colour (SPECIES_COLOUR)
+const SHADE = '#F3B7C7' // bodyShade(PET) from src/art/color.ts
 const BLUSH = '#F28FA0'
 const WHITE = '#FFFFFF'
 
 const BODY = 'M32 150 C32 104 62 72 100 72 C138 72 168 104 168 150 C168 172 140 181 100 181 C60 181 32 172 32 150 Z'
-const PINCH = 'M88 80 C88 64 96 54 108 56 C114 58 114 66 106 68 C102 70 104 76 110 80 Z'
+const KNOT = 'M89 78 C88 67 94 60 100 60 C106 60 112 67 111 78 Z'
 
-// The pet fills x 25..175, y 54..193 of its 200x200 box.
+// The pet fills x 25..175, y 52..193 of its 200x200 box.
 const PET_CENTER = { x: 100, y: 124 }
+
+function eye(x) {
+  return `<ellipse cx="${x}" cy="124" rx="8.5" ry="10.5" fill="${INK}"/>
+      <circle cx="${x + 2.9}" cy="119.8" r="3.3" fill="${WHITE}"/>
+      <circle cx="${x - 2.8}" cy="128" r="1.5" fill="${WHITE}"/>`
+}
 
 function pet() {
   return `
+  <defs><clipPath id="body"><path d="${BODY}"/></clipPath></defs>
   <g stroke="${INK}" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
     <ellipse cx="100" cy="186" rx="62" ry="7" fill="${INK}" opacity="0.15" stroke="none"/>
     <ellipse cx="74" cy="178" rx="15" ry="9" fill="${PET}"/>
     <ellipse cx="126" cy="178" rx="15" ry="9" fill="${PET}"/>
-    <ellipse cx="36" cy="142" rx="11" ry="14" fill="${PET}" transform="rotate(-20 36 142)"/>
-    <ellipse cx="164" cy="142" rx="11" ry="14" fill="${PET}" transform="rotate(20 164 142)"/>
-    <path d="${PINCH}" fill="${PET}"/>
-    <path d="${BODY}" fill="${PET}"/>
-    <g fill="${BLUSH}" stroke="none" opacity="0.85">
-      <ellipse cx="60" cy="140" rx="10" ry="6"/>
-      <ellipse cx="140" cy="140" rx="10" ry="6"/>
+    <ellipse cx="37" cy="152" rx="10" ry="13" fill="${PET}" transform="rotate(-10 37 152)"/>
+    <ellipse cx="163" cy="152" rx="10" ry="13" fill="${PET}" transform="rotate(10 163 152)"/>
+    <path d="${KNOT}" fill="${PET}"/>
+    <path d="M100 60 C100 55 104 53 106 55" fill="none" stroke-width="4.5"/>
+    <g clip-path="url(#body)" stroke="none">
+      <path d="${BODY}" fill="${SHADE}"/>
+      <path d="${BODY}" fill="${PET}" transform="translate(-6 -9)"/>
+      <ellipse cx="64" cy="104" rx="9" ry="5.5" fill="${WHITE}" opacity="0.7" transform="rotate(-38 64 104)"/>
+    </g>
+    <path d="${BODY}" fill="none"/>
+    <g fill="none" stroke-width="4" opacity="0.25">
+      <path d="M91 77 Q82 83 78 93"/>
+      <path d="M109 77 Q118 83 122 93"/>
+    </g>
+    <g fill="${BLUSH}" stroke="none" opacity="0.9">
+      <ellipse cx="60" cy="140" rx="10.5" ry="6"/>
+      <ellipse cx="140" cy="140" rx="10.5" ry="6"/>
     </g>
     <g stroke="none">
-      <ellipse cx="82" cy="124" rx="8.5" ry="10.5" fill="${INK}"/>
-      <ellipse cx="118" cy="124" rx="8.5" ry="10.5" fill="${INK}"/>
-      <circle cx="85" cy="120" r="3.2" fill="${WHITE}"/>
-      <circle cx="121" cy="120" r="3.2" fill="${WHITE}"/>
+      ${eye(80)}
+      ${eye(120)}
     </g>
-    <path d="M90 136 q10 14 20 0 Z" fill="${INK}" stroke-width="4"/>
+    <path d="M91.5 136 q8.5 12 17 0 Z" fill="${INK}" stroke-width="4"/>
+    <path d="M95.5 141.6 q4.5 -3.6 9 0 q-4.5 2.2 -9 0 Z" fill="${BLUSH}" stroke="none"/>
   </g>`
 }
 

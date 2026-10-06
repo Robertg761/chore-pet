@@ -1,3 +1,5 @@
+import type { Species } from '../domain/types'
+
 // Palette tokens from docs/ART.md. Art code uses these names, never raw hex.
 
 export const PALETTE = {
@@ -13,6 +15,7 @@ export const PALETTE = {
   sky: '#9ED8F5',
   blush: '#F28FA0',
   petDefault: '#FFD65C',
+  sakura: '#FFCFDA',
   sickTint: '#7BAE3A',
   dirt: '#8A6A4A',
   leaf: '#8CCB5E',
@@ -37,3 +40,10 @@ export const PALETTE = {
 export const CHARACTER_STROKE = 4
 /** Outline weight at room scale (object art). */
 export const ROOM_STROKE = 3
+
+/** Each pet's own starting colour: sakura-pink Mochi, snow-white Bun, sunny Sprout. */
+export const SPECIES_COLOUR: Record<Species, string> = {
+  mochi: PALETTE.sakura,
+  bun: PALETTE.white,
+  sprout: PALETTE.petDefault,
+}

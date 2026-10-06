@@ -11,9 +11,6 @@ import { BODY, HIGHLIGHT, ear } from './bun'
 
 const { ink } = PALETTE
 
-/** Scruffy and sick are always tinted: the pose itself implies the mood. */
-const EAR_TINT: Partial<Record<Mood, number>> = { scruffy: 0.18, sick: 0.32 }
-
 /** Posture of the idle silhouette: squash about the ground point, tilt, then lift. */
 interface Posture {
   sx: number
@@ -88,7 +85,6 @@ function feet(fill: string, spread = 22) {
 
 function figure(props: FigureProps) {
   const { colour, posture, droop, mood, expression, eyeY, mouthY, shadowRx = 56, behind, front, smudges, extras } = props
-  const tint = EAR_TINT[mood] ?? 0
   const ey = squashY(eyeY, posture)
   const my = squashY(mouthY, posture)
   const cy = squashY(mouthY - 2, posture)
@@ -97,8 +93,8 @@ function figure(props: FigureProps) {
       <Shadow rx={shadowRx} />
       <g transform={figureTransform(posture)}>
         <g transform={`translate(100 ${GROUND}) scale(${posture.sx} ${posture.sy}) translate(-100 ${-GROUND})`}>
-          {ear(droop[0], colour, tint)}
-          <g transform="translate(200 0) scale(-1 1)">{ear(droop[1], colour, tint)}</g>
+          {ear(droop[0], colour, mood)}
+          <g transform="translate(200 0) scale(-1 1)">{ear(droop[1], colour, mood)}</g>
           {behind}
           <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
           <MoodTint d={BODY} mood={mood} smudges={smudges ?? [[66, 160], [134, 118], [126, 168]]} />
@@ -286,8 +282,8 @@ const bunSick: Pose = {
       <SickBedBack />
       {/* Bun, shrunk into the bed */}
       <g transform={`translate(100 ${SICK_BOTTOM}) scale(${SICK_SCALE}) translate(-100 ${-GROUND})`}>
-        {ear(128, colour, 0.32)}
-        <g transform="translate(200 0) scale(-1 1)">{ear(128, colour, 0.32)}</g>
+        {ear(128, colour, 'sick')}
+        <g transform="translate(200 0) scale(-1 1)">{ear(128, colour, 'sick')}</g>
         <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
         <MoodTint d={BODY} mood="sick" smudges={[[62, 128], [140, 116], [118, 104]]} />
       </g>

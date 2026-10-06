@@ -25,7 +25,8 @@ Every asset is hand-authored SVG, designed from scratch. No asset packs, no rast
 | warm-red | #E86A4A | hats, bows |
 | sky | #9ED8F5 | windows, ice packs |
 | blush | #F28FA0 | cheeks |
-| pet-default | #FFD65C | default body colour |
+| pet-default | #FFD65C | Sprout's starting body colour |
+| sakura | #FFCFDA | Mochi's starting body colour |
 | sick-tint | #7BAE3A | overlay at 18% (scruffy) / 32% (sick) |
 | dirt | #8A6A4A | smudges at 45% |
 | leaf | #8CCB5E | Sprout's leaves and stem, plants |
@@ -86,7 +87,7 @@ Rules for every pose of every species:
 - Moods via face and posture only: happy, content, meh, scruffy, sick (in bed, thermometer), plus sleeping and cheering. Scruffy looks tired, never angry; sick looks uncomfortable, never dead (no X eyes).
 - Scruffy adds a faint green cast and two or three dirt smudges; sick goes pale (white wash) with a light green cast (`MoodTint`). Never olive or brown.
 - Drawn in a 200x200 viewBox, feet near y = 180.
-- Body colour is swappable; check new art on yellow, pink, sky and white.
+- Each pet starts in its own colour (`SPECIES_COLOUR` in `src/art/palette.ts`): sakura-pink Mochi, snow-white Bun, sunny-yellow Sprout. Body colour is swappable; check new art on each pet's own colour plus yellow, pink, sky and white.
 - Poses are registered per species in `src/character/poses.ts` (`idle` is happy). A missing pose falls back to idle.
 
 ### Layered slots

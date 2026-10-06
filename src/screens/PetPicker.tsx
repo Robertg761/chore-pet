@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { Character } from '../character/Character'
-import { PALETTE } from '../art/palette'
+import { SPECIES_COLOUR } from '../art/palette'
 import { SPECIES, type Species } from '../domain/types'
 import './PetPicker.css'
 
@@ -69,7 +69,7 @@ export function PetPicker({ onChoose }: PetPickerProps) {
                   species={s}
                   mood="happy"
                   pose={selected ? 'cheering' : undefined}
-                  bodyColour={PALETTE.petDefault}
+                  bodyColour={SPECIES_COLOUR[s]}
                   size={104}
                   title={INFO[s].label}
                 />

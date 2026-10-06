@@ -1,4 +1,4 @@
-import { PALETTE } from '../art/palette'
+import { PALETTE, SPECIES_COLOUR } from '../art/palette'
 import { Character } from '../character/Character'
 import { POSES, type PoseName } from '../character/poses'
 import { SPECIES, type MessStage, type Mood } from '../domain/types'
@@ -14,12 +14,6 @@ import type { ObjectArt } from '../room/objects/types'
 // docs/ART.md before it lands.
 
 const MOODS: Mood[] = ['happy', 'content', 'meh', 'scruffy', 'sick']
-/** Candidate default body colour per species, for review. */
-const COLOUR_OPTIONS: { id: string; label: string; colours: Record<(typeof SPECIES)[number], string> }[] = [
-  { id: 'a', label: 'A: all sunny yellow', colours: { mochi: '#FFD65C', bun: '#FFD65C', sprout: '#FFD65C' } },
-  { id: 'b', label: 'B: bao white, apricot, yellow', colours: { mochi: '#FFF5E6', bun: '#FFC48A', sprout: '#FFD65C' } },
-  { id: 'c', label: 'C: sakura pink, snow white, yellow', colours: { mochi: '#FFCFDA', bun: '#FFFFFF', sprout: '#FFD65C' } },
-]
 const STAGES: MessStage[] = ['clean', 'messy1', 'messy2']
 const OBJECTS: ObjectArt[] = [sinkArt]
 
@@ -44,19 +38,9 @@ export default function ArtGallery() {
       <h2>Close-up</h2>
       <section className="gallery-row">
         {SPECIES.map((s) => (
-          <Character key={s} species={s} mood="happy" bodyColour={PALETTE.petDefault} size={300} />
+          <Character key={s} species={s} mood="happy" bodyColour={SPECIES_COLOUR[s]} size={300} />
         ))}
       </section>
-
-      <h2>Default colour candidates</h2>
-      {COLOUR_OPTIONS.map((o) => (
-        <section key={o.id} className="gallery-row" data-option={o.id}>
-          <h3>{o.label}</h3>
-          {SPECIES.map((s) => (
-            <Character key={s} species={s} mood="happy" bodyColour={o.colours[s]} size={150} />
-          ))}
-        </section>
-      ))}
 
       <h2>Pets by mood</h2>
       {SPECIES.map((s) => (
@@ -64,7 +48,7 @@ export default function ArtGallery() {
           <h3>{s}</h3>
           {MOODS.map((m) => (
             <figure key={m}>
-              <Character species={s} mood={m} bodyColour={PALETTE.petDefault} size={150} />
+              <Character species={s} mood={m} bodyColour={SPECIES_COLOUR[s]} size={150} />
               <figcaption>{m}</figcaption>
             </figure>
           ))}
@@ -77,7 +61,7 @@ export default function ArtGallery() {
           <h3>{s}</h3>
           {poseNames(s).map((p) => (
             <figure key={p}>
-              <Character species={s} mood="happy" pose={p} bodyColour={PALETTE.petDefault} equipped={{ head: 'beanie-red' }} size={150} />
+              <Character species={s} mood="happy" pose={p} bodyColour={SPECIES_COLOUR[s]} equipped={{ head: 'beanie-red' }} size={150} />
               <figcaption>{p} + beanie</figcaption>
             </figure>
           ))}
@@ -87,7 +71,7 @@ export default function ArtGallery() {
       <h2>Readable at 60px</h2>
       <section className="gallery-row">
         {SPECIES.flatMap((s) =>
-          MOODS.map((m) => <Character key={s + m} species={s} mood={m} bodyColour={PALETTE.petDefault} size={60} />),
+          MOODS.map((m) => <Character key={s + m} species={s} mood={m} bodyColour={SPECIES_COLOUR[s]} size={60} />),
         )}
       </section>
 
@@ -95,7 +79,7 @@ export default function ArtGallery() {
       {SPECIES.map((s) => (
         <section key={s} className="gallery-row">
           <h3>{s}</h3>
-          {[PALETTE.petDefault, PALETTE.blush, PALETTE.sky, PALETTE.white].flatMap((c) =>
+          {[SPECIES_COLOUR[s], PALETTE.petDefault, PALETTE.blush, PALETTE.sky, PALETTE.white].filter((c, i, all) => all.indexOf(c) === i).flatMap((c) =>
             poseNames(s).map((p) => <Character key={c + p} species={s} mood={p === 'idle' || p === 'sleeping' || p === 'cheering' ? 'happy' : p} pose={p} bodyColour={c} size={90} />),
           )}
         </section>

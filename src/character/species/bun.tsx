@@ -21,11 +21,12 @@ export const EAR_DROOP: Record<Mood, [number, number]> = {
 /** The left ear, pivoting at its base. The right ear is this mirrored. */
 export const EAR = 'M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z'
 
-export function ear(droop: number, fill: string, tint: number) {
+/** The left ear. `mood` tints it to match the body when scruffy or sick. */
+export function ear(droop: number, fill: string, mood: Mood) {
   return (
     <g transform={`rotate(${-droop} 82 98)`}>
       <path d={EAR} fill={fill} />
-      {tint > 0 && <path d={EAR} fill={PALETTE.sickTint} opacity={tint} stroke="none" />}
+      <MoodTint d={EAR} mood={mood} smudges={[]} />
       <path d="M75 90 C67 68 67 44 74 39 C81 35 87 62 86 90 Z" fill={PALETTE.blush} stroke="none" />
     </g>
   )
@@ -35,13 +36,12 @@ export const bunIdle: Pose = {
   id: 'bun-idle',
   renderBody: (bodyColour, mood) => {
     const [left, right] = EAR_DROOP[mood]
-    const tint = mood === 'sick' ? 0.32 : mood === 'scruffy' ? 0.18 : 0
     return (
       <g stroke={PALETTE.ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" strokeLinecap="round">
         <Shadow rx={56} />
-        {ear(left, bodyColour, tint)}
+        {ear(left, bodyColour, mood)}
         <g transform="translate(200 0) scale(-1 1)">
-          {ear(right, bodyColour, tint)}
+          {ear(right, bodyColour, mood)}
         </g>
         <Nub cx={78} cy={178} rx={16} ry={9} fill={bodyColour} />
         <Nub cx={122} cy={178} rx={16} ry={9} fill={bodyColour} />
