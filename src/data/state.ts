@@ -122,6 +122,36 @@ export function rebase(server: Tables, outbox: Outbox): Tables {
 }
 
 /**
+ * Progress is one shared row per home, so two devices that each finish chores
+ * offline would overwrite each other's. Before a queued progress row is sent,
+ * it is merged with the server's: rewards from either side are kept, and the
+ * counters take the higher value. (Chores finished on both sides at once can
+ * still undercount by the overlap; rewards are never lost.)
+ */
+export function mergeProgress(local: Progress, server: Progress): Progress {
+  return {
+    ...local,
+    choreCount: Math.max(local.choreCount, server.choreCount),
+    bestStreak: Math.max(local.bestStreak, server.bestStreak),
+    unlockedItems: [...local.unlockedItems, ...server.unlockedItems.filter((id) => !local.unlockedItems.includes(id))],
+  }
+}
+
+/** Merge every queued progress upsert with the server's copy (see mergeProgress). Seqs are kept, so in-flight acks still match. */
+export function mergeQueuedProgress(snapshot: Snapshot, server: Tables['progress']): Snapshot {
+  let { tables, outbox } = snapshot
+  for (const [k, op] of Object.entries(outbox)) {
+    if (op.table !== 'progress' || op.kind !== 'upsert') continue
+    const theirs = server[op.key]
+    if (!theirs) continue
+    const merged = mergeProgress(op.value, theirs)
+    outbox = { ...outbox, [k]: { ...op, value: merged } }
+    tables = { ...tables, progress: { ...tables.progress, [op.key]: merged } }
+  }
+  return outbox === snapshot.outbox ? snapshot : { ...snapshot, tables, outbox }
+}
+
+/**
  * Decide what to keep when a session appears. Data made before any session
  * (offline first launch) is adopted by the new account; data that belongs to
  * a different account is dropped.

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import type { Chore, Completion, Home } from '../domain/types'
-import { acknowledge, applyOp, change, claim, deleteOp, emptySnapshot, emptyTables, planFlush, rebase, selectHome, upsertOp } from './state'
+import type { Chore, Completion, Home, Progress } from '../domain/types'
+import { acknowledge, applyOp, change, claim, deleteOp, emptySnapshot, emptyTables, mergeProgress, mergeQueuedProgress, planFlush, rebase, selectHome, upsertOp } from './state'
 
 const home: Home = { id: 'h1', ownerId: 'u1', name: 'Home', vacations: [] }
 const chore = (id: string, extra: Partial<Chore> = {}): Chore => ({
@@ -111,5 +111,24 @@ describe('selectHome', () => {
     expect(data.chores.map((c) => c.id)).toEqual(['c1'])
     expect(data.completions.map((c) => c.id)).toEqual(['x1'])
     expect(data.progress?.choreCount).toBe(1)
+  })
+})
+
+describe('mergeProgress', () => {
+  const p = (over: Partial<Progress> = {}): Progress => ({ homeId: 'h', choreCount: 3, currentStreak: 1, bestStreak: 2, unlockedItems: ['item:beanie-red'], ...over })
+
+  it('keeps rewards from both sides and the higher counters', () => {
+    const merged = mergeProgress(p({ choreCount: 5, unlockedItems: ['item:beanie-red', 'decor:plant'] }), p({ choreCount: 4, bestStreak: 6, unlockedItems: ['item:beanie-red', 'wall:mint'] }))
+    expect(merged).toEqual({ homeId: 'h', choreCount: 5, currentStreak: 1, bestStreak: 6, unlockedItems: ['item:beanie-red', 'decor:plant', 'wall:mint'] })
+  })
+
+  it('merges a queued progress row with the server copy, keeping its seq', () => {
+    const snap = change(emptySnapshot('u1'), upsertOp('progress', p({ choreCount: 4 })))
+    const merged = mergeQueuedProgress(snap, { h: p({ choreCount: 9, unlockedItems: ['wall:mint'] }) })
+    const op = merged.outbox['progress:h']
+    expect(op.seq).toBe(snap.outbox['progress:h'].seq)
+    expect(op.kind === 'upsert' && op.value).toMatchObject({ choreCount: 9, unlockedItems: ['item:beanie-red', 'wall:mint'] })
+    expect(merged.tables.progress.h.choreCount).toBe(9)
+    expect(mergeQueuedProgress(snap, {})).toBe(snap)
   })
 })

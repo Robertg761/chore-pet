@@ -1,6 +1,6 @@
 import type { LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
-import { acknowledge, change, claim, emptySnapshot, planFlush, rebase, type NewOp, type Op, type Snapshot } from './state'
+import { acknowledge, change, claim, emptySnapshot, mergeQueuedProgress, planFlush, rebase, type NewOp, type Op, type Snapshot } from './state'
 
 /**
  * - local-only: no Supabase keys, data stays on this device.
@@ -74,6 +74,11 @@ export function createStore({ local, remote, isOnline = () => true }: StoreDeps)
     set({ sync: 'syncing' })
     try {
       commit(claim(state.snapshot, await r.session()))
+
+      // Another device may have moved progress on; merge before overwriting it.
+      if (Object.values(state.snapshot.outbox).some((o) => o.table === 'progress' && o.kind === 'upsert')) {
+        commit(mergeQueuedProgress(state.snapshot, (await r.pull()).progress))
+      }
 
       for (const step of planFlush(state.snapshot.outbox)) {
         const res = await send(r, step, step.ops)

@@ -14,7 +14,13 @@ let client: Promise<SupabaseClient | null> | null = null
  */
 export function getSupabase(): Promise<SupabaseClient | null> {
   if (!supabaseConfigured) return Promise.resolve(null)
-  client ??= import('@supabase/supabase-js').then(({ createClient }) => createClient(url!, anonKey!))
+  client ??= import('@supabase/supabase-js').then(
+    ({ createClient }) => createClient(url!, anonKey!),
+    (e: unknown) => {
+      client = null // a failed download (e.g. offline) is retried on the next call
+      throw e
+    },
+  )
   return client
 }
 

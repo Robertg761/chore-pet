@@ -3,8 +3,8 @@ import type { Chore } from '../domain/types'
 import { addChore, completeChore, createHousehold, removeChore } from './actions'
 import { memoryStore, type LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
-import { emptyTables, selectHome, type Tables } from './state'
-import { createStore } from './store'
+import { emptyTables, selectHome, upsertOp, type Tables } from './state'
+import { createStore, type Store } from './store'
 import { keyOf, type TableName } from './tables'
 
 /** An in-memory server. `offline` makes every call fail like a dropped connection. */
@@ -204,5 +204,35 @@ describe('when the browser refuses local storage', () => {
     await settle()
     expect(store.getState().savedLocally).toBe(true)
     expect(local.current).not.toBeNull()
+  })
+})
+
+describe('two devices on one account', () => {
+  it('keeps rewards earned on both while each was offline', async () => {
+    const { server, remote } = fakeServer()
+    const phone = await onboarded(remote)
+    const tablet = createStore({ local: memoryStore(), remote })
+    await tablet.start()
+    await tablet.sync()
+    const progressOf = (s: Store) => selectHome(s.getState().snapshot.tables).progress!
+    expect(progressOf(tablet)).toEqual(progressOf(phone))
+
+    server.offline = true
+    const base = progressOf(phone)
+    phone.apply(upsertOp('progress', { ...base, choreCount: base.choreCount + 1, unlockedItems: [...base.unlockedItems, 'item:beanie-red'] }))
+    tablet.apply(upsertOp('progress', { ...base, choreCount: base.choreCount + 2, bestStreak: 3, unlockedItems: [...base.unlockedItems, 'wall:mint'] }))
+    await phone.sync()
+    await tablet.sync()
+
+    server.offline = false
+    await phone.sync()
+    await tablet.sync()
+    await phone.sync()
+    const merged = server.tables.progress[base.homeId]
+    expect(merged.unlockedItems).toEqual(expect.arrayContaining(['item:beanie-red', 'wall:mint']))
+    expect(merged.choreCount).toBe(base.choreCount + 2)
+    expect(merged.bestStreak).toBe(3)
+    expect(progressOf(phone)).toEqual(merged)
+    expect(progressOf(tablet)).toEqual(merged)
   })
 })
