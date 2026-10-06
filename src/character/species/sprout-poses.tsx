@@ -265,7 +265,8 @@ const sick: Pose = {
     </>,
   )
   ),
-  anchors: anchorsFor(SICK_TF),
+  // The face is drawn full size in the bed (see sickY), so face items keep full size too.
+  anchors: { ...anchorsFor(SICK_TF), face: { x: 100, y: sickY(126), scale: 1 } },
 }
 
 export const sproutPoses: MoodPoses = { content, meh, scruffy, sick, sleeping, cheering }

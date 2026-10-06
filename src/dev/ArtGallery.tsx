@@ -4,13 +4,15 @@ import { Character, CharacterArt } from '../character/Character'
 import { Cheer } from '../effects/Cheer'
 import { Sparkle } from '../effects/Sparkle'
 import { POSES, type PoseName } from '../character/poses'
-import { SPECIES, type MessStage, type Mood } from '../domain/types'
+import { SPECIES, type CharacterSlot, type MessStage, type Mood } from '../domain/types'
 import { isoPoints } from '../room/iso'
 import { OBJECT_ART } from '../room/objects'
 import { OBJECT_SCALE, tileCorner } from '../room/shell/geometry'
 import { RoomShell } from '../room/shell/RoomShell'
 import { FLOOR_STYLES, WALL_STYLES } from '../room/shell/styles'
 import type { ObjectArt } from '../room/objects/types'
+import { WeekView } from '../screens/WeekView'
+import type { Chore, Completion } from '../domain/types'
 
 // Dev-only review sheet (open /?art). Every species in every mood, items on
 // every pose, objects in every mess stage. Use it to check new art against
@@ -126,6 +128,8 @@ export default function ArtGallery() {
       </section>
 
       <EffectsSection />
+      <WeekViewSection />
+      <WardrobeCheck />
     </main>
   )
 }
@@ -168,6 +172,86 @@ function EffectsSection() {
           </figure>
         ))}
       </section>
+    </>
+  )
+}
+
+// Sample week for the week view: a fixed "today" so the picture never changes.
+const WEEK_TODAY = '2026-10-07'
+const weekChore = (id: string, name: string, createdOn: string): Chore => ({
+  id,
+  homeId: 'sample',
+  objectId: null,
+  name,
+  schedule: { kind: 'daily' },
+  createdOn,
+  photoProof: false,
+})
+const weekDone = (choreId: string, on: string): Completion => ({
+  id: `${choreId}-${on}`,
+  choreId,
+  completedAt: `${on}T09:00:00.000Z`,
+  completedOn: on,
+})
+const WEEK_CHORES = [weekChore('dishes', 'Dishes', '2026-09-20'), weekChore('bed', 'Make the bed', '2026-09-20'), weekChore('plants', 'Water plants', '2026-10-03')]
+const WEEK_DONE: Completion[] = [
+  ...['2026-10-01', '2026-10-02', '2026-10-06', '2026-10-07'].map((d) => weekDone('dishes', d)),
+  ...['2026-10-01', '2026-10-06', '2026-10-07'].map((d) => weekDone('bed', d)),
+  ...['2026-10-05', '2026-10-06'].map((d) => weekDone('plants', d)),
+]
+const WEEK_AWAY = [{ start: '2026-10-03', end: '2026-10-04' }]
+
+function WeekViewSection() {
+  return (
+    <>
+      <h2>Week view</h2>
+      <section className="gallery-row">
+        <figure style={{ width: 390, maxWidth: '100%' }}>
+          <WeekView chores={WEEK_CHORES} completions={WEEK_DONE} vacations={WEEK_AWAY} today={WEEK_TODAY} />
+          <figcaption>busy week with a break</figcaption>
+        </figure>
+        <figure style={{ width: 390, maxWidth: '100%' }}>
+          <WeekView chores={WEEK_CHORES} completions={[]} vacations={[]} today={WEEK_TODAY} />
+          <figcaption>quiet week, nothing done</figcaption>
+        </figure>
+      </section>
+    </>
+  )
+}
+
+const WARDROBE_POSES: PoseName[] = ['idle', 'content', 'meh', 'scruffy', 'sick', 'sleeping', 'cheering']
+const WARDROBE_ROWS: { label: string; equipped: Partial<Record<CharacterSlot, string>> }[] = [
+  { label: 'bow', equipped: { head: 'bow' } },
+  { label: 'glasses', equipped: { face: 'glasses' } },
+  { label: 'scarf', equipped: { neck: 'scarf' } },
+  { label: 'bow tie', equipped: { neck: 'bow-tie' } },
+  { label: 'backpack', equipped: { back: 'backpack' } },
+  { label: 'everything on', equipped: { head: 'bow', face: 'glasses', neck: 'scarf', back: 'backpack' } },
+]
+
+/** Every item, one at a time, on every pose of every species, plus an "everything on" row. */
+function WardrobeCheck() {
+  const cell = 110
+  return (
+    <>
+      <h2>Wardrobe check</h2>
+      {SPECIES.map((s) => (
+        <section key={s} className="gallery-row" style={{ display: 'grid', gridTemplateColumns: `80px repeat(${WARDROBE_POSES.length}, ${cell}px)`, gap: 4, alignItems: 'center' }}>
+          <h3 style={{ gridColumn: '1 / -1' }}>{s}</h3>
+          <span />
+          {WARDROBE_POSES.map((p) => (
+            <figcaption key={p} style={{ textAlign: 'center' }}>
+              {p}
+            </figcaption>
+          ))}
+          {WARDROBE_ROWS.flatMap((row) => [
+            <figcaption key={row.label}>{row.label}</figcaption>,
+            ...WARDROBE_POSES.map((p) => (
+              <Character key={row.label + p} species={s} mood={p === 'idle' || p === 'sleeping' || p === 'cheering' ? 'happy' : p} pose={p} bodyColour={SPECIES_COLOUR[s]} equipped={row.equipped} size={cell} title={`${s} ${p} with ${row.label}`} />
+            )),
+          ])}
+        </section>
+      ))}
     </>
   )
 }
