@@ -63,12 +63,12 @@ export function WeekView({ chores, completions, vacations, today, onClose }: Wee
   return (
     <section className="wk" aria-labelledby="wk-title">
       <div className="wk-head">
-        <h2 id="wk-title" className="wk-title">
+        <h1 id="wk-title" className="wk-title">
           This week
-        </h2>
+        </h1>
         {onClose && (
           <button type="button" className="wk-close" onClick={onClose}>
-            Close
+            Back
           </button>
         )}
       </div>

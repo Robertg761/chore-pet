@@ -155,7 +155,7 @@ export function Room({ room, objects, stages = {}, selectedId, ghost, hiddenId, 
   const selectedEntry = selected && catalogEntry(selected.catalogId)
 
   return (
-    <RoomShell floorStyle={room.floorStyle} wallStyle={room.wallStyle} width={width} className={className} svgRef={svgRef} svgProps={svgProps}>
+    <RoomShell floorStyle={room.floorStyle} wallStyle={room.wallStyle} width={width} className={className} svgRef={svgRef} svgProps={pet?.onTap ? { role: 'group', ...svgProps } : svgProps}>
       {selected && selectedEntry && footprintPolygon(footprintOf(selected, selectedEntry), accent, 0.3)}
       {ghost && footprintPolygon(footprintOf(ghost.placement, ghost.entry), ghost.ok ? FITS : BLOCKED, 0.4, true)}
       {depthOrder(items).map((i) => i.draw())}

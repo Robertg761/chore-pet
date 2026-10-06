@@ -75,7 +75,7 @@
 .coach-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .coach-step { margin: 0; font-size: 12px; font-weight: 800; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
 .coach-text { margin: 0; font-weight: 800; line-height: 1.3; color: var(--due-ink); }
-.coach-count { margin: 0; font-size: 14px; font-weight: 800; color: var(--accent); }
+.coach-count { margin: 0; font-size: 14px; font-weight: 800; color: var(--due-ink); }
 .coach-skip { flex: none; }
 
 /* Keeps the tray and style picker laying out as direct children of the shell did. */

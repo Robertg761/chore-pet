@@ -59,9 +59,9 @@ export function VacationScreen({ vacations, today, onChange, onClose }: Vacation
         Back
       </button>
 
-      <h2 id={`${uid}-title`} className="vacation-title">
+      <h1 id={`${uid}-title`} className="vacation-title">
         Vacation mode
-      </h2>
+      </h1>
       <p className="vacation-lede">While you're away, chores pause and your pet won't get sick.</p>
 
       {current && (
@@ -78,7 +78,7 @@ export function VacationScreen({ vacations, today, onChange, onClose }: Vacation
       )}
 
       <form className="vacation-card vacation-form" onSubmit={submit} noValidate>
-        <h3 className="vacation-subtitle">Add a vacation</h3>
+        <h2 className="vacation-subtitle">Add a vacation</h2>
 
         <div className="vacation-field">
           <label htmlFor={`${uid}-start`}>Start date</label>
@@ -127,7 +127,7 @@ export function VacationScreen({ vacations, today, onChange, onClose }: Vacation
       </form>
 
       <div className="vacation-group">
-        <h3 className="vacation-subtitle">Upcoming trips</h3>
+        <h2 className="vacation-subtitle">Upcoming trips</h2>
         {upcoming.length === 0 ? (
           <p className="vacation-empty">No trips planned.</p>
         ) : (
