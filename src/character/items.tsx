@@ -1,4 +1,4 @@
-import { backpack, bowTie, glasses, scarf } from './items/extras'
+import { backpack, backpackStraps, bowTie, glasses, scarf } from './items/extras'
 import { beanie, bow, leafCrown } from './items/hats'
 import { dress, hoodie, overalls, sweater } from './items/outfits'
 import type { Item } from './slots'
@@ -13,7 +13,7 @@ export const ITEMS: Item[] = [
   { id: 'glasses', slot: 'face', name: 'Round glasses', render: glasses },
   { id: 'scarf', slot: 'neck', name: 'Scarf', render: scarf },
   { id: 'bow-tie', slot: 'neck', name: 'Bow tie', render: bowTie },
-  { id: 'backpack', slot: 'back', name: 'Backpack', render: backpack },
+  { id: 'backpack', slot: 'back', name: 'Backpack', render: backpack, front: backpackStraps },
   { id: 'hoodie', slot: 'outfit', name: 'Hoodie', render: hoodie },
   { id: 'overalls', slot: 'outfit', name: 'Overalls', render: overalls },
   { id: 'dress', slot: 'outfit', name: 'Dress', render: dress },

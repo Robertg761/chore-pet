@@ -39,4 +39,9 @@ export interface Item {
    * generously wide and simply need a neckline.
    */
   render: (fit: { species: Species }) => ReactNode
+  /**
+   * Optional part drawn in front of the body and outfit (after the outfit, before
+   * the neck), at the same anchor: a backpack's shoulder straps. Not clipped.
+   */
+  front?: (fit: { species: Species }) => ReactNode
 }
