@@ -50,7 +50,7 @@ The tokens live in `src/art/palette.ts`; art code uses those names, never raw he
 ## Isometric room
 
 - 2:1 isometric. Room floor is a diamond; one tile step along the left wall is (+w/2, -h/2) and along the right wall (+w/2, +h/2), with h = w/2.
-- Reference room (390 px wide): floor corners (195,170) (365,265) (195,360) (25,265); walls 160 px tall; 6x6 tiles.
+- Reference room (390 px wide): floor corners (195,170) (365,255) (195,340) (25,255); walls 160 px tall; 6x6 tiles.
 - Objects are drawn as three visible faces (top, left-front, right-front) using the face shading above.
 - Each catalog object ships as `clean`, `messy1` (a little behind) and `messy2` (very behind), same footprint and bounding box.
 

@@ -1,8 +1,8 @@
 import { TILE_W, type Point } from '../iso'
 
 // Room-scale geometry for the shell (docs/ART.md, "Isometric room").
-// Reference room: 390 px wide, floor diamond (195,170) (365,265) (195,360)
-// (25,265), 6x6 tiles. Same tx/ty orientation as ../iso.ts: +tx toward the
+// Reference room: 390 px wide, floor diamond (195,170) (365,255) (195,340)
+// (25,255), 6x6 tiles. Same tx/ty orientation as ../iso.ts: +tx toward the
 // lower right (along the right wall), +ty toward the lower left (along the
 // left wall), origin at the floor's top corner.
 

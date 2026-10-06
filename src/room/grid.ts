@@ -188,11 +188,14 @@ export function tilesOf(f: Footprint): { tx: number; ty: number }[] {
 /**
  * The same object turned. A wall object moves to the other wall (mirrored
  * across the room's diagonal) so it still backs onto a wall; a floor object
- * turns in place.
+ * turns in place, nudged back inside the room if it would poke out.
  */
-export function turned(entry: Pick<CatalogEntry, 'placement'>, p: Placement): Placement {
+export function turned(entry: Pick<CatalogEntry, 'placement' | 'footprint'>, p: Placement): Placement {
   const rotation: Rotation = p.rotation % 2 === 0 ? 1 : 0
-  return entry.placement === 'wall' ? { tileX: p.tileY, tileY: p.tileX, rotation } : { ...p, rotation }
+  if (entry.placement === 'wall') return { tileX: p.tileY, tileY: p.tileX, rotation }
+  // Turning swaps w and d, so nudge it back inside if it would poke out.
+  const { w, d } = rotatedSize(entry, rotation)
+  return { tileX: Math.min(p.tileX, ROOM_SIZE - w), tileY: Math.min(p.tileY, ROOM_SIZE - d), rotation }
 }
 
 /** A free floor tile for the pet to stand on, preferring the front of the room. */
