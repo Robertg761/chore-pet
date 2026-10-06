@@ -297,6 +297,8 @@ const bunSick: Pose = {
       <Thermometer x={103} y={139} rotate={18} />
     </g>
   ),
+  // Tucked in bed: the outfit, backpack and scarf or bow tie are under the covers.
+  hides: ['outfit', 'back', 'neck'],
   anchors: {
     back: { x: 100, y: 120 },
     body: { x: 100, y: 130 },

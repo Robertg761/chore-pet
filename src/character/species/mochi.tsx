@@ -54,7 +54,8 @@ export const mochiIdle: Pose = {
   anchors: {
     back: { x: 100, y: 132 },
     body: { x: 100, y: 132 },
-    outfit: { x: 100, y: 160 },
+    // Mochi is the widest pet, so outfits are drawn a little bigger.
+    outfit: { x: 100, y: 160, scale: 1.1 },
     neck: { x: 100, y: 152 },
     face: { x: 100, y: 124 },
     head: { x: 100, y: 78 },

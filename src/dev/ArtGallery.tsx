@@ -4,7 +4,7 @@ import { Character, CharacterArt } from '../character/Character'
 import { Cheer } from '../effects/Cheer'
 import { Sparkle } from '../effects/Sparkle'
 import { POSES, type PoseName } from '../character/poses'
-import { SPECIES, type CharacterSlot, type MessStage, type Mood } from '../domain/types'
+import { CHEEK_STYLES, EYE_STYLES, SPECIES, type CharacterSlot, type MessStage, type Mood } from '../domain/types'
 import { isoPoints } from '../room/iso'
 import { OBJECT_ART } from '../room/objects'
 import { OBJECT_SCALE, tileCorner } from '../room/shell/geometry'
@@ -130,6 +130,7 @@ export default function ArtGallery() {
       <EffectsSection />
       <WeekViewSection />
       <WardrobeCheck />
+      <FaceOptions />
     </main>
   )
 }
@@ -226,6 +227,15 @@ const WARDROBE_ROWS: { label: string; equipped: Partial<Record<CharacterSlot, st
   { label: 'scarf', equipped: { neck: 'scarf' } },
   { label: 'bow tie', equipped: { neck: 'bow-tie' } },
   { label: 'backpack', equipped: { back: 'backpack' } },
+  { label: 'hoodie', equipped: { outfit: 'hoodie' } },
+  { label: 'overalls', equipped: { outfit: 'overalls' } },
+  { label: 'dress', equipped: { outfit: 'dress' } },
+  { label: 'knit sweater', equipped: { outfit: 'knit-sweater' } },
+  { label: 'leaf crown', equipped: { head: 'leaf-crown' } },
+  { label: 'hoodie + scarf + beanie', equipped: { outfit: 'hoodie', neck: 'scarf', head: 'beanie-red' } },
+  { label: 'overalls + bow tie + bow', equipped: { outfit: 'overalls', neck: 'bow-tie', head: 'bow', face: 'glasses' } },
+  { label: 'dress + bow', equipped: { outfit: 'dress', head: 'bow' } },
+  { label: 'sweater + crown + pack', equipped: { outfit: 'knit-sweater', head: 'leaf-crown', back: 'backpack' } },
   { label: 'everything on', equipped: { head: 'bow', face: 'glasses', neck: 'scarf', back: 'backpack' } },
 ]
 
@@ -248,6 +258,50 @@ function WardrobeCheck() {
             <figcaption key={row.label}>{row.label}</figcaption>,
             ...WARDROBE_POSES.map((p) => (
               <Character key={row.label + p} species={s} mood={p === 'idle' || p === 'sleeping' || p === 'cheering' ? 'happy' : p} pose={p} bodyColour={SPECIES_COLOUR[s]} equipped={row.equipped} size={cell} title={`${s} ${p} with ${row.label}`} />
+            )),
+          ])}
+        </section>
+      ))}
+    </>
+  )
+}
+
+/** Every eye style x cheek style per species on the idle pose, plus each eye style across all seven poses. */
+function FaceOptions() {
+  const cell = 100
+  return (
+    <>
+      <h2>Face options</h2>
+      {SPECIES.map((s) => (
+        <section key={s} className="gallery-row" style={{ display: 'grid', gridTemplateColumns: `80px repeat(${CHEEK_STYLES.length}, ${cell}px)`, gap: 4, alignItems: 'center' }}>
+          <h3 style={{ gridColumn: '1 / -1' }}>{s}: eyes x cheeks</h3>
+          <span />
+          {CHEEK_STYLES.map((c) => (
+            <figcaption key={c} style={{ textAlign: 'center' }}>
+              {c}
+            </figcaption>
+          ))}
+          {EYE_STYLES.flatMap((e) => [
+            <figcaption key={e}>{e}</figcaption>,
+            ...CHEEK_STYLES.map((c) => (
+              <Character key={e + c} species={s} mood="happy" bodyColour={SPECIES_COLOUR[s]} look={{ eyes: e, cheeks: c }} size={cell} title={`${s} with ${e} eyes and ${c} cheeks`} />
+            )),
+          ])}
+        </section>
+      ))}
+      {SPECIES.map((s) => (
+        <section key={s} className="gallery-row" style={{ display: 'grid', gridTemplateColumns: `80px repeat(${WARDROBE_POSES.length}, ${cell}px)`, gap: 4, alignItems: 'center' }}>
+          <h3 style={{ gridColumn: '1 / -1' }}>{s}: eye styles on every pose</h3>
+          <span />
+          {WARDROBE_POSES.map((p) => (
+            <figcaption key={p} style={{ textAlign: 'center' }}>
+              {p}
+            </figcaption>
+          ))}
+          {EYE_STYLES.flatMap((e) => [
+            <figcaption key={e}>{e}</figcaption>,
+            ...WARDROBE_POSES.map((p) => (
+              <Character key={e + p} species={s} mood={p === 'idle' || p === 'sleeping' || p === 'cheering' ? 'happy' : p} pose={p} bodyColour={SPECIES_COLOUR[s]} look={{ eyes: e, cheeks: 'round' }} size={cell} title={`${s} ${p} with ${e} eyes`} />
             )),
           ])}
         </section>

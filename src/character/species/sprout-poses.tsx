@@ -266,6 +266,8 @@ const sick: Pose = {
   )
   ),
   // The face is drawn full size in the bed (see sickY), so face items keep full size too.
+  // Tucked in bed: the outfit, backpack and scarf or bow tie are under the covers.
+  hides: ['outfit', 'back', 'neck'],
   anchors: { ...anchorsFor(SICK_TF), face: { x: 100, y: sickY(126), scale: 1 } },
 }
 

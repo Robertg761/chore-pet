@@ -18,6 +18,8 @@ export interface Pose {
   /** Body and face for this pose, already coloured. */
   renderBody: (bodyColour: string, mood: Mood) => ReactNode
   anchors: Record<CharacterSlot, Anchor>
+  /** Slots this pose covers up, so their items aren't drawn (in bed, the outfit, backpack and neck items are under the covers). */
+  hides?: CharacterSlot[]
 }
 
 export interface Item {

@@ -31,6 +31,7 @@ export function CharacterArt({ species, mood, bodyColour, equipped = {}, pose, i
     <LookContext.Provider value={{ ...DEFAULT_LOOK, ...look }}>
       {SLOT_RENDER_ORDER.map((slot) => {
         if (slot === 'body') return <g key={slot}>{p.renderBody(bodyColour, mood)}</g>
+        if (p.hides?.includes(slot)) return null
         const item = items.find((i) => i.id === equipped[slot] && i.slot === slot)
         return item ? <g key={slot}>{placed(p.anchors[slot], item.render())}</g> : null
       })}

@@ -105,11 +105,11 @@ Parallel batch G:
 
 - [SONNET: ui-builder] Character creator: species (switching keeps the outfit), name, body colour, eye and cheek variants. **Done**
 - [SONNET: ui-builder] Wardrobe: equip per slot, live preview, saved outfits. **Done**
-- [SONNET: svg-artist] Full outfits for the outfit slot (hoodie, overalls, dress, a seasonal set).
+- [SONNET: svg-artist] Full outfits for the outfit slot (hoodie, overalls, dress, a seasonal set). **Done** (autumn set: knit sweater and leaf crown)
 
-- [LEAD] Review every item on every pose of every species.
+- [LEAD] Review every item on every pose of every species. **Done:** all 11 items on all 7 poses of all 3 pets, alone and combined. In bed the outfit, backpack and neck items are tucked under the covers; Mochi's outfits are drawn 10% bigger for its wider body.
 
-**Done when:** a user can dress a character that feels like theirs, with every item wearable in every pose.
+**Done when:** a user can dress a character that feels like theirs, with every item wearable in every pose. **Met.**
 
 ## Phase 7: Polish and ship
 

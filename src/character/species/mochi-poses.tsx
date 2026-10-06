@@ -32,13 +32,13 @@ function transformOf({ sx = 1, sy = 1, rotate = 0, lift = 0 }: Shape) {
 }
 
 /** Maps an idle anchor through the same squash, lean and lift as the drawing. */
-function moved(a: { x: number; y: number }, { sx = 1, sy = 1, rotate = 0, lift = 0 }: Shape): Anchor {
+function moved(a: Anchor, { sx = 1, sy = 1, rotate = 0, lift = 0 }: Shape): Anchor {
   const dx = (a.x - 100) * sx
   const dy = (a.y - GROUND_Y) * sy
   const r = (rotate * Math.PI) / 180
   const x = 100 + dx * Math.cos(r) - dy * Math.sin(r)
   const y = GROUND_Y + dx * Math.sin(r) + dy * Math.cos(r) - lift
-  return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, rotate }
+  return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, rotate, ...(a.scale !== undefined && { scale: a.scale }) }
 }
 
 function anchorsFor(shape: Shape): Pose['anchors'] {
@@ -304,6 +304,8 @@ const mochiSick: Pose = {
       <Thermometer x={101} y={138} rotate={12} />
     </g>
   ),
+  // Tucked in bed: the outfit, backpack and scarf or bow tie are under the covers.
+  hides: ['outfit', 'back', 'neck'],
   anchors: { ...sickAnchors, head: { x: sickAnchors.head.x + 8, y: sickAnchors.head.y, scale: 0.88, rotate: 8 } },
 }
 
