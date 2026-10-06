@@ -51,7 +51,7 @@ Parallel batch B:
 
 Parallel batch C:
 
-- [SONNET: catalog-curator] `src/catalog/objects.ts`: the 12 starting objects with footprint, wall placement rules and default chores. The lead fixed footprints, placement and layer (art depends on them); the curator writes names, rooms and default chores.
+- [SONNET: catalog-curator] `src/catalog/objects.ts`: the 12 starting objects with footprint, wall placement rules and default chores. The lead fixed footprints, placement and layer (art depends on them); the curator writes names, rooms and default chores. **Done**
 - [SONNET: svg-artist] Objects batch 1: stove, fridge, dishwasher, trash can (clean, messy1, messy2 each), copying the reference sink.
 - [SONNET: svg-artist] Objects batch 2: recycling, bed, washer, toilet.
 - [SONNET: svg-artist] Objects batch 3: shower, couch, floor rug, table.
