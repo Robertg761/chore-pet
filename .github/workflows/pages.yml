@@ -1,6 +1,6 @@
 # Checks every pull request, and deploys main to GitHub Pages
-# (https://<owner>.github.io/<repo>/). One-time setup: Settings > Pages >
-# Source: GitHub Actions. Optional repository secrets VITE_SUPABASE_URL and
+# (https://<owner>.github.io/<repo>/). The deploy job tries to switch Pages on;
+# if it can't, set Settings > Pages > Source: GitHub Actions once. Optional repository secrets VITE_SUPABASE_URL and
 # VITE_SUPABASE_ANON_KEY turn on cloud sync; without them the app keeps
 # everything on the device.
 name: Pages
@@ -52,5 +52,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Switches Pages on (source: GitHub Actions) if it isn't yet. If the
+      # workflow token isn't allowed to, turn it on once in Settings > Pages.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - id: deployment
         uses: actions/deploy-pages@v4
