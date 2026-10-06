@@ -144,14 +144,16 @@ export interface Sortable {
 }
 
 /**
- * Back-to-front draw order. Flat things go first (they lie under everything).
+ * Back-to-front draw order. Things hung on the back walls go first, then flat
+ * things (they lie under everything).
  * For solid things, A is drawn before B when A ends before B starts along tx,
  * or else along ty; the result is topologically sorted, falling back to
  * distance from the back corner if the rules ever form a cycle.
  */
 export function depthOrder<T extends Sortable>(items: T[]): T[] {
+  const hung = items.filter((i) => i.layer === 'hung').sort(byCorner)
   const flat = items.filter((i) => i.layer === 'flat').sort(byCorner)
-  const solid = items.filter((i) => i.layer !== 'flat').sort(byCorner)
+  const solid = items.filter((i) => i.layer === 'solid').sort(byCorner)
   const behind = (a: Footprint, b: Footprint) => (a.tx + a.w <= b.tx ? true : b.tx + b.w <= a.tx ? false : a.ty + a.d <= b.ty)
 
   const remaining = new Set(solid)
@@ -162,7 +164,7 @@ export function depthOrder<T extends Sortable>(items: T[]): T[] {
     ordered.push(pick)
     remaining.delete(pick)
   }
-  return [...flat, ...ordered]
+  return [...hung, ...flat, ...ordered]
 }
 
 function byCorner(a: Sortable, b: Sortable): number {
