@@ -137,6 +137,24 @@ Parallel batch H:
 
 **Done when:** a stranger can open the link on a phone, build a room, finish a chore and get an unlock with no help. **Met in phone emulation** (Pixel 7 profile, touch only, production build): landing to picking Sprout, building a kitchen, finishing a chore and putting on the red beanie, with no help and no errors. It also reloads offline from the service worker. Re-checked on the live URL after launch: the same flow passes with no errors, and the sample home's seeded history doesn't count. Not yet tried on a physical phone.
 
+## Phase 8: Deep polish
+
+Feedback from the first real use: the red beanie didn't sit on the pet properly, outfits read as thin bands, and the home screen scrolled about four phone-heights. Goal: every item fits every pet, and every screen fits one viewport on a phone and lays out well on desktop.
+
+- [LEAD] Item fit infrastructure: each pose carries its body silhouette, outfits are clipped to it and the outline is re-inked on top, and each item's render gets the species so it can be cut per pet. `items.tsx` split into `items/hats.tsx`, `items/outfits.tsx` and `items/extras.tsx` so each can be redrawn on its own. **Done**
+
+Parallel batch I:
+
+- [SONNET: svg-artist] Hats (`src/character/items/hats.tsx`): a beanie that hugs each head (Mochi's dome, between Bun's ears, around Sprout's stem); review bow and leaf crown.
+- [SONNET: svg-artist] Outfits (`src/character/items/outfits.tsx`): hoodie with hood, overalls with bib and straps, dress and knit sweater as full garments with necklines, relying on the silhouette clip.
+- [SONNET: svg-artist] Extras (`src/character/items/extras.tsx`): backpack with front straps; neck items sit over every outfit; glasses per species.
+- [SONNET: ui-builder] Secondary screens (Rewards, Wardrobe, Week, Settings, Creator, Share, Vacation) fit one phone viewport and use the width on desktop.
+
+- [LEAD] Single-screen home: top bar, the room as the hero, an "Up next" card with a sheet for the full list, and a tab bar (bottom on phones, side rail on desktop). Build mode fits one screen.
+- [LEAD] Review: the wardrobe check in `/?art` for every item, species and pose; no page scroll at 390 x 664 and a balanced layout at 1280 x 800; axe clean.
+
+**Done when:** every item looks made for every pet in every pose, and the home and every screen fit one viewport on a phone and a desktop browser.
+
 ## Stretch
 
 Photo proof, multiple rooms and templates, shared households, drawing your own floor plan.

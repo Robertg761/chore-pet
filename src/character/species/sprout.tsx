@@ -62,6 +62,7 @@ export const sproutIdle: Pose = {
       <Face mood={mood} eyeY={126} mouthY={140} />
     </g>
   ),
+  silhouette: { d: BODY },
   anchors: {
     back: { x: 100, y: 138 },
     body: { x: 100, y: 138 },

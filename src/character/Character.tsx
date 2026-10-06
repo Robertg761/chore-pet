@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
+import { CHARACTER_STROKE, PALETTE } from '../art/palette'
 import { SLOT_RENDER_ORDER, type CharacterSlot, type Mood, type Species } from '../domain/types'
 import { ITEMS } from './items'
 import { DEFAULT_LOOK, LookContext, type Look } from './look'
@@ -27,13 +28,27 @@ export interface CharacterProps {
 /** The pet as SVG content in its 200x200 box (feet near y = 180), for use inside another SVG. */
 export function CharacterArt({ species, mood, bodyColour, equipped = {}, pose, items = ITEMS, look }: Omit<CharacterProps, 'size' | 'title'>) {
   const p = poseFor(species, pose ?? poseNameFor(mood))
+  const clip = `body${useId().replace(/[^a-zA-Z0-9]/g, '')}`
+  const { d, transform } = p.silhouette
   return (
     <LookContext.Provider value={{ ...DEFAULT_LOOK, ...look }}>
       {SLOT_RENDER_ORDER.map((slot) => {
         if (slot === 'body') return <g key={slot}>{p.renderBody(bodyColour, mood)}</g>
         if (p.hides?.includes(slot)) return null
         const item = items.find((i) => i.id === equipped[slot] && i.slot === slot)
-        return item ? <g key={slot}>{placed(p.anchors[slot], item.render())}</g> : null
+        if (!item) return null
+        const art = placed(p.anchors[slot], item.render({ species }))
+        if (slot !== 'outfit') return <g key={slot}>{art}</g>
+        // Outfits are cut to the body outline, and the outline is inked again on top.
+        return (
+          <g key={slot}>
+            <clipPath id={clip}>
+              <path d={d} transform={transform} />
+            </clipPath>
+            <g clipPath={`url(#${clip})`}>{art}</g>
+            <path d={d} transform={transform} fill="none" stroke={PALETTE.ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" />
+          </g>
+        )
       })}
     </LookContext.Provider>
   )

@@ -28,6 +28,12 @@ function figureTransform(p: Posture) {
   return `translate(0 ${p.dy}) rotate(${p.tilt} 100 ${GROUND})`
 }
 
+/** The body outline after the posture (outfits are clipped to it). */
+const silhouetteFor = (p: Posture) => ({
+  d: BODY,
+  transform: `${figureTransform(p)} translate(100 ${GROUND}) scale(${p.sx} ${p.sy}) translate(-100 ${-GROUND})`,
+})
+
 /** Where an idle-space point lands after the posture, as an anchor. */
 function anchorFor(x: number, y: number, p: Posture, scale?: number): Anchor {
   const px = 100 + (x - 100) * p.sx
@@ -131,6 +137,7 @@ const bunContent: Pose = {
         </>
       ),
     }),
+  silhouette: silhouetteFor(CONTENT),
   anchors: anchorsFor(CONTENT, 93),
 }
 
@@ -156,6 +163,7 @@ const bunMeh: Pose = {
         </>
       ),
     }),
+  silhouette: silhouetteFor(MEH),
   anchors: anchorsFor(MEH, 95),
 }
 
@@ -183,6 +191,7 @@ const bunScruffy: Pose = {
       ),
       smudges: [[64, 158], [136, 126], [124, 170]],
     }),
+  silhouette: silhouetteFor(SCRUFFY),
   anchors: anchorsFor(SCRUFFY, 96),
 }
 
@@ -227,6 +236,7 @@ const bunSleeping: Pose = {
         </>
       ),
     }),
+  silhouette: silhouetteFor(SLEEPING),
   anchors: anchorsFor(SLEEPING, 95),
 }
 
@@ -264,6 +274,7 @@ const bunCheering: Pose = {
         </>
       ),
     }),
+  silhouette: silhouetteFor(CHEERING),
   anchors: anchorsFor(CHEERING, 92),
 }
 
@@ -299,6 +310,7 @@ const bunSick: Pose = {
   ),
   // Tucked in bed: the outfit, backpack and scarf or bow tie are under the covers.
   hides: ['outfit', 'back', 'neck'],
+  silhouette: { d: BODY, transform: `translate(100 ${SICK_BOTTOM}) scale(${SICK_SCALE}) translate(-100 ${-GROUND})` },
   anchors: {
     back: { x: 100, y: 120 },
     body: { x: 100, y: 130 },

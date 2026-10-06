@@ -224,6 +224,7 @@ function WeekViewSection() {
 
 const WARDROBE_POSES: PoseName[] = ['idle', 'content', 'meh', 'scruffy', 'sick', 'sleeping', 'cheering']
 const WARDROBE_ROWS: { label: string; equipped: Partial<Record<CharacterSlot, string>> }[] = [
+  { label: 'beanie', equipped: { head: 'beanie-red' } },
   { label: 'bow', equipped: { head: 'bow' } },
   { label: 'glasses', equipped: { face: 'glasses' } },
   { label: 'scarf', equipped: { neck: 'scarf' } },

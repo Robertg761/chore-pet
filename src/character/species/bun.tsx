@@ -55,6 +55,7 @@ export const bunIdle: Pose = {
       </g>
     )
   },
+  silhouette: { d: BODY },
   anchors: {
     back: { x: 100, y: 140 },
     body: { x: 100, y: 140 },
