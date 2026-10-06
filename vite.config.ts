@@ -7,6 +7,8 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Lets a tap on a reminder open the app (public/sw-notifications.js).
+      workbox: { importScripts: ['sw-notifications.js'] },
       manifest: {
         name: 'Chore Pet',
         short_name: 'Chore Pet',
