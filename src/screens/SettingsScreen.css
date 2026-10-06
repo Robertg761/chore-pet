@@ -1,0 +1,7 @@
+.settings { align-self: stretch; display: flex; flex-direction: column; gap: 14px; }
+.settings h1 { margin: 0; font-size: 32px; }
+.settings h2 { margin: 0 0 8px; font-size: 18px; }
+.settings-back { align-self: flex-start; padding-left: 0; }
+.settings-card { padding: 14px 16px; background: var(--card); border: 2px solid var(--ink); border-radius: var(--radius); }
+.settings-toggle { min-height: 44px; display: flex; align-items: center; gap: 12px; font-weight: 800; cursor: pointer; }
+.settings-toggle input { width: 24px; height: 24px; accent-color: var(--accent); }

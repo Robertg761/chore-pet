@@ -8,6 +8,7 @@ import type { Chore, MessStage, Mood, Pet, PlacedObject, Room as RoomRow } from 
 import { footprintOf, freeTile, overlaps, tilesOf, type Footprint } from '../room/grid'
 import { PET_SCALE, Room } from '../room/Room'
 import { ROOM_VIEWBOX, roomPoint } from '../room/shell/geometry'
+import { play } from '../audio/sfx'
 import { initialPet, positionAt, poseFor, step, tap, type PetState, type Tile, type World } from './behaviour'
 import './LivingRoom.css'
 
@@ -105,6 +106,7 @@ export function LivingRoom({ room, objects, stages, pet, mood, away, chores, sta
   }
 
   function onTap() {
+    play('chirp')
     const t = performance.now()
     const next = tap(state, t)
     setState(next)

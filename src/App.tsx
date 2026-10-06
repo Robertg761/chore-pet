@@ -52,8 +52,12 @@ import { RoomStylePicker } from './screens/RoomStylePicker'
 import { VacationScreen } from './screens/VacationScreen'
 import { Wardrobe } from './screens/Wardrobe'
 import { WeekView } from './screens/WeekView'
+import { SettingsScreen } from './screens/SettingsScreen'
+import { ShareCard } from './screens/ShareCard'
+import { play } from './audio/sfx'
+import { useReminders } from './reminders/reminders'
 
-type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; chore?: Chore } | { name: 'vacation' } | { name: 'rewards' } | { name: 'week' } | { name: 'creator' } | { name: 'wardrobe' }
+type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; chore?: Chore } | { name: 'vacation' } | { name: 'rewards' } | { name: 'week' } | { name: 'creator' } | { name: 'wardrobe' } | { name: 'share' } | { name: 'settings' }
 
 const SYNC_LABEL: Record<SyncStatus, string> = {
   'local-only': 'Saved on this device',
@@ -79,6 +83,14 @@ export default function App() {
   const [sparkles, setSparkles] = useState<(SparkleSpot & { id: number })[]>([])
   const [gifts, setGifts] = useState<Unlock[]>([])
   const momentKey = useRef(0)
+
+  // The pet's daily nudge (while the app is open); needs the same view of the day as the screen.
+  const reminderStatuses = data.home ? petCondition(data.chores, data.completions, today, data.home.vacations).statuses : []
+  useReminders(
+    data.home && data.pet
+      ? { pet: data.pet, chores: data.chores, statuses: reminderStatuses, today, away: isInVacation(today, data.home.vacations) }
+      : null,
+  )
 
   // Homes made before rooms existed get their first room.
   const needsRoom = Boolean(data.home && data.rooms.length === 0)
@@ -139,6 +151,29 @@ export default function App() {
     return (
       <main className="shell">
         <VacationScreen vacations={home.vacations} today={today} onChange={(v) => appStore.apply(...setVacations(home, v))} onClose={back} />
+      </main>
+    )
+  }
+
+  if (view.name === 'settings') {
+    return (
+      <main className="shell">
+        <SettingsScreen petName={pet.name} onClose={back} />
+      </main>
+    )
+  }
+
+  if (view.name === 'share' && rooms[0]) {
+    return (
+      <main className="shell">
+        <ShareCard
+          pet={pet}
+          room={rooms[0]}
+          objects={objects.filter((o) => o.roomId === rooms[0].id)}
+          choreCount={progress?.choreCount ?? 0}
+          streak={progress?.currentStreak ?? 0}
+          onClose={back}
+        />
       </main>
     )
   }
@@ -279,6 +314,17 @@ export default function App() {
             <button type="button" className="chip-button" onClick={() => setView({ name: 'creator' })}>
               Change look
             </button>
+            <button type="button" className="chip-button" onClick={() => setView({ name: 'settings' })} aria-label="Settings">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" strokeWidth="2.4" />
+                <path
+                  d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
           </div>
         </div>
         <HealthBar health={condition.health} mood={condition.mood} away={away} />
@@ -323,6 +369,7 @@ export default function App() {
         onComplete={(chore) => {
           const done = completeChoreWithRewards(chore, progress, { chores, completions, vacations: home.vacations }, devNow())
           appStore.apply(...done.ops)
+          play('sparkle')
           if (done.unlocked.length) setGifts((queue) => [...queue, ...done.unlocked])
           const key = ++momentKey.current
           setCelebrate({ key, choreName: chore.name })
@@ -336,6 +383,10 @@ export default function App() {
 
       <button type="button" className="link-button" onClick={() => setView({ name: 'week' })}>
         Your week
+      </button>
+
+      <button type="button" className="link-button" onClick={() => setView({ name: 'share' })}>
+        Share your home
       </button>
 
       <button type="button" className="link-button" onClick={() => setView({ name: 'vacation' })}>
