@@ -13,6 +13,7 @@ import {
   adoptSample,
   completeChoreWithRewards,
   updatePet,
+  updateRoom,
   createHousehold,
   createRoom,
   moveObject,
@@ -46,9 +47,11 @@ import { PetPicker } from './screens/PetPicker'
 import { RewardsScreen } from './screens/RewardsScreen'
 import { rewardsButtonLabel } from './screens/rewardsModel'
 import { SampleBanner } from './screens/SampleBanner'
+import { RoomStylePicker } from './screens/RoomStylePicker'
 import { VacationScreen } from './screens/VacationScreen'
+import { WeekView } from './screens/WeekView'
 
-type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; chore?: Chore } | { name: 'vacation' } | { name: 'rewards' }
+type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; chore?: Chore } | { name: 'vacation' } | { name: 'rewards' } | { name: 'week' }
 
 const SYNC_LABEL: Record<SyncStatus, string> = {
   'local-only': 'Saved on this device',
@@ -134,6 +137,14 @@ export default function App() {
     return (
       <main className="shell">
         <VacationScreen vacations={home.vacations} today={today} onChange={(v) => appStore.apply(...setVacations(home, v))} onClose={back} />
+      </main>
+    )
+  }
+
+  if (view.name === 'week') {
+    return (
+      <main className="shell">
+        <WeekView chores={chores} completions={completions} vacations={home.vacations} today={today} onClose={back} />
       </main>
     )
   }
@@ -224,7 +235,15 @@ export default function App() {
             onClose={() => setSelectedId(null)}
           />
         ) : (
-          <CatalogTray roomType={room.type} objects={roomObjects} unlocked={progress?.unlockedItems} onPick={(entry) => (setSelectedId(null), setPlacing(entry))} />
+          <>
+            <CatalogTray roomType={room.type} objects={roomObjects} unlocked={progress?.unlockedItems} onPick={(entry) => (setSelectedId(null), setPlacing(entry))} />
+            <RoomStylePicker
+              wallStyle={room.wallStyle}
+              floorStyle={room.floorStyle}
+              progress={progress}
+              onChange={(patch) => appStore.apply(...updateRoom(room, patch))}
+            />
+          </>
         )}
       </main>
     )
@@ -286,6 +305,10 @@ export default function App() {
         onEdit={(chore) => setView({ name: 'edit', chore })}
         onAdd={() => setView({ name: 'edit' })}
       />
+
+      <button type="button" className="link-button" onClick={() => setView({ name: 'week' })}>
+        Your week
+      </button>
 
       <button type="button" className="link-button" onClick={() => setView({ name: 'vacation' })}>
         Vacation mode
