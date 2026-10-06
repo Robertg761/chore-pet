@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { catalogEntry } from '../catalog/objects'
-import { completeChore, createHousehold, moveObject, placeObject, removeObject } from './actions'
+import { SAMPLE_HOME_NAME, sampleHome } from '../content/sampleHome'
+import { adoptSample, completeChore, createHousehold, moveObject, placeObject, removeHome, removeObject } from './actions'
 import { change, emptySnapshot, selectHome, type Snapshot } from './state'
 
 function apply(s: Snapshot, ops: ReturnType<typeof createHousehold>): Snapshot {
@@ -48,5 +49,43 @@ describe('rooms and objects', () => {
     expect(data.objects.map((o) => o.catalogId)).toEqual(['sink'])
     expect(data.chores.every((c) => c.objectId !== stove.id)).toBe(true)
     expect(data.completions).toHaveLength(0)
+  })
+})
+
+describe('sample homes', () => {
+  const sample = () => apply(emptySnapshot('u1'), sampleHome({ species: 'mochi', userId: 'u1', today: '2026-10-06' }))
+
+  it('making it mine keeps everything and drops the sample name', () => {
+    let s = sample()
+    const before = selectHome(s.tables)
+    expect(before.home?.name).toBe(SAMPLE_HOME_NAME)
+    s = apply(s, adoptSample(before.home!))
+    const after = selectHome(s.tables)
+    expect(after.home?.name).toBe('Home')
+    expect(after.objects).toHaveLength(before.objects.length)
+    expect(after.chores).toHaveLength(before.chores.length)
+    expect(after.completions).toHaveLength(before.completions.length)
+    expect(after.pet?.name).toBe('Mochi')
+  })
+
+  it('takes a custom name, and falls back when it is blank', () => {
+    const home = selectHome(sample().tables).home!
+    expect(adoptSample(home, '  Our flat ')[0]).toMatchObject({ value: { name: 'Our flat' } })
+    expect(adoptSample(home, '   ')[0]).toMatchObject({ value: { name: 'Home' } })
+  })
+
+  it('starting fresh removes the home and everything in it', () => {
+    let s = sample()
+    const home = selectHome(s.tables).home!
+    s = apply(s, removeHome(home.id))
+    const data = selectHome(s.tables)
+    expect(data.home).toBeNull()
+    expect(data.pet).toBeNull()
+    expect(data.rooms).toHaveLength(0)
+    expect(data.objects).toHaveLength(0)
+    expect(data.chores).toHaveLength(0)
+    expect(data.completions).toHaveLength(0)
+    // Nothing is left behind in the store itself, not just hidden by the selector.
+    for (const table of Object.values(s.tables)) expect(Object.keys(table)).toHaveLength(0)
   })
 })

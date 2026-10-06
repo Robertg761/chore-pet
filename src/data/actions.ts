@@ -84,3 +84,13 @@ export function setVacations(home: Home, vacations: VacationWindow[]): NewOp[] {
 export function updatePet(pet: Pet, patch: Partial<Omit<Pet, 'id' | 'homeId'>>): NewOp[] {
   return [upsertOp('pets', { ...pet, ...patch })]
 }
+
+/** Remove a whole home. Rooms, objects, chores, history, pet and progress go with it (the database cascades the same way). */
+export function removeHome(homeId: string): NewOp[] {
+  return [deleteOp('homes', homeId)]
+}
+
+/** Keep everything in a sample home and make it the player's own by renaming it away from the sample name. */
+export function adoptSample(home: Home, name = 'Home'): NewOp[] {
+  return [upsertOp('homes', { ...home, name: name.trim() || 'Home' })]
+}

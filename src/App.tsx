@@ -8,19 +8,23 @@ import { objectMessStages } from './domain/mess'
 import type { Chore } from './domain/types'
 import {
   addChore,
+  adoptSample,
   completeChore,
   createHousehold,
   createRoom,
   moveObject,
   placeObject,
   removeChore,
+  removeHome,
   removeObject,
   setVacations,
   updateChore,
 } from './data/actions'
 import { appStore, startAppStore, useDataState, useHome } from './data/appStore'
 import type { SyncStatus } from './data/store'
+import { devNow } from './lib/devClock'
 import { useToday } from './lib/useToday'
+import { SAMPLE_HOME_NAME, sampleHome } from './content/sampleHome'
 import { useInstallPrompt } from './pwa/useInstallPrompt'
 import { BuildRoom, type BuildChange } from './room/BuildRoom'
 import { Sparkle } from './effects'
@@ -32,8 +36,10 @@ import { ChoreEditor } from './screens/ChoreEditor'
 import { ChoreList } from './screens/ChoreList'
 import { sparkleSpot, type SparkleSpot } from './screens/doneMoment'
 import { HealthBar } from './screens/HealthBar'
+import { Landing } from './screens/Landing'
 import { ObjectSheet } from './screens/ObjectSheet'
 import { PetPicker } from './screens/PetPicker'
+import { SampleBanner } from './screens/SampleBanner'
 import { VacationScreen } from './screens/VacationScreen'
 
 type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; chore?: Chore } | { name: 'vacation' }
@@ -54,6 +60,8 @@ export default function App() {
   const [view, setView] = useState<View>({ name: 'home' })
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [placing, setPlacing] = useState<CatalogEntry | null>(null)
+  // First launch: the landing choice, or the picker once "Build my home" is tapped.
+  const [building, setBuilding] = useState(false)
   const { canInstall, install } = useInstallPrompt()
   // The completion moment: the pet cheers and each cleaned object gets its own sparkle.
   const [celebrate, setCelebrate] = useState<Celebration | null>(null)
@@ -71,7 +79,19 @@ export default function App() {
   if (!data.home || !data.pet) {
     return (
       <main className="shell">
-        <PetPicker onChoose={({ species, name }) => appStore.apply(...createHousehold({ species, petName: name, userId: snapshot.userId }))} />
+        {building ? (
+          <>
+            <button type="button" className="link-button landing-back" onClick={() => setBuilding(false)}>
+              Back
+            </button>
+            <PetPicker onChoose={({ species, name }) => appStore.apply(...createHousehold({ species, petName: name, userId: snapshot.userId }))} />
+          </>
+        ) : (
+          <Landing
+            onSample={(species) => appStore.apply(...sampleHome({ species, userId: snapshot.userId, today }))}
+            onBuild={() => setBuilding(true)}
+          />
+        )}
       </main>
     )
   }
@@ -193,6 +213,13 @@ export default function App() {
         <HealthBar health={condition.health} mood={condition.mood} away={away} />
       </header>
 
+      {home.name === SAMPLE_HOME_NAME && (
+        <SampleBanner
+          onKeep={() => appStore.apply(...adoptSample(home))}
+          onStartFresh={() => (setBuilding(false), setView({ name: 'home' }), appStore.apply(...removeHome(home.id)))}
+        />
+      )}
+
       {room && (
         <LivingRoom
           room={room}
@@ -220,7 +247,7 @@ export default function App() {
         vacations={home.vacations}
         today={today}
         onComplete={(chore) => {
-          appStore.apply(...completeChore(chore, progress))
+          appStore.apply(...completeChore(chore, progress, devNow()))
           const key = ++momentKey.current
           setCelebrate({ key, choreName: chore.name })
           const placed = roomObjects.find((o) => o.id === chore.objectId)
