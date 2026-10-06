@@ -30,8 +30,8 @@ The three pose files are pre-registered in `src/character/poses.ts`, so the pose
 
 ## Phase 1: Core loop
 
-- [LEAD] Data layer: repository functions over Supabase for every table, plus an offline cache (IndexedDB) that syncs on reconnect. Define the sync and conflict rule (last write wins per row is fine).
-- [LEAD] Wire `ensureSession()` into app start; create the home, pet and progress rows on first launch. The pet row gets the species from the picker below.
+- [LEAD] Data layer: repository functions over Supabase for every table, plus an offline cache (IndexedDB) that syncs on reconnect. Define the sync and conflict rule (last write wins per row is fine). **Done** (`src/data/`): the local copy is what the UI reads; changes queue in an outbox (latest per row) and flush parents-first; after a flush we pull and re-apply anything still queued. UI code calls the pure functions in `src/data/actions.ts` and passes the result to `appStore.apply(...)`.
+- [LEAD] Wire `ensureSession()` into app start; create the home, pet and progress rows on first launch. The pet row gets the species from the picker below. **Done** (`src/App.tsx`); screens are placeholders with fixed props in `src/screens/`.
 
 Parallel batch B:
 
