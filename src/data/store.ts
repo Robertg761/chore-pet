@@ -1,6 +1,6 @@
 import type { LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
-import { acknowledge, change, claim, emptySnapshot, mergeQueuedProgress, planFlush, rebase, type NewOp, type Op, type Snapshot } from './state'
+import { acknowledge, change, claim, emptySnapshot, mergeQueuedProgress, planFlush, progressBaseOf, rebase, type NewOp, type Op, type Snapshot } from './state'
 
 /**
  * - local-only: no Supabase keys, data stays on this device.
@@ -16,6 +16,12 @@ export interface DataState {
   lastError: string | null
   /** False when the browser refuses to store the offline copy (storage blocked or full): changes then last only until reload. */
   savedLocally: boolean
+  /**
+   * False while this device has not yet heard from the server for the current
+   * account (first launch, or just signed in somewhere new). An empty home is
+   * only really empty once this is true, so onboarding waits for it.
+   */
+  hydrated: boolean
 }
 
 export interface Store {
@@ -36,7 +42,7 @@ export interface StoreDeps {
 }
 
 export function createStore({ local, remote, isOnline = () => true }: StoreDeps): Store {
-  let state: DataState = { ready: false, snapshot: emptySnapshot(), sync: remote ? 'offline' : 'local-only', lastError: null, savedLocally: true }
+  let state: DataState = { ready: false, snapshot: emptySnapshot(), sync: remote ? 'offline' : 'local-only', lastError: null, savedLocally: true, hydrated: !remote }
   const listeners = new Set<() => void>()
   let saving: Promise<void> = Promise.resolve()
 
@@ -70,10 +76,13 @@ export function createStore({ local, remote, isOnline = () => true }: StoreDeps)
   }
 
   async function run(r: Remote) {
-    if (!isOnline()) return set({ sync: 'offline' })
+    if (!isOnline()) return set({ sync: 'offline', hydrated: true })
     set({ sync: 'syncing' })
     try {
+      const before = state.snapshot.userId
       commit(claim(state.snapshot, await r.session()))
+      // Signed in to another account: its home is on the way, so don't offer an empty one meanwhile.
+      if (before !== null && before !== state.snapshot.userId) set({ hydrated: false })
 
       // Another device may have moved progress on; merge before overwriting it.
       if (Object.values(state.snapshot.outbox).some((o) => o.table === 'progress' && o.kind === 'upsert')) {
@@ -98,10 +107,11 @@ export function createStore({ local, remote, isOnline = () => true }: StoreDeps)
       }
 
       const server = await r.pull()
-      commit({ ...state.snapshot, tables: rebase(server, state.snapshot.outbox) })
-      set({ sync: 'synced', lastError: null })
+      commit({ ...state.snapshot, tables: rebase(server, state.snapshot.outbox), progressBase: progressBaseOf(server.progress) })
+      set({ sync: 'synced', lastError: null, hydrated: true })
     } catch (e) {
-      set({ sync: isOnline() ? 'error' : 'offline', lastError: e instanceof Error ? e.message : String(e) })
+      // Offline or failing: let the player carry on with what this device has.
+      set({ sync: isOnline() ? 'error' : 'offline', lastError: e instanceof Error ? e.message : String(e), hydrated: true })
     }
   }
 

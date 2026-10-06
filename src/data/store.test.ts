@@ -208,7 +208,7 @@ describe('when the browser refuses local storage', () => {
 })
 
 describe('two devices on one account', () => {
-  it('keeps rewards earned on both while each was offline', async () => {
+  it('keeps every chore and reward from both while each was offline', async () => {
     const { server, remote } = fakeServer()
     const phone = await onboarded(remote)
     const tablet = createStore({ local: memoryStore(), remote })
@@ -230,9 +230,40 @@ describe('two devices on one account', () => {
     await phone.sync()
     const merged = server.tables.progress[base.homeId]
     expect(merged.unlockedItems).toEqual(expect.arrayContaining(['item:beanie-red', 'wall:mint']))
-    expect(merged.choreCount).toBe(base.choreCount + 2)
+    expect(merged.choreCount).toBe(base.choreCount + 3) // one on the phone, two on the tablet
     expect(merged.bestStreak).toBe(3)
     expect(progressOf(phone)).toEqual(merged)
     expect(progressOf(tablet)).toEqual(merged)
+  })
+})
+
+describe('first sync for an account', () => {
+  it('stays unhydrated until the first pull, so onboarding waits for a saved home', async () => {
+    const { server, remote } = fakeServer()
+    const phone = await onboarded(remote)
+    expect(phone.getState().hydrated).toBe(true)
+    let release = () => {}
+    const gate = new Promise<void>((resolve) => (release = resolve))
+    const slow: Remote = { ...remote, pull: () => gate.then(() => structuredClone(server.tables)) }
+    const tablet = createStore({ local: memoryStore(), remote: slow })
+    await tablet.start()
+    expect(tablet.getState()).toMatchObject({ ready: true, hydrated: false })
+    const synced = tablet.sync()
+    await new Promise((r) => setTimeout(r, 0))
+    expect(tablet.getState().hydrated).toBe(false)
+    release()
+    await synced
+    expect(tablet.getState().hydrated).toBe(true)
+    expect(selectHome(tablet.getState().snapshot.tables).home).not.toBeNull()
+  })
+
+  it('hydrates at once without a server, and when offline', async () => {
+    expect(createStore({ local: memoryStore(), remote: null }).getState().hydrated).toBe(true)
+    const { server, remote } = fakeServer()
+    server.offline = true
+    const store = createStore({ local: memoryStore(), remote })
+    await store.start()
+    await store.sync()
+    expect(store.getState().hydrated).toBe(true)
   })
 })

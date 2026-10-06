@@ -71,7 +71,7 @@ const SYNC_LABEL: Record<SyncStatus, string> = {
 
 export default function App() {
   useEffect(startAppStore, [])
-  const { ready, sync, snapshot, savedLocally } = useDataState()
+  const { ready, hydrated, sync, snapshot, savedLocally } = useDataState()
   const data = useHome()
   const today = useToday()
   const [view, setView] = useState<View>({ name: 'home' })
@@ -106,6 +106,14 @@ export default function App() {
   }, [needsRoom, data.home])
 
   if (!ready) return <main className="shell" aria-busy="true" />
+  // Signed in on a new device: wait for the saved home rather than offering a fresh one.
+  if (!data.home && !hydrated) {
+    return (
+      <main className="shell" aria-busy="true">
+        <p className="dev-note" role="status">Finding your home…</p>
+      </main>
+    )
+  }
 
   if (!data.home || !data.pet) {
     return (

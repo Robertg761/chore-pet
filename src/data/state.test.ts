@@ -115,20 +115,31 @@ describe('selectHome', () => {
 })
 
 describe('mergeProgress', () => {
-  const p = (over: Partial<Progress> = {}): Progress => ({ homeId: 'h', choreCount: 3, currentStreak: 1, bestStreak: 2, unlockedItems: ['item:beanie-red'], ...over })
+  const p = (over: Partial<Progress> = {}): Progress => ({ homeId: 'h', choreCount: 3, currentStreak: 1, bestStreak: 1, unlockedItems: ['item:beanie-red'], ...over })
 
-  it('keeps rewards from both sides and the higher counters', () => {
-    const merged = mergeProgress(p({ choreCount: 5, unlockedItems: ['item:beanie-red', 'decor:plant'] }), p({ choreCount: 4, bestStreak: 6, unlockedItems: ['item:beanie-red', 'wall:mint'] }))
-    expect(merged).toEqual({ homeId: 'h', choreCount: 5, currentStreak: 1, bestStreak: 6, unlockedItems: ['item:beanie-red', 'decor:plant', 'wall:mint'] })
+  it("adds this device's chores to the server's count and keeps rewards from both", () => {
+    // Both devices started at 3; this one did 1 more (4), the other did 2 more (server 5).
+    const merged = mergeProgress(p({ choreCount: 4, unlockedItems: ['item:beanie-red', 'decor:plant'] }), p({ choreCount: 5, bestStreak: 2, unlockedItems: ['item:beanie-red', 'wall:mint'] }), 3)
+    expect(merged.choreCount).toBe(6)
+    expect(merged.bestStreak).toBe(2)
+    expect(merged.unlockedItems).toEqual(['item:beanie-red', 'decor:plant', 'wall:mint', 'item:bow'])
   })
 
-  it('merges a queued progress row with the server copy, keeping its seq', () => {
-    const snap = change(emptySnapshot('u1'), upsertOp('progress', p({ choreCount: 4 })))
+  it('takes the higher count when it never saw the server copy', () => {
+    expect(mergeProgress(p({ choreCount: 4 }), p({ choreCount: 2 })).choreCount).toBe(4)
+  })
+
+  it('merges a queued progress row with the server copy, keeping its seq and moving the base', () => {
+    const snap = { ...change(emptySnapshot('u1'), upsertOp('progress', p({ choreCount: 4 }))), progressBase: { h: 3 } }
     const merged = mergeQueuedProgress(snap, { h: p({ choreCount: 9, unlockedItems: ['wall:mint'] }) })
     const op = merged.outbox['progress:h']
     expect(op.seq).toBe(snap.outbox['progress:h'].seq)
-    expect(op.kind === 'upsert' && op.value).toMatchObject({ choreCount: 9, unlockedItems: ['item:beanie-red', 'wall:mint'] })
-    expect(merged.tables.progress.h.choreCount).toBe(9)
+    expect(op.kind === 'upsert' && (op.value as Progress).choreCount).toBe(10)
+    expect(merged.tables.progress.h.choreCount).toBe(10)
+    expect(merged.progressBase).toEqual({ h: 9 })
+    // A retry against the same server copy doesn't add the delta again.
+    const again = mergeQueuedProgress(merged, { h: p({ choreCount: 9 }) })
+    expect(again.tables.progress.h.choreCount).toBe(10)
     expect(mergeQueuedProgress(snap, {})).toBe(snap)
   })
 })

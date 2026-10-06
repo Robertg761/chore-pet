@@ -1,4 +1,5 @@
 import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room } from '../domain/types'
+import { applyUnlocks } from '../domain/unlocks'
 import { CASCADES, TABLES, keyOf, type TableMap, type TableName } from './tables'
 
 // Pure state for the offline-first data layer. No IO here, so it's all testable.
@@ -28,6 +29,8 @@ export interface Snapshot {
   outbox: Outbox
   /** Monotonic counter for op sequence numbers. */
   seq: number
+  /** The server's chore count per home at the last pull, so this device's own additions can be merged as a delta. */
+  progressBase?: Record<string, number>
 }
 
 export function emptyTables(): Tables {
@@ -124,31 +127,44 @@ export function rebase(server: Tables, outbox: Outbox): Tables {
 /**
  * Progress is one shared row per home, so two devices that each finish chores
  * offline would overwrite each other's. Before a queued progress row is sent,
- * it is merged with the server's: rewards from either side are kept, and the
- * counters take the higher value. (Chores finished on both sides at once can
- * still undercount by the overlap; rewards are never lost.)
+ * it is merged with the server's: the chore count is the server's plus what
+ * this device added since its last pull (`base`), rewards from either side are
+ * kept, and anything the new total has earned is unlocked.
  */
-export function mergeProgress(local: Progress, server: Progress): Progress {
-  return {
+export function mergeProgress(local: Progress, server: Progress, base?: number): Progress {
+  const choreCount = base === undefined ? Math.max(local.choreCount, server.choreCount) : server.choreCount + Math.max(0, local.choreCount - base)
+  const merged: Progress = {
     ...local,
-    choreCount: Math.max(local.choreCount, server.choreCount),
+    choreCount,
     bestStreak: Math.max(local.bestStreak, server.bestStreak),
     unlockedItems: [...local.unlockedItems, ...server.unlockedItems.filter((id) => !local.unlockedItems.includes(id))],
   }
+  return applyUnlocks(merged, merged.currentStreak).progress
 }
 
-/** Merge every queued progress upsert with the server's copy (see mergeProgress). Seqs are kept, so in-flight acks still match. */
+/** The server's chore counts, remembered at each pull as the base for mergeProgress. */
+export function progressBaseOf(server: Tables['progress']): Record<string, number> {
+  return Object.fromEntries(Object.entries(server).map(([k, p]) => [k, p.choreCount]))
+}
+
+/**
+ * Merge every queued progress upsert with the server's copy (see mergeProgress).
+ * Seqs are kept, so in-flight acks still match; the base moves to the server's
+ * count so a retry after a failed send doesn't add the same delta twice.
+ */
 export function mergeQueuedProgress(snapshot: Snapshot, server: Tables['progress']): Snapshot {
   let { tables, outbox } = snapshot
+  const progressBase = { ...snapshot.progressBase }
   for (const [k, op] of Object.entries(outbox)) {
     if (op.table !== 'progress' || op.kind !== 'upsert') continue
     const theirs = server[op.key]
     if (!theirs) continue
-    const merged = mergeProgress(op.value, theirs)
+    const merged = mergeProgress(op.value, theirs, snapshot.progressBase?.[op.key])
+    progressBase[op.key] = theirs.choreCount
     outbox = { ...outbox, [k]: { ...op, value: merged } }
     tables = { ...tables, progress: { ...tables.progress, [op.key]: merged } }
   }
-  return outbox === snapshot.outbox ? snapshot : { ...snapshot, tables, outbox }
+  return outbox === snapshot.outbox ? snapshot : { ...snapshot, tables, outbox, progressBase }
 }
 
 /**
