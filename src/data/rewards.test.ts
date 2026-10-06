@@ -154,3 +154,14 @@ describe('completeChoreWithRewards basics', () => {
     expect(p).toEqual(copy)
   })
 })
+
+describe('completeChoreWithRewards repeats', () => {
+  it('neither records nor counts a completion the schedule ignores', () => {
+    const chore = dailyChore('dishes', '2026-10-01')
+    const first = completeChoreWithRewards(chore, progress(), ctx([chore], []), at(9))
+    expect(upsertOf(first.ops, 'progress')[0].value.choreCount).toBe(1)
+    const completions = upsertOf(first.ops, 'completions').map((o) => o.value)
+    const again = completeChoreWithRewards(chore, progress({ choreCount: 1 }), ctx([chore], completions), at(10))
+    expect(again).toEqual({ ops: [], unlocked: [] })
+  })
+})

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Chore } from '../domain/types'
 import { addChore, completeChore, createHousehold, removeChore } from './actions'
-import { memoryStore } from './local'
+import { memoryStore, type LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
 import { emptyTables, selectHome, type Tables } from './state'
 import { createStore } from './store'
@@ -175,3 +175,34 @@ describe('sync engine', () => {
 
 // Keep the Tables type referenced for readers of the fake server.
 export type _ServerTables = Tables
+
+describe('when the browser refuses local storage', () => {
+  const broken = (): LocalStore => ({
+    load: () => Promise.reject(new Error('SecurityError')),
+    save: () => Promise.reject(new Error('QuotaExceededError')),
+  })
+  const settle = () => new Promise((r) => setTimeout(r, 0))
+
+  it('says so instead of claiming the home is saved', async () => {
+    const store = createStore({ local: broken(), remote: null })
+    await store.start()
+    expect(store.getState()).toMatchObject({ ready: true, savedLocally: false })
+  })
+
+  it('notices a failing save, and recovers once saving works again', async () => {
+    let fail = true
+    const local = memoryStore()
+    const flaky: LocalStore = { load: () => local.load(), save: (s) => (fail ? Promise.reject(new Error('QuotaExceededError')) : local.save(s)) }
+    const store = createStore({ local: flaky, remote: null })
+    await store.start()
+    expect(store.getState().savedLocally).toBe(true)
+    store.apply(...createHousehold({ species: 'bun', petName: 'Pip', userId: null }))
+    await settle()
+    expect(store.getState().savedLocally).toBe(false)
+    fail = false
+    store.apply(...dishes(store))
+    await settle()
+    expect(store.getState().savedLocally).toBe(true)
+    expect(local.current).not.toBeNull()
+  })
+})

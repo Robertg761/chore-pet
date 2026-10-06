@@ -14,6 +14,8 @@ export interface DataState {
   snapshot: Snapshot
   sync: SyncStatus
   lastError: string | null
+  /** False when the browser refuses to store the offline copy (storage blocked or full): changes then last only until reload. */
+  savedLocally: boolean
 }
 
 export interface Store {
@@ -34,7 +36,7 @@ export interface StoreDeps {
 }
 
 export function createStore({ local, remote, isOnline = () => true }: StoreDeps): Store {
-  let state: DataState = { ready: false, snapshot: emptySnapshot(), sync: remote ? 'offline' : 'local-only', lastError: null }
+  let state: DataState = { ready: false, snapshot: emptySnapshot(), sync: remote ? 'offline' : 'local-only', lastError: null, savedLocally: true }
   const listeners = new Set<() => void>()
   let saving: Promise<void> = Promise.resolve()
 
@@ -45,7 +47,17 @@ export function createStore({ local, remote, isOnline = () => true }: StoreDeps)
 
   function commit(snapshot: Snapshot) {
     set({ snapshot })
-    saving = saving.then(() => local.save(snapshot)).catch((e) => console.warn('Could not save the offline copy', e))
+    saving = saving
+      .then(() => local.save(snapshot))
+      .then(
+        () => {
+          if (!state.savedLocally) set({ savedLocally: true })
+        },
+        (e) => {
+          console.warn('Could not save the offline copy', e)
+          set({ savedLocally: false })
+        },
+      )
   }
 
   function ack(ops: Op[]) {
@@ -115,8 +127,9 @@ export function createStore({ local, remote, isOnline = () => true }: StoreDeps)
       return () => listeners.delete(listener)
     },
     async start() {
-      const loaded = await local.load().catch(() => null)
-      set({ ready: true, snapshot: loaded ?? state.snapshot })
+      let savedLocally = true
+      const loaded = await local.load().catch(() => ((savedLocally = false), null))
+      set({ ready: true, snapshot: loaded ?? state.snapshot, savedLocally })
       void sync()
     },
     apply(...ops) {

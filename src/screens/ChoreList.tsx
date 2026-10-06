@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { completionCounts } from '../domain/schedule'
 import type { Chore, Completion, VacationWindow } from '../domain/types'
 import { buildSections, onVacation, type ChoreRow } from './choreListModel'
 import './ChoreList.css'
@@ -78,6 +79,12 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
           <span className="cl-action cl-done-mark" role="status">
             <CheckIcon />
             <span>Nice</span>
+          </span>
+        ) : early && !completionCounts(chore, completions, today) ? (
+          // Already done for this round: doing it again wouldn't count, so there's nothing to tap.
+          <span className="cl-action cl-done-mark cl-set">
+            <CheckIcon />
+            <span>All set</span>
           </span>
         ) : early ? (
           <button type="button" className="cl-action cl-early" aria-label={`Do ${chore.name} early`} onClick={() => finish(chore)}>

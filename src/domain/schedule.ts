@@ -104,6 +104,17 @@ export function nextDueDate(chore: Chore, completions: Completion[]): ISODate {
   return due
 }
 
+/**
+ * Whether finishing the chore on `day` satisfies an occurrence, i.e. moves its
+ * next due date. Doing it again the same day, or a second early completion in
+ * the same period, doesn't: those are ignored by the schedule, so they must not
+ * count toward rewards either.
+ */
+export function completionCounts(chore: Chore, completions: Completion[], day: ISODate): boolean {
+  const extra: Completion = { id: '', choreId: chore.id, completedAt: '', completedOn: day }
+  return nextDueDate(chore, [...completions, extra]) !== nextDueDate(chore, completions)
+}
+
 export function choreStatus(
   chore: Chore,
   completions: Completion[],

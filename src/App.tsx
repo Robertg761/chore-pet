@@ -71,7 +71,7 @@ const SYNC_LABEL: Record<SyncStatus, string> = {
 
 export default function App() {
   useEffect(startAppStore, [])
-  const { ready, sync, snapshot } = useDataState()
+  const { ready, sync, snapshot, savedLocally } = useDataState()
   const data = useHome()
   const today = useToday()
   const [view, setView] = useState<View>({ name: 'home' })
@@ -460,7 +460,9 @@ export default function App() {
         </button>
       )}
 
-      <footer className="dev-note">{SYNC_LABEL[sync]}</footer>
+      <footer className="dev-note" role={savedLocally ? undefined : 'alert'}>
+        {savedLocally || sync === 'synced' ? SYNC_LABEL[sync] : "This browser isn't saving your home. Try a regular (not private) window."}
+      </footer>
 
       {gifts[0] && (
         <GiftBox

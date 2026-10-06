@@ -1,5 +1,6 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
+import { completionCounts } from '../domain/schedule'
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, currentStreak, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
@@ -89,6 +90,8 @@ export function completeChoreWithRewards(
   now: Date = new Date(),
 ): { ops: NewOp[]; unlocked: Unlock[] } {
   const completion: Completion = { id: id(), choreId: chore.id, completedAt: now.toISOString(), completedOn: toISODate(now) }
+  // A repeat the schedule ignores (same day, or a second early one) is neither recorded nor counted.
+  if (!completionCounts(chore, context.completions, completion.completedOn)) return { ops: [], unlocked: [] }
   const ops: NewOp[] = [upsertOp('completions', completion)]
   if (!progress) return { ops, unlocked: [] }
   const streak = currentStreak(context.chores, [...context.completions, completion], completion.completedOn, context.vacations)

@@ -118,6 +118,8 @@
   color: var(--due-ink);
 }
 .cl-check { animation: cl-pop 0.3s ease-out; }
+.cl-set { font-size: 14px; }
+.cl-set .cl-check { animation: none; }
 
 .cl-name:focus-visible,
 .cl-action:focus-visible,
