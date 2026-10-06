@@ -16,6 +16,7 @@ export const PALETTE = {
   sickTint: '#7BAE3A',
   dirt: '#8A6A4A',
   leaf: '#8CCB5E',
+  leafDark: '#6FB24A',
   cream: '#FFF6E6',
   creamDark: '#EBDCC6',
   steel: '#C9D3E6',

@@ -3,8 +3,8 @@ import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
 import type { Mood } from '../../domain/types'
 import type { MoodPoses } from '../poses'
 import type { Anchor, Pose } from '../slots'
-import { Cheeks, Face, IcePack, MoodTint, Nub, Shadow, SickBedBack, SickBedFront, Thermometer, type Expression } from '../parts'
-import { BODY, WILT, sproutIdle, stemAndLeaves } from './sprout'
+import { Body, Cheeks, Face, IcePack, MoodTint, Nub, Shadow, SickBedBack, SickBedFront, Thermometer, type Expression } from '../parts'
+import { BODY, HIGHLIGHT, WILT, sproutIdle, stemAndLeaves } from './sprout'
 
 // Sprout mood poses (Phase 0 batch A). Leaves do the mood work: they sway when
 // content, droop when meh, wilt when scruffy, fold up for sleep and fly wide
@@ -85,7 +85,7 @@ function figure({ colour, face, tint, tf = {}, wilt, wiltRight, bend, arms }: Bo
       <Nub cx={122} cy={178} rx={15} ry={9} fill={colour} />
       <Nub cx={100 - arms.dx} cy={arms.cy} rx={10} ry={arms.ry} rotate={-arms.rot} fill={colour} />
       <Nub cx={100 + arms.dx} cy={arms.cy} rx={10} ry={arms.ry} rotate={arms.rot} fill={colour} />
-      <path d={BODY} fill={colour} />
+      <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
       {tint && <MoodTint d={BODY} mood={tint} smudges={[[64, 160], [132, 108], [130, 166]]} />}
       <Cheeks y={142} spread={36} />
       <Face mood={face} eyeY={126} mouthY={140} />
@@ -251,7 +251,7 @@ const sick: Pose = {
       <SickBedBack />
       <g transform={tfString(SICK_TF)} strokeWidth={CHARACTER_STROKE / 0.8}>
         {stemAndLeaves(WILT.sick + 8, WILT.sick + 16, { x: 0, y: -8 })}
-        <path d={BODY} fill={colour} />
+        <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
         <MoodTint d={BODY} mood="sick" smudges={[[64, 160], [132, 108], [130, 166]]} />
       </g>
       {/* face drawn at full size in final coordinates so its strokes match the other poses */}

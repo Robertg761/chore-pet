@@ -29,6 +29,7 @@ Every asset is hand-authored SVG, designed from scratch. No asset packs, no rast
 | sick-tint | #7BAE3A | overlay at 18% (scruffy) / 32% (sick) |
 | dirt | #8A6A4A | smudges at 45% |
 | leaf | #8CCB5E | Sprout's leaves and stem, plants |
+| leaf-dark | #6FB24A | lower half of each leaf |
 | cream | #FFF6E6 | countertops, light tops |
 | cream-dark | #EBDCC6 | countertop edges, plate rims |
 | steel | #C9D3E6 | taps, basins, metal |
@@ -73,13 +74,17 @@ All three concepts ship and the player picks one:
 - **Bun** (`src/character/species/bun.tsx`): a round bunny. Ears show mood: upright when happy, one flopped when meh, drooping down the sides when scruffy or sick (`EAR_DROOP`).
 - **Sprout** (`src/character/species/sprout.tsx`): a gumdrop seedling with a stem and two leaves. Leaves wilt with mood (`WILT`).
 
-They are one family. Shared parts live in `src/character/parts.tsx` and every species uses them: the same eyes, mouth, cheeks, feet and arm nubs, ground shadow, and mood tint. Don't draw a species-specific face.
+They are one family. Shared parts live in `src/character/parts.tsx` and every species uses them: the same body shading, eyes, mouth, cheeks, feet and arm nubs, ground shadow, and mood tint. Don't draw a species-specific face.
+
+- **Body:** always draw the body with `<Body d={BODY} colour={...} highlight={HIGHLIGHT} />`. It adds the one darker shade (the body colour blended toward warm rose, `bodyShade()` in `src/art/color.ts`, so any player colour shades nicely), a soft top-left highlight, then the outline.
+- **Eyes:** big, glossy and wide-set (two highlights). Low moods change the eyes, never with lids that look unimpressed: meh is slightly smaller eyes, scruffy and sick add worried brows (inner ends higher).
+- **Mochi's top** is a pinched knot with pleats fanning out (`mochiKnot`, `mochiPleats`), never a curl that reads as hair.
 
 Rules for every pose of every species:
 
 - Round silhouette that reads at 60 px. Big eyes, small mouth, short limbs.
 - Moods via face and posture only: happy, content, meh, scruffy, sick (in bed, thermometer), plus sleeping and cheering. Scruffy looks tired, never angry; sick looks uncomfortable, never dead (no X eyes).
-- Scruffy and sick add the sick tint over the body (and Bun's ears) plus two or three dirt smudges (`MoodTint`).
+- Scruffy adds a faint green cast and two or three dirt smudges; sick goes pale (white wash) with a light green cast (`MoodTint`). Never olive or brown.
 - Drawn in a 200x200 viewBox, feet near y = 180.
 - Body colour is swappable; check new art on yellow, pink, sky and white.
 - Poses are registered per species in `src/character/poses.ts` (`idle` is happy). A missing pose falls back to idle.

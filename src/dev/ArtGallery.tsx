@@ -14,6 +14,12 @@ import type { ObjectArt } from '../room/objects/types'
 // docs/ART.md before it lands.
 
 const MOODS: Mood[] = ['happy', 'content', 'meh', 'scruffy', 'sick']
+/** Candidate default body colour per species, for review. */
+const COLOUR_OPTIONS: { id: string; label: string; colours: Record<(typeof SPECIES)[number], string> }[] = [
+  { id: 'a', label: 'A: all sunny yellow', colours: { mochi: '#FFD65C', bun: '#FFD65C', sprout: '#FFD65C' } },
+  { id: 'b', label: 'B: bao white, apricot, yellow', colours: { mochi: '#FFF5E6', bun: '#FFC48A', sprout: '#FFD65C' } },
+  { id: 'c', label: 'C: sakura pink, snow white, yellow', colours: { mochi: '#FFCFDA', bun: '#FFFFFF', sprout: '#FFD65C' } },
+]
 const STAGES: MessStage[] = ['clean', 'messy1', 'messy2']
 const OBJECTS: ObjectArt[] = [sinkArt]
 
@@ -34,6 +40,23 @@ export default function ArtGallery() {
   return (
     <main className="gallery">
       <h1>Art gallery</h1>
+
+      <h2>Close-up</h2>
+      <section className="gallery-row">
+        {SPECIES.map((s) => (
+          <Character key={s} species={s} mood="happy" bodyColour={PALETTE.petDefault} size={300} />
+        ))}
+      </section>
+
+      <h2>Default colour candidates</h2>
+      {COLOUR_OPTIONS.map((o) => (
+        <section key={o.id} className="gallery-row" data-option={o.id}>
+          <h3>{o.label}</h3>
+          {SPECIES.map((s) => (
+            <Character key={s} species={s} mood="happy" bodyColour={o.colours[s]} size={150} />
+          ))}
+        </section>
+      ))}
 
       <h2>Pets by mood</h2>
       {SPECIES.map((s) => (

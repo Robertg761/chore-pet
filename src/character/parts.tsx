@@ -1,8 +1,10 @@
+import { useId } from 'react'
+import { bodyShade } from '../art/color'
 import { PALETTE } from '../art/palette'
 import type { Mood } from '../domain/types'
 
 // Shared building blocks for every species, so Mochi, Bun and Sprout read as
-// one family: same eyes, cheeks, feet, shadow and mood tint.
+// one family: same body shading, eyes, cheeks, feet, shadow and mood tint.
 
 const { ink, blush, sickTint, dirt, white, sky, woodDark, floorWood, cream, creamDark, fabricBlue, warmRed } = PALETTE
 
@@ -16,11 +18,39 @@ export function Nub({ cx, cy, rx, ry, rotate = 0, fill }: { cx: number; cy: numb
   return <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={fill} transform={`rotate(${rotate} ${cx} ${cy})`} />
 }
 
+/**
+ * The pet's body with its one shade and a soft highlight, then the outline.
+ * The shade is the body colour blended warm (see art/color.ts), showing as a
+ * crescent along the bottom and right where the lit body is nudged up-left.
+ * `highlight` is the top-left spot where light catches the body.
+ */
+export function Body({ d, colour, highlight }: { d: string; colour: string; highlight?: [number, number] }) {
+  const clip = `body${useId().replace(/[^a-zA-Z0-9]/g, '')}`
+  return (
+    <g>
+      <clipPath id={clip}>
+        <path d={d} />
+      </clipPath>
+      <g clipPath={`url(#${clip})`} stroke="none">
+        <path d={d} fill={bodyShade(colour)} />
+        <path d={d} fill={colour} transform="translate(-6 -9)" />
+        {highlight && (
+          <g fill={white} opacity={0.7}>
+            <ellipse cx={highlight[0]} cy={highlight[1]} rx={9} ry={5.5} transform={`rotate(-38 ${highlight[0]} ${highlight[1]})`} />
+            <circle cx={highlight[0] + 11} cy={highlight[1] - 8} r={2.6} />
+          </g>
+        )}
+      </g>
+      <path d={d} fill="none" />
+    </g>
+  )
+}
+
 export function Cheeks({ y, spread = 34 }: { y: number; spread?: number }) {
   return (
     <g fill={blush} stroke="none" opacity={0.85}>
-      <ellipse cx={100 - spread} cy={y} rx={9} ry={5} />
-      <ellipse cx={100 + spread} cy={y} rx={9} ry={5} />
+      <ellipse cx={100 - spread} cy={y} rx={9.5} ry={5.5} />
+      <ellipse cx={100 + spread} cy={y} rx={9.5} ry={5.5} />
     </g>
   )
 }
@@ -28,41 +58,56 @@ export function Cheeks({ y, spread = 34 }: { y: number; spread?: number }) {
 /** A mood, or one of the two special moments that override the face. */
 export type Expression = Mood | 'sleeping' | 'cheering'
 
+/** Eye centres sit this far either side of x = 100. */
+const EYE_SPREAD = 20
+
+/** A big glossy eye: two highlights make it read as wet and alive. */
+function OpenEye({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
+  return (
+    <g stroke="none">
+      <ellipse cx={x} cy={y} rx={8.5 * scale} ry={10.5 * scale} fill={ink} />
+      <circle cx={x + 2.9 * scale} cy={y - 4.2 * scale} r={3.3 * scale} fill={white} />
+      <circle cx={x - 2.8 * scale} cy={y + 4 * scale} r={1.5 * scale} fill={white} />
+    </g>
+  )
+}
+
+/** Worried brows: the inner end sits higher, which reads as sad, never cross. */
+function Brow({ x, y, side }: { x: number; y: number; side: -1 | 1 }) {
+  return <path d={`M${x + 7 * side} ${y - 13} Q${x} ${y - 17} ${x - 6 * side} ${y - 18}`} strokeWidth={3} />
+}
+
 function Eye({ x, y, mood, side }: { x: number; y: number; mood: Expression; side: -1 | 1 }) {
   switch (mood) {
     case 'sleeping':
       // Peacefully shut: soft downward curves.
-      return <path d={`M${x - 7} ${y} q7 6 14 0`} />
+      return <path d={`M${x - 7.5} ${y} q7.5 6.5 15 0`} />
     case 'cheering':
       // Squeezed happy: ^ ^
-      return <path d={`M${x - 7} ${y + 3} q7 -11 14 0`} />
+      return <path d={`M${x - 7.5} ${y + 3} q7.5 -12 15 0`} />
     case 'happy':
     case 'content':
-      return (
-        <g>
-          <ellipse cx={x} cy={y} rx={7.5} ry={9.5} fill={ink} stroke="none" />
-          <circle cx={x + 2.6} cy={y - 3.6} r={2.8} fill={white} stroke="none" />
-        </g>
-      )
+      return <OpenEye x={x} y={y} />
     case 'meh':
-      // Half-lidded: the lower half of the eye under a flat lid.
-      return (
-        <g>
-          <path d={`M${x - 7.5} ${y - 1} a7.5 8 0 0 0 15 0 Z`} fill={ink} stroke="none" />
-          <path d={`M${x - 9} ${y - 1} h18`} />
-        </g>
-      )
+      // Still bright, a touch smaller: "hm, okay". No lids, so it never looks unimpressed.
+      return <OpenEye x={x} y={y + 1} scale={0.82} />
     case 'scruffy':
-      // Tired: half-lidded, lids sloping down toward the outside (never angry).
+      // Tired and a little sad: drowsy half eyes under worried brows.
       return (
         <g>
-          <path d={`M${x - 7.5} ${y} a7.5 7 0 0 0 15 0 Z`} fill={ink} stroke="none" />
-          <path d={`M${x - 9 * side} ${y - 2} L${x + 9 * side} ${y + 2}`} />
+          <Brow x={x} y={y} side={side} />
+          <path d={`M${x - 8} ${y - 1} a8 8.5 0 0 0 16 0 Z`} fill={ink} stroke="none" />
+          <circle cx={x + 2.6} cy={y + 2.2} r={1.8} fill={white} stroke="none" />
         </g>
       )
     case 'sick':
-      // Squeezed shut: > <
-      return <path d={`M${x + 6 * side} ${y - 6} L${x - 5 * side} ${y} L${x + 6 * side} ${y + 6}`} />
+      // Squeezed shut under worried brows: > <
+      return (
+        <g>
+          <Brow x={x} y={y + 1} side={side} />
+          <path d={`M${x + 6 * side} ${y - 6} L${x - 5 * side} ${y} L${x + 6 * side} ${y + 6}`} />
+        </g>
+      )
   }
 }
 
@@ -74,43 +119,46 @@ function Mouth({ y, mood }: { y: number; mood: Expression }) {
     case 'cheering':
       return (
         <g>
-          <path d={`M91 ${y - 2} q9 12 18 0 Z`} fill={ink} />
-          <ellipse cx={100} cy={y + 3.5} rx={4} ry={2.2} fill={blush} stroke="none" />
+          <path d={`M91.5 ${y - 2} q8.5 12 17 0 Z`} fill={ink} />
+          <path d={`M95.5 ${y + 3.6} q4.5 -3.6 9 0 q-4.5 2.2 -9 0 Z`} fill={blush} stroke="none" />
         </g>
       )
     case 'content':
-      return <path d={`M93 ${y} q7 6 14 0`} />
+      return <path d={`M94 ${y} q6 5.5 12 0`} />
     case 'meh':
-      return <path d={`M94 ${y + 1} h12`} />
+      return <path d={`M95.5 ${y + 1.5} q4.5 -1.2 9 0`} />
     case 'scruffy':
+      return <path d={`M93 ${y + 2.5} q3.5 -3.5 7 0 q3.5 3.5 7 0`} />
     case 'sick':
-      return <path d={`M89 ${y + 2} q5.5 -5 11 0 q5.5 5 11 0`} />
+      return <path d={`M90 ${y + 2} q5 -4.5 10 0 q5 4.5 10 0`} />
   }
 }
 
-/** Eyes and mouth. Eyes sit at (100 +/- 18, eyeY). */
+/** Eyes and mouth. Eyes sit at (100 +/- EYE_SPREAD, eyeY). */
 export function Face({ mood, eyeY, mouthY }: { mood: Expression; eyeY: number; mouthY: number }) {
   return (
     <g stroke={ink} strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round" fill="none">
-      <Eye x={82} y={eyeY} mood={mood} side={-1} />
-      <Eye x={118} y={eyeY} mood={mood} side={1} />
+      <Eye x={100 - EYE_SPREAD} y={eyeY} mood={mood} side={-1} />
+      <Eye x={100 + EYE_SPREAD} y={eyeY} mood={mood} side={1} />
       <Mouth y={mouthY} mood={mood} />
       {mood === 'sick' && (
-        <path d={`M150 ${eyeY - 14} q-6 9 0 12 q6 -3 0 -12 Z`} fill={sky} strokeWidth={2.5} />
+        <path d={`M151 ${eyeY - 16} q-6 9 0 12 q6 -3 0 -12 Z`} fill={sky} strokeWidth={2.5} />
       )}
     </g>
   )
 }
 
 /**
- * Greenish tint and a couple of dirt smudges over the body when the pet is
- * scruffy or sick. `d` is the body outline path.
+ * How scruffy and sick show on the body, kept funny rather than gross:
+ * scruffy gets a faint green cast and a few dirt smudges; sick goes pale with
+ * a light green cast. `d` is the body outline path.
  */
 export function MoodTint({ d, mood, smudges }: { d: string; mood: Mood; smudges: [number, number][] }) {
   if (mood !== 'scruffy' && mood !== 'sick') return null
   return (
     <g stroke="none">
-      <path d={d} fill={sickTint} opacity={mood === 'sick' ? 0.32 : 0.18} />
+      {mood === 'sick' && <path d={d} fill={white} opacity={0.3} />}
+      <path d={d} fill={sickTint} opacity={mood === 'sick' ? 0.2 : 0.12} />
       <g fill={dirt} opacity={0.45}>
         {smudges.map(([x, y], i) => (
           <ellipse key={i} cx={x} cy={y} rx={i % 2 ? 5 : 7} ry={i % 2 ? 3.5 : 4.5} transform={`rotate(${i % 2 ? 20 : -15} ${x} ${y})`} />

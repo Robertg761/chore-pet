@@ -3,8 +3,8 @@ import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
 import type { Mood } from '../../domain/types'
 import type { MoodPoses } from '../poses'
 import type { Anchor, Pose } from '../slots'
-import { Cheeks, Face, IcePack, MoodTint, Nub, Shadow, SickBedBack, SickBedFront, Thermometer, type Expression } from '../parts'
-import { BODY, ear } from './bun'
+import { Body, Cheeks, Face, IcePack, MoodTint, Nub, Shadow, SickBedBack, SickBedFront, Thermometer, type Expression } from '../parts'
+import { BODY, HIGHLIGHT, ear } from './bun'
 
 // Bun mood poses. Ears carry the mood (see EAR_DROOP in bun.tsx); posture does
 // the rest by squashing, tilting and lowering the same idle silhouette.
@@ -100,7 +100,7 @@ function figure(props: FigureProps) {
           {ear(droop[0], colour, tint)}
           <g transform="translate(200 0) scale(-1 1)">{ear(droop[1], colour, tint)}</g>
           {behind}
-          <path d={BODY} fill={colour} />
+          <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
           <MoodTint d={BODY} mood={mood} smudges={smudges ?? [[66, 160], [134, 118], [126, 168]]} />
           {front}
         </g>
@@ -288,7 +288,7 @@ const bunSick: Pose = {
       <g transform={`translate(100 ${SICK_BOTTOM}) scale(${SICK_SCALE}) translate(-100 ${-GROUND})`}>
         {ear(128, colour, 0.32)}
         <g transform="translate(200 0) scale(-1 1)">{ear(128, colour, 0.32)}</g>
-        <path d={BODY} fill={colour} />
+        <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
         <MoodTint d={BODY} mood="sick" smudges={[[62, 128], [140, 116], [118, 104]]} />
       </g>
       <Cheeks y={sickY(143)} spread={31} />

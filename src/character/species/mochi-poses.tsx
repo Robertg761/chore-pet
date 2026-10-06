@@ -1,9 +1,9 @@
 import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
 import type { Mood } from '../../domain/types'
 import type { MoodPoses } from '../poses'
-import { Cheeks, Face, IcePack, MoodTint, Nub, Shadow, SickBedBack, SickBedFront, Thermometer } from '../parts'
+import { Body, Cheeks, Face, IcePack, MoodTint, Nub, Shadow, SickBedBack, SickBedFront, Thermometer } from '../parts'
 import type { Anchor, Pose } from '../slots'
-import { BODY, PINCH } from './mochi'
+import { BODY, HIGHLIGHT, mochiKnot, mochiPleats } from './mochi'
 
 // Mochi mood poses (Phase 0 batch A). Each reuses the idle dumpling, squashed,
 // leaned or lifted around the ground point, so they stay one family.
@@ -53,8 +53,8 @@ function anchorsFor(shape: Shape): Pose['anchors'] {
 }
 
 // Pinch variants: upright (idle), a little bent, and drooped over.
-const PINCH_BENT = 'M88 80 C88 66 98 58 110 60 C120 62 122 70 114 71 C108 72 108 77 111 80 Z'
-const PINCH_DROOP = 'M88 80 C86 68 96 62 108 64 C122 66 128 76 120 82 C116 84 112 80 110 80 Z'
+const KNOT_BENT = 16
+const KNOT_DROOP = 38
 
 interface ArmSpec {
   cx: number
@@ -71,7 +71,8 @@ interface FigureProps {
   shape: Shape
   arms: [ArmSpec, ArmSpec]
   feet?: [number, number] // x of each foot
-  pinch?: string
+  /** How far the knot on top flops over, in degrees. */
+  knotTilt?: number
   eyeY?: number
   mouthY?: number
   cheekY?: number
@@ -87,7 +88,7 @@ function figure({
   shape,
   arms,
   feet = [74, 126],
-  pinch = PINCH,
+  knotTilt = 0,
   eyeY = 124,
   mouthY = 138,
   cheekY = 140,
@@ -103,12 +104,9 @@ function figure({
         {arms.map((a, i) => (
           <Nub key={i} cx={a.cx} cy={a.cy} rx={a.rx ?? 11} ry={a.ry ?? 14} rotate={a.rotate} fill={colour} />
         ))}
-        <path d={pinch} fill={colour} />
-        <path d={BODY} fill={colour} />
-        <g fill="none" strokeWidth={3} opacity={0.35}>
-          <path d="M88 80 q-3 7 -1 13" />
-          <path d="M112 80 q3 7 1 13" />
-        </g>
+        {mochiKnot(colour, knotTilt)}
+        <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
+        {mochiPleats()}
         <MoodTint d={BODY} mood={tintMood} smudges={smudges} />
         <Cheeks y={cheekY} spread={40} />
         <Face mood={faceMood} eyeY={eyeY} mouthY={mouthY} />
@@ -133,7 +131,7 @@ const mochiContent: Pose = {
         { cx: 37, cy: 150, rotate: -10 },
         { cx: 163, cy: 150, rotate: 10 },
       ],
-      pinch: PINCH_BENT,
+      knotTilt: KNOT_BENT,
     })
   ),
   anchors: anchorsFor(CONTENT),
@@ -156,7 +154,7 @@ const mochiMeh: Pose = {
         { cx: 164, cy: 156, rotate: 4 },
       ],
       feet: [70, 130],
-      pinch: PINCH_BENT,
+      knotTilt: KNOT_BENT,
       shadowRx: 66,
     })
   ),
@@ -180,7 +178,7 @@ const mochiScruffy: Pose = {
         { cx: 165, cy: 160, rotate: -2, ry: 13 },
       ],
       feet: [68, 132],
-      pinch: PINCH_DROOP,
+      knotTilt: KNOT_DROOP,
       eyeY: 128,
       mouthY: 142,
       cheekY: 144,
@@ -222,7 +220,7 @@ const mochiSleeping: Pose = {
           { cx: 165, cy: 160, rotate: -5, ry: 13 },
         ],
         feet: [70, 130],
-        pinch: PINCH_DROOP,
+        knotTilt: KNOT_DROOP,
         eyeY: 128,
         mouthY: 142,
         cheekY: 144,
@@ -290,12 +288,9 @@ const mochiSick: Pose = {
       <SickBedBack />
       {/* Mochi, propped up on the pillow */}
       <g transform={transformOf(SICK)} strokeWidth={CHARACTER_STROKE / SICK_SCALE}>
-        <path d={PINCH} fill={colour} />
-        <path d={BODY} fill={colour} />
-        <g fill="none" strokeWidth={3 / SICK_SCALE} opacity={0.35}>
-          <path d="M88 80 q-3 7 -1 13" />
-          <path d="M112 80 q3 7 1 13" />
-        </g>
+        {mochiKnot(colour, KNOT_DROOP)}
+        <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
+        {mochiPleats(3 / SICK_SCALE)}
         <MoodTint d={BODY} mood={mood === 'sick' ? mood : 'sick'} smudges={[[54, 126], [142, 108], [128, 140]]} />
       </g>
       <g transform="rotate(-3 100 132)">

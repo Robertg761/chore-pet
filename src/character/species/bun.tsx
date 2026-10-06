@@ -1,11 +1,13 @@
 import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
 import type { Mood } from '../../domain/types'
 import type { Pose } from '../slots'
-import { Cheeks, Face, MoodTint, Nub, Shadow } from '../parts'
+import { Body, Cheeks, Face, MoodTint, Nub, Shadow } from '../parts'
 
 // Bun: a round bunny whose ears show how it feels.
 
 export const BODY = 'M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z'
+/** Where light catches the body (top left). */
+export const HIGHLIGHT: [number, number] = [70, 112]
 
 /** Outward droop in degrees for the [left, right] ear. 0 is straight up. */
 export const EAR_DROOP: Record<Mood, [number, number]> = {
@@ -45,7 +47,7 @@ export const bunIdle: Pose = {
         <Nub cx={122} cy={178} rx={16} ry={9} fill={bodyColour} />
         <Nub cx={48} cy={148} rx={10} ry={13} rotate={-20} fill={bodyColour} />
         <Nub cx={152} cy={148} rx={10} ry={13} rotate={20} fill={bodyColour} />
-        <path d={BODY} fill={bodyColour} />
+        <Body d={BODY} colour={bodyColour} highlight={HIGHLIGHT} />
         <MoodTint d={BODY} mood={mood} smudges={[[66, 160], [134, 118], [126, 168]]} />
         <Cheeks y={143} spread={36} />
         <Face mood={mood} eyeY={126} mouthY={145} />
