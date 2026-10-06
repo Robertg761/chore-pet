@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { ensureSession, getSupabase, supabaseConfigured } from '../lib/supabase'
 import { KEY_COLUMN, MAPPERS } from './mappers'
+import { isPermanentError } from './remoteErrors'
 import { emptyTables, type Tables } from './state'
 import { TABLES, keyOf, type TableMap, type TableName } from './tables'
 
@@ -15,15 +16,10 @@ export interface Remote {
   remove(table: TableName, keys: string[]): Promise<RemoteResult>
 }
 
-/**
- * Postgres and PostgREST errors carry a code (SQLSTATE like 23503, or PGRSTxxx):
- * the server saw the request and refused it, so retrying won't help. Anything
- * without one is a network failure worth retrying.
- */
+/** A failed request; see isPermanentError for what is worth retrying. */
 function result(error: { code?: string; message: string } | null): RemoteResult {
   if (!error) return { ok: true }
-  const permanent = Boolean(error.code && /^([0-9A-Z]{5}|PGRST\d+)$/.test(error.code))
-  return { ok: false, transient: !permanent, message: error.message }
+  return { ok: false, transient: !isPermanentError(error.code), message: error.message }
 }
 
 export function supabaseRemote(getClient: () => Promise<SupabaseClient>): Remote {
