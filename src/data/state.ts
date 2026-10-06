@@ -15,6 +15,9 @@ export type Op =
   | { [T in TableName]: { table: T; kind: 'upsert'; key: string; value: TableMap[T]; seq: number } }[TableName]
   | { table: TableName; kind: 'delete'; key: string; seq: number }
 
+/** A change before it is queued (no sequence number yet). */
+export type NewOp = Op extends infer O ? (O extends Op ? Omit<O, 'seq'> : never) : never
+
 /** Latest pending change per row, keyed `${table}:${key}`. */
 export type Outbox = Record<string, Op>
 
@@ -58,7 +61,7 @@ export function applyOp(tables: Tables, op: Op): Tables {
 }
 
 /** Apply a change locally and queue it, replacing any older queued change to the same row. */
-export function change(snapshot: Snapshot, op: Omit<Op, 'seq'>): Snapshot {
+export function change(snapshot: Snapshot, op: NewOp): Snapshot {
   const seq = snapshot.seq + 1
   const full = { ...op, seq } as Op
   return {
@@ -69,11 +72,11 @@ export function change(snapshot: Snapshot, op: Omit<Op, 'seq'>): Snapshot {
   }
 }
 
-export function upsertOp<T extends TableName>(table: T, value: TableMap[T]): Omit<Op, 'seq'> {
-  return { table, kind: 'upsert', key: keyOf(table, value), value } as Omit<Op, 'seq'>
+export function upsertOp<T extends TableName>(table: T, value: TableMap[T]): NewOp {
+  return { table, kind: 'upsert', key: keyOf(table, value), value } as NewOp
 }
 
-export function deleteOp(table: TableName, key: string): Omit<Op, 'seq'> {
+export function deleteOp(table: TableName, key: string): NewOp {
   return { table, kind: 'delete', key }
 }
 

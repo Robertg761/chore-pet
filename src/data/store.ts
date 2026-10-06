@@ -1,6 +1,6 @@
 import type { LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
-import { acknowledge, change, claim, emptySnapshot, planFlush, rebase, type Op, type Snapshot } from './state'
+import { acknowledge, change, claim, emptySnapshot, planFlush, rebase, type NewOp, type Op, type Snapshot } from './state'
 
 /**
  * - local-only: no Supabase keys, data stays on this device.
@@ -22,7 +22,7 @@ export interface Store {
   /** Load the local copy, then sync in the background. */
   start(): Promise<void>
   /** Apply changes locally (all at once), queue them, and kick off a sync. */
-  apply(...ops: Omit<Op, 'seq'>[]): void
+  apply(...ops: NewOp[]): void
   /** Push queued changes, then pull. Resolves when done; never throws. */
   sync(): Promise<void>
 }

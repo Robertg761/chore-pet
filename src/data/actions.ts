@@ -1,12 +1,10 @@
 import { PALETTE } from '../art/palette'
 import { toISODate } from '../domain/dates'
 import type { Chore, Home, Pet, Progress, Schedule, Species, VacationWindow } from '../domain/types'
-import { deleteOp, upsertOp, type Op } from './state'
+import { deleteOp, upsertOp, type NewOp } from './state'
 
 // Every user action as a pure function returning the changes to apply.
 // The UI calls these and hands the result to store.apply(...ops).
-
-type NewOp = Omit<Op, 'seq'>
 
 const id = () => crypto.randomUUID()
 
