@@ -77,7 +77,7 @@ Parallel batch D:
 
 Parallel batch E:
 
-- [SONNET: catalog-curator] Sample home seed: a pre-built kitchen with two overdue chores.
+- [SONNET: catalog-curator] Sample home seed: a pre-built kitchen with two overdue chores. **Done** (`src/content/sampleHome.ts`)
 - [SONNET: ui-builder] Landing choice: "Try a sample home" or "Build my home"; turning the sample into your own.
 - [SONNET: ui-builder] Hidden time fast-forward dev panel (query param or long-press) for recording the demo.
 
