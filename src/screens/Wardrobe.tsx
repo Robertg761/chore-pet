@@ -5,6 +5,7 @@ import { poseFor } from '../character/poses'
 import type { Item } from '../character/slots'
 import type { Mood, Pet, Progress, SavedOutfit } from '../domain/types'
 import { GiftSilhouette } from './RewardArt'
+import { useViewport, WIDE_MIN } from '../shell/useViewport'
 import './Wardrobe.css'
 import {
   MAX_OUTFIT_NAME,
@@ -65,10 +66,14 @@ function NoneArt() {
   )
 }
 
+/** A tab: one of the slots, or (on phones) the saved outfits. */
+type Section = WardrobeSlot | 'saved'
+
 export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
   const uid = useId()
   const [draft, setDraft] = useState<Pet['equipped']>(pet.equipped)
-  const [slot, setSlot] = useState<WardrobeSlot>('head')
+  const wide = useViewport().width >= WIDE_MIN
+  const [picked, setPicked] = useState<Section>('head')
   const [pose, setPose] = useState<PoseName>('idle')
   const [naming, setNaming] = useState(false)
   const [name, setName] = useState('')
@@ -79,6 +84,10 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
   const dirty = !sameOutfit(draft, pet.equipped)
   const current = activeOutfit(outfits, draft)
   const full = isFull(outfits)
+  // On wide screens the saved outfits sit under the items; on phones they are one more tab.
+  const slot: WardrobeSlot = picked === 'saved' ? 'head' : picked
+  const showing: Section = wide && picked === 'saved' ? 'head' : picked
+  const sections: { key: Section; label: string }[] = wide ? WARDROBE_SLOTS.map((s) => ({ key: s.slot, label: s.label })) : [...WARDROBE_SLOTS.map((s) => ({ key: s.slot as Section, label: s.label })), { key: 'saved', label: 'Saved' }]
   const entries = itemsForSlot(slot, progress)
   const worn = draft[slot]
 
@@ -90,9 +99,9 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
     const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
     if (!step && e.key !== 'Home' && e.key !== 'End') return
     e.preventDefault()
-    const next = e.key === 'Home' ? 0 : e.key === 'End' ? WARDROBE_SLOTS.length - 1 : (index + step + WARDROBE_SLOTS.length) % WARDROBE_SLOTS.length
-    setSlot(WARDROBE_SLOTS[next].slot)
-    document.getElementById(`${uid}-tab-${WARDROBE_SLOTS[next].slot}`)?.focus()
+    const next = e.key === 'Home' ? 0 : e.key === 'End' ? sections.length - 1 : (index + step + sections.length) % sections.length
+    setPicked(sections[next].key)
+    document.getElementById(`${uid}-tab-${sections[next].key}`)?.focus()
   }
 
   function startNaming() {
@@ -123,144 +132,159 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
         ? `This is already saved as ${current.name}.`
         : null
 
-  return (
-    <section className="wd" aria-labelledby={`${uid}-title`}>
-      <h1 id={`${uid}-title`} className="wd-title">
-        Dress up {pet.name}
-      </h1>
-
-      <div className="wd-stage">
-        <PetArt className="wd-preview" pet={pet} equipped={draft} pose={pose} label={`${pet.name} wearing ${describeOutfit(draft)}`} />
-        <div className="wd-poses" role="group" aria-label="Pose">
-          {WARDROBE_POSES.map((p) => (
-            <button key={p.pose} type="button" className="wd-pose" aria-pressed={pose === p.pose} onClick={() => setPose(p.pose)}>
-              {p.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="wd-tabs" role="tablist" aria-label="Where it goes">
-        {WARDROBE_SLOTS.map((s, i) => (
-          <button
-            key={s.slot}
-            id={`${uid}-tab-${s.slot}`}
-            type="button"
-            role="tab"
-            className="wd-tab"
-            aria-selected={slot === s.slot}
-            aria-controls={`${uid}-panel`}
-            tabIndex={slot === s.slot ? 0 : -1}
-            onClick={() => setSlot(s.slot)}
-            onKeyDown={(e) => onTabKey(e, i)}
-          >
-            {s.label}
-            {draft[s.slot] && <span className="wd-tab-dot" aria-hidden="true" />}
+  const itemsGrid = (
+    <>
+      <ul className="wd-grid">
+        <li>
+          <button type="button" className="wd-tile" aria-pressed={!worn} onClick={() => setDraft(clearSlot(draft, slot))}>
+            <NoneArt />
+            <span className="wd-tile-name">None</span>
           </button>
-        ))}
-      </div>
-
-      <div id={`${uid}-panel`} role="tabpanel" aria-labelledby={`${uid}-tab-${slot}`} className="wd-panel">
-        <ul className="wd-grid">
-          <li>
-            <button type="button" className="wd-tile" aria-pressed={!worn} onClick={() => setDraft(clearSlot(draft, slot))}>
-              <NoneArt />
-              <span className="wd-tile-name">None</span>
-            </button>
+        </li>
+        {entries.map(({ item, unlocked, requirement }) => (
+          <li key={item.id}>
+            {unlocked ? (
+              <button type="button" className="wd-tile" aria-pressed={worn === item.id} onClick={() => setDraft(toggleItem(draft, slot, item.id))}>
+                <ItemCrop pet={pet} item={item} />
+                <span className="wd-tile-name">{item.name}</span>
+              </button>
+            ) : (
+              <div className="wd-tile wd-tile-locked">
+                <GiftSilhouette className="wd-tile-art" />
+                <span className="wd-tile-name">
+                  <span className="wd-sr">Locked gift. </span>
+                  {requirement ?? 'A surprise'}
+                </span>
+              </div>
+            )}
           </li>
-          {entries.map(({ item, unlocked, requirement }) => (
-            <li key={item.id}>
-              {unlocked ? (
-                <button type="button" className="wd-tile" aria-pressed={worn === item.id} onClick={() => setDraft(toggleItem(draft, slot, item.id))}>
-                  <ItemCrop pet={pet} item={item} />
-                  <span className="wd-tile-name">{item.name}</span>
-                </button>
-              ) : (
-                <div className="wd-tile wd-tile-locked">
-                  <GiftSilhouette className="wd-tile-art" />
-                  <span className="wd-tile-name">
-                    <span className="wd-sr">Locked gift. </span>
-                    {requirement ?? 'A surprise'}
-                  </span>
+        ))}
+      </ul>
+      {entries.length === 0 && <p className="wd-note">Nothing for this spot yet. More are on the way.</p>}
+    </>
+  )
+
+  const saved = (
+    <section className="wd-saved" aria-labelledby={`${uid}-saved`}>
+      <h2 id={`${uid}-saved`} className={wide ? 'wd-sub' : 'wd-sr'}>
+        Saved outfits
+      </h2>
+      {outfits.length > 0 ? (
+        <ul className="wd-outfits">
+          {outfits.map((o) => (
+            <li key={o.id} className={sameOutfit(o.equipped, draft) ? 'wd-outfit wd-outfit-on' : 'wd-outfit'}>
+              <button type="button" className="wd-outfit-try" aria-pressed={sameOutfit(o.equipped, draft)} aria-label={`Try on ${o.name}`} onClick={() => setDraft(wearableOutfit(o.equipped, progress))}>
+                <PetArt className="wd-outfit-art" pet={pet} equipped={wearableOutfit(o.equipped, progress)} pose="idle" />
+                <span className="wd-outfit-name">{o.name}</span>
+              </button>
+              {removing === o.id ? (
+                <div className="wd-confirm" role="group" aria-label={`Remove ${o.name}?`}>
+                  <button type="button" className="wd-small wd-small-danger" onClick={() => confirmRemove(o)}>
+                    Remove
+                  </button>
+                  <button type="button" className="wd-small" onClick={() => setRemoving(null)}>
+                    Keep
+                  </button>
                 </div>
+              ) : (
+                <button type="button" className="wd-small" aria-label={`Remove ${o.name}`} onClick={() => setRemoving(o.id)}>
+                  Remove
+                </button>
               )}
             </li>
           ))}
         </ul>
-        {entries.length === 0 && <p className="wd-note">Nothing for this spot yet. More are on the way.</p>}
-      </div>
+      ) : (
+        <p className="wd-note">Save a look to switch back to it any time.</p>
+      )}
 
-      <section className="wd-saved" aria-labelledby={`${uid}-saved`}>
-        <h2 id={`${uid}-saved`} className="wd-sub">
-          Saved outfits
-        </h2>
-        {outfits.length > 0 ? (
-          <ul className="wd-outfits">
-            {outfits.map((o) => (
-              <li key={o.id} className={sameOutfit(o.equipped, draft) ? 'wd-outfit wd-outfit-on' : 'wd-outfit'}>
-                <button type="button" className="wd-outfit-try" aria-pressed={sameOutfit(o.equipped, draft)} aria-label={`Try on ${o.name}`} onClick={() => setDraft(wearableOutfit(o.equipped, progress))}>
-                  <PetArt className="wd-outfit-art" pet={pet} equipped={wearableOutfit(o.equipped, progress)} pose="idle" />
-                  <span className="wd-outfit-name">{o.name}</span>
-                </button>
-                {removing === o.id ? (
-                  <div className="wd-confirm" role="group" aria-label={`Remove ${o.name}?`}>
-                    <button type="button" className="wd-small wd-small-danger" onClick={() => confirmRemove(o)}>
-                      Remove
-                    </button>
-                    <button type="button" className="wd-small" onClick={() => setRemoving(null)}>
-                      Keep
-                    </button>
-                  </div>
-                ) : (
-                  <button type="button" className="wd-small" aria-label={`Remove ${o.name}`} onClick={() => setRemoving(o.id)}>
-                    Remove
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="wd-note">Save a look to switch back to it any time.</p>
-        )}
-
-        {naming ? (
-          <form
-            className="wd-name-form"
-            onSubmit={(e) => {
-              e.preventDefault()
-              saveOutfit()
-            }}
-          >
-            <label className="wd-label" htmlFor={`${uid}-name`}>
-              Outfit name
-            </label>
-            <div className="wd-name-row">
-              <input ref={nameRef} id={`${uid}-name`} className="wd-input" type="text" value={name} maxLength={MAX_OUTFIT_NAME} autoComplete="off" onChange={(e) => setName(e.target.value)} />
-              <button type="submit" className="wd-btn wd-btn-solid">
-                Save outfit
-              </button>
-              <button type="button" className="wd-btn" onClick={() => setNaming(false)}>
-                Not now
-              </button>
-            </div>
-          </form>
-        ) : (
-          <>
-            <button type="button" className="wd-btn wd-save-outfit" disabled={full || isEmptyOutfit(draft) || Boolean(current)} onClick={startNaming}>
-              Save this outfit
+      {naming ? (
+        <form
+          className="wd-name-form"
+          onSubmit={(e) => {
+            e.preventDefault()
+            saveOutfit()
+          }}
+        >
+          <label className="wd-label" htmlFor={`${uid}-name`}>
+            Outfit name
+          </label>
+          <div className="wd-name-row">
+            <input ref={nameRef} id={`${uid}-name`} className="wd-input" type="text" value={name} maxLength={MAX_OUTFIT_NAME} autoComplete="off" onChange={(e) => setName(e.target.value)} />
+            <button type="submit" className="wd-btn wd-btn-solid">
+              Save outfit
             </button>
-            {saveHint && <p className="wd-note">{saveHint}</p>}
-          </>
-        )}
-      </section>
+            <button type="button" className="wd-btn" onClick={() => setNaming(false)}>
+              Not now
+            </button>
+          </div>
+        </form>
+      ) : (
+        <div className="wd-save-row">
+          <button type="button" className="wd-btn wd-save-outfit" disabled={full || isEmptyOutfit(draft) || Boolean(current)} onClick={startNaming}>
+            Save this outfit
+          </button>
+          {saveHint && <p className="wd-note">{saveHint}</p>}
+        </div>
+      )}
+    </section>
+  )
 
-      <div className="wd-actions">
-        <button type="button" className="wd-btn" onClick={onClose}>
-          {dirty ? 'Cancel' : 'Back'}
-        </button>
-        <button type="button" className="wd-btn wd-btn-solid" disabled={!dirty} onClick={save}>
-          Save
-        </button>
+  return (
+    <section className="wd" aria-labelledby={`${uid}-title`}>
+      <header className="wd-head">
+        <h1 id={`${uid}-title`} className="wd-title">
+          Dress up {pet.name}
+        </h1>
+        <div className="wd-head-actions">
+          <button type="button" className="link-button wd-back" onClick={onClose}>
+            {dirty ? 'Cancel' : 'Back'}
+          </button>
+          <button type="button" className="wd-btn wd-btn-solid" disabled={!dirty} onClick={save}>
+            Save
+          </button>
+        </div>
+      </header>
+
+      <div className="wd-body">
+        <div className="wd-stage">
+          <PetArt className="wd-preview" pet={pet} equipped={draft} pose={pose} label={`${pet.name} wearing ${describeOutfit(draft)}`} />
+          <div className="wd-poses" role="group" aria-label="Pose">
+            {WARDROBE_POSES.map((p) => (
+              <button key={p.pose} type="button" className="wd-pose" aria-pressed={pose === p.pose} onClick={() => setPose(p.pose)}>
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="wd-side">
+          <div className="wd-tabs" role="tablist" aria-label="Where it goes" data-count={sections.length}>
+            {sections.map((s, i) => (
+              <button
+                key={s.key}
+                id={`${uid}-tab-${s.key}`}
+                type="button"
+                role="tab"
+                className="wd-tab"
+                aria-selected={showing === s.key}
+                aria-controls={`${uid}-panel`}
+                tabIndex={showing === s.key ? 0 : -1}
+                onClick={() => setPicked(s.key)}
+                onKeyDown={(e) => onTabKey(e, i)}
+              >
+                {s.label}
+                {s.key !== 'saved' && draft[s.key] && <span className="wd-tab-dot" aria-hidden="true" />}
+              </button>
+            ))}
+          </div>
+
+          <div id={`${uid}-panel`} role="tabpanel" aria-labelledby={`${uid}-tab-${showing}`} className="wd-panel">
+            {showing === 'saved' ? saved : itemsGrid}
+          </div>
+
+          {wide && saved}
+        </div>
       </div>
     </section>
   )
