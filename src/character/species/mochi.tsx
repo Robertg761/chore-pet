@@ -4,8 +4,8 @@ import { Cheeks, Face, MoodTint, Nub, Shadow } from '../parts'
 
 // Mochi: a soft dumpling with a little pinched top.
 
-const BODY = 'M32 150 C32 104 62 72 100 72 C138 72 168 104 168 150 C168 172 140 181 100 181 C60 181 32 172 32 150 Z'
-const PINCH = 'M88 80 C88 64 96 54 108 56 C114 58 114 66 106 68 C102 70 104 76 110 80 Z'
+export const BODY = 'M32 150 C32 104 62 72 100 72 C138 72 168 104 168 150 C168 172 140 181 100 181 C60 181 32 172 32 150 Z'
+export const PINCH = 'M88 80 C88 64 96 54 108 56 C114 58 114 66 106 68 C102 70 104 76 110 80 Z'
 
 export const mochiIdle: Pose = {
   id: 'mochi-idle',

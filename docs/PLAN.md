@@ -19,7 +19,7 @@ Already done in the scaffold: domain types, schedule logic, health and mood logi
 
 Parallel batch A (after the base poses and reference sink exist):
 
-- [SONNET: svg-artist] Mochi mood poses: content, meh, scruffy, sick (in bed, thermometer), sleeping, cheering. Same anchors as the idle pose and the shared parts in `src/character/parts.tsx`. Output: `src/character/species/mochi-poses.tsx` (already registered in `src/character/poses.ts`).
+- [SONNET: svg-artist] Mochi mood poses: content, meh, scruffy, sick (in bed, thermometer), sleeping, cheering. Same anchors as the idle pose and the shared parts in `src/character/parts.tsx`. Output: `src/character/species/mochi-poses.tsx` (already registered in `src/character/poses.ts`). **Done**
 - [SONNET: svg-artist] Bun mood poses: same list, output `src/character/species/bun-poses.tsx`. Ears keep doing the mood work (`EAR_DROOP`).
 - [SONNET: svg-artist] Sprout mood poses: same list, output `src/character/species/sprout-poses.tsx`. Leaves keep doing the mood work (`WILT`).
 - [SONNET: svg-artist] Room shell: walls, floor tiles, window, in 3 floor styles and 3 wall styles. Output: `src/room/shell/*`. **Done**
