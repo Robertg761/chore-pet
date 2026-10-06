@@ -84,24 +84,48 @@ function monthlyDate(ref: ISODate, dayOfMonth: number, monthOffset: number): ISO
  *   before the chore was created.
  */
 export function nextDueDate(chore: Chore, completions: Completion[]): ISODate {
+  return replay(chore, completions).due
+}
+
+/**
+ * Replays a chore's completions in date order (one per calendar day) and
+ * returns the next due date plus the days that satisfied an occurrence.
+ * Days the schedule ignores (a second early completion in a period) aren't
+ * in `satisfied`.
+ */
+function replay(chore: Chore, completions: Completion[]): { due: ISODate; satisfied: ISODate[] } {
   const dates = [...new Set(completions.filter((c) => c.choreId === chore.id).map((c) => c.completedOn))].sort()
   const { schedule } = chore
 
   if (schedule.kind === 'everyNDays') {
     const last = dates[dates.length - 1]
     const next = last ? addDays(last, Math.max(1, schedule.n)) : chore.createdOn
-    return next > chore.createdOn ? next : chore.createdOn
+    return { due: next > chore.createdOn ? next : chore.createdOn, satisfied: dates }
   }
 
   let due = firstOnOrAfter(schedule, chore.createdOn)
+  const satisfied: ISODate[] = []
   for (const c of dates) {
     if (c >= due) {
       due = firstOnOrAfter(schedule, addDays(c, 1))
+      satisfied.push(c)
     } else if (c > lastBefore(schedule, due)) {
       due = firstOnOrAfter(schedule, addDays(due, 1))
+      satisfied.push(c)
     }
   }
-  return due
+  return { due, satisfied }
+}
+
+/**
+ * How many chore occurrences were done, counting each occurrence once and only
+ * from `from` on (null counts everything). This is the chore count rewards run
+ * on. It is worked out from the completions rather than stored, so devices
+ * that finish chores offline can never overwrite each other's count, and the
+ * same occurrence ticked off on two devices counts once.
+ */
+export function countedOccurrences(chores: Chore[], completions: Completion[], from: ISODate | null = null): number {
+  return chores.reduce((n, chore) => n + replay(chore, completions).satisfied.filter((d) => from === null || d >= from).length, 0)
 }
 
 /**

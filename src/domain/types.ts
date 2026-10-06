@@ -105,7 +105,13 @@ export interface SavedOutfit {
 
 export interface Progress {
   homeId: string
+  /**
+   * Chore occurrences done since `countedFrom`. Worked out from the completions
+   * (see countedOccurrences); the stored value is only a cache of that.
+   */
   choreCount: number
+  /** Count chores from this day on. Set on sample homes so their seeded history doesn't count; null counts everything. */
+  countedFrom?: ISODate | null
   currentStreak: number
   bestStreak: number
   unlockedItems: string[]

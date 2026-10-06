@@ -1,11 +1,22 @@
 import { describe, expect, it } from 'vitest'
-import type { Chore } from '../domain/types'
-import { addChore, completeChore, createHousehold, removeChore } from './actions'
+import type { Chore, Progress } from '../domain/types'
+import { addChore, completeChore, completeChoreWithRewards, createHousehold, removeChore } from './actions'
 import { memoryStore, type LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
-import { emptyTables, selectHome, upsertOp, type Tables } from './state'
+import { emptyTables, selectHome, type Tables } from './state'
 import { createStore, type Store } from './store'
 import { keyOf, type TableName } from './tables'
+
+/** What supabase/migrations/0004_progress_merge.sql does to an updated progress row. */
+function mergeLikeTrigger(old: Progress, row: Progress): Progress {
+  return {
+    ...row,
+    unlockedItems: [...new Set([...old.unlockedItems, ...row.unlockedItems])],
+    bestStreak: Math.max(old.bestStreak, row.bestStreak),
+    choreCount: Math.max(old.choreCount, row.choreCount),
+    countedFrom: [old.countedFrom, row.countedFrom].filter(Boolean).sort()[0] ?? null,
+  }
+}
 
 /** An in-memory server. `offline` makes every call fail like a dropped connection. */
 function fakeServer(userId = 'u1') {
@@ -30,7 +41,12 @@ function fakeServer(userId = 'u1') {
       if (server.offline) return down()
       if (rows.some((r) => server.refuse(table, r))) return { ok: false, transient: false, message: 'refused' }
       const t = server.tables[table] as Record<string, unknown>
-      for (const r of rows) t[keyOf(table, r)] = structuredClone(r)
+      for (const r of rows) {
+        const key = keyOf(table, r)
+        const old = t[key] as Progress | undefined
+        // Like the progress_merge trigger (migration 0004): updates merge instead of overwriting.
+        t[key] = table === 'progress' && old ? mergeLikeTrigger(old, r as Progress) : structuredClone(r)
+      }
       return { ok: true }
     },
     async remove(table, keys) {
@@ -208,32 +224,55 @@ describe('when the browser refuses local storage', () => {
 })
 
 describe('two devices on one account', () => {
-  it('keeps every chore and reward from both while each was offline', async () => {
+  async function pair() {
     const { server, remote } = fakeServer()
     const phone = await onboarded(remote)
+    phone.apply(...dishes(phone))
+    const { home } = selectHome(phone.getState().snapshot.tables)
+    phone.apply(...addChore(home!, { name: 'Bins', schedule: { kind: 'daily' } }, '2026-10-01'))
+    await phone.sync()
     const tablet = createStore({ local: memoryStore(), remote })
     await tablet.start()
     await tablet.sync()
-    const progressOf = (s: Store) => selectHome(s.getState().snapshot.tables).progress!
-    expect(progressOf(tablet)).toEqual(progressOf(phone))
+    return { server, phone, tablet }
+  }
+  const finish = (s: Store, name: string, day: number) => {
+    const data = selectHome(s.getState().snapshot.tables)
+    const chore = data.chores.find((c) => c.name === name)!
+    s.apply(...completeChoreWithRewards(chore, data.progress, { ...data, vacations: data.home!.vacations }, new Date(2026, 9, day, 9)).ops)
+  }
+  const progressOf = (s: Store) => selectHome(s.getState().snapshot.tables).progress!
 
+  it('keeps every chore and reward from both while each was offline, whatever order they sync in', async () => {
+    const { server, phone, tablet } = await pair()
     server.offline = true
-    const base = progressOf(phone)
-    phone.apply(upsertOp('progress', { ...base, choreCount: base.choreCount + 1, unlockedItems: [...base.unlockedItems, 'item:beanie-red'] }))
-    tablet.apply(upsertOp('progress', { ...base, choreCount: base.choreCount + 2, bestStreak: 3, unlockedItems: [...base.unlockedItems, 'wall:mint'] }))
-    await phone.sync()
-    await tablet.sync()
-
+    finish(phone, 'Dishes', 6) // chore 1: the red beanie
+    finish(tablet, 'Bins', 6)
+    finish(tablet, 'Bins', 7)
+    // Both reconnect; the tablet's progress row lands last, and still nothing is lost.
     server.offline = false
     await phone.sync()
     await tablet.sync()
     await phone.sync()
-    const merged = server.tables.progress[base.homeId]
-    expect(merged.unlockedItems).toEqual(expect.arrayContaining(['item:beanie-red', 'wall:mint']))
-    expect(merged.choreCount).toBe(base.choreCount + 3) // one on the phone, two on the tablet
-    expect(merged.bestStreak).toBe(3)
-    expect(progressOf(phone)).toEqual(merged)
-    expect(progressOf(tablet)).toEqual(merged)
+    for (const s of [phone, tablet]) {
+      expect(progressOf(s).choreCount).toBe(3)
+      expect(progressOf(s).unlockedItems).toContain('item:beanie-red')
+    }
+    expect(server.tables.progress[progressOf(phone).homeId].unlockedItems).toContain('item:beanie-red')
+  })
+
+  it('counts the same chore ticked off on both devices once', async () => {
+    const { server, phone, tablet } = await pair()
+    server.offline = true
+    finish(phone, 'Dishes', 6)
+    finish(tablet, 'Dishes', 6)
+    server.offline = false
+    await phone.sync()
+    await tablet.sync()
+    await phone.sync()
+    expect(Object.keys(server.tables.completions)).toHaveLength(2)
+    expect(progressOf(phone).choreCount).toBe(1)
+    expect(progressOf(tablet).choreCount).toBe(1)
   })
 })
 
@@ -295,5 +334,24 @@ describe('signing in to a saved account on a flaky connection', () => {
     expect(device.getState().hydrated).toBe(true)
     expect(selectHome(device.getState().snapshot.tables).pet?.name).toBe('Mo')
     expect(server.tables.homes).not.toEqual({})
+  })
+})
+
+describe('changes made while sync is signing in', () => {
+  it('are kept and sent, not overwritten by the snapshot from before the wait', async () => {
+    const { server, remote } = fakeServer()
+    const phone = await onboarded(remote)
+    let release = () => {}
+    const gate = new Promise<void>((resolve) => (release = resolve))
+    const slow = createStore({ local: memoryStore(phone.getState().snapshot), remote: { ...remote, session: () => gate.then(() => 'u1') } })
+    await slow.start()
+    slow.apply(...dishes(slow)) // starts a sync, which waits on the session
+    const { home } = selectHome(slow.getState().snapshot.tables)
+    slow.apply(...addChore(home!, { name: 'Bins', schedule: { kind: 'daily' } }, '2026-10-01'))
+    release()
+    await slow.sync()
+    const names = (s: Record<string, Chore>) => Object.values(s).map((c) => c.name).sort()
+    expect(names(slow.getState().snapshot.tables.chores)).toEqual(['Bins', 'Dishes'])
+    expect(names(server.tables.chores)).toEqual(['Bins', 'Dishes'])
   })
 })

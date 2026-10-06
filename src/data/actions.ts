@@ -1,6 +1,6 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
-import { completionCounts } from '../domain/schedule'
+import { completionCounts, countedOccurrences } from '../domain/schedule'
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, currentStreak, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
@@ -95,7 +95,8 @@ export function completeChoreWithRewards(
   const ops: NewOp[] = [upsertOp('completions', completion)]
   if (!progress) return { ops, unlocked: [] }
   const streak = currentStreak(context.chores, [...context.completions, completion], completion.completedOn, context.vacations)
-  const result = applyUnlocks({ ...progress, choreCount: progress.choreCount + 1 }, streak)
+  const choreCount = countedOccurrences(context.chores, [...context.completions, completion], progress.countedFrom ?? null)
+  const result = applyUnlocks({ ...progress, choreCount }, streak)
   ops.push(upsertOp('progress', result.progress))
   return { ops, unlocked: result.unlocked }
 }

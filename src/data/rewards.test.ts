@@ -116,7 +116,8 @@ describe('completeChoreWithRewards basics', () => {
     const c = dailyChore('A', '2026-09-30')
     const p = progress({ choreCount: 20, currentStreak: 6, bestStreak: 9, unlockedItems: UNLOCKS.map((u) => u.id) })
     const result = completeChoreWithRewards(c, p, ctx([c], daysOf('A', '2026-09-30', '2026-10-05')), at(9))
-    expect(upsertOf(result.ops, 'progress')[0].value).toMatchObject({ choreCount: 21, currentStreak: 7, bestStreak: 9 })
+    // The count comes from the completions (six days, plus today), not from the stored 20.
+    expect(upsertOf(result.ops, 'progress')[0].value).toMatchObject({ choreCount: 7, currentStreak: 7, bestStreak: 9 })
     expect(result.unlocked).toEqual([])
   })
 
@@ -125,13 +126,14 @@ describe('completeChoreWithRewards basics', () => {
     const p = progress({ choreCount: 4, bestStreak: 3 })
     const result = completeChoreWithRewards(c, p, ctx([c], daysOf('A', '2026-09-30', '2026-10-05')), at(9))
     expect(result.unlocked.map((u) => u.id)).toEqual(['item:beanie-red', 'decor:plant', 'wall:mint', 'item:bow', 'floor:tile', 'wall:lavender'])
-    expect(upsertOf(result.ops, 'progress')[0].value).toMatchObject({ choreCount: 5, currentStreak: 7, bestStreak: 7 })
+    expect(upsertOf(result.ops, 'progress')[0].value).toMatchObject({ choreCount: 7, currentStreak: 7, bestStreak: 7 })
   })
 
   it('bumps the chore count before unlocking: the chore that reaches a threshold earns it', () => {
-    const c = dailyChore('A', '2026-10-01')
+    // 39 days done (28 Aug to 5 Oct), so today's is chore 40: the backpack.
+    const c = dailyChore('A', '2026-08-28')
     const others = UNLOCKS.filter((u) => u.id !== 'item:backpack').map((u) => u.id)
-    const result = completeChoreWithRewards(c, progress({ choreCount: 39, bestStreak: 14, unlockedItems: others }), ctx([c], []), at(9))
+    const result = completeChoreWithRewards(c, progress({ choreCount: 39, bestStreak: 14, unlockedItems: others }), ctx([c], daysOf('A', '2026-08-28', '2026-10-05')), at(9))
     expect(result.unlocked.map((u) => u.id)).toEqual(['item:backpack'])
     expect(upsertOf(result.ops, 'progress')[0].value.choreCount).toBe(40)
 

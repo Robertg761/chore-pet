@@ -94,6 +94,7 @@ const progress: Mapper<Progress> = {
   toRow: (p) => ({
     home_id: p.homeId,
     chore_count: p.choreCount,
+    counted_from: p.countedFrom ?? null,
     current_streak: p.currentStreak,
     best_streak: p.bestStreak,
     unlocked_items: p.unlockedItems,
@@ -101,6 +102,7 @@ const progress: Mapper<Progress> = {
   fromRow: (r) => ({
     homeId: r.home_id as string,
     choreCount: r.chore_count as number,
+    countedFrom: (r.counted_from as string | null) ?? null,
     currentStreak: r.current_streak as number,
     bestStreak: r.best_streak as number,
     unlockedItems: (r.unlocked_items as string[]) ?? [],

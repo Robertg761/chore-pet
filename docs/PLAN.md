@@ -125,6 +125,11 @@ Parallel batch H:
   - Performance: **Done.** Supabase loads after first paint, so first-load JS in a configured build drops from 197 to 142 kB gzipped.
   - Account linking: **Done** (`src/lib/account.ts`, `src/screens/AccountSection.tsx`). A guest saves with email (confirmation link) or Google, linking the same user id so nothing moves. "Sign in" on another device switches accounts and syncs to follow.
   - Final QA: browser emulation at 390 px only. There is no real phone in this environment.
+  - Progress across devices: **Done.**
+    - The chore count is worked out from the completions (`countedOccurrences`), so nothing can overwrite it, and the same chore occurrence ticked off on two devices counts once.
+    - The `progress_merge` trigger (migration 0004) merges unlocks and the best streak atomically on the server.
+    - `supabase/migrations.test.ts` runs every migration on PGlite.
+    - Known trade-off: deleting a chore removes its history, so the count drops. Rewards already earned stay.
 - [LEAD] Submission: live link, repo, write-up, in-app demo video.
   - **Write-up drafted** (`docs/SUBMISSION.md`).
   - **Demo video recorded** in the app (`npm run demo:record`; about 85 s, sample home and time skip).

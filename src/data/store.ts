@@ -1,6 +1,6 @@
 import type { LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
-import { acknowledge, change, claim, emptySnapshot, mergeQueuedProgress, planFlush, progressBaseOf, rebase, type NewOp, type Op, type Snapshot } from './state'
+import { acknowledge, change, claim, emptySnapshot, planFlush, rebase, type NewOp, type Op, type Snapshot } from './state'
 
 /**
  * - local-only: no Supabase keys, data stays on this device.
@@ -82,17 +82,15 @@ export function createStore({ local, remote, isOnline = () => true }: StoreDeps)
     set({ sync: 'syncing' })
     try {
       const before = state.snapshot.userId
-      commit(claim(state.snapshot, await r.session()))
+      // Read the snapshot after the await: changes made while signing in must not be lost.
+      const userId = await r.session()
+      commit(claim(state.snapshot, userId))
       // Signed in to another account: its home is on the way, so don't offer an empty one meanwhile.
       if (before !== null && before !== state.snapshot.userId) {
         switching = true
         set({ hydrated: false })
       }
 
-      // Another device may have moved progress on; merge before overwriting it.
-      if (Object.values(state.snapshot.outbox).some((o) => o.table === 'progress' && o.kind === 'upsert')) {
-        commit(mergeQueuedProgress(state.snapshot, (await r.pull()).progress))
-      }
 
       for (const step of planFlush(state.snapshot.outbox)) {
         const res = await send(r, step, step.ops)
@@ -112,7 +110,7 @@ export function createStore({ local, remote, isOnline = () => true }: StoreDeps)
       }
 
       const server = await r.pull()
-      commit({ ...state.snapshot, tables: rebase(server, state.snapshot.outbox), progressBase: progressBaseOf(server.progress) })
+      commit({ ...state.snapshot, tables: rebase(server, state.snapshot.outbox) })
       switching = false
       set({ sync: 'synced', lastError: null, hydrated: true })
     } catch (e) {

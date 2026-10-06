@@ -1,5 +1,5 @@
 import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room } from '../domain/types'
-import { applyUnlocks } from '../domain/unlocks'
+import { countedOccurrences } from '../domain/schedule'
 import { CASCADES, TABLES, keyOf, type TableMap, type TableName } from './tables'
 
 // Pure state for the offline-first data layer. No IO here, so it's all testable.
@@ -29,8 +29,6 @@ export interface Snapshot {
   outbox: Outbox
   /** Monotonic counter for op sequence numbers. */
   seq: number
-  /** The server's chore count per home at the last pull, so this device's own additions can be merged as a delta. */
-  progressBase?: Record<string, number>
 }
 
 export function emptyTables(): Tables {
@@ -125,49 +123,6 @@ export function rebase(server: Tables, outbox: Outbox): Tables {
 }
 
 /**
- * Progress is one shared row per home, so two devices that each finish chores
- * offline would overwrite each other's. Before a queued progress row is sent,
- * it is merged with the server's: the chore count is the server's plus what
- * this device added since its last pull (`base`), rewards from either side are
- * kept, and anything the new total has earned is unlocked.
- */
-export function mergeProgress(local: Progress, server: Progress, base?: number): Progress {
-  const choreCount = base === undefined ? Math.max(local.choreCount, server.choreCount) : server.choreCount + Math.max(0, local.choreCount - base)
-  const merged: Progress = {
-    ...local,
-    choreCount,
-    bestStreak: Math.max(local.bestStreak, server.bestStreak),
-    unlockedItems: [...local.unlockedItems, ...server.unlockedItems.filter((id) => !local.unlockedItems.includes(id))],
-  }
-  return applyUnlocks(merged, merged.currentStreak).progress
-}
-
-/** The server's chore counts, remembered at each pull as the base for mergeProgress. */
-export function progressBaseOf(server: Tables['progress']): Record<string, number> {
-  return Object.fromEntries(Object.entries(server).map(([k, p]) => [k, p.choreCount]))
-}
-
-/**
- * Merge every queued progress upsert with the server's copy (see mergeProgress).
- * Seqs are kept, so in-flight acks still match; the base moves to the server's
- * count so a retry after a failed send doesn't add the same delta twice.
- */
-export function mergeQueuedProgress(snapshot: Snapshot, server: Tables['progress']): Snapshot {
-  let { tables, outbox } = snapshot
-  const progressBase = { ...snapshot.progressBase }
-  for (const [k, op] of Object.entries(outbox)) {
-    if (op.table !== 'progress' || op.kind !== 'upsert') continue
-    const theirs = server[op.key]
-    if (!theirs) continue
-    const merged = mergeProgress(op.value, theirs, snapshot.progressBase?.[op.key])
-    progressBase[op.key] = theirs.choreCount
-    outbox = { ...outbox, [k]: { ...op, value: merged } }
-    tables = { ...tables, progress: { ...tables.progress, [op.key]: merged } }
-  }
-  return outbox === snapshot.outbox ? snapshot : { ...snapshot, tables, outbox, progressBase }
-}
-
-/**
  * Decide what to keep when a session appears. Data made before any session
  * (offline first launch) is adopted by the new account; data that belongs to
  * a different account is dropped.
@@ -199,13 +154,16 @@ export function selectHome(tables: Tables): HomeData {
     .filter((c) => c.homeId === home.id)
     .sort((a, b) => a.createdOn.localeCompare(b.createdOn) || a.name.localeCompare(b.name))
   const choreIds = new Set(chores.map((c) => c.id))
+  const completions = Object.values(tables.completions).filter((c) => choreIds.has(c.choreId))
+  const stored = tables.progress[home.id] ?? null
   return {
     home,
     pet: Object.values(tables.pets).find((p) => p.homeId === home.id) ?? null,
-    progress: tables.progress[home.id] ?? null,
+    // The chore count comes from the completions themselves, so it is right whichever device recorded them.
+    progress: stored && { ...stored, choreCount: countedOccurrences(chores, completions, stored.countedFrom ?? null) },
     rooms,
     objects: Object.values(tables.placed_objects).filter((o) => roomIds.has(o.roomId)),
     chores,
-    completions: Object.values(tables.completions).filter((c) => choreIds.has(c.choreId)),
+    completions,
   }
 }
