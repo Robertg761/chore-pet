@@ -145,15 +145,15 @@ Feedback from the first real use: the red beanie didn't sit on the pet properly,
 
 Parallel batch I:
 
-- [SONNET: svg-artist] Hats (`src/character/items/hats.tsx`): a beanie that hugs each head (Mochi's dome, between Bun's ears, around Sprout's stem); review bow and leaf crown.
-- [SONNET: svg-artist] Outfits (`src/character/items/outfits.tsx`): hoodie with hood, overalls with bib and straps, dress and knit sweater as full garments with necklines, relying on the silhouette clip.
-- [SONNET: svg-artist] Extras (`src/character/items/extras.tsx`): backpack with front straps; neck items sit over every outfit; glasses per species.
-- [SONNET: ui-builder] Secondary screens (Rewards, Wardrobe, Week, Settings, Creator, Share, Vacation) fit one phone viewport and use the width on desktop.
+- [SONNET: svg-artist] Hats (`src/character/items/hats.tsx`): a beanie that hugs each head (Mochi's dome, between Bun's ears, around Sprout's stem); review bow and leaf crown. **Done**
+- [SONNET: svg-artist] Outfits (`src/character/items/outfits.tsx`): hoodie with hood, overalls with bib and straps, dress and knit sweater as full garments with necklines, relying on the silhouette clip. **Done** (second pass after review: necklines climb the sides, flat fills, and the dress skirt flares past the body as an unclipped front part)
+- [SONNET: svg-artist] Extras (`src/character/items/extras.tsx`): backpack with front straps; neck items sit over every outfit; glasses per species. **Done** (after review: a smaller pack, and the straps drawn in front via a new `Item.front`)
+- [SONNET: ui-builder] Secondary screens (Rewards, Wardrobe, Week, Settings, Creator, Share, Vacation) fit one phone viewport and use the width on desktop. **Done** (split across two ui-builders)
 
-- [LEAD] Single-screen home: top bar, the room as the hero, an "Up next" card with a sheet for the full list, and a tab bar (bottom on phones, side rail on desktop). Build mode fits one screen.
-- [LEAD] Review: the wardrobe check in `/?art` for every item, species and pose; no page scroll at 390 x 664 and a balanced layout at 1280 x 800; axe clean.
+- [LEAD] Single-screen home: top bar, the room as the hero, an "Up next" card with a sheet for the full list, and a tab bar (bottom on phones, side rail on desktop). Build mode fits one screen. **Done** (`src/shell/`: AppNav, Sheet, useViewport; build mode has a tabbed panel)
+- [LEAD] Review: the wardrobe check in `/?art` for every item, species and pose; no page scroll at 390 x 664 and a balanced layout at 1280 x 800; axe clean. **Done:** all 11 items on 3 pets x 7 poses, alone and in combos. Every screen (landing, home, the chores sheet, More, build, wardrobe, rewards, week, change look, share, vacation, settings, editor, gift) fits 390 x 664 and 1280 x 800 with no page scroll, and axe reports nothing at either size.
 
-**Done when:** every item looks made for every pet in every pose, and the home and every screen fit one viewport on a phone and a desktop browser.
+**Done when:** every item looks made for every pet in every pose, and the home and every screen fit one viewport on a phone and a desktop browser. **Met.**
 
 ## Stretch
 

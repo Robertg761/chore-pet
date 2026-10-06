@@ -144,7 +144,8 @@ export function GiftBox({ unlock, pet, onClose }: GiftBoxProps) {
           {revealed && (
             <div className="gift-reveal">
               {unlock.kind === 'item' && item ? (
-                <svg className="gift-art" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+                // Taller than the pet's 200 box so ears, hats and the cheer's hearts stay clear of the title.
+                <svg className="gift-art" viewBox="0 -28 200 224" aria-hidden="true" focusable="false">
                   <Cheer>
                     <CharacterArt species={pet.species} mood="happy" pose="cheering" bodyColour={pet.bodyColour} equipped={{ ...pet.equipped, [item.slot]: item.id }} />
                   </Cheer>

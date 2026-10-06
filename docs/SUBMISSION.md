@@ -50,6 +50,7 @@ The pet is a reason to come back, not a guilt trip. It never dies, and its lines
   - It works offline first, from IndexedDB, and syncs to Supabase.
   - Everyone starts as a guest with no sign-up.
   - In Settings, a guest saves their home to email or Google. That links the same account, so nothing moves, and the home then opens on any device.
+- **One screen, phone or desktop:** every screen fits the window with no scrolling: tabs along the bottom on a phone, a side rail and two columns on a desktop browser.
 - **Phone-first PWA:**
   - Installable and works offline.
   - An opt-in daily nudge in the pet's voice.
@@ -73,7 +74,7 @@ All code was written fresh during the Yard, solo, with Claude Code:
   - a test writer.
 - **Review:** each result was checked against the art contract (`docs/ART.md`) in a live gallery (`/?art`) and by tests before it landed.
 - **Plan:** `docs/PLAN.md` holds the phase-by-phase plan and who did what.
-- **Tests:** 669 unit tests cover schedules, health, mess, streaks, unlocks, sync, tile maths and placement.
+- **Tests:** 700 unit tests cover schedules, health, mess, streaks, unlocks, sync, tile maths and placement.
 
 ## Honest limits
 
