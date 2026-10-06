@@ -1,7 +1,7 @@
 import { UNLOCKS } from '../domain/unlocks'
 import { describe, expect, it } from 'vitest'
 import type { Progress } from '../domain/types'
-import { giftTitle, nextLines, requirementLabel, rewardsButtonLabel, withEquipped } from './rewardsModel'
+import { giftTitle, nextLines, requirementLabel, rewardsButtonLabel, rewardsNote, withEquipped } from './rewardsModel'
 
 const progress = (over: Partial<Progress> = {}): Progress => ({ homeId: 'h', choreCount: 0, currentStreak: 0, bestStreak: 0, unlockedItems: [], ...over })
 
@@ -42,6 +42,8 @@ describe('rewardsModel', () => {
   it('labels the home button', () => {
     expect(rewardsButtonLabel(null)).toBe('Rewards')
     expect(rewardsButtonLabel(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }))).toBe('Rewards · 2 to go')
+    expect(rewardsNote(null)).toBeUndefined()
+    expect(rewardsNote(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }))).toBe('2 to go')
   })
 
   it('keeps one item per slot', () => {

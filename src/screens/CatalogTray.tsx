@@ -14,43 +14,54 @@ export interface CatalogTrayProps {
   onPick: (entry: CatalogEntry) => void
   /** Unlock ids earned so far (progress.unlockedItems): decor shows up once earned. */
   unlocked?: string[]
+  /** One scrolling row (things for this room first) instead of a group per kind. */
+  oneRow?: boolean
 }
 
-export function CatalogTray({ roomType, objects, onPick, unlocked = [] }: CatalogTrayProps) {
+export function CatalogTray({ roomType, objects, onPick, unlocked = [], oneRow = false }: CatalogTrayProps) {
   const uid = useId()
   const earnedDecor = DECOR.filter((e) => e.unlock && unlocked.includes(e.unlock))
   const { suited, others } = splitCatalog([...CATALOG, ...earnedDecor], roomType)
 
+  const row = (entries: CatalogEntry[]) => (
+    <ul className="tray-row">
+      {entries.map((e) => {
+        const fits = fitsSomewhere(e, objects)
+        return (
+          <li key={e.id}>
+            <button type="button" className="tray-tile" disabled={!fits} onClick={() => onPick(e)}>
+              <ObjectThumb entry={e} className="tray-art" />
+              <span className="tray-name">{e.name}</span>
+              <span className="tray-meta">{fits ? choreCountLabel(e.chores.length) : 'No space'}</span>
+            </button>
+          </li>
+        )
+      })}
+    </ul>
+  )
   const group = (title: string, entries: CatalogEntry[], key: string) =>
     entries.length > 0 && (
       <div className="tray-group" role="group" aria-labelledby={`${uid}-${key}`}>
         <h3 className="tray-subheading" id={`${uid}-${key}`}>
           {title}
         </h3>
-        <ul className="tray-row">
-          {entries.map((e) => {
-            const fits = fitsSomewhere(e, objects)
-            return (
-              <li key={e.id}>
-                <button type="button" className="tray-tile" disabled={!fits} onClick={() => onPick(e)}>
-                  <ObjectThumb entry={e} className="tray-art" />
-                  <span className="tray-name">{e.name}</span>
-                  <span className="tray-meta">{fits ? choreCountLabel(e.chores.length) : 'No space'}</span>
-                </button>
-              </li>
-            )
-          })}
-        </ul>
+        {row(entries)}
       </div>
     )
 
   return (
-    <section className="tray" aria-labelledby={`${uid}-title`}>
+    <section className={oneRow ? 'tray tray-one-row' : 'tray'} aria-labelledby={`${uid}-title`}>
       <h2 className="tray-title" id={`${uid}-title`}>
         Add to your room
       </h2>
-      {group('For this room', suited, 'suited')}
-      {group(suited.length > 0 ? 'Everything else' : 'All things', others, 'others')}
+      {oneRow ? (
+        row([...suited, ...others])
+      ) : (
+        <>
+          {group('For this room', suited, 'suited')}
+          {group(suited.length > 0 ? 'Everything else' : 'All things', others, 'others')}
+        </>
+      )}
     </section>
   )
 }

@@ -117,3 +117,139 @@ body { margin: 0; }
   cursor: pointer;
 }
 .chip-button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* App frame: the view fills the screen above the tab bar (phones) or beside the rail (wide).
+   Screens are laid out to fit it; the view only scrolls as a last resort. */
+.app {
+  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas: 'view' 'nav';
+}
+.app > .app-nav { grid-area: nav; }
+.app-view { grid-area: view; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.app-view > .screen { min-height: 100%; padding-top: 16px; padding-bottom: 16px; }
+
+/* Home: name and health, the room as big as the space allows, then what's up next. */
+.home {
+  height: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 12px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.home-top { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 16px; }
+.home-top h1 { margin: 0; font-size: 26px; line-height: 1.1; overflow-wrap: anywhere; }
+.home-top .hb { margin: 0; gap: 2px; }
+.home-top .hb-track { height: 16px; }
+.home-top .hb-text { font-size: 14px; line-height: 18px; }
+.home-top .hb-row { min-height: 18px; }
+
+.home-stage {
+  flex: 1 1 0;
+  min-height: 150px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  container-type: size;
+}
+/* The room keeps its shape and fills whichever side runs out first (it is 390 x 392). */
+.home-stage .living-room { width: min(100cqw, 100cqh * 390 / 392); align-self: center; }
+.home-build {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  transform: translateX(-50%);
+  min-height: 48px;
+  padding: 0 22px;
+  font: inherit;
+  font-weight: 800;
+  color: #fff;
+  background: var(--accent);
+  border: var(--outline);
+  border-radius: 14px;
+  box-shadow: 0 3px 0 var(--ink);
+  cursor: pointer;
+}
+.home-build:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.home-chores { flex: none; display: flex; flex-direction: column; gap: 8px; }
+.home-alert { margin: 0; font-size: 13px; font-weight: 700; color: var(--late-ink); text-align: center; }
+
+.home .sample-banner { gap: 6px; padding: 8px 10px; }
+.home .sample-banner-text { font-size: 14px; }
+.home .sample-banner-actions { flex-wrap: nowrap; }
+.home .sample-btn { min-height: 44px; padding: 0 10px; font-size: 14px; white-space: nowrap; }
+
+/* Wide screens: the rail on the left, the room big on the left of the view, chores in a panel on the right. */
+@media (min-width: 900px) {
+  .app { grid-template-columns: 104px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); grid-template-areas: 'nav view'; }
+  .home {
+    max-width: 1280px;
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
+    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-areas: 'stage top' 'stage banner' 'stage chores';
+    column-gap: 32px;
+    row-gap: 14px;
+  }
+  .home-top { grid-area: top; grid-template-columns: 1fr; row-gap: 8px; }
+  .home-top h1 { font-size: 34px; }
+  .home .sample-banner { grid-area: banner; }
+  .home-stage { grid-area: stage; min-height: 0; }
+  .home-chores { grid-area: chores; min-height: 0; overflow-y: auto; padding: 2px 4px 8px 2px; }
+  .home-alert { grid-column: 2; }
+  /* The list scrolls in its panel; adding a chore stays in reach. */
+  .home-chores .cl-foot { position: sticky; bottom: -8px; padding: 8px 0; background: var(--ground); }
+  .app-view > .screen { max-width: 1040px; padding: 28px; }
+}
+
+/* Build mode: the room fills what the panel below (phones) or beside it (wide) leaves. */
+.build {
+  height: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 10px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.build .build-header h1 { font-size: 26px; }
+.build-stage { flex: 1 1 0; min-height: 200px; display: flex; flex-direction: column; }
+.build-stage .build-room { flex: 1 1 0; min-height: 0; gap: 6px; }
+.build-stage .build-room-svg { flex: 1 1 0; min-height: 0; height: 100%; }
+.build-panel { flex: none; max-height: 52%; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 10px; padding: 2px; }
+.build-extras { display: flex; flex-direction: column; gap: 8px; }
+.build-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; background: var(--card); border: 2px solid var(--ink); border-radius: 14px; }
+.build-tabs button {
+  min-height: 40px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink-soft);
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.build-tabs button[aria-pressed='true'] { color: #fff; background: var(--ink); }
+.build-tabs button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+@media (min-width: 900px) {
+  .build {
+    max-width: 1280px;
+    padding: 24px 28px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: 'head head' 'stage panel';
+    column-gap: 32px;
+    row-gap: 12px;
+  }
+  .build .build-header { grid-area: head; }
+  .build-stage { grid-area: stage; min-height: 0; }
+  .build-panel { grid-area: panel; max-height: none; min-height: 0; }
+}

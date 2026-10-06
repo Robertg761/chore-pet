@@ -2,7 +2,7 @@
   align-self: stretch;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
 }
 
 .cl-banner {
@@ -43,7 +43,7 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .cl-row {
@@ -51,7 +51,7 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
-  padding: 8px 10px 8px 12px;
+  padding: 4px 6px 4px 12px;
   background: var(--card);
   border: 2px solid var(--ink);
   border-radius: var(--radius);
@@ -64,9 +64,9 @@
 .cl-info {
   min-width: 0;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 8px;
 }
 
 .cl-name {
@@ -75,7 +75,7 @@
   padding: 0;
   font: inherit;
   font-weight: 800;
-  font-size: 17px;
+  font-size: 16px;
   text-align: left;
   color: var(--ink);
   background: none;
@@ -84,7 +84,15 @@
   cursor: pointer;
   overflow-wrap: anywhere;
 }
-.cl-info .tag { margin-top: 0; margin-bottom: 4px; font-weight: 800; }
+.cl-info .tag { margin: 0 0 2px; font-weight: 800; white-space: nowrap; }
+
+/* The home screen's short list: one line per chore. */
+.cl-short .cl-info { flex-wrap: nowrap; }
+.cl-short .cl-name { flex: 0 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; overflow-wrap: normal; }
+.cl-short .cl-info .tag { margin: 0; }
+
+.cl-foot { display: flex; gap: 8px; }
+.cl-foot .cl-add { flex: 1 1 0; }
 
 .cl-action {
   min-width: 72px;
@@ -129,7 +137,7 @@
 }
 
 .cl-add {
-  min-height: 48px;
+  min-height: 46px;
   padding: 0 18px;
   font: inherit;
   font-weight: 800;
