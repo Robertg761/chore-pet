@@ -39,7 +39,7 @@ Parallel batch B:
 - [SONNET: ui-builder] Chore list screen: today, overdue, upcoming, with the done action. Uses `petCondition()`. **Done**
 - [SONNET: ui-builder] Chore editor: name and every schedule type, with validation. **Done**
 - [SONNET: ui-builder] Vacation mode screen: set and clear date ranges on the home.
-- [SONNET: test-writer] Extra tests for edge cases: month ends, leap years, chores created mid-week, vacations spanning due dates.
+- [SONNET: test-writer] Extra tests for edge cases: month ends, leap years, chores created mid-week, vacations spanning due dates. **Done** (found and fixed: everyNDays could be due before the chore was created)
 - [SONNET: ui-builder] PWA polish: app icons drawn as SVG and PNG exports, install prompt hook. **Done** (`npm run icons` regenerates the PNGs; hook in `src/pwa/useInstallPrompt.ts`)
 
 **Done when:** you can create chores, complete them, and watch the pet's mood change on the right days, with data surviving a reload and a new device sign-in.

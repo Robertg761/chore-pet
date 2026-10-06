@@ -80,7 +80,8 @@ function monthlyDate(ref: ISODate, dayOfMonth: number, monthOffset: number): ISO
  * - Early completion (before the due date but after the previous scheduled
  *   date): satisfies the pending occurrence. Extra early completions in the
  *   same period are ignored.
- * - everyNDays: always due N days after the most recent completion.
+ * - everyNDays: always due N days after the most recent completion, and never
+ *   before the chore was created.
  */
 export function nextDueDate(chore: Chore, completions: Completion[]): ISODate {
   const dates = [...new Set(completions.filter((c) => c.choreId === chore.id).map((c) => c.completedOn))].sort()
@@ -88,7 +89,8 @@ export function nextDueDate(chore: Chore, completions: Completion[]): ISODate {
 
   if (schedule.kind === 'everyNDays') {
     const last = dates[dates.length - 1]
-    return last ? addDays(last, Math.max(1, schedule.n)) : chore.createdOn
+    const next = last ? addDays(last, Math.max(1, schedule.n)) : chore.createdOn
+    return next > chore.createdOn ? next : chore.createdOn
   }
 
   let due = firstOnOrAfter(schedule, chore.createdOn)
