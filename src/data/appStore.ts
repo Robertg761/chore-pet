@@ -16,21 +16,43 @@ export const appStore = createStore({
 })
 
 let started = false
+let listening = false
+
+/**
+ * Signing in, out or saving the account changes whose data this is: sync to
+ * follow it. Called again on every retry, so a Supabase download that failed
+ * at start-up still gets its listener once it loads.
+ */
+function listenForAuthChanges() {
+  if (listening) return
+  getSupabase().then(
+    (supabase) => {
+      if (!supabase || listening) return
+      listening = true
+      supabase.auth.onAuthStateChange((event) => {
+        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') void appStore.sync()
+      })
+    },
+    () => {
+      // Offline or the download failed; the next retry tries again.
+    },
+  )
+}
+
+function retry() {
+  listenForAuthChanges()
+  void appStore.sync()
+}
 
 export function startAppStore() {
   if (started) return
   started = true
   void appStore.start()
-  window.addEventListener('online', () => void appStore.sync())
+  listenForAuthChanges()
+  window.addEventListener('online', retry)
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') void appStore.sync()
+    if (document.visibilityState === 'visible') retry()
   })
-  // Signing in, out or saving the account changes whose data this is: sync to follow it.
-  void getSupabase().then((supabase) =>
-    supabase?.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') void appStore.sync()
-    }),
-  )
 }
 
 export function useDataState(): DataState {
