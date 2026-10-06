@@ -55,10 +55,10 @@ Parallel batch C:
 - [SONNET: svg-artist] Objects batch 1: stove, fridge, dishwasher, trash can (clean, messy1, messy2 each), copying the reference sink. **Done**
 - [SONNET: svg-artist] Objects batch 2: recycling, bed, washer, toilet. **Done**
 - [SONNET: svg-artist] Objects batch 3: shower, couch, floor rug, table. **Done**
-- [SONNET: ui-builder] Catalog tray and object sheet (edit chore frequency, add custom chore, move, remove). There are no build mode mockups in the repo; the task brief describes the design.
+- [SONNET: ui-builder] Catalog tray and object sheet (edit chore frequency, add custom chore, move, remove). There are no build mode mockups in the repo; the task brief describes the design. **Done**
 - [SONNET: test-writer] Tests for footprint validation and tile maths. **Done** (found and fixed: turning a floor object near the edge could push it outside the room)
 
-**Done when:** a new user can build one room and get a working chore schedule without seeing a form.
+**Done when:** a new user can build one room and get a working chore schedule without seeing a form. **Met:** five taps on the tray build a kitchen with nine scheduled chores; placing a thing opens its sheet to show the chores it brought.
 
 ## Phase 3: Mess and pet life
 

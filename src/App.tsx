@@ -120,7 +120,12 @@ export default function App() {
     const selected = roomObjects.find((o) => o.id === selectedId) ?? null
     const selectedEntry = selected ? catalogEntry(selected.catalogId) : undefined
     const commit = (change: BuildChange) => {
-      if (change.kind === 'add') appStore.apply(...placeObject(room, change.entry, change.placement, today))
+      if (change.kind === 'add') {
+        // Select what was just placed so its sheet shows the chores it brought.
+        const ops = placeObject(room, change.entry, change.placement, today)
+        appStore.apply(...ops)
+        setSelectedId(ops[0].key)
+      }
       else {
         const obj = roomObjects.find((o) => o.id === change.id)
         if (obj) appStore.apply(...moveObject(obj, change.placement))
