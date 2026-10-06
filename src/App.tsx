@@ -48,6 +48,8 @@ import { PetPicker } from './screens/PetPicker'
 import { RewardsScreen } from './screens/RewardsScreen'
 import { rewardsButtonLabel } from './screens/rewardsModel'
 import { SampleBanner } from './screens/SampleBanner'
+import { CoachCard, FirstDoneHint, Welcome } from './screens/Onboarding'
+import { coachStep, hasDueChore, hintKey, onboardedKey, readFlag, showFirstDoneHint, writeFlag } from './screens/onboardingModel'
 import { RoomStylePicker } from './screens/RoomStylePicker'
 import { VacationScreen } from './screens/VacationScreen'
 import { Wardrobe } from './screens/Wardrobe'
@@ -77,12 +79,17 @@ export default function App() {
   const [placing, setPlacing] = useState<CatalogEntry | null>(null)
   // First launch: the landing choice, or the picker once "Build my home" is tapped.
   const [building, setBuilding] = useState(false)
+  // First run: the welcome beat after "Move in", then the coach card while building the first room.
+  const [welcome, setWelcome] = useState(false)
+  const [coachHome, setCoachHome] = useState<string | null>(null)
+  const [, setFlagTick] = useState(0)
   const { canInstall, install } = useInstallPrompt()
   // The completion moment: the pet cheers and each cleaned object gets its own sparkle.
   const [celebrate, setCelebrate] = useState<Celebration | null>(null)
   const [sparkles, setSparkles] = useState<(SparkleSpot & { id: number })[]>([])
   const [gifts, setGifts] = useState<Unlock[]>([])
   const momentKey = useRef(0)
+  const doneRef = useRef<HTMLButtonElement>(null)
 
   // The pet's daily nudge (while the app is open); needs the same view of the day as the screen.
   const reminderStatuses = data.home ? petCondition(data.chores, data.completions, today, data.home.vacations).statuses : []
@@ -108,7 +115,12 @@ export default function App() {
             <button type="button" className="link-button landing-back" onClick={() => setBuilding(false)}>
               Back
             </button>
-            <PetPicker onChoose={({ species, name }) => appStore.apply(...createHousehold({ species, petName: name, userId: snapshot.userId }))} />
+            <PetPicker
+              onChoose={({ species, name }) => {
+                setWelcome(true)
+                appStore.apply(...createHousehold({ species, petName: name, userId: snapshot.userId }))
+              }}
+            />
           </>
         ) : (
           <Landing
@@ -123,6 +135,26 @@ export default function App() {
   const { home, pet, progress, rooms, objects, chores, completions } = data
   const room = rooms[0]
   const back = () => setView({ name: 'home' })
+  const flag = (key: string) => (writeFlag(key), setFlagTick((n) => n + 1))
+  // Build mode for the first time shows the coach card; it stays for this visit once started.
+  const openBuild = () => {
+    if (!readFlag(onboardedKey(home.id)) && !objects.some((o) => o.roomId === room?.id)) setCoachHome(home.id)
+    setView({ name: 'build' })
+  }
+
+  if (welcome) {
+    return (
+      <main className="shell">
+        <Welcome
+          pet={pet}
+          onContinue={() => {
+            setWelcome(false)
+            openBuild()
+          }}
+        />
+      </main>
+    )
+  }
 
   if (view.name === 'edit') {
     const { chore } = view
@@ -236,17 +268,24 @@ export default function App() {
   if (view.name === 'build' && room) {
     const selected = roomObjects.find((o) => o.id === selectedId) ?? null
     const selectedEntry = selected ? catalogEntry(selected.catalogId) : undefined
+    const coaching = coachHome === home.id && !readFlag(onboardedKey(home.id))
     const commit = (change: BuildChange) => {
       if (change.kind === 'add') {
         // Select what was just placed so its sheet shows the chores it brought.
         const ops = placeObject(room, change.entry, change.placement, today)
         appStore.apply(...ops)
-        setSelectedId(ops[0].key)
+        // While coaching, keep the tray open so the next pick is one tap away.
+        if (!coaching) setSelectedId(ops[0].key)
       }
       else {
         const obj = roomObjects.find((o) => o.id === change.id)
         if (obj) appStore.apply(...moveObject(obj, change.placement))
       }
+    }
+    const step = coachStep(roomObjects.length)
+    const finishCoach = () => {
+      setCoachHome(null)
+      flag(onboardedKey(home.id))
     }
     const turnTo = selected && selectedEntry ? turned(selectedEntry, selected) : null
     const canTurn = Boolean(selected && selectedEntry && turnTo && checkPlacement(selectedEntry, turnTo, roomObjects, lookup, selected.id).ok)
@@ -255,7 +294,12 @@ export default function App() {
       <main className="shell shell-wide">
         <header className="build-header">
           <h1>Build</h1>
-          <button type="button" className="build-done" onClick={() => (setSelectedId(null), setPlacing(null), back())}>
+          <button
+            type="button"
+            className={coaching && step === 3 ? 'build-done build-done-ready' : 'build-done'}
+            ref={doneRef}
+            onClick={() => (setSelectedId(null), setPlacing(null), coaching && finishCoach(), back())}
+          >
             Done
           </button>
         </header>
@@ -270,6 +314,14 @@ export default function App() {
           onCommit={commit}
           onPlacingDone={() => setPlacing(null)}
         />
+        {coaching && (
+          <CoachCard
+            step={step}
+            choreCount={chores.filter((c) => roomObjects.some((o) => o.id === c.objectId)).length}
+            sheetOpen={Boolean(selected)}
+            onSkip={() => (finishCoach(), doneRef.current?.focus())}
+          />
+        )}
         {selected && selectedEntry ? (
           <ObjectSheet
             object={selected}
@@ -288,7 +340,7 @@ export default function App() {
             onClose={() => setSelectedId(null)}
           />
         ) : (
-          <>
+          <div className={coaching && step === 1 ? 'build-extras coach-pulse' : 'build-extras'}>
             <CatalogTray roomType={room.type} objects={roomObjects} unlocked={progress?.unlockedItems} onPick={(entry) => (setSelectedId(null), setPlacing(entry))} />
             <RoomStylePicker
               wallStyle={room.wallStyle}
@@ -296,7 +348,7 @@ export default function App() {
               progress={progress}
               onChange={(patch) => appStore.apply(...updateRoom(room, patch))}
             />
-          </>
+          </div>
         )}
       </main>
     )
@@ -354,12 +406,20 @@ export default function App() {
         />
       )}
 
-      <button type="button" className="build-open" onClick={() => setView({ name: 'build' })}>
+      <button type="button" className="build-open" onClick={openBuild}>
         {roomObjects.length ? 'Build' : 'Build your room'}
       </button>
       <button type="button" className="build-open" onClick={() => setView({ name: 'rewards' })}>
         {rewardsButtonLabel(progress)}
       </button>
+
+      {view.name === 'home' &&
+        showFirstDoneHint({
+          onboarded: readFlag(onboardedKey(home.id)),
+          hintDone: readFlag(hintKey(home.id)),
+          completionCount: completions.length,
+          dueChore: hasDueChore(chores, completions, today, home.vacations),
+        }) && <FirstDoneHint onClose={() => flag(hintKey(home.id))} />}
 
       <ChoreList
         chores={chores}
@@ -369,6 +429,7 @@ export default function App() {
         onComplete={(chore) => {
           const done = completeChoreWithRewards(chore, progress, { chores, completions, vacations: home.vacations }, devNow())
           appStore.apply(...done.ops)
+          flag(hintKey(home.id))
           play('sparkle')
           if (done.unlocked.length) setGifts((queue) => [...queue, ...done.unlocked])
           const key = ++momentKey.current

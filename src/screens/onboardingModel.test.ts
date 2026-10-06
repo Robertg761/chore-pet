@@ -1,0 +1,75 @@
+import { describe, expect, it } from 'vitest'
+import type { Chore } from '../domain/types'
+import { coachCopy, coachStep, hasDueChore, hintKey, onboardedKey, readFlag, showFirstDoneHint, writeFlag, type FlagStorage } from './onboardingModel'
+
+function memory(): FlagStorage & { data: Map<string, string> } {
+  const data = new Map<string, string>()
+  return { data, getItem: (k) => data.get(k) ?? null, setItem: (k, v) => void data.set(k, v) }
+}
+
+const blocked: FlagStorage = {
+  getItem: () => {
+    throw new Error('blocked')
+  },
+  setItem: () => {
+    throw new Error('blocked')
+  },
+}
+
+describe('coach steps', () => {
+  it('moves on as things are placed', () => {
+    expect([0, 1, 2, 5].map(coachStep)).toEqual([1, 2, 3, 3])
+  })
+
+  it('has short copy with a live chore count', () => {
+    expect(coachCopy(1, 0)).toEqual({ text: 'Tap something to put it in your room.', count: null })
+    expect(coachCopy(2, 1).count).toBe('1 chore so far')
+    expect(coachCopy(2, 4).count).toBe('4 chores so far')
+    expect(coachCopy(2, 2, true).text).toContain('Tap the X')
+    expect(coachCopy(3, 7).text).toContain('Tap Done')
+  })
+})
+
+describe('flags', () => {
+  it('remembers per home', () => {
+    const s = memory()
+    expect(readFlag(onboardedKey('a'), s)).toBe(false)
+    writeFlag(onboardedKey('a'), s)
+    expect(readFlag(onboardedKey('a'), s)).toBe(true)
+    expect(readFlag(onboardedKey('b'), s)).toBe(false)
+    expect(readFlag(hintKey('a'), s)).toBe(false)
+  })
+
+  it('never throws when storage is blocked or missing', () => {
+    expect(() => writeFlag('k', blocked)).not.toThrow()
+    expect(readFlag('k', blocked)).toBe(false)
+    expect(() => writeFlag('k', null)).not.toThrow()
+    expect(readFlag('k', null)).toBe(false)
+  })
+})
+
+describe('first done hint', () => {
+  const chore: Chore = {
+    id: 'c1',
+    homeId: 'h',
+    objectId: 'o',
+    name: 'Wipe the counter',
+    schedule: { kind: 'daily' },
+    createdOn: '2026-01-05',
+    photoProof: false,
+  }
+
+  it('needs a chore that can be done today', () => {
+    expect(hasDueChore([chore], [], '2026-01-05', [])).toBe(true)
+    expect(hasDueChore([], [], '2026-01-05', [])).toBe(false)
+  })
+
+  it('shows only after a first build and before any completion', () => {
+    const base = { onboarded: true, hintDone: false, completionCount: 0, dueChore: true }
+    expect(showFirstDoneHint(base)).toBe(true)
+    expect(showFirstDoneHint({ ...base, onboarded: false })).toBe(false)
+    expect(showFirstDoneHint({ ...base, hintDone: true })).toBe(false)
+    expect(showFirstDoneHint({ ...base, completionCount: 1 })).toBe(false)
+    expect(showFirstDoneHint({ ...base, dueChore: false })).toBe(false)
+  })
+})

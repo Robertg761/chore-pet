@@ -46,7 +46,7 @@ export function PetPicker({ onChoose }: PetPickerProps) {
   return (
     <form className="picker" onSubmit={submit}>
       <h1 className="picker-title" id="picker-title">Who's moving in?</h1>
-      <p className="picker-sub">Pick a friend for your new home.</p>
+      <p className="picker-sub">Pick a friend for your new home. You can change how they look later.</p>
 
       <div className="picker-cards" role="radiogroup" aria-labelledby="picker-title" onKeyDown={onKeyDown}>
         {SPECIES.map((s) => {
