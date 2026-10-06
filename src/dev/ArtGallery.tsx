@@ -3,7 +3,7 @@ import { Character } from '../character/Character'
 import { POSES, type PoseName } from '../character/poses'
 import { SPECIES, type MessStage, type Mood } from '../domain/types'
 import { isoPoints } from '../room/iso'
-import { sinkArt } from '../room/objects/sink'
+import { OBJECT_ART } from '../room/objects'
 import { OBJECT_SCALE, tileCorner } from '../room/shell/geometry'
 import { RoomShell } from '../room/shell/RoomShell'
 import { FLOOR_STYLES, WALL_STYLES } from '../room/shell/styles'
@@ -15,7 +15,7 @@ import type { ObjectArt } from '../room/objects/types'
 
 const MOODS: Mood[] = ['happy', 'content', 'meh', 'scruffy', 'sick']
 const STAGES: MessStage[] = ['clean', 'messy1', 'messy2']
-const OBJECTS: ObjectArt[] = [sinkArt]
+const OBJECTS: ObjectArt[] = Object.values(OBJECT_ART)
 
 function ObjectTile({ art, stage, scale }: { art: ObjectArt; stage: MessStage; scale: number }) {
   const { x, y, width, height } = art.bounds
@@ -105,7 +105,7 @@ export default function ArtGallery() {
       <section className="gallery-row">
         <h3>Default room with the sink at tile (0, 2)</h3>
         <RoomShell floorStyle="wood" wallStyle="peach" width={520}>
-          <g transform={`translate(${tileCorner(0, 2).x} ${tileCorner(0, 2).y}) scale(${OBJECT_SCALE})`}>{sinkArt.render('clean')}</g>
+          <g transform={`translate(${tileCorner(0, 2).x} ${tileCorner(0, 2).y}) scale(${OBJECT_SCALE})`}>{OBJECT_ART.sink.render('clean')}</g>
         </RoomShell>
       </section>
       <section className="gallery-row">

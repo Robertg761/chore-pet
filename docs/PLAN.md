@@ -42,7 +42,7 @@ Parallel batch B:
 - [SONNET: test-writer] Extra tests for edge cases: month ends, leap years, chores created mid-week, vacations spanning due dates. **Done** (found and fixed: everyNDays could be due before the chore was created)
 - [SONNET: ui-builder] PWA polish: app icons drawn as SVG and PNG exports, install prompt hook. **Done** (`npm run icons` regenerates the PNGs; hook in `src/pwa/useInstallPrompt.ts`)
 
-**Done when:** you can create chores, complete them, and watch the pet's mood change on the right days, with data surviving a reload and a new device sign-in.
+**Done when:** you can create chores, complete them, and watch the pet's mood change on the right days, with data surviving a reload and a new device sign-in. **Met**, except the new-device check: guests are anonymous, so a real second-device sign-in waits for account linking in Phase 7 (the sync engine already handles it; see `src/data/store.test.ts`).
 
 ## Phase 2: The room and build mode
 
@@ -51,7 +51,7 @@ Parallel batch B:
 
 Parallel batch C:
 
-- [SONNET: catalog-curator] `src/catalog/objects.ts`: the 12 starting objects with footprint, wall placement rules and default chores (see the spec doc table).
+- [SONNET: catalog-curator] `src/catalog/objects.ts`: the 12 starting objects with footprint, wall placement rules and default chores. The lead fixed footprints, placement and layer (art depends on them); the curator writes names, rooms and default chores.
 - [SONNET: svg-artist] Objects batch 1: stove, fridge, dishwasher, trash can (clean, messy1, messy2 each), copying the reference sink.
 - [SONNET: svg-artist] Objects batch 2: recycling, bed, washer, toilet.
 - [SONNET: svg-artist] Objects batch 3: shower, couch, floor rug, table.
