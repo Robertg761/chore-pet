@@ -1,7 +1,8 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
 import type { CatalogEntry } from '../catalog/types'
-import type { Chore, Home, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
+import { applyUnlocks, currentStreak, type Unlock } from '../domain/unlocks'
+import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
 import { deleteOp, upsertOp, type NewOp } from './state'
 
 // Every user action as a pure function returning the changes to apply.
@@ -74,6 +75,26 @@ export function completeChore(chore: Chore, progress: Progress | null, now: Date
   const ops: NewOp[] = [upsertOp('completions', { id: id(), choreId: chore.id, completedAt: now.toISOString(), completedOn: toISODate(now) })]
   if (progress) ops.push(upsertOp('progress', { ...progress, choreCount: progress.choreCount + 1 }))
   return ops
+}
+
+/**
+ * Finish a chore and count it toward rewards: records the completion, bumps
+ * the chore count, works out today's streak with this completion included,
+ * and returns any rewards newly earned so the UI can open a gift for each.
+ */
+export function completeChoreWithRewards(
+  chore: Chore,
+  progress: Progress | null,
+  context: { chores: Chore[]; completions: Completion[]; vacations: VacationWindow[] },
+  now: Date = new Date(),
+): { ops: NewOp[]; unlocked: Unlock[] } {
+  const completion: Completion = { id: id(), choreId: chore.id, completedAt: now.toISOString(), completedOn: toISODate(now) }
+  const ops: NewOp[] = [upsertOp('completions', completion)]
+  if (!progress) return { ops, unlocked: [] }
+  const streak = currentStreak(context.chores, [...context.completions, completion], completion.completedOn, context.vacations)
+  const result = applyUnlocks({ ...progress, choreCount: progress.choreCount + 1 }, streak)
+  ops.push(upsertOp('progress', result.progress))
+  return { ops, unlocked: result.unlocked }
 }
 
 export function setVacations(home: Home, vacations: VacationWindow[]): NewOp[] {

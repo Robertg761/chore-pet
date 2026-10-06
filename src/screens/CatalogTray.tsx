@@ -1,6 +1,6 @@
 import { useId } from 'react'
 import type { CatalogEntry } from '../catalog/types'
-import { CATALOG } from '../catalog/objects'
+import { CATALOG, DECOR } from '../catalog/objects'
 import type { PlacedObject, RoomType } from '../domain/types'
 import { fitsSomewhere } from '../room/placement'
 import { choreCountLabel, splitCatalog } from './buildModel'
@@ -12,11 +12,14 @@ export interface CatalogTrayProps {
   /** The room's placed objects, to tell what still fits. */
   objects: PlacedObject[]
   onPick: (entry: CatalogEntry) => void
+  /** Unlock ids earned so far (progress.unlockedItems): decor shows up once earned. */
+  unlocked?: string[]
 }
 
-export function CatalogTray({ roomType, objects, onPick }: CatalogTrayProps) {
+export function CatalogTray({ roomType, objects, onPick, unlocked = [] }: CatalogTrayProps) {
   const uid = useId()
-  const { suited, others } = splitCatalog(CATALOG, roomType)
+  const earnedDecor = DECOR.filter((e) => e.unlock && unlocked.includes(e.unlock))
+  const { suited, others } = splitCatalog([...CATALOG, ...earnedDecor], roomType)
 
   const group = (title: string, entries: CatalogEntry[], key: string) =>
     entries.length > 0 && (

@@ -89,3 +89,26 @@ describe('sample homes', () => {
     for (const table of Object.values(s.tables)) expect(Object.keys(table)).toHaveLength(0)
   })
 })
+
+describe('rewards', () => {
+  it("unlocks the beanie on the player's first chore, and nothing twice", async () => {
+    const { completeChoreWithRewards } = await import('./actions')
+    let s = household()
+    const room = selectHome(s.tables).rooms[0]
+    s = apply(s, placeObject(room, catalogEntry('sink')!, { tileX: 0, tileY: 2, rotation: 0 }, '2026-10-06'))
+    let data = selectHome(s.tables)
+    const dishes = data.chores.find((c) => c.name === 'Wash the dishes')!
+
+    const first = completeChoreWithRewards(dishes, data.progress, { chores: data.chores, completions: data.completions, vacations: [] }, new Date(2026, 9, 6, 9))
+    expect(first.unlocked.map((u) => u.id)).toEqual(['item:beanie-red'])
+    s = apply(s, first.ops)
+    data = selectHome(s.tables)
+    expect(data.progress).toMatchObject({ choreCount: 1, currentStreak: 1, unlockedItems: ['item:beanie-red'] })
+
+    const scrub = data.chores.find((c) => c.name === 'Scrub the sink')!
+    const second = completeChoreWithRewards(scrub, data.progress, { chores: data.chores, completions: data.completions, vacations: [] }, new Date(2026, 9, 6, 10))
+    expect(second.unlocked).toEqual([])
+    s = apply(s, second.ops)
+    expect(selectHome(s.tables).progress?.choreCount).toBe(2)
+  })
+})

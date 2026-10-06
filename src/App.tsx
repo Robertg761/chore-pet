@@ -6,10 +6,13 @@ import { isInVacation } from './domain/dates'
 import { petCondition } from './domain/health'
 import { objectMessStages } from './domain/mess'
 import type { Chore } from './domain/types'
+import type { Unlock } from './domain/unlocks'
+import { ITEMS } from './character/items'
 import {
   addChore,
   adoptSample,
-  completeChore,
+  completeChoreWithRewards,
+  updatePet,
   createHousehold,
   createRoom,
   moveObject,
@@ -37,6 +40,7 @@ import { ChoreList } from './screens/ChoreList'
 import { sparkleSpot, type SparkleSpot } from './screens/doneMoment'
 import { HealthBar } from './screens/HealthBar'
 import { Landing } from './screens/Landing'
+import { GiftBox } from './screens/GiftBox'
 import { ObjectSheet } from './screens/ObjectSheet'
 import { PetPicker } from './screens/PetPicker'
 import { SampleBanner } from './screens/SampleBanner'
@@ -66,6 +70,7 @@ export default function App() {
   // The completion moment: the pet cheers and each cleaned object gets its own sparkle.
   const [celebrate, setCelebrate] = useState<Celebration | null>(null)
   const [sparkles, setSparkles] = useState<(SparkleSpot & { id: number })[]>([])
+  const [gifts, setGifts] = useState<Unlock[]>([])
   const momentKey = useRef(0)
 
   // Homes made before rooms existed get their first room.
@@ -200,7 +205,7 @@ export default function App() {
             onClose={() => setSelectedId(null)}
           />
         ) : (
-          <CatalogTray roomType={room.type} objects={roomObjects} onPick={(entry) => (setSelectedId(null), setPlacing(entry))} />
+          <CatalogTray roomType={room.type} objects={roomObjects} unlocked={progress?.unlockedItems} onPick={(entry) => (setSelectedId(null), setPlacing(entry))} />
         )}
       </main>
     )
@@ -247,7 +252,9 @@ export default function App() {
         vacations={home.vacations}
         today={today}
         onComplete={(chore) => {
-          appStore.apply(...completeChore(chore, progress, devNow()))
+          const done = completeChoreWithRewards(chore, progress, { chores, completions, vacations: home.vacations }, devNow())
+          appStore.apply(...done.ops)
+          if (done.unlocked.length) setGifts((queue) => [...queue, ...done.unlocked])
           const key = ++momentKey.current
           setCelebrate({ key, choreName: chore.name })
           const placed = roomObjects.find((o) => o.id === chore.objectId)
@@ -269,6 +276,19 @@ export default function App() {
       )}
 
       <footer className="dev-note">{SYNC_LABEL[sync]}</footer>
+
+      {gifts[0] && (
+        <GiftBox
+          key={gifts[0].id}
+          unlock={gifts[0]}
+          pet={pet}
+          onClose={({ wear }) => {
+            const item = ITEMS.find((i) => i.id === gifts[0].ref)
+            if (wear && gifts[0].kind === 'item' && item) appStore.apply(...updatePet(pet, { equipped: { ...pet.equipped, [item.slot]: item.id } }))
+            setGifts((queue) => queue.slice(1))
+          }}
+        />
+      )}
     </main>
   )
 }
