@@ -25,8 +25,17 @@ export function Cheeks({ y, spread = 34 }: { y: number; spread?: number }) {
   )
 }
 
-function Eye({ x, y, mood, side }: { x: number; y: number; mood: Mood; side: -1 | 1 }) {
+/** A mood, or one of the two special moments that override the face. */
+export type Expression = Mood | 'sleeping' | 'cheering'
+
+function Eye({ x, y, mood, side }: { x: number; y: number; mood: Expression; side: -1 | 1 }) {
   switch (mood) {
+    case 'sleeping':
+      // Peacefully shut: soft downward curves.
+      return <path d={`M${x - 7} ${y} q7 6 14 0`} />
+    case 'cheering':
+      // Squeezed happy: ^ ^
+      return <path d={`M${x - 7} ${y + 3} q7 -11 14 0`} />
     case 'happy':
     case 'content':
       return (
@@ -57,9 +66,12 @@ function Eye({ x, y, mood, side }: { x: number; y: number; mood: Mood; side: -1 
   }
 }
 
-function Mouth({ y, mood }: { y: number; mood: Mood }) {
+function Mouth({ y, mood }: { y: number; mood: Expression }) {
   switch (mood) {
+    case 'sleeping':
+      return <ellipse cx={100} cy={y + 1} rx={3} ry={2.5} fill={ink} stroke="none" />
     case 'happy':
+    case 'cheering':
       return (
         <g>
           <path d={`M91 ${y - 2} q9 12 18 0 Z`} fill={ink} />
@@ -77,7 +89,7 @@ function Mouth({ y, mood }: { y: number; mood: Mood }) {
 }
 
 /** Eyes and mouth. Eyes sit at (100 +/- 18, eyeY). */
-export function Face({ mood, eyeY, mouthY }: { mood: Mood; eyeY: number; mouthY: number }) {
+export function Face({ mood, eyeY, mouthY }: { mood: Expression; eyeY: number; mouthY: number }) {
   return (
     <g stroke={ink} strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round" fill="none">
       <Eye x={82} y={eyeY} mood={mood} side={-1} />
