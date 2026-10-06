@@ -1,0 +1,23 @@
+<!-- Chore Pet email: save a home with email. Paste into Supabase > Authentication > Emails > Templates > Change Email Address. Subject: Keep your Chore Pet home safe -->
+<div style="margin:0;padding:24px 12px;background:#efe9ff;font-family:Nunito,'Trebuchet MS','Segoe UI',system-ui,-apple-system,sans-serif;color:#2b1e2f;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:440px;margin:0 auto;background:#ffffff;border:3px solid #2b1e2f;border-radius:20px;">
+    <tr>
+      <td style="padding:28px 28px 8px;text-align:center;">
+        <img src="https://robertg761.github.io/chore-pet/icons/icon-192.png" width="72" height="72" alt="" style="display:inline-block;border:0;border-radius:16px;">
+        <h1 style="margin:16px 0 8px;font-size:24px;line-height:1.25;font-weight:800;">One tap to keep your home</h1>
+        <p style="margin:0;font-size:16px;line-height:1.5;">Tap below to save your home and pet to <strong>{{ .NewEmail }}</strong>. Then you can open it on any phone.</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:20px 28px 8px;text-align:center;">
+        <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:14px 28px;background:#6f5cf0;color:#ffffff;font-size:17px;font-weight:800;text-decoration:none;border:3px solid #2b1e2f;border-radius:999px;">Save my home</a>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:16px 28px 28px;text-align:center;">
+        <p style="margin:0;font-size:13px;line-height:1.5;color:#4a3e58;">Didn't ask for this? You can ignore this email. Nothing will change.</p>
+      </td>
+    </tr>
+  </table>
+  <p style="margin:16px 0 0;text-align:center;font-size:12px;color:#4a3e58;">Chore Pet · a tiny pet that lives in a home you build</p>
+</div>
