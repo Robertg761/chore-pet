@@ -36,7 +36,7 @@ The three pose files are pre-registered in `src/character/poses.ts`, so the pose
 Parallel batch B:
 
 - [SONNET: ui-builder] Pet picker: first-launch screen showing Mochi, Bun and Sprout side by side (happy pose, tap to choose, then name it). Returns `{ species, name }`; the lead wires it to pet creation. **Done**
-- [SONNET: ui-builder] Chore list screen: today, overdue, upcoming, with the done action. Uses `petCondition()`.
+- [SONNET: ui-builder] Chore list screen: today, overdue, upcoming, with the done action. Uses `petCondition()`. **Done**
 - [SONNET: ui-builder] Chore editor: name and every schedule type, with validation.
 - [SONNET: ui-builder] Vacation mode screen: set and clear date ranges on the home.
 - [SONNET: test-writer] Extra tests for edge cases: month ends, leap years, chores created mid-week, vacations spanning due dates.
