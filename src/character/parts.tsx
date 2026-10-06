@@ -1,7 +1,8 @@
-import { useId } from 'react'
+import { useContext, useId } from 'react'
 import { bodyShade } from '../art/color'
 import { PALETTE } from '../art/palette'
-import type { Mood } from '../domain/types'
+import type { EyeStyle, Mood } from '../domain/types'
+import { LookContext } from './look'
 
 // Shared building blocks for every species, so Mochi, Bun and Sprout read as
 // one family: same body shading, eyes, cheeks, feet, shadow and mood tint.
@@ -46,13 +47,47 @@ export function Body({ d, colour, highlight }: { d: string; colour: string; high
   )
 }
 
+/** A small blush heart centred on (x, y), about 18 wide. */
+function BlushHeart({ x, y, tilt }: { x: number; y: number; tilt: number }) {
+  return <path d="M0 5 C-10 -1.5 -6.5 -7.5 -3.2 -6.4 C-1.6 -5.9 0 -4.3 0 -3 C0 -4.3 1.6 -5.9 3.2 -6.4 C6.5 -7.5 10 -1.5 0 5 Z" transform={`translate(${x} ${y}) rotate(${tilt}) scale(1.2)`} />
+}
+
+/** Blush on both cheeks, in the style chosen in the character creator (see look.ts). */
 export function Cheeks({ y, spread = 34 }: { y: number; spread?: number }) {
-  return (
-    <g fill={blush} stroke="none" opacity={0.85}>
-      <ellipse cx={100 - spread} cy={y} rx={9.5} ry={5.5} />
-      <ellipse cx={100 + spread} cy={y} rx={9.5} ry={5.5} />
-    </g>
-  )
+  const { cheeks } = useContext(LookContext)
+  const [l, r] = [100 - spread, 100 + spread]
+  switch (cheeks) {
+    case 'none':
+      return null
+    case 'hearts':
+      return (
+        <g fill={blush} stroke="none" opacity={0.9}>
+          <BlushHeart x={l} y={y} tilt={-10} />
+          <BlushHeart x={r} y={y} tilt={10} />
+        </g>
+      )
+    case 'freckles':
+      return (
+        <g stroke="none">
+          <g fill={blush} opacity={0.4}>
+            <ellipse cx={l} cy={y} rx={9.5} ry={5.5} />
+            <ellipse cx={r} cy={y} rx={9.5} ry={5.5} />
+          </g>
+          <g fill={dirt} opacity={0.7}>
+            {[l, r].flatMap((cx) =>
+              [[-5, -1.5], [0.5, 2.5], [5.5, -1]].map(([dx, dy]) => <circle key={`${cx}${dx}`} cx={cx + dx} cy={y + dy} r={1.8} />),
+            )}
+          </g>
+        </g>
+      )
+    case 'round':
+      return (
+        <g fill={blush} stroke="none" opacity={0.85}>
+          <ellipse cx={l} cy={y} rx={9.5} ry={5.5} />
+          <ellipse cx={r} cy={y} rx={9.5} ry={5.5} />
+        </g>
+      )
+  }
 }
 
 /** A mood, or one of the two special moments that override the face. */
@@ -61,8 +96,35 @@ export type Expression = Mood | 'sleeping' | 'cheering'
 /** Eye centres sit this far either side of x = 100. */
 const EYE_SPREAD = 20
 
+/** A four-point glint, concave sides, `r` from centre to tip. */
+function Glint({ x, y, r }: { x: number; y: number; r: number }) {
+  const k = r * 0.22
+  return <path d={`M${x} ${y - r} Q${x + k} ${y - k} ${x + r} ${y} Q${x + k} ${y + k} ${x} ${y + r} Q${x - k} ${y + k} ${x - r} ${y} Q${x - k} ${y - k} ${x} ${y - r} Z`} fill={white} />
+}
+
 /** A big glossy eye: two highlights make it read as wet and alive. */
-function OpenEye({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) {
+function OpenEye({ x, y, scale = 1, style }: { x: number; y: number; scale?: number; style: EyeStyle }) {
+  if (style === 'button') {
+    // Smaller, perfectly round and shiny: a bead of ink.
+    return (
+      <g stroke="none">
+        <circle cx={x} cy={y} r={7.8 * scale} fill={ink} />
+        <circle cx={x + 2.4 * scale} cy={y - 2.8 * scale} r={2.7 * scale} fill={white} />
+        <circle cx={x - 2.3 * scale} cy={y + 2.6 * scale} r={1.2 * scale} fill={white} />
+      </g>
+    )
+  }
+  if (style === 'sparkly') {
+    // A touch taller, a big shine, a star glint and a pinprick of extra light.
+    return (
+      <g stroke="none">
+        <ellipse cx={x} cy={y} rx={9 * scale} ry={11 * scale} fill={ink} />
+        <circle cx={x + 3 * scale} cy={y - 4.6 * scale} r={4.2 * scale} fill={white} />
+        <Glint x={x - 3.2 * scale} y={y + 4 * scale} r={3.4 * scale} />
+        <circle cx={x + 4.6 * scale} cy={y + 3.4 * scale} r={0.9 * scale} fill={white} />
+      </g>
+    )
+  }
   return (
     <g stroke="none">
       <ellipse cx={x} cy={y} rx={8.5 * scale} ry={10.5 * scale} fill={ink} />
@@ -72,12 +134,40 @@ function OpenEye({ x, y, scale = 1 }: { x: number; y: number; scale?: number }) 
   )
 }
 
+/** Two short ink lashes flicking off the outer corner of whichever eye shape is showing. */
+function Lashes({ x, y, mood, side }: { x: number; y: number; mood: Expression; side: -1 | 1 }) {
+  // Each lash is [from dx, from dy, to dx, to dy], dx measured outward from the eye centre.
+  const lashes: Record<Expression, [number, number, number, number][]> = {
+    happy: [[7.2, -6, 12.8, -9.4], [8.4, -1.8, 14.2, -3.4]],
+    content: [[7.2, -6, 12.8, -9.4], [8.4, -1.8, 14.2, -3.4]],
+    meh: [[6, -4.6, 11, -7.6], [7, -1, 12.4, -2.4]],
+    sleeping: [[7.2, 2.2, 12.2, 4.6], [5.4, 4.4, 9.4, 8]],
+    cheering: [[7.4, 2.4, 12.8, 0.4], [7, 4.4, 12.2, 5.8]],
+    scruffy: [[7.6, -2, 13, -5], [8, 0.6, 13.6, 0.4]],
+    sick: [[6, -6, 11.4, -9.2], [6, 6, 11.4, 9.2]],
+  }
+  const d = lashes[mood].map(([a, b, c, e]) => `M${x + a * side} ${y + b} L${x + c * side} ${y + e}`).join(' ')
+  return <path d={d} strokeWidth={3} />
+}
+
 /** Worried brows: the inner end sits higher, which reads as sad, never cross. */
 function Brow({ x, y, side }: { x: number; y: number; side: -1 | 1 }) {
   return <path d={`M${x + 7 * side} ${y - 13} Q${x} ${y - 17} ${x - 6 * side} ${y - 18}`} strokeWidth={3} />
 }
 
 function Eye({ x, y, mood, side }: { x: number; y: number; mood: Expression; side: -1 | 1 }) {
+  const { eyes } = useContext(LookContext)
+  const shape = <EyeShape x={x} y={y} mood={mood} side={side} style={eyes} />
+  if (eyes !== 'lashes') return shape
+  return (
+    <g>
+      {shape}
+      <Lashes x={x} y={y} mood={mood} side={side} />
+    </g>
+  )
+}
+
+function EyeShape({ x, y, mood, side, style }: { x: number; y: number; mood: Expression; side: -1 | 1; style: EyeStyle }) {
   switch (mood) {
     case 'sleeping':
       // Peacefully shut: soft downward curves.
@@ -87,10 +177,10 @@ function Eye({ x, y, mood, side }: { x: number; y: number; mood: Expression; sid
       return <path d={`M${x - 7.5} ${y + 3} q7.5 -12 15 0`} />
     case 'happy':
     case 'content':
-      return <OpenEye x={x} y={y} />
+      return <OpenEye x={x} y={y} style={style} />
     case 'meh':
       // Still bright, a touch smaller: "hm, okay". No lids, so it never looks unimpressed.
-      return <OpenEye x={x} y={y + 1} scale={0.82} />
+      return <OpenEye x={x} y={y + 1} scale={0.82} style={style} />
     case 'scruffy':
       // Tired and a little sad: drowsy half eyes under worried brows.
       return (
