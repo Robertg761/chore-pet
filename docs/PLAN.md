@@ -15,18 +15,18 @@ Already done in the scaffold: domain types, schedule logic, health and mood logi
 ## Phase 0: Art foundation (runs alongside Phase 1)
 
 - [LEAD] ~~Pick the final character with Robert~~ Decision: all three ship and the player picks. Draw the base idle pose for Mochi, Bun and Sprout with their six anchors. This sets the bar for every other asset. **Done**, see `src/character/species/` and `/?art`.
-- [LEAD] Draw one reference object (the sink) in `clean`, `messy1`, `messy2`. This is the template every object task copies. **Done** (`src/room/objects/sink.tsx`), awaiting Robert's approval.
+- [LEAD] Draw one reference object (the sink) in `clean`, `messy1`, `messy2`. This is the template every object task copies. **Done** (`src/room/objects/sink.tsx`), approved by Robert.
 
 Parallel batch A (after the base poses and reference sink exist):
 
-- [SONNET: svg-artist] Mochi mood poses: content, meh, scruffy, sick (in bed, thermometer), sleeping, cheering. Same anchors as the idle pose and the shared parts in `src/character/parts.tsx`. Output: `src/character/species/mochi-poses.tsx`, registered in `src/character/poses.ts`.
+- [SONNET: svg-artist] Mochi mood poses: content, meh, scruffy, sick (in bed, thermometer), sleeping, cheering. Same anchors as the idle pose and the shared parts in `src/character/parts.tsx`. Output: `src/character/species/mochi-poses.tsx` (already registered in `src/character/poses.ts`).
 - [SONNET: svg-artist] Bun mood poses: same list, output `src/character/species/bun-poses.tsx`. Ears keep doing the mood work (`EAR_DROOP`).
 - [SONNET: svg-artist] Sprout mood poses: same list, output `src/character/species/sprout-poses.tsx`. Leaves keep doing the mood work (`WILT`).
 - [SONNET: svg-artist] Room shell: walls, floor tiles, window, in 3 floor styles and 3 wall styles. Output: `src/room/shell/*`.
 
 **Done when:** all moods exist for all three species, anchors line up in every pose (check the beanie on each in `/?art`), and the reference sink is approved.
 
-The three pose tasks each add one line to `POSES` in `src/character/poses.ts`; that is the only shared file, so merge them one at a time.
+The three pose files are pre-registered in `src/character/poses.ts`, so the pose tasks share no files.
 
 ## Phase 1: Core loop
 
