@@ -246,7 +246,8 @@ export function BuildRoom({ room, objects, stages, neglect, overdue, pet, select
         {hint && <span className="build-room-help">{hint}</span>}
       </p>
       {pending && (
-        <div className="build-room-actions">
+        // data-unsaved: a reload now would drop this placement (see UpdateBanner).
+        <div className="build-room-actions" data-unsaved>
           <button type="button" className="build-btn build-btn-primary" onClick={place} disabled={!ghost?.ok}>
             Place it
           </button>

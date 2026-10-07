@@ -5,9 +5,13 @@ import './UpdateBanner.css'
 /** How often an open app checks for a new deploy. */
 const CHECK_MS = 60 * 60 * 1000
 
-/** A reload would lose nothing on screen: no form being filled in, no dialog (a gift, say) open. */
+/**
+ * A reload would lose nothing on screen: no form being filled in, no dialog (a
+ * gift, say) open, and nothing else marked `data-unsaved` (like an object
+ * waiting to be placed in Build).
+ */
 function quietToReload(): boolean {
-  return !document.querySelector('form, dialog[open], [role="dialog"]')
+  return !document.querySelector('form, dialog[open], [role="dialog"], [data-unsaved]')
 }
 
 /**
