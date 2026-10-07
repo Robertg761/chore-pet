@@ -21,3 +21,5 @@ Execution notes:
 - Reused modal bundle's browser helper verbatim. jsdom is a development-only dependency for React integration tests, not a second browser harness.
 - Integration: keep account bundle's AccountCleanup gate immediately after !ready; honor selectHome's active selection; preserve modal bundle feedback in framed(). A route selected from a sheet replaces that sheet entry, so gift shortcuts should call setView directly. Transient gifts remain outside URL per coordinator.
 - New retained-history archivedOn rows are treated as noneditable without changing the baseline Chore type. Coordinator may simplify the compatibility cast after merging history schema.
+
+Final review: independent reviewer found no Critical/Important issue and one minor callback Cancel URL mismatch. Treated that mismatch as required cancellation behavior, added query/fragment regressions, and encoded explicit Home while auth error parameters remain. Live delivery and other bundles' store/schema/modal behavior were explicitly outside this review. Coordinator owns gift-above-sheet Back integration; no unused history-dismiss hook is needed.
