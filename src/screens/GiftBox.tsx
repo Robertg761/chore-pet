@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { CHARACTER_STROKE, PALETTE } from '../art/palette'
 import { CharacterArt } from '../character/Character'
 import { ITEMS } from '../character/items'
@@ -15,6 +15,8 @@ export interface GiftBoxProps {
   /** The reward being given. Shown one at a time; the app queues the rest. */
   unlock: Unlock
   pet: Pet
+  /** Reachable correction for the chore that earned this gift. */
+  children?: ReactNode
   /** Wear it now (items only) or put it away; either closes the gift. */
   onClose: (choice: { wear: boolean }) => void
   /** Decor: "Place it". Called, then the gift closes itself, so this only needs to take the player to Build. */
@@ -56,24 +58,38 @@ function WrappedBox({ opening }: { opening: boolean }) {
   )
 }
 
-export function GiftBox({ unlock, pet, onClose, onPlace, onTry }: GiftBoxProps) {
+export function GiftBox({ unlock, pet, onClose, onPlace, onTry, children }: GiftBoxProps) {
   const uid = useId()
   const [phase, setPhase] = useState<'wrapped' | 'opening' | 'open'>('wrapped')
-  const panel = useRef<HTMLDivElement>(null)
+  const panel = useRef<HTMLDialogElement>(null)
   const primary = useRef<HTMLButtonElement>(null)
   const openButton = useRef<HTMLButtonElement>(null)
 
   const item = unlock.kind === 'item' ? ITEMS.find((i) => i.id === unlock.ref) : undefined
   const canWear = Boolean(item)
 
-  // Focus moves in, and goes back to where it was when the gift closes. If that has gone
-  // (the list re-drew, or the view changed), the next best place is the main heading.
+  // Native modality puts gifts above sheets and keeps background controls inert.
   useEffect(() => {
-    const before = document.activeElement instanceof HTMLElement ? document.activeElement : null
-    openButton.current?.focus()
+    const dialog = panel.current
+    if (!dialog) return
+    const before = document.activeElement instanceof HTMLElement && document.activeElement !== document.body ? document.activeElement : null
+    dialog.showModal()
+    openButton.current?.focus({ preventScroll: true })
     return () => {
-      const target = before?.isConnected ? before : document.querySelector<HTMLElement>('#cl-h-next, h1')
-      target?.focus?.()
+      dialog.close()
+      // Wait for removal, queued gifts, and screen changes before restoring focus.
+      queueMicrotask(() => {
+        const modal = document.querySelector<HTMLDialogElement>('dialog:modal')
+        if (modal?.contains(document.activeElement) && document.activeElement !== document.body) return
+        const target = before?.isConnected && (!modal || modal.contains(before))
+          ? before
+          : modal?.querySelector<HTMLElement>('button:not(:disabled), [tabindex]')
+            ?? document.querySelector<HTMLElement>('.app-view h1, #cl-h-next')
+        if (target) {
+          if (target.matches('h1, h2')) target.setAttribute('tabindex', '-1')
+          target.focus({ preventScroll: true })
+        }
+      })
     }
   }, [])
 
@@ -94,33 +110,6 @@ export function GiftBox({ unlock, pet, onClose, onPlace, onTry }: GiftBoxProps) 
     setPhase('opening')
   }
 
-  function keys(e: KeyboardEvent) {
-    if (e.key === 'Escape') {
-      e.stopPropagation()
-      onClose({ wear: false })
-      return
-    }
-    if (e.key !== 'Tab' || !panel.current) return
-    const stops = Array.from(panel.current.querySelectorAll<HTMLElement>('button:not(:disabled)'))
-    if (stops.length === 0) {
-      e.preventDefault()
-      return
-    }
-    const first = stops[0]
-    const last = stops[stops.length - 1]
-    const at = document.activeElement
-    if (e.shiftKey && (at === first || at === panel.current)) {
-      e.preventDefault()
-      last.focus()
-    } else if (!e.shiftKey && at === last) {
-      e.preventDefault()
-      first.focus()
-    } else if (!panel.current.contains(at)) {
-      e.preventDefault()
-      first.focus()
-    }
-  }
-
   const revealed = phase === 'open'
   // A shortcut for gifts that live in Build: decor can be placed, walls and floors tried.
   const shortcut = unlock.kind === 'decor' && onPlace ? { label: 'Place it', run: onPlace } : (unlock.kind === 'wall' || unlock.kind === 'floor') && onTry ? { label: 'Try it', run: onTry } : null
@@ -136,88 +125,90 @@ export function GiftBox({ unlock, pet, onClose, onPlace, onTry }: GiftBoxProps) 
           : 'Find it in Rewards.'
 
   return (
-    <div className="gift-backdrop">
-      <div
-        ref={panel}
-        className="gift-panel"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        aria-describedby={revealed && hint ? hintId : undefined}
-        tabIndex={-1}
-        onKeyDown={keys}
-      >
-        <h2 id={titleId} className="gift-title" aria-live="polite">
-          {revealed ? giftTitle(unlock) : 'A gift for you!'}
-        </h2>
+    <dialog
+      ref={panel}
+      className="gift-panel"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      aria-describedby={revealed && hint ? hintId : undefined}
+      tabIndex={-1}
+      onCancel={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        onClose({ wear: false })
+      }}
+    >
+      <h2 id={titleId} className="gift-title" aria-live="polite">
+        {revealed ? giftTitle(unlock) : 'A gift for you!'}
+      </h2>
 
-        <div className="gift-stage">
-          {!revealed && <WrappedBox opening={phase === 'opening'} />}
-          {revealed && (
-            <div className="gift-reveal">
-              {unlock.kind === 'item' && item ? (
-                // Taller than the pet's 200 box so ears, hats and the cheer's hearts stay clear of the title.
-                <svg className="gift-art" viewBox="0 -28 200 224" aria-hidden="true" focusable="false">
-                  <Cheer>
-                    <CharacterArt species={pet.species} mood="happy" pose="cheering" bodyColour={pet.bodyColour} equipped={{ ...pet.equipped, [item.slot]: item.id }} />
-                  </Cheer>
-                </svg>
-              ) : (
-                <div className="gift-thing">
-                  <RewardArt unlock={unlock} pet={pet} className="gift-thing-art" />
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {revealed && hint && (
-          <p id={hintId} className="gift-hint">
-            {hint}
-          </p>
+      <div className="gift-stage">
+        {!revealed && <WrappedBox opening={phase === 'opening'} />}
+        {revealed && (
+          <div className="gift-reveal">
+            {unlock.kind === 'item' && item ? (
+              // Taller than the pet's 200 box so ears, hats and the cheer's hearts stay clear of the title.
+              <svg className="gift-art" viewBox="0 -28 200 224" aria-hidden="true" focusable="false">
+                <Cheer>
+                  <CharacterArt species={pet.species} mood="happy" pose="cheering" bodyColour={pet.bodyColour} equipped={{ ...pet.equipped, [item.slot]: item.id }} />
+                </Cheer>
+              </svg>
+            ) : (
+              <div className="gift-thing">
+                <RewardArt unlock={unlock} pet={pet} className="gift-thing-art" />
+              </div>
+            )}
+          </div>
         )}
-
-        <div className="gift-actions">
-          {!revealed && (
-            <button ref={openButton} type="button" className="btn btn-primary gift-btn" onClick={open} disabled={phase === 'opening'}>
-              Open it
-            </button>
-          )}
-          {revealed && canWear && (
-            <>
-              <button ref={primary} type="button" className="btn btn-primary gift-btn" onClick={() => onClose({ wear: true })}>
-                Put it on
-              </button>
-              <button type="button" className="btn gift-btn" onClick={() => onClose({ wear: false })}>
-                Maybe later
-              </button>
-            </>
-          )}
-          {revealed && !canWear && shortcut && (
-            <>
-              <button
-                ref={primary}
-                type="button"
-                className="btn btn-primary gift-btn"
-                onClick={() => {
-                  shortcut.run()
-                  onClose({ wear: false })
-                }}
-              >
-                {shortcut.label}
-              </button>
-              <button type="button" className="btn gift-btn" onClick={() => onClose({ wear: false })}>
-                Maybe later
-              </button>
-            </>
-          )}
-          {revealed && !canWear && !shortcut && (
-            <button ref={primary} type="button" className="btn btn-primary gift-btn" onClick={() => onClose({ wear: false })}>
-              Lovely!
-            </button>
-          )}
-        </div>
       </div>
-    </div>
+
+      {revealed && hint && (
+        <p id={hintId} className="gift-hint">
+          {hint}
+        </p>
+      )}
+
+      <div className="gift-actions">
+        {!revealed && (
+          <button ref={openButton} type="button" className="btn btn-primary gift-btn" onClick={open} disabled={phase === 'opening'}>
+            Open it
+          </button>
+        )}
+        {revealed && canWear && (
+          <>
+            <button ref={primary} type="button" className="btn btn-primary gift-btn" onClick={() => onClose({ wear: true })}>
+              Put it on
+            </button>
+            <button type="button" className="btn gift-btn" onClick={() => onClose({ wear: false })}>
+              Maybe later
+            </button>
+          </>
+        )}
+        {revealed && !canWear && shortcut && (
+          <>
+            <button
+              ref={primary}
+              type="button"
+              className="btn btn-primary gift-btn"
+              onClick={() => {
+                shortcut.run()
+                onClose({ wear: false })
+              }}
+            >
+              {shortcut.label}
+            </button>
+            <button type="button" className="btn gift-btn" onClick={() => onClose({ wear: false })}>
+              Maybe later
+            </button>
+          </>
+        )}
+        {revealed && !canWear && !shortcut && (
+          <button ref={primary} type="button" className="btn btn-primary gift-btn" onClick={() => onClose({ wear: false })}>
+            Lovely!
+          </button>
+        )}
+      </div>
+      {children}
+    </dialog>
   )
 }

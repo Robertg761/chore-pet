@@ -37,6 +37,8 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}/
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      - run: npx playwright-core install --with-deps chromium
+      - run: npm run test:browser
       # The demo video is served next to the app (not precached by the service worker).
       - run: cp docs/media/chore-pet-demo.mp4 dist/
       - if: github.event_name != 'pull_request'

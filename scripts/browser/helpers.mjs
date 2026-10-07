@@ -1,0 +1,66 @@
+import { preview } from 'vite'
+import { chromium } from 'playwright-core'
+import { readFile } from 'node:fs/promises'
+
+// Use the production artifact, including its actual deployment base path.
+export async function browserApp(t, options = {}) {
+  const html = await readFile(new URL('../../dist/index.html', import.meta.url), 'utf8')
+  const base = html.match(/src="([^"]*)assets\/[^"/]+\.js"/)[1]
+  const server = await preview({ configFile: false, base, preview: { host: '127.0.0.1', port: 0, open: false } })
+  let browser
+  t.after(async () => {
+    await browser?.close()
+    server.httpServer.closeAllConnections()
+    await new Promise((resolve) => server.httpServer.close(resolve))
+  })
+  browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {})
+  const context = await browser.newContext({ viewport: { width: 390, height: 664 }, reducedMotion: 'reduce', serviceWorkers: 'block', ...options })
+  const page = await context.newPage()
+  page.setDefaultTimeout(4000)
+  const errors = []
+  page.on('pageerror', (e) => errors.push(e.message))
+  t.after(() => { if (errors.length) throw new Error(errors.join('\n')) })
+  // UI regressions run with local data even when CI builds a configured cloud app.
+  await context.route('https://**', (route) => route.abort())
+  await page.goto(`http://127.0.0.1:${server.httpServer.address().port}${base}`)
+  await page.getByRole('button', { name: 'Try a sample home' }).click()
+  return page
+}
+
+export async function snapshot(page) {
+  return page.evaluate(() => new Promise((resolve, reject) => {
+    const request = indexedDB.open('chore-pet', 1)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result
+      const read = db.transaction('kv').objectStore('kv').get('snapshot')
+      read.onsuccess = () => { db.close(); resolve(read.result) }
+      read.onerror = () => { db.close(); reject(read.error) }
+    }
+  }))
+}
+
+// A saved-home fixture for reward thresholds; no runtime hooks in the app.
+export async function seedProgress(page, patch) {
+  await page.evaluate((patch) => new Promise((resolve, reject) => {
+    const request = indexedDB.open('chore-pet', 1)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result
+      const tx = db.transaction('kv', 'readwrite')
+      const store = tx.objectStore('kv')
+      const read = store.get('snapshot')
+      read.onsuccess = () => {
+        const saved = read.result
+        const progress = Object.values(saved.tables.progress)[0]
+        Object.assign(progress, patch)
+        const queued = saved.outbox[`progress:${progress.homeId}`]
+        if (queued) queued.value = progress
+        store.put(saved, 'snapshot')
+      }
+      tx.oncomplete = () => { db.close(); resolve() }
+      tx.onerror = () => { db.close(); reject(tx.error) }
+    }
+  }), patch)
+  await page.reload()
+}

@@ -247,6 +247,21 @@ export default function App() {
     { label: 'Settings', onSelect: () => setView({ name: 'settings' }) },
     ...(canInstall ? [{ label: 'Add to home screen', onSelect: () => void install() }] : []),
   ]
+  const undoToast = undo && (
+    <UndoToast
+      key={undo.key}
+      choreName={undo.choreName}
+      paused={gifts.length > 0}
+      inline={gifts.length > 0 || (view.name === 'home' && allChores && !wide)}
+      onUndo={() => {
+        // Any gift that tap earned stays: rewards are never taken back.
+        appStore.apply(...uncompleteChore(undo.completionId, progress, completions))
+        setUndo(null)
+      }}
+      onClose={() => setUndo(null)}
+    />
+  )
+
   /** A screen inside the app frame: the tabs along the bottom (phones) or down the left (wide). */
   const framed = (active: Tab, content: ReactNode) => (
     <div className="app">
@@ -258,6 +273,36 @@ export default function App() {
         more={more}
         note={syncNote ?? undefined}
       />
+      {!gifts.length && !(view.name === 'home' && allChores && !wide) && undoToast}
+      {gifts[0] && (
+        <GiftBox
+          key={gifts[0].id}
+          unlock={gifts[0]}
+          pet={pet}
+          onPlace={() => {
+            const entry = catalogEntry(gifts[0].ref)
+            setAllChores(false)
+            setSelectedId(null)
+            setBuildPanel('things')
+            openBuild()
+            if (entry) setPlacing(entry)
+          }}
+          onTry={() => {
+            setAllChores(false)
+            const unlock = gifts[0]
+            if (room) appStore.apply(...updateRoom(room, unlock.kind === 'wall' ? { wallStyle: unlock.ref } : { floorStyle: unlock.ref }))
+            setBuildPanel('style')
+            openBuild()
+          }}
+          onClose={({ wear }) => {
+            const item = ITEMS.find((i) => i.id === gifts[0].ref)
+            if (wear && gifts[0].kind === 'item' && item) appStore.apply(...updatePet(pet, { equipped: { ...pet.equipped, [item.slot]: item.id } }))
+            setGifts((queue) => queue.slice(1))
+          }}
+        >
+          {undoToast}
+        </GiftBox>
+      )}
     </div>
   )
 
@@ -601,48 +646,9 @@ export default function App() {
       )}
 
       {allChores && !wide && (
-        <Sheet title="All chores" onClose={() => setAllChores(false)}>
+        <Sheet title="All chores" onClose={() => setAllChores(false)} footer={!gifts.length && undoToast}>
           {choreList(false)}
         </Sheet>
-      )}
-
-      {undo && (
-        <UndoToast
-          key={undo.key}
-          choreName={undo.choreName}
-          onUndo={() => {
-            // Any gift that tap earned stays: rewards are never taken back.
-            appStore.apply(...uncompleteChore(undo.completionId, progress, completions))
-            setUndo(null)
-          }}
-          onClose={() => setUndo(null)}
-        />
-      )}
-
-      {gifts[0] && (
-        <GiftBox
-          key={gifts[0].id}
-          unlock={gifts[0]}
-          pet={pet}
-          onPlace={() => {
-            const entry = catalogEntry(gifts[0].ref)
-            setSelectedId(null)
-            setBuildPanel('things')
-            openBuild()
-            if (entry) setPlacing(entry)
-          }}
-          onTry={() => {
-            const unlock = gifts[0]
-            if (room) appStore.apply(...updateRoom(room, unlock.kind === 'wall' ? { wallStyle: unlock.ref } : { floorStyle: unlock.ref }))
-            setBuildPanel('style')
-            openBuild()
-          }}
-          onClose={({ wear }) => {
-            const item = ITEMS.find((i) => i.id === gifts[0].ref)
-            if (wear && gifts[0].kind === 'item' && item) appStore.apply(...updatePet(pet, { equipped: { ...pet.equipped, [item.slot]: item.id } }))
-            setGifts((queue) => queue.slice(1))
-          }}
-        />
       )}
     </main>,
   )

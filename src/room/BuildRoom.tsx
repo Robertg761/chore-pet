@@ -169,6 +169,8 @@ export function BuildRoom({ room, objects, stages, neglect, overdue, pet, select
   }
 
   function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    // Buttons inside the room keep their native Enter/Space activation.
+    if (e.target !== e.currentTarget) return
     const steps: Record<string, [number, number]> = { ArrowRight: [1, 0], ArrowLeft: [-1, 0], ArrowDown: [0, 1], ArrowUp: [0, -1] }
     const step = steps[e.key]
     const selected = objects.find((o) => o.id === selectedId)
