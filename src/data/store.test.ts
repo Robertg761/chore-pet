@@ -993,6 +993,19 @@ describe('saved homes (backups kept on this device)', () => {
     expect(selectHome(tabA.getState().snapshot.tables).pet?.name).toBe('Bun')
   })
 
+  it('keeps a row another tab already sent, but has not pulled back yet, in the swapped-out copy', async () => {
+    const { local, tabA, during, pipHome } = await restoreBetweenTabs()
+    during(async () => {
+      // As the other tab leaves it between sending a change and its next pull: the row is
+      // in the stored tables, with nothing queued and no newer pull to say so.
+      const [op] = addChore(pipHome, { name: 'Sent from the other tab', schedule: { kind: 'daily' } }, '2026-10-07')
+      const stored = local.current as Snapshot
+      local.current = { ...stored, seq: stored.seq + 1, tables: change(stored, op).tables, pulledAt: tabA.getState().snapshot.pulledAt }
+    })
+    expect(await tabA.restoreSaved('guest')).toBe(true)
+    expect(choreNames((local.backups[`snapshot-backup-u1:${pipHome.id}`] as Snapshot).tables)).toEqual(['Sent from the other tab'])
+  })
+
   it('stops when another tab signs out partway, and leaves its cleared copy alone', async () => {
     const { local, tabA, tabB, during } = await restoreBetweenTabs()
     during(() => tabB.reset({ backup: false }))

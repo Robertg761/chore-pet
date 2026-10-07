@@ -24,6 +24,7 @@ import {
   type NewOp,
   type Op,
   type Snapshot,
+  type Tables,
 } from './state'
 
 /**
@@ -138,6 +139,13 @@ function kindOf(res: Extract<RemoteResult, { ok: false }>): ErrorKind {
   return res.kind ?? (res.transient ? 'outage' : 'permanent')
 }
 
+/** `mine`, plus any row only `theirs` has. */
+function withRows(mine: Tables, theirs: Tables): Tables {
+  const out = { ...mine } as Record<string, Record<string, unknown>>
+  for (const [table, rows] of Object.entries(theirs)) out[table] = { ...rows, ...out[table] }
+  return out as unknown as Tables
+}
+
 export function createStore({
   local,
   remote,
@@ -211,7 +219,7 @@ export function createStore({
    * device meanwhile, follow it instead and write nothing: this tab's data
    * belongs to the account that was just cleared.
    */
-  async function writeWith(next: (merged: Snapshot) => Snapshot | null): Promise<void> {
+  async function writeWith(next: (merged: Snapshot, stored: Snapshot | null) => Snapshot | null): Promise<void> {
     let written: Snapshot | null = null
     if (local.update) {
       await local.update((stored) => {
@@ -221,11 +229,11 @@ export function createStore({
         }
         const merged = stored ? mergeSnapshots(state.snapshot, base, stored, 'mine') : state.snapshot
         if (merged !== state.snapshot) set({ snapshot: merged })
-        written = next(merged)
+        written = next(merged, stored)
         return written && stamped(written)
       })
     } else {
-      written = next(state.snapshot)
+      written = next(state.snapshot, null)
       if (written) await local.save(stamped(written))
     }
     if (!written) return
@@ -640,10 +648,16 @@ export function createStore({
         // If anything lands meanwhile (a sync under way, another tab's save), go again with
         // the newer copy, so the one replaced below is exactly the one kept.
         let done = false
+        // Rows another tab sent and saved, which reach this tab only with its next pull:
+        // kept in the swapped-out copy too, so the swap can't delete them unsaved.
+        let theirs: Tables | null = null
+        /** The stored copy those rows were last taken from. */
+        let seen: string | null = null
         for (let tries = 0; tries < 3 && !done; tries++) {
           const before = state.snapshot
-          const replaced = selectHome(before.tables).home
-          if (replaced) await backup(`${account ?? 'unclaimed'}:${replaced.id}`, { ...before, heldFor: account })
+          const kept = theirs ? withRows(before.tables, theirs) : before.tables
+          const replaced = selectHome(kept).home
+          if (replaced) await backup(`${account ?? 'unclaimed'}:${replaced.id}`, { ...before, tables: kept, heldFor: account })
           if (local.holdLock && !(await local.holdLock(lock, token, now().getTime()))) return false
           if (!stillHere()) return false
           if (state.snapshot !== before) continue
@@ -652,7 +666,15 @@ export function createStore({
           // tab then follows). Otherwise that is taken in, and the next round keeps it too.
           let failed = false
           await queueSave(() =>
-            writeWith((merged) => {
+            writeWith((merged, stored) => {
+              // Rows the stored copy has that this tab hasn't seen (another tab sent them and
+              // hasn't pulled yet, so no merge brings them in): keep them, then go round again.
+              const storedTables = stored && JSON.stringify(stored.tables)
+              if (stored && storedTables !== seen && storedTables !== JSON.stringify(merged.tables)) {
+                theirs = theirs ? withRows(stored.tables, theirs) : stored.tables
+                seen = storedTables
+                return merged !== before ? merged : null
+              }
               if (merged !== before || !stillHere()) return merged
               const restoredSnapshot = restoreHome(saved, before).reduce(change, before)
               set({ snapshot: restoredSnapshot })
