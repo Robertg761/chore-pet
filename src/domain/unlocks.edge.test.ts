@@ -276,12 +276,12 @@ describe('applyUnlocks edge cases', () => {
 
   it('mixed chore and streak rewards interleave in UNLOCKS order, not by kind', () => {
     const { unlocked } = applyUnlocks(progress({ choreCount: 5 }), 4)
-    expect(ids(unlocked)).toEqual(['item:beanie-red', 'decor:plant', 'wall:mint', 'item:bow', 'floor:tile'])
+    expect(ids(unlocked)).toEqual(['item:beanie-red', 'decor:teddy', 'wall:mint', 'item:bow', 'floor:tile'])
   })
 
   it('unlocks exactly at a chore threshold, and not one before', () => {
     expect(ids(applyUnlocks(progress({ choreCount: 11 }), 0).unlocked)).not.toContain('item:glasses')
-    expect(ids(applyUnlocks(progress({ choreCount: 12 }), 0).unlocked)).toEqual(['item:beanie-red', 'decor:plant', 'item:bow', 'decor:lamp', 'item:glasses'])
+    expect(ids(applyUnlocks(progress({ choreCount: 12 }), 0).unlocked)).toEqual(['item:beanie-red', 'decor:teddy', 'item:bow', 'decor:lamp', 'item:glasses'])
   })
 
   it('unlocks exactly at a streak threshold, and not one before', () => {
@@ -306,10 +306,10 @@ describe('applyUnlocks edge cases', () => {
   })
 
   it('preserves unknown ids already in unlockedItems, ahead of the new ones', () => {
-    const p = progress({ choreCount: 3, unlockedItems: ['item:mystery', 'decor:plant'] })
+    const p = progress({ choreCount: 3, unlockedItems: ['item:mystery', 'decor:teddy'] })
     const result = applyUnlocks(p, 0)
     expect(ids(result.unlocked)).toEqual(['item:beanie-red'])
-    expect(result.progress.unlockedItems).toEqual(['item:mystery', 'decor:plant', 'item:beanie-red'])
+    expect(result.progress.unlockedItems).toEqual(['item:mystery', 'decor:teddy', 'item:beanie-red'])
   })
 
   it('does not mutate its input and leaves the other fields alone', () => {
@@ -350,7 +350,7 @@ describe('nextUnlocks edge cases', () => {
 
   it('picks the smallest pending threshold, skipping unlocked ones', () => {
     const next = nextUnlocks(progress({ choreCount: 4, unlockedItems: ['item:beanie-red', 'wall:mint', 'floor:tile'] }), 0)
-    expect(next.chores).toMatchObject({ unlock: { id: 'decor:plant' }, remaining: 0 })
+    expect(next.chores).toMatchObject({ unlock: { id: 'decor:teddy' }, remaining: 0 })
     expect(next.streak).toMatchObject({ unlock: { id: 'wall:lavender' }, remaining: 7 })
   })
 

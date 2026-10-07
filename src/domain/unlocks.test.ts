@@ -77,7 +77,7 @@ describe('unlocks', () => {
 
   it('says what is next', () => {
     const next = nextUnlocks(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }), 1)
-    expect(next.chores).toMatchObject({ unlock: { id: 'decor:plant' }, remaining: 2 })
+    expect(next.chores).toMatchObject({ unlock: { id: 'decor:teddy' }, remaining: 2 })
     expect(next.streak).toMatchObject({ unlock: { id: 'wall:mint' }, remaining: 1 })
   })
 

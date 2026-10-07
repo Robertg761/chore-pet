@@ -150,6 +150,27 @@ export const CATALOG: CatalogEntry[] = [
     ],
   },
   {
+    id: 'fish-tank',
+    name: 'Fish tank',
+    rooms: ['living'],
+    footprint: { w: 1, d: 1 },
+    placement: 'wall',
+    layer: 'solid',
+    chores: [
+      { name: 'Feed the fish', schedule: { kind: 'daily' } },
+      { name: 'Clean the fish tank', schedule: { kind: 'monthly', dayOfMonth: 8 } },
+    ],
+  },
+  {
+    id: 'plant',
+    name: 'Potted plant',
+    rooms: ['living', 'bedroom', 'kitchen'],
+    footprint: { w: 1, d: 1 },
+    placement: 'floor',
+    layer: 'solid',
+    chores: [{ name: 'Water the plant', schedule: { kind: 'everyNDays', n: 3 } }],
+  },
+  {
     id: 'rug',
     name: 'Floor rug',
     rooms: ['living', 'bedroom'],
@@ -160,17 +181,21 @@ export const CATALOG: CatalogEntry[] = [
   },
 ]
 
-/** Decor earned through unlocks (src/domain/unlocks.ts). Art: src/room/objects/decor*.tsx. */
+/**
+ * Decor earned through unlocks (src/domain/unlocks.ts). Rewards are purely
+ * cosmetic: decor never brings chores, and anything that does (a plant, a fish
+ * tank) is in the starting catalog above. Art: src/room/objects/decor.ts.
+ */
 export const DECOR: CatalogEntry[] = [
   {
-    id: 'plant',
-    name: 'Potted plant',
-    rooms: ['living', 'bedroom', 'kitchen'],
+    id: 'teddy',
+    name: 'Teddy bear',
+    rooms: ['living', 'bedroom'],
     footprint: { w: 1, d: 1 },
     placement: 'floor',
     layer: 'solid',
-    chores: [{ name: 'Water the plant', schedule: { kind: 'everyNDays', n: 3 } }],
-    unlock: 'decor:plant',
+    chores: [],
+    unlock: 'decor:teddy',
   },
   {
     id: 'lamp',
@@ -193,17 +218,14 @@ export const DECOR: CatalogEntry[] = [
     unlock: 'decor:poster',
   },
   {
-    id: 'fish-tank',
-    name: 'Fish tank',
-    rooms: ['living'],
+    id: 'fairy-lights',
+    name: 'Fairy lights',
+    rooms: ['living', 'bedroom', 'kitchen'],
     footprint: { w: 1, d: 1 },
     placement: 'wall',
-    layer: 'solid',
-    chores: [
-      { name: 'Feed the fish', schedule: { kind: 'daily' } },
-      { name: 'Clean the fish tank', schedule: { kind: 'monthly', dayOfMonth: 8 } },
-    ],
-    unlock: 'decor:fish-tank',
+    layer: 'hung',
+    chores: [],
+    unlock: 'decor:fairy-lights',
   },
 ]
 

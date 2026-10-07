@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { CATALOG, catalogEntry } from './objects'
+import { CATALOG, DECOR, catalogEntry } from './objects'
+import { UNLOCKS } from '../domain/unlocks'
 import type { Schedule } from '../domain/types'
 
 const ROOM_SIZE = 6
@@ -61,6 +62,28 @@ describe('object catalog', () => {
       const { w, d } = e.footprint
       expect(Number.isInteger(w) && w >= 1 && w <= ROOM_SIZE, `${e.id} w`).toBe(true)
       expect(Number.isInteger(d) && d >= 1 && d <= ROOM_SIZE, `${e.id} d`).toBe(true)
+    }
+  })
+})
+
+describe('rewards are purely cosmetic', () => {
+  it('gives no decor reward any chores', () => {
+    for (const e of DECOR) expect(e.chores, e.id).toEqual([])
+  })
+
+  it('keeps everything that brings chores in the starting catalog, never behind an unlock', () => {
+    for (const e of CATALOG) expect(e.unlock, e.id).toBeUndefined()
+    expect(catalogEntry('plant')?.chores.length).toBeGreaterThan(0)
+    expect(catalogEntry('fish-tank')?.chores.length).toBeGreaterThan(0)
+    expect(CATALOG.map((e) => e.id)).toEqual(expect.arrayContaining(['plant', 'fish-tank']))
+  })
+
+  it('points every decor unlock at a chore-free decor entry', () => {
+    for (const u of UNLOCKS.filter((x) => x.kind === 'decor')) {
+      const entry = DECOR.find((e) => e.id === u.ref)
+      expect(entry, u.id).toBeDefined()
+      expect(entry!.unlock).toBe(u.id)
+      expect(entry!.chores).toEqual([])
     }
   })
 })
