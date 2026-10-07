@@ -121,6 +121,7 @@ export const fridgeArt: ObjectArt = {
   catalogId: 'fridge',
   footprint: { w: 1, d: 1 },
   bounds: { x: -36, y: -100, width: 72, height: 138 },
+  cueY: -84,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {frame()}

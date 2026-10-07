@@ -189,6 +189,7 @@ export const couchArt: ObjectArt = {
   catalogId: 'couch',
   footprint: { w: 1, d: 2 },
   bounds: { x: -70, y: -96, width: 112, height: 168 },
+  cueY: -52,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {couch({ seatB: stage === 'clean', backs: stage !== 'messy2', askew: stage === 'messy1' })}

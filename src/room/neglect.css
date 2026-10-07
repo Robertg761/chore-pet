@@ -89,6 +89,15 @@
   to { transform: rotate(calc(-1 * var(--a0, 0deg) - 360deg)); }
 }
 
+/* Still cues: only the most neglected one or two cues in the room move
+   (src/room/cuePlan.ts). Every cue holds still while a dialog is open over the
+   room and while arranging the room in build mode. */
+.nc-still :is(.nc-rise, .nc-drift, .nc-bob, .nc-breathe, .nc-hop, .nc-fall, .nc-swirl, .nc-orbit, .nc-counter),
+.build-room .nc-cue :is(.nc-rise, .nc-drift, .nc-bob, .nc-breathe, .nc-hop, .nc-fall, .nc-swirl, .nc-orbit, .nc-counter),
+body:has(dialog[open]) .nc-cue :is(.nc-rise, .nc-drift, .nc-bob, .nc-breathe, .nc-hop, .nc-fall, .nc-swirl, .nc-orbit, .nc-counter) {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nc-rise,
   .nc-drift,

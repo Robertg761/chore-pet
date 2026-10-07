@@ -13,6 +13,13 @@ import { FLOOR_STYLES, WALL_STYLES } from '../room/shell/styles'
 import type { ObjectArt } from '../room/objects/types'
 import type { MessKind } from '../catalog/types'
 import { NeglectCue } from '../room/neglect'
+import { Room } from '../room/Room'
+import { findFreeSpot } from '../room/grid'
+import { lookup } from '../room/placement'
+import { catalogEntry } from '../catalog/objects'
+import { messStageFor } from '../domain/mess'
+import type { NeglectLevel } from '../domain/neglect'
+import type { PlacedObject } from '../domain/types'
 import { WeekView } from '../screens/WeekView'
 import { play, type Sound } from '../audio/sfx'
 import type { Chore, Completion } from '../domain/types'
@@ -191,7 +198,42 @@ function NeglectSection() {
           </section>
         )
       })}
+      <BusyNeglectRoom />
     </>
+  )
+}
+
+// Twelve late things in one room (src/room/cuePlan.ts): only the two most
+// neglected show their full cue and move; the rest are small and still, and
+// no cue covers another.
+const BUSY_IDS = ['sink', 'stove', 'fridge', 'dishwasher', 'trash', 'recycling', 'toilet', 'washer', 'couch', 'plant', 'table', 'fish-tank']
+const BUSY_LEVELS: NeglectLevel[] = [3, 2, 1, 3, 3, 2, 1, 2, 3, 3, 1, 2]
+
+function busyRoom() {
+  const objects: PlacedObject[] = []
+  BUSY_IDS.forEach((catalogId, i) => {
+    const entry = catalogEntry(catalogId)
+    const spot = entry && findFreeSpot(entry, objects, lookup)
+    if (spot) objects.push({ id: `busy-${i}`, roomId: 'gallery', catalogId, ...spot })
+  })
+  const neglect = Object.fromEntries(objects.map((o, i) => [o.id, BUSY_LEVELS[i]]))
+  const overdue = Object.fromEntries(objects.map((o, i) => [o.id, BUSY_LEVELS[i] * 3 + i]))
+  const stages = Object.fromEntries(objects.map((o) => [o.id, messStageFor(neglect[o.id])]))
+  return { objects, neglect, overdue, stages }
+}
+
+function BusyNeglectRoom() {
+  const [busy] = useState(busyRoom)
+  return (
+    <section className="gallery-row">
+      <h3>12 late objects in one room</h3>
+      {[520, 358].map((w) => (
+        <figure key={w}>
+          <Room room={{ floorStyle: 'wood', wallStyle: 'peach' }} {...busy} width={w} />
+          <figcaption>{w} px</figcaption>
+        </figure>
+      ))}
+    </section>
   )
 }
 

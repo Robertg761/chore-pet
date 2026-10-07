@@ -1,4 +1,4 @@
-import { useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react'
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react'
 import { catalogEntry } from '../catalog/objects'
 import type { CatalogEntry } from '../catalog/types'
 import type { NeglectLevel } from '../domain/neglect'
@@ -6,6 +6,7 @@ import type { MessStage, PlacedObject, Room as RoomRow } from '../domain/types'
 import { checkPlacement, findFreeSpot, screenToTile, snapDrag, turned, type Placement, type PlacementProblem } from './grid'
 import { lookup } from './placement'
 import { Room } from './Room'
+import { objectNames, objectsBackToFront } from './roomSummary'
 import './BuildRoom.css'
 
 // Build mode: drag things around the room and drop in new ones from the tray.
@@ -13,7 +14,10 @@ import './BuildRoom.css'
 //   things slide along the walls). It only moves if it fits.
 // - A new object from the tray appears where it fits first; drag it or tap a
 //   spot, turn it, then "Place it".
-// - Keyboard: arrows move, R turns, Enter places, Escape cancels.
+// - Keyboard: with nothing selected, Left/Right (or [ and ]) step through the
+//   things in the room, back to front. With one selected, arrows move it, R
+//   turns it, Enter opens its card, Escape deselects. While placing a new
+//   thing, arrows move it, R turns, Enter places, Escape cancels.
 
 export type BuildChange = { kind: 'add'; entry: CatalogEntry; placement: Placement } | { kind: 'move'; id: string; placement: Placement }
 
@@ -31,6 +35,13 @@ export interface BuildRoomProps {
   onCommit: (change: BuildChange) => void
   /** Called when a pick from the tray is placed or cancelled. */
   onPlacingDone: () => void
+  /** Days late per object (objectOverdue() in ./cuePlan), to pick which cues show in full. */
+  overdue?: Record<string, number>
+  /**
+   * Enter on a selected object: move focus to its card. Without it, focus goes
+   * to the first control in the open `.sheet`.
+   */
+  onOpen?: (id: string) => void
 }
 
 interface Drag {
@@ -50,8 +61,21 @@ const PROBLEM_TEXT: Record<PlacementProblem, string> = {
 }
 
 
-export function BuildRoom({ room, objects, stages, neglect, pet, selectedId, onSelect, placing, onCommit, onPlacingDone }: BuildRoomProps) {
+const KEYS_HINT = 'Arrows move, R turns, Enter opens, Escape deselects.'
+
+function focusSheet() {
+  const sheet = document.querySelector<HTMLElement>('.sheet')
+  const target = sheet?.querySelector<HTMLElement>('button:not(.sheet-close), input, select, textarea, [tabindex="0"]')
+  target?.focus()
+}
+
+export function BuildRoom({ room, objects, stages, neglect, overdue, pet, selectedId, onSelect, placing, onCommit, onPlacingDone, onOpen }: BuildRoomProps) {
   const svgRef = useRef<SVGSVGElement>(null)
+  const roomRef = useRef<HTMLDivElement>(null)
+  const helpId = useId()
+  const names = useMemo(() => objectNames(objects), [objects])
+  // Announced when the keyboard picks something; tapping shows its card instead.
+  const [keyed, setKeyed] = useState(false)
   const [pending, setPending] = useState<{ entry: CatalogEntry; placement: Placement } | null>(null)
   const [moving, setMoving] = useState<{ id: string; entry: CatalogEntry; placement: Placement } | null>(null)
   const drag = useRef<Drag | null>(null)
@@ -64,6 +88,11 @@ export function BuildRoom({ room, objects, stages, neglect, pet, selectedId, onS
     const spot = placing && findFreeSpot(placing, objects, lookup)
     setPending(placing && spot ? { entry: placing, placement: spot } : null)
   }
+
+  // Picking from the tray moves focus to the room, so the arrows move the new thing.
+  useEffect(() => {
+    if (picked) roomRef.current?.focus()
+  }, [picked])
 
   const check = (entry: CatalogEntry, placement: Placement, movingId?: string) => checkPlacement(entry, placement, objects, lookup, movingId)
 
@@ -118,6 +147,7 @@ export function BuildRoom({ room, objects, stages, neglect, pet, selectedId, onS
       return
     }
     if (!d.moved) {
+      setKeyed(false)
       onSelect(d.id)
     } else if (moving && check(moving.entry, moving.placement, moving.id).ok) {
       onCommit({ kind: 'move', id: moving.id, placement: moving.placement })
@@ -143,6 +173,7 @@ export function BuildRoom({ room, objects, stages, neglect, pet, selectedId, onS
     const step = steps[e.key]
     const selected = objects.find((o) => o.id === selectedId)
     const selectedEntry = selected && catalogEntry(selected.catalogId)
+    const cycle = e.key === 'ArrowRight' || e.key === ']' ? 1 : e.key === 'ArrowLeft' || e.key === '[' ? -1 : 0
 
     if (pending) {
       if (step) setPending({ ...pending, placement: { ...pending.placement, tileX: pending.placement.tileX + step[0], tileY: pending.placement.tileY + step[1] } })
@@ -150,6 +181,13 @@ export function BuildRoom({ room, objects, stages, neglect, pet, selectedId, onS
       else if (e.key === 'Enter') place()
       else if (e.key === 'Escape') cancel()
       else return
+    } else if (cycle !== 0 && (!selected || e.key === '[' || e.key === ']')) {
+      const order = objectsBackToFront(objects)
+      if (!order.length) return
+      const at = order.findIndex((o) => o.id === selectedId)
+      const next = at < 0 ? (cycle > 0 ? 0 : order.length - 1) : (at + cycle + order.length) % order.length
+      setKeyed(true)
+      onSelect(order[next].id)
     } else if (selected && selectedEntry) {
       if (step) {
         const next = { tileX: selected.tileX + step[0], tileY: selected.tileY + step[1], rotation: selected.rotation }
@@ -157,6 +195,9 @@ export function BuildRoom({ room, objects, stages, neglect, pet, selectedId, onS
       } else if (e.key === 'r' || e.key === 'R') {
         const next = turned(selectedEntry, selected)
         if (check(selectedEntry, next, selected.id).ok) onCommit({ kind: 'move', id: selected.id, placement: next })
+      } else if (e.key === 'Enter') {
+        if (onOpen) onOpen(selected.id)
+        else focusSheet()
       } else if (e.key === 'Escape') onSelect(null)
       else return
     } else return
@@ -166,20 +207,31 @@ export function BuildRoom({ room, objects, stages, neglect, pet, selectedId, onS
   const ghostSource = pending ?? moving
   const ghostCheck = ghostSource && check(ghostSource.entry, ghostSource.placement, moving?.id)
   const ghost = ghostSource && ghostCheck ? { entry: ghostSource.entry, placement: ghostSource.placement, ok: ghostCheck.ok } : null
-  const status = ghostCheck && !ghostCheck.ok && ghostCheck.problem ? PROBLEM_TEXT[ghostCheck.problem] : ''
+  const problem = ghostCheck && !ghostCheck.ok && ghostCheck.problem ? PROBLEM_TEXT[ghostCheck.problem] : ''
+  const selectedName = selectedId && !ghost ? names[selectedId] : undefined
+  const hint = !problem && keyed && selectedName ? `${selectedName} selected. ${KEYS_HINT}` : ''
 
   return (
     <div
       className="build-room"
+      ref={roomRef}
       tabIndex={0}
       onKeyDown={onKeyDown}
-      aria-label="Your room. Tap a thing to select it, drag to move. Arrow keys move, R turns."
+      role="group"
+      aria-roledescription="room editor"
+      aria-label="Your room"
+      aria-describedby={helpId}
     >
+      <p id={helpId} className="build-room-help">
+        Tap a thing to select it and drag to move it. With the keyboard, Left and Right arrows pick a thing; then arrows move it, R turns it, Enter opens it
+        and Escape lets go.
+      </p>
       <Room
         room={room}
         objects={objects}
         stages={stages}
         neglect={neglect}
+        overdue={overdue}
         pet={pet}
         selectedId={selectedId}
         ghost={ghost}
@@ -189,7 +241,9 @@ export function BuildRoom({ room, objects, stages, neglect, pet, selectedId, onS
         svgProps={{ onPointerDown, onPointerMove, onPointerUp, onPointerCancel: () => ((drag.current = null), setMoving(null)) }}
       />
       <p className="build-room-status" role="status">
-        {status}
+        {problem}
+        {/* What the keyboard just picked: read out, not shown (the chevron and its card show it). */}
+        {hint && <span className="build-room-help">{hint}</span>}
       </p>
       {pending && (
         <div className="build-room-actions">

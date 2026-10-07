@@ -112,6 +112,7 @@ export const posterArt: ObjectArt = {
   catalogId: 'poster',
   footprint: { w: 1, d: 1 },
   bounds: { x: -46, y: -114, width: 60, height: 76 },
+  cueY: -108,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={WALL_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {onRight(0, 1, render(stage))}

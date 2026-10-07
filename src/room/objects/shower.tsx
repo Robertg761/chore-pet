@@ -236,6 +236,7 @@ export const showerArt: ObjectArt = {
   catalogId: 'shower',
   footprint: { w: 2, d: 2 },
   bounds: { x: -68, y: -104, width: 136, height: 176 },
+  cueY: -100,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {tray()}

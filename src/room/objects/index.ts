@@ -9,3 +9,8 @@ import type { ObjectArt } from './types'
 export const OBJECT_ART: Record<string, ObjectArt> = Object.fromEntries(
   [sinkArt, ...batch1, ...batch2, ...batch3, ...decor].map((art) => [art.catalogId, art]),
 )
+
+/** Object-local y of an art's clean top: its `cueY`, or an estimate a third of the way down its bounds. */
+export function cleanTop(art: Pick<ObjectArt, 'bounds' | 'cueY'>): number {
+  return art.cueY ?? art.bounds.y + 0.35 * art.bounds.height
+}

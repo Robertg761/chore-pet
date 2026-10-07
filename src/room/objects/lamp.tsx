@@ -173,6 +173,7 @@ export const lampArt: ObjectArt = {
   catalogId: 'lamp',
   footprint: { w: 1, d: 1 },
   bounds: { x: -36, y: -88, width: 72, height: 124 },
+  cueY: -82,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {glow()}

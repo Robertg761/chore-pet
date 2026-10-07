@@ -181,6 +181,7 @@ export const teddyArt: ObjectArt = {
   catalogId: 'teddy',
   footprint: { w: 1, d: 1 },
   bounds: { x: -36, y: -50, width: 72, height: 78 },
+  cueY: -27,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
       <g transform={`translate(0 ${TILE_CENTRE_Y})`}>

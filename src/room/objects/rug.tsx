@@ -169,6 +169,7 @@ export const rugArt: ObjectArt = {
   catalogId: 'rug',
   footprint: { w: W, d: D },
   bounds: { x: -100, y: -26, width: 172, height: 114 },
+  cueY: -4,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {body()}

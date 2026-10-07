@@ -252,6 +252,7 @@ export const fishTankArt: ObjectArt = {
   catalogId: 'fish-tank',
   footprint: { w: 1, d: 1 },
   bounds: { x: -36, y: -88, width: 72, height: 124 },
+  cueY: -57,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {stage === 'clean' && cleanTank()}

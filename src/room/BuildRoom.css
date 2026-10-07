@@ -32,3 +32,30 @@
 .build-btn-primary { background: var(--accent); color: #fff; }
 .build-btn:disabled { opacity: 0.45; cursor: default; }
 .build-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* Keyboard help and what the keyboard picked: read out, not shown. */
+.build-room-help {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.build-room { position: relative; }
+
+/* The selected object's chevron bobs gently over it (src/room/Room.tsx). */
+.room-chevron {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: room-chevron-bob 1.4s ease-in-out infinite;
+}
+@keyframes room-chevron-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .room-chevron { animation: none; }
+}

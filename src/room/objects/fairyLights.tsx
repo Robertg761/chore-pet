@@ -173,6 +173,7 @@ export const fairyLightsArt: ObjectArt = {
   catalogId: 'fairy-lights',
   footprint: { w: 1, d: 2 },
   bounds: { x: -78, y: -144, width: 92, height: 84 },
+  cueY: -130,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={WALL_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {onRight(0, 2, render(stage))}

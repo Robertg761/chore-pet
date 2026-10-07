@@ -117,6 +117,7 @@ export const tableArt: ObjectArt = {
   catalogId: 'table',
   footprint: { w: 2, d: 2 },
   bounds: { x: -68, y: -92, width: 136, height: 162 },
+  cueY: -33,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {frame()}

@@ -1,6 +1,7 @@
-import type { ReactNode, Ref, SVGProps } from 'react'
+import { memo, type ReactNode, type Ref, type SVGProps } from 'react'
 import { PALETTE, ROOM_STROKE } from '../../art/palette'
 import {
+  ROOM_INK,
   ROOM_TILES as N,
   ROOM_VIEWBOX,
   SLAB_DEPTH,
@@ -44,6 +45,9 @@ function Line({ a, b, stroke = ink, opacity = 0.15, width = 1.2 }: { a: P3; b: P
 }
 
 const range = (n: number) => Array.from({ length: n }, (_, i) => i)
+
+/** Thinner inner lines (baseboard, window panes): 2 px at the reference room, shrunk with the tiles. */
+const DETAIL_INK = (2 * ROOM_INK) / 3
 
 // ---- floor -----------------------------------------------------------------
 
@@ -154,7 +158,7 @@ function stripes(wall: WallStyle, plane: (u: number, z: number) => P3) {
 }
 
 function baseboard(plane: (u: number, z: number) => P3) {
-  return <polygon points={roomPoints(plane(0, 0), plane(N, 0), plane(N, 9), plane(0, 9))} fill={cream} strokeWidth={2} />
+  return <polygon points={roomPoints(plane(0, 0), plane(N, 0), plane(N, 9), plane(0, 9))} fill={cream} strokeWidth={DETAIL_INK} />
 }
 
 function walls(wall: WallStyle) {
@@ -203,7 +207,7 @@ function windowLayer() {
       <polygon points={quad(u0, u1, z0, z1)} fill={floorWood} />
       {panes.map(([a, b, c, d], i) => (
         <g key={i}>
-          <polygon points={quad(a, b, c, d)} fill={sky} strokeWidth={2} />
+          <polygon points={quad(a, b, c, d)} fill={sky} strokeWidth={DETAIL_INK} />
           <polygon
             points={roomPoints(L(a + 0.08, d - 4), L(a + 0.2, d - 4), L(a + 0.08, d - 14), L(a + 0.04, d - 14))}
             fill={white}
@@ -222,6 +226,15 @@ function windowLayer() {
 
 // ---- the shell -------------------------------------------------------------
 
+// The floor and walls only change with the room's style, so they are memoised:
+// the pet's walk and the objects re-render on top without redrawing the shell.
+const Floor = memo(function Floor({ style }: { style: string }) {
+  return floorLayer(floorStyleOf(style))
+})
+const Walls = memo(function Walls({ style }: { style: string }) {
+  return walls(wallStyleOf(style))
+})
+
 export interface RoomShellProps {
   floorStyle?: FloorStyleId | string
   wallStyle?: WallStyleId | string
@@ -233,9 +246,11 @@ export interface RoomShellProps {
   svgRef?: Ref<SVGSVGElement>
   /** Extra attributes for the <svg> (pointer handlers, aria). */
   svgProps?: SVGProps<SVGSVGElement>
+  /** Said after the floor and walls in the accessible name (e.g. what is messy). */
+  summary?: string
 }
 
-export function RoomShell({ floorStyle = 'wood', wallStyle = 'peach', children, width, className, svgRef, svgProps }: RoomShellProps) {
+export function RoomShell({ floorStyle = 'wood', wallStyle = 'peach', children, width, className, svgRef, svgProps, summary }: RoomShellProps) {
   const floor = floorStyleOf(floorStyle)
   const wall = wallStyleOf(wallStyle)
   const { x, y, width: w, height: h } = ROOM_VIEWBOX
@@ -246,14 +261,17 @@ export function RoomShell({ floorStyle = 'wood', wallStyle = 'peach', children, 
       height={width === undefined ? undefined : (width * h) / w}
       className={className}
       role="img"
-      aria-label={`Room with ${floor.label} floor and ${wall.label} walls`}
+      aria-label={`Room with ${floor.label.toLowerCase()} floor and ${wall.label.toLowerCase()} walls.${summary ? ` ${summary}` : ''}`}
       {...svgProps}
       ref={svgRef}
     >
-      <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
-        {floorLayer(floor)}
-        {walls(wall)}
-        {children}
+      <g stroke={ink} strokeLinejoin="round" strokeLinecap="round">
+        <g strokeWidth={ROOM_INK}>
+          <Floor style={floor.id} />
+          <Walls style={wall.id} />
+        </g>
+        {/* Objects are drawn at 64 px tiles and scaled down, so they keep the full room stroke. */}
+        <g strokeWidth={ROOM_STROKE}>{children}</g>
       </g>
     </svg>
   )

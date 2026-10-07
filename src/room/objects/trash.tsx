@@ -119,6 +119,7 @@ export const trashArt: ObjectArt = {
   catalogId: 'trash',
   footprint: { w: 1, d: 1 },
   bounds: { x: -36, y: -64, width: 72, height: 100 },
+  cueY: -20,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {bin()}
