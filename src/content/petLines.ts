@@ -63,10 +63,20 @@ export const OBJECT_LINES: Record<string, string[]> = {
     'Clean dishes are waiting to come out!',
     'The dishwasher keeps humming at me.',
   ],
+  'fish-tank': [
+    'The fish keep waving at me. Snack time?',
+    'The fish tank is getting a little cloudy.',
+    'The fish would love a sparkly tank.',
+  ],
   fridge: [
     'The fridge has some mystery containers.',
     'Something in the fridge wants a goodbye.',
     'I peeked in the fridge. What an adventure.',
+  ],
+  plant: [
+    'The plant looks a little thirsty.',
+    'The leaves are drooping for a drink.',
+    'I think the plant wants some water.',
   ],
   recycling: [
     'The recycling is stacking up high.',

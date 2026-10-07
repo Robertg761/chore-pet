@@ -16,6 +16,7 @@ Hackyard: "The real task has to get done." A game about laundry doesn't count; a
 - Every phase ends usable. Never start a phase with the previous one broken.
 - Setup is play. Building your home is how you set up chores, never a form.
 - Rewards only come from real chores getting done.
+- Rewards are purely cosmetic: outfits, room styles and decor that brings no chores. Anything that brings chores (a plant, a fish tank) is in the catalog from the start, never behind an unlock.
 - Progress is never lost: accounts with cloud sync by default; guests start instantly (anonymous auth) and link a login later.
 - All art is designed from scratch, no asset packs.
 

@@ -67,7 +67,7 @@ describe('completeChoreWithRewards on a sample home', () => {
     // Two overdue chores: beanie only, no plant before three chores.
     if (overdue.length === 2) expect(last.unlocked).toEqual([])
     expect(data.progress).toMatchObject({ choreCount: overdue.length, currentStreak: 1, bestStreak: 1 })
-    expect(data.progress!.unlockedItems).toEqual(overdue.length >= 3 ? ['item:beanie-red', 'decor:plant'] : ['item:beanie-red'])
+    expect(data.progress!.unlockedItems).toEqual(overdue.length >= 3 ? ['item:beanie-red', 'decor:teddy'] : ['item:beanie-red'])
   })
 
   it('the third counted chore brings the plant', () => {
@@ -81,8 +81,8 @@ describe('completeChoreWithRewards on a sample home', () => {
       unlockedPerStep.push(r.unlocked.map((u) => u.id))
       s = apply(s, r.ops)
     }
-    expect(unlockedPerStep).toEqual([['item:beanie-red'], [], ['decor:plant']])
-    expect(selectHome(s.tables).progress).toMatchObject({ choreCount: 3, unlockedItems: ['item:beanie-red', 'decor:plant'] })
+    expect(unlockedPerStep).toEqual([['item:beanie-red'], [], ['decor:teddy']])
+    expect(selectHome(s.tables).progress).toMatchObject({ choreCount: 3, unlockedItems: ['item:beanie-red', 'decor:teddy'] })
   })
 })
 
@@ -125,7 +125,7 @@ describe('completeChoreWithRewards basics', () => {
     const c = dailyChore('A', '2026-09-30')
     const p = progress({ choreCount: 4, bestStreak: 3 })
     const result = completeChoreWithRewards(c, p, ctx([c], daysOf('A', '2026-09-30', '2026-10-05')), at(9))
-    expect(result.unlocked.map((u) => u.id)).toEqual(['item:beanie-red', 'decor:plant', 'wall:mint', 'item:bow', 'floor:tile', 'wall:lavender'])
+    expect(result.unlocked.map((u) => u.id)).toEqual(['item:beanie-red', 'decor:teddy', 'wall:mint', 'item:bow', 'floor:tile', 'wall:lavender'])
     expect(upsertOf(result.ops, 'progress')[0].value).toMatchObject({ choreCount: 7, currentStreak: 7, bestStreak: 7 })
   })
 

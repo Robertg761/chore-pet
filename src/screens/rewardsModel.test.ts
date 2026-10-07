@@ -18,7 +18,7 @@ describe('rewardsModel', () => {
 
   it('counts progress from the previous reward of the same kind', () => {
     // Beanie (1) and plant (3) are earned; 4 chores done; the bow is at 5.
-    const p = progress({ choreCount: 4, unlockedItems: ['item:beanie-red', 'decor:plant'] })
+    const p = progress({ choreCount: 4, unlockedItems: ['item:beanie-red', 'decor:teddy'] })
     const { chores } = nextLines(p, 0)
     expect(chores?.unlock.id).toBe('item:bow')
     expect(chores?.text).toBe('1 more chore to the bow')

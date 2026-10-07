@@ -153,6 +153,9 @@ Parallel batch I:
 - [LEAD] Single-screen home: top bar, the room as the hero, an "Up next" card with a sheet for the full list, and a tab bar (bottom on phones, side rail on desktop). Build mode fits one screen. **Done** (`src/shell/`: AppNav, Sheet, useViewport; build mode has a tabbed panel)
 - [LEAD] Review: the wardrobe check in `/?art` for every item, species and pose; no page scroll at 390 x 664 and a balanced layout at 1280 x 800; axe clean. **Done:** all 11 items on 3 pets x 7 poses, alone and in combos. Every screen (landing, home, the chores sheet, More, build, wardrobe, rewards, week, change look, share, vacation, settings, editor, gift) fits 390 x 664 and 1280 x 800 with no page scroll, and axe reports nothing at either size.
 
+- [LEAD] Rewards are purely cosmetic (user feedback: an unlocked plant came with chores). The plant and fish tank move to the starting catalog with their chores; a teddy bear and fairy lights replace them as chore-free decor rewards. Tests pin the rule: decor never has chores and nothing in the starting catalog sits behind an unlock. Players who already passed those milestones get the new decor on their next chore. **Done**
+- [SONNET: svg-artist] Teddy bear (floor) and fairy lights (wall) decor art, with gentle mess stages like the lamp's. **Done** (after review the fairy lights became a two-tile garland so they read at room scale)
+
 **Done when:** every item looks made for every pet in every pose, and the home and every screen fit one viewport on a phone and a desktop browser. **Met.**
 
 ## Stretch

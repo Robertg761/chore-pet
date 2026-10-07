@@ -2,7 +2,8 @@ import { activeDaysBetween, addDays, isInVacation } from './dates'
 import { choreStatus, nextDueDate } from './schedule'
 import type { Chore, Completion, ISODate, Progress, VacationWindow } from './types'
 
-// Rewards come only from real chores getting done (docs/SPEC.md):
+// Rewards come only from real chores getting done (docs/SPEC.md), and every
+// reward is purely cosmetic: outfits, styles and decor that brings no chores.
 // - chore milestones count chores the player finishes (progress.choreCount);
 // - streaks count days in a row with nothing overdue. Vacation days neither
 //   count nor break a streak, so going away never costs you.
@@ -13,7 +14,7 @@ export type UnlockKind = 'item' | 'decor' | 'wall' | 'floor'
 export type UnlockRule = { type: 'chores'; count: number } | { type: 'streak'; days: number }
 
 export interface Unlock {
-  /** Stored in progress.unlockedItems, e.g. "item:beanie-red", "decor:plant", "wall:mint". */
+  /** Stored in progress.unlockedItems, e.g. "item:beanie-red", "decor:teddy", "wall:mint". */
   id: string
   kind: UnlockKind
   /** The item id, catalog id or style id the reward refers to. */
@@ -27,7 +28,7 @@ const u = (kind: UnlockKind, ref: string, name: string, rule: UnlockRule): Unloc
 /** Every reward, in the order a typical player earns them. */
 export const UNLOCKS: Unlock[] = [
   u('item', 'beanie-red', 'Red beanie', { type: 'chores', count: 1 }),
-  u('decor', 'plant', 'Potted plant', { type: 'chores', count: 3 }),
+  u('decor', 'teddy', 'Teddy bear', { type: 'chores', count: 3 }),
   u('wall', 'mint', 'Mint walls', { type: 'streak', days: 2 }),
   u('item', 'bow', 'Bow', { type: 'chores', count: 5 }),
   u('decor', 'lamp', 'Lamp', { type: 'chores', count: 8 }),
@@ -36,7 +37,7 @@ export const UNLOCKS: Unlock[] = [
   u('decor', 'poster', 'Poster', { type: 'chores', count: 16 }),
   u('wall', 'lavender', 'Lavender walls', { type: 'streak', days: 7 }),
   u('item', 'scarf', 'Scarf', { type: 'chores', count: 20 }),
-  u('decor', 'fish-tank', 'Fish tank', { type: 'chores', count: 25 }),
+  u('decor', 'fairy-lights', 'Fairy lights', { type: 'chores', count: 25 }),
   u('item', 'bow-tie', 'Bow tie', { type: 'chores', count: 30 }),
   u('floor', 'carpet', 'Carpet', { type: 'streak', days: 14 }),
   u('item', 'backpack', 'Backpack', { type: 'chores', count: 40 }),
