@@ -17,6 +17,8 @@ export interface AppNavProps {
   more: MoreItem[]
   /** A quiet line at the foot of the More menu, e.g. the sync status. */
   note?: string
+  menuOpen?: boolean
+  onMenuChange?: (open: boolean) => void
 }
 
 // Hand-drawn 24px icons in the same round-ended line as the rest of the UI.
@@ -100,8 +102,10 @@ function useTabPill(active: Tab) {
   return { track, pill }
 }
 
-export function AppNav({ active, onNavigate, rewardsNote, more, note }: AppNavProps) {
-  const [menu, setMenu] = useState(false)
+export function AppNav({ active, onNavigate, rewardsNote, more, note, menuOpen, onMenuChange }: AppNavProps) {
+  const [localMenu, setLocalMenu] = useState(false)
+  const menu = menuOpen ?? localMenu
+  const setMenu = onMenuChange ?? setLocalMenu
   const { track, pill } = useTabPill(active)
 
   return (
@@ -136,7 +140,7 @@ export function AppNav({ active, onNavigate, rewardsNote, more, note }: AppNavPr
           <ul className="app-more">
             {more.map((item) => (
               <li key={item.label}>
-                <button type="button" className="app-more-item" onClick={() => (setMenu(false), item.onSelect())}>
+                <button type="button" className="app-more-item" onClick={() => { if (!onMenuChange) setLocalMenu(false); item.onSelect() }}>
                   {item.label}
                 </button>
               </li>
