@@ -24,6 +24,37 @@
 .wk-day-today { font-weight: 900; fill: var(--ink); }
 .wk-away { font-size: 12px; font-weight: 800; fill: var(--ink-soft); }
 
+/* Arriving: bars grow from the baseline, their numbers fade in after them, then the health
+   line draws left to right with the dots popping in along it. Plays once, when the screen mounts. */
+.wk-bar {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: wk-grow 450ms var(--ease-spring) both;
+  animation-delay: calc(var(--i) * 35ms);
+}
+.wk-fade {
+  animation: wk-fade var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--i) * 35ms + 280ms);
+}
+/* Dash and gap are 1 and 2 (of pathLength 1) so the round cap stays hidden before the line starts. */
+.wk-line {
+  stroke-dasharray: 1 2;
+  animation: wk-draw 660ms var(--ease-in-out) 200ms both;
+}
+.wk-dot {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: wk-pop 360ms var(--ease-spring) both;
+  animation-delay: calc(200ms + var(--i) * 110ms);
+}
+@keyframes wk-grow { from { transform: scaleY(0); } }
+@keyframes wk-fade { from { opacity: 0; translate: 0 4px; } }
+@keyframes wk-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes wk-pop { from { transform: scale(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .wk-bar, .wk-fade, .wk-line, .wk-dot { animation: none; }
+}
+
 .wk-note { margin: 0; font-size: 13px; font-weight: 700; color: var(--ink-soft); }
 
 /* In the app frame the week fits the view: the chart takes whatever space is left. */

@@ -12,6 +12,7 @@ import {
   swatchesFor,
 } from './creatorModel'
 import { ScreenHeader } from '../shell/ScreenHeader'
+import { SegThumb } from '../shell/SegThumb'
 import { useWide } from '../shell/useViewport'
 import './CharacterCreator.css'
 
@@ -308,6 +309,7 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
         <div className="cc-side">
           {!wide && (
             <div ref={tabsRef} className="cc-tabs seg" role="tablist" aria-label="What to change">
+              <SegThumb />
               {PARTS.map((p, i) => (
                 <button
                   key={p.part}

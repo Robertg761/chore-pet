@@ -6,6 +6,7 @@ import type { Item } from '../character/slots'
 import type { Mood, Pet, Progress, SavedOutfit } from '../domain/types'
 import { GiftSilhouette } from './RewardArt'
 import { ScreenHeader } from '../shell/ScreenHeader'
+import { SegThumb } from '../shell/SegThumb'
 import { useWide } from '../shell/useViewport'
 import './Wardrobe.css'
 import {
@@ -241,6 +242,7 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
         <div className="wd-stage">
           <PetArt className="wd-preview" pet={pet} equipped={equipped} pose={pose} label={`${pet.name} wearing ${describeOutfit(equipped)}`} />
           <div className="wd-poses seg" role="group" aria-label="Pose">
+            <SegThumb />
             {WARDROBE_POSES.map((p) => (
               <button key={p.pose} type="button" className="seg-btn" aria-pressed={pose === p.pose} onClick={() => setPose(p.pose)}>
                 {p.label}
@@ -251,6 +253,7 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
 
         <div className="wd-side">
           <div className="wd-tabs seg" role="tablist" aria-label="Where it goes">
+            <SegThumb />
             {sections.map((s, i) => (
               <button
                 key={s.key}
