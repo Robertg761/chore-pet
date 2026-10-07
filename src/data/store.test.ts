@@ -910,6 +910,26 @@ describe('saved homes (backups kept on this device)', () => {
     expect(Object.keys(local.backups)).toContain(`snapshot-backup-u1:${pipHome.id}`)
   })
 
+  it('offers a guest\u2019s home kept at sign-out to the next account here, and only to that one', async () => {
+    const { server, remote } = fakeServer('anon-1')
+    const local = memoryStore()
+    const store = createStore({ local, remote })
+    await store.start()
+    await store.sync()
+    store.apply(...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'anon-1' }))
+    await store.sync()
+    await store.reset({ backup: true, forNext: true }) // the guest signs out
+    server.user = 'anon-2' // a new guest session starts
+    server.tables = emptyTables()
+    await store.sync()
+    await settle()
+    // Held for anon-2 now, so someone signing in here later isn't offered it.
+    expect(local.backups['snapshot-backup-anon-1'].heldFor).toBe('anon-2')
+    expect((await store.savedHomes()).map((h) => h.petName)).toEqual(['Bun'])
+    expect(await store.restoreSaved('anon-1')).toBe(true)
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Bun')
+  })
+
   it('never offers a home held for another account, and clearing an account forgets its saved homes', async () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()

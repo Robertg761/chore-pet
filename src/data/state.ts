@@ -58,6 +58,13 @@ export interface Snapshot {
   keptBy?: string
 }
 
+/**
+ * heldFor of a guest's home kept at sign-out: the guest can never sign back in,
+ * so it is held for whoever uses this device next (the first account to claim
+ * the device takes it over).
+ */
+export const HELD_FOR_NEXT = 'next-on-this-device'
+
 /** The account a backup may be offered back to. */
 export function heldFor(backup: Snapshot): string | null {
   return backup.heldFor !== undefined ? backup.heldFor : backup.userId

@@ -10,6 +10,7 @@ import {
   emptySnapshot,
   emptyTables,
   heldFor,
+  HELD_FOR_NEXT,
   mergeSnapshots,
   opIdOf,
   planFlush,
@@ -73,9 +74,11 @@ export interface Store {
    * Forget this device's data and start over with no account (signing out,
    * deleting the account). Anything unsynced, and any home, is first copied to
    * a backup key, unless `backup` is false (the account was deleted: its
-   * backup goes too). Other tabs are told to follow.
+   * backup goes too). With `forNext` (a guest signing out, who can't sign back
+   * in), that copy is held for whoever uses this device next. Other tabs are
+   * told to follow.
    */
-  reset(options?: { backup?: boolean }): Promise<void>
+  reset(options?: { backup?: boolean; forNext?: boolean }): Promise<void>
   /** Hold syncs (they run once resumed) until the returned function is called. */
   pause(): () => void
   /** Queue the set-aside changes again, e.g. after the server was fixed. */
@@ -141,6 +144,12 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 
 function kindOf(res: Extract<RemoteResult, { ok: false }>): ErrorKind {
   return res.kind ?? (res.transient ? 'outage' : 'permanent')
+}
+
+/** Whether `account` may be offered (and restore) this backup. */
+function mayRestore(backup: Snapshot, account: string | null): boolean {
+  const holder = heldFor(backup)
+  return holder === account || holder === HELD_FOR_NEXT
 }
 
 export function createStore({
@@ -312,6 +321,18 @@ export function createStore({
     saving = saving.then(() => backup(snapshot.userId ?? 'unclaimed', snapshot)).catch(warn('Could not back up the offline copy'))
   }
 
+  /** Hold the homes kept for whoever uses this device next for `account`, now that it is here. */
+  function adoptBackups(account: string) {
+    if (memoryOnly || !local.listBackups || !local.backup) return
+    const list = local.listBackups.bind(local)
+    const backup = local.backup.bind(local)
+    saving = saving
+      .then(async () => {
+        for (const b of await list()) if (heldFor(b.snapshot) === HELD_FOR_NEXT) await backup(b.ownerId, { ...b.snapshot, heldFor: account })
+      })
+      .catch(warn('Could not hand the saved homes to this account'))
+  }
+
   /** Forget every backup held for an account (its own copies and the homes it swapped out). */
   async function dropBackupsFor(account: string) {
     if (!local.dropBackup) return
@@ -390,6 +411,8 @@ export function createStore({
       current()
       // The home being dropped is held for the account taking over this device.
       if (claimDrops(state.snapshot, userId)) backUp({ ...state.snapshot, heldFor: userId })
+      // The first account on this device since a guest signed out takes over that guest's home.
+      if (state.snapshot.userId === null) adoptBackups(userId)
       commit(claim(state.snapshot, userId))
       // Signed in to another account: its home is on the way, so don't offer an empty one meanwhile.
       if (before !== null && before !== state.snapshot.userId) {
@@ -561,7 +584,7 @@ export function createStore({
       void sync()
     },
     sync,
-    async reset({ backup = true } = {}) {
+    async reset({ backup = true, forNext = false } = {}) {
       const resume = pause()
       try {
         // A sync under way gets a moment to finish; one stuck on a hung request is left behind.
@@ -575,7 +598,7 @@ export function createStore({
         failures = 0
         switching = false
         const owner = state.snapshot.userId
-        if (backup) backUp(state.snapshot)
+        if (backup) backUp(forNext ? { ...state.snapshot, heldFor: HELD_FOR_NEXT } : state.snapshot)
         else if (owner && !memoryOnly) {
           saving = saving.then(() => dropBackupsFor(owner)).catch(warn('Could not remove the backups'))
         }
@@ -614,9 +637,10 @@ export function createStore({
       if (memoryOnly || !local.listBackups) return []
       await load()
       const backups = await local.listBackups().catch(() => [])
-      // Only homes held for this account: never someone else's on a shared browser.
       const me = state.snapshot.userId
-      return backups.flatMap(({ ownerId, snapshot }) => (heldFor(snapshot) === me ? (savedHomeOf(ownerId, snapshot) ?? []) : []))
+      // Only homes held for this account: never someone else's on a shared browser. A guest's
+      // home kept at sign-out is offered to whoever comes next (until an account takes it over).
+      return backups.flatMap(({ ownerId, snapshot }) => (mayRestore(snapshot, me) ? (savedHomeOf(ownerId, snapshot) ?? []) : []))
     },
     async restoreSaved(ownerId) {
       if (memoryOnly || !local.claimBackup || !local.backup) return false
@@ -639,7 +663,7 @@ export function createStore({
       try {
         // A sync under way gets a moment to finish, so the home doesn't change under the swap.
         if (inflight) await Promise.race([inflight, new Promise((r) => setTimeout(r, resetWaitMs))])
-        if (!stillHere() || heldFor(saved) !== account) return false
+        if (!stillHere() || !mayRestore(saved, account)) return false
         if (!selectHome(saved.tables).home) return false
         // Keep the home being replaced on this device, so it can be swapped back. Its own key
         // (account and home), so it never overwrites the copy being brought back. Each round

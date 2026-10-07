@@ -165,11 +165,13 @@ export async function signOutSafely(): Promise<SignOutResult> {
   // set-aside changes, or a guest's home (no way to sign back in to it). A fully saved
   // account leaves nothing behind, so sign-out is a clean break on a shared browser.
   const { data: current } = await supabase.auth.getSession()
-  const keep = unsynced > 0 || rejectedCount > 0 || current.session?.user.is_anonymous === true
+  const guest = current.session?.user.is_anonymous === true
+  const keep = unsynced > 0 || rejectedCount > 0 || guest
   // No syncing in between: the old session must not pull its home back in, nor the new one claim it.
   const resume = appStore.pause()
   try {
-    await appStore.reset({ backup: keep })
+    // A guest's home is held for whoever uses this device next, who can bring it back.
+    await appStore.reset({ backup: keep, forNext: guest })
     clearLocalSettings()
     // Removes the session from this device even if the server can't be told.
     const { error } = await supabase.auth.signOut({ scope: 'local' })
