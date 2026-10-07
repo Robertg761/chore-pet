@@ -94,7 +94,7 @@ Parallel batch F:
 - [SONNET: svg-artist] Decor set: rug, lamp, plant, poster, fish tank, wallpaper and floor variants. **Done** (plant, lamp, poster, fish tank; wall and floor variants come from the room shell styles)
 - [SONNET: svg-artist] Accessories: beanie, bow, glasses, scarf, bow tie, backpack (one per slot at least), checked on every pose of every species. Bun's ears and Sprout's leaves stick up through head items; draw hats so that looks intentional. **Done**
 - [SONNET: ui-builder] Gift box unlock moment and rewards screen with progress to next unlock. **Done**
-- [SONNET: ui-builder] Week view: chores completed per day and pet health over time.
+- [SONNET: ui-builder] Week view: chores completed per day and pet health over time. **Done** (`src/screens/WeekView.tsx`, under More)
 - [SONNET: test-writer] Tests for streak and unlock rules. **Done** (found and fixed: a vacation longer than the lookback hid the streak before it)
 
 **Done when:** completing chores visibly unlocks at least 4 decor items and 4 accessories, the first in the first session. **Met:** 4 decor and 6 accessories unlock through chore milestones and streaks (plus 4 room styles); in the sample home, chore 1 gives the beanie, chore 3 the plant (which then appears in Build), chore 5 the bow.
@@ -177,6 +177,19 @@ Audit findings, all fixed:
 - [SONNET: test-writer] Room and geometry tests written in terms of the room size. **Done**
 
 **Done when:** a late chore shows on its object and visibly gets worse day by day at a pace that fits the chore, the pet's health matches what the room shows, and any chore can be tied to an object. **Met.**
+
+## Phase 10: Motion and feel
+
+User feedback: "I want it to feel fluid. Nice animations, good design elements, perfected." Recorded every interaction on video and stepped through the frames first. The static design held up; the motion didn't. Rows vanished and the room jumped when a chore was done, tabs swapped instantly, sheets snapped shut, the gift faded in see-through, and the pet stood stock still.
+
+- [LEAD] Motion tokens in `src/index.css` (`--ease-out`, `--ease-in`, `--ease-spring`, `--ease-bounce`, `--dur-*`): things arrive with a soft spring and leave quickly. Every button gives under a press (individual `scale`, so it composes with existing transforms; shadowed buttons press onto their shadow). One reduced-motion rule. **Done**
+- [LEAD] Screen changes slide in from the side the screen lives on (`src/shell/viewTransition.ts`, the View Transitions API, so taps go straight through); the tab bar stays put and a pill glides from tab to tab, with a hop on the chosen icon. **Done**
+- [LEAD] Chore done on the home screen: the row folds away, the others glide up, the next one eases in and the room resizes smoothly (a `chores` view transition); a light haptic tick. **Done**
+- [LEAD] Sheets spring up, fade their backdrop, play an exit on every close path and can be dragged down by a handle. The gift card pops in solid; the undo toast slides away. Placed objects drop into the room with a squash. The landing arrives in order. **Done**
+- [SONNET: svg-artist] The pet breathes (slower asleep) and blinks, out of step with other pets on screen (`src/character/Character.css`). **Done**
+- [SONNET: ui-builder] Segmented controls get an ink thumb that glides (`src/shell/SegThumb.tsx`); the week's bars grow and its health line draws; rewards bars fill and tiles rise in. **Done**
+
+**Done when:** every interaction has motion that explains what changed, nothing jumps, and nothing moves for players who ask for less. **Met** in phone and desktop emulation (video frames reviewed for each); axe clean with motion on and off.
 
 ## Stretch
 
