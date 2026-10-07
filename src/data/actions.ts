@@ -203,12 +203,16 @@ export function restoreHome(saved: Snapshot, current: Snapshot): NewOp[] {
   const roomIds = new Map(rooms.map((r) => [r.id, id()]))
   const objectIds = new Map(objects.map((o) => [o.id, id()]))
   const choreIds = new Map(chores.map((c) => [c.id, id()]))
-  const now = selectHome(current.tables).home
-  const ops: NewOp[] = now ? removeHome(now.id) : []
+  // Every home the account has goes (usually one; more after conflicting offline starts).
+  const ops: NewOp[] = Object.keys(current.tables.homes).flatMap((homeKey) => removeHome(homeKey))
   ops.push(upsertOp('homes', { ...fresh(home), id: homeId, ownerId: current.userId ?? home.ownerId }))
   for (const r of rooms) ops.push(upsertOp('rooms', { ...fresh(r), id: roomIds.get(r.id)!, homeId }))
   if (pet) ops.push(upsertOp('pets', { ...fresh(pet), id: id(), homeId }))
-  if (progress) ops.push(upsertOp('progress', { ...fresh(progress), homeId }))
+  if (progress) {
+    // Banked counts of live chores follow them to their new ids; those of deleted chores keep theirs.
+    const retired = progress.retired && Object.fromEntries(Object.entries(progress.retired).map(([k, n]) => [choreIds.get(k) ?? k, n]))
+    ops.push(upsertOp('progress', { ...fresh(progress), homeId, ...(retired && { retired }) }))
+  }
   for (const o of objects) {
     const roomId = roomIds.get(o.roomId)
     if (roomId) ops.push(upsertOp('placed_objects', { ...fresh(o), id: objectIds.get(o.id)!, roomId }))
