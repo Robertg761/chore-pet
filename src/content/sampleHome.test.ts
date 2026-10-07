@@ -115,7 +115,7 @@ describe('sampleHome', () => {
     const others = condition.statuses.filter((s) => s.state !== 'overdue')
     expect(others).toHaveLength(data.chores.length - 2)
     expect(others.every((s) => s.dueDate >= today)).toBe(true)
-    expect(condition.health).toBe(79) // 100 - 15 (dishes, level 2) - 6 (trash, level 1)
+    expect(condition.health).toBe(86) // 100 * 100 / (100 + 12 (dishes, level 2) + 4 (trash, level 1))
     expect(condition.mood).toBe('content')
     expect(condition.worst?.choreId).toBe(data.chores.find((c) => c.name === 'Wash the dishes')!.id)
   })

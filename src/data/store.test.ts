@@ -1,10 +1,10 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { Chore, Progress } from '../domain/types'
 import { addChore, completeChore, completeChoreWithRewards, createHousehold, removeChore } from './actions'
-import { memoryStore, type LocalStore } from './local'
+import { memoryStore, volatileStore, type LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
-import { emptyTables, selectHome, type Tables } from './state'
-import { createStore, type Store } from './store'
+import { emptyTables, selectHome, type Snapshot, type Tables } from './state'
+import { MAX_ATTEMPTS, createStore, type Store, type StoreChannel, type StoreMessage } from './store'
 import { keyOf, type TableName } from './tables'
 
 /** What supabase/migrations/0004_progress_merge.sql does to an updated progress row. */
@@ -25,14 +25,16 @@ function fakeServer(userId = 'u1') {
   const server = {
     tables: emptyTables(),
     offline: false,
-    refuse: (_table: TableName, _row: unknown) => false,
+    /** Answer for a refused row: permanent unless set otherwise. */
+    refuse: (_table: TableName, _row: unknown): false | RemoteResult => false,
     calls: [] as string[],
+    user: userId,
   }
   const down = (): RemoteResult => ({ ok: false, transient: true, message: 'Failed to fetch' })
   const remote: Remote = {
     async session() {
       if (server.offline) throw new Error('Failed to fetch')
-      return userId
+      return server.user
     },
     async pull() {
       if (server.offline) throw new Error('Failed to fetch')
@@ -41,7 +43,10 @@ function fakeServer(userId = 'u1') {
     async upsert(table, rows) {
       server.calls.push(`upsert ${table} ${rows.length}`)
       if (server.offline) return down()
-      if (rows.some((r) => server.refuse(table, r))) return { ok: false, transient: false, message: 'refused' }
+      for (const r of rows) {
+        const refused = server.refuse(table, r)
+        if (refused) return refused
+      }
       const t = server.tables[table] as Record<string, unknown>
       for (const r of rows) {
         const key = keyOf(table, r)
@@ -61,6 +66,8 @@ function fakeServer(userId = 'u1') {
   }
   return { server, remote }
 }
+
+const settle = () => new Promise((r) => setTimeout(r, 0))
 
 async function onboarded(remote: Remote, local = memoryStore()) {
   const store = createStore({ local, remote })
@@ -165,10 +172,11 @@ describe('sync engine', () => {
     expect(Object.values(server.tables.chores)).toHaveLength(0)
   })
 
-  it('drops only the row the server refuses, not the whole batch', async () => {
+  it('sets aside only the row the server refuses, not the whole batch', async () => {
     const { server, remote } = fakeServer()
-    const store = await onboarded(remote)
-    server.refuse = (table, row) => table === 'chores' && (row as Chore).name === 'Bad'
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    server.refuse = (table, row) => table === 'chores' && (row as Chore).name === 'Bad' && { ok: false, transient: false, message: 'refused' }
     const { home } = selectHome(store.getState().snapshot.tables)
     store.apply(
       ...addChore(home!, { name: 'Good', schedule: { kind: 'daily' } }, '2026-10-01'),
@@ -178,6 +186,11 @@ describe('sync engine', () => {
     expect(store.getState().sync).toBe('synced')
     expect(Object.values(server.tables.chores).map((c) => c.name)).toEqual(['Good'])
     expect(selectHome(store.getState().snapshot.tables).chores.map((c) => c.name)).toEqual(['Good'])
+    // Not dropped silently: kept on the snapshot (and saved) for the UI to mention.
+    expect(store.getState().rejectedCount).toBe(1)
+    expect(store.getState().snapshot.rejected?.[0]).toMatchObject({ message: 'refused', op: { table: 'chores', value: { name: 'Bad' } } })
+    await settle()
+    expect(local.current?.rejected).toHaveLength(1)
   })
 
   it('works with no server at all', async () => {
@@ -199,7 +212,6 @@ describe('when the browser refuses local storage', () => {
     load: () => Promise.reject(new Error('SecurityError')),
     save: () => Promise.reject(new Error('QuotaExceededError')),
   })
-  const settle = () => new Promise((r) => setTimeout(r, 0))
 
   it('says so instead of claiming the home is saved', async () => {
     const store = createStore({ local: broken(), remote: null })
@@ -355,5 +367,417 @@ describe('changes made while sync is signing in', () => {
     const names = (s: Record<string, Chore>) => Object.values(s).map((c) => c.name).sort()
     expect(names(slow.getState().snapshot.tables.chores)).toEqual(['Bins', 'Dishes'])
     expect(names(server.tables.chores)).toEqual(['Bins', 'Dishes'])
+  })
+})
+
+/** Tabs in one browser: every channel hears every other channel's messages, like a BroadcastChannel. */
+function channelBus() {
+  const listeners = new Set<(m: StoreMessage) => void>()
+  return (): StoreChannel => {
+    let mine: ((m: StoreMessage) => void) | null = null
+    return {
+      post: (m) => listeners.forEach((l) => l !== mine && l(m)),
+      listen(fn) {
+        mine = fn
+        listeners.add(fn)
+        return () => listeners.delete(fn)
+      },
+    }
+  }
+}
+
+const choreNames = (tables: Tables) => Object.values(tables.chores).map((c) => c.name).sort()
+
+describe('changes the server refuses', () => {
+  it('waits out a schema mismatch (a migration not applied yet) instead of setting the row aside', async () => {
+    const { server, remote } = fakeServer()
+    const store = await onboarded(remote)
+    let migrated = false
+    server.refuse = (table) => table === 'chores' && !migrated && { ok: false, transient: true, kind: 'schema', message: 'Could not find the column' }
+    store.apply(...dishes(store))
+    await store.sync()
+    expect(store.getState()).toMatchObject({ sync: 'error', rejectedCount: 0, pendingCount: 1 })
+    expect(selectHome(store.getState().snapshot.tables).chores).toHaveLength(1)
+    await store.sync()
+    expect(store.getState().rejectedCount).toBe(0)
+
+    migrated = true
+    await store.sync()
+    expect(store.getState()).toMatchObject({ sync: 'synced', rejectedCount: 0, pendingCount: 0 })
+    expect(choreNames(server.tables)).toEqual(['Dishes'])
+  })
+
+  it('sets a row aside after it keeps getting stuck (a 413 with no code), so the queue moves again', async () => {
+    const { server, remote } = fakeServer()
+    const store = await onboarded(remote)
+    server.refuse = (table, row) => table === 'chores' && (row as Chore).name === 'Huge' && { ok: false, transient: true, kind: 'stuck', message: 'Payload Too Large' }
+    const { home } = selectHome(store.getState().snapshot.tables)
+    store.apply(...addChore(home!, { name: 'Huge', schedule: { kind: 'daily' } }, '2026-10-01'))
+    store.apply(...addChore(home!, { name: 'Fine', schedule: { kind: 'daily' } }, '2026-10-01'))
+    for (let i = 1; i < MAX_ATTEMPTS; i++) {
+      await store.sync()
+      expect(store.getState(), `try ${i}`).toMatchObject({ sync: 'error', rejectedCount: 0 })
+    }
+    // The good row went through meanwhile.
+    expect(choreNames(server.tables)).toEqual(['Fine'])
+    await store.sync()
+    expect(store.getState()).toMatchObject({ sync: 'synced', rejectedCount: 1, pendingCount: 0 })
+    expect(store.getState().snapshot.rejected?.[0].message).toBe('Payload Too Large')
+  })
+
+  it('never counts a network outage against a row', async () => {
+    const { server, remote } = fakeServer()
+    const store = await onboarded(remote)
+    store.apply(...dishes(store))
+    server.offline = true
+    for (let i = 0; i < MAX_ATTEMPTS * 2; i++) await store.sync()
+    server.offline = false
+    await store.sync()
+    expect(store.getState()).toMatchObject({ sync: 'synced', rejectedCount: 0 })
+    expect(choreNames(server.tables)).toEqual(['Dishes'])
+  })
+
+  it('can queue set-aside rows again, or forget them', async () => {
+    const { server, remote } = fakeServer()
+    const store = await onboarded(remote)
+    let allowed = false
+    server.refuse = (table) => table === 'chores' && !allowed && { ok: false, transient: false, message: 'refused' }
+    store.apply(...dishes(store))
+    await store.sync()
+    expect(store.getState().rejectedCount).toBe(1)
+    allowed = true
+    store.retryRejected()
+    await store.sync()
+    expect(store.getState().rejectedCount).toBe(0)
+    expect(choreNames(server.tables)).toEqual(['Dishes'])
+
+    allowed = false
+    const { home } = selectHome(store.getState().snapshot.tables)
+    store.apply(...addChore(home!, { name: 'Bins', schedule: { kind: 'daily' } }, '2026-10-01'))
+    await store.sync()
+    expect(store.getState().rejectedCount).toBe(1)
+    store.dismissRejected()
+    expect(store.getState().rejectedCount).toBe(0)
+  })
+})
+
+describe('retrying after a failed sync', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('backs off exponentially up to the cap, and stops once a sync works', async () => {
+    vi.useFakeTimers()
+    const { server, remote } = fakeServer()
+    let sessions = 0
+    const counted: Remote = { ...remote, session: () => (sessions++, remote.session()), currentUser: async () => 'u1' }
+    const store = createStore({ local: memoryStore(), remote: counted, backoff: { baseMs: 1000, maxMs: 4000 } })
+    await store.start()
+    await vi.runAllTimersAsync()
+    expect(sessions).toBe(1)
+
+    server.offline = true
+    await store.sync()
+    expect(sessions).toBe(2)
+    // 1s, 2s, 4s, then capped at 4s.
+    for (const [wait, total] of [[999, 2], [1, 3], [2000, 4], [4000, 5], [4000, 6]] as const) {
+      await vi.advanceTimersByTimeAsync(wait)
+      expect(sessions, `after ${wait}ms`).toBe(total)
+    }
+    server.offline = false
+    await vi.advanceTimersByTimeAsync(4000)
+    expect(store.getState().sync).toBe('synced')
+    const after = sessions
+    await vi.advanceTimersByTimeAsync(60_000)
+    expect(sessions).toBe(after)
+  })
+
+  it('does not retry on a timer while the device is offline (the online event does that)', async () => {
+    vi.useFakeTimers()
+    const { remote } = fakeServer()
+    let sessions = 0
+    const store = createStore({ local: memoryStore(), remote: { ...remote, session: () => (sessions++, remote.session()) }, isOnline: () => false, backoff: { baseMs: 1000, maxMs: 4000 } })
+    await store.start()
+    await vi.advanceTimersByTimeAsync(60_000)
+    expect(store.getState().sync).toBe('offline')
+    expect(sessions).toBe(0)
+  })
+})
+
+describe('the offline copy', () => {
+  it('says so when it only lives in memory (no IndexedDB)', async () => {
+    const store = createStore({ local: volatileStore(), remote: null })
+    await store.start()
+    store.apply(...createHousehold({ species: 'bun', petName: 'Pip', userId: null }))
+    await settle()
+    expect(store.getState()).toMatchObject({ ready: true, savedLocally: false })
+  })
+
+  it('stops waiting for a stuck load, runs from memory, and never writes over the stored copy', async () => {
+    let saves = 0
+    const stuck: LocalStore = { load: () => new Promise(() => {}), save: async () => void saves++ }
+    const store = createStore({ local: stuck, remote: null, loadTimeoutMs: 20 })
+    await store.start()
+    expect(store.getState()).toMatchObject({ ready: true, savedLocally: false })
+    store.apply(...createHousehold({ species: 'bun', petName: 'Pip', userId: null }))
+    await settle()
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Pip')
+    expect(saves).toBe(0)
+  })
+
+  it('is loaded before any sync runs, even one started before start()', async () => {
+    const { server, remote } = fakeServer()
+    const phone = await onboarded(remote)
+    phone.apply(...dishes(phone))
+    await phone.sync()
+    server.offline = true
+    phone.apply(...addChore(selectHome(phone.getState().snapshot.tables).home!, { name: 'Offline', schedule: { kind: 'daily' } }, '2026-10-01'))
+    await settle()
+    const saved = structuredClone(phone.getState().snapshot)
+    server.offline = false
+
+    let release = () => {}
+    const gate = new Promise<void>((r) => (release = r))
+    const local = memoryStore(saved)
+    const slow: LocalStore = { ...local, load: () => gate.then(() => local.load()) }
+    const reopened = createStore({ local: slow, remote })
+    const synced = reopened.sync() // e.g. a SIGNED_IN event right at start-up
+    await settle()
+    expect(server.calls.filter((c) => c.startsWith('upsert chores'))).toHaveLength(1)
+    release()
+    await synced
+    expect(choreNames(server.tables)).toEqual(['Dishes', 'Offline'])
+    expect(choreNames(reopened.getState().snapshot.tables)).toEqual(['Dishes', 'Offline'])
+  })
+})
+
+describe('switching accounts', () => {
+  it('backs up the old snapshot before dropping it (audit: a replaced session lost offline edits)', async () => {
+    const { server, remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    server.offline = true
+    store.apply(...addChore(selectHome(store.getState().snapshot.tables).home!, { name: 'Offline chore', schedule: { kind: 'daily' } }, '2026-10-07'))
+    await store.sync()
+    server.offline = false
+    server.user = 'anon-new' // refresh token revoked: a new anonymous account
+    await store.sync()
+    await settle()
+    expect(store.getState().snapshot.userId).toBe('anon-new')
+    const backup = local.backups['snapshot-backup-u1'] as Snapshot
+    expect(choreNames(backup.tables)).toEqual(['Offline chore'])
+    expect(Object.values(backup.outbox).some((op) => op.table === 'chores')).toBe(true)
+  })
+
+  it('stops a flush when the account changes partway, so old rows never go out under the new account', async () => {
+    const { server, remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = createStore({ local, remote })
+    await store.start()
+    await store.sync()
+    server.offline = true
+    store.apply(...createHousehold({ species: 'bun', petName: 'Pip', userId: 'u1' })) // homes, rooms, pets, progress
+    await store.sync()
+    server.offline = false
+    server.calls.length = 0
+
+    // The first step goes out as u1; then the session becomes u2 (signed in elsewhere in this browser).
+    let checks = 0
+    const switching: Remote = {
+      ...remote,
+      currentUser: async () => (++checks > 1 ? 'u2' : 'u1'),
+      session: async () => (checks > 1 ? 'u2' : 'u1'),
+      // u2's own home (row-level security hides u1's rows from it).
+      pull: async () => (checks > 1 ? emptyTables() : remote.pull()),
+    }
+    const tab = createStore({ local, remote: switching })
+    await tab.start()
+    await tab.sync()
+    expect(server.calls).toEqual(['upsert homes 1'])
+    expect(tab.getState().snapshot.userId).toBe('u2')
+    await settle()
+    expect(Object.keys((local.backups['snapshot-backup-u1'] as Snapshot).outbox).length).toBeGreaterThan(0)
+  })
+})
+
+describe('reset (signing out, deleting the account)', () => {
+  it('forgets the home, keeping a backup when anything was unsynced, and pauses syncing meanwhile', async () => {
+    const { server, remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    server.offline = true
+    store.apply(...dishes(store))
+    await store.sync()
+    expect(store.getState().pendingCount).toBe(1)
+    server.offline = false
+
+    const resume = store.pause()
+    await store.reset()
+    await store.sync() // held while paused
+    expect(server.calls.filter((c) => c.startsWith('upsert chores'))).toHaveLength(0)
+    expect(store.getState()).toMatchObject({ pendingCount: 0, hydrated: false })
+    expect(store.getState().snapshot.userId).toBeNull()
+    expect(selectHome(store.getState().snapshot.tables).home).toBeNull()
+    expect(local.current?.userId).toBeNull()
+    expect(choreNames((local.backups['snapshot-backup-u1'] as Snapshot).tables)).toEqual(['Dishes'])
+
+    server.user = 'u-new'
+    resume()
+    await store.sync()
+    expect(store.getState()).toMatchObject({ hydrated: true, sync: 'synced' })
+    expect(store.getState().snapshot.userId).toBe('u-new')
+  })
+
+  it('keeps no backup when the account was deleted', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    await local.backup!('u1', store.getState().snapshot)
+    await store.reset({ backup: false })
+    expect(local.backups).toEqual({})
+  })
+})
+
+describe('two tabs sharing one offline copy', () => {
+  async function twoTabs() {
+    const { server, remote } = fakeServer()
+    const shared = memoryStore()
+    const bus = channelBus()
+    const a = createStore({ local: shared, remote, channel: bus() })
+    await a.start()
+    await a.sync()
+    a.apply(...createHousehold({ species: 'bun', petName: 'P', userId: 'u1' }))
+    await a.sync()
+    const b = createStore({ local: shared, remote, channel: bus() })
+    await b.start()
+    await b.sync()
+    await settle()
+    return { server, shared, a, b }
+  }
+  const add = (s: Store, name: string) => s.apply(...addChore(selectHome(s.getState().snapshot.tables).home!, { name, schedule: { kind: 'daily' } }, '2026-10-07'))
+
+  it('keeps offline edits from both tabs (audit: the second tab’s save wiped the first’s)', async () => {
+    const { server, shared, a, b } = await twoTabs()
+    server.offline = true
+    add(a, 'Tab A chore')
+    await a.sync()
+    await settle()
+    add(b, 'Tab B chore')
+    await b.sync()
+    await settle()
+    await settle()
+
+    expect(choreNames((shared.current as Snapshot).tables)).toEqual(['Tab A chore', 'Tab B chore'])
+    expect(Object.keys((shared.current as Snapshot).outbox)).toHaveLength(2)
+    // Each tab hears the other's save and shows both.
+    expect(choreNames(a.getState().snapshot.tables)).toEqual(['Tab A chore', 'Tab B chore'])
+    expect(choreNames(b.getState().snapshot.tables)).toEqual(['Tab A chore', 'Tab B chore'])
+
+    server.offline = false
+    await a.sync()
+    expect(choreNames(server.tables)).toEqual(['Tab A chore', 'Tab B chore'])
+  })
+
+  it('does not resend a change the other tab already sent, over a newer one', async () => {
+    const { server, a, b } = await twoTabs()
+    server.offline = true
+    add(b, 'Dishes')
+    await b.sync()
+    await settle()
+    server.offline = false
+    const id = Object.values(a.getState().snapshot.tables.chores)[0].id
+    await a.sync() // tab A sends tab B's change
+    await settle()
+    // A newer edit on the server, from another device.
+    ;(server.tables.chores[id] as Chore).name = 'Dishes (renamed on phone)'
+    await b.sync()
+    await settle()
+    expect(server.tables.chores[id].name).toBe('Dishes (renamed on phone)')
+    expect(b.getState().pendingCount).toBe(0)
+  })
+
+  it('follows the other tab when it signs out', async () => {
+    const { a, b } = await twoTabs()
+    const resume = a.pause()
+    await a.reset()
+    await settle()
+    await settle()
+    expect(selectHome(b.getState().snapshot.tables).home).toBeNull()
+    resume()
+  })
+})
+
+describe('a missing progress row', () => {
+  it('is recreated once the server’s copy has been pulled, with the rewards already earned', async () => {
+    const { server, remote } = fakeServer()
+    const store = await onboarded(remote)
+    store.apply(...dishes(store))
+    const d = selectHome(store.getState().snapshot.tables)
+    store.apply(...completeChore(d.chores[0], d.progress, new Date(2026, 9, 6, 9)))
+    await store.sync()
+    // The progress row never made it (e.g. refused); the next sync pulls without it.
+    server.tables.progress = {}
+    await store.sync()
+    const homeId = d.home!.id
+    expect(selectHome(store.getState().snapshot.tables).progress).toMatchObject({ homeId, choreCount: 1 })
+    expect(server.tables.progress[homeId]).toMatchObject({ unlockedItems: ['item:beanie-red'] })
+  })
+})
+
+describe('deleted chores', () => {
+  // Audit repro: if deleting a chore's completions didn't reach the server
+  // after its banked count did, another device counted them twice.
+  it('count once, even while their completions are still on the server', async () => {
+    const { remote, server } = fakeServer()
+    let failDeletes = false
+    const flaky: Remote = { ...remote, remove: (t, k) => (failDeletes ? Promise.resolve({ ok: false, transient: true, message: 'Failed to fetch' }) : remote.remove(t, k)) }
+    const phone = await onboarded(flaky)
+    phone.apply(...dishes(phone))
+    for (let i = 1; i <= 4; i++) {
+      const d = selectHome(phone.getState().snapshot.tables)
+      phone.apply(...completeChoreWithRewards(d.chores[0], d.progress, { chores: d.chores, completions: d.completions, vacations: [] }, new Date(2026, 9, i, 12)).ops)
+    }
+    await phone.sync()
+    failDeletes = true
+    const d = selectHome(phone.getState().snapshot.tables)
+    phone.apply(...removeChore(d.chores[0].id, d))
+    await phone.sync()
+    expect(Object.keys(server.tables.completions)).toHaveLength(4)
+
+    const tablet = createStore({ local: memoryStore(), remote })
+    await tablet.start()
+    await tablet.sync()
+    expect(selectHome(tablet.getState().snapshot.tables).progress?.choreCount).toBe(4)
+  })
+})
+
+describe('a failed save', () => {
+  it('never makes this tab forget its own unsaved changes on the next save', async () => {
+    const shared = memoryStore()
+    let failNext = false
+    const flaky: LocalStore = {
+      ...shared,
+      update: async (fn) => {
+        if (failNext) {
+          failNext = false
+          fn(await shared.load()) // the transaction ran, then the write failed
+          throw new Error('QuotaExceededError')
+        }
+        return shared.update!(fn)
+      },
+    }
+    const store = createStore({ local: flaky, remote: null })
+    await store.start()
+    store.apply(...createHousehold({ species: 'bun', petName: 'Pip', userId: null }))
+    await settle()
+    failNext = true
+    store.apply(...addChore(selectHome(store.getState().snapshot.tables).home!, { name: 'Dishes', schedule: { kind: 'daily' } }, '2026-10-01'))
+    await settle()
+    expect(store.getState().savedLocally).toBe(false)
+    store.apply(...addChore(selectHome(store.getState().snapshot.tables).home!, { name: 'Bins', schedule: { kind: 'daily' } }, '2026-10-01'))
+    await settle()
+    expect(store.getState().savedLocally).toBe(true)
+    expect(choreNames((shared.current as Snapshot).tables)).toEqual(['Bins', 'Dishes'])
+    expect(choreNames(store.getState().snapshot.tables)).toEqual(['Bins', 'Dishes'])
   })
 })

@@ -31,22 +31,32 @@ describe('streaks with mixed schedules', () => {
     expect(currentStreak(mixed(), allDone(), TODAY)).toBe(6)
   })
 
-  it('breaks on the day the weekly chore was missed; today is then skipped, not counted', () => {
+  it('a weekly chore a day late (level 1) does not break it while other chores get done', () => {
     const c = allDone().filter((x) => x.choreId !== 'W')
-    // W is due 10-05 and still not done: 10-05 is unclean, and today is overdue.
-    expect(currentStreak(mixed(), c, TODAY)).toBe(0)
+    // W is due 10-05 and still not done: one day late today, still level 1.
+    expect(currentStreak(mixed(), c, TODAY)).toBe(6)
   })
 
-  it('a late completion the next day does not repair the missed day', () => {
-    // Monthly chore due 10-03, done 10-04: 10-03 is a break, 10-04..10-06 count.
+  it('a weekly chore left until level 2 fails that day, and a banked rest token covers it', () => {
+    const c = allDone().filter((x) => x.choreId !== 'W')
+    const later = [...c, ...days('D', '2026-10-07', '2026-10-09'), ...on('E', '2026-10-07')]
+    // W is 3 days late (level 2 for a weekly chore) by the end of 10-08: that day fails and
+    // spends the token banked by 10-01..10-07. Today, 10-09, W is still level 2: not judged yet.
+    expect(currentStreak(mixed(), later, '2026-10-09')).toBe(7)
+    // Doing W today makes today count.
+    expect(currentStreak(mixed(), [...later, ...on('W', '2026-10-09')], '2026-10-09')).toBe(8)
+  })
+
+  it('a chore done a day late is fine: the day still had something done', () => {
+    // Monthly chore due 10-03, done 10-04: a day late, never level 2.
     const c = [...days('D', '2026-10-01', TODAY), ...on('W', '2026-10-05'), ...on('M', '2026-10-04'), ...on('E', '2026-10-01', '2026-10-04')]
-    expect(currentStreak(mixed(), c, TODAY)).toBe(3)
+    expect(currentStreak(mixed(), c, TODAY)).toBe(6)
   })
 
-  it('an everyNDays chore that was overdue for a day breaks the streak on that day', () => {
-    // E done 10-01, due 10-04, done late on 10-05: 10-04 is unclean.
+  it('an everyNDays chore a day late does not break it either', () => {
+    // E done 10-01, due 10-04, done late on 10-05.
     const c = [...days('D', '2026-10-01', TODAY), ...on('W', '2026-10-05'), ...on('M', '2026-10-03'), ...on('E', '2026-10-01', '2026-10-05')]
-    expect(currentStreak(mixed(), c, TODAY)).toBe(2)
+    expect(currentStreak(mixed(), c, TODAY)).toBe(6)
   })
 
   it('a weekly chore only matters on and after its due day', () => {
@@ -71,10 +81,10 @@ describe('streaks and chore creation, deletion and early completion', () => {
     expect(currentStreak(c, completions, TODAY)).toBe(6)
   })
 
-  it('a chore created mid-streak and missed on its first day breaks the days up to then', () => {
+  it('a chore created mid-streak and left until its second day does not break it', () => {
     const c = [daily('A', '2026-10-01'), daily('B', '2026-10-04')]
     const completions = [...days('A', '2026-10-01', TODAY), ...days('B', '2026-10-05', TODAY)]
-    expect(currentStreak(c, completions, TODAY)).toBe(2) // 10-04 is unclean
+    expect(currentStreak(c, completions, TODAY)).toBe(6) // B's first day is a grace day, and A was done every day
   })
 
   it('a chore created today and not done yet still lets today count', () => {
@@ -98,9 +108,12 @@ describe('streaks and chore creation, deletion and early completion', () => {
     expect(currentStreak(c, on('W', '2026-09-28', '2026-10-02'), TODAY)).toBe(9) // 09-28 .. 10-06
   })
 
-  it('without that early completion the Monday is missed', () => {
+  it('without that early completion the Monday is missed, and the rest token from the week before covers it', () => {
     const c = [chore('W', { kind: 'weekly', weekday: 1 }, '2026-09-28')]
-    expect(currentStreak(c, on('W', '2026-09-28'), TODAY)).toBe(0)
+    // 09-28 .. 10-04 are seven counted days (nothing due after the first): one token, spent on 10-05.
+    // Today W is a day late with nothing done: not judged yet.
+    expect(currentStreak(c, on('W', '2026-09-28'), TODAY)).toBe(7)
+    expect(currentStreak(c, on('W', '2026-09-28', TODAY), TODAY)).toBe(8)
   })
 
   it('multiple completions on one day count once and do not pay for another day', () => {
@@ -219,8 +232,9 @@ describe('streaks today', () => {
     expect(currentStreak(c, completions, TODAY)).toBe(1)
   })
 
-  it('a brand new home with nothing done yet is also 1: chores due today are not overdue', () => {
-    expect(currentStreak([daily('A', TODAY)], [], TODAY)).toBe(1)
+  it('a brand new home with nothing done yet is 0, and 1 with the first chore', () => {
+    expect(currentStreak([daily('A', TODAY)], [], TODAY)).toBe(0)
+    expect(currentStreak([daily('A', TODAY)], on('A', TODAY), TODAY)).toBe(1)
   })
 
   it('does not count days before the earliest chore existed', () => {
@@ -232,10 +246,10 @@ describe('streaks today', () => {
     expect(currentStreak(c, days('A', '2026-10-05', TODAY), TODAY)).toBe(2)
   })
 
-  it('a chore due today (not yet overdue) lets today count', () => {
-    // Overdue-now-but-yesterday-clean needs a vacation yesterday: see the vacation tests.
+  it('a chore due today and not done yet leaves today unjudged', () => {
     const c = [chore('W', { kind: 'weekly', weekday: 2 }, '2026-09-29')]
-    expect(currentStreak(c, on('W', '2026-09-29'), TODAY)).toBe(8) // due again today, not overdue
+    expect(currentStreak(c, on('W', '2026-09-29'), TODAY)).toBe(7) // 09-29 .. 10-05; today waits
+    expect(currentStreak(c, on('W', '2026-09-29', TODAY), TODAY)).toBe(8)
   })
 })
 

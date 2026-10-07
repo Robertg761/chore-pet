@@ -1,13 +1,16 @@
 import { describe, expect, it, vi } from 'vitest'
-import { DAY_OFFSET_KEY, createDevClock, parseOffset, shiftDays } from './devClock'
+import { DAY_OFFSET_KEY, DEV_SESSION_KEY, createDevClock, parseOffset, readDevSession, shiftDays } from './devClock'
 
 function memoryStorage(initial: Record<string, string> = {}) {
-  const data = { ...initial }
+  const data: Record<string, string> = { ...initial }
   return {
     data,
     getItem: (k: string) => data[k] ?? null,
     setItem: (k: string, v: string) => {
       data[k] = v
+    },
+    removeItem: (k: string) => {
+      delete data[k]
     },
   }
 }
@@ -118,5 +121,58 @@ describe('createDevClock', () => {
 
   it('ignores junk already in storage', () => {
     expect(createDevClock(() => memoryStorage({ [DAY_OFFSET_KEY]: 'soon' })).get()).toBe(0)
+  })
+})
+
+describe('outside a dev build or demo session', () => {
+  // Audit repro: an offset left in storage silently moved the whole app to a fake date.
+  it('ignores a stored offset and runs on the real date', () => {
+    const storage = memoryStorage({ [DAY_OFFSET_KEY]: '7' })
+    const clock = createDevClock(() => storage, () => false)
+    expect(clock.get()).toBe(0)
+    expect(clock.today(new Date(2026, 9, 7, 9))).toBe('2026-10-07')
+    clock.set(3)
+    expect(clock.get()).toBe(0)
+    expect(storage.data[DAY_OFFSET_KEY]).toBe('7')
+  })
+
+  it('follows the gate as it changes', () => {
+    let active = true
+    const clock = createDevClock(() => memoryStorage({ [DAY_OFFSET_KEY]: '2' }), () => active)
+    expect(clock.get()).toBe(2)
+    active = false
+    expect(clock.get()).toBe(0)
+  })
+})
+
+describe('closing the panel', () => {
+  it('forgets the stored offset and tells listeners', () => {
+    const storage = memoryStorage()
+    const clock = createDevClock(() => storage)
+    clock.set(4)
+    const listener = vi.fn()
+    clock.subscribe(listener)
+    clock.clear()
+    expect(clock.get()).toBe(0)
+    expect(storage.data).not.toHaveProperty(DAY_OFFSET_KEY)
+    expect(listener).toHaveBeenCalledTimes(1)
+    expect(createDevClock(() => storage).get()).toBe(0)
+  })
+})
+
+describe('readDevSession', () => {
+  it('turns on for ?dev or ?demo and remembers it for the session', () => {
+    const session = memoryStorage()
+    expect(readDevSession(session, false)).toBe(false)
+    expect(readDevSession(session, true)).toBe(true)
+    expect(session.data[DEV_SESSION_KEY]).toBe('1')
+    expect(readDevSession(session, false)).toBe(true)
+  })
+
+  it('still works when session storage is blocked', () => {
+    const blocked = { getItem: () => { throw new Error('blocked') }, setItem: () => { throw new Error('blocked') } }
+    expect(readDevSession(blocked, true)).toBe(true)
+    expect(readDevSession(blocked, false)).toBe(false)
+    expect(readDevSession(null, false)).toBe(false)
   })
 })

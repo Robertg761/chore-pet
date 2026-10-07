@@ -222,8 +222,8 @@ describe('choreStatus fills in neglect', () => {
     expect(due).toMatchObject({ state: 'due', overdueDays: 0, neglect: 0 })
   })
 
-  it('follows the schedule as days go by (daily, created 2026-10-01 so due that day)', () => {
-    const c = chore({ kind: 'daily' })
+  it('follows the schedule as days go by (daily, created and due 2026-09-30, so 10-01 is its grace day)', () => {
+    const c = chore({ kind: 'daily' }, '2026-09-30')
     const at = (today: ISODate) => choreStatus(c, [], today)
     expect(at('2026-10-01')).toMatchObject({ state: 'due', neglect: 0 })
     expect(at('2026-10-02')).toMatchObject({ overdueDays: 1, neglect: 1 })
@@ -245,7 +245,7 @@ describe('choreStatus fills in neglect', () => {
   })
 
   it('uses the chore schedule, so a monthly chore three days late is only level 1', () => {
-    const c = chore({ kind: 'monthly', dayOfMonth: 1 }, '2026-10-01')
+    const c = chore({ kind: 'monthly', dayOfMonth: 1 }, '2026-09-25') // due 10-01
     expect(choreStatus(c, [], '2026-10-04')).toMatchObject({ overdueDays: 3, neglect: 1 })
     expect(choreStatus(c, [], '2026-10-08')).toMatchObject({ overdueDays: 7, neglect: 2 })
     expect(choreStatus(c, [], '2026-10-15')).toMatchObject({ overdueDays: 14, neglect: 3 })
@@ -259,7 +259,7 @@ describe('choreStatus fills in neglect', () => {
   })
 
   it('skips vacation days: they do not count towards neglect', () => {
-    const c = chore({ kind: 'daily' }) // due 10-01
+    const c = chore({ kind: 'daily' }, '2026-09-30') // due 09-30, grace day 10-01
     // Active days since 10-01 up to 10-06: 02, 05, 06 = 3, with 03..04 away.
     const partial = choreStatus(c, [], '2026-10-06', vac('2026-10-03', '2026-10-04'))
     expect(partial).toMatchObject({ overdueDays: 3, neglect: 2 })
@@ -268,7 +268,7 @@ describe('choreStatus fills in neglect', () => {
   })
 
   it('stays flat while away, then grows again after', () => {
-    const c = chore({ kind: 'daily' }, '2026-10-05') // due 10-05
+    const c = chore({ kind: 'daily' }, '2026-10-04') // due 10-04, grace day 10-05
     const v = vac('2026-10-07', '2026-10-20')
     expect(choreStatus(c, [], '2026-10-06', v).neglect).toBe(1)
     expect(choreStatus(c, [], '2026-10-10', v).neglect).toBe(1)

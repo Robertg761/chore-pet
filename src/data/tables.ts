@@ -1,9 +1,17 @@
 import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room } from '../domain/types'
 
+/**
+ * When the server first stored the row. Homes and rooms carry it so the oldest
+ * home and room show first. Missing until the row has come back from a pull.
+ */
+export interface Created {
+  createdAt?: string
+}
+
 /** Every synced table and the domain type its rows map to. */
 export interface TableMap {
-  homes: Home
-  rooms: Room
+  homes: Home & Created
+  rooms: Room & Created
   placed_objects: PlacedObject
   chores: Chore
   completions: Completion

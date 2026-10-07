@@ -1,9 +1,9 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
-import { completionCounts } from '../domain/schedule'
+import { completionCounts, sameSchedule } from '../domain/schedule'
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, choreCountOf, currentStreak, type Unlock } from '../domain/unlocks'
-import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
+import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
 import { deleteOp, upsertOp, type NewOp } from './state'
 
 // Every user action as a pure function returning the changes to apply.
@@ -82,8 +82,16 @@ export function addChore(home: Home, input: { name: string; schedule: Schedule; 
   return [upsertOp('chores', chore)]
 }
 
-export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 'schedule' | 'objectId'>>): NewOp[] {
-  return [upsertOp('chores', { ...chore, ...patch })]
+/**
+ * Edit a chore. A new schedule takes effect from `today` (its `since`), so
+ * nothing from before the change is owed and the chore can't turn late the
+ * moment it is edited. Saving the same schedule again (say, with a rename)
+ * keeps the old one, `since` and all.
+ */
+export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 'schedule' | 'objectId'>>, today: ISODate): NewOp[] {
+  const { schedule, ...rest } = patch
+  const changed = schedule !== undefined && !sameSchedule(schedule, chore.schedule)
+  return [upsertOp('chores', { ...chore, ...rest, schedule: changed ? { ...schedule, since: today } : chore.schedule })]
 }
 
 /** Also removes its completions (the database cascades the same way). */
@@ -91,25 +99,47 @@ export function removeChore(choreId: string, history?: History): NewOp[] {
   return [...retire([choreId], history), deleteOp('chores', choreId)]
 }
 
-/** Record a completion on the local calendar date of `now`, and count it (seeded sample history passes counts: false). */
-export function completeChore(chore: Chore, progress: Progress | null, now: Date = new Date(), { counts = true } = {}): NewOp[] {
-  const ops: NewOp[] = [upsertOp('completions', { id: id(), choreId: chore.id, completedAt: now.toISOString(), completedOn: toISODate(now), counts })]
+/**
+ * The moment to stamp a completion with: `now`, but never later than the real
+ * clock, so the dev clock (src/lib/devClock.ts) set ahead can't record, and
+ * sync for good, a day that hasn't happened. `realNow: null` turns this off.
+ */
+function stampTime(now: Date, realNow: Date | null): Date {
+  return realNow && now.getTime() > realNow.getTime() ? realNow : now
+}
+
+/**
+ * Record a completion on the local calendar date of `now` (never after the
+ * real date), and count it. Seeded sample history passes counts: false, and
+ * realNow: null because it is laid out around the app's own today.
+ */
+export function completeChore(
+  chore: Chore,
+  progress: Progress | null,
+  now: Date = new Date(),
+  { counts = true, realNow = new Date() }: { counts?: boolean; realNow?: Date | null } = {},
+): NewOp[] {
+  const at = stampTime(now, realNow)
+  const ops: NewOp[] = [upsertOp('completions', { id: id(), choreId: chore.id, completedAt: at.toISOString(), completedOn: toISODate(at), counts })]
   if (progress) ops.push(upsertOp('progress', { ...progress, choreCount: progress.choreCount + 1 }))
   return ops
 }
 
 /**
- * Finish a chore and count it toward rewards: records the completion, bumps
- * the chore count, works out today's streak with this completion included,
- * and returns any rewards newly earned so the UI can open a gift for each.
+ * Finish a chore and count it toward rewards: records the completion (at
+ * `now`, never after the real clock `realNow`), bumps the chore count, works
+ * out today's streak with this completion included, and returns any rewards
+ * newly earned so the UI can open a gift for each.
  */
 export function completeChoreWithRewards(
   chore: Chore,
   progress: Progress | null,
   context: { chores: Chore[]; completions: Completion[]; vacations: VacationWindow[] },
   now: Date = new Date(),
+  realNow: Date = new Date(),
 ): { ops: NewOp[]; unlocked: Unlock[] } {
-  const completion: Completion = { id: id(), choreId: chore.id, completedAt: now.toISOString(), completedOn: toISODate(now), counts: true }
+  const at = stampTime(now, realNow)
+  const completion: Completion = { id: id(), choreId: chore.id, completedAt: at.toISOString(), completedOn: toISODate(at), counts: true }
   // A repeat the schedule ignores (same day, or a second early one) is neither recorded nor counted.
   if (!completionCounts(chore, context.completions, completion.completedOn)) return { ops: [], unlocked: [] }
   const ops: NewOp[] = [upsertOp('completions', completion)]

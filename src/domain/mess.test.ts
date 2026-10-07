@@ -44,7 +44,7 @@ describe('mess stages', () => {
   })
 
   it('scales to the chore: a monthly chore stays a little messy for much longer', () => {
-    const c = [chore('oven', 'stove', { schedule: { kind: 'monthly', dayOfMonth: 1 } })] // due 10-01
+    const c = [chore('oven', 'stove', { schedule: { kind: 'monthly', dayOfMonth: 1 }, createdOn: '2026-09-25' })] // due 10-01
     expect(objectMessStages(c, statuses(c, [], '2026-10-02'))).toEqual({ stove: 'messy1' })
     expect(objectMessStages(c, statuses(c, [], '2026-10-06'))).toEqual({ stove: 'messy1' }) // 5 days late
     expect(objectMessStages(c, statuses(c, [], '2026-10-08'))).toEqual({ stove: 'messy2' }) // 7 days late
@@ -74,7 +74,7 @@ describe('mess stages', () => {
   })
 
   it('a vacation freezes the stage rather than clearing it', () => {
-    const c = [chore('dishes', 'sink', { createdOn: '2026-10-05' })] // due 10-05
+    const c = [chore('dishes', 'sink', { createdOn: '2026-10-04' })] // due 10-04, a new chore's grace day 10-05
     const v = [{ start: '2026-10-07', end: '2026-10-20' }]
     expect(objectMessStages(c, statuses(c, [], '2026-10-06', v))).toEqual({ sink: 'messy1' })
     expect(objectMessStages(c, statuses(c, [], '2026-10-15', v))).toEqual({ sink: 'messy1' })
@@ -160,7 +160,7 @@ describe('messiestObject', () => {
 
   it('picks by neglect level before overdue days', () => {
     // A monthly chore 6 days late is only level 1; a daily chore 2 days late is level 2.
-    const c = [chore('oven', 'stove', { schedule: { kind: 'monthly', dayOfMonth: 31 }, createdOn: '2026-09-01' }), chore('dishes', 'sink', { createdOn: '2026-10-04' })]
+    const c = [chore('oven', 'stove', { schedule: { kind: 'monthly', dayOfMonth: 31 }, createdOn: '2026-09-01' }), chore('dishes', 'sink', { createdOn: '2026-10-03' })]
     const s = statuses(c, [], '2026-10-06')
     expect(s.map((x) => [x.overdueDays, x.neglect])).toEqual([[6, 1], [2, 2]])
     expect(messiestObject(c, s)).toMatchObject({ objectId: 'sink', overdueDays: 2 })

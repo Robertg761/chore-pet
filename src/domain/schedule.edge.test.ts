@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { diffDays, weekdayOf } from './dates'
-import { choreStatus, firstOnOrAfter, lastBefore, nextDueDate } from './schedule'
+import { choreStatus, completionCounts, firstOnOrAfter, lastBefore, nextDueDate, sameSchedule } from './schedule'
 import type { Chore, Completion, ISODate, Schedule, VacationWindow, Weekday } from './types'
 
 // Reference: 2026-10-06 is a Tuesday. The week of 2026-10-04 (Sun) .. 2026-10-10 (Sat).
@@ -106,8 +106,11 @@ describe('monthly: late and early completions', () => {
   it('completing late in the next month jumps to that month, not the one skipped', () => {
     // Due 2026-01-31, done 2026-02-10 (late): next is Feb 28, not Mar 31.
     expect(nextDueDate(c31, done('2026-02-10'))).toBe('2026-02-28')
-    // With Jan 31 done on time first, Feb 10 is an early completion for Feb 28, so next is Mar 31.
-    expect(nextDueDate(c31, done('2026-01-31', '2026-02-10'))).toBe('2026-03-31')
+    // With Jan 31 done on time first, Feb 10 is too soon after it to count for Feb 28 (a repeat)...
+    expect(nextDueDate(c31, done('2026-01-31', '2026-02-10'))).toBe('2026-02-28')
+    // ...but from halfway to Feb 28 (Feb 14) it is an early completion, so next is Mar 31.
+    expect(nextDueDate(c31, done('2026-01-31', '2026-02-14'))).toBe('2026-03-31')
+    expect(nextDueDate(c31, done('2026-01-31', '2026-02-13'))).toBe('2026-02-28')
   })
   it('completing on the clamped day then next month', () => {
     expect(nextDueDate(c31, done('2026-01-31', '2026-02-28'))).toBe('2026-03-31')
@@ -240,10 +243,33 @@ describe('weekly completions', () => {
     expect(nextDueDate(sat, other)).toBe('2026-10-10')
     expect(nextDueDate(sat, [...other, ...done('2026-10-10')])).toBe('2026-10-17')
   })
-  it('a late completion followed by one early for the next occurrence counts both (documented rules)', () => {
-    // Late Mon 10-12 satisfies Sat 10-10, so next is 10-17; Tue 10-13 is after the
-    // previous scheduled date (10-10), so it counts as early for 10-17.
-    expect(nextDueDate(sat, done('2026-10-12', '2026-10-13'))).toBe('2026-10-24')
+  it('a late completion followed by another before the next due date never skips an occurrence', () => {
+    // Late Mon 10-12 satisfies Sat 10-10, so next is 10-17. It already landed in
+    // the window before 10-17, so Tue 10-13 (or even Fri 10-16) is a repeat.
+    expect(nextDueDate(sat, done('2026-10-12', '2026-10-13'))).toBe('2026-10-17')
+    expect(nextDueDate(sat, done('2026-10-12', '2026-10-16'))).toBe('2026-10-17')
+  })
+  it('a Monday chore done late on Wednesday and again on Thursday is still due next Monday (audit repro)', () => {
+    const mon = chore({ kind: 'weekly', weekday: 1 }, '2026-09-01')
+    expect(nextDueDate(mon, done('2026-09-30'))).toBe('2026-10-05')
+    expect(nextDueDate(mon, done('2026-09-30', '2026-10-01'))).toBe('2026-10-05')
+  })
+  it('after an on-time completion, an early one counts only from halfway to the next due date', () => {
+    // Done Sat 10-10 on time; the next Saturday is 10-17, halfway is Wed 10-14.
+    expect(nextDueDate(sat, done('2026-10-10', '2026-10-11'))).toBe('2026-10-17') // Sunday: a repeat
+    expect(nextDueDate(sat, done('2026-10-10', '2026-10-13'))).toBe('2026-10-17')
+    expect(nextDueDate(sat, done('2026-10-10', '2026-10-14'))).toBe('2026-10-24') // Wednesday: early for 10-17
+    expect(nextDueDate(sat, done('2026-10-10', '2026-10-16'))).toBe('2026-10-24') // the day before: early
+  })
+  it('a weekly chore tapped every day counts no faster than once a week', () => {
+    const thu = chore({ kind: 'weekly', weekday: 4 }, '2026-10-01')
+    const counted: Completion[] = []
+    for (let d = 1; d <= 28; d++) {
+      const day = `2026-10-${String(d).padStart(2, '0')}`
+      if (completionCounts(thu, counted, day)) counted.push(...done(day).map((x) => ({ ...x, id: day })))
+    }
+    // Thursdays 10-01, 08, 15, 22 are four occurrences: one early tap can run a week ahead, never more.
+    expect(counted.map((c) => c.completedOn)).toEqual(['2026-10-01', '2026-10-05', '2026-10-12', '2026-10-19', '2026-10-26'])
   })
   it('overdue counts days since the due Saturday', () => {
     const s = choreStatus(sat, [], '2026-10-13')
@@ -368,9 +394,24 @@ describe('everyNDays', () => {
     const c = chore({ kind: 'everyNDays', n: 3 })
     expect(nextDueDate(c, done('2026-10-06', '2026-10-20'))).toBe('2026-10-23')
   })
-  it('early completion also resets from the completion day (no anchor to the old due date)', () => {
+  it('an early completion from halfway on resets from the completion day', () => {
+    const c = chore({ kind: 'everyNDays', n: 7 }) // done 10-06, due 10-13, halfway is 10-10
+    expect(nextDueDate(c, done('2026-10-06', '2026-10-10'))).toBe('2026-10-17')
+  })
+  it('a completion before halfway is a repeat and changes nothing', () => {
     const c = chore({ kind: 'everyNDays', n: 7 })
-    expect(nextDueDate(c, done('2026-10-06', '2026-10-08'))).toBe('2026-10-15')
+    expect(nextDueDate(c, done('2026-10-06', '2026-10-08'))).toBe('2026-10-13')
+    expect(nextDueDate(c, done('2026-10-06', '2026-10-07', '2026-10-08', '2026-10-09'))).toBe('2026-10-13')
+  })
+  it('an every-60-days chore tapped every day counts once (audit repro)', () => {
+    const c = chore({ kind: 'everyNDays', n: 60 }, '2026-10-01')
+    const counted: Completion[] = []
+    for (let d = 1; d <= 7; d++) {
+      const day = `2026-10-0${d}`
+      if (completionCounts(c, counted, day)) counted.push(...done(day).map((x) => ({ ...x, id: day })))
+    }
+    expect(counted.map((x) => x.completedOn)).toEqual(['2026-10-01'])
+    expect(nextDueDate(c, counted)).toBe('2026-11-30')
   })
   it('uses the most recent completion regardless of input order and duplicates', () => {
     const c = chore({ kind: 'everyNDays', n: 3 })
@@ -385,14 +426,25 @@ describe('everyNDays', () => {
   it('ignores completions for other chores', () => {
     const c = chore({ kind: 'everyNDays', n: 3 })
     const other: Completion[] = [{ id: 'z', choreId: 'other', completedAt: '2026-10-20T12:00:00Z', completedOn: '2026-10-20' }]
-    expect(nextDueDate(c, other)).toBe('2026-10-06')
+    expect(nextDueDate(c, other)).toBe('2026-10-07')
   })
-  it('with no completions it is due on createdOn, then overdue by the days since', () => {
-    const c = chore({ kind: 'everyNDays', n: 3 })
-    expect(choreStatus(c, [], '2026-10-06').state).toBe('due')
-    const s = choreStatus(c, [], '2026-10-09')
+  it('a new one is first due halfway through its first interval, then overdue by the days since', () => {
+    const c = chore({ kind: 'everyNDays', n: 3 }) // created 10-06: due 10-07
+    expect(choreStatus(c, [], '2026-10-06').state).toBe('upcoming')
+    expect(choreStatus(c, [], '2026-10-07').state).toBe('due')
+    const s = choreStatus(c, [], '2026-10-10')
     expect(s.state).toBe('overdue')
     expect(s.overdueDays).toBe(3)
+  })
+  it('first due dates spread out by N: 1 and 0 today, 2 and 3 tomorrow, 7 in three days, 90 in 45', () => {
+    const first = (n: number) => nextDueDate(chore({ kind: 'everyNDays', n }), [])
+    expect([1, 2, 3, 7, 90].map(first)).toEqual(['2026-10-06', '2026-10-07', '2026-10-07', '2026-10-09', '2026-11-20'])
+    expect(first(0)).toBe('2026-10-06')
+  })
+  it('doing it on the day it is created counts, and the interval runs from there', () => {
+    const c = chore({ kind: 'everyNDays', n: 7 })
+    expect(completionCounts(c, [], '2026-10-06')).toBe(true)
+    expect(nextDueDate(c, done('2026-10-06'))).toBe('2026-10-13')
   })
   // Edge: a completion dated before the chore existed (e.g. imported data) must not
   // make a brand new chore show up as overdue.
@@ -428,11 +480,12 @@ describe('vacations spanning due dates', () => {
   const win = (start: ISODate, end: ISODate): VacationWindow[] => [{ start, end }]
 
   it('window starts before and ends after the due date, today after the window', () => {
-    // Active days after 10-07 through 10-12: 08,09,10 vacation; 11,12 active.
+    // Due 10-07 during the vacation, so due on the first day back (10-11); 10-12 is one day late.
     const s = choreStatus(daily, c, '2026-10-12', win('2026-10-05', '2026-10-10'))
     expect(s.dueDate).toBe('2026-10-07')
     expect(s.state).toBe('overdue')
-    expect(s.overdueDays).toBe(2)
+    expect(s.overdueDays).toBe(1)
+    expect(choreStatus(daily, c, '2026-10-11', win('2026-10-05', '2026-10-10'))).toMatchObject({ state: 'due', overdueDays: 0 })
   })
   it('window covers the due date and today: nothing is overdue', () => {
     const s = choreStatus(daily, c, '2026-10-15', win('2026-10-05', '2026-10-20'))
@@ -453,18 +506,20 @@ describe('vacations spanning due dates', () => {
   it('vacation in the future has no effect', () => {
     expect(choreStatus(daily, c, '2026-10-10', win('2026-10-20', '2026-10-25')).overdueDays).toBe(3)
   })
-  it('vacation that only includes the due day itself does not remove overdue days', () => {
-    // Due day is never counted as overdue anyway; vacation on 10-07 changes nothing.
-    expect(choreStatus(daily, c, '2026-10-10', win('2026-10-07', '2026-10-07')).overdueDays).toBe(3)
+  it('a one-day vacation on the due day moves it to the next day', () => {
+    // Due 10-07 (vacation), so due 10-08: 10-09 and 10-10 are late.
+    expect(choreStatus(daily, c, '2026-10-08', win('2026-10-07', '2026-10-07'))).toMatchObject({ state: 'due', overdueDays: 0 })
+    expect(choreStatus(daily, c, '2026-10-10', win('2026-10-07', '2026-10-07')).overdueDays).toBe(2)
   })
-  it('chore due on the first day of a vacation', () => {
+  it('chore due on the first day of a vacation is due, not late, on the first day back', () => {
     const sat = chore({ kind: 'weekly', weekday: 6 }) // due 10-10
     const v = win('2026-10-10', '2026-10-12')
     expect(choreStatus(sat, [], '2026-10-10', v).state).toBe('due')
     expect(choreStatus(sat, [], '2026-10-11', v).overdueDays).toBe(0)
     expect(choreStatus(sat, [], '2026-10-12', v).overdueDays).toBe(0)
-    // 10-13 is the first active day after the due date.
-    const after = choreStatus(sat, [], '2026-10-13', v)
+    // 10-13 is the first day back: due, not late. It keeps its scheduled date.
+    expect(choreStatus(sat, [], '2026-10-13', v)).toMatchObject({ dueDate: '2026-10-10', state: 'due', overdueDays: 0, neglect: 0 })
+    const after = choreStatus(sat, [], '2026-10-14', v)
     expect(after.overdueDays).toBe(1)
     expect(after.state).toBe('overdue')
   })
@@ -472,9 +527,24 @@ describe('vacations spanning due dates', () => {
     const sat = chore({ kind: 'weekly', weekday: 6 }) // due 10-10
     const v = win('2026-10-08', '2026-10-10')
     expect(choreStatus(sat, [], '2026-10-10', v).state).toBe('due')
-    const next = choreStatus(sat, [], '2026-10-11', v)
+    expect(choreStatus(sat, [], '2026-10-11', v)).toMatchObject({ state: 'due', overdueDays: 0 })
+    const next = choreStatus(sat, [], '2026-10-12', v)
     expect(next.overdueDays).toBe(1)
     expect(next.state).toBe('overdue')
+  })
+  it('two weeks away with a daily chore due on the first day away: due on the first day back (audit repro)', () => {
+    const d = chore({ kind: 'daily' }, '2026-09-01')
+    const v = win('2026-10-01', '2026-10-14')
+    expect(choreStatus(d, done('2026-09-30'), '2026-10-15', v)).toMatchObject({ dueDate: '2026-10-01', state: 'due', overdueDays: 0 })
+    expect(choreStatus(d, done('2026-09-30'), '2026-10-16', v)).toMatchObject({ state: 'overdue', overdueDays: 1, neglect: 1 })
+  })
+  it('a due date in back-to-back vacations moves past all of them', () => {
+    const v: VacationWindow[] = [
+      { start: '2026-10-09', end: '2026-10-11' },
+      { start: '2026-10-07', end: '2026-10-08' },
+    ]
+    expect(choreStatus(daily, c, '2026-10-12', v)).toMatchObject({ state: 'due', overdueDays: 0 })
+    expect(choreStatus(daily, c, '2026-10-13', v).overdueDays).toBe(1)
   })
   it('chore due the day before a vacation is overdue only outside it', () => {
     const sat = chore({ kind: 'weekly', weekday: 6 }) // due 10-10
@@ -522,7 +592,7 @@ describe('vacations spanning due dates', () => {
     const v = win('2027-02-27', '2027-03-02')
     const s = choreStatus(m, [], '2027-03-04', v)
     expect(s.dueDate).toBe('2027-02-28')
-    expect(s.overdueDays).toBe(2) // Mar 3, 4
+    expect(s.overdueDays).toBe(1) // due on the first day back (Mar 3), so only Mar 4 is late
   })
   it('a vacation across a leap day', () => {
     const d = chore({ kind: 'daily' }, '2028-02-27')
@@ -539,6 +609,102 @@ describe('vacations spanning due dates', () => {
   it('completing during a vacation is allowed and resets the schedule', () => {
     const s = choreStatus(daily, done('2026-10-06', '2026-10-10'), '2026-10-12', win('2026-10-08', '2026-10-11'))
     expect(s.dueDate).toBe('2026-10-11')
-    expect(s.overdueDays).toBe(1) // 10-12 only
+    expect(s.state).toBe('due') // 10-11 is a vacation day, so it is due on 10-12, the first day back
+    expect(choreStatus(daily, done('2026-10-06', '2026-10-10'), '2026-10-13', win('2026-10-08', '2026-10-11')).overdueDays).toBe(1)
+  })
+})
+
+describe('a schedule change is not retroactive (since)', () => {
+  // Today is Wed 10-07 in these.
+  it('a weekly chore done 5 days ago, changed to daily today, is due today, not 4 days late (audit repro)', () => {
+    const weekly = chore({ kind: 'weekly', weekday: 5 }, '2026-09-01') // Fridays
+    expect(choreStatus(weekly, done('2026-10-02'), '2026-10-07').state).toBe('upcoming')
+    // Without since, the old history would make it instantly very late.
+    expect(choreStatus({ ...weekly, schedule: { kind: 'daily' } }, done('2026-10-02'), '2026-10-07').neglect).toBe(3)
+    const daily = { ...weekly, schedule: { kind: 'daily', since: '2026-10-07' } as Schedule }
+    expect(choreStatus(daily, done('2026-10-02'), '2026-10-07')).toMatchObject({ dueDate: '2026-10-07', state: 'due', overdueDays: 0 })
+    expect(choreStatus(daily, done('2026-10-02'), '2026-10-08')).toMatchObject({ state: 'due', overdueDays: 0 }) // the first occurrence's grace day
+    expect(choreStatus(daily, done('2026-10-02'), '2026-10-09')).toMatchObject({ state: 'overdue', overdueDays: 1 })
+  })
+  it('a monthly chore created 12 days ago and never done is not late the moment it is edited (audit repro)', () => {
+    const monthly = chore({ kind: 'monthly', dayOfMonth: 20 }, '2026-09-25') // due 10-20
+    const edited = { ...monthly, schedule: { kind: 'monthly', dayOfMonth: 5, since: '2026-10-07' } as Schedule }
+    expect(choreStatus(edited, [], '2026-10-07')).toMatchObject({ dueDate: '2026-11-05', state: 'upcoming' })
+    const toDaily = { ...monthly, schedule: { kind: 'daily', since: '2026-10-07' } as Schedule }
+    expect(choreStatus(toDaily, [], '2026-10-07')).toMatchObject({ dueDate: '2026-10-07', state: 'due' })
+  })
+  it('a completion on or after since still satisfies the first occurrence under the new schedule', () => {
+    const c = chore({ kind: 'weekly', weekday: 3, since: '2026-10-05' }, '2026-09-01') // Wednesdays from Mon 10-05
+    expect(nextDueDate(c, [])).toBe('2026-10-07')
+    expect(nextDueDate(c, done('2026-10-05'))).toBe('2026-10-14') // done on the day of the change: early for Wed
+    expect(nextDueDate(c, done('2026-10-04'))).toBe('2026-10-07') // before the change: not counted
+    expect(completionCounts(c, [], '2026-10-04')).toBe(false)
+  })
+  it('everyNDays starts over from since, halfway through its first interval', () => {
+    const c = chore({ kind: 'everyNDays', n: 7, since: '2026-10-07' }, '2026-09-01')
+    expect(nextDueDate(c, done('2026-09-20'))).toBe('2026-10-10')
+    expect(nextDueDate(c, done('2026-09-20', '2026-10-07'))).toBe('2026-10-14')
+  })
+  it('a since before the chore was created changes nothing', () => {
+    const c = chore({ kind: 'daily', since: '2026-01-01' })
+    expect(nextDueDate(c, [])).toBe('2026-10-06')
+    expect(nextDueDate(c, done('2026-10-06'))).toBe('2026-10-07')
+  })
+})
+
+describe('a new chore is not late the morning after', () => {
+  it('a daily chore never done gets one extra day before it is late', () => {
+    const c = chore({ kind: 'daily' }) // created and due 10-06
+    expect(choreStatus(c, [], '2026-10-06')).toMatchObject({ dueDate: '2026-10-06', state: 'due' })
+    expect(choreStatus(c, [], '2026-10-07')).toMatchObject({ dueDate: '2026-10-06', state: 'due', overdueDays: 0 })
+    expect(choreStatus(c, [], '2026-10-08')).toMatchObject({ state: 'overdue', overdueDays: 1, neglect: 1 })
+  })
+  it('only the first occurrence, and only when it is due the day the chore is created', () => {
+    const c = chore({ kind: 'daily' })
+    expect(choreStatus(c, done('2026-10-06'), '2026-10-08')).toMatchObject({ state: 'overdue', overdueDays: 1 })
+    const wed = chore({ kind: 'weekly', weekday: 3 }) // created Tue, due Wed 10-07
+    expect(choreStatus(wed, [], '2026-10-08')).toMatchObject({ state: 'overdue', overdueDays: 1 })
+    const tue = chore({ kind: 'weekly', weekday: 2 }) // created and due Tue 10-06
+    expect(choreStatus(tue, [], '2026-10-07').state).toBe('due')
+    expect(choreStatus(tue, [], '2026-10-08').overdueDays).toBe(1)
+  })
+  it('the grace day and a vacation stack', () => {
+    const c = chore({ kind: 'daily' })
+    const v: VacationWindow[] = [{ start: '2026-10-07', end: '2026-10-09' }]
+    expect(choreStatus(c, [], '2026-10-10', v)).toMatchObject({ state: 'due', overdueDays: 0 })
+    expect(choreStatus(c, [], '2026-10-11', v).overdueDays).toBe(1)
+  })
+})
+
+describe('unknown or malformed schedules', () => {
+  const odd = (schedule: unknown) => chore(schedule as Schedule)
+  it('an unknown kind from a newer app is treated as daily instead of crashing', () => {
+    const c = odd({ kind: 'fortnightly', every: 14 })
+    expect(nextDueDate(c, [])).toBe('2026-10-06')
+    expect(nextDueDate(c, done('2026-10-06'))).toBe('2026-10-07')
+    expect(choreStatus(c, done('2026-10-06'), '2026-10-09')).toMatchObject({ state: 'overdue', overdueDays: 2, neglect: 2 })
+    expect(firstOnOrAfter(c.schedule, '2026-10-06')).toBe('2026-10-06')
+    expect(lastBefore(c.schedule, '2026-10-06')).toBe('2026-10-05')
+    expect(completionCounts(c, [], '2026-10-06')).toBe(true)
+  })
+  it('missing fields fall back safely', () => {
+    expect(nextDueDate(odd({ kind: 'everyNDays' }), done('2026-10-06'))).toBe('2026-10-07')
+    expect(nextDueDate(odd({ kind: 'weekdays' }), done('2026-10-06'))).toBe('2026-10-07')
+    expect(nextDueDate(odd({ kind: 'monthly' }), [])).toBe('2026-11-01')
+  })
+})
+
+describe('sameSchedule', () => {
+  it('ignores since, weekday order and repeats', () => {
+    expect(sameSchedule({ kind: 'daily' }, { kind: 'daily', since: '2026-10-01' })).toBe(true)
+    expect(sameSchedule({ kind: 'weekdays', days: [5, 1, 3, 3] }, { kind: 'weekdays', days: [1, 3, 5], since: '2026-10-01' })).toBe(true)
+    expect(sameSchedule({ kind: 'everyNDays', n: 3 }, { kind: 'everyNDays', n: 3 })).toBe(true)
+  })
+  it('tells apart a different kind or detail', () => {
+    expect(sameSchedule({ kind: 'daily' }, { kind: 'everyNDays', n: 1 })).toBe(false)
+    expect(sameSchedule({ kind: 'everyNDays', n: 3 }, { kind: 'everyNDays', n: 4 })).toBe(false)
+    expect(sameSchedule({ kind: 'weekly', weekday: 1 }, { kind: 'weekly', weekday: 2 })).toBe(false)
+    expect(sameSchedule({ kind: 'monthly', dayOfMonth: 1 }, { kind: 'monthly', dayOfMonth: 31 })).toBe(false)
+    expect(sameSchedule({ kind: 'weekdays', days: [1] }, { kind: 'weekdays', days: [1, 2] })).toBe(false)
   })
 })

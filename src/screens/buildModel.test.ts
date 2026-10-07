@@ -34,10 +34,11 @@ describe('splitCatalog', () => {
 describe('dueText', () => {
   it('says due today, tomorrow and a weekday', () => {
     expect(dueText(chore('2026-10-06'), [], '2026-10-06', [])).toEqual({ text: 'Due today', late: false })
-    expect(dueText(chore('2026-10-07', { kind: 'everyNDays', n: 2 }), [], '2026-10-06', []).text).toBe('Due tomorrow')
-    expect(dueText(chore('2026-10-09', { kind: 'everyNDays', n: 2 }), [], '2026-10-06', []).text).toBe('Due Fri')
+    expect(dueText(chore('2026-10-06', { kind: 'everyNDays', n: 2 }), [], '2026-10-06', []).text).toBe('Due tomorrow')
+    expect(dueText(chore('2026-10-08', { kind: 'everyNDays', n: 2 }), [], '2026-10-06', []).text).toBe('Due Fri')
   })
+  // A new chore's first day is a grace day, and every-N-days chores start halfway through their first cycle.
   it('flags late chores', () => {
-    expect(dueText(chore('2026-10-04'), [], '2026-10-06', [])).toEqual({ text: '2 days late', late: true })
+    expect(dueText(chore('2026-10-03'), [], '2026-10-06', [])).toEqual({ text: '2 days late', late: true })
   })
 })

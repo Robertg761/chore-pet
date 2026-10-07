@@ -14,23 +14,31 @@ export const NEGLECT_TUNING = {
   level3: { share: 1, min: 4, max: 14 },
 }
 
-/** Typical days between occurrences of a schedule (monthly counts as 30). */
+/** N for an everyNDays schedule: a whole number of at least 1, whatever the row holds. */
+export function intervalOf(schedule: Extract<Schedule, { kind: 'everyNDays' }>): number {
+  const n = Math.floor(Number(schedule.n))
+  return Number.isFinite(n) ? Math.max(1, n) : 1
+}
+
+/** Typical days between occurrences of a schedule (monthly counts as 30). An unknown kind counts as daily. */
 export function cadenceDays(schedule: Schedule): number {
   switch (schedule.kind) {
     case 'daily':
       return 1
     case 'everyNDays':
-      return Math.max(1, schedule.n)
+      return intervalOf(schedule)
     case 'weekly':
       return 7
     case 'monthly':
       return 30
     case 'weekdays': {
-      const days = [...new Set(schedule.days)].sort((a, b) => a - b)
+      const days = [...new Set(Array.isArray(schedule.days) ? schedule.days : [])].sort((a, b) => a - b)
       if (days.length === 0) return 7
       // The longest wait between two chosen days, wrapping round the week.
       return Math.max(...days.map((d, i) => (i + 1 < days.length ? days[i + 1] - d : days[0] + 7 - d)))
     }
+    default:
+      return 1
   }
 }
 

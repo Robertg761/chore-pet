@@ -255,7 +255,7 @@ export default function App() {
           chore={chore}
           places={places}
           onSave={(value) => {
-            appStore.apply(...(chore ? updateChore(chore, value) : addChore(home, value, today)))
+            appStore.apply(...(chore ? updateChore(chore, value, today) : addChore(home, value, today)))
             back()
           }}
           onDelete={
@@ -439,7 +439,7 @@ export default function App() {
               today={today}
               canTurn={canTurn}
               onSaveChore={(chore, value) =>
-                appStore.apply(...(chore ? updateChore(chore, value) : addChore(home, { ...value, objectId: selected.id }, today)))
+                appStore.apply(...(chore ? updateChore(chore, value, today) : addChore(home, { ...value, objectId: selected.id }, today)))
               }
               onRemoveChore={(chore) => appStore.apply(...removeChore(chore.id, data))}
               onTurn={() => turnTo && canTurn && appStore.apply(...moveObject(selected, turnTo))}

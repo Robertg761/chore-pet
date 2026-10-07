@@ -50,10 +50,17 @@ export function weekDays(today: ISODate): WeekDay[] {
   })
 }
 
-/** Chores completed on each day, in the same order as `days`. */
+/**
+ * Chores completed on each day, in the same order as `days`. A chore counts
+ * once per day, like choreCountOf: ticking it off on two devices is one chore.
+ */
 export function completedPerDay(completions: Completion[], days: WeekDay[]): number[] {
   const counts = new Map<ISODate, number>(days.map((d) => [d.date, 0]))
+  const seen = new Set<string>()
   for (const c of completions) {
+    const once = `${c.choreId}:${c.completedOn}`
+    if (seen.has(once)) continue
+    seen.add(once)
     const n = counts.get(c.completedOn)
     if (n !== undefined) counts.set(c.completedOn, n + 1)
   }
@@ -93,7 +100,7 @@ export function weekSummary(days: WeekDay[], counts: number[], vacations: Vacati
   const allAway = days.length > 0 && days.every((d) => isInVacation(d.date, vacations))
   let line: string
   if (allAway && total === 0) line = 'A week away. Your pet was resting.'
-  else if (total < QUIET_BELOW || !bestDay) line = 'A quiet week. Even one chore makes a difference.'
+  else if (total < QUIET_BELOW || !bestDay) line = "A quiet week. I'm here whenever you're ready."
   else line = `${total} chores this week. Your best day was ${bestDay.long}.`
 
   return { total, bestDay, bestCount, line }

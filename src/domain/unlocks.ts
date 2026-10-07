@@ -1,12 +1,13 @@
-import { activeDaysBetween, addDays, isInVacation } from './dates'
-import { choreStatus, nextDueDate } from './schedule'
+import { addDays, isInVacation } from './dates'
+import { completionDays, startReplay, type ChoreReplay } from './schedule'
 import type { Chore, Completion, ISODate, Progress, VacationWindow } from './types'
 
 // Rewards come only from real chores getting done (docs/SPEC.md), and every
 // reward is purely cosmetic: outfits, styles and decor that brings no chores.
 // - chore milestones count chores the player finishes (progress.choreCount);
-// - streaks count days in a row with nothing overdue. Vacation days neither
-//   count nor break a streak, so going away never costs you.
+// - streaks count days in a row the player kept the home going (see
+//   currentStreak), with rest tokens so one off day doesn't undo a good run.
+//   Vacation days neither count nor break a streak, so going away never costs you.
 // The first unlock is the very first chore, so it lands in the first session.
 
 export type UnlockKind = 'item' | 'decor' | 'wall' | 'floor'
@@ -58,10 +59,30 @@ export const FREE_ITEMS = ['item:hoodie', 'item:overalls', 'item:dress']
  * devices counts once), plus the banked counts of deleted chores. Completion
  * rows are never edited, so devices can't overwrite each other's count, and
  * editing a chore's schedule doesn't rewrite its history.
+ *
+ * A chore is counted once either way: from its completions or from its banked
+ * count, whichever is larger, so a chore deleted on one device while its rows
+ * are still around (a delete that hasn't synced yet) never counts twice. A
+ * chore in `liveChoreIds` still exists, so its banked count is ignored.
  */
-export function choreCountOf(completions: Completion[], retired: Record<string, number> = {}): number {
-  const days = new Set(completions.filter((c) => c.counts !== false).map((c) => `${c.choreId}:${c.completedOn}`))
-  return days.size + Object.values(retired).reduce((a, b) => a + b, 0)
+export function choreCountOf(completions: Completion[], retired: Record<string, number> = {}, liveChoreIds?: Iterable<string>): number {
+  const live = new Set(liveChoreIds ?? [])
+  const perChore = new Map<string, number>()
+  const seen = new Set<string>()
+  for (const c of completions) {
+    if (c.counts === false) continue
+    const key = `${c.choreId}:${c.completedOn}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    perChore.set(c.choreId, (perChore.get(c.choreId) ?? 0) + 1)
+  }
+  let total = 0
+  for (const n of perChore.values()) total += n
+  for (const [choreId, banked] of Object.entries(retired)) {
+    if (live.has(choreId)) continue
+    total += Math.max(0, banked - (perChore.get(choreId) ?? 0))
+  }
+  return total
 }
 
 export function isUnlocked(progress: Pick<Progress, 'unlockedItems'> | null, id: string): boolean {
@@ -73,46 +94,94 @@ const STREAK_LOOKBACK = 120
 /** Vacation days skipped while looking back, at most. */
 const MAX_VACATION_DAYS = 400
 
+export const STREAK_TUNING = {
+  /** Counted days it takes to bank a rest token. */
+  daysPerRestToken: 7,
+  /** Rest tokens held at most. */
+  maxRestTokens: 2,
+}
+
+/** One chore's replay, fed its completion days as the streak walks forward. */
+interface Walker {
+  chore: Chore
+  replay: ChoreReplay
+  days: ISODate[]
+  /** How many of `days` have been fed in. */
+  fed: number
+}
+
+/** Feed a walker every completion day up to and including `day`. */
+function feedThrough(w: Walker, day: ISODate) {
+  while (w.fed < w.days.length && w.days[w.fed] <= day) w.replay.add(w.days[w.fed++])
+}
+
 /**
- * A past day is clean when, by its end, every chore that had fallen due was
- * done, except ones whose due days were all vacation days (those are paused).
+ * Whether a day counts toward the streak: at least one chore was done that
+ * day (or nothing was due), and no chore ended the day at neglect level 2 or
+ * worse. For today, "ended the day" means right now. Leaves every walker fed
+ * through `day`.
  */
-function cleanPastDay(chores: Chore[], completions: Completion[], day: ISODate, vacations: VacationWindow[]): boolean {
-  const doneBy = completions.filter((c) => c.completedOn <= day)
-  return chores
-    .filter((c) => c.createdOn <= day)
-    .every((c) => {
-      const due = nextDueDate(c, doneBy)
-      return due > day || activeDaysBetween(addDays(due, -1), day, vacations) === 0
-    })
-}
-
-/** Today is clean while nothing is overdue yet: chores due today can still be done. */
-function cleanSoFar(chores: Chore[], completions: Completion[], today: ISODate, vacations: VacationWindow[]): boolean {
-  return chores.filter((c) => c.createdOn <= today).every((c) => choreStatus(c, completions, today, vacations).overdueDays === 0)
+function dayCounts(walkers: Walker[], active: Set<ISODate>, day: ISODate, vacations: VacationWindow[]): boolean {
+  const live = walkers.filter((w) => w.chore.createdOn <= day)
+  let somethingDue = false
+  for (const w of live) {
+    feedThrough(w, addDays(day, -1))
+    if (w.replay.statusOn(day, vacations).state !== 'upcoming') somethingDue = true
+  }
+  for (const w of walkers) feedThrough(w, day)
+  if (somethingDue && !active.has(day)) return false
+  return live.every((w) => w.replay.statusOn(day, vacations).neglect < 2)
 }
 
 /**
- * Days in a row with nothing overdue, ending today (today counts while it is
- * clean so far). Vacation days are skipped: they don't count or break it.
+ * Days in a row the home was kept going, ending today. A day counts when at
+ * least one chore was done (or nothing was due) and nothing was left to get
+ * very neglected (level 2 or worse). Today counts as soon as it qualifies, and
+ * while it doesn't yet it is simply not judged.
+ *
+ * Every 7 counted days bank a rest token (at most 2). A day that doesn't count
+ * spends a token instead of breaking the streak, and adds nothing to it.
+ * Vacation days are skipped: they don't count, break or spend anything.
+ * Seeded sample history (counts: false) isn't the player's, so it doesn't
+ * make a day count.
  */
 export function currentStreak(chores: Chore[], completions: Completion[], today: ISODate, vacations: VacationWindow[] = []): number {
   if (chores.length === 0) return 0
   const firstDay = chores.reduce((min, c) => (c.createdOn < min ? c.createdOn : min), chores[0].createdOn)
-  let streak = 0
-  let active = 0
   // The lookback counts active days only, so a long vacation can't hide the streak before it.
-  for (let i = 0; i <= STREAK_LOOKBACK + MAX_VACATION_DAYS && active <= STREAK_LOOKBACK; i++) {
+  let from = today
+  let activeDays = 0
+  for (let i = 0; i <= STREAK_LOOKBACK + MAX_VACATION_DAYS; i++) {
     const day = addDays(today, -i)
     if (day < firstDay) break
+    from = day
+    if (!isInVacation(day, vacations) && ++activeDays > STREAK_LOOKBACK) break
+  }
+
+  const ids = new Set(chores.map((c) => c.id))
+  const walkers: Walker[] = chores.map((chore) => ({ chore, replay: startReplay(chore), days: completionDays(chore, completions), fed: 0 }))
+  const active = new Set(completions.filter((c) => c.counts !== false && ids.has(c.choreId)).map((c) => c.completedOn))
+  const { daysPerRestToken, maxRestTokens } = STREAK_TUNING
+
+  let streak = 0
+  let tokens = 0
+  let towardToken = 0
+  for (let day = from; day <= today; day = addDays(day, 1)) {
     if (isInVacation(day, vacations)) continue
-    active++
-    const clean = i === 0 ? cleanSoFar(chores, completions, day, vacations) : cleanPastDay(chores, completions, day, vacations)
-    if (!clean) {
-      if (i === 0) continue // something is overdue now; judge the streak up to yesterday
-      break
+    if (dayCounts(walkers, active, day, vacations)) {
+      streak++
+      if (++towardToken >= daysPerRestToken) {
+        towardToken = 0
+        tokens = Math.min(maxRestTokens, tokens + 1)
+      }
+    } else if (day === today) {
+      // Today can still be turned around, so it is not held against the streak.
+    } else if (tokens > 0) {
+      tokens--
+    } else {
+      streak = 0
+      towardToken = 0
     }
-    streak++
   }
   return streak
 }

@@ -1,12 +1,13 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { weekdayOf } from '../domain/dates'
-import { devToday, getDayOffset, setDayOffset, subscribeDayOffset } from '../lib/devClock'
+import { devSessionActive, devToday, getDayOffset, setDayOffset, setDevSession, subscribeDayOffset } from '../lib/devClock'
 import './TimePanel.css'
 
-// Hidden time fast-forward for recording the demo. Open with ?dev (remembered
-// for the session) or by long-pressing the very top-left corner of the screen.
+// Hidden time fast-forward for recording the demo. Open with ?dev or ?demo
+// (remembered for the tab's session), or in a dev build by long-pressing the
+// very top-left corner of the screen. Closing it goes back to the real date.
+// Root only mounts it in a dev build or a ?dev / ?demo session.
 
-const SESSION_KEY = 'chore-pet:dev'
 const CORNER_PX = 48
 const LONG_PRESS_MS = 900
 const MOVE_SLOP_PX = 10
@@ -25,27 +26,6 @@ function formatOffset(days: number): string {
   return `${days > 0 ? '+' : '-'}${n} ${n === 1 ? 'day' : 'days'}`
 }
 
-function readEnabled(): boolean {
-  try {
-    if (new URLSearchParams(location.search).has('dev')) {
-      sessionStorage.setItem(SESSION_KEY, '1')
-      return true
-    }
-    return sessionStorage.getItem(SESSION_KEY) === '1'
-  } catch {
-    return new URLSearchParams(location.search).has('dev')
-  }
-}
-
-function remember(on: boolean) {
-  try {
-    if (on) sessionStorage.setItem(SESSION_KEY, '1')
-    else sessionStorage.removeItem(SESSION_KEY)
-  } catch {
-    // Session storage is blocked; the panel just will not survive a reload.
-  }
-}
-
 const STEPS: { label: string; days: number }[] = [
   { label: '-1 day', days: -1 },
   { label: '+1 day', days: 1 },
@@ -54,13 +34,14 @@ const STEPS: { label: string; days: number }[] = [
 ]
 
 export default function TimePanel() {
-  const [enabled, setEnabled] = useState(readEnabled)
+  const [enabled, setEnabled] = useState(devSessionActive)
   const [open, setOpen] = useState(true)
   const offset = useSyncExternalStore(subscribeDayOffset, getDayOffset)
 
-  // Long-press on the top-left corner. A document listener, so no invisible
-  // element sits over the app and taps there behave as normal.
+  // Long-press on the top-left corner, in dev builds only. A document listener,
+  // so no invisible element sits over the app and taps there behave as normal.
   useEffect(() => {
+    if (!import.meta.env.DEV) return
     let timer: number | undefined
     let start: { x: number; y: number } | null = null
     const cancel = () => {
@@ -73,7 +54,7 @@ export default function TimePanel() {
       window.clearTimeout(timer)
       timer = window.setTimeout(() => {
         start = null
-        remember(true)
+        setDevSession(true)
         setEnabled(true)
         setOpen(true)
       }, LONG_PRESS_MS)
@@ -123,7 +104,8 @@ export default function TimePanel() {
           type="button"
           className="time-icon"
           onClick={() => {
-            remember(false)
+            // Back to the real date: the offset goes with the panel.
+            setDevSession(false)
             setEnabled(false)
           }}
           aria-label="Close time panel"
