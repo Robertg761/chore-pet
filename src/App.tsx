@@ -378,6 +378,7 @@ export default function App() {
             room={room}
             objects={roomObjects}
             stages={stages}
+            neglect={neglect}
             pet={petInRoom}
             selectedId={selectedId}
             onSelect={(id) => (setSelectedId(id), setPlacing(null))}

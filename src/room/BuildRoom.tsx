@@ -1,6 +1,7 @@
 import { useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react'
 import { catalogEntry } from '../catalog/objects'
 import type { CatalogEntry } from '../catalog/types'
+import type { NeglectLevel } from '../domain/neglect'
 import type { MessStage, PlacedObject, Room as RoomRow } from '../domain/types'
 import { checkPlacement, findFreeSpot, screenToTile, snapDrag, turned, type Placement, type PlacementProblem } from './grid'
 import { lookup } from './placement'
@@ -20,6 +21,8 @@ export interface BuildRoomProps {
   room: Pick<RoomRow, 'floorStyle' | 'wallStyle'>
   objects: PlacedObject[]
   stages?: Record<string, MessStage>
+  /** Neglect level per object, so the cues show while arranging the room too. */
+  neglect?: Record<string, NeglectLevel>
   pet?: { tile: { tx: number; ty: number }; art: ReactNode } | null
   selectedId: string | null
   onSelect: (id: string | null) => void
@@ -47,7 +50,7 @@ const PROBLEM_TEXT: Record<PlacementProblem, string> = {
 }
 
 
-export function BuildRoom({ room, objects, stages, pet, selectedId, onSelect, placing, onCommit, onPlacingDone }: BuildRoomProps) {
+export function BuildRoom({ room, objects, stages, neglect, pet, selectedId, onSelect, placing, onCommit, onPlacingDone }: BuildRoomProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [pending, setPending] = useState<{ entry: CatalogEntry; placement: Placement } | null>(null)
   const [moving, setMoving] = useState<{ id: string; entry: CatalogEntry; placement: Placement } | null>(null)
@@ -176,6 +179,7 @@ export function BuildRoom({ room, objects, stages, pet, selectedId, onSelect, pl
         room={room}
         objects={objects}
         stages={stages}
+        neglect={neglect}
         pet={pet}
         selectedId={selectedId}
         ghost={ghost}
