@@ -69,7 +69,7 @@ test('landing sign-in and cancel do not create a disposable home', async (t) => 
   // A second isolated context represents a returning user on a new device.
   const context = await page.context().browser().newContext()
   t.after(() => context.close())
-  await context.route('https://**', (route) => route.abort())
+  await context.route(/^https:\/\//, (route) => route.abort())
   const fresh = await context.newPage()
   await fresh.goto(origin.origin + origin.pathname)
   await fresh.getByRole('button', { name: 'I already have a home' }).click()

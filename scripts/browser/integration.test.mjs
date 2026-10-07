@@ -34,14 +34,12 @@ test('hydration reconciles the selected home rather than the most furnished home
     }
   }))
   await page.reload()
-  await page.waitForFunction(() => new Promise(resolve => {
-    const request = indexedDB.open('chore-pet', 1)
-    request.onsuccess = () => {
-      const db = request.result
-      const read = db.transaction('kv').objectStore('kv').get('snapshot')
-      read.onsuccess = () => { db.close(); resolve(read.result.tables.progress.selected.unlockedItems.includes('wall:lavender')) }
-    }
-  }))
+  // IndexedDB is asynchronous; poll its resolved value, not a Promise object.
+  const deadline = Date.now() + 5000
+  while (!(await snapshot(page)).tables.progress.selected.unlockedItems.includes('wall:lavender')) {
+    assert.ok(Date.now() < deadline, 'selected-home reconciliation did not persist')
+    await new Promise(resolve => setTimeout(resolve, 50))
+  }
   const saved = await snapshot(page)
   assert.equal(saved.activeHomeId, 'selected')
   assert.equal(saved.tables.progress.selected.bestStreak, 7)

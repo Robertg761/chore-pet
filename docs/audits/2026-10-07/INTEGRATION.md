@@ -22,9 +22,9 @@ All 13 actionable findings from the [baseline audit](AUDIT.md) are covered by fi
 
 ## Verification
 
-- Combined `npm test`: **1,160 tests across 53 files passed** on CI Node 22.23.3 (the preceding tree also passed 1,159 on Node 26).
-- `npm run lint` and production builds at `/` and `/chore-pet/`: passed. Existing main-chunk size advisory remains (about 568 kB minified / 174 kB gzip).
-- `npm run test:browser`: **20/20 passed** against each production base path. Covers navigation/drafts/auth entry, gift/Undo focus and timing, touch sheet dismissal, room keyboard controls, selected-home reconciliation, and visible/pending gift Back/Forward behavior.
+- Combined `npm test`: **1,160 tests across 53 files passed** locally on the CI runtime, Node 22.23.3 (the preceding tree also passed 1,159 on Node 26).
+- `npm run lint` and production builds at `/` and `/chore-pet/`: passed. Existing main-chunk size advisory remains.
+- `npm run test:browser`: **21/21 passed** against each production base path with cloud configuration and external requests blocked. Covers navigation/drafts/auth entry, gift/Undo focus and timing, touch sheet dismissal, room keyboard controls, selected-home reconciliation, and visible/pending gift Back/Forward behavior.
 - Four new combined domain tests cover old schedule maxima after a break/archive, same-day archive credit, rest-token preservation through idle periods, resumed completion gifts, archived sample exclusions and legacy count fallback. Temporarily removing the archive pause or historical maximum causes the tests to fail; restoring both passes.
 - The selected-home browser test failed before selection was passed into reconciliation. Both gift Back cases failed before the popstate/delayed-presentation guard. All pass after integration.
 - Independent data review passed 79 focused tests. It found a P3 mismatch between accepted creation dates and archive end dates; PR #12 fixed it with eight SQL regressions for 2150 and 2999 across explicit archive, legacy chore/object DELETE, and object RPC.
@@ -32,6 +32,12 @@ All 13 actionable findings from the [baseline audit](AUDIT.md) are covered by fi
 - T3 phone preview at 390 × 664 verified returning-user entry/cancel and the combined native gift above All chores with visible Undo. [Screenshot](evidence/14-integrated-gift-undo.png).
 
 Final CI inspection found PR #14's account tests relying on Node 26's built-in Web Locks while CI uses Node 22. Commit `87a92f6` supplies an explicit browser fixture and adds a missing-Web-Locks refusal regression without changing production code. The combined unit suite, lint, Pages build, and all 20 browser tests pass on actual Node 22.23.3. All five focused PR build checks passed on GitHub; deployment jobs were skipped.
+
+## Combined PR CI follow-up
+
+PR #16's first GitHub build passed unit tests, lint and compilation but failed two browser tests. The selected-home test passed an asynchronous IndexedDB predicate to Playwright's synchronous polling function; a truthy Promise ended polling before reconciliation persisted. It now polls the resolved snapshot, retaining the exact best-streak, unlock and no-gift assertions.
+
+The browser harness also used `https://**`, which Playwright normalizes to a pattern that misses nested API paths. Cloud-configured CI could therefore authenticate, changing account scope while the gift test's sheet was open. Both browser contexts now block HTTPS with a regex. A regression fetches a nested path on a reserved `.invalid` domain after removing CSP, and checks the explicit interception error; it failed with DNS resolution under the old glob and passes with the regex. No production code or account guards changed. An independent review found no actionable issues in these fixes. Fresh Node 22 validation passed all 1,160 unit tests, lint, both cloud-configured production builds, and all 21 browser tests at each base path. GitHub verification of this follow-up remains pending.
 
 ## Rollout and remaining limits
 

@@ -21,7 +21,8 @@ export async function browserApp(t, options = {}) {
   page.on('pageerror', (e) => errors.push(e.message))
   t.after(() => { if (errors.length) throw new Error(errors.join('\n')) })
   // UI regressions run with local data even when CI builds a configured cloud app.
-  await context.route('https://**', (route) => route.abort())
+  // A regex also matches nested API paths; the string glob https://** does not.
+  await context.route(/^https:\/\//, (route) => route.abort())
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}${base}`)
   await page.getByRole('button', { name: 'Try a sample home' }).click()
   return page
