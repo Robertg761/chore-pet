@@ -89,11 +89,6 @@ export function isUnlocked(progress: Pick<Progress, 'unlockedItems'> | null, id:
   return FREE_STYLES.includes(id) || FREE_ITEMS.includes(id) || Boolean(progress?.unlockedItems.includes(id))
 }
 
-/** How far back a streak is counted, in active (non-vacation) days. Long enough for every streak reward. */
-const STREAK_LOOKBACK = 120
-/** Vacation days skipped while looking back, at most. */
-const MAX_VACATION_DAYS = 400
-
 export const STREAK_TUNING = {
   /** Counted days it takes to bank a rest token. */
   daysPerRestToken: 7,
@@ -173,42 +168,20 @@ function dayCounts(walkers: Walker[], active: Set<ISODate>, day: ISODate, vacati
  * Seeded sample history (counts: false) isn't the player's, so it doesn't
  * make a day count.
  */
-/**
- * The first day of a lookback reaching back `days` active days from today (and
- * how many active days it spans). Only active days count, so a long vacation
- * can't hide the streak before it; it never starts before `firstDay`.
- */
-function lookback(today: ISODate, firstDay: ISODate, vacations: VacationWindow[], days: number): { from: ISODate; active: number } {
-  let from = today
-  let active = 0
-  for (let i = 0; i <= days + MAX_VACATION_DAYS; i++) {
-    const day = addDays(today, -i)
-    if (day < firstDay) break
-    from = day
-    if (!isInVacation(day, vacations) && ++active > days) break
-  }
-  return { from, active }
-}
-
 export function currentStreak(chores: Chore[], completions: Completion[], today: ISODate, vacations: VacationWindow[] = []): number {
   if (chores.length === 0) return 0
   const firstDay = chores.reduce((min, c) => (c.createdOn < min ? c.createdOn : min), chores[0].createdOn)
   const { daysPerRestToken, maxRestTokens } = STREAK_TUNING
-  // The streak is capped at the lookback window. The replay starts a little earlier so
-  // tokens banked before the window carry into it; replaying all history would be exact
-  // but too slow, so when there is earlier history the replay starts with full tokens,
-  // erring on the kind side.
-  const window = lookback(today, firstDay, vacations, STREAK_LOOKBACK)
-  const from = lookback(today, firstDay, vacations, STREAK_LOOKBACK + daysPerRestToken * maxRestTokens).from
 
   const ids = new Set(chores.map((c) => c.id))
   const walkers = chores.flatMap((chore) => walkersFor(chore, completions))
   const active = new Set(completions.filter((c) => c.counts !== false && ids.has(c.choreId)).map((c) => c.completedOn))
 
   let streak = 0
-  let tokens = from > firstDay ? maxRestTokens : 0
+  // Every day from the first chore on, so rest tokens are exactly what was banked.
+  let tokens = 0
   let towardToken = 0
-  for (let day = from; day <= today; day = addDays(day, 1)) {
+  for (let day = firstDay; day <= today; day = addDays(day, 1)) {
     if (isInVacation(day, vacations)) continue
     if (dayCounts(walkers, active, day, vacations)) {
       streak++
@@ -225,7 +198,7 @@ export function currentStreak(chores: Chore[], completions: Completion[], today:
       towardToken = 0
     }
   }
-  return Math.min(streak, window.active)
+  return streak
 }
 
 function earned(rule: UnlockRule, choreCount: number, streak: number): boolean {

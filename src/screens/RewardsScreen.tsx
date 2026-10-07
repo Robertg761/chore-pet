@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { CharacterArt } from '../character/Character'
 import { ITEMS } from '../character/items'
 import { currentStreak, isUnlocked, UNLOCKS, type Unlock } from '../domain/unlocks'
@@ -54,7 +54,8 @@ function NextCard({ line, label }: { line: NextLine; label: string }) {
 export function RewardsScreen({ pet, progress, chores, completions, vacations, today, onEquip }: RewardsScreenProps) {
   const titleId = useId()
   const [group, setGroup] = useState<Group>('dress')
-  const streak = currentStreak(chores, completions, today, vacations)
+  // Replays the home's whole history, so not again on every tab switch.
+  const streak = useMemo(() => currentStreak(chores, completions, today, vacations), [chores, completions, today, vacations])
   const best = Math.max(progress?.bestStreak ?? 0, streak)
   const choreCount = progress?.choreCount ?? 0
   const next = progress ? nextLines(progress, streak) : { chores: null, streak: null }
