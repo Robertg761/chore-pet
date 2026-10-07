@@ -1,3 +1,4 @@
+import { toISODate } from '../domain/dates'
 import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room } from '../domain/types'
 import { applyUnlocks, choreCountOf } from '../domain/unlocks'
 import { CASCADES, TABLES, keyOf, type Created, type TableMap, type TableName } from './tables'
@@ -12,6 +13,12 @@ import { CASCADES, TABLES, keyOf, type Created, type TableMap, type TableName } 
 
 export type Tables = { [T in TableName]: Record<string, TableMap[T]> }
 
+/** Extra intent for an atomic furniture removal. Missing on old queued deletes. */
+export interface Removal {
+  archivedOn?: string
+  keepChores?: boolean
+}
+
 /**
  * A queued change. `seq` orders changes within a snapshot; `id` tells two
  * changes apart across tabs, whose seq counters can collide (missing on
@@ -19,7 +26,7 @@ export type Tables = { [T in TableName]: Record<string, TableMap[T]> }
  */
 export type Op =
   | { [T in TableName]: { table: T; kind: 'upsert'; key: string; value: TableMap[T]; seq: number; id?: string } }[TableName]
-  | { table: TableName; kind: 'delete'; key: string; seq: number; id?: string }
+  | { table: TableName; kind: 'delete'; key: string; seq: number; id?: string; removal?: Removal }
 
 /** A change before it is queued (no sequence number or id yet). */
 export type NewOp = Op extends infer O ? (O extends Op ? Omit<O, 'seq' | 'id'> : never) : never
@@ -109,25 +116,53 @@ function outboxKey(table: TableName, key: string): string {
 }
 
 /** Remove a row and, like the database, every row that cascades from it. */
-function removeCascading(tables: Tables, table: TableName, key: string): Tables {
+function removeCascading(tables: Tables, table: TableName, key: string, removal: Removal = {}, hard = false): Tables {
+  const archivedOn = removal.archivedOn ?? toISODate(new Date())
+  if (table === 'chores' && !hard) {
+    const chore = tables.chores[key]
+    return chore ? { ...tables, chores: { ...tables.chores, [key]: { ...chore, archivedOn: chore.archivedOn ?? archivedOn } } } : tables
+  }
+  if (table === 'placed_objects' && !hard) {
+    tables = { ...tables, chores: Object.fromEntries(Object.entries(tables.chores).map(([id, chore]) => [id, chore.objectId === key
+      ? { ...chore, objectId: null, ...(!removal.keepChores && { archivedOn: chore.archivedOn ?? archivedOn }) }
+      : chore])) }
+  }
   let next = { ...tables, [table]: { ...tables[table] } } as Tables
   delete (next[table] as Record<string, unknown>)[key]
   for (const c of CASCADES) {
     if (c.parent !== table) continue
     for (const [childKey, row] of Object.entries(next[c.child] as Record<string, never>)) {
-      if (c.fk(row) === key) next = removeCascading(next, c.child, childKey)
+      if (c.fk(row) === key) next = removeCascading(next, c.child, childKey, removal, hard || table === 'homes')
     }
   }
   return next
 }
 
 export function applyOp(tables: Tables, op: Op): Tables {
-  if (op.kind === 'delete') return removeCascading(tables, op.table, op.key)
+  if (op.kind === 'delete') return removeCascading(tables, op.table, op.key, op.removal)
+  // A delayed edit cannot reopen an archived task or rewrite its old schedule.
+  if (op.table === 'chores' && tables.chores[op.key]?.archivedOn) {
+    const old = tables.chores[op.key]
+    return { ...tables, chores: { ...tables.chores, [op.key]: { ...old, objectId: op.value.objectId === null ? null : old.objectId } } }
+  }
   return { ...tables, [op.table]: { ...tables[op.table], [op.key]: op.value } }
 }
 
 /** Apply a change locally and queue it, replacing any older queued change to the same row. */
 export function change(snapshot: Snapshot, op: NewOp): Snapshot {
+  if (op.kind === 'delete' && op.table === 'placed_objects') {
+    // Save even never-synced tasks detached before dropping their object's upsert.
+    for (const chore of Object.values(snapshot.tables.chores)) {
+      if (chore.objectId !== op.key) continue
+      snapshot = change(snapshot, upsertOp('chores', { ...chore, objectId: null,
+        ...(!op.removal?.keepChores && { archivedOn: chore.archivedOn ?? op.removal?.archivedOn ?? toISODate(new Date()) }),
+      }))
+    }
+  }
+  if (op.kind === 'delete' && op.table === 'chores' && snapshot.tables.chores[op.key]) {
+    const chore = snapshot.tables.chores[op.key]
+    return change(snapshot, upsertOp('chores', { ...chore, archivedOn: chore.archivedOn ?? op.removal?.archivedOn ?? toISODate(new Date()) }))
+  }
   const seq = snapshot.seq + 1
   const full = { ...op, seq, id: newOpId() } as Op
   const key = outboxKey(op.table, op.key)
@@ -139,7 +174,7 @@ export function change(snapshot: Snapshot, op: NewOp): Snapshot {
   // the server removes them the same way, and a child of a row that never reached it
   // would only be refused.
   const removed = new Map<TableName, Set<string>>(TABLES.map((t) => [t, new Set(Object.keys(snapshot.tables[t]).filter((k) => !(k in tables[t])))]))
-  removed.get(op.table)!.add(op.key)
+  if (!(op.key in tables[op.table])) removed.get(op.table)!.add(op.key)
   const under = (o: Op) =>
     o.kind === 'upsert' &&
     (removed.get(o.table)!.has(o.key) || CASCADES.some((c) => c.child === o.table && removed.get(c.parent)!.has(c.fk(o.value as never) ?? '')))
@@ -185,7 +220,12 @@ export function planFlush(outbox: Outbox): FlushStep[] {
   }
   for (const table of [...TABLES].reverse()) {
     const batch = ops.filter((o) => o.table === table && o.kind === 'delete')
-    if (batch.length) steps.push({ table, kind: 'delete', ops: batch })
+    const groups = new Map<string, Op[]>()
+    for (const op of batch) {
+      const key = JSON.stringify(op.kind === 'delete' ? op.removal ?? {} : {})
+      groups.set(key, [...(groups.get(key) ?? []), op])
+    }
+    for (const ops of groups.values()) steps.push({ table, kind: 'delete', ops })
   }
   return steps
 }
@@ -394,6 +434,7 @@ export interface HomeData {
   progress: Progress | null
   rooms: Room[]
   objects: PlacedObject[]
+  /** Includes archives: history/rewards need all rows; current UI uses choreActiveOn. */
   chores: Chore[]
   completions: Completion[]
 }

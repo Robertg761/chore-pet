@@ -389,7 +389,7 @@ export function createStore({
   }
 
   async function send(r: Remote, step: FlushStep, ops: Op[]): Promise<RemoteResult> {
-    if (step.kind === 'delete') return r.remove(step.table, ops.map((o) => o.key))
+    if (step.kind === 'delete') return r.remove(step.table, ops.map((o) => o.key), ops[0]?.kind === 'delete' ? ops[0].removal : undefined)
     return r.upsert(step.table, ops.map((o) => (o as Extract<Op, { kind: 'upsert' }>).value) as never[])
   }
 

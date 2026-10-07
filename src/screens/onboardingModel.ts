@@ -1,4 +1,4 @@
-import { choreStatus } from '../domain/schedule'
+import { choreActiveOn, choreStatus } from '../domain/schedule'
 import type { Chore, Completion, ISODate, VacationWindow } from '../domain/types'
 
 // Pure helpers for the first-run path (coach card in build mode, hint on the home
@@ -80,7 +80,7 @@ export function coachCopy(
 
 /** Whether the first-done hint has something to point at: a chore that can be done today. */
 export function hasDueChore(chores: Chore[], completions: Completion[], today: ISODate, vacations: VacationWindow[]): boolean {
-  return chores.some((c) => {
+  return chores.filter((c) => choreActiveOn(c, today)).some((c) => {
     const state = choreStatus(c, completions, today, vacations).state
     return state === 'due' || state === 'overdue'
   })

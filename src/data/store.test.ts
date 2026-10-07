@@ -159,7 +159,7 @@ describe('sync engine', () => {
     expect(selectHome(store.getState().snapshot.tables).chores[0].name).toBe('Dishes (renamed on phone)')
   })
 
-  it('deletes cascade locally and on the server', async () => {
+  it('archives locally and syncs retained history to the server', async () => {
     const { server, remote } = fakeServer()
     const store = await onboarded(remote)
     store.apply(...dishes(store))
@@ -167,9 +167,11 @@ describe('sync engine', () => {
     store.apply(...completeChore(chores[0], progress))
     await store.sync()
     store.apply(...removeChore(chores[0].id))
-    expect(selectHome(store.getState().snapshot.tables).completions).toHaveLength(0)
+    expect(selectHome(store.getState().snapshot.tables).completions).toHaveLength(1)
     await store.sync()
-    expect(Object.values(server.tables.chores)).toHaveLength(0)
+    expect(Object.values(server.tables.chores)).toHaveLength(1)
+    expect(Object.values(server.tables.chores)[0].archivedOn).toBeTruthy()
+    expect(Object.values(server.tables.completions)).toHaveLength(1)
   })
 
   it('sets aside only the row the server refuses, not the whole batch', async () => {

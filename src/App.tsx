@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { catalogEntry } from './catalog/objects'
+import { choreActiveOn } from './domain/schedule'
 import type { CatalogEntry } from './catalog/types'
 import { CharacterArt } from './character/Character'
 import { isInVacation } from './domain/dates'
@@ -143,7 +144,7 @@ export default function App() {
   const viewport = useViewport()
   const wide = useWide()
   // A chore being edited that no longer exists (deleted on another device) sends the editor home.
-  const staleEdit = view.name === 'edit' && view.choreId !== undefined && !data.chores.some((c) => c.id === view.choreId)
+  const staleEdit = view.name === 'edit' && view.choreId !== undefined && !data.chores.some((c) => c.id === view.choreId && choreActiveOn(c, today))
   if (staleEdit) setViewNow({ name: 'home' })
   // Each screen names itself and takes focus at its heading, so keyboard and screen-reader users land on it.
   useEffect(() => {
@@ -213,6 +214,7 @@ export default function App() {
   }
 
   const { home, pet, progress, rooms, objects, chores, completions } = data
+  const activeChores = chores.filter((c) => choreActiveOn(c, today))
   const room = rooms[0]
   const back = () => setView({ name: 'home' })
   const flag = (key: string) => (writeFlag(key), setFlagTick((n) => n + 1))
@@ -261,7 +263,7 @@ export default function App() {
 
   if (view.name === 'edit') {
     // Looked up fresh each render: a chore deleted elsewhere (another device, a sync) is never written back.
-    const chore = view.choreId ? chores.find((c) => c.id === view.choreId) : undefined
+    const chore = view.choreId ? activeChores.find((c) => c.id === view.choreId) : undefined
     // Places a chore can belong to, named like the catalog; duplicates are numbered ("Rug 2").
     const seen = new Map<string, number>()
     const places = objects
@@ -286,7 +288,7 @@ export default function App() {
           onDelete={
             chore &&
             (() => {
-              appStore.apply(...removeChore(chore.id, data))
+              appStore.apply(...removeChore(chore.id, data, today))
               back()
             })
           }
@@ -449,7 +451,7 @@ export default function App() {
           {coaching && (
             <CoachCard
               step={step}
-              choreCount={chores.filter((c) => roomObjects.some((o) => o.id === c.objectId)).length}
+              choreCount={activeChores.filter((c) => roomObjects.some((o) => o.id === c.objectId)).length}
               sheetOpen={Boolean(selected)}
               placing={Boolean(placing)}
               onSkip={() => (finishCoach(), doneRef.current?.focus())}
@@ -459,7 +461,7 @@ export default function App() {
             <ObjectSheet
               object={selected}
               entry={selectedEntry}
-              chores={chores.filter((c) => c.objectId === selected.id)}
+              chores={activeChores.filter((c) => c.objectId === selected.id)}
               completions={completions}
               vacations={home.vacations}
               today={today}
@@ -467,13 +469,10 @@ export default function App() {
               onSaveChore={(chore, value) =>
                 appStore.apply(...(chore ? updateChore(chore, value, today) : addChore(home, { ...value, objectId: selected.id }, today)))
               }
-              onRemoveChore={(chore) => appStore.apply(...removeChore(chore.id, data))}
+              onRemoveChore={(chore) => appStore.apply(...removeChore(chore.id, data, today))}
               onTurn={() => turnTo && canTurn && appStore.apply(...moveObject(selected, turnTo))}
               onRemove={(keepChores) => {
-                // Kept chores stay on the list without a home object; otherwise they go and their counts are retired.
-                const own = chores.filter((c) => c.objectId === selected.id)
-                if (keepChores) appStore.apply(...own.flatMap((c) => updateChore(c, { objectId: null }, today)), ...removeObject(selected.id))
-                else appStore.apply(...removeObject(selected.id, data))
+                appStore.apply(...removeObject(selected.id, data, today, keepChores))
                 setSelectedId(null)
               }}
               onClose={() => setSelectedId(null)}
@@ -533,7 +532,7 @@ export default function App() {
   }
   const choreList = (short: boolean) => (
     <ChoreList
-      chores={chores}
+      chores={activeChores}
       completions={completions}
       vacations={home.vacations}
       today={today}
@@ -570,7 +569,7 @@ export default function App() {
             pet={pet}
             mood={condition.mood}
             away={away}
-            chores={chores}
+            chores={activeChores}
             statuses={condition.statuses}
             celebrate={celebrate}
             overlay={sparkles.map((s) => (

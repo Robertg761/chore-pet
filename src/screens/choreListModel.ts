@@ -1,5 +1,5 @@
 import { diffDays, isInVacation, weekdayOf } from '../domain/dates'
-import { choreStatus, completionCounts, completionDays, type ChoreStatus } from '../domain/schedule'
+import { choreActiveOn, choreStatus, completionCounts, completionDays, type ChoreStatus } from '../domain/schedule'
 import type { Chore, Completion, ISODate, VacationWindow } from '../domain/types'
 
 export type SectionId = 'late' | 'today' | 'soon' | 'done'
@@ -57,7 +57,7 @@ export function buildSections(
   vacations: VacationWindow[],
   today: ISODate,
 ): ChoreSection[] {
-  const rows: ChoreRow[] = chores.map((chore) => {
+  const rows: ChoreRow[] = chores.filter((c) => choreActiveOn(c, today)).map((chore) => {
     const status = choreStatus(chore, completions, today, vacations)
     const upcoming = status.state === 'upcoming'
     const doneToday = upcoming && completionDays(chore, completions).includes(today)

@@ -2,7 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { ensureSession, getSupabase, supabaseConfigured } from '../lib/supabase'
 import { KEY_COLUMN, MAPPERS } from './mappers'
 import { classifyError, type ErrorKind } from './remoteErrors'
-import { emptyTables, type Tables } from './state'
+import { emptyTables, type Tables, type Removal } from './state'
 import { TABLES, keyOf, type TableMap, type TableName } from './tables'
 
 /**
@@ -23,7 +23,7 @@ export interface Remote {
   currentUser?(): Promise<string | null>
   pull(): Promise<Tables>
   upsert<T extends TableName>(table: T, rows: TableMap[T][]): Promise<RemoteResult>
-  remove(table: TableName, keys: string[]): Promise<RemoteResult>
+  remove(table: TableName, keys: string[], removal?: Removal): Promise<RemoteResult>
 }
 
 /**
@@ -94,8 +94,12 @@ export function supabaseRemote(getClient: () => Promise<SupabaseClient>): Remote
       const { error, status } = await client.from(table).upsert(rows.map((r) => mapper.toRow(r)), { onConflict: KEY_COLUMN[table] })
       return result(error, status)
     },
-    async remove(table, keys) {
+    async remove(table, keys, removal) {
       const client = await getClient()
+      if (table === 'placed_objects' && removal) {
+        const { error, status } = await client.rpc('remove_objects', { object_ids: keys, archive_on: removal.archivedOn, keep_chores: removal.keepChores ?? false })
+        return result(error, status)
+      }
       const { error, status } = await client.from(table).delete().in(KEY_COLUMN[table], keys)
       return result(error, status)
     },

@@ -166,3 +166,12 @@ describe('failed writes', () => {
     expect(await failing(null, 201).upsert(tables[0], [])).toEqual({ ok: true })
   })
 })
+
+describe('atomic object removal', () => {
+  it('sends keep-chore intent and the local end date to the database transaction', async () => {
+    const calls: unknown[] = []
+    const client = { rpc: async (...args: unknown[]) => { calls.push(args); return { error: null, status: 200 } } } as unknown as SupabaseClient
+    expect(await remoteOver(client).remove('placed_objects', ['object'], { archivedOn: '2026-10-06', keepChores: true })).toEqual({ ok: true })
+    expect(calls).toEqual([['remove_objects', { object_ids: ['object'], archive_on: '2026-10-06', keep_chores: true }]])
+  })
+})
