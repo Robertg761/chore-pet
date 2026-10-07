@@ -56,7 +56,8 @@ export function AccountSection() {
   }
 
   function askSignOut() {
-    if (pendingCount > 0) setConfirm('sign-out')
+    // Unsent or refused changes: ask first, so they can be retried or let go before leaving.
+    if (pendingCount > 0 || (rejectedCount ?? 0) > 0) setConfirm('sign-out')
     else void signOutNow()
   }
 

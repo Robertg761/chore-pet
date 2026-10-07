@@ -212,6 +212,24 @@ describe('mergeSnapshots (two tabs, one offline copy)', () => {
     expect(Object.keys(merged.outbox).sort()).toEqual(['chores:b', 'homes:h1'])
   })
 
+  it('takes the other tab\'s fresher pull and keeps this tab\'s pending changes on top', () => {
+    const synced: Snapshot = { ...change(start, upsertOp('chores', chore('a'))), outbox: {}, pulledAt: '2026-10-07T08:00:00.000Z' }
+    // The other tab pulled later: chore a was renamed on another device and chore b appeared.
+    const theirs: Snapshot = {
+      ...synced,
+      tables: { ...synced.tables, chores: { a: { ...chore('a'), name: 'Renamed' }, b: chore('b') } },
+      pulledAt: '2026-10-07T09:00:00.000Z',
+    }
+    const mine = change(synced, upsertOp('chores', chore('c')))
+    const merged = mergeSnapshots(mine, synced, theirs, 'stored')
+    expect(merged.tables.chores.a.name).toBe('Renamed')
+    expect(Object.keys(merged.tables.chores).sort()).toEqual(['a', 'b', 'c'])
+    expect(Object.keys(merged.outbox)).toEqual(['chores:c'])
+    expect(merged.pulledAt).toBe('2026-10-07T09:00:00.000Z')
+    // And an older pull never replaces a fresher one.
+    expect(mergeSnapshots(theirs, theirs, synced, 'stored')).toBe(theirs)
+  })
+
   it('keeps changes from both tabs', () => {
     const mine = change(start, upsertOp('chores', chore('a')))
     const theirs = change(start, upsertOp('chores', chore('b')))

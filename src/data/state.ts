@@ -40,6 +40,8 @@ export interface Snapshot {
    * snapshots saved before this existed.
    */
   rejected?: RejectedOp[]
+  /** When `tables` last came from the server (an ISO time), so tabs can tell whose copy is fresher. */
+  pulledAt?: string
 }
 
 export interface RejectedOp {
@@ -256,7 +258,12 @@ export function mergeSnapshots(mine: Snapshot, base: Snapshot | null, stored: Sn
 
   const userId = mine.userId ?? stored.userId
   const seq = Math.max(mine.seq, stored.seq)
+  // The other tab pulled from the server more recently: its tables are the fresher view
+  // of the server (renames, deletions, rows from other devices), with every pending change
+  // still to send applied on top.
+  const fresher = stored.pulledAt !== undefined && (mine.pulledAt === undefined || stored.pulledAt > mine.pulledAt)
   const unchanged =
+    !fresher &&
     incoming.length === 0 &&
     userId === mine.userId &&
     seq === mine.seq &&
@@ -267,10 +274,11 @@ export function mergeSnapshots(mine: Snapshot, base: Snapshot | null, stored: Sn
   if (unchanged) return mine
   return {
     userId,
-    tables: incoming.sort((a, b) => a.seq - b.seq).reduce(applyOp, mine.tables),
+    tables: fresher ? rebase(stored.tables, outbox) : incoming.sort((a, b) => a.seq - b.seq).reduce(applyOp, mine.tables),
     outbox,
     seq,
     rejected,
+    ...((fresher ? stored.pulledAt : mine.pulledAt) !== undefined && { pulledAt: fresher ? stored.pulledAt : mine.pulledAt }),
   }
 }
 
