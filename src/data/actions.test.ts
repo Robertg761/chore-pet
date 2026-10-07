@@ -3,7 +3,7 @@ import { catalogEntry } from '../catalog/objects'
 import { SAMPLE_HOME_NAME, sampleHome } from '../content/sampleHome'
 import { choreStatus } from '../domain/schedule'
 import type { Chore, Progress, Schedule } from '../domain/types'
-import { adoptSample, completeChore, completeChoreWithRewards, createHousehold, moveObject, placeObject, removeHome, removeObject, uncompleteChore, updateChore } from './actions'
+import { adoptSample, completeChore, completeChoreWithRewards, createHousehold, moveObject, placeObject, removeHome, removeObject, restoreHome, uncompleteChore, updateChore } from './actions'
 import { change, emptySnapshot, selectHome, type NewOp, type Snapshot } from './state'
 
 function apply(s: Snapshot, ops: ReturnType<typeof createHousehold>): Snapshot {
@@ -212,3 +212,58 @@ describe('updateChore schedule history', () => {
   })
 })
 
+
+describe('restoreHome', () => {
+  const build = (userId: string, petName: string) => {
+    let s = createHousehold({ species: 'bun', petName, userId }).reduce(change, emptySnapshot(userId))
+    const dishes: Chore = { id: 'c1', homeId: selectHome(s.tables).home!.id, objectId: null, name: 'Dishes', schedule: { kind: 'daily' }, createdOn: '2026-10-01', photoProof: false }
+    s = change(s, { table: 'chores', kind: 'upsert', key: 'c1', value: dishes })
+    return completeChore(dishes, null, new Date('2026-10-05T10:00:00'), { realNow: null }).reduce(change, s)
+  }
+
+  it('brings a saved home into an empty account with new ids', () => {
+    const saved = build('guest', 'Bun')
+    const before = selectHome(saved.tables)
+    const restored = restoreHome(saved, emptySnapshot('u1')).reduce(change, emptySnapshot('u1'))
+    const after = selectHome(restored.tables)
+    expect(after.home?.ownerId).toBe('u1')
+    expect(after.home?.id).not.toBe(before.home?.id)
+    expect(after.pet?.name).toBe('Bun')
+    expect(after.chores.map((c) => c.name)).toEqual(['Dishes'])
+    expect(after.chores[0].id).not.toBe('c1')
+    expect(after.completions).toHaveLength(1)
+    expect(after.completions[0].choreId).toBe(after.chores[0].id)
+    expect(after.progress).not.toBeNull()
+  })
+
+  it('replaces the current home', () => {
+    const saved = build('guest', 'Bun')
+    const current = build('u1', 'Pip')
+    const ops = restoreHome(saved, current)
+    expect(ops[0]).toEqual({ table: 'homes', kind: 'delete', key: selectHome(current.tables).home!.id })
+    const after = selectHome(ops.reduce(change, current).tables)
+    expect(after.pet?.name).toBe('Bun')
+    expect(Object.keys(ops.reduce(change, current).tables.homes)).toHaveLength(1)
+  })
+
+  it('removes every home the account has, not just the one on screen', () => {
+    const saved = build('guest', 'Bun')
+    const two = createHousehold({ species: 'bun', petName: 'Other', userId: 'u1' }).reduce(change, build('u1', 'Pip'))
+    expect(Object.keys(two.tables.homes)).toHaveLength(2)
+    const after = restoreHome(saved, two).reduce(change, two)
+    expect(Object.keys(after.tables.homes)).toHaveLength(1)
+    expect(selectHome(after.tables).pet?.name).toBe('Bun')
+  })
+
+  it('moves banked counts of live chores to their new ids', () => {
+    const base = build('guest', 'Bun')
+    const homeId = selectHome(base.tables).home!.id
+    const saved: Snapshot = { ...base, tables: { ...base.tables, progress: { [homeId]: { ...base.tables.progress[homeId], retired: { c1: 3, gone: 2 } } } } }
+    const after = selectHome(restoreHome(saved, emptySnapshot('u1')).reduce(change, emptySnapshot('u1')).tables)
+    expect(after.progress?.retired).toEqual({ [after.chores[0].id]: 3, gone: 2 })
+  })
+
+  it('does nothing for a backup without a home', () => {
+    expect(restoreHome(emptySnapshot('guest'), emptySnapshot('u1'))).toEqual([])
+  })
+})

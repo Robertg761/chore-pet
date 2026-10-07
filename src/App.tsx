@@ -286,7 +286,7 @@ export default function App() {
     return framed(
       'more',
       <main className="shell screen">
-        <SettingsScreen petName={pet.name} onClose={back} />
+        <SettingsScreen petName={pet.name} homeId={home.id} onClose={back} />
       </main>,
     )
   }

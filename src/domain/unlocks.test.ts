@@ -195,6 +195,40 @@ describe('choreCountOf', () => {
   })
 })
 
+describe('long streaks', () => {
+  it('count every day, however long', () => {
+    const start = addDays(TODAY, -200)
+    expect(currentStreak([daily('a', start)], everyDay('a', start, TODAY), TODAY)).toBe(201)
+  })
+
+  it('a missed day long ago is covered by a banked rest token', () => {
+    const start = addDays(TODAY, -200)
+    const missed = addDays(TODAY, -118)
+    const done = everyDay('a', start, TODAY).filter((c) => c.completedOn !== missed)
+    expect(currentStreak([daily('a', start)], done, TODAY)).toBe(200)
+  })
+
+  it('tokens are exactly what was banked: three misses with two tokens and a refill in between hold', () => {
+    const start = addDays(TODAY, -200)
+    const misses = new Set([addDays(TODAY, -134), addDays(TODAY, -120), addDays(TODAY, -119)])
+    const done = everyDay('a', start, TODAY).filter((c) => !misses.has(c.completedOn))
+    expect(currentStreak([daily('a', start)], done, TODAY)).toBe(198)
+  })
+
+  it('and a miss with no token left breaks it, wherever the week boundaries fall', () => {
+    const start = addDays(TODAY, -200)
+    const misses = new Set([addDays(TODAY, -123), addDays(TODAY, -122), addDays(TODAY, -118)])
+    const done = everyDay('a', start, TODAY).filter((c) => !misses.has(c.completedOn))
+    expect(currentStreak([daily('a', start)], done, TODAY)).toBe(118)
+  })
+
+  it('gives a brand-new home no free rest days', () => {
+    const start = addDays(TODAY, -3)
+    const done = everyDay('a', start, TODAY).filter((c) => c.completedOn !== addDays(TODAY, -2))
+    expect(currentStreak([daily('a', start)], done, TODAY)).toBe(2)
+  })
+})
+
 describe('rest tokens', () => {
   const c = [daily('dishes', '2026-09-01')]
   const skipping = (...skipped: string[]) => everyDay('dishes', '2026-09-01', TODAY).filter((x) => !skipped.includes(x.completedOn))

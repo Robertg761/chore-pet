@@ -1,0 +1,24 @@
+/* Homes saved on this device: a welcome-back card on the landing screen, a small card in Settings. */
+.saved-homes { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.saved-homes h2 { margin: 0; }
+.saved-homes-note { margin: 0; font-weight: 700; color: var(--ink-soft); }
+.saved-homes-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.saved-homes-list li { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.saved-homes-pet { flex: none; display: grid; place-items: center; }
+.saved-homes-name { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; font-weight: 800; overflow-wrap: anywhere; }
+.saved-homes-meta { font-size: 0.8125rem; font-weight: 700; color: var(--ink-soft); }
+.saved-homes-list .btn { flex: none; }
+.saved-homes-confirm p { margin: 0 0 8px; line-height: 1.35; }
+.saved-homes-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+.saved-homes-landing {
+  align-self: stretch;
+  padding: 12px 14px;
+  background: var(--card);
+  border: var(--outline);
+  border-radius: var(--radius);
+}
+.saved-homes-landing h2 { font-size: 1.125rem; }
+.saved-homes-landing .btn { flex: 1 1 auto; }
+/* Coming back: the welcome-back card takes the pitch line's place. */
+.landing:has(.saved-homes-landing) .landing-pitch { display: none; }

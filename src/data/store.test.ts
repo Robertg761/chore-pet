@@ -3,7 +3,7 @@ import type { Chore, Progress } from '../domain/types'
 import { addChore, completeChore, completeChoreWithRewards, createHousehold, removeChore } from './actions'
 import { memoryStore, volatileStore, type LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
-import { emptyTables, selectHome, type Snapshot, type Tables } from './state'
+import { HELD_FOR_NEXT, change, emptySnapshot, emptyTables, selectHome, type Snapshot, type Tables } from './state'
 import { MAX_ATTEMPTS, createStore, type Store, type StoreChannel, type StoreMessage } from './store'
 import { keyOf, type TableName } from './tables'
 
@@ -724,6 +724,22 @@ describe('two tabs sharing one offline copy', () => {
     expect(b.getState().pendingCount).toBe(0)
   })
 
+  it('never writes the old account back over a sign-out it has not heard about yet', async () => {
+    const { server, remote } = fakeServer()
+    const shared = memoryStore()
+    const a = await onboarded(remote, shared)
+    const b = createStore({ local: shared, remote }) // no channel: the reset message hasn't reached A
+    await b.start()
+    await b.sync()
+    await b.reset({ backup: false })
+    server.offline = true // only this device's copy matters here
+    add(a, 'Late edit')
+    await settle()
+    await settle()
+    expect(selectHome((shared.current as Snapshot).tables).home).toBeNull()
+    expect(selectHome(a.getState().snapshot.tables).home).toBeNull()
+  })
+
   it('follows the other tab when it signs out', async () => {
     const { a, b } = await twoTabs()
     const resume = a.pause()
@@ -809,3 +825,344 @@ describe('a failed save', () => {
     expect(choreNames(store.getState().snapshot.tables)).toEqual(['Bins', 'Dishes'])
   })
 })
+
+describe('saved homes (backups kept on this device)', () => {
+  it('lists a saved home and brings it back, keeping the replaced one', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    // As a sign-in would leave it: the guest's home, held for the account that took over.
+    const guest = createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest'))
+    await local.backup!('guest', { ...guest, heldFor: 'u1' })
+
+    expect((await store.savedHomes()).map((h) => [h.ownerId, h.petName])).toEqual([['guest', 'Bun']])
+    expect(await store.restoreSaved('guest')).toBe(true)
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Bun')
+    // The guest copy now lives in the account; Pip's home is kept on this device to swap back.
+    const saved = await store.savedHomes()
+    expect(saved.map((h) => h.petName)).toEqual(['Pip'])
+    expect(await store.restoreSaved(saved[0].ownerId)).toBe(true)
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Pip')
+    expect((await store.savedHomes()).map((h) => h.petName)).toEqual(['Bun'])
+  })
+
+  it('changes nothing, and keeps the saved copy, when the restored home could not be stored', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    local.update = async () => {
+      throw new Error('disk full')
+    }
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    expect(await store.restoreSaved('guest')).toBe(false)
+    expect(Object.keys(local.backups)).toContain('snapshot-backup-guest')
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Pip')
+  })
+
+  it('reports nothing restored, and puts the home back, when the write fails as it is stored', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    const update = local.update!.bind(local)
+    local.update = async (fn) => {
+      fn(await local.load()) // the transaction ran, then it was aborted (quota, say)
+      throw new Error('QuotaExceededError')
+    }
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    expect(await store.restoreSaved('guest')).toBe(false)
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Pip')
+    expect(Object.keys(local.backups)).toEqual(['snapshot-backup-guest'])
+    local.update = update
+  })
+
+  it('leaves alone a swapped-out copy another restore wrote after this one lost its lock', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    const pipHome = selectHome(store.getState().snapshot.tables).home!
+    const key = `snapshot-backup-u1:${pipHome.id}`
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    local.holdLock = async () => {
+      // This restore was paused past its lock; another took over and wrote its own copy.
+      local.backups[key] = { ...local.backups[key], restoreToken: 'the-other-restore' }
+      return false
+    }
+    expect(await store.restoreSaved('guest')).toBe(false)
+    expect(local.backups[key]?.restoreToken).toBe('the-other-restore')
+  })
+
+  it('keeps the swapped-out copy, and counts the swap, when forgetting the brought-back copy fails', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    const pipHome = selectHome(store.getState().snapshot.tables).home!
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    const drop = local.dropBackup!.bind(local)
+    local.dropBackup = async (owner, restoreToken) => {
+      if (owner === 'guest') throw new Error('UnknownError')
+      return drop(owner, restoreToken)
+    }
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    expect(await store.restoreSaved('guest')).toBe(true)
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Bun')
+    expect(Object.keys(local.backups)).toContain(`snapshot-backup-u1:${pipHome.id}`)
+  })
+
+  it('offers a guest\u2019s home kept at sign-out to the next account here, and only to that one', async () => {
+    const { server, remote } = fakeServer('anon-1')
+    const local = memoryStore()
+    const store = createStore({ local, remote })
+    await store.start()
+    await store.sync()
+    store.apply(...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'anon-1' }))
+    await store.sync()
+    await store.reset({ backup: true, forNext: true }) // the guest signs out
+    server.user = 'anon-2' // a new guest session starts
+    server.tables = emptyTables()
+    await store.sync()
+    await settle()
+    // Held for anon-2 now, so someone signing in here later isn't offered it.
+    expect(local.backups['snapshot-backup-anon-1'].heldFor).toBe('anon-2')
+    expect((await store.savedHomes()).map((h) => h.petName)).toEqual(['Bun'])
+    expect(await store.restoreSaved('anon-1')).toBe(true)
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Bun')
+  })
+
+  it('leaves a newer backup another tab wrote over the brought-back copy', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    const home = (name: string) => ({ ...createHousehold({ species: 'mochi', petName: name, userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    await local.backup!('guest', home('Bun'))
+    const drop = local.dropBackup!.bind(local)
+    local.dropBackup = async (owner, token) => {
+      // Just after the swap, another tab signs out with unsynced changes and backs up there.
+      if (owner === 'guest') await local.backup!('guest', home('Newer'))
+      return drop(owner, token)
+    }
+    expect(await store.restoreSaved('guest')).toBe(true)
+    expect((await store.savedHomes()).map((h) => h.petName)).toContain('Newer')
+  })
+
+  it('does not swap when another restore took the lock while this one waited to be saved', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    const hold = local.holdLock!.bind(local)
+    local.holdLock = async (lock, token, at) => {
+      const ours = await hold(lock, token, at)
+      // The lease checks out, then lapses while the swap waits behind other saves.
+      local.locks[lock] = { token: 'the-other-restore', at }
+      return ours
+    }
+    expect(await store.restoreSaved('guest')).toBe(false)
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Pip')
+    expect(selectHome((local.current as Snapshot).tables).pet?.name).toBe('Pip')
+  })
+
+  it('clears a swapped-out copy another tab wrote while this one deleted the account', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const tabA = await onboarded(remote, local)
+    const tabB = createStore({ local, remote })
+    await tabB.start()
+    await tabB.sync()
+    // A guest's home kept at sign-out, which tab B brings back.
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: HELD_FOR_NEXT })
+    const save = local.save.bind(local)
+    let restored: boolean | null = null
+    local.save = async (snapshot) => {
+      // Tab B's restore commits just before tab A's reset clears the stored copy.
+      if (restored === null) restored = await tabB.restoreSaved('guest')
+      return save(snapshot)
+    }
+    await tabA.reset({ backup: false }) // "Delete my account" in tab A
+    expect(restored).toBe(true)
+    expect(Object.keys(local.backups)).toEqual([])
+  })
+
+  it('never offers a home held for another account, and clearing an account forgets its saved homes', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    const home = (name: string, owner: string) => createHousehold({ species: 'mochi', petName: name, userId: owner }).reduce(change, emptySnapshot(owner))
+    await local.backup!('someone', home('Theirs', 'someone')) // another person's sign-out copy
+    await local.backup!('guest', { ...home('Bun', 'guest'), heldFor: 'u1' })
+    expect((await store.savedHomes()).map((h) => h.petName)).toEqual(['Bun'])
+    expect(await store.restoreSaved('someone')).toBe(false)
+
+    await store.restoreSaved('guest') // swaps Pip's home out, held for u1
+    await store.reset({ backup: false })
+    expect(Object.keys(local.backups)).toEqual(['snapshot-backup-someone'])
+  })
+
+  it('lets only one tab bring the same home back', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const tabA = await onboarded(remote, local)
+    const tabB = createStore({ local, remote })
+    await tabB.start()
+    await tabB.sync()
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    const results = await Promise.all([tabA.restoreSaved('guest'), tabB.restoreSaved('guest')])
+    expect(results.filter(Boolean)).toHaveLength(1)
+  })
+
+  it('runs one restore at a time per account, even for different saved homes', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const tabA = await onboarded(remote, local)
+    const tabB = createStore({ local, remote })
+    await tabB.start()
+    await tabB.sync()
+    const home = (name: string, owner: string) => ({ ...createHousehold({ species: 'mochi', petName: name, userId: owner }).reduce(change, emptySnapshot(owner)), heldFor: 'u1' })
+    await local.backup!('guest-1', home('Bun', 'guest-1'))
+    await local.backup!('guest-2', home('Sprout', 'guest-2'))
+    const results = await Promise.all([tabA.restoreSaved('guest-1'), tabB.restoreSaved('guest-2')])
+    expect(results.filter(Boolean)).toHaveLength(1)
+    expect(local.locks).toEqual({})
+  })
+
+  it('only the restore holding the lock may commit or release it', async () => {
+    const local = memoryStore()
+    await local.backup!('guest', emptySnapshot('guest'))
+    expect(await local.claimBackup!('guest', 'lock', 'a', 0, 60_000)).not.toBeNull()
+    expect(await local.claimBackup!('guest', 'lock', 'b', 30_000, 60_000)).toBeNull() // still held
+    expect(await local.claimBackup!('guest', 'lock', 'b', 70_000, 60_000)).not.toBeNull() // lapsed: b takes it
+    expect(await local.holdLock!('lock', 'a', 71_000)).toBe(false)
+    await local.releaseLock!('lock', 'a')
+    expect(local.locks.lock.token).toBe('b')
+  })
+
+  it('stops when the account is cleared while it runs, so a deleted account never gets the home back', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    let release = () => {}
+    const gate = new Promise<void>((r) => (release = r))
+    const backup = local.backup!.bind(local)
+    local.backup = async (owner, snapshot) => (await gate, backup(owner, snapshot))
+    const restoring = store.restoreSaved('guest')
+    await settle()
+    await store.reset({ backup: false }) // "Delete my account" from Settings, mid-restore
+    release()
+    expect(await restoring).toBe(false)
+    expect(selectHome(store.getState().snapshot.tables).home).toBeNull()
+    // The swapped-out copy written after the account's backups were cleared goes too.
+    expect(Object.keys(local.backups).filter((k) => k.startsWith('snapshot-backup-u1'))).toEqual([])
+  })
+
+  it('keeps an edit that lands during the lock check in the swapped-out copy', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    const pipHome = selectHome(store.getState().snapshot.tables).home!
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    let release = () => {}
+    const gate = new Promise<void>((r) => (release = r))
+    let entered = () => {}
+    const checking = new Promise<void>((r) => (entered = r))
+    const hold = local.holdLock!.bind(local)
+    let first = true
+    local.holdLock = async (lock, token, at) => {
+      if (first) {
+        first = false
+        entered()
+        await gate
+      }
+      return hold(lock, token, at)
+    }
+    const restoring = store.restoreSaved('guest')
+    await checking
+    store.apply(...addChore(pipHome, { name: 'Late', schedule: { kind: 'daily' } }, '2026-10-07'))
+    release()
+    expect(await restoring).toBe(true)
+    expect(choreNames((local.backups[`snapshot-backup-u1:${pipHome.id}`] as Snapshot).tables)).toEqual(['Late'])
+  })
+
+  /** Two tabs on one offline copy, the second unheard (no channel), with a saved home to bring back. */
+  async function restoreBetweenTabs() {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const tabA = await onboarded(remote, local)
+    const tabB = createStore({ local, remote })
+    await tabB.start()
+    await tabB.sync()
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    /** Run `meanwhile` once, while tab A's restore checks its lock. */
+    const during = (meanwhile: () => Promise<void>) => {
+      const hold = local.holdLock!.bind(local)
+      let first = true
+      local.holdLock = async (lock, token, at) => {
+        if (first) {
+          first = false
+          await meanwhile()
+        }
+        return hold(lock, token, at)
+      }
+    }
+    return { local, tabA, tabB, during, pipHome: selectHome(tabA.getState().snapshot.tables).home! }
+  }
+
+  it('keeps another tab\u2019s edit, saved just before the swap, in the swapped-out copy', async () => {
+    const { local, tabA, tabB, during, pipHome } = await restoreBetweenTabs()
+    during(async () => {
+      tabB.apply(...addChore(pipHome, { name: 'From the other tab', schedule: { kind: 'daily' } }, '2026-10-07'))
+      await settle()
+    })
+    expect(await tabA.restoreSaved('guest')).toBe(true)
+    expect(choreNames((local.backups[`snapshot-backup-u1:${pipHome.id}`] as Snapshot).tables)).toEqual(['From the other tab'])
+    expect(selectHome(tabA.getState().snapshot.tables).pet?.name).toBe('Bun')
+  })
+
+  it('keeps a row another tab already sent, but has not pulled back yet, in the swapped-out copy', async () => {
+    const { local, tabA, during, pipHome } = await restoreBetweenTabs()
+    during(async () => {
+      // As the other tab leaves it between sending a change and its next pull: the row is
+      // in the stored tables, with nothing queued and no newer pull to say so.
+      const [op] = addChore(pipHome, { name: 'Sent from the other tab', schedule: { kind: 'daily' } }, '2026-10-07')
+      const stored = local.current as Snapshot
+      local.current = { ...stored, seq: stored.seq + 1, tables: change(stored, op).tables, pulledAt: tabA.getState().snapshot.pulledAt }
+    })
+    expect(await tabA.restoreSaved('guest')).toBe(true)
+    expect(choreNames((local.backups[`snapshot-backup-u1:${pipHome.id}`] as Snapshot).tables)).toEqual(['Sent from the other tab'])
+  })
+
+  it('takes in another tab\u2019s sent removals and edits too, so the swapped-out copy never brings them back', async () => {
+    const { local, tabA, during, pipHome } = await restoreBetweenTabs()
+    tabA.apply(...addChore(pipHome, { name: 'Dishes', schedule: { kind: 'daily' } }, '2026-10-07'), ...addChore(pipHome, { name: 'Bins', schedule: { kind: 'daily' } }, '2026-10-07'))
+    await tabA.sync()
+    await settle()
+    during(async () => {
+      // The other tab removed Dishes and renamed Bins, sent both, and hasn't pulled yet.
+      const stored = local.current as Snapshot
+      const chores = Object.values(stored.tables.chores)
+      const dishes = chores.find((c) => c.name === 'Dishes')!
+      const bins = chores.find((c) => c.name === 'Bins')!
+      const { [dishes.id]: _gone, ...rest } = stored.tables.chores
+      local.current = { ...stored, seq: stored.seq + 2, tables: { ...stored.tables, chores: { ...rest, [bins.id]: { ...bins, name: 'Recycling' } } }, pulledAt: tabA.getState().snapshot.pulledAt }
+    })
+    expect(await tabA.restoreSaved('guest')).toBe(true)
+    expect(choreNames((local.backups[`snapshot-backup-u1:${pipHome.id}`] as Snapshot).tables)).toEqual(['Recycling'])
+  })
+
+  it('stops when another tab signs out partway, and leaves its cleared copy alone', async () => {
+    const { local, tabA, tabB, during } = await restoreBetweenTabs()
+    during(() => tabB.reset({ backup: false }))
+    expect(await tabA.restoreSaved('guest')).toBe(false)
+    expect(selectHome((local.current as Snapshot).tables).home).toBeNull()
+    expect(selectHome(tabA.getState().snapshot.tables).home).toBeNull()
+  })
+
+  it('has nothing to offer without a store that keeps backups', async () => {
+    const store = createStore({ local: volatileStore(), remote: null })
+    await store.start()
+    expect(await store.savedHomes()).toEqual([])
+    expect(await store.restoreSaved('guest')).toBe(false)
+  })
+})
+

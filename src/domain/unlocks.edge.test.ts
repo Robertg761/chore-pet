@@ -253,25 +253,23 @@ describe('streaks today', () => {
   })
 })
 
-describe('streak lookback cap', () => {
-  it('a very long streak is capped (about 121 days) and returns quickly', () => {
+describe('very long streaks', () => {
+  it('count every day since the start, and return quickly', () => {
     const c = [daily('A', '2025-01-01')]
     const completions = days('A', '2025-01-01', TODAY)
     const t0 = Date.now()
     const streak = currentStreak(c, completions, TODAY)
     expect(Date.now() - t0).toBeLessThan(5000)
-    expect(streak).toBeGreaterThanOrEqual(120)
-    expect(streak).toBeLessThanOrEqual(121)
+    expect(streak).toBe(completions.length)
   })
 
-  it('the cap is still enough for every streak reward', () => {
+  it('reach every streak reward', () => {
     const longest = Math.max(...UNLOCKS.flatMap((x) => (x.rule.type === 'streak' ? [x.rule.days] : [])))
     const streak = currentStreak([daily('A', '2025-01-01')], days('A', '2025-01-01', TODAY), TODAY)
     expect(streak).toBeGreaterThanOrEqual(longest)
   })
 
-  // The lookback counts active days only, so a long trip can't hide the streak from before it.
-  it('a vacation longer than the lookback does not erase the streak from before it', () => {
+  it('a long vacation does not erase the streak from before it', () => {
     const c = [daily('A', '2026-01-01')]
     const v = [{ start: '2026-01-21', end: '2026-10-05' }]
     const completions = [...days('A', '2026-01-01', '2026-01-20'), ...on('A', TODAY)]

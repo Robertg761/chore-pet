@@ -4,7 +4,7 @@ import { completionCounts, sameSchedule, SCHEDULE_HISTORY, trimHistory } from '.
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, choreCountOf, currentStreak, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
-import { deleteOp, upsertOp, type NewOp } from './state'
+import { deleteOp, selectHome, upsertOp, type NewOp, type Snapshot } from './state'
 
 // Every user action as a pure function returning the changes to apply.
 // The UI calls these and hands the result to store.apply(...ops).
@@ -181,6 +181,50 @@ export function updatePet(pet: Pet, patch: Partial<Omit<Pet, 'id' | 'homeId'>>):
 /** Remove a whole home. Rooms, objects, chores, history, pet and progress go with it (the database cascades the same way). */
 export function removeHome(homeId: string): NewOp[] {
   return [deleteOp('homes', homeId)]
+}
+
+/** A row as a new one: the server stamps its own creation time. */
+function fresh<T extends object>(row: T): T {
+  const { createdAt: _createdAt, ...rest } = row as T & { createdAt?: string }
+  return rest as T
+}
+
+/**
+ * Bring a home kept on this device (a backup) into the current account. Every
+ * row gets a new id, since the originals may still belong to another account
+ * on the server. The account's current home, if any, is removed first: one
+ * home per account. Returns nothing when the backup holds no home.
+ */
+export function restoreHome(saved: Snapshot, current: Snapshot): NewOp[] {
+  const { home, pet, rooms, objects, chores, completions } = selectHome(saved.tables)
+  if (!home) return []
+  const progress = saved.tables.progress[home.id]
+  const homeId = id()
+  const roomIds = new Map(rooms.map((r) => [r.id, id()]))
+  const objectIds = new Map(objects.map((o) => [o.id, id()]))
+  const choreIds = new Map(chores.map((c) => [c.id, id()]))
+  // Every home the account has goes (usually one; more after conflicting offline starts).
+  const ops: NewOp[] = Object.keys(current.tables.homes).flatMap((homeKey) => removeHome(homeKey))
+  ops.push(upsertOp('homes', { ...fresh(home), id: homeId, ownerId: current.userId ?? home.ownerId }))
+  for (const r of rooms) ops.push(upsertOp('rooms', { ...fresh(r), id: roomIds.get(r.id)!, homeId }))
+  if (pet) ops.push(upsertOp('pets', { ...fresh(pet), id: id(), homeId }))
+  if (progress) {
+    // Banked counts of live chores follow them to their new ids; those of deleted chores keep theirs.
+    const retired = progress.retired && Object.fromEntries(Object.entries(progress.retired).map(([k, n]) => [choreIds.get(k) ?? k, n]))
+    ops.push(upsertOp('progress', { ...fresh(progress), homeId, ...(retired && { retired }) }))
+  }
+  for (const o of objects) {
+    const roomId = roomIds.get(o.roomId)
+    if (roomId) ops.push(upsertOp('placed_objects', { ...fresh(o), id: objectIds.get(o.id)!, roomId }))
+  }
+  for (const c of chores) {
+    ops.push(upsertOp('chores', { ...fresh(c), id: choreIds.get(c.id)!, homeId, objectId: c.objectId ? (objectIds.get(c.objectId) ?? null) : null }))
+  }
+  for (const c of completions) {
+    const choreId = choreIds.get(c.choreId)
+    if (choreId) ops.push(upsertOp('completions', { ...fresh(c), id: id(), choreId }))
+  }
+  return ops
 }
 
 /** Keep everything in a sample home and make it the player's own by renaming it away from the sample name. */

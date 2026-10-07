@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { SavedHomes } from './SavedHomes'
 import { Character } from '../character/Character'
 import { SPECIES_COLOUR } from '../art/palette'
 import { SPECIES, type Species } from '../domain/types'
@@ -33,6 +34,8 @@ export function Landing({ onSample, onBuild }: LandingProps) {
           </button>
         ))}
       </div>
+
+      <SavedHomes />
 
       <p className="landing-pitch">A tiny pet that lives in a home you build. Do real chores, keep it happy.</p>
 

@@ -10,7 +10,7 @@ const store = {
     calls.push('pause')
     return () => void calls.push('resume')
   }),
-  reset: vi.fn(async (options?: { backup?: boolean }) => void calls.push(`reset${options?.backup === false ? ' no-backup' : ''}`)),
+  reset: vi.fn(async (options?: { backup?: boolean; forNext?: boolean }) => void calls.push(`reset${options?.backup === false ? ' no-backup' : ''}${options?.forNext ? ' for-next' : ''}`)),
 }
 let anonymous = false
 const auth = {
@@ -67,7 +67,8 @@ describe('signOutSafely', () => {
     store.rejectedCount = 0
     anonymous = true
     await signOutSafely()
-    expect(calls.filter((c) => c.startsWith('reset'))).toEqual(['reset', 'reset', 'reset'])
+    // A guest's home is held for whoever uses this device next: that guest can't sign back in.
+    expect(calls.filter((c) => c.startsWith('reset'))).toEqual(['reset', 'reset', 'reset for-next'])
   })
 
   it('says how many changes had not synced (they are backed up by the reset)', async () => {

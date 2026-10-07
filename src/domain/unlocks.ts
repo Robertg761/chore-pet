@@ -89,11 +89,6 @@ export function isUnlocked(progress: Pick<Progress, 'unlockedItems'> | null, id:
   return FREE_STYLES.includes(id) || FREE_ITEMS.includes(id) || Boolean(progress?.unlockedItems.includes(id))
 }
 
-/** How far back a streak is counted, in active (non-vacation) days. Long enough for every streak reward. */
-const STREAK_LOOKBACK = 120
-/** Vacation days skipped while looking back, at most. */
-const MAX_VACATION_DAYS = 400
-
 export const STREAK_TUNING = {
   /** Counted days it takes to bank a rest token. */
   daysPerRestToken: 7,
@@ -176,25 +171,17 @@ function dayCounts(walkers: Walker[], active: Set<ISODate>, day: ISODate, vacati
 export function currentStreak(chores: Chore[], completions: Completion[], today: ISODate, vacations: VacationWindow[] = []): number {
   if (chores.length === 0) return 0
   const firstDay = chores.reduce((min, c) => (c.createdOn < min ? c.createdOn : min), chores[0].createdOn)
-  // The lookback counts active days only, so a long vacation can't hide the streak before it.
-  let from = today
-  let activeDays = 0
-  for (let i = 0; i <= STREAK_LOOKBACK + MAX_VACATION_DAYS; i++) {
-    const day = addDays(today, -i)
-    if (day < firstDay) break
-    from = day
-    if (!isInVacation(day, vacations) && ++activeDays > STREAK_LOOKBACK) break
-  }
+  const { daysPerRestToken, maxRestTokens } = STREAK_TUNING
 
   const ids = new Set(chores.map((c) => c.id))
   const walkers = chores.flatMap((chore) => walkersFor(chore, completions))
   const active = new Set(completions.filter((c) => c.counts !== false && ids.has(c.choreId)).map((c) => c.completedOn))
-  const { daysPerRestToken, maxRestTokens } = STREAK_TUNING
 
   let streak = 0
+  // Every day from the first chore on, so rest tokens are exactly what was banked.
   let tokens = 0
   let towardToken = 0
-  for (let day = from; day <= today; day = addDays(day, 1)) {
+  for (let day = firstDay; day <= today; day = addDays(day, 1)) {
     if (isInVacation(day, vacations)) continue
     if (dayCounts(walkers, active, day, vacations)) {
       streak++

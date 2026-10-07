@@ -9,6 +9,9 @@ import {
   deleteOp,
   emptySnapshot,
   emptyTables,
+  tableChanges,
+  unapplied,
+  withChanges,
   mergeSnapshots,
   planFlush,
   rebase,
@@ -18,6 +21,7 @@ import {
   selectHome,
   upsertOp,
   worthBackingUp,
+  type Op,
   type Snapshot,
 } from './state'
 
@@ -202,6 +206,24 @@ describe('backups when an account switch drops data', () => {
   })
 })
 
+describe('change: deleting a row', () => {
+  it('drops queued changes to the rows that went with it', () => {
+    const offline = change(change(emptySnapshot('u1'), upsertOp('homes', home)), upsertOp('chores', chore('a')))
+    const gone = change(offline, deleteOp('homes', home.id))
+    expect(Object.keys(gone.outbox)).toEqual(['homes:h1'])
+    expect(gone.tables.chores).toEqual({})
+  })
+
+  it('drops set-aside changes under it too, but keeps unrelated ones', () => {
+    const synced = { ...change(emptySnapshot('u1'), upsertOp('homes', home)), outbox: {} }
+    const refused = (key: string, value: Chore) => ({ op: { table: 'chores', kind: 'upsert', key, value, seq: 1, id: key } as Op, message: 'no', at: '2026-10-07T00:00:00.000Z' })
+    const elsewhere: Chore = { ...chore('z'), homeId: 'other-home' }
+    const withRefused = { ...synced, rejected: [refused('a', chore('a')), refused('z', elsewhere)] }
+    const gone = change(withRefused, deleteOp('homes', home.id))
+    expect(gone.rejected?.map((r) => r.op.key)).toEqual(['z'])
+  })
+})
+
 describe('mergeSnapshots (two tabs, one offline copy)', () => {
   const start = change(emptySnapshot('u1'), upsertOp('homes', home))
 
@@ -288,5 +310,26 @@ describe('repairOps', () => {
     t.progress = { h1: { homeId: 'h1', choreCount: 1, currentStreak: 0, bestStreak: 0, unlockedItems: [] } }
     expect(repairOps(t)).toEqual([])
     expect(repairOps(emptyTables())).toEqual([])
+  })
+})
+
+describe('table changes', () => {
+  const chore = (id: string, name: string): Chore => ({ id, homeId: 'h', objectId: null, name, schedule: { kind: 'daily' }, createdOn: '2026-10-01', photoProof: false })
+  const withChores = (...chores: Chore[]) => ({ ...emptyTables(), chores: Object.fromEntries(chores.map((c) => [c.id, c])) })
+
+  it('finds rows added, changed and removed, and replays them on another copy', () => {
+    const before = withChores(chore('a', 'Dishes'), chore('b', 'Bins'))
+    const after = withChores(chore('b', 'Recycling'), chore('c', 'Plants'))
+    const changes = tableChanges(before, after)
+    expect(changes.put.map((p) => p.key).sort()).toEqual(['b', 'c'])
+    expect(changes.removed).toEqual([{ table: 'chores', key: 'a' }])
+    const mine = withChores(chore('a', 'Dishes'), chore('b', 'Bins'), chore('d', 'Mine'))
+    expect(Object.values(withChanges(mine, changes).chores).map((c) => c.name).sort()).toEqual(['Mine', 'Plants', 'Recycling'])
+  })
+
+  it('leaves out what a copy already has', () => {
+    const changes = tableChanges(withChores(chore('a', 'Dishes')), withChores(chore('b', 'Bins')))
+    expect(unapplied(changes, withChores(chore('b', 'Bins')))).toEqual({ put: [], removed: [] })
+    expect(unapplied(changes, withChores(chore('a', 'Dishes'))).put).toHaveLength(1)
   })
 })

@@ -42,6 +42,36 @@ export interface Snapshot {
   rejected?: RejectedOp[]
   /** When `tables` last came from the server (an ISO time), so tabs can tell whose copy is fresher. */
   pulledAt?: string
+  /**
+   * On a backup only: the account it may be offered back to (missing means its
+   * own account). A guest home replaced by a sign-in is held for the account
+   * that replaced it, so a shared browser never offers one person's home to
+   * the next.
+   */
+  heldFor?: string | null
+  /**
+   * On the stored copy only: changes each time this device is reset (sign-out,
+   * account deletion). A tab still holding an older one must not write over it.
+   */
+  generation?: string
+  /**
+   * On a backup only: the restore that last wrote it (a swapped-out copy) or
+   * claimed it (the copy being brought back), so that restore only ever
+   * deletes its own copy, never a newer one written over it.
+   */
+  restoreToken?: string
+}
+
+/**
+ * heldFor of a guest's home kept at sign-out: the guest can never sign back in,
+ * so it is held for whoever uses this device next (the first account to claim
+ * the device takes it over).
+ */
+export const HELD_FOR_NEXT = 'next-on-this-device'
+
+/** The account a backup may be offered back to. */
+export function heldFor(backup: Snapshot): string | null {
+  return backup.heldFor !== undefined ? backup.heldFor : backup.userId
 }
 
 export interface RejectedOp {
@@ -100,12 +130,32 @@ export function applyOp(tables: Tables, op: Op): Tables {
 export function change(snapshot: Snapshot, op: NewOp): Snapshot {
   const seq = snapshot.seq + 1
   const full = { ...op, seq, id: newOpId() } as Op
-  return {
-    ...snapshot,
-    seq,
-    tables: applyOp(snapshot.tables, full),
-    outbox: { ...snapshot.outbox, [outboxKey(op.table, op.key)]: full },
+  const key = outboxKey(op.table, op.key)
+  const tables = applyOp(snapshot.tables, full)
+  const outbox = { ...snapshot.outbox, [key]: full }
+  if (op.kind !== 'delete') return { ...snapshot, seq, tables, outbox }
+
+  // Rows that went with it (the cascade) have nothing left to send, queued or set aside:
+  // the server removes them the same way, and a child of a row that never reached it
+  // would only be refused.
+  const removed = new Map<TableName, Set<string>>(TABLES.map((t) => [t, new Set(Object.keys(snapshot.tables[t]).filter((k) => !(k in tables[t])))]))
+  removed.get(op.table)!.add(op.key)
+  const under = (o: Op) =>
+    o.kind === 'upsert' &&
+    (removed.get(o.table)!.has(o.key) || CASCADES.some((c) => c.child === o.table && removed.get(c.parent)!.has(c.fk(o.value as never) ?? '')))
+  for (const [k, queued] of Object.entries(outbox)) if (k !== key && under(queued)) delete outbox[k]
+  // Set-aside rows may hang under other set-aside rows (not in the tables), so follow them down.
+  let rejected = snapshot.rejected
+  for (let grew = true; grew && rejected?.length; ) {
+    grew = false
+    rejected = rejected.filter((r) => {
+      if (!under(r.op)) return true
+      removed.get(r.op.table)!.add(r.op.key)
+      grew = true
+      return false
+    })
   }
+  return { ...snapshot, seq, tables, outbox, ...(rejected && { rejected }) }
 }
 
 export function upsertOp<T extends TableName>(table: T, value: TableMap[T]): NewOp {
@@ -280,6 +330,61 @@ export function mergeSnapshots(mine: Snapshot, base: Snapshot | null, stored: Sn
     rejected,
     ...((fresher ? stored.pulledAt : mine.pulledAt) !== undefined && { pulledAt: fresher ? stored.pulledAt : mine.pulledAt }),
   }
+}
+
+/** Row by row, what one copy of the tables changed since another: rows added or changed, and rows removed. */
+export interface TableChanges {
+  put: { table: TableName; key: string; row: unknown }[]
+  removed: { table: TableName; key: string }[]
+}
+
+/** What `after` changed since `before`. */
+export function tableChanges(before: Tables, after: Tables): TableChanges {
+  const changes: TableChanges = { put: [], removed: [] }
+  for (const table of TABLES) {
+    const was = before[table] as Record<string, unknown>
+    const now = after[table] as Record<string, unknown>
+    for (const [key, row] of Object.entries(now)) if (!(key in was) || JSON.stringify(was[key]) !== JSON.stringify(row)) changes.put.push({ table, key, row })
+    for (const key of Object.keys(was)) if (!(key in now)) changes.removed.push({ table, key })
+  }
+  return changes
+}
+
+/** The changes `tables` doesn't have yet (none when it already matches them). */
+export function unapplied(changes: TableChanges, tables: Tables): TableChanges {
+  const rows = (table: TableName) => tables[table] as Record<string, unknown>
+  return {
+    put: changes.put.filter(({ table, key, row }) => JSON.stringify(rows(table)[key]) !== JSON.stringify(row)),
+    removed: changes.removed.filter(({ table, key }) => key in rows(table)),
+  }
+}
+
+/** `tables` with the changes made. */
+export function withChanges(tables: Tables, changes: TableChanges): Tables {
+  const out = { ...tables } as Record<TableName, Record<string, unknown>>
+  for (const { table, key, row } of changes.put) out[table] = { ...out[table], [key]: row }
+  for (const { table, key } of changes.removed) {
+    const { [key]: _gone, ...rest } = out[table]
+    out[table] = rest
+  }
+  return out as Tables
+}
+
+/** A home kept on this device (a backup), as offered back to the player. */
+export interface SavedHome {
+  ownerId: string
+  homeId: string
+  petName: string
+  species: Pet['species']
+  bodyColour: string
+  choreCount: number
+}
+
+/** What a backup holds, for offering it back; null when it holds no home with a pet. */
+export function savedHomeOf(ownerId: string, snapshot: Snapshot): SavedHome | null {
+  const { home, pet, chores } = selectHome(snapshot.tables)
+  if (!home || !pet) return null
+  return { ownerId, homeId: home.id, petName: pet.name, species: pet.species, bodyColour: pet.bodyColour, choreCount: chores.length }
 }
 
 /** Everything the app shows for the player's home. One home per account for now. */
