@@ -2,8 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { CATALOG, DECOR, catalogEntry } from './objects'
 import { UNLOCKS } from '../domain/unlocks'
 import type { Schedule } from '../domain/types'
-
-const ROOM_SIZE = 6
+import { ROOM_SIZE } from '../room/grid'
 
 function validSchedule(s: Schedule): boolean {
   switch (s.kind) {
@@ -57,7 +56,7 @@ describe('object catalog', () => {
     }
   })
 
-  it('has positive integer footprints that fit a 6x6 room', () => {
+  it('has positive integer footprints that fit the room', () => {
     for (const e of CATALOG) {
       const { w, d } = e.footprint
       expect(Number.isInteger(w) && w >= 1 && w <= ROOM_SIZE, `${e.id} w`).toBe(true)

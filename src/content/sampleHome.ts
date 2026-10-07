@@ -34,7 +34,7 @@ interface SampleSpot {
 }
 
 /**
- * The kitchen, seen from the front (6x6 tiles, back corner at 0,0).
+ * The kitchen, seen from the front (back corner at 0,0; the room is 8x8, so the front stays open).
  * Left wall (tx = 0): fridge in the corner, then sink, then stove.
  * Right wall (ty = 0): dishwasher and trash can beside the fridge.
  * Table on a rug in the open floor, with a clear lane all the way round.

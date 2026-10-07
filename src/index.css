@@ -156,8 +156,8 @@ body { margin: 0; }
   place-items: center;
   container-type: size;
 }
-/* The room keeps its shape and fills whichever side runs out first (it is 390 x 392). */
-.home-stage .living-room { width: min(100cqw, 100cqh * 390 / 392); align-self: center; }
+/* The room keeps its shape and fills whichever side runs out first (ROOM_VIEWBOX: 390 x 352). */
+.home-stage .living-room { width: min(100cqw, 100cqh * 390 / 352); align-self: center; }
 .home-build {
   position: absolute;
   left: 50%;

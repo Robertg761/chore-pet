@@ -23,7 +23,7 @@ import {
   type Rotation,
   type Sortable,
 } from './grid'
-import { roomPoint } from './shell/geometry'
+import { ROOM_TILES, WINDOW, roomPoint } from './shell/geometry'
 
 function entry(id: string): CatalogEntry {
   const e = catalogEntry(id)
@@ -47,9 +47,48 @@ function placed(catalogId: string, tileX: number, tileY: number, rotation: Rotat
 
 const fp = (tx: number, ty: number, w: number, d: number): Footprint => ({ tx, ty, w, d })
 
+// Everything below is written in terms of the room size, so it holds for any room.
+const S = ROOM_SIZE
+/** Index of the last tile along an axis. */
+const LAST = S - 1
+/** Every tile index along an axis. */
+const AXIS = Array.from({ length: S }, (_, i) => i)
+
+/**
+ * Packs the whole room with solid things: as many 2x2 tables as fit, then 1x1 trash cans on the
+ * leftover strip (only needed for an odd size). `skip` leaves one table out, giving a 2x2 hole.
+ */
+function packedRoom(skip?: { x: number; y: number }): { objects: PlacedObject[]; tables: number } {
+  const objects: PlacedObject[] = []
+  const per = Math.floor(S / 2)
+  for (let x = 0; x < per * 2; x += 2) {
+    for (let y = 0; y < per * 2; y += 2) if (!(skip && skip.x === x && skip.y === y)) objects.push(placed('table', x, y))
+  }
+  for (let x = 0; x < S; x++) {
+    for (let y = 0; y < S; y++) if (x >= per * 2 || y >= per * 2) objects.push(placed('trash', x, y))
+  }
+  return { objects, tables: per * per }
+}
+
+/** The same packing as footprints, for freeTile. */
+function packedFootprints(): Footprint[] {
+  return packedRoom().objects.map((o) => footprintOf(o, entry(o.catalogId)))
+}
+
 describe('ROOM_SIZE', () => {
-  it('is the 6x6 room', () => {
-    expect(ROOM_SIZE).toBe(6)
+  it('is the room size from the shell geometry', () => {
+    expect(ROOM_SIZE).toBe(ROOM_TILES)
+  })
+
+  it('is a whole number of tiles', () => {
+    expect(Number.isInteger(ROOM_SIZE)).toBe(true)
+  })
+
+  it('is big enough for every catalog footprint to fit on its own', () => {
+    for (const e of [sink, bed, couch, rug, table, trash]) {
+      expect(e.footprint.w).toBeLessThanOrEqual(ROOM_SIZE)
+      expect(e.footprint.d).toBeLessThanOrEqual(ROOM_SIZE)
+    }
   })
 })
 
@@ -129,12 +168,12 @@ describe('overlaps', () => {
   })
 
   it('is true when one contains the other', () => {
-    expect(overlaps(fp(0, 0, 6, 6), fp(2, 2, 1, 1))).toBe(true)
-    expect(overlaps(fp(2, 2, 1, 1), fp(0, 0, 6, 6))).toBe(true)
+    expect(overlaps(fp(0, 0, S, S), fp(2, 2, 1, 1))).toBe(true)
+    expect(overlaps(fp(2, 2, 1, 1), fp(0, 0, S, S))).toBe(true)
   })
 
   it('is true for a cross shape (overlap in the middle, neither contains the other)', () => {
-    expect(overlaps(fp(0, 2, 6, 1), fp(2, 0, 1, 6))).toBe(true)
+    expect(overlaps(fp(0, 2, S, 1), fp(2, 0, 1, S))).toBe(true)
   })
 
   it('is false when separated by a gap', () => {
@@ -144,8 +183,8 @@ describe('overlaps', () => {
 
   it('is symmetric over a grid of 1x1 tiles against a 2x2', () => {
     const big = fp(2, 2, 2, 2)
-    for (let x = 0; x < 6; x++) {
-      for (let y = 0; y < 6; y++) {
+    for (const x of AXIS) {
+      for (const y of AXIS) {
         const t = fp(x, y, 1, 1)
         const expected = x >= 2 && x < 4 && y >= 2 && y < 4
         expect(overlaps(big, t)).toBe(expected)
@@ -157,14 +196,19 @@ describe('overlaps', () => {
 
 describe('insideRoom', () => {
   it('accepts a footprint filling the whole room', () => {
-    expect(insideRoom(fp(0, 0, 6, 6))).toBe(true)
+    expect(insideRoom(fp(0, 0, S, S))).toBe(true)
+  })
+
+  it('rejects a footprint one tile too big for the room', () => {
+    expect(insideRoom(fp(0, 0, S + 1, S))).toBe(false)
+    expect(insideRoom(fp(0, 0, S, S + 1))).toBe(false)
   })
 
   it('accepts 1x1 tiles at all four corners', () => {
     expect(insideRoom(fp(0, 0, 1, 1))).toBe(true)
-    expect(insideRoom(fp(5, 0, 1, 1))).toBe(true)
-    expect(insideRoom(fp(0, 5, 1, 1))).toBe(true)
-    expect(insideRoom(fp(5, 5, 1, 1))).toBe(true)
+    expect(insideRoom(fp(LAST, 0, 1, 1))).toBe(true)
+    expect(insideRoom(fp(0, LAST, 1, 1))).toBe(true)
+    expect(insideRoom(fp(LAST, LAST, 1, 1))).toBe(true)
   })
 
   it('rejects negative origins', () => {
@@ -173,33 +217,33 @@ describe('insideRoom', () => {
   })
 
   it('rejects 1x1 tiles just past the far edges', () => {
-    expect(insideRoom(fp(6, 0, 1, 1))).toBe(false)
-    expect(insideRoom(fp(0, 6, 1, 1))).toBe(false)
+    expect(insideRoom(fp(S, 0, 1, 1))).toBe(false)
+    expect(insideRoom(fp(0, S, 1, 1))).toBe(false)
   })
 
   it('handles multi-tile objects at every edge (the bed, 3x2)', () => {
-    // tx edge: 3 wide, so tx 3 is the last that fits
-    expect(insideRoom(fp(3, 0, 3, 2))).toBe(true)
-    expect(insideRoom(fp(4, 0, 3, 2))).toBe(false)
-    // ty edge: 2 deep, so ty 4 is the last that fits
-    expect(insideRoom(fp(0, 4, 3, 2))).toBe(true)
-    expect(insideRoom(fp(0, 5, 3, 2))).toBe(false)
+    // tx edge: 3 wide, so tx S - 3 is the last that fits
+    expect(insideRoom(fp(S - 3, 0, 3, 2))).toBe(true)
+    expect(insideRoom(fp(S - 2, 0, 3, 2))).toBe(false)
+    // ty edge: 2 deep, so ty S - 2 is the last that fits
+    expect(insideRoom(fp(0, S - 2, 3, 2))).toBe(true)
+    expect(insideRoom(fp(0, S - 1, 3, 2))).toBe(false)
     // far corner
-    expect(insideRoom(fp(3, 4, 3, 2))).toBe(true)
-    expect(insideRoom(fp(4, 5, 3, 2))).toBe(false)
+    expect(insideRoom(fp(S - 3, S - 2, 3, 2))).toBe(true)
+    expect(insideRoom(fp(S - 2, S - 1, 3, 2))).toBe(false)
   })
 
   it('handles the rotated bed (2x3)', () => {
-    expect(insideRoom(fp(4, 3, 2, 3))).toBe(true)
-    expect(insideRoom(fp(5, 3, 2, 3))).toBe(false)
-    expect(insideRoom(fp(4, 4, 2, 3))).toBe(false)
+    expect(insideRoom(fp(S - 2, S - 3, 2, 3))).toBe(true)
+    expect(insideRoom(fp(S - 1, S - 3, 2, 3))).toBe(false)
+    expect(insideRoom(fp(S - 2, S - 2, 2, 3))).toBe(false)
   })
 
   it('handles the table (2x2) and rug (2x3) at the far edges', () => {
-    expect(insideRoom(fp(4, 4, 2, 2))).toBe(true)
-    expect(insideRoom(fp(5, 4, 2, 2))).toBe(false)
-    expect(insideRoom(fp(4, 3, 2, 3))).toBe(true)
-    expect(insideRoom(fp(4, 4, 2, 3))).toBe(false)
+    expect(insideRoom(fp(S - 2, S - 2, 2, 2))).toBe(true)
+    expect(insideRoom(fp(S - 1, S - 2, 2, 2))).toBe(false)
+    expect(insideRoom(fp(S - 2, S - 3, 2, 3))).toBe(true)
+    expect(insideRoom(fp(S - 2, S - 2, 2, 3))).toBe(false)
   })
 
   it('works through footprintOf for every rotation of the bed at the origin', () => {
@@ -267,32 +311,32 @@ describe('checkPlacement', () => {
 
   it('checks the bed against both walls using its rotated footprint', () => {
     // rotation 0: 3 along tx, 2 along ty, back at tx = 0
-    expect(checkPlacement(bed, { tileX: 0, tileY: 4, rotation: 0 }, none, lookup).ok).toBe(true)
-    expect(checkPlacement(bed, { tileX: 0, tileY: 5, rotation: 0 }, none, lookup).problem).toBe('outside')
+    expect(checkPlacement(bed, { tileX: 0, tileY: S - 2, rotation: 0 }, none, lookup).ok).toBe(true)
+    expect(checkPlacement(bed, { tileX: 0, tileY: S - 1, rotation: 0 }, none, lookup).problem).toBe('outside')
     // rotation 1: 2 along tx, 3 along ty, back at ty = 0
-    expect(checkPlacement(bed, { tileX: 4, tileY: 0, rotation: 1 }, none, lookup).ok).toBe(true)
-    expect(checkPlacement(bed, { tileX: 5, tileY: 0, rotation: 1 }, none, lookup).problem).toBe('outside')
+    expect(checkPlacement(bed, { tileX: S - 2, tileY: 0, rotation: 1 }, none, lookup).ok).toBe(true)
+    expect(checkPlacement(bed, { tileX: S - 1, tileY: 0, rotation: 1 }, none, lookup).problem).toBe('outside')
   })
 
   it('checks the couch (1x2) against both walls', () => {
-    expect(checkPlacement(couch, { tileX: 0, tileY: 4, rotation: 0 }, none, lookup).ok).toBe(true)
-    expect(checkPlacement(couch, { tileX: 0, tileY: 5, rotation: 0 }, none, lookup).problem).toBe('outside')
-    expect(checkPlacement(couch, { tileX: 4, tileY: 0, rotation: 1 }, none, lookup).ok).toBe(true)
-    expect(checkPlacement(couch, { tileX: 5, tileY: 0, rotation: 1 }, none, lookup).problem).toBe('outside')
+    expect(checkPlacement(couch, { tileX: 0, tileY: S - 2, rotation: 0 }, none, lookup).ok).toBe(true)
+    expect(checkPlacement(couch, { tileX: 0, tileY: S - 1, rotation: 0 }, none, lookup).problem).toBe('outside')
+    expect(checkPlacement(couch, { tileX: S - 2, tileY: 0, rotation: 1 }, none, lookup).ok).toBe(true)
+    expect(checkPlacement(couch, { tileX: S - 1, tileY: 0, rotation: 1 }, none, lookup).problem).toBe('outside')
   })
 
   it('reports outside at every edge', () => {
     expect(checkPlacement(table, { tileX: -1, tileY: 0, rotation: 0 }, none, lookup).problem).toBe('outside')
     expect(checkPlacement(table, { tileX: 0, tileY: -1, rotation: 0 }, none, lookup).problem).toBe('outside')
-    expect(checkPlacement(table, { tileX: 5, tileY: 0, rotation: 0 }, none, lookup).problem).toBe('outside')
-    expect(checkPlacement(table, { tileX: 0, tileY: 5, rotation: 0 }, none, lookup).problem).toBe('outside')
-    expect(checkPlacement(table, { tileX: 4, tileY: 4, rotation: 0 }, none, lookup).ok).toBe(true)
+    expect(checkPlacement(table, { tileX: S - 1, tileY: 0, rotation: 0 }, none, lookup).problem).toBe('outside')
+    expect(checkPlacement(table, { tileX: 0, tileY: S - 1, rotation: 0 }, none, lookup).problem).toBe('outside')
+    expect(checkPlacement(table, { tileX: S - 2, tileY: S - 2, rotation: 0 }, none, lookup).ok).toBe(true)
   })
 
   describe('problem priority', () => {
     it('outside beats needsWall', () => {
       // sink off the wall AND off the room
-      const result = checkPlacement(sink, { tileX: 7, tileY: 7, rotation: 0 }, none, lookup)
+      const result = checkPlacement(sink, { tileX: S, tileY: S, rotation: 0 }, none, lookup)
       expect(result).toEqual({ ok: false, problem: 'outside', blockers: [] })
     })
 
@@ -303,8 +347,8 @@ describe('checkPlacement', () => {
     })
 
     it('outside beats overlap', () => {
-      const t = placed('table', 4, 4, 0, 'tbl')
-      const result = checkPlacement(table, { tileX: 5, tileY: 5, rotation: 0 }, [t], lookup)
+      const t = placed('table', S - 2, S - 2, 0, 'tbl')
+      const result = checkPlacement(table, { tileX: S - 1, tileY: S - 1, rotation: 0 }, [t], lookup)
       expect(result.problem).toBe('outside')
       expect(result.blockers).toEqual([])
     })
@@ -411,9 +455,10 @@ describe('checkPlacement', () => {
   })
 
   it('works with a custom lookup', () => {
-    const custom = (id: string) => (id === 'big' ? { footprint: { w: 6, d: 6 }, placement: 'floor' as const, layer: 'solid' as const } : undefined)
+    const custom = (id: string) => (id === 'big' ? { footprint: { w: S, d: S }, placement: 'floor' as const, layer: 'solid' as const } : undefined)
     const big = placed('big', 0, 0, 0, 'big1')
-    expect(checkPlacement(trash, { tileX: 3, tileY: 3, rotation: 0 }, [big], custom).blockers).toEqual(['big1'])
+    const middle = Math.floor(S / 2)
+    expect(checkPlacement(trash, { tileX: middle, tileY: middle, rotation: 0 }, [big], custom).blockers).toEqual(['big1'])
   })
 })
 
@@ -469,7 +514,7 @@ describe('findFreeSpot', () => {
 
   it('uses the right wall when the left wall is taken', () => {
     // fill tx = 0 column with 1x1 trash cans
-    const cans = [0, 1, 2, 3, 4, 5].map((y) => placed('trash', 0, y))
+    const cans = AXIS.map((y) => placed('trash', 0, y))
     const spot = findFreeSpot(sink, cans, lookup) as Placement
     expect(spot).toEqual({ tileX: 1, tileY: 0, rotation: 1 })
   })
@@ -487,32 +532,32 @@ describe('findFreeSpot', () => {
   })
 
   it('returns null when the room is full of tables', () => {
-    // 9 tables tile the 6x6 room exactly
-    const tables: PlacedObject[] = []
-    for (let x = 0; x < 6; x += 2) for (let y = 0; y < 6; y += 2) tables.push(placed('table', x, y))
-    expect(tables).toHaveLength(9)
-    expect(findFreeSpot(table, tables, lookup)).toBeNull()
-    expect(findFreeSpot(trash, tables, lookup)).toBeNull()
-    expect(findFreeSpot(sink, tables, lookup)).toBeNull()
+    // floor(S / 2) ^ 2 tables tile the room (any odd leftover strip holds trash cans)
+    const { objects, tables } = packedRoom()
+    expect(tables).toBe(Math.floor(S / 2) ** 2)
+    expect(objects.filter((o) => o.catalogId === 'table')).toHaveLength(tables)
+    expect(findFreeSpot(table, objects, lookup)).toBeNull()
+    expect(findFreeSpot(trash, objects, lookup)).toBeNull()
+    expect(findFreeSpot(sink, objects, lookup)).toBeNull()
   })
 
   it('finds a rug spot in a room full of solid tables (flat and solid are separate layers)', () => {
-    const tables: PlacedObject[] = []
-    for (let x = 0; x < 6; x += 2) for (let y = 0; y < 6; y += 2) tables.push(placed('table', x, y))
-    expect(findFreeSpot(rug, tables, lookup)).toEqual({ tileX: 0, tileY: 0, rotation: 0 })
+    const { objects } = packedRoom()
+    expect(findFreeSpot(rug, objects, lookup)).toEqual({ tileX: 0, tileY: 0, rotation: 0 })
   })
 
   it('finds the last remaining hole', () => {
-    const tables: PlacedObject[] = []
-    for (let x = 0; x < 6; x += 2) for (let y = 0; y < 6; y += 2) if (!(x === 4 && y === 4)) tables.push(placed('table', x, y))
-    expect(findFreeSpot(table, tables, lookup)).toEqual({ tileX: 4, tileY: 4, rotation: 0 })
-    expect(findFreeSpot(trash, tables, lookup)).toEqual({ tileX: 4, tileY: 4, rotation: 0 })
+    // leave out the table in the front corner of the table grid
+    const hole = 2 * (Math.floor(S / 2) - 1)
+    const { objects } = packedRoom({ x: hole, y: hole })
+    expect(findFreeSpot(table, objects, lookup)).toEqual({ tileX: hole, tileY: hole, rotation: 0 })
+    expect(findFreeSpot(trash, objects, lookup)).toEqual({ tileX: hole, tileY: hole, rotation: 0 })
   })
 
   it('returns null for a wall object when both walls are blocked', () => {
     const cans = [
-      ...[0, 1, 2, 3, 4, 5].map((y) => placed('trash', 0, y)),
-      ...[1, 2, 3, 4, 5].map((x) => placed('trash', x, 0)),
+      ...AXIS.map((y) => placed('trash', 0, y)),
+      ...AXIS.slice(1).map((x) => placed('trash', x, 0)),
     ]
     expect(findFreeSpot(sink, cans, lookup)).toBeNull()
     expect(findFreeSpot(bed, cans, lookup)).toBeNull()
@@ -551,22 +596,24 @@ describe('snapDrag', () => {
     })
 
     it('clamps inside the room at the front edges', () => {
-      expect(snapDrag(table, 20, 20, 0)).toEqual({ tileX: 4, tileY: 4, rotation: 0 })
-      expect(snapDrag(table, 6, 3, 0)).toEqual({ tileX: 4, tileY: 2, rotation: 0 })
-      expect(snapDrag(table, 3, 6, 0)).toEqual({ tileX: 2, tileY: 4, rotation: 0 })
-      expect(snapDrag(trash, 6, 6, 0)).toEqual({ tileX: 5, tileY: 5, rotation: 0 })
+      expect(snapDrag(table, S * 4, S * 4, 0)).toEqual({ tileX: S - 2, tileY: S - 2, rotation: 0 })
+      expect(snapDrag(table, S, 3, 0)).toEqual({ tileX: S - 2, tileY: 2, rotation: 0 })
+      expect(snapDrag(table, 3, S, 0)).toEqual({ tileX: 2, tileY: S - 2, rotation: 0 })
+      expect(snapDrag(trash, S, S, 0)).toEqual({ tileX: LAST, tileY: LAST, rotation: 0 })
     })
 
     it('clamps non-square objects with their rotated size', () => {
-      expect(snapDrag(rug, 99, 99, 0)).toEqual({ tileX: 4, tileY: 3, rotation: 0 })
-      expect(snapDrag(rug, 99, 99, 1)).toEqual({ tileX: 3, tileY: 4, rotation: 1 })
+      // rug is 2 wide x 3 deep at rotation 0, 3 x 2 at rotation 1
+      expect(snapDrag(rug, S * 10, S * 10, 0)).toEqual({ tileX: S - 2, tileY: S - 3, rotation: 0 })
+      expect(snapDrag(rug, S * 10, S * 10, 1)).toEqual({ tileX: S - 3, tileY: S - 2, rotation: 1 })
     })
 
     it('always yields a placement inside the room, for pointers well outside', () => {
       for (const e of [trash, table, rug]) {
         for (const r of [0, 1, 2, 3] as Rotation[]) {
-          for (const v of [-10, -0.5, 0, 2.5, 5.99, 6, 12]) {
-            for (const w of [-10, -0.5, 0, 2.5, 5.99, 6, 12]) {
+          const pointers = [-10, -0.5, 0, 2.5, S - 0.01, S, S + 6]
+          for (const v of pointers) {
+            for (const w of pointers) {
               const p = snapDrag(e, v, w, r)
               expect(insideRoom(footprintOf(p, e))).toBe(true)
             }
@@ -620,13 +667,14 @@ describe('snapDrag', () => {
     })
 
     it('clamps along the wall using the rotated size', () => {
-      // bed on the left wall is 2 deep along ty: max tileY = 4
-      expect(snapDrag(bed, 0, 99, 0)).toEqual({ tileX: 0, tileY: 4, rotation: 0 })
-      // bed on the right wall is 2 wide along tx: max tileX = 4
-      expect(snapDrag(bed, 99, 0, 0)).toEqual({ tileX: 4, tileY: 0, rotation: 1 })
+      const far = S * 10
+      // bed on the left wall is 2 deep along ty: max tileY = S - 2
+      expect(snapDrag(bed, 0, far, 0)).toEqual({ tileX: 0, tileY: S - 2, rotation: 0 })
+      // bed on the right wall is 2 wide along tx: max tileX = S - 2
+      expect(snapDrag(bed, far, 0, 0)).toEqual({ tileX: S - 2, tileY: 0, rotation: 1 })
       // couch (1x2): left wall d = 2, right wall w = 2
-      expect(snapDrag(couch, 0, 99, 0)).toEqual({ tileX: 0, tileY: 4, rotation: 0 })
-      expect(snapDrag(couch, 99, 0, 0)).toEqual({ tileX: 4, tileY: 0, rotation: 1 })
+      expect(snapDrag(couch, 0, far, 0)).toEqual({ tileX: 0, tileY: S - 2, rotation: 0 })
+      expect(snapDrag(couch, far, 0, 0)).toEqual({ tileX: S - 2, tileY: 0, rotation: 1 })
     })
 
     it('clamps to the back corner for a pointer behind the room', () => {
@@ -636,8 +684,9 @@ describe('snapDrag', () => {
 
     it('always yields a valid placement against a wall in an empty room', () => {
       for (const e of [sink, bed, couch]) {
-        for (const v of [-4, 0, 0.5, 1.5, 2.5, 3, 4.5, 5.99, 6, 9]) {
-          for (const w of [-4, 0, 0.5, 1.5, 2.5, 3, 4.5, 5.99, 6, 9]) {
+        const pointers = [-4, 0, 0.5, 1.5, 2.5, 3, 4.5, S - 0.01, S, S + 3]
+        for (const v of pointers) {
+          for (const w of pointers) {
             const p = snapDrag(e, v, w, 0)
             expect(checkPlacement(e, p, [], lookup).ok).toBe(true)
           }
@@ -658,7 +707,7 @@ describe('turned', () => {
     })
 
     it('stays against a wall', () => {
-      for (let i = 0; i < 6; i++) {
+      for (const i of AXIS) {
         expect(againstWall(turned(sink, { tileX: 0, tileY: i, rotation: 0 }))).toBe(true)
         expect(againstWall(turned(sink, { tileX: i, tileY: 0, rotation: 1 }))).toBe(true)
       }
@@ -673,7 +722,7 @@ describe('turned', () => {
 
     it('keeps a valid wall object valid and inside the room (bed and couch, every slot)', () => {
       for (const e of [sink, bed, couch]) {
-        for (let i = 0; i < 6; i++) {
+        for (const i of AXIS) {
           for (const p of [
             { tileX: 0, tileY: i, rotation: 0 } as Placement,
             { tileX: i, tileY: 0, rotation: 1 } as Placement,
@@ -714,12 +763,13 @@ describe('turned', () => {
       expect(turned(table, { tileX: 2, tileY: 3, rotation: 3 }).rotation).toBe(0)
     })
 
-    // The rug (2x3) at (4, 3) fits at rotation 0 (tx 4..6, ty 3..6); turned
-    // it is 3x2, so it is nudged back to tx 3..6.
+    // The rug (2x3) at (S - 2, S - 3) fits at rotation 0 (tx S-2..S, ty S-3..S); turned
+    // it is 3x2, so it is nudged back to tx S-3..S.
     it('keeps a floor object inside the room when turned near the front edge', () => {
-      const p: Placement = { tileX: 4, tileY: 3, rotation: 0 }
+      const p: Placement = { tileX: S - 2, tileY: S - 3, rotation: 0 }
       expect(insideRoom(footprintOf(p, rug))).toBe(true)
       expect(insideRoom(footprintOf(turned(rug, p), rug))).toBe(true)
+      expect(turned(rug, p)).toEqual({ tileX: S - 3, tileY: S - 3, rotation: 1 })
     })
   })
 })
@@ -841,10 +891,10 @@ describe('depthOrder', () => {
 
   it('sorts a grid of 1x1 items so that nothing is drawn after something in front of it', () => {
     const list: Sortable[] = []
-    for (let x = 0; x < 6; x++) for (let y = 0; y < 6; y++) list.push(item(`${x}-${y}`, 'solid', x, y, 1, 1))
+    for (const x of AXIS) for (const y of AXIS) list.push(item(`${x}-${y}`, 'solid', x, y, 1, 1))
     const shuffled = [...list].reverse()
     const out = depthOrder(shuffled)
-    expect(out).toHaveLength(36)
+    expect(out).toHaveLength(S * S)
     const pos = new Map(out.map((o, i) => [o.id, i]))
     for (const a of list) {
       for (const b of list) {
@@ -998,9 +1048,9 @@ describe('screenToTile', () => {
   it('round-trips the room corners', () => {
     for (const [tx, ty] of [
       [0, 0],
-      [6, 0],
-      [0, 6],
-      [6, 6],
+      [S, 0],
+      [0, S],
+      [S, S],
     ]) {
       const p = roomPoint(tx, ty)
       close(screenToTile(p.x, p.y), tx, ty)
@@ -1008,16 +1058,16 @@ describe('screenToTile', () => {
   })
 
   it('round-trips the room centre', () => {
-    const p = roomPoint(3, 3)
-    close(screenToTile(p.x, p.y), 3, 3)
+    const p = roomPoint(S / 2, S / 2)
+    close(screenToTile(p.x, p.y), S / 2, S / 2)
   })
 
   it('round-trips fractional points', () => {
     for (const [tx, ty] of [
       [0.5, 0.5],
       [2.25, 4.75],
-      [5.9, 0.1],
-      [0.1, 5.9],
+      [S - 0.1, 0.1],
+      [0.1, S - 0.1],
       [3.333, 1.667],
       [1 / 3, 2 / 3],
     ]) {
@@ -1030,7 +1080,7 @@ describe('screenToTile', () => {
     for (const [tx, ty] of [
       [-1.5, 2],
       [2, -3.25],
-      [8, 9.5],
+      [S + 2, S + 3.5],
     ]) {
       const p = roomPoint(tx, ty)
       close(screenToTile(p.x, p.y), tx, ty)
@@ -1066,7 +1116,7 @@ describe('screenToTile', () => {
     for (const [tx, ty] of [
       [0, 0],
       [2, 4],
-      [5, 5],
+      [LAST, LAST],
       [4, 1],
     ]) {
       const c = roomPoint(tx + 0.5, ty + 0.5)
@@ -1078,75 +1128,104 @@ describe('screenToTile', () => {
 
 describe('freeTile', () => {
   it('prefers the front corner of an empty room', () => {
-    expect(freeTile([])).toEqual({ tx: 5, ty: 5 })
+    expect(freeTile([])).toEqual({ tx: LAST, ty: LAST })
   })
 
   it('skips an occupied front tile and takes a neighbour one step back', () => {
-    const t = freeTile([fp(5, 5, 1, 1)])
-    expect(t).toEqual({ tx: 5, ty: 4 })
+    const t = freeTile([fp(LAST, LAST, 1, 1)])
+    expect(t).toEqual({ tx: LAST, ty: LAST - 1 })
   })
 
   it('skips tiles under multi-tile footprints', () => {
-    // table at (4, 4) covers the four front tiles
-    const t = freeTile([fp(4, 4, 2, 2)])
-    expect(t).toEqual({ tx: 5, ty: 3 })
+    // table in the front corner covers the four front tiles
+    const t = freeTile([fp(S - 2, S - 2, 2, 2)])
+    expect(t).toEqual({ tx: LAST, ty: S - 3 })
   })
 
   it('prefers a tile further front over one further back', () => {
     // only the very back corner and a mid tile are free
     const occupied: Footprint[] = []
-    for (let x = 0; x < 6; x++) for (let y = 0; y < 6; y++) if (!(x === 0 && y === 0) && !(x === 3 && y === 2)) occupied.push(fp(x, y, 1, 1))
+    for (const x of AXIS) for (const y of AXIS) if (!(x === 0 && y === 0) && !(x === 3 && y === 2)) occupied.push(fp(x, y, 1, 1))
     expect(freeTile(occupied)).toEqual({ tx: 3, ty: 2 })
   })
 
   it('finds the only free tile, even at the back corner', () => {
     const occupied: Footprint[] = []
-    for (let x = 0; x < 6; x++) for (let y = 0; y < 6; y++) if (!(x === 0 && y === 0)) occupied.push(fp(x, y, 1, 1))
+    for (const x of AXIS) for (const y of AXIS) if (!(x === 0 && y === 0)) occupied.push(fp(x, y, 1, 1))
     expect(freeTile(occupied)).toEqual({ tx: 0, ty: 0 })
   })
 
   it('returns null when the room is full', () => {
-    expect(freeTile([fp(0, 0, 6, 6)])).toBeNull()
-    const occupied: Footprint[] = []
-    for (let x = 0; x < 6; x += 2) for (let y = 0; y < 6; y += 2) occupied.push(fp(x, y, 2, 2))
-    expect(freeTile(occupied)).toBeNull()
+    expect(freeTile([fp(0, 0, S, S)])).toBeNull()
+    expect(freeTile(packedFootprints())).toBeNull()
   })
 
   it('only returns tiles inside the room and never an occupied one', () => {
-    const occupied = [fp(0, 0, 3, 2), fp(4, 4, 2, 2), fp(2, 3, 1, 1), fp(5, 0, 1, 3)]
+    const occupied = [fp(0, 0, 3, 2), fp(S - 2, S - 2, 2, 2), fp(2, 3, 1, 1), fp(LAST, 0, 1, 3)]
     const blocked = new Set(occupied.flatMap((f) => tilesOf(f).map((t) => `${t.tx},${t.ty}`)))
     const picked: string[] = []
     const stack = [...occupied]
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < S * S; i++) {
       const t = freeTile(stack)
       if (!t) break
       expect(t.tx).toBeGreaterThanOrEqual(0)
-      expect(t.tx).toBeLessThan(6)
+      expect(t.tx).toBeLessThan(S)
       expect(t.ty).toBeGreaterThanOrEqual(0)
-      expect(t.ty).toBeLessThan(6)
+      expect(t.ty).toBeLessThan(S)
       expect(blocked.has(`${t.tx},${t.ty}`)).toBe(false)
       expect(picked).not.toContain(`${t.tx},${t.ty}`)
       picked.push(`${t.tx},${t.ty}`)
       stack.push(fp(t.tx, t.ty, 1, 1))
     }
     // every tile ends up either blocked or picked, then null
-    expect(picked.length + blocked.size).toBe(36)
+    expect(picked.length + blocked.size).toBe(S * S)
     expect(freeTile(stack)).toBeNull()
   })
 
   it('ignores footprints that are entirely outside the room', () => {
-    expect(freeTile([fp(7, 7, 2, 2)])).toEqual({ tx: 5, ty: 5 })
+    expect(freeTile([fp(S + 1, S + 1, 2, 2)])).toEqual({ tx: LAST, ty: LAST })
   })
 })
 
 describe('the window', () => {
   const poster = { footprint: { w: 1, d: 1 }, placement: 'wall' as const, layer: 'hung' as const }
   const none = () => undefined
-  it("keeps hung things off the window on the left wall, but allows them beside it and on the right wall", () => {
-    expect(checkPlacement(poster, { tileX: 0, tileY: 2, rotation: 0 }, [], none).problem).toBe('window')
-    expect(checkPlacement(poster, { tileX: 0, tileY: 1, rotation: 0 }, [], none).problem).toBe('window')
-    expect(checkPlacement(poster, { tileX: 0, tileY: 0, rotation: 0 }, [], none).ok).toBe(true)
-    expect(checkPlacement(poster, { tileX: 0, tileY: 4, rotation: 0 }, [], none).ok).toBe(true)
-    expect(checkPlacement(poster, { tileX: 2, tileY: 0, rotation: 1 }, [], none).ok).toBe(true)
+  /** Clear space kept around the window (sill included) before a hung thing may sit beside it. */
+  const SILL = 0.15
+  const onLeftWall = (tileY: number) => checkPlacement(poster, { tileX: 0, tileY, rotation: 0 }, [], none)
+
+  it('keeps hung things off the window on the left wall', () => {
+    const covering = AXIS.filter((y) => y < WINDOW.u1 && y + 1 > WINDOW.u0)
+    expect(covering.length).toBeGreaterThan(0)
+    for (const y of covering) expect(onLeftWall(y).problem, `tileY ${y}`).toBe('window')
+    // the window's own middle is certainly covered
+    expect(onLeftWall(Math.floor((WINDOW.u0 + WINDOW.u1) / 2)).problem).toBe('window')
+  })
+
+  it('allows hung things beside the window on the left wall, on both sides', () => {
+    const before = AXIS.filter((y) => y + 1 <= WINDOW.u0 - SILL)
+    const after = AXIS.filter((y) => y >= WINDOW.u1 + SILL)
+    // there is wall on both sides of the window for a poster to hang on
+    expect(before.length).toBeGreaterThan(0)
+    expect(after.length).toBeGreaterThan(0)
+    for (const y of [...before, ...after]) expect(onLeftWall(y).ok, `tileY ${y}`).toBe(true)
+  })
+
+  it('treats every left-wall slot as either covering the window or free', () => {
+    for (const y of AXIS) {
+      const result = onLeftWall(y)
+      expect(result.ok || result.problem === 'window', `tileY ${y}`).toBe(true)
+    }
+  })
+
+  it('allows hung things on the right wall at any tile, including across the window span', () => {
+    for (const x of AXIS) {
+      expect(checkPlacement(poster, { tileX: x, tileY: 0, rotation: 1 }, [], none).ok, `tileX ${x}`).toBe(true)
+    }
+  })
+
+  it('does not stop solid wall things (a sink) from standing in front of the window', () => {
+    const y = Math.floor((WINDOW.u0 + WINDOW.u1) / 2)
+    expect(checkPlacement(sink, { tileX: 0, tileY: y, rotation: 0 }, [], lookup).ok).toBe(true)
   })
 })

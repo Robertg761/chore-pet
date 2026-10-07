@@ -173,6 +173,9 @@ Audit findings, all fixed:
 - [SONNET: ui-builder] "Where is it?" in the chore editor, so any chore can be tied to an object. **Done**
 - [SONNET: test-writer] Tests for cadence, thresholds, levels, health and mess. **Done** (no bugs found; noted that monthly chores reach level 3 at 14 days by design)
 
+- [LEAD] Roomier room (user feedback: the default room felt claustrophobic). The floor grows from 6x6 to 8x8 tiles, 78% more space. Walls, window, pet, neglect cues and sparkles scale with `TILE_SCALE` so every proportion holds; existing rooms keep their layout with open floor in front. **Done**
+- [SONNET: test-writer] Room and geometry tests written in terms of the room size. **Done**
+
 **Done when:** a late chore shows on its object and visibly gets worse day by day at a pace that fits the chore, the pet's health matches what the room shows, and any chore can be tied to an object. **Met.**
 
 ## Stretch

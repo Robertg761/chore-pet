@@ -38,7 +38,7 @@ The pet is a reason to come back, not a guilt trip. It never dies, and its lines
   - There are 4 eye styles and 4 cheek styles, and ten soft body colours.
   - A wardrobe holds 11 items across head, face, neck, outfit and back, plus saved outfits.
 - **The room:**
-  - An isometric room with drag-and-snap building and rotation.
+  - A roomy 8x8 isometric room with drag-and-snap building and rotation.
   - Footprint checks: things can't overlap, and posters can't cover the window.
   - 15 objects that bring chores, all available from the start, and 4 chore-free decor pieces to unlock.
   - Every chore object is drawn clean, a little messy and very messy.
@@ -74,7 +74,7 @@ All code was written fresh during the Yard, solo, with Claude Code:
   - a test writer.
 - **Review:** each result was checked against the art contract (`docs/ART.md`) in a live gallery (`/?art`) and by tests before it landed.
 - **Plan:** `docs/PLAN.md` holds the phase-by-phase plan and who did what.
-- **Tests:** 789 unit tests cover schedules, health, mess, streaks, unlocks, sync, tile maths and placement.
+- **Tests:** 811 unit tests cover schedules, health, mess, streaks, unlocks, sync, tile maths and placement.
 
 ## Honest limits
 

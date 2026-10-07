@@ -8,15 +8,14 @@ import { depthOrder, footprintOf, type Footprint, type Placement, type Sortable 
 import { NeglectCue } from './neglect'
 import { OBJECT_ART } from './objects'
 import { RoomShell } from './shell/RoomShell'
-import { OBJECT_SCALE, roomPoint, roomPoints } from './shell/geometry'
+import { OBJECT_SCALE, PET_SCALE, TILE_SCALE, roomPoint, roomPoints } from './shell/geometry'
 
 // The room: shell, floor highlights, then every object and the pet drawn back
 // to front. Pure rendering; build mode (src/room/BuildRoom.tsx) adds input.
 
 const { ink, accent, white, cream, creamDark } = PALETTE
 
-/** How big the pet's 200x200 art is drawn in the room (about one tile wide). */
-export const PET_SCALE = 0.44
+export { PET_SCALE } from './shell/geometry'
 
 const FITS = '#5DBB63'
 const BLOCKED = PALETTE.warmRed
@@ -177,7 +176,7 @@ export function Room({ room, objects, stages = {}, neglect = {}, selectedId, gho
         if (!level || !entry) return null
         const top = objectTop(entry, o)
         return (
-          <g key={`neglect-${o.id}`} transform={`translate(${top.x} ${top.y})`} stroke="none" style={{ pointerEvents: 'none' }}>
+          <g key={`neglect-${o.id}`} transform={`translate(${top.x} ${top.y}) scale(${TILE_SCALE})`} stroke="none" style={{ pointerEvents: 'none' }}>
             <NeglectCue kind={entry.mess} level={level} />
           </g>
         )
