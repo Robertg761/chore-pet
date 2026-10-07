@@ -221,7 +221,7 @@ export const DECOR: CatalogEntry[] = [
     id: 'fairy-lights',
     name: 'Fairy lights',
     rooms: ['living', 'bedroom', 'kitchen'],
-    footprint: { w: 1, d: 1 },
+    footprint: { w: 1, d: 2 },
     placement: 'wall',
     layer: 'hung',
     chores: [],
