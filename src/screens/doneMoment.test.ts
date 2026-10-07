@@ -15,6 +15,11 @@ describe('sparkleSpot', () => {
     expect(spot.x).toBeGreaterThan(0)
   })
 
+  it('is as wide as the footprint on screen (a 2x2 table is two tiles wide)', () => {
+    const spot = sparkleSpot(placed('table', 2, 2), catalogEntry('table')!)
+    expect(spot.size).toBeCloseTo(2 * ROOM_TILE_W)
+  })
+
   it('lifts the fridge higher than a counter', () => {
     const fridge = sparkleSpot(placed('fridge', 2, 2), catalogEntry('fridge')!)
     const sink = sparkleSpot(placed('sink', 2, 2), catalogEntry('sink')!)

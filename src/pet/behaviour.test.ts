@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { besideTiles, findPath, initialPet, positionAt, poseFor, step, tap, TIMING, type PetState, type Tile, type World } from './behaviour'
+import { ROOM_SIZE } from '../room/grid'
 
 const blocked = (tiles: Tile[]) => {
   const set = new Set(tiles.map((t) => `${t.tx},${t.ty}`))
@@ -20,7 +21,7 @@ describe('paths', () => {
 
   it('gives up when the goal is walled off', () => {
     const free = blocked([{ tx: 1, ty: 0 }, { tx: 0, ty: 1 }])
-    expect(findPath({ tx: 0, ty: 0 }, [{ tx: 5, ty: 5 }], free)).toBeNull()
+    expect(findPath({ tx: 0, ty: 0 }, [{ tx: ROOM_SIZE - 1, ty: ROOM_SIZE - 1 }], free)).toBeNull()
   })
 
   it('finds free tiles beside an object', () => {

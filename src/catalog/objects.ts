@@ -18,6 +18,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 2, d: 2 },
     placement: 'wall',
     layer: 'solid',
+    mess: 'stink',
     chores: [{ name: 'Scrub the shower', schedule: { kind: 'weekly', weekday: 6 } }],
   },
   {
@@ -27,6 +28,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'wall',
     layer: 'solid',
+    mess: 'stink',
     chores: [{ name: 'Clean the toilet', schedule: { kind: 'weekly', weekday: 3 } }],
   },
   {
@@ -36,6 +38,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'wall',
     layer: 'solid',
+    mess: 'stink',
     chores: [
       { name: 'Do a load of laundry', schedule: { kind: 'weekdays', days: [1, 4] } },
       { name: 'Run a washer cleaning cycle', schedule: { kind: 'monthly', dayOfMonth: 15 } },
@@ -50,6 +53,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 3, d: 2 },
     placement: 'wall',
     layer: 'solid',
+    mess: 'dust',
     chores: [
       { name: 'Make the bed', schedule: { kind: 'daily' } },
       { name: 'Change the sheets', schedule: { kind: 'weekly', weekday: 0 } },
@@ -64,6 +68,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'wall',
     layer: 'solid',
+    mess: 'stink',
     chores: [
       { name: 'Run and empty the dishwasher', schedule: { kind: 'everyNDays', n: 2 } },
       { name: 'Clean the dishwasher filter', schedule: { kind: 'monthly', dayOfMonth: 20 } },
@@ -76,6 +81,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'wall',
     layer: 'solid',
+    mess: 'stink',
     chores: [
       { name: 'Clear out old food', schedule: { kind: 'weekly', weekday: 5 } },
       { name: 'Wipe the fridge shelves', schedule: { kind: 'monthly', dayOfMonth: 5 } },
@@ -88,6 +94,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'floor',
     layer: 'solid',
+    mess: 'stink',
     chores: [{ name: 'Take out the recycling', schedule: { kind: 'weekly', weekday: 4 } }],
   },
   {
@@ -97,6 +104,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'wall',
     layer: 'solid',
+    mess: 'stink',
     chores: [
       { name: 'Wash the dishes', schedule: { kind: 'daily' } },
       { name: 'Scrub the sink', schedule: { kind: 'weekly', weekday: 1 } },
@@ -109,6 +117,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'wall',
     layer: 'solid',
+    mess: 'stink',
     chores: [
       { name: 'Wipe the stove', schedule: { kind: 'everyNDays', n: 3 } },
       { name: 'Clean the oven', schedule: { kind: 'monthly', dayOfMonth: 12 } },
@@ -121,6 +130,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 2, d: 2 },
     placement: 'floor',
     layer: 'solid',
+    mess: 'dust',
     chores: [{ name: 'Wipe the table', schedule: { kind: 'everyNDays', n: 2 } }],
   },
   {
@@ -130,6 +140,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'floor',
     layer: 'solid',
+    mess: 'stink',
     chores: [
       { name: 'Take out the trash', schedule: { kind: 'everyNDays', n: 3 } },
       { name: 'Wash the trash can', schedule: { kind: 'monthly', dayOfMonth: 25 } },
@@ -144,8 +155,9 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 1, d: 2 },
     placement: 'wall',
     layer: 'solid',
+    mess: 'dust',
     chores: [
-      { name: 'Fluff the cushions', schedule: { kind: 'everyNDays', n: 3 } },
+      { name: 'Fluff the cushions', schedule: { kind: 'everyNDays', n: 7 } },
       { name: 'Vacuum under the cushions', schedule: { kind: 'monthly', dayOfMonth: 10 } },
     ],
   },
@@ -156,6 +168,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'wall',
     layer: 'solid',
+    mess: 'stink',
     chores: [
       { name: 'Feed the fish', schedule: { kind: 'daily' } },
       { name: 'Clean the fish tank', schedule: { kind: 'monthly', dayOfMonth: 8 } },
@@ -168,7 +181,8 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'floor',
     layer: 'solid',
-    chores: [{ name: 'Water the plant', schedule: { kind: 'everyNDays', n: 3 } }],
+    mess: 'wilt',
+    chores: [{ name: 'Water the plant', schedule: { kind: 'everyNDays', n: 7 } }],
   },
   {
     id: 'rug',
@@ -177,6 +191,7 @@ export const CATALOG: CatalogEntry[] = [
     footprint: { w: 2, d: 3 },
     placement: 'floor',
     layer: 'flat',
+    mess: 'dust',
     chores: [{ name: 'Vacuum the rug', schedule: { kind: 'weekly', weekday: 2 } }],
   },
 ]
@@ -194,6 +209,7 @@ export const DECOR: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'floor',
     layer: 'solid',
+    mess: 'dust',
     chores: [],
     unlock: 'decor:teddy',
   },
@@ -204,6 +220,7 @@ export const DECOR: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'floor',
     layer: 'solid',
+    mess: 'dust',
     chores: [],
     unlock: 'decor:lamp',
   },
@@ -214,6 +231,7 @@ export const DECOR: CatalogEntry[] = [
     footprint: { w: 1, d: 1 },
     placement: 'wall',
     layer: 'hung',
+    mess: 'dust',
     chores: [],
     unlock: 'decor:poster',
   },
@@ -224,6 +242,7 @@ export const DECOR: CatalogEntry[] = [
     footprint: { w: 1, d: 2 },
     placement: 'wall',
     layer: 'hung',
+    mess: 'dust',
     chores: [],
     unlock: 'decor:fairy-lights',
   },

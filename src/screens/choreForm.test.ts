@@ -5,6 +5,7 @@ import {
   formFromChore,
   ordinal,
   parseN,
+  resolveObjectId,
   scheduleFromForm,
   stepN,
   toggleDay,
@@ -102,6 +103,7 @@ describe('valueFromForm', () => {
     expect(valueFromForm(form({ name: '  Dishes  ', kind: 'everyNDays', n: '4' }))).toEqual({
       name: 'Dishes',
       schedule: { kind: 'everyNDays', n: 4 },
+      objectId: null,
     })
   })
 
@@ -109,6 +111,41 @@ describe('valueFromForm', () => {
     expect(valueFromForm(form({ name: '' }))).toBeNull()
     expect(valueFromForm(form({ kind: 'weekdays', days: [] }))).toBeNull()
     expect(scheduleFromForm(form({ kind: 'everyNDays', n: '1' }))).toBeNull()
+  })
+})
+
+describe('where the chore lives', () => {
+  const places = [
+    { id: 'sink', name: 'Sink' },
+    { id: 'rug', name: 'Rug' },
+  ]
+  const tied = (objectId: string | null): Chore => ({ ...chore({ kind: 'daily' }), objectId })
+
+  it('starts with no object for a new chore and the current one when editing', () => {
+    expect(formFromChore(undefined, TODAY).objectId).toBeNull()
+    expect(formFromChore(tied(null), TODAY).objectId).toBeNull()
+    expect(formFromChore(tied('sink'), TODAY).objectId).toBe('sink')
+  })
+
+  it('round-trips the chosen object', () => {
+    expect(valueFromForm(formFromChore(tied('rug'), TODAY), places)?.objectId).toBe('rug')
+    expect(valueFromForm(form({ objectId: 'sink' }), places)?.objectId).toBe('sink')
+  })
+
+  it('clears to none with an explicit null', () => {
+    const value = valueFromForm({ ...formFromChore(tied('sink'), TODAY), objectId: null }, places)
+    expect(value).toMatchObject({ objectId: null })
+    expect(value && 'objectId' in value).toBe(true)
+  })
+
+  it('treats an object that has left the room as none', () => {
+    expect(resolveObjectId('gone', places)).toBeNull()
+    expect(valueFromForm(form({ objectId: 'gone' }), places)?.objectId).toBeNull()
+  })
+
+  it('leaves the current object alone when there are no places to pick from', () => {
+    expect(resolveObjectId('sink', [])).toBe('sink')
+    expect(valueFromForm(formFromChore(tied('sink'), TODAY), [])?.objectId).toBe('sink')
   })
 })
 

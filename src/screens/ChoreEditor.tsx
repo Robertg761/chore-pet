@@ -1,5 +1,5 @@
 import { useId, useRef, useState, type FormEvent } from 'react'
-import type { Chore, Schedule, Weekday } from '../domain/types'
+import type { Chore, Weekday } from '../domain/types'
 import {
   N_MAX,
   N_MIN,
@@ -11,12 +11,15 @@ import {
   describeSchedule,
   formFromChore,
   ordinal,
+  resolveObjectId,
   scheduleFromForm,
   stepN,
   toggleDay,
   validateForm,
   valueFromForm,
   type ChoreFormState,
+  type ChorePlace,
+  type ChoreValue,
   type ScheduleKind,
 } from './choreForm'
 import './ChoreEditor.css'
@@ -24,7 +27,10 @@ import './ChoreEditor.css'
 export interface ChoreEditorProps {
   /** Missing when adding a new chore. */
   chore?: Chore
-  onSave: (value: { name: string; schedule: Schedule }) => void
+  /** The placed objects in the room, already labelled ("Sink", "Rug 2"). Empty hides the "Where is it?" field. */
+  places?: ChorePlace[]
+  /** objectId is always set: an id, or null for "nowhere in particular". */
+  onSave: (value: ChoreValue) => void
   onDelete?: () => void
   onCancel: () => void
 }
@@ -33,7 +39,7 @@ type Field = 'name' | 'n' | 'days'
 
 const MONTH_DAYS = Array.from({ length: 31 }, (_, i) => i + 1)
 
-export function ChoreEditor({ chore, onSave, onDelete, onCancel }: ChoreEditorProps) {
+export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: ChoreEditorProps) {
   const uid = useId()
   const [form, setForm] = useState<ChoreFormState>(() => formFromChore(chore))
   const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({})
@@ -57,7 +63,7 @@ export function ChoreEditor({ chore, onSave, onDelete, onCancel }: ChoreEditorPr
   const submit = (e: FormEvent) => {
     e.preventDefault()
     setSubmitted(true)
-    const value = valueFromForm(form)
+    const value = valueFromForm(form, places)
     if (value) {
       onSave(value)
       return
@@ -81,9 +87,13 @@ export function ChoreEditor({ chore, onSave, onDelete, onCancel }: ChoreEditorPr
   const nameErrId = `${uid}-name-err`
   const nId = `${uid}-n`
   const nErrId = `${uid}-n-err`
+  const nHintId = `${uid}-n-hint`
   const daysErrId = `${uid}-days-err`
   const domId = `${uid}-dom`
   const domHintId = `${uid}-dom-hint`
+  const whereId = `${uid}-where`
+  const whereHintId = `${uid}-where-hint`
+  const where = resolveObjectId(form.objectId, places)
 
   return (
     <form className="editor" onSubmit={submit} noValidate>
@@ -158,7 +168,7 @@ export function ChoreEditor({ chore, onSave, onDelete, onCancel }: ChoreEditorPr
                   autoComplete="off"
                   value={form.n}
                   aria-invalid={shown('n') ? true : undefined}
-                  aria-describedby={shown('n') ? nErrId : undefined}
+                  aria-describedby={shown('n') ? nErrId : nHintId}
                   onChange={(e) => patch({ n: e.target.value })}
                   onBlur={() => touch('n')}
                 />
@@ -177,7 +187,7 @@ export function ChoreEditor({ chore, onSave, onDelete, onCancel }: ChoreEditorPr
                   days
                 </span>
               </div>
-              {!shown('n') && <p className="editor-hint">Pick a number from {N_MIN} to {N_MAX}.</p>}
+              {!shown('n') && <p className="editor-hint editor-hint-n" id={nHintId}>Pick a number from {N_MIN} to {N_MAX}.</p>}
               {shown('n') && (
                 <p className="editor-error" id={nErrId} role="alert">
                   {errors.n}
@@ -265,6 +275,29 @@ export function ChoreEditor({ chore, onSave, onDelete, onCancel }: ChoreEditorPr
             <p className="editor-summary" aria-live="polite">
               <span className="editor-summary-label">Repeats</span> {summary}
             </p>
+          )}
+
+          {places.length > 0 && (
+            <div className="editor-field editor-where">
+              <label htmlFor={whereId}>Where is it?</label>
+              <select
+                id={whereId}
+                className="editor-input editor-select"
+                value={where ?? ''}
+                aria-describedby={whereHintId}
+                onChange={(e) => patch({ objectId: e.target.value || null })}
+              >
+                <option value="">Nowhere in particular</option>
+                {places.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+              <p className="editor-hint" id={whereHintId}>
+                Late chores show as mess on this.
+              </p>
+            </div>
           )}
 
           <div className="editor-actions">

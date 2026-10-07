@@ -43,6 +43,21 @@ export interface ChoreFormState {
   days: Weekday[]
   weekday: Weekday
   dayOfMonth: number
+  /** The placed object this chore belongs to, or null for "nowhere in particular". */
+  objectId: string | null
+}
+
+/** What the editor hands to onSave. objectId is always present so null can clear an old choice. */
+export interface ChoreValue {
+  name: string
+  schedule: Schedule
+  objectId: string | null
+}
+
+/** A placed object the chore can belong to, already labelled for display. */
+export interface ChorePlace {
+  id: string
+  name: string
 }
 
 export interface ChoreFormErrors {
@@ -61,6 +76,7 @@ export function formFromChore(chore: Chore | undefined, today: ISODate = todayIS
     days: [todayWeekday],
     weekday: todayWeekday,
     dayOfMonth: Number(today.slice(8, 10)),
+    objectId: chore?.objectId ?? null,
   }
   const s = chore?.schedule
   if (!s) return form
@@ -128,11 +144,21 @@ export function scheduleFromForm(form: ChoreFormState): Schedule | null {
   }
 }
 
+/**
+ * The object to show as chosen. With no places to pick from the field is hidden,
+ * so the chore's current object is left alone; otherwise an object that is no
+ * longer in the room counts as "nowhere in particular".
+ */
+export function resolveObjectId(objectId: string | null, places: readonly ChorePlace[]): string | null {
+  if (places.length === 0) return objectId
+  return objectId !== null && places.some((p) => p.id === objectId) ? objectId : null
+}
+
 /** The value to hand to onSave, or null when the form is invalid. */
-export function valueFromForm(form: ChoreFormState): { name: string; schedule: Schedule } | null {
+export function valueFromForm(form: ChoreFormState, places: readonly ChorePlace[] = []): ChoreValue | null {
   if (!isValid(form)) return null
   const schedule = scheduleFromForm(form)
-  return schedule ? { name: form.name.trim(), schedule } : null
+  return schedule ? { name: form.name.trim(), schedule, objectId: resolveObjectId(form.objectId, places) } : null
 }
 
 export function ordinal(n: number): string {

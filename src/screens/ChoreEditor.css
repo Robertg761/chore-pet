@@ -13,6 +13,10 @@
   .editor { gap: 8px; }
 }
 
+@media (max-height: 700px) and (max-width: 899px) {
+  .editor { gap: 6px; }
+}
+
 /* On phones the two columns are just one list. */
 .editor-cols,
 .editor-col { display: contents; }
@@ -43,6 +47,31 @@
 
 .editor-hint { margin: 0; font-size: 14px; font-weight: 700; color: var(--ink-soft); }
 .editor-error { margin: 0; font-size: 14px; font-weight: 800; color: var(--late-ink); }
+
+/* "Where is it?": label and select share a row on phones so the editor still fits one screen. */
+@media (max-width: 899px) {
+  .editor-where {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 6px 10px;
+  }
+  .editor-where > label { white-space: nowrap; }
+  .editor-where > .editor-hint { grid-column: 1 / -1; }
+}
+
+/* Short phones: the number range is still read out, just not drawn, to keep the editor on one screen. */
+@media (max-height: 700px) and (max-width: 899px) {
+  .editor-hint-n {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
 
 /* Schedule kind: a radio list of big cards. */
 .editor-kinds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }

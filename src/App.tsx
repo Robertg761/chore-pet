@@ -4,7 +4,7 @@ import type { CatalogEntry } from './catalog/types'
 import { CharacterArt } from './character/Character'
 import { isInVacation } from './domain/dates'
 import { petCondition } from './domain/health'
-import { objectMessStages } from './domain/mess'
+import { messStageFor, objectNeglect } from './domain/mess'
 import type { Chore } from './domain/types'
 import { currentStreak, type Unlock } from './domain/unlocks'
 import { ITEMS } from './character/items'
@@ -204,11 +204,23 @@ export default function App() {
 
   if (view.name === 'edit') {
     const { chore } = view
+    // Places a chore can belong to, named like the catalog; duplicates are numbered ("Rug 2").
+    const seen = new Map<string, number>()
+    const places = objects
+      .filter((o) => o.roomId === rooms[0]?.id)
+      .flatMap((o) => {
+        const name = catalogEntry(o.catalogId)?.name
+        if (!name) return []
+        const n = (seen.get(name) ?? 0) + 1
+        seen.set(name, n)
+        return [{ id: o.id, name: n > 1 ? `${name} ${n}` : name }]
+      })
     return framed(
       'home',
       <main className="shell screen">
         <ChoreEditor
           chore={chore}
+          places={places}
           onSave={(value) => {
             appStore.apply(...(chore ? updateChore(chore, value) : addChore(home, value, today)))
             back()
@@ -308,7 +320,8 @@ export default function App() {
 
   const condition = petCondition(chores, completions, today, home.vacations)
   const away = isInVacation(today, home.vacations)
-  const stages = objectMessStages(chores, condition.statuses)
+  const neglect = objectNeglect(chores, condition.statuses)
+  const stages = Object.fromEntries(Object.entries(neglect).map(([id, level]) => [id, messStageFor(level)]))
   const roomObjects = room ? objects.filter((o) => o.roomId === room.id) : []
   const solid = roomObjects.flatMap((o) => {
     const e = catalogEntry(o.catalogId)
@@ -365,6 +378,7 @@ export default function App() {
             room={room}
             objects={roomObjects}
             stages={stages}
+            neglect={neglect}
             pet={petInRoom}
             selectedId={selectedId}
             onSelect={(id) => (setSelectedId(id), setPlacing(null))}
@@ -483,6 +497,7 @@ export default function App() {
             room={room}
             objects={roomObjects}
             stages={stages}
+            neglect={neglect}
             pet={pet}
             mood={condition.mood}
             away={away}

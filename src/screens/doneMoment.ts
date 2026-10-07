@@ -3,7 +3,7 @@ import { PALETTE } from '../art/palette'
 import type { CatalogEntry } from '../catalog/types'
 import type { PlacedObject } from '../domain/types'
 import { footprintOf } from '../room/grid'
-import { ROOM_TILE_W, roomPoint } from '../room/shell/geometry'
+import { ROOM_TILE_W, TILE_SCALE, roomPoint } from '../room/shell/geometry'
 
 // Pure helpers for the completion moment: where the sparkle goes and what
 // colour the health bar is.
@@ -21,7 +21,7 @@ export interface SparkleSpot {
 /** Room-px spot for the sparkle over an object: above the middle of its footprint. */
 export function sparkleSpot(placed: PlacedObject, entry: Pick<CatalogEntry, 'id' | 'footprint'>): SparkleSpot {
   const f = footprintOf(placed, entry)
-  const centre = roomPoint(f.tx + f.w / 2, f.ty + f.d / 2, LIFT[entry.id] ?? DEFAULT_LIFT)
+  const centre = roomPoint(f.tx + f.w / 2, f.ty + f.d / 2, (LIFT[entry.id] ?? DEFAULT_LIFT) * TILE_SCALE)
   // About the width of the footprint on screen, never smaller than one tile.
   const size = Math.max(f.w, f.d, 1) * ROOM_TILE_W
   return { x: centre.x, y: centre.y, size }

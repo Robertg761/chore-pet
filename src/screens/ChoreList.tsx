@@ -74,12 +74,12 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
     const early = status.state === 'upcoming'
     const justDone = finishing.has(chore.id)
     return (
-      <li key={chore.id} className={`cl-row cl-row-${status.state}${justDone ? ' cl-row-done' : ''}`}>
+      <li key={chore.id} className={`cl-row cl-row-${status.state}${status.neglect ? ` cl-row-late${status.neglect}` : ''}${justDone ? ' cl-row-done' : ''}`}>
         <div className="cl-info">
           <button type="button" className="cl-name" onClick={() => onEdit(chore)}>
             {chore.name}
           </button>
-          <span className={`tag tag-${status.state}`}>{label}</span>
+          <span className={`tag tag-${status.state}${status.neglect ? ` tag-late${status.neglect}` : ''}`}>{label}</span>
         </div>
         {justDone ? (
           <span className="cl-action cl-done-mark" role="status">

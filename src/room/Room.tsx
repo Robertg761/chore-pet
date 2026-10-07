@@ -2,19 +2,20 @@ import type { KeyboardEvent, ReactNode, Ref, SVGProps } from 'react'
 import { PALETTE, ROOM_STROKE } from '../art/palette'
 import { catalogEntry } from '../catalog/objects'
 import type { CatalogEntry } from '../catalog/types'
+import type { NeglectLevel } from '../domain/neglect'
 import type { MessStage, PlacedObject, Room as RoomRow } from '../domain/types'
 import { depthOrder, footprintOf, type Footprint, type Placement, type Sortable } from './grid'
+import { NeglectCue } from './neglect'
 import { OBJECT_ART } from './objects'
 import { RoomShell } from './shell/RoomShell'
-import { OBJECT_SCALE, roomPoint, roomPoints } from './shell/geometry'
+import { OBJECT_SCALE, PET_SCALE, TILE_SCALE, roomPoint, roomPoints } from './shell/geometry'
 
 // The room: shell, floor highlights, then every object and the pet drawn back
 // to front. Pure rendering; build mode (src/room/BuildRoom.tsx) adds input.
 
 const { ink, accent, white, cream, creamDark } = PALETTE
 
-/** How big the pet's 200x200 art is drawn in the room (about one tile wide). */
-export const PET_SCALE = 0.44
+export { PET_SCALE } from './shell/geometry'
 
 const FITS = '#5DBB63'
 const BLOCKED = PALETTE.warmRed
@@ -30,6 +31,8 @@ export interface RoomProps {
   objects: PlacedObject[]
   /** Mess stage per placed object id; clean when missing. */
   stages?: Record<string, MessStage>
+  /** Neglect level per placed object id (src/domain/neglect.ts): a cue floats above each late object. */
+  neglect?: Record<string, NeglectLevel>
   selectedId?: string | null
   /** A new or moving object's preview: drawn see-through with a green or red footprint. */
   ghost?: Ghost | null
@@ -62,6 +65,14 @@ function objectArt(entry: CatalogEntry, p: Placement, stage: MessStage) {
   )
 }
 
+/** The top-centre of an object's art in room coordinates, where its neglect cue floats. */
+function objectTop(entry: CatalogEntry, p: Placement) {
+  const corner = roomPoint(p.tileX, p.tileY)
+  const flip = p.rotation % 2 === 1 ? -1 : 1
+  const b = OBJECT_ART[entry.id]?.bounds ?? { x: -32, y: -40, width: 64, height: 56 }
+  return { x: corner.x + flip * OBJECT_SCALE * (b.x + b.width / 2), y: corner.y + OBJECT_SCALE * b.y }
+}
+
 /** A plain box for objects whose art hasn't landed yet, in art units (64 px tiles). */
 function placeholder(entry: CatalogEntry) {
   const { w, d } = entry.footprint
@@ -89,7 +100,7 @@ function footprintPolygon(f: Footprint, fill: string, opacity: number, dashed = 
   )
 }
 
-export function Room({ room, objects, stages = {}, selectedId, ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
+export function Room({ room, objects, stages = {}, neglect = {}, selectedId, ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
   const items: Item[] = []
 
   for (const o of objects) {
@@ -159,6 +170,17 @@ export function Room({ room, objects, stages = {}, selectedId, ghost, hiddenId, 
       {selected && selectedEntry && footprintPolygon(footprintOf(selected, selectedEntry), accent, 0.3)}
       {ghost && footprintPolygon(footprintOf(ghost.placement, ghost.entry), ghost.ok ? FITS : BLOCKED, 0.4, true)}
       {depthOrder(items).map((i) => i.draw())}
+      {objects.map((o) => {
+        const level = neglect[o.id]
+        const entry = level && o.id !== hiddenId ? catalogEntry(o.catalogId) : undefined
+        if (!level || !entry) return null
+        const top = objectTop(entry, o)
+        return (
+          <g key={`neglect-${o.id}`} transform={`translate(${top.x} ${top.y}) scale(${TILE_SCALE})`} stroke="none" style={{ pointerEvents: 'none' }}>
+            <NeglectCue kind={entry.mess} level={level} />
+          </g>
+        )
+      })}
       {overlay}
     </RoomShell>
   )

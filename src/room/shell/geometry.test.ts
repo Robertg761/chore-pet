@@ -1,21 +1,36 @@
 import { describe, expect, it } from 'vitest'
 import { TILE_W } from '../iso'
+import { PET_SCALE } from './geometry'
 import {
   OBJECT_SCALE,
   ROOM_ORIGIN,
   ROOM_TILES,
   ROOM_TILE_H,
   ROOM_TILE_W,
+  ROOM_VIEWBOX,
   ROOM_WIDTH,
+  SLAB_DEPTH,
+  TILE_SCALE,
+  WALL_HEIGHT,
+  WINDOW,
   roomPoint,
   roomPoints,
   tileCorner,
 } from './geometry'
 
 describe('room constants', () => {
-  it('is a 6x6 room whose floor spans 340 px', () => {
-    expect(ROOM_TILES).toBe(6)
+  it('is a square room of whole tiles whose floor spans 340 px', () => {
+    expect(Number.isInteger(ROOM_TILES)).toBe(true)
+    expect(ROOM_TILES).toBeGreaterThan(0)
     expect(ROOM_TILE_W * ROOM_TILES).toBeCloseTo(340)
+  })
+
+  it('makes a tile 340 / ROOM_TILES px wide', () => {
+    expect(ROOM_TILE_W).toBeCloseTo(340 / ROOM_TILES)
+  })
+
+  it('fits the floor diamond inside the room width', () => {
+    expect(ROOM_TILE_W * ROOM_TILES).toBeLessThanOrEqual(ROOM_WIDTH)
   })
 
   it('keeps tiles 2:1 (twice as wide as tall)', () => {
@@ -29,6 +44,86 @@ describe('room constants', () => {
   it('scales 64 px object art to room tiles', () => {
     expect(OBJECT_SCALE).toBeCloseTo(ROOM_TILE_W / TILE_W)
     expect(OBJECT_SCALE).toBeLessThan(1)
+  })
+})
+
+describe('tile scale (the art was drawn for a 6x6 reference room)', () => {
+  it('shrinks tiles so that TILE_SCALE x ROOM_TILES is always 6', () => {
+    expect(TILE_SCALE * ROOM_TILES).toBeCloseTo(6)
+  })
+
+  it('is the size of a tile against a 340 / 6 px reference tile', () => {
+    expect(ROOM_TILE_W / (340 / 6)).toBeCloseTo(TILE_SCALE)
+  })
+
+  it('scales the wall height from the 160 px reference', () => {
+    expect(WALL_HEIGHT).toBe(Math.round(160 * TILE_SCALE))
+    expect(Math.abs(WALL_HEIGHT - 160 * TILE_SCALE)).toBeLessThanOrEqual(0.5)
+  })
+
+  it('sits the floor origin just below the wall top', () => {
+    expect(ROOM_ORIGIN.y).toBe(WALL_HEIGHT + 10)
+  })
+
+  it('scales the pet with the tiles, so it stays about one tile wide', () => {
+    expect(PET_SCALE).toBeCloseTo(0.44 * TILE_SCALE)
+    // the pet's art is 200 px wide; the reference pet was 0.44 x 200 px against a 340 / 6 px tile
+    expect((PET_SCALE * 200) / ROOM_TILE_W).toBeCloseTo((0.44 * 200) / (340 / 6))
+  })
+})
+
+describe('the window', () => {
+  it('stays inside the left wall along its length', () => {
+    expect(WINDOW.u0).toBeGreaterThan(0)
+    expect(WINDOW.u0).toBeLessThan(WINDOW.u1)
+    expect(WINDOW.u1).toBeLessThan(ROOM_TILES)
+  })
+
+  it('stays inside the wall in height', () => {
+    expect(WINDOW.z0).toBeGreaterThan(0)
+    expect(WINDOW.z0).toBeLessThan(WINDOW.z1)
+    expect(WINDOW.z1).toBeLessThan(WALL_HEIGHT)
+  })
+
+  it('shrinks the window with the tiles in both directions, so it keeps its shape', () => {
+    // Reference room: 1.8 tiles of 340/6 px across, 64 px tall.
+    const refAspect = (1.8 * (340 / 6)) / (140 - 76)
+    const width = (WINDOW.u1 - WINDOW.u0) * ROOM_TILE_W
+    const height = WINDOW.z1 - WINDOW.z0
+    expect(WINDOW.u1 - WINDOW.u0).toBeCloseTo(1.8)
+    expect(width / height).toBeCloseTo(refAspect, 1)
+    expect(WINDOW.z0).toBe(Math.round(76 * TILE_SCALE))
+    expect(WINDOW.z1).toBe(Math.round(140 * TILE_SCALE))
+  })
+
+  it('keeps the window on the same tiles as the 6x6 room, so older wall decor never covers it', () => {
+    expect(WINDOW.u0).toBe(1.8)
+    expect(WINDOW.u1).toBe(3.6)
+  })
+})
+
+describe('the viewBox', () => {
+  const frontCorner = roomPoint(ROOM_TILES, ROOM_TILES)
+  const floorBottom = ROOM_ORIGIN.y + ROOM_TILES * ROOM_TILE_H
+
+  it('puts the floor front corner at origin.y + ROOM_TILES x tile height', () => {
+    expect(frontCorner.y).toBeCloseTo(floorBottom)
+  })
+
+  it('contains the whole floor plus the slab underneath', () => {
+    const bottom = ROOM_VIEWBOX.y + ROOM_VIEWBOX.height
+    expect(floorBottom + SLAB_DEPTH).toBeLessThanOrEqual(bottom)
+    expect(roomPoint(0, 0).y).toBeGreaterThanOrEqual(ROOM_VIEWBOX.y)
+    expect(roomPoint(ROOM_TILES, 0).x).toBeLessThanOrEqual(ROOM_VIEWBOX.x + ROOM_VIEWBOX.width)
+    expect(roomPoint(0, ROOM_TILES).x).toBeGreaterThanOrEqual(ROOM_VIEWBOX.x)
+  })
+
+  it('contains the top of the walls', () => {
+    expect(ROOM_ORIGIN.y - WALL_HEIGHT).toBeGreaterThanOrEqual(ROOM_VIEWBOX.y)
+  })
+
+  it('is as wide as the room', () => {
+    expect(ROOM_VIEWBOX.width).toBe(ROOM_WIDTH)
   })
 })
 
@@ -48,15 +143,15 @@ describe('roomPoint', () => {
   })
 
   it('places the floor corners on the 2:1 diamond', () => {
-    const half = ROOM_TILE_W * 3 // 170
-    const right = roomPoint(6, 0)
-    const left = roomPoint(0, 6)
-    const front = roomPoint(6, 6)
+    const half = (ROOM_TILE_W * ROOM_TILES) / 2 // 170
+    const right = roomPoint(ROOM_TILES, 0)
+    const left = roomPoint(0, ROOM_TILES)
+    const front = roomPoint(ROOM_TILES, ROOM_TILES)
     expect(right.x).toBeCloseTo(ROOM_ORIGIN.x + half)
     expect(left.x).toBeCloseTo(ROOM_ORIGIN.x - half)
     expect(right.y).toBeCloseTo(left.y)
     expect(front.x).toBeCloseTo(ROOM_ORIGIN.x)
-    expect(front.y).toBeCloseTo(ROOM_ORIGIN.y + 12 * (ROOM_TILE_H / 2))
+    expect(front.y).toBeCloseTo(ROOM_ORIGIN.y + ROOM_TILES * ROOM_TILE_H)
   })
 
   it('lifts a point up the screen by z', () => {

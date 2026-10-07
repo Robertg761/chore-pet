@@ -3,7 +3,7 @@ import { SPECIES_COLOUR } from '../art/palette'
 import { catalogEntry } from '../catalog/objects'
 import { change, emptySnapshot, selectHome, type HomeData } from '../data/state'
 import { petCondition } from '../domain/health'
-import { objectMessStages } from '../domain/mess'
+import { objectMessStages, objectNeglect } from '../domain/mess'
 import { SPECIES, type ISODate, type Species } from '../domain/types'
 import { checkPlacement, footprintOf, freeTile, overlaps, ROOM_SIZE, tilesOf, type Footprint } from '../room/grid'
 import { SAMPLE_HOME_NAME, SAMPLE_KITCHEN, SAMPLE_LATE_CHORES, SAMPLE_PET_NAMES, sampleHome } from './sampleHome'
@@ -16,7 +16,8 @@ function build(species: Species, today: ISODate, petName?: string) {
   const data = selectHome(snapshot.tables)
   const condition = petCondition(data.chores, data.completions, today, data.home!.vacations)
   const stages = objectMessStages(data.chores, condition.statuses)
-  return { ops, data, condition, stages }
+  const neglect = objectNeglect(data.chores, condition.statuses)
+  return { ops, data, condition, stages, neglect }
 }
 
 function objectOf(data: HomeData, catalogId: string) {
@@ -92,7 +93,7 @@ describe('sampleHome', () => {
   })
 
   it.each(TODAYS)('on %s exactly two chores are overdue: the dishes (messy2) and the trash (messy1)', (today) => {
-    const { data, condition, stages } = build('mochi', today)
+    const { data, condition, stages, neglect } = build('mochi', today)
     const overdue = condition.statuses.filter((s) => s.state === 'overdue')
     const names = overdue.map((s) => data.chores.find((c) => c.id === s.choreId)!.name).sort()
     expect(names).toEqual(['Take out the trash', 'Wash the dishes'])
@@ -105,6 +106,8 @@ describe('sampleHome', () => {
     const sink = objectOf(data, 'sink')
     const trash = objectOf(data, 'trash')
     expect(stages).toEqual({ [sink.id]: 'messy2', [trash.id]: 'messy1' })
+    // Daily dishes 3 days late is level 2; trash every 3 days, 1 day late, is level 1.
+    expect(neglect).toEqual({ [sink.id]: 2, [trash.id]: 1 })
   })
 
   it.each(TODAYS)('on %s everything else is due today or upcoming, and the pet is not sick', (today) => {
@@ -112,8 +115,9 @@ describe('sampleHome', () => {
     const others = condition.statuses.filter((s) => s.state !== 'overdue')
     expect(others).toHaveLength(data.chores.length - 2)
     expect(others.every((s) => s.dueDate >= today)).toBe(true)
-    expect(['content', 'meh']).toContain(condition.mood)
-    expect(condition.health).toBe(72)
+    expect(condition.health).toBe(79) // 100 - 15 (dishes, level 2) - 6 (trash, level 1)
+    expect(condition.mood).toBe('content')
+    expect(condition.worst?.choreId).toBe(data.chores.find((c) => c.name === 'Wash the dishes')!.id)
   })
 
   it.each(TODAYS)('on %s only records completions in the past, within the last two weeks', (today) => {

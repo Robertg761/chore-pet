@@ -158,6 +158,26 @@ Parallel batch I:
 
 **Done when:** every item looks made for every pet in every pose, and the home and every screen fit one viewport on a phone and a desktop browser. **Met.**
 
+## Phase 9: Chore audit and escalating neglect
+
+User feedback: players set their own frequency, chores should be real ones, neglect should be easy to spot, and it should get worse over time ("one day missed cleaning the toilet isn't the worst, but a few days it should start to get progressively more stinky").
+
+Audit findings, all fixed:
+- Mess had two stages and maxed out at 3 days late, whatever the chore: a monthly oven clean 3 days late looked as bad as dishes 3 days late, and cost the same health.
+- Chores added from the home screen were tied to no object, so neglecting them never showed in the room.
+- Two defaults weren't realistic (watering a plant and fluffing cushions every 3 days).
+- Rewards were already cosmetic (Phase 8); frequency was already editable per chore (every day, every 2 to 60 days, chosen weekdays, weekly, monthly).
+
+- [LEAD] Neglect levels (`src/domain/neglect.ts`): 0 to 3, scaled to each chore's cadence. Mess stages, the pet's health and the pet's grumbles follow the level; the chore list's late tags get louder with it. Every catalog object gets a mess kind (stink, dust or wilt). Plant and cushions become weekly. **Done**
+- [SONNET: svg-artist] Neglect cues (`src/room/neglect.tsx`): stink, dust and wilt at levels 1 to 3, floating over the object, gently animated. **Done**
+- [SONNET: ui-builder] "Where is it?" in the chore editor, so any chore can be tied to an object. **Done**
+- [SONNET: test-writer] Tests for cadence, thresholds, levels, health and mess. **Done** (no bugs found; noted that monthly chores reach level 3 at 14 days by design)
+
+- [LEAD] Roomier room (user feedback: the default room felt claustrophobic). The floor grows from 6x6 to 8x8 tiles, 78% more space. Walls, window, pet, neglect cues and sparkles scale with `TILE_SCALE` so every proportion holds; existing rooms keep their layout with open floor in front. **Done**
+- [SONNET: test-writer] Room and geometry tests written in terms of the room size. **Done**
+
+**Done when:** a late chore shows on its object and visibly gets worse day by day at a pace that fits the chore, the pet's health matches what the room shows, and any chore can be tied to an object. **Met.**
+
 ## Stretch
 
 Photo proof, multiple rooms and templates, shared households, drawing your own floor plan.
