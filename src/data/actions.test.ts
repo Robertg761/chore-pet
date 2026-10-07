@@ -121,13 +121,13 @@ describe('editing a chore', () => {
 
   it('a new schedule takes effect from today, so it is never late the moment it is edited', () => {
     const edited = saved(updateChore(base, { schedule: { kind: 'daily' } }, '2026-10-07'))
-    expect(edited.schedule).toEqual({ kind: 'daily', since: '2026-10-07' })
+    expect(edited.schedule).toMatchObject({ kind: 'daily', since: '2026-10-07' })
     const lastDone = [{ id: 'x', choreId: 'c', completedAt: '', completedOn: '2026-10-02' }]
     expect(choreStatus(edited, lastDone, '2026-10-07')).toMatchObject({ state: 'due', overdueDays: 0 })
   })
 
   it('a change of detail counts as a new schedule too', () => {
-    expect(saved(updateChore(base, { schedule: { kind: 'weekly', weekday: 1 } }, '2026-10-07')).schedule).toEqual({ kind: 'weekly', weekday: 1, since: '2026-10-07' })
+    expect(saved(updateChore(base, { schedule: { kind: 'weekly', weekday: 1 } }, '2026-10-07')).schedule).toMatchObject({ kind: 'weekly', weekday: 1, since: '2026-10-07' })
   })
 
   it('a rename, or saving the same schedule again, keeps the schedule and its since', () => {
@@ -179,3 +179,26 @@ describe('uncompleteChore', () => {
     expect(ops[1]).toMatchObject({ table: 'progress', kind: 'upsert', value: { choreCount: 1, unlockedItems: ['beanie'] } })
   })
 })
+
+describe('updateChore schedule history', () => {
+  const base: Chore = { id: 'c', homeId: 'h', objectId: null, name: 'Dishes', schedule: { kind: 'monthly', dayOfMonth: 1 }, createdOn: '2026-08-01', photoProof: false }
+  const saved = (ops: NewOp[]) => (ops[0] as Extract<NewOp, { table: 'chores' }>).value
+
+  it('keeps the schedule it replaced', () => {
+    expect(saved(updateChore(base, { schedule: { kind: 'daily' } }, '2026-10-05')).schedule).toEqual({ kind: 'daily', since: '2026-10-05', before: { kind: 'monthly', dayOfMonth: 1 } })
+  })
+
+  it('keeps one step of history, and a same-day change replaces the first', () => {
+    const once = saved(updateChore(base, { schedule: { kind: 'daily' } }, '2026-10-05'))
+    const sameDay = saved(updateChore(once, { schedule: { kind: 'weekly', weekday: 1 } }, '2026-10-05'))
+    expect(sameDay.schedule).toEqual({ kind: 'weekly', weekday: 1, since: '2026-10-05', before: { kind: 'monthly', dayOfMonth: 1 } })
+    const later = saved(updateChore(once, { schedule: { kind: 'weekly', weekday: 1 } }, '2026-10-09'))
+    expect(later.schedule).toEqual({ kind: 'weekly', weekday: 1, since: '2026-10-09', before: { kind: 'daily', since: '2026-10-05' } })
+  })
+
+  it('leaves the schedule alone when only the name changes', () => {
+    const once = saved(updateChore(base, { schedule: { kind: 'daily' } }, '2026-10-05'))
+    expect(saved(updateChore(once, { name: 'Wash up', schedule: { kind: 'daily' } }, '2026-10-07')).schedule).toBe(once.schedule)
+  })
+})
+

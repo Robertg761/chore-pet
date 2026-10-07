@@ -84,6 +84,16 @@ describe('streaks after a schedule edit', () => {
     expect(currentStreak([chore], [done('a', TODAY)], TODAY)).toBe(1)
   })
 
+  it('judges the days before an edit by the schedule of the time', () => {
+    // Monthly, kept up since August; switched to daily on 5 Oct and done since.
+    const monthly: Chore = { ...daily('a', '2026-08-01'), schedule: { kind: 'monthly', dayOfMonth: 1 } }
+    const history = [done('a', '2026-08-01'), done('a', '2026-09-01'), done('a', '2026-10-01')]
+    const kept = currentStreak([monthly], history, '2026-10-04')
+    const edited: Chore = { ...monthly, schedule: { kind: 'daily', since: '2026-10-05', before: { kind: 'monthly', dayOfMonth: 1 } } }
+    expect(currentStreak([edited], [...history, done('a', '2026-10-05'), done('a', TODAY)], TODAY)).toBe(kept + 2)
+    expect(kept).toBeGreaterThan(30)
+  })
+
   it('keeps the streak of a chore that was done all along', () => {
     const before = currentStreak([daily('a', '2026-09-01')], everyDay('a', '2026-09-01', TODAY), TODAY)
     const edited: Chore = { ...daily('a', '2026-09-01'), schedule: { kind: 'everyNDays', n: 2, since: TODAY } }

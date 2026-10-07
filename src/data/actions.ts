@@ -90,8 +90,12 @@ export function addChore(home: Home, input: { name: string; schedule: Schedule; 
  */
 export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 'schedule' | 'objectId'>>, today: ISODate): NewOp[] {
   const { schedule, ...rest } = patch
-  const changed = schedule !== undefined && !sameSchedule(schedule, chore.schedule)
-  return [upsertOp('chores', { ...chore, ...rest, schedule: changed ? { ...schedule, since: today } : chore.schedule })]
+  if (schedule === undefined || sameSchedule(schedule, chore.schedule)) return [upsertOp('chores', { ...chore, ...rest })]
+  const { before: replaced, ...current } = chore.schedule
+  // A second change on the same day replaces the first, which never got to apply.
+  const before = current.since === today ? replaced : current
+  const { before: _ignored, ...next } = schedule
+  return [upsertOp('chores', { ...chore, ...rest, schedule: { ...next, since: today, ...(before && { before }) } as Schedule })]
 }
 
 /** Also removes its completions (the database cascades the same way). */

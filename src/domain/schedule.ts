@@ -99,13 +99,13 @@ function scheduleKey(schedule: Schedule): string {
     case 'monthly':
       return `monthly:${schedule.dayOfMonth}`
     default: {
-      const { since: _since, ...rest } = schedule as Schedule
+      const { since: _since, before: _before, ...rest } = schedule as Schedule
       return JSON.stringify(rest)
     }
   }
 }
 
-/** Whether two schedules ask for the same thing. `since` (when a schedule took effect) is ignored. */
+/** Whether two schedules ask for the same thing. `since` and `before` (its history) are ignored. */
 export function sameSchedule(a: Schedule, b: Schedule): boolean {
   return scheduleKey(a) === scheduleKey(b)
 }

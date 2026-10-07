@@ -115,17 +115,18 @@ interface Walker {
 
 /**
  * The replays that judge a chore's days. A chore whose schedule was changed
- * gets two: its current schedule from the change on, and before that the same
- * schedule as if it had always applied (the old one isn't kept). So days
- * before an edit are still judged, and editing a chore neither wipes a streak
- * nor makes long-skipped days look like nothing was due.
+ * gets two: its current schedule from the change on, and before that the
+ * schedule it replaced, as if that had always applied. So days before an edit
+ * are judged by the rule of the time: editing a chore neither wipes a streak
+ * nor makes long-skipped days look like nothing was due. (A change made before
+ * schedules kept `before` falls back to the current rule.)
  */
 function walkersFor(chore: Chore, completions: Completion[]): Walker[] {
   const days = completionDays(chore, completions)
   const start = scheduleStart(chore)
   const current: Walker = { chore, replay: startReplay(chore), days, fed: 0, from: start }
   if (start <= chore.createdOn) return [current]
-  const { since: _since, ...always } = chore.schedule
+  const { since: _since, ...always } = chore.schedule.before ?? { ...chore.schedule, before: undefined }
   const before: Walker = { chore, replay: startReplay({ ...chore, schedule: always as Schedule }), days, fed: 0, from: chore.createdOn, until: start }
   return [before, current]
 }

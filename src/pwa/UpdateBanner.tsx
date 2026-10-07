@@ -5,9 +5,15 @@ import './UpdateBanner.css'
 /** How often an open app checks for a new deploy. */
 const CHECK_MS = 60 * 60 * 1000
 
+/** A reload would lose nothing on screen: no form being filled in, no dialog (a gift, say) open. */
+function quietToReload(): boolean {
+  return !document.querySelector('form, dialog[open], [role="dialog"]')
+}
+
 /**
  * Registers the service worker and offers new deploys kindly: a small banner
- * with Refresh, or a quiet swap the next time the app goes into the background.
+ * with Refresh, or a quiet swap the next time the app goes into the background
+ * with nothing unsaved on screen.
  * Without this, an app left open (an installed iPhone app especially) only
  * picked up a deploy after being closed and opened twice.
  */
@@ -23,8 +29,9 @@ export function UpdateBanner() {
     const check = () => void registration?.update().catch(() => undefined)
     const onVisibility = () => {
       if (document.visibilityState === 'visible') check()
-      // Hidden with an update waiting: swap now, so the next look is the new version.
-      else if (waiting.current) void update.current?.(true)
+      // Hidden with an update waiting: swap now, so the next look is the new version
+      // (but never mid-edit, where the reload would throw away what was typed).
+      else if (waiting.current && quietToReload()) void update.current?.(true)
     }
     update.current = registerSW({
       immediate: true,
