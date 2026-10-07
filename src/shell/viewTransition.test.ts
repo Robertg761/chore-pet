@@ -46,4 +46,20 @@ describe('withViewTransition', () => {
     await new Promise((r) => setTimeout(r, 0))
     expect(doc.documentElement.dataset.vt).toBeUndefined()
   })
+
+  it('leaves the marker to a newer transition that cut an older one short', async () => {
+    const finishes: (() => void)[] = []
+    const doc = fakeDocument((run) => {
+      run()
+      return { finished: new Promise<void>((resolve) => finishes.push(resolve)) }
+    })
+    withViewTransition(() => {}, 'forward')
+    withViewTransition(() => {}, 'forward')
+    finishes[0]() // the first one is skipped as the second starts
+    await new Promise((r) => setTimeout(r, 0))
+    expect(doc.documentElement.dataset.vt).toBe('forward')
+    finishes[1]()
+    await new Promise((r) => setTimeout(r, 0))
+    expect(doc.documentElement.dataset.vt).toBeUndefined()
+  })
 })
