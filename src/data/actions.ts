@@ -48,29 +48,16 @@ export function moveObject(object: PlacedObject, to: Pick<PlacedObject, 'tileX' 
   return [upsertOp('placed_objects', { ...object, ...to })]
 }
 
-/** Also removes its chores and their history (the database cascades the same way). */
-/** What a removal needs to keep the player's progress: their completions, and the chores going away with an object. */
+/** The retained history available when removing a chore or object. */
 export interface History {
   progress: Progress | null
   chores: Chore[]
   completions: Completion[]
 }
 
-/** Bank the counted chores of chores about to be deleted (their completions go with them). */
-function retire(choreIds: string[], history?: History): NewOp[] {
-  if (!history?.progress) return []
-  const retired = { ...history.progress.retired }
-  for (const choreId of choreIds) {
-    const own = history.completions.filter((c) => c.choreId === choreId)
-    const counted = choreCountOf(own)
-    if (counted > 0) retired[choreId] = Math.max(retired[choreId] ?? 0, counted)
-  }
-  return [upsertOp('progress', { ...history.progress, retired })]
-}
-
-export function removeObject(objectId: string, history?: History): NewOp[] {
-  const going = history?.chores.filter((c) => c.objectId === objectId).map((c) => c.id) ?? []
-  return [...retire(going, history), deleteOp('placed_objects', objectId)]
+/** Remove furniture atomically, retaining its tasks as history or keeping them active. */
+export function removeObject(objectId: string, _history?: History, today = toISODate(new Date()), keepChores = false): NewOp[] {
+  return [{ ...deleteOp('placed_objects', objectId), removal: { archivedOn: today, keepChores } } as NewOp]
 }
 
 export function updateRoom(room: Room, patch: Partial<Pick<Room, 'type' | 'floorStyle' | 'wallStyle'>>): NewOp[] {
@@ -98,9 +85,12 @@ export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 's
   return [upsertOp('chores', { ...chore, ...rest, schedule: { ...next, since: today, ...(before && { before }) } as Schedule })]
 }
 
-/** Also removes its completions (the database cascades the same way). */
-export function removeChore(choreId: string, history?: History): NewOp[] {
-  return [...retire([choreId], history), deleteOp('chores', choreId)]
+/** Stop future obligations, retaining dated work and the schedule that earned it. */
+export function removeChore(choreId: string, history?: History, today = toISODate(new Date())): NewOp[] {
+  const chore = history?.chores.find((c) => c.id === choreId)
+  return chore
+    ? [upsertOp('chores', { ...chore, archivedOn: chore.archivedOn ?? today })]
+    : [{ ...deleteOp('chores', choreId), removal: { archivedOn: today } } as NewOp]
 }
 
 /**

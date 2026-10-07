@@ -1,5 +1,5 @@
 import { addDays, isInVacation } from './dates'
-import { choreAsOf, completionDays, scheduleStart, startReplay, type ChoreReplay } from './schedule'
+import { choreActiveOn, choreAsOf, completionDays, scheduleStart, startReplay, type ChoreReplay } from './schedule'
 import type { Chore, Completion, ISODate, Progress, VacationWindow } from './types'
 
 // Rewards come only from real chores getting done (docs/SPEC.md), and every
@@ -145,7 +145,7 @@ function feedThrough(w: Walker, day: ISODate) {
  * through `day`.
  */
 function dayCounts(walkers: Walker[], active: Set<ISODate>, day: ISODate, vacations: VacationWindow[]): boolean {
-  const live = walkers.filter((w) => w.from <= day && (w.until === undefined || day < w.until))
+  const live = walkers.filter((w) => choreActiveOn(w.chore, day) && w.from <= day && (w.until === undefined || day < w.until))
   let somethingDue = false
   for (const w of live) {
     feedThrough(w, addDays(day, -1))
@@ -183,6 +183,9 @@ export function currentStreak(chores: Chore[], completions: Completion[], today:
   let towardToken = 0
   for (let day = firstDay; day <= today; day = addDays(day, 1)) {
     if (isInVacation(day, vacations)) continue
+    // A home with no remaining chores pauses its streak. Work recorded on the
+    // removal day still counts, including a completion synced by another device.
+    if (!chores.some((c) => choreActiveOn(c, day)) && !active.has(day)) continue
     if (dayCounts(walkers, active, day, vacations)) {
       streak++
       if (++towardToken >= daysPerRestToken) {

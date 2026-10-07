@@ -113,7 +113,7 @@ function Sheet({
             if (removingChore === chore.id) {
               return (
                 <li key={chore.id} className="sheet-chore sheet-confirm" role="group" aria-label={`Remove ${chore.name}`}>
-                  <p>Remove “{chore.name}”? Rewards you earned stay.</p>
+                  <p>Remove “{chore.name}”? Your past work and rewards stay.</p>
                   <div className="sheet-pair">
                     <button
                       type="button"
@@ -206,7 +206,7 @@ function Sheet({
       <div className="sheet-block">
         {removing ? (
           <div className="sheet-confirm" role="group" aria-label={`Remove ${lowerName} from room`}>
-            <p>{chores.length > 0 ? `Remove the ${lowerName}? Its chores go too. Rewards stay.` : `Remove the ${lowerName}? Rewards stay.`}</p>
+            <p>{chores.length > 0 ? `Remove the ${lowerName}? Its chores stop. Past work and rewards stay.` : `Remove the ${lowerName}? Rewards stay.`}</p>
             <div className="sheet-choices">
               <button type="button" className="btn btn-danger os-btn" onClick={() => onRemove(false)}>
                 {chores.length > 0 ? 'Remove with its chores' : 'Remove'}

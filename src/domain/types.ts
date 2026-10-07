@@ -66,6 +66,8 @@ export interface Chore {
   name: string
   schedule: Schedule
   createdOn: ISODate
+  /** Exclusive end date: earlier history stays, obligations stop on this day. */
+  archivedOn?: ISODate
   photoProof: boolean // reserved; photo proof is on hold
 }
 
@@ -124,7 +126,7 @@ export interface Progress {
   homeId: string
   /** Chores done that count toward rewards. Worked out by choreCountOf; the stored value is only a cache. */
   choreCount: number
-  /** Counted chores of chores since deleted, by chore id, so removing a chore never takes progress away. */
+  /** Legacy counts for chores deleted before history retention, by chore id. */
   retired?: Record<string, number>
   currentStreak: number
   bestStreak: number

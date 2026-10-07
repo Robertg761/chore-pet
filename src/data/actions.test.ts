@@ -33,7 +33,7 @@ describe('rooms and objects', () => {
     expect(data.chores.every((c) => c.objectId === data.objects[0].id && c.createdOn === '2026-10-06')).toBe(true)
   })
 
-  it('moving keeps the chores; removing takes the chores and their history with it', () => {
+  it('moving keeps the chores; removing archives chores and keeps their history', () => {
     let s = household()
     const room = selectHome(s.tables).rooms[0]
     s = apply(s, placeObject(room, catalogEntry('stove')!, { tileX: 0, tileY: 0, rotation: 0 }, '2026-10-06'))
@@ -50,7 +50,8 @@ describe('rooms and objects', () => {
     data = selectHome(s.tables)
     expect(data.objects.map((o) => o.catalogId)).toEqual(['sink'])
     expect(data.chores.every((c) => c.objectId !== stove.id)).toBe(true)
-    expect(data.completions).toHaveLength(0)
+    expect(data.completions).toHaveLength(1)
+    expect(data.chores.find((c) => c.id === stoveChore.id)?.archivedOn).toBeTruthy()
   })
 })
 

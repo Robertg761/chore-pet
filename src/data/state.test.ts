@@ -48,7 +48,7 @@ describe('local changes', () => {
     expect(Object.values(s.outbox)[0]).toMatchObject({ kind: 'upsert', seq: 2 })
   })
 
-  it('cascades deletes like the database does', () => {
+  it('archives chores but truly cascades home deletion', () => {
     let t = emptyTables()
     t = applyOp(t, { ...upsertOp('homes', home), seq: 1 } as never)
     t = applyOp(t, { ...upsertOp('chores', chore('c1')), seq: 2 } as never)
@@ -57,8 +57,9 @@ describe('local changes', () => {
     t = applyOp(t, { ...upsertOp('completions', completion('x2', 'c2')), seq: 5 } as never)
 
     const afterChore = applyOp(t, { ...deleteOp('chores', 'c1'), seq: 6 })
-    expect(Object.keys(afterChore.chores)).toEqual(['c2'])
-    expect(Object.keys(afterChore.completions)).toEqual(['x2'])
+    expect(Object.keys(afterChore.chores)).toEqual(['c1', 'c2'])
+    expect(afterChore.chores.c1.archivedOn).toBeTruthy()
+    expect(Object.keys(afterChore.completions)).toEqual(['x1', 'x2'])
 
     const afterHome = applyOp(t, { ...deleteOp('homes', 'h1'), seq: 7 })
     expect(afterHome.chores).toEqual({})
@@ -99,7 +100,8 @@ describe('flushing', () => {
     s = change(s, deleteOp('chores', 'gone'))
     const server = emptyTables()
     server.chores = { gone: chore('gone'), remote: chore('remote') }
-    expect(Object.keys(rebase(server, s.outbox).chores).sort()).toEqual(['local', 'remote'])
+    expect(Object.keys(rebase(server, s.outbox).chores).sort()).toEqual(['gone', 'local', 'remote'])
+    expect(rebase(server, s.outbox).chores.gone.archivedOn).toBeTruthy()
   })
 })
 

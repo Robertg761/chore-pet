@@ -58,6 +58,7 @@ const chores: Mapper<Chore> = {
     schedule: c.schedule,
     created_on: c.createdOn,
     photo_proof: c.photoProof,
+    ...(c.archivedOn && { archived_on: c.archivedOn }),
   }),
   fromRow: (r) => ({
     id: r.id as string,
@@ -67,6 +68,7 @@ const chores: Mapper<Chore> = {
     schedule: r.schedule as Chore['schedule'],
     createdOn: r.created_on as string,
     photoProof: Boolean(r.photo_proof),
+    ...(typeof r.archived_on === 'string' && { archivedOn: r.archived_on }),
   }),
 }
 

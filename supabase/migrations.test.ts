@@ -120,7 +120,9 @@ function device(db: PGlite, user: string) {
                 step.table,
                 step.ops.map((o) => MAPPERS[step.table].toRow((o as { value: never }).value)),
               )
-            : await as(db, user, `delete from ${step.table} where ${KEY_COLUMN[step.table]} = any($1::uuid[])`, [step.ops.map((o) => o.key)])
+            : step.table === 'placed_objects' && step.ops[0]?.kind === 'delete' && step.ops[0].removal
+              ? await as(db, user, `select public.remove_objects($1::uuid[], $2::date, $3::boolean)`, [step.ops.map(o => o.key), step.ops[0].removal.archivedOn, step.ops[0].removal.keepChores ?? false])
+              : await as(db, user, `delete from ${step.table} where ${KEY_COLUMN[step.table]} = any($1::uuid[])`, [step.ops.map((o) => o.key)])
         if (!res.ok) refused.push(`${step.kind} ${step.table}: ${res.code} ${res.message}`)
       }
       snap = { ...snap, outbox: {} }
@@ -522,4 +524,134 @@ describe('upgrading an existing database to 0006', () => {
     expect((await as(db, C, `insert into pets (home_id, name) values ($1, 'Mine')`, [homeC])).ok).toBe(true)
     expect((await as(db, C, `insert into progress (home_id) values ($1)`, [homeC])).ok).toBe(true)
   })
+})
+
+describe('retained history lifecycle (0007)', () => {
+  let db: PGlite
+  beforeAll(async () => { db = await supabaseLike() }, 60_000)
+
+  async function fixture() {
+    const home = crypto.randomUUID(), room = crypto.randomUUID(), object = crypto.randomUUID(), chore = crypto.randomUUID()
+    for (const [query, params] of [
+      [`insert into homes (id) values ($1)`, [home]],
+      [`insert into rooms (id, home_id, type) values ($1, $2, 'kitchen')`, [room, home]],
+      [`insert into placed_objects (id, room_id, catalog_id, tile_x, tile_y) values ($1, $2, 'sink', 0, 0)`, [object, room]],
+      [`insert into chores (id, home_id, object_id, name, schedule, created_on) values ($1, $2, $3, 'Dishes', '{"kind":"daily"}', '2026-10-01')`, [chore, home, object]],
+      [`insert into completions (chore_id, completed_on) values ($1, '2026-10-01')`, [chore]],
+    ] as const) expect((await as(db, A, query, [...params])).ok, query).toBe(true)
+    return { home, room, object, chore }
+  }
+  const retained = async (chore: string) => {
+    const r = await as(db, A, `select count(*)::int as n from completions where chore_id = $1`, [chore])
+    return r.ok && r.rows[0].n
+  }
+
+  it('intercepts an old stale-device hard delete without losing either completion', async () => {
+    const f = await fixture()
+    // B's cached bank contains one; A has written a second since B last pulled.
+    expect((await as(db, A, `insert into progress (home_id, retired) values ($1, $2)`, [f.home, JSON.stringify({ [f.chore]: 1 })])).ok).toBe(true)
+    expect((await as(db, A, `insert into completions (chore_id, completed_on) values ($1, '2026-10-02')`, [f.chore])).ok).toBe(true)
+    expect((await as(db, A, `delete from chores where id = $1`, [f.chore])).ok).toBe(true)
+    expect(await retained(f.chore)).toBe(2)
+    const r = await as(db, A, `select archived_on from chores where id = $1`, [f.chore])
+    expect(r.ok && r.rows[0]?.archived_on).toBeTruthy()
+    // A completion queued before deletion may arrive after it; it still exists and counts.
+    expect((await as(db, A, `insert into completions (chore_id, completed_on) values ($1, '2026-10-03')`, [f.chore])).ok).toBe(true)
+    expect(await retained(f.chore)).toBe(3)
+  })
+
+  it('preserves authoritative schedule on archival and cannot be reopened by a stale upsert', async () => {
+    const f = await fixture()
+    expect((await as(db, A, `update chores set schedule = '{"kind":"weekly","weekday":2}' where id = $1`, [f.chore])).ok).toBe(true)
+    expect((await as(db, A, `update chores set archived_on = '2026-10-06', schedule = '{"kind":"daily"}' where id = $1`, [f.chore])).ok).toBe(true)
+    expect((await as(db, A, `update chores set archived_on = null, name = 'stale', schedule = '{"kind":"daily"}' where id = $1`, [f.chore])).ok).toBe(true)
+    const r = await as(db, A, `select name, schedule, archived_on::text from chores where id = $1`, [f.chore])
+    expect(r.ok && r.rows[0]).toEqual({ name: 'Dishes', schedule: { kind: 'weekly', weekday: 2 }, archived_on: '2026-10-06' })
+  })
+
+  it('archives and detaches legacy furniture cascades, retaining completions', async () => {
+    const f = await fixture()
+    expect((await as(db, A, `delete from placed_objects where id = $1`, [f.object])).ok).toBe(true)
+    expect(await retained(f.chore)).toBe(1)
+    const r = await as(db, A, `select object_id, archived_on from chores where id = $1`, [f.chore])
+    expect(r.ok && r.rows[0].object_id).toBeNull()
+    expect(r.ok && r.rows[0].archived_on).toBeTruthy()
+  })
+
+  it('atomically keeps even unseen attached chores active, and enforces owner isolation', async () => {
+    const f = await fixture()
+    expect((await as(db, B, `select public.remove_objects(array[$1::uuid], '2026-10-06', true)`, [f.object])).ok).toBe(true)
+    const other = await as(db, A, `select id from placed_objects where id = $1`, [f.object])
+    expect(other.ok && other.rows).toHaveLength(1)
+    expect((await as(db, A, `select public.remove_objects(array[$1::uuid], '2026-10-06', true)`, [f.object])).ok).toBe(true)
+    const r = await as(db, A, `select object_id, archived_on from chores where id = $1`, [f.chore])
+    expect(r.ok && r.rows[0]).toEqual({ object_id: null, archived_on: null })
+    expect(await retained(f.chore)).toBe(1)
+  })
+
+  it('keeps completion facts immutable to stale updates while allowing explicit Undo', async () => {
+    const f = await fixture()
+    expect((await as(db, A, `update completions set counts = false, completed_on = '2026-10-03' where chore_id = $1`, [f.chore])).ok).toBe(true)
+    const r = await as(db, A, `select counts, completed_on::text from completions where chore_id = $1`, [f.chore])
+    expect(r.ok && r.rows).toEqual([{ counts: true, completed_on: '2026-10-01' }])
+    expect((await as(db, A, `delete from chores where id = $1`, [f.chore])).ok).toBe(true)
+    expect((await as(db, A, `delete from completions where chore_id = $1`, [f.chore])).ok).toBe(true)
+    expect(await retained(f.chore)).toBe(0)
+  })
+
+  it('uses the requested local end date and still truly deletes a whole home', async () => {
+    const f = await fixture()
+    expect((await as(db, A, `select public.remove_objects(array[$1::uuid], '2026-10-06', false)`, [f.object])).ok).toBe(true)
+    const r = await as(db, A, `select archived_on::text from chores where id = $1`, [f.chore])
+    expect(r.ok && r.rows[0].archived_on).toBe('2026-10-06')
+    expect((await as(db, A, `delete from homes where id = $1`, [f.home])).ok).toBe(true)
+    expect(await retained(f.chore)).toBe(0)
+  })
+})
+
+describe('upgrading retained history from 0006', () => {
+  it('keeps existing facts and legacy banks, protects subsequent deletes, and erases the account', async () => {
+    const db = await supabaseLike(MIGRATIONS.find(f => f.startsWith('0006'))!)
+    const a = device(db, A)
+    expect(await a.apply(...createHousehold({ species: 'mochi', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(a, 'homes')[0]
+    expect(await a.apply(...addChore(home, { name: 'Dishes', schedule: { kind: 'daily' } }, '2026-10-01'))).toEqual([])
+    const chore = rowsOf<Chore>(a, 'chores')[0]
+    expect(await a.apply(...completeChore(chore, null, new Date('2026-10-01T12:00:00Z')))).toEqual([])
+    expect((await as(db, A, `update progress set retired = '{"already-deleted":4}' where home_id = $1`, [home.id])).ok).toBe(true)
+    const before = await countsByOwner(db)
+    await db.exec(sql(MIGRATIONS.find(f => f.startsWith('0007'))!))
+    expect(await countsByOwner(db)).toEqual(before)
+    expect((await as(db, A, `delete from chores where id = $1`, [chore.id])).ok).toBe(true)
+    expect(await countsByOwner(db)).toEqual(before)
+    const bank = await as(db, A, `select retired from progress where home_id = $1`, [home.id])
+    expect(bank.ok && bank.rows[0].retired).toEqual({ 'already-deleted': 4 })
+    expect((await as(db, A, `select public.delete_my_account()`)).ok).toBe(true)
+    expect((await countsByOwner(db))[A]).toEqual(Object.fromEntries(TABLES.map(t => [t, 0])))
+    await db.close()
+  }, 60_000)
+})
+
+describe('object removal from the real offline queue', () => {
+  it.each([false, true])('sends keep=%s intent through sync and handles unseen server tasks', async (keep) => {
+    const db = await supabaseLike()
+    const dev = device(db, A)
+    expect(await dev.apply(...createHousehold({ species: 'bun', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(dev, 'homes')[0]
+    expect(await dev.apply(...placeObject(rowsOf<Room>(dev, 'rooms')[0], ALL_ENTRIES.find(e => e.id === 'sink')!, { tileX: 0, tileY: 0, rotation: 0 }, '2026-10-01'))).toEqual([])
+    const object = rowsOf<PlacedObject>(dev, 'placed_objects')[0]
+    const chore = rowsOf<Chore>(dev, 'chores')[0]
+    expect(await dev.apply(...completeChore(chore, null, new Date('2026-10-01T12:00:00Z')))).toEqual([])
+    const unseen = crypto.randomUUID()
+    expect((await as(db, A, `insert into chores (id, home_id, object_id, name, schedule, created_on) values ($1, $2, $3, 'Added on another device', '{"kind":"daily"}', '2026-10-01')`, [unseen, home.id, object.id])).ok).toBe(true)
+    expect((await as(db, A, `insert into completions (chore_id, completed_on) values ($1, '2026-10-02')`, [chore.id])).ok).toBe(true)
+    expect(await dev.apply(...removeObject(object.id, undefined, '2026-10-06', keep))).toEqual([])
+    const tasks = await as(db, A, `select id, object_id, archived_on::text from chores where home_id = $1`, [home.id])
+    expect(tasks.ok && tasks.rows).toHaveLength(rowsOf<Chore>(dev, 'chores').length + 1)
+    expect(tasks.ok && tasks.rows.every(c => c.object_id === null && c.archived_on === (keep ? null : '2026-10-06'))).toBe(true)
+    const counts = await serverCounts(db, A)
+    expect(counts.placed_objects).toBe(0)
+    expect(counts.completions).toBe(2)
+    await db.close()
+  }, 60_000)
 })
