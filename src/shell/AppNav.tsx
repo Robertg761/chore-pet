@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { Sheet } from './Sheet'
 import './AppNav.css'
 
@@ -53,11 +53,61 @@ const LABELS: Record<Tab, string> = { home: 'Home', build: 'Build', wardrobe: 'W
 const TABS: Tab[] = ['home', 'build', 'wardrobe', 'rewards', 'more']
 
 /** The app's tabs: a bar along the bottom on phones, a rail down the left on wide screens. */
+/**
+ * The soft pill behind the current tab's icon. It glides from tab to tab rather
+ * than jumping, and follows the layout (bar or rail) as the window changes.
+ */
+/** Where the pill last sat, kept across screens: some screens draw a fresh tab bar, and the pill should glide on from there. */
+let lastPill: { x: number; y: number; width: number; height: number } | null = null
+
+function useTabPill(active: Tab) {
+  const track = useRef<HTMLDivElement>(null)
+  const pill = useRef<HTMLSpanElement>(null)
+  useLayoutEffect(() => {
+    const box = track.current
+    const shape = pill.current
+    if (!box || !shape) return
+    const set = (at: NonNullable<typeof lastPill>) => {
+      shape.style.width = `${at.width}px`
+      shape.style.height = `${at.height}px`
+      shape.style.translate = `${at.x}px ${at.y}px`
+    }
+    const place = (animate: boolean) => {
+      const icon = box.querySelector<SVGElement>('.app-nav-tab[aria-current="page"] svg')
+      if (!icon) {
+        shape.style.opacity = '0'
+        return
+      }
+      const from = box.getBoundingClientRect()
+      const at = icon.getBoundingClientRect()
+      const next = { x: at.left - from.left, y: at.top - from.top, width: at.width, height: at.height }
+      // Start from where it was (this bar or the last one), with no glide, then glide to the current tab.
+      shape.style.transition = 'none'
+      set(animate && lastPill ? lastPill : next)
+      shape.style.opacity = '1'
+      void shape.offsetWidth
+      shape.style.transition = ''
+      set(next)
+      lastPill = next
+    }
+    place(true)
+    // Only real size changes after this (a ResizeObserver also reports once on attach, mid-glide).
+    let first = true
+    const observer = new ResizeObserver(() => (first ? (first = false) : place(false)))
+    observer.observe(box)
+    return () => observer.disconnect()
+  }, [active])
+  return { track, pill }
+}
+
 export function AppNav({ active, onNavigate, rewardsNote, more, note }: AppNavProps) {
   const [menu, setMenu] = useState(false)
+  const { track, pill } = useTabPill(active)
 
   return (
     <nav className="app-nav" aria-label="Main">
+      <div ref={track} className="app-nav-track">
+      <span ref={pill} className="app-nav-pill" aria-hidden="true" />
       <ul className="app-nav-list">
         {TABS.map((tab) => (
           <li key={tab}>
@@ -80,6 +130,7 @@ export function AppNav({ active, onNavigate, rewardsNote, more, note }: AppNavPr
           </li>
         ))}
       </ul>
+      </div>
       {menu && (
         <Sheet title="More" variant="menu" onClose={() => setMenu(false)}>
           <ul className="app-more">

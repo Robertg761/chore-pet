@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { ScreenHeader } from '../shell/ScreenHeader'
 import { useWide } from '../shell/useViewport'
 import { PALETTE } from '../art/palette'
@@ -37,6 +37,8 @@ const PLOT_TOP = 34
 const MIN_BAR_SCALE = 4
 
 const centreX = (i: number) => PAD_L + COL_W * (i + 0.5)
+/** Stagger index for the arrival animations (see WeekView.css). */
+const step = (i: number) => ({ '--i': i }) as CSSProperties
 
 // Plot heights: a sensible default, and the range the chart may stretch to when it has room.
 const PLOT_DEFAULT = { stacked: 100, wide: 230 }
@@ -168,9 +170,11 @@ export function WeekView({ chores, completions, vacations, today, onClose }: Wee
                       stroke={PALETTE.ink}
                       strokeWidth={2.5}
                       strokeLinejoin="round"
+                      className="wk-bar"
+                      style={step(i)}
                     />
                   )}
-                  <text x={centreX(i)} y={g.barBase - h - 7} textAnchor="middle" className={n > 0 ? 'wk-count' : 'wk-count wk-count-zero'}>
+                  <text x={centreX(i)} y={g.barBase - h - 7} textAnchor="middle" className={n > 0 ? 'wk-count wk-fade' : 'wk-count wk-count-zero wk-fade'} style={step(i)}>
                     {n}
                   </text>
                 </g>
@@ -190,9 +194,9 @@ export function WeekView({ chores, completions, vacations, today, onClose }: Wee
                   </text>
                 </g>
               ))}
-              <polyline points={points} fill="none" stroke={PALETTE.ink} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" opacity={0.55} />
+              <polyline className="wk-line" pathLength={1} points={points} fill="none" stroke={PALETTE.ink} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" opacity={0.55} />
               {health.map((h, i) => (
-                <circle key={h.date} cx={centreX(i)} cy={healthY(h.health)} r={DOT_R} fill={healthColour(h.health)} stroke={PALETTE.ink} strokeWidth={2.5} />
+                <circle key={h.date} cx={centreX(i)} cy={healthY(h.health)} r={DOT_R} fill={healthColour(h.health)} stroke={PALETTE.ink} strokeWidth={2.5} className="wk-dot" style={step(i)} />
               ))}
             </g>
 

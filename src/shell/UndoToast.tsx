@@ -10,20 +10,23 @@ const SHOW_MS = 5000
  */
 export function UndoToast({ choreName, onUndo, onClose }: { choreName: string; onUndo: () => void; onClose: () => void }) {
   const [held, setHeld] = useState(false)
+  const [leaving, setLeaving] = useState(false)
   const closeRef = useRef(onClose)
   useEffect(() => {
     closeRef.current = onClose
   })
   useEffect(() => {
     if (held) return
-    const timer = window.setTimeout(() => closeRef.current(), SHOW_MS)
+    // Slide away, then go (the animation's end closes it; see onAnimationEnd).
+    const timer = window.setTimeout(() => setLeaving(true), SHOW_MS)
     return () => window.clearTimeout(timer)
   }, [held])
 
   return (
     <div
-      className="undo-toast"
+      className={`undo-toast${leaving ? ' undo-toast-out' : ''}`}
       role="status"
+      onAnimationEnd={(e) => leaving && e.target === e.currentTarget && closeRef.current()}
       onPointerEnter={() => setHeld(true)}
       onPointerLeave={() => setHeld(false)}
       onFocus={() => setHeld(true)}

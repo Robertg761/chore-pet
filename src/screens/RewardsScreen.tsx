@@ -1,9 +1,10 @@
-import { useId, useMemo, useState } from 'react'
+import { useId, useMemo, useState, type CSSProperties } from 'react'
 import { CharacterArt } from '../character/Character'
 import { ITEMS } from '../character/items'
 import { currentStreak, isUnlocked, UNLOCKS, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Pet, Progress, VacationWindow } from '../domain/types'
 import { ScreenHeader } from '../shell/ScreenHeader'
+import { SegThumb } from '../shell/SegThumb'
 import { RewardArt } from './RewardArt'
 import './RewardsScreen.css'
 import { STREAK_RULE, hasRewardArt, nextLines, nextUpId, requirementLabel, withEquipped, type NextLine } from './rewardsModel'
@@ -62,13 +63,13 @@ export function RewardsScreen({ pet, progress, chores, completions, vacations, t
   const earned = UNLOCKS.filter((x) => isUnlocked(progress, x.id))
   const upNext = progress ? nextUpId(progress, streak) : null
 
-  function tile(unlock: Unlock) {
+  function tile(unlock: Unlock, index: number) {
     const got = earned.includes(unlock)
     const item = unlock.kind === 'item' ? ITEMS.find((i) => i.id === unlock.ref) : undefined
     const worn = Boolean(item && pet.equipped[item.slot] === item.id)
     const isNext = !got && unlock.id === upNext
     return (
-      <li key={unlock.id} className={`rewards-tile${got ? '' : ' rewards-tile-locked'}${isNext ? ' rewards-tile-next' : ''}`}>
+      <li key={unlock.id} className={`rewards-tile${got ? '' : ' rewards-tile-locked'}${isNext ? ' rewards-tile-next' : ''}`} style={{ '--i': index } as CSSProperties}>
         <RewardArt unlock={unlock} pet={pet} locked={!got} className="rewards-tile-art" />
         {got ? (
           <>
@@ -107,7 +108,7 @@ export function RewardsScreen({ pet, progress, chores, completions, vacations, t
           {label}
         </h2>
         <ul className="rewards-grid" tabIndex={0} aria-label={label}>
-          {list.map(tile)}
+          {list.map((u, i) => tile(u, i))}
         </ul>
       </section>
     )
@@ -148,6 +149,7 @@ export function RewardsScreen({ pet, progress, chores, completions, vacations, t
 
         <div className="rewards-main">
           <div className="rewards-tabs seg" role="group" aria-label="Show">
+            <SegThumb />
             {GROUPS.map((g) => {
               const list = UNLOCKS.filter(g.has)
               const got = list.filter((x) => earned.includes(x)).length

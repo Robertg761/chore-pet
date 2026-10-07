@@ -64,10 +64,14 @@ import { objectOverdue } from './room/cuePlan'
 import { PET_STROKE_SCALE } from './room/shell/geometry'
 import { Sheet } from './shell/Sheet'
 import { UndoToast } from './shell/UndoToast'
+import { withViewTransition } from './shell/viewTransition'
 import { ROOM_ASPECT_VARS, upNextRows } from './shell/layout'
 import { useViewport, useWide } from './shell/useViewport'
 
 type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; choreId?: string } | { name: 'vacation' } | { name: 'rewards' } | { name: 'week' } | { name: 'creator' } | { name: 'wardrobe' } | { name: 'share' } | { name: 'settings' }
+
+/** Where each screen sits, left to right: the tabs in their order, then the screens opened from them. */
+const VIEW_RANK: Record<View['name'], number> = { home: 0, build: 1, wardrobe: 2, rewards: 3, edit: 4, week: 5, creator: 5, share: 5, vacation: 5, settings: 5 }
 
 /** How long the gift waits after Done, so the cheer, sparkle and health float play first. */
 const GIFT_DELAY_MS = 1400
@@ -99,7 +103,13 @@ export default function App() {
   const { ready, hydrated, sync, snapshot, savedLocally, lastError } = useDataState()
   const data = useHome()
   const today = useToday()
-  const [view, setView] = useState<View>({ name: 'home' })
+  const [view, setViewNow] = useState<View>({ name: 'home' })
+  /** Change screen with a short slide: forward when going deeper (to the right), back when returning. */
+  const setView = (next: View) => {
+    const step = VIEW_RANK[next.name] - VIEW_RANK[view.name]
+    if (next.name === view.name) setViewNow(next)
+    else withViewTransition(() => setViewNow(next), step > 0 ? 'forward' : step < 0 ? 'back' : 'fade')
+  }
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [placing, setPlacing] = useState<CatalogEntry | null>(null)
   // First launch: the landing choice, or the picker once "Build my home" is tapped.
@@ -121,7 +131,7 @@ export default function App() {
   const wide = useWide()
   // A chore being edited that no longer exists (deleted on another device) sends the editor home.
   const staleEdit = view.name === 'edit' && view.choreId !== undefined && !data.chores.some((c) => c.id === view.choreId)
-  if (staleEdit) setView({ name: 'home' })
+  if (staleEdit) setViewNow({ name: 'home' })
   // Each screen names itself and takes focus at its heading, so keyboard and screen-reader users land on it.
   useEffect(() => {
     document.title = VIEW_TITLE[view.name]

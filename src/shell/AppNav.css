@@ -6,10 +6,11 @@
   border-top: var(--outline);
   padding-bottom: env(safe-area-inset-bottom);
 }
+.app-nav-track { position: relative; max-width: 520px; margin: 0 auto; }
 .app-nav-list {
-  margin: 0 auto;
+  position: relative;
+  margin: 0;
   padding: 0 4px;
-  max-width: 520px;
   list-style: none;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -36,7 +37,34 @@
 .app-nav-label { max-width: 100%; line-height: 1.1; text-align: center; overflow-wrap: anywhere; }
 .app-nav-tab svg { display: block; padding: 2px 10px; box-sizing: content-box; border-radius: 999px; }
 .app-nav-tab[aria-current='page'] { color: var(--ink); }
-.app-nav-tab[aria-current='page'] svg { background: var(--due-bg); }
+.app-nav-tab svg { position: relative; }
+/* The current tab's icon gives a little hop as it's chosen. */
+.app-nav-tab[aria-current='page'] svg { animation: nav-icon-hop var(--dur-slow) var(--ease-bounce); }
+@keyframes nav-icon-hop {
+  0% { scale: 1; }
+  35% { scale: 0.86 1.08; translate: 0 -2px; }
+  100% { scale: 1; translate: 0 0; }
+}
+/* Behind the current icon (placed by useTabPill), gliding from tab to tab. */
+.app-nav-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-radius: 999px;
+  background: var(--due-bg);
+  pointer-events: none;
+  transition:
+    translate var(--dur-base) var(--ease-spring),
+    width var(--dur-base) var(--ease-spring),
+    height var(--dur-base) var(--ease-spring),
+    opacity var(--dur-quick) ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-nav-pill { transition: none; }
+  .app-nav-tab[aria-current='page'] svg { animation: none; }
+}
 .app-nav-tab:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
 .app-nav-note {
   position: absolute;

@@ -1,4 +1,4 @@
-import { useContext, useId } from 'react'
+import { useContext, useId, type ReactNode } from 'react'
 import { bodyShade, mix } from '../art/color'
 import { PALETTE } from '../art/palette'
 import type { EyeStyle, Mood } from '../domain/types'
@@ -104,21 +104,22 @@ function Glint({ x, y, r }: { x: number; y: number; r: number }) {
 }
 
 /** A big glossy eye: two highlights make it read as wet and alive. */
-function OpenEye({ x, y, scale = 1, drop = 0, style }: { x: number; y: number; scale?: number; drop?: number; style: EyeStyle }) {
+function OpenEye({ x, y, scale = 1, drop = 0, style, children }: { x: number; y: number; scale?: number; drop?: number; style: EyeStyle; children?: ReactNode }) {
   // `drop` sinks the main highlight toward the middle of the eye: a softer, wetter, sadder gaze.
+  // The whole eye (and any `children`, like lashes) blinks as one; see Character.css.
+  let drawing: ReactNode
   if (style === 'button') {
     // Smaller, perfectly round and shiny: a bead of ink.
-    return (
+    drawing = (
       <g stroke="none">
         <circle cx={x} cy={y} r={7.8 * scale} fill={ink} />
         <circle cx={x + 2.4 * scale} cy={y - (2.8 - drop) * scale} r={2.7 * scale} fill={white} />
         <circle cx={x - 2.3 * scale} cy={y + 2.6 * scale} r={1.2 * scale} fill={white} />
       </g>
     )
-  }
-  if (style === 'sparkly') {
+  } else if (style === 'sparkly') {
     // A touch taller, a big shine, a star glint and a pinprick of extra light.
-    return (
+    drawing = (
       <g stroke="none">
         <ellipse cx={x} cy={y} rx={9 * scale} ry={11 * scale} fill={ink} />
         <circle cx={x + 3 * scale} cy={y - (4.6 - drop) * scale} r={4.2 * scale} fill={white} />
@@ -126,12 +127,19 @@ function OpenEye({ x, y, scale = 1, drop = 0, style }: { x: number; y: number; s
         <circle cx={x + 4.6 * scale} cy={y + 3.4 * scale} r={0.9 * scale} fill={white} />
       </g>
     )
+  } else {
+    drawing = (
+      <g stroke="none">
+        <ellipse cx={x} cy={y} rx={8.5 * scale} ry={10.5 * scale} fill={ink} />
+        <circle cx={x + 2.9 * scale} cy={y - (4.2 - drop) * scale} r={3.3 * scale} fill={white} />
+        <circle cx={x - 2.8 * scale} cy={y + 4 * scale} r={1.5 * scale} fill={white} />
+      </g>
+    )
   }
   return (
-    <g stroke="none">
-      <ellipse cx={x} cy={y} rx={8.5 * scale} ry={10.5 * scale} fill={ink} />
-      <circle cx={x + 2.9 * scale} cy={y - (4.2 - drop) * scale} r={3.3 * scale} fill={white} />
-      <circle cx={x - 2.8 * scale} cy={y + 4 * scale} r={1.5 * scale} fill={white} />
+    <g className="ch-eye">
+      {drawing}
+      {children}
     </g>
   )
 }
@@ -159,37 +167,42 @@ function Brow({ x, y, side }: { x: number; y: number; side: -1 | 1 }) {
 
 function Eye({ x, y, mood, side }: { x: number; y: number; mood: Expression; side: -1 | 1 }) {
   const { eyes } = useContext(LookContext)
-  const shape = <EyeShape x={x} y={y} mood={mood} side={side} style={eyes} />
-  if (eyes !== 'lashes') return shape
-  return (
-    <g>
-      {shape}
-      <Lashes x={x} y={y} mood={mood} side={side} />
-    </g>
-  )
+  // Lashes go inside an open eye so they blink with it.
+  const lashes = eyes === 'lashes' ? <Lashes x={x} y={y} mood={mood} side={side} /> : null
+  return <EyeShape x={x} y={y} mood={mood} side={side} style={eyes} lashes={lashes} />
 }
 
-function EyeShape({ x, y, mood, side, style }: { x: number; y: number; mood: Expression; side: -1 | 1; style: EyeStyle }) {
+function EyeShape({ x, y, mood, side, style, lashes }: { x: number; y: number; mood: Expression; side: -1 | 1; style: EyeStyle; lashes: ReactNode }) {
   switch (mood) {
     case 'sleeping':
       // Peacefully shut: soft downward curves.
-      return <path d={`M${x - 7.5} ${y} q7.5 6.5 15 0`} />
+      return (
+        <g>
+          <path d={`M${x - 7.5} ${y} q7.5 6.5 15 0`} />
+          {lashes}
+        </g>
+      )
     case 'cheering':
       // Squeezed happy: ^ ^
-      return <path d={`M${x - 7.5} ${y + 3} q7.5 -12 15 0`} />
+      return (
+        <g>
+          <path d={`M${x - 7.5} ${y + 3} q7.5 -12 15 0`} />
+          {lashes}
+        </g>
+      )
     case 'happy':
     case 'content':
-      return <OpenEye x={x} y={y} style={style} />
+      return <OpenEye x={x} y={y} style={style}>{lashes}</OpenEye>
     case 'meh':
       // Still bright, a touch smaller: "hm, okay". No lids, so it never looks unimpressed.
-      return <OpenEye x={x} y={y + 1} scale={0.82} style={style} />
+      return <OpenEye x={x} y={y + 1} scale={0.82} style={style}>{lashes}</OpenEye>
     case 'scruffy':
       // Tired and a bit sad, but hopeful: the same open eye as meh (smaller, glossy, no lid,
       // so never smug or cross) with its main highlight sunk lower, under worried brows.
       return (
         <g>
           <Brow x={x} y={y} side={side} />
-          <OpenEye x={x} y={y + 1.5} scale={0.78} drop={2.4} style={style} />
+          <OpenEye x={x} y={y + 1.5} scale={0.78} drop={2.4} style={style}>{lashes}</OpenEye>
         </g>
       )
     case 'sick':
@@ -198,6 +211,7 @@ function EyeShape({ x, y, mood, side, style }: { x: number; y: number; mood: Exp
         <g>
           <Brow x={x} y={y + 1} side={side} />
           <path d={`M${x + 6 * side} ${y - 6} L${x - 5 * side} ${y} L${x + 6 * side} ${y + 6}`} />
+          {lashes}
         </g>
       )
   }

@@ -38,7 +38,10 @@
 }
 .rewards-next-text { margin: 0; font-weight: 800; font-size: 0.875rem; line-height: 1.25; }
 .rewards-bar { height: 14px; overflow: hidden; background: var(--card); border: 2.5px solid var(--ink); border-radius: 999px; }
-.rewards-bar-fill { height: 100%; min-width: 6px; background: var(--accent); border-radius: 999px; border-right: 2.5px solid var(--ink); transition: width 0.4s ease; }
+.rewards-bar-fill { height: 100%; min-width: 6px; background: var(--accent); border-radius: 999px; border-right: 2.5px solid var(--ink); transition: width var(--dur-slow) var(--ease-out); }
+/* On arrival the bar fills from empty. */
+.rewards-bar-fill { animation: rewards-fill 600ms var(--ease-out) 120ms backwards; }
+@keyframes rewards-fill { from { width: 0; } }
 
 .rewards-count { margin-left: 6px; font-size: 0.8125rem; font-weight: 700; opacity: 0.85; }
 
@@ -72,6 +75,9 @@
   border: var(--outline);
   border-radius: var(--radius);
 }
+/* Tiles rise in a few at a time; the stagger is capped so a long list is all in by about 350ms. */
+.rewards-tile { animation: rewards-rise 220ms var(--ease-out) min(calc(var(--i, 0) * 30ms), 130ms) backwards; }
+@keyframes rewards-rise { from { opacity: 0; translate: 0 6px; } }
 /* Not earned yet: the gift box's colours, softened, with a lock. */
 .rewards-tile-locked { color: var(--ink-soft); background: var(--ground-soft); border-style: dashed; border-color: var(--ink-soft); }
 .rewards-tile-next { color: var(--ink); border-style: solid; border-color: var(--accent); box-shadow: var(--ring); }
@@ -134,5 +140,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rewards-bar-fill { transition: none; }
+  .rewards-bar-fill { transition: none; animation: none; }
+  .rewards-tile { animation: none; }
 }

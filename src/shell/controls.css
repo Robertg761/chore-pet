@@ -43,8 +43,10 @@
   .btn-quiet.btn-danger { color: var(--late-ink); }
   .btn-sm { padding: 0 12px; font-size: 0.875rem; }
 
-  /* Segmented control: one row, the selected segment filled with ink. Scrolls sideways if it runs out of room. */
+  /* Segmented control: one row, the selected segment filled with ink. Scrolls sideways if it runs out of room.
+     With a <SegThumb /> inside, an ink thumb glides to the selected segment (and the segment itself drops its fill). */
   .seg {
+    position: relative;
     display: flex;
     gap: 4px;
     padding: 4px;
@@ -74,6 +76,20 @@
   .seg-btn[aria-pressed='true'],
   .seg-btn[aria-selected='true'] { color: var(--on-accent); background: var(--ink); }
   .seg-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+  .seg-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    background: var(--ink);
+    border-radius: 10px;
+    transition:
+      translate var(--dur-base) var(--ease-spring),
+      width var(--dur-base) var(--ease-spring),
+      height var(--dur-base) var(--ease-spring);
+  }
+  .seg-has-thumb .seg-btn[aria-pressed='true'],
+  .seg-has-thumb .seg-btn[aria-selected='true'] { z-index: 1; background: transparent; }
 
   /* A choice among a few: the selected one gets the accent ring. */
   .choice {
@@ -144,6 +160,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .check::after { transition: none; }
+    .seg-thumb { transition: none; }
     .btn-primary:active:not(:disabled) { transform: none; }
   }
 

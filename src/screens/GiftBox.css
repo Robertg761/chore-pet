@@ -7,7 +7,7 @@
   justify-content: center;
   padding: 16px;
   background: color-mix(in srgb, var(--ink) 62%, transparent);
-  animation: gift-fade 0.2s ease-out both;
+  animation: gift-fade var(--dur-base) var(--ease-out) both;
 }
 
 .gift-panel {
@@ -24,7 +24,8 @@
   border: var(--outline);
   border-radius: 22px;
   box-shadow: 0 6px 0 var(--ink);
-  animation: gift-rise 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  /* Pops in with a soft bounce; solid almost at once, so the room never shows through it. */
+  animation: gift-rise var(--dur-slow) var(--ease-bounce) 60ms both;
 }
 .gift-panel:focus { outline: none; }
 
@@ -65,7 +66,11 @@
 .gift-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
 @keyframes gift-fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes gift-rise { from { opacity: 0; transform: translateY(18px) scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes gift-rise {
+  from { opacity: 0; transform: translateY(24px) scale(0.86); }
+  25% { opacity: 1; }
+  to { opacity: 1; transform: none; }
+}
 @keyframes gift-wiggle {
   0%, 55%, 100% { transform: rotate(0); }
   62% { transform: rotate(-5deg) scale(1.02, 0.98); }

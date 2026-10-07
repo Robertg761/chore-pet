@@ -214,3 +214,31 @@
 .tag-late3 { background: #b8401a; color: #fff; }
 .cl-row-late2 { background: #ffeadd; }
 .cl-row-late3 { background: #ffe1d1; border-width: 3px; }
+
+/*
+ * A chore leaving the home list (withViewTransition(..., 'chores') in ChoreList.tsx):
+ * while it runs, each row, the room, the all-done card and the buttons below carry a
+ * view-transition name, so the done row folds away, the others glide into their new
+ * places, a row coming up from below eases in, and the room grows or shrinks smoothly.
+ */
+html[data-vt='chores'] .cl-row { view-transition-name: var(--cl-vt); view-transition-class: cl-row; }
+html[data-vt='chores'] .home-stage .living-room { view-transition-name: home-room; }
+html[data-vt='chores'] .cl-caught { view-transition-name: cl-caught; }
+html[data-vt='chores'] .cl-foot { view-transition-name: cl-foot; }
+html[data-vt='chores'] .cl-heading { view-transition-name: cl-heading; }
+
+html[data-vt='chores']::view-transition-group(*) { animation-duration: 340ms; animation-timing-function: var(--ease-out); }
+html[data-vt='chores']::view-transition-old(root),
+html[data-vt='chores']::view-transition-new(root) { animation-duration: 160ms; animation-delay: 0ms; }
+::view-transition-old(.cl-row):only-child { animation: cl-vt-out 220ms var(--ease-in) both; }
+::view-transition-new(.cl-row):only-child { animation: cl-vt-in 300ms var(--ease-out) 120ms both; }
+::view-transition-new(cl-caught):only-child { animation: cl-vt-in 360ms var(--ease-spring) 140ms both; }
+
+@keyframes cl-vt-out {
+  to { opacity: 0; transform: scale(0.92) translateY(-4px); }
+}
+@keyframes cl-vt-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+}
+/* The room moves the furthest, so it eases in and out rather than lurching off. */
+html[data-vt='chores']::view-transition-group(home-room) { animation-duration: 420ms; animation-timing-function: var(--ease-in-out); }
