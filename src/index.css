@@ -1,3 +1,6 @@
+/* Shared base rules sit under every screen's CSS and under the shared controls. */
+@layer base, controls;
+
 /* Nunito, self-hosted (SIL OFL, see public/fonts/OFL.txt). One variable file per script covers 400-900. */
 @font-face {
   font-family: 'Nunito';
@@ -42,6 +45,61 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; }
+
+/*
+ * Motion. One feel everywhere: things arrive with a soft spring and leave quickly.
+ *  - --ease-out: settling (most entrances, presses letting go)
+ *  - --ease-in: leaving (exits are quicker than entrances)
+ *  - --ease-spring: a gentle overshoot for things that pop (sheets, gifts, pills)
+ * Durations: press 110ms, quick 180ms, base 260ms, slow 420ms.
+ */
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.55, 0, 0.75, 0.2);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: linear(0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%, 0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%, 1.001 85.9%, 1);
+  --ease-bounce: linear(0, 0.013, 0.05 3.1%, 0.2 6.6%, 0.718 17.5%, 0.882 22%, 1.002 27%, 1.06 31.3%, 1.081 35.5%, 1.072 40.6%, 1.027 50.8%, 0.996 62%, 0.993 72.2%, 1);
+  --dur-press: 110ms;
+  --dur-quick: 180ms;
+  --dur-base: 260ms;
+  --dur-slow: 420ms;
+}
+
+@layer base {
+  /*
+   * Every button gives under a press and springs back. The individual scale and
+   * translate properties compose with any transform a screen already sets.
+   * Buttons that press down onto their own shadow (.btn-primary and friends) keep that instead.
+   * Real buttons only: the room's pet is an SVG role="button" that walks by transform, and must not be eased.
+   */
+  button,
+  label.btn {
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      scale var(--dur-quick) var(--ease-spring),
+      translate var(--dur-quick) var(--ease-out),
+      transform var(--dur-press) var(--ease-out),
+      box-shadow var(--dur-press) var(--ease-out),
+      background-color var(--dur-quick) ease,
+      color var(--dur-quick) ease,
+      border-color var(--dur-quick) ease,
+      opacity var(--dur-quick) ease;
+  }
+  button:not(:disabled):not([aria-disabled='true']):active,
+  label.btn:active {
+    scale: 0.96;
+    transition-duration: var(--dur-press);
+  }
+}
+
+/* Shadowed buttons press down onto their shadow rather than shrinking. */
+:is(.btn-primary, .landing-primary, .welcome-go, .tray-tile, .home-build, .wobbly-reload, .time-btn):active { scale: none; }
+
+/* Reduced motion: nothing moves or scales; colour changes still ease. */
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-press: 0ms; }
+  button:active, label.btn:active { scale: none !important; translate: none !important; }
+}
 
 /*
  * Text for screen readers only. Clipped and out of flow, and pinned to the top
@@ -227,6 +285,7 @@ h1[tabindex='-1']:focus { outline: none; }
   cursor: pointer;
 }
 .home-build:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.home-build:active { translate: 0 3px; box-shadow: 0 0 0 var(--ink); }
 .home-chores { flex: none; display: flex; flex-direction: column; gap: 8px; }
 .home-alert { margin: 0; font-size: 0.8125rem; font-weight: 700; color: var(--late-ink); text-align: center; }
 
@@ -334,4 +393,30 @@ h1[tabindex='-1']:focus { outline: none; }
 .build-panel .os-btn { min-height: 44px; font-size: 0.9375rem; padding: 0 10px; }
 @media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
   .build-panel:has(.sheet) { max-height: none; }
+}
+
+/*
+ * Screen changes (withViewTransition in src/shell/viewTransition.ts): the old
+ * screen slips away as the new one slides in from the side it lives on. The
+ * tab bar stays put (its pill glides on its own), and taps go straight through
+ * to the new screen while it settles.
+ */
+::view-transition { pointer-events: none; }
+.app-nav { view-transition-name: app-nav; }
+::view-transition-group(app-nav) { animation: none; }
+::view-transition-old(app-nav) { animation: none; opacity: 0; }
+::view-transition-new(app-nav) { animation: none; }
+
+/* The old screen is gone before the new one is half in, so they never sit on top of each other. */
+::view-transition-old(root) { animation: vt-out 120ms var(--ease-in) both; }
+::view-transition-new(root) { animation: vt-in var(--dur-base) var(--ease-out) 60ms both; }
+html[data-vt='forward'] { --vt-from: 28px; --vt-to: -18px; }
+html[data-vt='back'] { --vt-from: -28px; --vt-to: 18px; }
+html[data-vt='fade'] { --vt-from: 0px; --vt-to: 0px; }
+
+@keyframes vt-out {
+  to { opacity: 0; transform: translateX(var(--vt-to, 0px)); }
+}
+@keyframes vt-in {
+  from { opacity: 0; transform: translateX(var(--vt-from, 0px)); }
 }
