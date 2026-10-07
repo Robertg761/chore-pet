@@ -194,8 +194,10 @@ export function currentStreak(chores: Chore[], completions: Completion[], today:
   if (chores.length === 0) return 0
   const firstDay = chores.reduce((min, c) => (c.createdOn < min ? c.createdOn : min), chores[0].createdOn)
   const { daysPerRestToken, maxRestTokens } = STREAK_TUNING
-  // The streak is capped at the lookback window; the replay starts a little earlier,
-  // so rest tokens banked before the window still cover a miss early in it.
+  // The streak is capped at the lookback window. The replay starts a little earlier so
+  // tokens banked before the window carry into it; replaying all history would be exact
+  // but too slow, so when there is earlier history the replay starts with full tokens,
+  // erring on the kind side.
   const window = lookback(today, firstDay, vacations, STREAK_LOOKBACK)
   const from = lookback(today, firstDay, vacations, STREAK_LOOKBACK + daysPerRestToken * maxRestTokens).from
 
@@ -204,7 +206,7 @@ export function currentStreak(chores: Chore[], completions: Completion[], today:
   const active = new Set(completions.filter((c) => c.counts !== false && ids.has(c.choreId)).map((c) => c.completedOn))
 
   let streak = 0
-  let tokens = 0
+  let tokens = from > firstDay ? maxRestTokens : 0
   let towardToken = 0
   for (let day = from; day <= today; day = addDays(day, 1)) {
     if (isInVacation(day, vacations)) continue

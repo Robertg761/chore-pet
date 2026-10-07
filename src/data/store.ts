@@ -562,13 +562,14 @@ export function createStore({
       if (!saved) return false
       const ops = restoreHome(saved, state.snapshot)
       if (ops.length === 0) return false
-      const owner = state.snapshot.userId ?? 'unclaimed'
-      const replacing = Boolean(selectHome(state.snapshot.tables).home)
-      // Keep the home being replaced on this device, so it can be swapped back.
-      if (replacing) await local.backup(owner, state.snapshot)
+      // Keep the home being replaced on this device, so it can be swapped back. Its own
+      // key (account and home), so it can never overwrite the copy being brought back.
+      const replaced = selectHome(state.snapshot.tables).home
+      if (replaced) await local.backup(`${state.snapshot.userId ?? 'unclaimed'}:${replaced.id}`, state.snapshot)
       commit(ops.reduce(change, state.snapshot))
-      // The brought-back copy now lives in this account (unless that backup now holds the replaced home).
-      if (ownerId !== owner || !replacing) await local.dropBackup?.(ownerId)
+      // Forget the brought-back copy only once the restored home is really stored.
+      await saving
+      if (state.savedLocally) await local.dropBackup?.(ownerId)
       void sync()
       return true
     },

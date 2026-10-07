@@ -822,9 +822,24 @@ describe('saved homes (backups kept on this device)', () => {
     expect(await store.restoreSaved('guest')).toBe(true)
     expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Bun')
     // The guest copy now lives in the account; Pip's home is kept on this device to swap back.
-    expect((await store.savedHomes()).map((h) => [h.ownerId, h.petName])).toEqual([['u1', 'Pip']])
-    expect(await store.restoreSaved('u1')).toBe(true)
+    const saved = await store.savedHomes()
+    expect(saved.map((h) => h.petName)).toEqual(['Pip'])
+    expect(await store.restoreSaved(saved[0].ownerId)).toBe(true)
     expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Pip')
+    expect((await store.savedHomes()).map((h) => h.petName)).toEqual(['Bun'])
+  })
+
+  it('keeps the saved copy when the restored home could not be stored', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    await local.backup!('guest', createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')))
+    local.update = async () => {
+      throw new Error('disk full')
+    }
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    expect(await store.restoreSaved('guest')).toBe(true)
+    expect(Object.keys(local.backups)).toContain('snapshot-backup-guest')
   })
 
   it('has nothing to offer without a store that keeps backups', async () => {

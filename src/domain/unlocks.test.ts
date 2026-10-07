@@ -204,6 +204,19 @@ describe('the streak lookback', () => {
     expect(currentStreak([daily('a', start)], all.filter((c) => c.completedOn !== missed), TODAY)).toBe(full)
     expect(full).toBe(121)
   })
+
+  it('carries banked tokens across the replay start too', () => {
+    const start = addDays(TODAY, -200)
+    const misses = new Set([addDays(TODAY, -134), addDays(TODAY, -120), addDays(TODAY, -119)])
+    const done = everyDay('a', start, TODAY).filter((c) => !misses.has(c.completedOn))
+    expect(currentStreak([daily('a', start)], done, TODAY)).toBe(121)
+  })
+
+  it('gives a brand-new home no free rest days', () => {
+    const start = addDays(TODAY, -3)
+    const done = everyDay('a', start, TODAY).filter((c) => c.completedOn !== addDays(TODAY, -2))
+    expect(currentStreak([daily('a', start)], done, TODAY)).toBe(2)
+  })
 })
 
 describe('rest tokens', () => {
