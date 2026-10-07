@@ -3,7 +3,7 @@ import type { Chore, Progress } from '../domain/types'
 import { addChore, completeChore, completeChoreWithRewards, createHousehold, removeChore } from './actions'
 import { memoryStore, volatileStore, type LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
-import { change, emptySnapshot, emptyTables, selectHome, type Snapshot, type Tables } from './state'
+import { HELD_FOR_NEXT, change, emptySnapshot, emptyTables, selectHome, type Snapshot, type Tables } from './state'
 import { MAX_ATTEMPTS, createStore, type Store, type StoreChannel, type StoreMessage } from './store'
 import { keyOf, type TableName } from './tables'
 
@@ -961,6 +961,27 @@ describe('saved homes (backups kept on this device)', () => {
     expect(await store.restoreSaved('guest')).toBe(false)
     expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Pip')
     expect(selectHome((local.current as Snapshot).tables).pet?.name).toBe('Pip')
+  })
+
+  it('clears a swapped-out copy another tab wrote while this one deleted the account', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const tabA = await onboarded(remote, local)
+    const tabB = createStore({ local, remote })
+    await tabB.start()
+    await tabB.sync()
+    // A guest's home kept at sign-out, which tab B brings back.
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: HELD_FOR_NEXT })
+    const save = local.save.bind(local)
+    let restored: boolean | null = null
+    local.save = async (snapshot) => {
+      // Tab B's restore commits just before tab A's reset clears the stored copy.
+      if (restored === null) restored = await tabB.restoreSaved('guest')
+      return save(snapshot)
+    }
+    await tabA.reset({ backup: false }) // "Delete my account" in tab A
+    expect(restored).toBe(true)
+    expect(Object.keys(local.backups)).toEqual([])
   })
 
   it('never offers a home held for another account, and clearing an account forgets its saved homes', async () => {

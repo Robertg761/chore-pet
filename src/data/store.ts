@@ -599,9 +599,6 @@ export function createStore({
         switching = false
         const owner = state.snapshot.userId
         if (backup) backUp(forNext ? { ...state.snapshot, heldFor: HELD_FOR_NEXT } : state.snapshot)
-        else if (owner && !memoryOnly) {
-          saving = saving.then(() => dropBackupsFor(owner)).catch(warn('Could not remove the backups'))
-        }
         set({ snapshot: emptySnapshot(), sync: remote ? 'offline' : 'local-only', lastError: null, hydrated: !remote })
         if (!memoryOnly) {
           // Saves and reads queued before this one belong to the old account: skip them.
@@ -616,6 +613,11 @@ export function createStore({
               channel?.post({ type: 'reset', from: tabId })
             })
             .catch(warn('Could not clear the offline copy'))
+            // The account's backups go only now: from here on, a restore in another tab can no
+            // longer commit (its write sees this reset), and one that already did has written
+            // its swapped-out copy, so this catches it.
+            .then(() => (!backup && owner ? dropBackupsFor(owner) : undefined))
+            .catch(warn('Could not remove the backups'))
             .finally(() => (resetting = false))
           await saving
         }
