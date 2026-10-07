@@ -546,6 +546,28 @@ describe('retained history lifecycle (0007)', () => {
     return r.ok && r.rows[0].n
   }
 
+  it.each([
+    ['2150-01-01', 'archive'], ['2999-12-31', 'archive'],
+    ['2150-01-01', 'chore delete'], ['2999-12-31', 'chore delete'],
+    ['2150-01-01', 'object delete'], ['2999-12-31', 'object delete'],
+    ['2150-01-01', 'object RPC'], ['2999-12-31', 'object RPC'],
+  ])('retains wrong-clock history created on %s through %s', async (createdOn, removal) => {
+    const f = await fixture()
+    // 0006 accepts these creation dates so a bad device clock can still sync.
+    expect((await as(db, A, `update chores set created_on = $1 where id = $2`, [createdOn, f.chore])).ok).toBe(true)
+    const result = removal === 'archive'
+      ? await as(db, A, `update chores set archived_on = '2026-10-07' where id = $1`, [f.chore])
+      : removal === 'chore delete'
+        ? await as(db, A, `delete from chores where id = $1`, [f.chore])
+        : removal === 'object delete'
+          ? await as(db, A, `delete from placed_objects where id = $1`, [f.object])
+          : await as(db, A, `select public.remove_objects(array[$1::uuid], '2026-10-07', false)`, [f.object])
+    expect(result).toMatchObject({ ok: true })
+    const row = await as(db, A, `select archived_on::text from chores where id = $1`, [f.chore])
+    expect(row.ok && row.rows).toEqual([{ archived_on: createdOn }])
+    expect(await retained(f.chore)).toBe(1)
+  })
+
   it('intercepts an old stale-device hard delete without losing either completion', async () => {
     const f = await fixture()
     // B's cached bank contains one; A has written a second since B last pulled.
