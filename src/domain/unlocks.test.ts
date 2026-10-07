@@ -195,6 +195,17 @@ describe('choreCountOf', () => {
   })
 })
 
+describe('the streak lookback', () => {
+  it('lets tokens banked before the window cover a miss early in it', () => {
+    const start = addDays(TODAY, -200)
+    const all = everyDay('a', start, TODAY)
+    const full = currentStreak([daily('a', start)], all, TODAY)
+    const missed = addDays(TODAY, -118)
+    expect(currentStreak([daily('a', start)], all.filter((c) => c.completedOn !== missed), TODAY)).toBe(full)
+    expect(full).toBe(121)
+  })
+})
+
 describe('rest tokens', () => {
   const c = [daily('dishes', '2026-09-01')]
   const skipping = (...skipped: string[]) => everyDay('dishes', '2026-09-01', TODAY).filter((x) => !skipped.includes(x.completedOn))
