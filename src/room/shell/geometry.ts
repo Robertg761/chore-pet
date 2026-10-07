@@ -56,5 +56,10 @@ export const PET_SCALE = 0.44 * TILE_SCALE
 /** Scale to apply to object art (drawn at 64 px tiles) so it fits room tiles. */
 export const OBJECT_SCALE = ROOM_TILE_W / TILE_W
 
-/** The window on the left wall: tiles u0..u1 along ty (sill included), heights z0..z1 in room px. */
-export const WINDOW = { u0: 1.8 / TILE_SCALE, u1: 3.6 / TILE_SCALE, z0: Math.round(76 * TILE_SCALE), z1: Math.round(140 * TILE_SCALE) }
+/**
+ * The window on the left wall: tiles u0..u1 along ty (sill included), heights z0..z1 in room px.
+ * It stays 1.8 tiles wide so it shrinks with the tiles in both directions, centred where the
+ * reference room had it (45% of the way along the wall).
+ */
+const WINDOW_CENTRE = (2.7 / 6) * ROOM_TILES
+export const WINDOW = { u0: WINDOW_CENTRE - 0.9, u1: WINDOW_CENTRE + 0.9, z0: Math.round(76 * TILE_SCALE), z1: Math.round(140 * TILE_SCALE) }

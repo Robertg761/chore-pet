@@ -85,11 +85,19 @@ describe('the window', () => {
     expect(WINDOW.z1).toBeLessThan(WALL_HEIGHT)
   })
 
-  it('keeps the window the same size on screen: tiles divided by the scale, px times it', () => {
-    expect(WINDOW.u0 * TILE_SCALE).toBeCloseTo(1.8)
-    expect(WINDOW.u1 * TILE_SCALE).toBeCloseTo(3.6)
+  it('shrinks the window with the tiles in both directions, so it keeps its shape', () => {
+    // Reference room: 1.8 tiles of 340/6 px across, 64 px tall.
+    const refAspect = (1.8 * (340 / 6)) / (140 - 76)
+    const width = (WINDOW.u1 - WINDOW.u0) * ROOM_TILE_W
+    const height = WINDOW.z1 - WINDOW.z0
+    expect(WINDOW.u1 - WINDOW.u0).toBeCloseTo(1.8)
+    expect(width / height).toBeCloseTo(refAspect, 1)
     expect(WINDOW.z0).toBe(Math.round(76 * TILE_SCALE))
     expect(WINDOW.z1).toBe(Math.round(140 * TILE_SCALE))
+  })
+
+  it('keeps the window centred 45% of the way along the left wall', () => {
+    expect((WINDOW.u0 + WINDOW.u1) / 2 / ROOM_TILES).toBeCloseTo(0.45)
   })
 })
 
