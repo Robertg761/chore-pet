@@ -45,6 +45,7 @@ import { ChoreEditor } from './screens/ChoreEditor'
 import { ChoreList } from './screens/ChoreList'
 import { sparkleSpot, type SparkleSpot } from './screens/doneMoment'
 import { HealthBar } from './screens/HealthBar'
+import { AccountCleanup } from './screens/AccountCleanup'
 import { Landing } from './screens/Landing'
 import { GiftBox } from './screens/GiftBox'
 import { ObjectSheet } from './screens/ObjectSheet'
@@ -174,6 +175,7 @@ export default function App() {
   }, [needsRoom, data.home])
 
   if (!ready) return <main className="shell" aria-busy="true" />
+  if (snapshot.cleanup) return <AccountCleanup cleanup={snapshot.cleanup} />
   // Signed in on a new device: wait for the saved home rather than offering a fresh one.
   if (!data.home && !hydrated) {
     return (

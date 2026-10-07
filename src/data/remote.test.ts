@@ -75,7 +75,7 @@ function fakePostgrest(maxRows = 1000) {
 
 /** A real supabaseRemote over the fake client, signed in as u1. */
 function remoteOver(client: SupabaseClient): Remote {
-  return { ...supabaseRemote(async () => client), session: async () => 'u1', currentUser: async () => 'u1' }
+  return { ...supabaseRemote(async () => client), session: async () => 'u1', ownerKind: async () => 'saved', currentUser: async () => 'u1' }
 }
 
 const day = (i: number) => new Date(Date.UTC(2023, 0, 1 + i)).toISOString().slice(0, 10)

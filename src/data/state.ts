@@ -34,7 +34,23 @@ export type NewOp = Op extends infer O ? (O extends Op ? Omit<O, 'seq' | 'id'> :
 /** Latest pending change per row, keyed `${table}:${key}`. */
 export type Outbox = Record<string, Op>
 
+export interface AccountCleanup {
+  kind: 'sign-out' | 'delete'
+  ownerId: string | null
+  stage: 'prepared' | 'server-deleted' | 'local-cleared'
+  serverDeleted?: boolean
+  deviceOnly?: boolean
+  backup?: boolean
+  forNext?: boolean
+}
+
 export interface Snapshot {
+  /** Missing on legacy caches: never assume those belonged to a guest. */
+  ownerKind?: 'guest' | 'saved'
+  /** Device-local choice, scoped to this snapshot's user and reset generation. */
+  activeHomeId?: string
+  /** Stops sync until a partially completed account operation is retried. */
+  cleanup?: AccountCleanup
   /** The account this data belongs to. null until a session first appears (offline first launch). */
   userId: string | null
   tables: Tables
@@ -352,7 +368,11 @@ export function mergeSnapshots(mine: Snapshot, base: Snapshot | null, stored: Sn
   // of the server (renames, deletions, rows from other devices), with every pending change
   // still to send applied on top.
   const fresher = stored.pulledAt !== undefined && (mine.pulledAt === undefined || stored.pulledAt > mine.pulledAt)
+  const cleanup = JSON.stringify(stored.cleanup) !== JSON.stringify(base?.cleanup) ? stored.cleanup : mine.cleanup
+  const activeHomeId = stored.activeHomeId !== base?.activeHomeId && mine.activeHomeId === base?.activeHomeId ? stored.activeHomeId : mine.activeHomeId
+  const ownerKind = mine.ownerKind === 'saved' || stored.ownerKind === 'saved' ? 'saved' : mine.ownerKind ?? stored.ownerKind
   const unchanged =
+    cleanup === mine.cleanup && activeHomeId === mine.activeHomeId && ownerKind === mine.ownerKind &&
     !fresher &&
     incoming.length === 0 &&
     userId === mine.userId &&
@@ -363,6 +383,8 @@ export function mergeSnapshots(mine: Snapshot, base: Snapshot | null, stored: Sn
     rejected.every((r, i) => r === mine.rejected?.[i])
   if (unchanged) return mine
   return {
+    ...mine,
+    cleanup, activeHomeId, ownerKind,
     userId,
     tables: fresher ? rebase(stored.tables, outbox) : incoming.sort((a, b) => a.seq - b.seq).reduce(applyOp, mine.tables),
     outbox,
@@ -422,7 +444,7 @@ export interface SavedHome {
 
 /** What a backup holds, for offering it back; null when it holds no home with a pet. */
 export function savedHomeOf(ownerId: string, snapshot: Snapshot): SavedHome | null {
-  const { home, pet, chores } = selectHome(snapshot.tables)
+  const { home, pet, chores } = selectHome(snapshot.tables, snapshot.activeHomeId)
   if (!home || !pet) return null
   return { ownerId, homeId: home.id, petName: pet.name, species: pet.species, bodyColour: pet.bodyColour, choreCount: chores.length }
 }
@@ -456,7 +478,7 @@ function byCreation(a: Created & { id: string }, b: Created & { id: string }): n
 /**
  * The home to show when an account somehow has several (two devices
  * onboarding offline): the one with the most placed objects, which is the one
- * being lived in, then the oldest. Stable, so the shown home never flips.
+ * being lived in, then the oldest. Used once when no valid persisted choice exists.
  */
 function pickHome(tables: Tables): (Home & Created) | null {
   const homes = Object.values(tables.homes)
@@ -470,8 +492,8 @@ function pickHome(tables: Tables): (Home & Created) | null {
   return homes.sort((a, b) => (objects.get(b.id) ?? 0) - (objects.get(a.id) ?? 0) || byCreation(a, b))[0]
 }
 
-export function selectHome(tables: Tables): HomeData {
-  const home = pickHome(tables)
+export function selectHome(tables: Tables, activeHomeId?: string): HomeData {
+  const home = (activeHomeId && tables.homes[activeHomeId]) || pickHome(tables)
   if (!home) return { home: null, pet: null, progress: null, rooms: [], objects: [], chores: [], completions: [] }
   const rooms = Object.values(tables.rooms)
     .filter((r) => r.homeId === home.id)
@@ -502,8 +524,8 @@ export function selectHome(tables: Tables): HomeData {
  * Only run once the server's copy has been pulled (or with no server), or a
  * fresh row could overwrite the real one's streak.
  */
-export function repairOps(tables: Tables): NewOp[] {
-  const { home, completions, chores } = selectHome(tables)
+export function repairOps(tables: Tables, activeHomeId?: string): NewOp[] {
+  const { home, completions, chores } = selectHome(tables, activeHomeId)
   if (!home || tables.progress[home.id]) return []
   const choreCount = choreCountOf(completions, {}, new Set(chores.map((c) => c.id)))
   const { progress } = applyUnlocks({ homeId: home.id, choreCount, retired: {}, currentStreak: 0, bestStreak: 0, unlockedItems: [] }, 0)
