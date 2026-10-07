@@ -127,7 +127,10 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
     const early = status.state === 'upcoming'
     const justDone = finishing.has(chore.id)
     return (
-      <li key={chore.id} className={`cl-row cl-row-${status.state}${status.neglect ? ` cl-row-late${status.neglect}` : ''}${justDone ? ' cl-row-done' : ''}${row.doneToday ? ' cl-row-doneToday' : ''}`}>
+      <li key={chore.id} className={`cl-row cl-row-${status.state}${status.neglect ? ` cl-row-late${status.neglect}` : ''}${justDone ? ' cl-row-done' : ''}${row.doneToday ? ' cl-row-doneToday' : ''}`}
+        // Ticked but not saved until the feedback ends: an app update must not reload over it.
+        data-unsaved={justDone || undefined}
+      >
         <div className="cl-info">
           <button type="button" className="cl-name" onClick={() => onEdit(chore)}>
             {chore.name}
