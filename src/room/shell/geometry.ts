@@ -58,8 +58,7 @@ export const OBJECT_SCALE = ROOM_TILE_W / TILE_W
 
 /**
  * The window on the left wall: tiles u0..u1 along ty (sill included), heights z0..z1 in room px.
- * It stays 1.8 tiles wide so it shrinks with the tiles in both directions, centred where the
- * reference room had it (45% of the way along the wall).
+ * It stays on the same tiles as in the 6x6 room, so wall decor placed before the room grew
+ * never ends up over it, and at 1.8 tiles wide it shrinks with the tiles in both directions.
  */
-const WINDOW_CENTRE = (2.7 / 6) * ROOM_TILES
-export const WINDOW = { u0: WINDOW_CENTRE - 0.9, u1: WINDOW_CENTRE + 0.9, z0: Math.round(76 * TILE_SCALE), z1: Math.round(140 * TILE_SCALE) }
+export const WINDOW = { u0: 1.8, u1: 3.6, z0: Math.round(76 * TILE_SCALE), z1: Math.round(140 * TILE_SCALE) }

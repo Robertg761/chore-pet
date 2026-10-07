@@ -96,8 +96,9 @@ describe('the window', () => {
     expect(WINDOW.z1).toBe(Math.round(140 * TILE_SCALE))
   })
 
-  it('keeps the window centred 45% of the way along the left wall', () => {
-    expect((WINDOW.u0 + WINDOW.u1) / 2 / ROOM_TILES).toBeCloseTo(0.45)
+  it('keeps the window on the same tiles as the 6x6 room, so older wall decor never covers it', () => {
+    expect(WINDOW.u0).toBe(1.8)
+    expect(WINDOW.u1).toBe(3.6)
   })
 })
 
