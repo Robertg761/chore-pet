@@ -65,3 +65,12 @@ it('checks the persisted history owner after startup hydration', () => {
   nav.setScope('new:home')
   expect(nav.getSnapshot()).toEqual({ name: 'home' })
 })
+
+it.each(['?error=access_denied', '#error=access_denied'])('keeps canceled sign-in dismissed on reload for %s', (callback) => {
+  history.replaceState(null, '', `/${callback}`)
+  const nav = createNavigation('guest:no-home')
+  disposers.push(nav.subscribe(() => {}))
+  expect(nav.getSnapshot()).toEqual({ name: 'sign-in' })
+  nav.go({ name: 'home' })
+  expect(readRoute(location.search, location.hash)).toEqual({ name: 'home' })
+})

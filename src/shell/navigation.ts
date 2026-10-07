@@ -20,7 +20,8 @@ export function readRoute(search: string, hash = ''): Route {
 export function routeUrl(url: URL, route: Route): string {
   const next = new URL(url)
   for (const key of ['screen', 'chore', 'sheet']) next.searchParams.delete(key)
-  if (route.name !== 'home') next.searchParams.set('screen', route.name)
+  // An explicit Home wins over a canceled auth callback when this URL reloads.
+  if (route.name !== 'home' || authReturnMessage(next.search, next.hash)) next.searchParams.set('screen', route.name)
   if (route.name === 'edit' && route.choreId) next.searchParams.set('chore', route.choreId)
   if (route.sheet) next.searchParams.set('sheet', route.sheet)
   return next.pathname + next.search + next.hash
