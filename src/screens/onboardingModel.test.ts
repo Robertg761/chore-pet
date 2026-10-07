@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Chore } from '../domain/types'
-import { coachCopy, coachStep, hasDueChore, hintKey, onboardedKey, readFlag, showFirstDoneHint, writeFlag, type FlagStorage } from './onboardingModel'
+import { FIRST_DONE_HINT, PLACING_COPY, coachCopy, coachStep, hasDueChore, hintKey, onboardedKey, readFlag, showFirstDoneHint, writeFlag, type FlagStorage } from './onboardingModel'
 
 function memory(): FlagStorage & { data: Map<string, string> } {
   const data = new Map<string, string>()
@@ -26,7 +26,24 @@ describe('coach steps', () => {
     expect(coachCopy(2, 1).count).toBe('1 chore so far')
     expect(coachCopy(2, 4).count).toBe('4 chores so far')
     expect(coachCopy(2, 2, true).text).toContain('Tap the X')
-    expect(coachCopy(3, 7).text).toContain('Tap Done')
+    expect(coachCopy(3, 7).text).toBe('Looks cosy! Tap Finish to meet your chores.')
+  })
+
+  it('says everything you place brings chores', () => {
+    expect(coachCopy(2, 1).text).toBe('Everything you place brings its own chores. Add one or two more.')
+    expect(coachCopy(2, 1, true).text).toBe('Everything you place brings its own chores. Tap the X to add one or two more.')
+  })
+
+  it('has a placing state that wins over the step text and keeps the count', () => {
+    expect(PLACING_COPY).toBe('Drag it where it goes, then tap Place it.')
+    expect(coachCopy(1, 0, false, true)).toEqual({ text: PLACING_COPY, count: null })
+    expect(coachCopy(2, 3, true, true)).toEqual({ text: PLACING_COPY, count: '3 chores so far' })
+    expect(coachCopy(3, 1, false, true).text).toBe(PLACING_COPY)
+    expect(coachCopy(2, 1, false, false).text).not.toBe(PLACING_COPY)
+  })
+
+  it('has a first-done hint that says to do it for real', () => {
+    expect(FIRST_DONE_HINT).toBe('Do it for real, then tap Done. Your pet will notice!')
   })
 })
 

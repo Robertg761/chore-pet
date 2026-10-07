@@ -7,12 +7,15 @@ import {
   isValidTime,
   parsePrefs,
   pickReminder,
+  PRIVATE_REMINDER_BODY,
+  reminderMessage,
   REMINDER_DUE_LINES,
   REMINDER_OVERDUE_LINES,
   shouldNotify,
   timeToMinutes,
   type ReminderPrefs,
 } from './reminderLogic'
+import { pickLine } from '../content/petLines'
 import { loadLastSent, loadPrefs, PREFS_KEY, saveLastSent, savePrefs } from './reminderStore'
 
 const on: ReminderPrefs = { enabled: true, time: '09:00' }
@@ -114,6 +117,23 @@ describe('pickReminder', () => {
     expect(pickReminder('Bun', chores, [status('zzz', 'due')], '2026-10-06')).toBeNull()
   })
 
+  it('keeps chore names out of a private reminder', () => {
+    const statuses = [status('a', 'due'), status('c', 'overdue', 3, '2026-10-03')]
+    const msg = reminderMessage('Mochi', chores, statuses, '2026-10-06', { private: true })
+    expect(msg).toEqual({ title: 'Mochi', body: 'A few little jobs are ready.' })
+    expect(PRIVATE_REMINDER_BODY).toBe('A few little jobs are ready.')
+    expect(msg?.body.toLowerCase()).not.toContain('plants')
+    expect(msg?.body).not.toContain('Plus')
+    expect(reminderMessage('Mochi', chores, [], '2026-10-06', { private: true })).toBeNull()
+    expect(reminderMessage('Mochi', chores, [status('zzz', 'due')], '2026-10-06', { private: true })).toBeNull()
+  })
+
+  it('is the same as pickReminder when not private', () => {
+    const s = [status('c', 'overdue', 3, '2026-10-03'), status('a', 'due')]
+    expect(reminderMessage('Mochi', chores, s, '2026-10-06')).toEqual(pickReminder('Mochi', chores, s, '2026-10-06'))
+    expect(reminderMessage('Mochi', chores, s, '2026-10-06', { private: false })).toEqual(pickReminder('Mochi', chores, s, '2026-10-06'))
+  })
+
   it('falls back to a generic title', () => {
     expect(pickReminder('  ', chores, [status('a', 'due')], '2026-10-06')?.title).toBe('Chore Pet')
   })
@@ -128,6 +148,18 @@ describe('reminder lines', () => {
       expect(line).toContain('{chore}')
       expect(line.length).toBeLessThanOrEqual(60)
       for (const word of BANNED) expect(line.toLowerCase().split(/\W+/)).not.toContain(word)
+    }
+  })
+})
+
+describe('reminder wording', () => {
+  it('reads well with verb-phrase names, never opens with the chore, and has no typographic quotes', () => {
+    for (const line of [...REMINDER_OVERDUE_LINES, ...REMINDER_DUE_LINES]) {
+      expect(line.startsWith('{chore}'), line).toBe(false)
+      expect(/^[\x20-\x7e]+$/.test(line), line).toBe(true)
+      const filled = pickLine([line], 0, { chore: 'Wash the dishes' })
+      expect(filled).toContain('wash the dishes')
+      expect(filled).not.toContain('{')
     }
   })
 })

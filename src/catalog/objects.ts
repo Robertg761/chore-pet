@@ -8,6 +8,8 @@ import type { CatalogEntry } from './types'
 // Sorted by first room, then name. Weekly chores are spread over the week
 // (Sun bed, Mon sink, Tue rug, Wed toilet, Thu recycling, Fri fridge, Sat
 // shower) and monthly chores sit on days 1 to 28, spread across the month.
+// Slow chores (oven, trash can wash, fish tank) repeat every N days instead, so
+// they stay realistic: oven 90, trash can 60, fish tank 14.
 
 export const CATALOG: CatalogEntry[] = [
   // Bathroom
@@ -120,7 +122,7 @@ export const CATALOG: CatalogEntry[] = [
     mess: 'stink',
     chores: [
       { name: 'Wipe the stove', schedule: { kind: 'everyNDays', n: 3 } },
-      { name: 'Clean the oven', schedule: { kind: 'monthly', dayOfMonth: 12 } },
+      { name: 'Clean the oven', schedule: { kind: 'everyNDays', n: 90 } },
     ],
   },
   {
@@ -143,7 +145,7 @@ export const CATALOG: CatalogEntry[] = [
     mess: 'stink',
     chores: [
       { name: 'Take out the trash', schedule: { kind: 'everyNDays', n: 3 } },
-      { name: 'Wash the trash can', schedule: { kind: 'monthly', dayOfMonth: 25 } },
+      { name: 'Wash the trash can', schedule: { kind: 'everyNDays', n: 60 } },
     ],
   },
 
@@ -171,7 +173,7 @@ export const CATALOG: CatalogEntry[] = [
     mess: 'stink',
     chores: [
       { name: 'Feed the fish', schedule: { kind: 'daily' } },
-      { name: 'Clean the fish tank', schedule: { kind: 'monthly', dayOfMonth: 8 } },
+      { name: 'Clean the fish tank', schedule: { kind: 'everyNDays', n: 14 } },
     ],
   },
   {

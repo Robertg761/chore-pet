@@ -50,6 +50,13 @@ describe('object catalog', () => {
     }
   })
 
+  it('keeps the slow chores on realistic intervals', () => {
+    const every = (id: string, name: string) => catalogEntry(id)?.chores.find((c) => c.name === name)?.schedule
+    expect(every('stove', 'Clean the oven')).toEqual({ kind: 'everyNDays', n: 90 })
+    expect(every('trash', 'Wash the trash can')).toEqual({ kind: 'everyNDays', n: 60 })
+    expect(every('fish-tank', 'Clean the fish tank')).toEqual({ kind: 'everyNDays', n: 14 })
+  })
+
   it('uses only valid schedules', () => {
     for (const e of CATALOG) {
       for (const c of e.chores) expect(validSchedule(c.schedule), `${e.id}: ${c.name}`).toBe(true)

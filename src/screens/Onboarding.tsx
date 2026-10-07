@@ -3,7 +3,7 @@ import { CharacterArt } from '../character/Character'
 import { WELCOME_LINES, pickLine } from '../content/petLines'
 import type { Pet } from '../domain/types'
 import { Cheer } from '../effects'
-import { coachCopy, type CoachStep } from './onboardingModel'
+import { FIRST_DONE_HINT, coachCopy, type CoachStep } from './onboardingModel'
 import './Onboarding.css'
 
 // The first minutes: a welcome beat, a coach card in build mode, and a hint on the home screen.
@@ -68,12 +68,14 @@ export interface CoachCardProps {
   choreCount: number
   /** The object sheet is covering the tray. */
   sheetOpen: boolean
+  /** An object is being dragged into place. */
+  placing?: boolean
   onSkip: () => void
 }
 
 /** A friendly card above the tray. It never covers the room or the tray. */
-export function CoachCard({ step, choreCount, sheetOpen, onSkip }: CoachCardProps) {
-  const { text, count } = coachCopy(step, choreCount, sheetOpen)
+export function CoachCard({ step, choreCount, sheetOpen, placing = false, onSkip }: CoachCardProps) {
+  const { text, count } = coachCopy(step, choreCount, sheetOpen, placing)
   const ref = useRef<HTMLElement>(null)
   // Arriving in build mode: land on the card so the first step is read out.
   useEffect(() => {
@@ -109,7 +111,7 @@ export function FirstDoneHint({ onClose }: FirstDoneHintProps) {
   }, [])
   return (
     <aside ref={ref} className="first-hint" tabIndex={-1} aria-label="Tip">
-      <p className="first-hint-text">Tap Done when you've really done it. Your pet will notice!</p>
+      <p className="first-hint-text">{FIRST_DONE_HINT}</p>
       <button type="button" className="first-hint-close" onClick={onClose} aria-label="Close tip">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
           <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
