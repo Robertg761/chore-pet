@@ -634,6 +634,8 @@ export function createStore({
       // No new syncs while the home is swapped, so the copy kept below is the one replaced.
       const resume = pause()
       let restored = false
+      /** The swapped-out copy written by this restore, removed again if the restore doesn't happen. */
+      let keptKey: string | null = null
       try {
         // A sync under way gets a moment to finish, so the home doesn't change under the swap.
         if (inflight) await Promise.race([inflight, new Promise((r) => setTimeout(r, resetWaitMs))])
@@ -655,7 +657,10 @@ export function createStore({
           const before = state.snapshot
           const kept = theirs.reduce(withChanges, before.tables)
           const replaced = selectHome(kept).home
-          if (replaced) await backup(`${account ?? 'unclaimed'}:${replaced.id}`, { ...before, tables: kept, heldFor: account })
+          if (replaced) {
+            keptKey = `${account ?? 'unclaimed'}:${replaced.id}`
+            await backup(keptKey, { ...before, tables: kept, heldFor: account })
+          }
           if (local.holdLock && !(await local.holdLock(lock, token, now().getTime()))) return false
           if (!stillHere()) return false
           if (state.snapshot !== before) continue
@@ -663,6 +668,7 @@ export function createStore({
           // ahead only if nothing new is there (another tab's save, or its reset, which this
           // tab then follows). Otherwise that is taken in, and the next round keeps it too.
           let failed = false
+          let swapped: Snapshot | null = null
           await queueSave(() =>
             writeWith((merged, stored) => {
               // Changes in the stored copy, since this tab last saw it, that this tab doesn't have
@@ -678,23 +684,32 @@ export function createStore({
                 }
               }
               if (merged !== before || !stillHere()) return merged
-              const restoredSnapshot = restoreHome(saved, before).reduce(change, before)
-              set({ snapshot: restoredSnapshot })
-              done = true
-              return restoredSnapshot
+              swapped = restoreHome(saved, before).reduce(change, before)
+              set({ snapshot: swapped })
+              return swapped
             }).catch((e: unknown) => {
               failed = true
               throw e
             }),
           )
-          if (!done && (failed || !stillHere())) return false
+          if (failed) {
+            // The swap was never stored (the write failed as the transaction ended): put the
+            // home on screen back to the one storage still holds.
+            if (swapped && state.snapshot === swapped) set({ snapshot: before })
+            return false
+          }
+          if (swapped) done = true
+          else if (!stillHere()) return false
         }
         if (!done) return false
-        // Forget the brought-back copy only once the restored home is really stored.
-        if (state.savedLocally) await local.dropBackup?.(ownerId)
+        // The restored home is stored: forget the brought-back copy.
+        await local.dropBackup?.(ownerId)
         restored = true
         return true
       } finally {
+        // Not restored (cancelled by a sign-out or account deletion, say): the home being
+        // replaced is still here, so its swapped-out copy goes, and nothing outlives a deletion.
+        if (!restored && keptKey) await local.dropBackup?.(keptKey).catch(warn('Could not remove the swapped-out copy'))
         await local.releaseLock?.(lock, token).catch(warn('Could not release the restore lock'))
         resume()
         if (restored) void sync()

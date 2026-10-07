@@ -860,6 +860,23 @@ describe('saved homes (backups kept on this device)', () => {
     expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Pip')
   })
 
+  it('reports nothing restored, and puts the home back, when the write fails as it is stored', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    const update = local.update!.bind(local)
+    local.update = async (fn) => {
+      fn(await local.load()) // the transaction ran, then it was aborted (quota, say)
+      throw new Error('QuotaExceededError')
+    }
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    expect(await store.restoreSaved('guest')).toBe(false)
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Pip')
+    expect(Object.keys(local.backups)).toEqual(['snapshot-backup-guest'])
+    local.update = update
+  })
+
   it('never offers a home held for another account, and clearing an account forgets its saved homes', async () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()
@@ -928,6 +945,8 @@ describe('saved homes (backups kept on this device)', () => {
     release()
     expect(await restoring).toBe(false)
     expect(selectHome(store.getState().snapshot.tables).home).toBeNull()
+    // The swapped-out copy written after the account's backups were cleared goes too.
+    expect(Object.keys(local.backups).filter((k) => k.startsWith('snapshot-backup-u1'))).toEqual([])
   })
 
   it('keeps an edit that lands during the lock check in the swapped-out copy', async () => {
