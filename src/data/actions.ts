@@ -1,6 +1,6 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
-import { completionCounts, sameSchedule } from '../domain/schedule'
+import { completionCounts, sameSchedule, SCHEDULE_HISTORY, trimHistory } from '../domain/schedule'
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, choreCountOf, currentStreak, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
@@ -91,10 +91,10 @@ export function addChore(home: Home, input: { name: string; schedule: Schedule; 
 export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 'schedule' | 'objectId'>>, today: ISODate): NewOp[] {
   const { schedule, ...rest } = patch
   if (schedule === undefined || sameSchedule(schedule, chore.schedule)) return [upsertOp('chores', { ...chore, ...rest })]
-  const { before: replaced, ...current } = chore.schedule
   // A second change on the same day replaces the first, which never got to apply.
-  const before = current.since === today ? replaced : current
+  const previous = chore.schedule.since === today ? chore.schedule.before : chore.schedule
   const { before: _ignored, ...next } = schedule
+  const before = previous && trimHistory(previous, SCHEDULE_HISTORY - 1)
   return [upsertOp('chores', { ...chore, ...rest, schedule: { ...next, since: today, ...(before && { before }) } as Schedule })]
 }
 

@@ -18,14 +18,14 @@ export type ScheduleRule =
  * How often a chore comes round. `since` is the day the chore moved to this
  * schedule (set by updateChore when the schedule changes): nothing is owed
  * from before it, so a schedule change is never retroactive. `before` is the
- * schedule it replaced (one step back only), so streaks can judge the days
- * before the change by the rule that applied then. Both are missing on a
- * schedule that was never changed, and neither is part of what the schedule
- * asks for, so `sameSchedule` ignores them.
+ * schedule it replaced, with its own `since` and `before` (a short chain, see
+ * SCHEDULE_HISTORY), so past days are judged by the rule that applied then.
+ * Both are missing on a schedule that was never changed, and neither is part
+ * of what the schedule asks for, so `sameSchedule` ignores them.
  */
 export type Schedule = ScheduleRule & {
   since?: ISODate
-  before?: ScheduleRule & { since?: ISODate }
+  before?: Schedule
 }
 
 export interface VacationWindow {

@@ -118,14 +118,27 @@ export function scheduleStart(chore: Chore): ISODate {
 
 /**
  * The chore as its schedule stood on `day`. Before a schedule change, that is
- * the schedule it replaced (`before`), applied as if from the start; a change
- * made before schedules kept `before` falls back to the current rule. Used to
- * judge past days (streaks, the week's health) by the rule of the time.
+ * the rule in force then (from the `before` chain), applied as if from the
+ * start; a change made before schedules kept `before` falls back to the
+ * current rule. Used to judge past days (streaks, the week's health) by the
+ * rule of the time.
  */
 export function choreAsOf(chore: Chore, day: ISODate): Chore {
   if (day >= scheduleStart(chore)) return chore
-  const { since: _since, ...rule } = chore.schedule.before ?? { ...chore.schedule, before: undefined }
+  // Step back to the rule in force that day; the oldest one kept covers everything before it.
+  let s: Schedule = chore.schedule
+  while (s.before && s.since && day < s.since) s = s.before
+  const { since: _since, before: _before, ...rule } = s
   return { ...chore, schedule: rule as Schedule }
+}
+
+/** Past schedules kept on a chore, at most (each is a few dozen bytes of the row's JSON). */
+export const SCHEDULE_HISTORY = 6
+
+/** A schedule with at most `depth` past schedules behind it. */
+export function trimHistory(schedule: Schedule, depth = SCHEDULE_HISTORY): Schedule {
+  const { before, ...rest } = schedule
+  return before && depth > 0 ? ({ ...rest, before: trimHistory(before, depth - 1) } as Schedule) : (rest as Schedule)
 }
 
 /** A chore's completion days for the replay: its own, one per calendar day, in order. */

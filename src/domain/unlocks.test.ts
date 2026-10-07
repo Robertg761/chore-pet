@@ -94,6 +94,22 @@ describe('streaks after a schedule edit', () => {
     expect(kept).toBeGreaterThan(30)
   })
 
+  it('judges each stretch by its own rule across several edits', () => {
+    // Weekly on Mondays in August, daily in September, every 2 days from October.
+    const mondays = ['2026-08-03', '2026-08-10', '2026-08-17', '2026-08-24', '2026-08-31']
+    const septDaily = everyDay('a', '2026-09-01', '2026-09-30')
+    const october = ['2026-10-01', '2026-10-03', '2026-10-05'].map((d) => done('a', d))
+    const history = [...mondays.map((d) => done('a', d)), ...septDaily, ...october]
+    const edited: Chore = {
+      ...daily('a', '2026-08-03'),
+      schedule: { kind: 'everyNDays', n: 2, since: '2026-10-01', before: { kind: 'daily', since: '2026-09-01', before: { kind: 'weekly', weekday: 1 } } },
+    }
+    expect(currentStreak([edited], history, TODAY)).toBeGreaterThan(60)
+    // With only one step of history, August would be judged as daily and the streak would break.
+    const oneStep: Chore = { ...edited, schedule: { ...edited.schedule, before: { kind: 'daily', since: '2026-09-01' } } }
+    expect(currentStreak([oneStep], history, TODAY)).toBeLessThan(40)
+  })
+
   it('keeps the streak of a chore that was done all along', () => {
     const before = currentStreak([daily('a', '2026-09-01')], everyDay('a', '2026-09-01', TODAY), TODAY)
     const edited: Chore = { ...daily('a', '2026-09-01'), schedule: { kind: 'everyNDays', n: 2, since: TODAY } }

@@ -124,10 +124,18 @@ interface Walker {
 function walkersFor(chore: Chore, completions: Completion[]): Walker[] {
   const days = completionDays(chore, completions)
   const start = scheduleStart(chore)
-  const current: Walker = { chore, replay: startReplay(chore), days, fed: 0, from: start }
-  if (start <= chore.createdOn) return [current]
-  const before: Walker = { chore, replay: startReplay(choreAsOf(chore, chore.createdOn)), days, fed: 0, from: chore.createdOn, until: start }
-  return [before, current]
+  const walkers: Walker[] = [{ chore, replay: startReplay(chore), days, fed: 0, from: start }]
+  // Each earlier rule judges the days from its own start up to the next change.
+  // The oldest rule kept (as choreAsOf sees it) reaches back to the chore's creation.
+  let until = start
+  let link = chore.schedule.before
+  while (until > chore.createdOn) {
+    const from = link?.before && link.since && link.since > chore.createdOn && link.since < until ? link.since : chore.createdOn
+    walkers.unshift({ chore, replay: startReplay(choreAsOf(chore, addDays(until, -1))), days, fed: 0, from, until })
+    until = from
+    link = link?.before
+  }
+  return walkers
 }
 
 /** Feed a walker every completion day up to and including `day`. */

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { weekdayOf } from './dates'
-import { choreStatus, completionCounts, nextDueDate } from './schedule'
+import { choreAsOf, choreStatus, completionCounts, nextDueDate } from './schedule'
 import type { Chore, Completion, Schedule } from './types'
 
 // Reference: 2026-10-06 is a Tuesday, 2026-10-10 is a Saturday.
@@ -138,3 +138,19 @@ describe('completionCounts', () => {
     expect(completionCounts(weekly, [on('2026-09-28'), on('2026-10-02')], '2026-10-03')).toBe(false)
   })
 })
+
+describe('choreAsOf', () => {
+  const c: Chore = {
+    id: 'c', homeId: 'h', objectId: null, name: 'c', createdOn: '2026-01-01', photoProof: false,
+    schedule: { kind: 'weekly', weekday: 1, since: '2026-03-01', before: { kind: 'monthly', dayOfMonth: 1, since: '2026-02-01', before: { kind: 'daily' } } },
+  }
+  it('gives the rule in force on each day', () => {
+    expect(choreAsOf(c, '2026-01-15').schedule).toEqual({ kind: 'daily' })
+    expect(choreAsOf(c, '2026-02-15').schedule).toEqual({ kind: 'monthly', dayOfMonth: 1 })
+    expect(choreAsOf(c, '2026-03-15')).toBe(c)
+  })
+  it('falls back to the current rule when no history was kept', () => {
+    expect(choreAsOf({ ...c, schedule: { kind: 'weekly', weekday: 1, since: '2026-03-01' } }, '2026-01-15').schedule).toEqual({ kind: 'weekly', weekday: 1 })
+  })
+})
+

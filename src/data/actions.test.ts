@@ -188,12 +188,22 @@ describe('updateChore schedule history', () => {
     expect(saved(updateChore(base, { schedule: { kind: 'daily' } }, '2026-10-05')).schedule).toEqual({ kind: 'daily', since: '2026-10-05', before: { kind: 'monthly', dayOfMonth: 1 } })
   })
 
-  it('keeps one step of history, and a same-day change replaces the first', () => {
+  it('chains the history, and a same-day change replaces the first', () => {
     const once = saved(updateChore(base, { schedule: { kind: 'daily' } }, '2026-10-05'))
     const sameDay = saved(updateChore(once, { schedule: { kind: 'weekly', weekday: 1 } }, '2026-10-05'))
     expect(sameDay.schedule).toEqual({ kind: 'weekly', weekday: 1, since: '2026-10-05', before: { kind: 'monthly', dayOfMonth: 1 } })
     const later = saved(updateChore(once, { schedule: { kind: 'weekly', weekday: 1 } }, '2026-10-09'))
-    expect(later.schedule).toEqual({ kind: 'weekly', weekday: 1, since: '2026-10-09', before: { kind: 'daily', since: '2026-10-05' } })
+    expect(later.schedule).toEqual({ kind: 'weekly', weekday: 1, since: '2026-10-09', before: { kind: 'daily', since: '2026-10-05', before: { kind: 'monthly', dayOfMonth: 1 } } })
+  })
+
+  it('keeps a short chain of past schedules', () => {
+    let c = base
+    const kinds: Schedule[] = [{ kind: 'daily' }, { kind: 'weekly', weekday: 1 }, { kind: 'everyNDays', n: 2 }, { kind: 'daily' }, { kind: 'weekly', weekday: 3 }, { kind: 'everyNDays', n: 3 }, { kind: 'daily' }, { kind: 'monthly', dayOfMonth: 2 }]
+    kinds.forEach((schedule, i) => (c = saved(updateChore(c, { schedule }, `2026-10-${String(i + 10).padStart(2, '0')}`))))
+    let depth = 0
+    for (let s = c.schedule.before; s; s = s.before) depth++
+    expect(depth).toBe(6)
+    expect(c.schedule.before).toMatchObject({ kind: 'daily', since: '2026-10-16' })
   })
 
   it('leaves the schedule alone when only the name changes', () => {
