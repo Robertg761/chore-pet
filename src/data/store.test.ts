@@ -896,6 +896,51 @@ describe('saved homes (backups kept on this device)', () => {
     expect(local.locks.lock.token).toBe('b')
   })
 
+  it('stops when the account is cleared while it runs, so a deleted account never gets the home back', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    let release = () => {}
+    const gate = new Promise<void>((r) => (release = r))
+    const backup = local.backup!.bind(local)
+    local.backup = async (owner, snapshot) => (await gate, backup(owner, snapshot))
+    const restoring = store.restoreSaved('guest')
+    await settle()
+    await store.reset({ backup: false }) // "Delete my account" from Settings, mid-restore
+    release()
+    expect(await restoring).toBe(false)
+    expect(selectHome(store.getState().snapshot.tables).home).toBeNull()
+  })
+
+  it('keeps an edit that lands during the lock check in the swapped-out copy', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    const pipHome = selectHome(store.getState().snapshot.tables).home!
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    let release = () => {}
+    const gate = new Promise<void>((r) => (release = r))
+    let entered = () => {}
+    const checking = new Promise<void>((r) => (entered = r))
+    const hold = local.holdLock!.bind(local)
+    let first = true
+    local.holdLock = async (lock, token, at) => {
+      if (first) {
+        first = false
+        entered()
+        await gate
+      }
+      return hold(lock, token, at)
+    }
+    const restoring = store.restoreSaved('guest')
+    await checking
+    store.apply(...addChore(pipHome, { name: 'Late', schedule: { kind: 'daily' } }, '2026-10-07'))
+    release()
+    expect(await restoring).toBe(true)
+    expect(choreNames((local.backups[`snapshot-backup-u1:${pipHome.id}`] as Snapshot).tables)).toEqual(['Late'])
+  })
+
   it('has nothing to offer without a store that keeps backups', async () => {
     const store = createStore({ local: volatileStore(), remote: null })
     await store.start()

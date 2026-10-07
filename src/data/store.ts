@@ -572,8 +572,12 @@ export function createStore({
       if (memoryOnly || !local.claimBackup || !local.backup) return false
       const backup = local.backup.bind(local)
       await load()
+      // The account this restore is for: a sign-out, deletion or account switch meanwhile cancels it.
+      const account = state.snapshot.userId
+      const started = epoch
+      const stillHere = () => epoch === started && state.snapshot.userId === account
       // One restore at a time for the account, across tabs: two at once would leave two homes.
-      const lock = `restore-lock-${state.snapshot.userId ?? 'unclaimed'}`
+      const lock = `restore-lock-${account ?? 'unclaimed'}`
       const token = crypto.randomUUID()
       const saved = await local.claimBackup(ownerId, lock, token, now().getTime(), CLAIM_STALE_MS)
       if (!saved) return false
@@ -581,22 +585,24 @@ export function createStore({
       const resume = pause()
       let restored = false
       try {
-        if (heldFor(saved) !== state.snapshot.userId) return false
+        if (!stillHere() || heldFor(saved) !== account) return false
         // Keep the home being replaced on this device, so it can be swapped back. Its own key
-        // (account and home), so it never overwrites the copy being brought back. If a sync
-        // already under way lands meanwhile, keep the newer copy instead.
-        let before = state.snapshot
-        for (let tries = 0; tries < 3; tries++) {
-          const replaced = selectHome(before.tables).home
-          if (replaced) await backup(`${before.userId ?? 'unclaimed'}:${replaced.id}`, { ...before, heldFor: before.userId })
-          if (state.snapshot === before) break
+        // (account and home), so it never overwrites the copy being brought back. Each round
+        // also checks the lock is still ours (a tab paused past its lifetime may have lost it).
+        // If anything lands meanwhile (a sync under way, another tab's save), go again with
+        // the newer copy, so the one replaced below is exactly the one kept.
+        let before: Snapshot | null = null
+        for (let tries = 0; tries < 3 && before !== state.snapshot; tries++) {
           before = state.snapshot
+          const replaced = selectHome(before.tables).home
+          if (replaced) await backup(`${account ?? 'unclaimed'}:${replaced.id}`, { ...before, heldFor: account })
+          if (local.holdLock && !(await local.holdLock(lock, token, now().getTime()))) return false
         }
-        if (restoreHome(saved, state.snapshot).length === 0) return false
-        // Still ours? A tab paused past the lock's lifetime may have lost it to another restore.
-        if (local.holdLock && !(await local.holdLock(lock, token, now().getTime()))) return false
-        // Built from the latest state, with no wait before the commit.
-        commit(restoreHome(saved, state.snapshot).reduce(change, state.snapshot))
+        // No wait from these checks to the commit, so nothing can land in between.
+        if (before !== state.snapshot || !stillHere()) return false
+        const ops = restoreHome(saved, state.snapshot)
+        if (ops.length === 0) return false
+        commit(ops.reduce(change, state.snapshot))
         // Forget the brought-back copy only once the restored home is really stored.
         await saving
         if (state.savedLocally) await local.dropBackup?.(ownerId)
