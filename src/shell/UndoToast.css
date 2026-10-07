@@ -45,3 +45,15 @@
   /* Still runs (instantly) so its end closes the toast. */
   .undo-toast-out { animation: undo-toast-out 1ms linear forwards; }
 }
+
+/* In dialogs the correction has its own row, so it never covers gift actions. */
+.undo-toast-inline {
+  position: static;
+  transform: none;
+  width: 100%;
+  max-width: 100%;
+  justify-content: space-between;
+  animation: none;
+}
+.undo-toast-inline.undo-toast-out { animation: undo-inline-out var(--dur-quick) var(--ease-in) forwards; }
+@keyframes undo-inline-out { to { opacity: 0; } }
