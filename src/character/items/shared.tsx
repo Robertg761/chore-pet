@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
 import type { Species } from '../../domain/types'
 
 // Shared helpers for wearable items. Items are drawn centred on (0,0) at
@@ -10,8 +9,8 @@ import type { Species } from '../../domain/types'
 
 export type Fit = { species: Species }
 
-/** The shared outline every item is drawn inside. */
-export const LINE = { stroke: PALETTE.ink, strokeWidth: CHARACTER_STROKE, strokeLinejoin: 'round', strokeLinecap: 'round' } as const
+// Every item is drawn inside an <Ink> group (../ink.tsx), the shared outline: it follows the
+// character's `strokeScale`. Use <Tube> (also ../ink.tsx) for outlined straps and twigs.
 
 /** Draws `children` and a mirrored copy, so the item is symmetrical. */
 export function pair(children: ReactNode) {

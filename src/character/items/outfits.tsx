@@ -1,6 +1,7 @@
 import { mix } from '../../art/color'
-import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
+import { PALETTE } from '../../art/palette'
 import { Garment } from '../Garment'
+import { Ink, Tube } from '../ink'
 import { pair, type Fit } from './shared'
 
 // Outfits are drawn around the outfit anchor (the lower belly) and clipped to
@@ -15,7 +16,8 @@ const { ink, warmRed, fabricBlue, cream, petDefault } = PALETTE
 const SHOULDER: Record<Fit['species'], number> = { mochi: 62, bun: 56, sprout: 58 }
 
 const shade = (colour: string, by = 0.28) => mix(colour, ink, by)
-const line = { fill: 'none', stroke: ink, strokeWidth: CHARACTER_STROKE, strokeLinecap: 'round', strokeLinejoin: 'round' } as const
+// No stroke width here: lines inherit the character outline from the enclosing <Garment> or <Ink>.
+const line = { fill: 'none', stroke: ink, strokeLinecap: 'round', strokeLinejoin: 'round' } as const
 
 /** The belly's lower outline, lifted by `y0`: a parabola that follows the round body bottom. */
 const hemY = (x: number, y0: number) => y0 - (x * x) / 180
@@ -97,7 +99,7 @@ export function overalls({ species }: Fit) {
   // Each strap leaves the bib's top corner, slips under the cheek, then climbs the side of the body.
   const strap = `M-13 -6 Q-30 -5 -${w - 14} -12 L-${w + 8} -34`
   return (
-    <>
+    <Ink>
       {/* trousers */}
       <Garment d="M-90 1 Q0 8 90 1 V40 H-90 Z" fill={denim}>
         <path d="M0 11 V30" {...line} strokeWidth={3} />
@@ -105,16 +107,13 @@ export function overalls({ species }: Fit) {
       </Garment>
       {/* straps */}
       {pair(
-        <>
-          <path d={strap} {...line} strokeWidth={10} />
-          <path d={strap} {...line} stroke={denim} strokeWidth={5.6} />
-        </>,
+        <Tube d={strap} outer={10} inner={5.6} colour={denim} />,
       )}
       {/* bib */}
       <path d="M-17 -7 Q-17 -10 -14 -10 H14 Q17 -10 17 -7 V4 Q0 8 -17 4 Z" {...line} fill={denim} />
       <rect x={-8} y={-5} width={16} height={8} rx={3} {...line} fill={denimShade} strokeWidth={2.8} />
       {pair(button(-14.5, -6.5))}
-    </>
+    </Ink>
   )
 }
 
@@ -143,11 +142,11 @@ export function dressSkirt({ species }: Fit) {
   const xs = Array.from({ length: n }, (_, i) => b - ((i + 1) * 2 * b) / n)
   const skirt = `M${-a} 0.5 Q0 6 ${a} 0.5 L${b} ${base(b)} ${xs.map((x) => `A8 8 0 0 1 ${x} ${base(x)}`).join(' ')} Z`
   return (
-    <>
+    <Ink>
       <path {...line} d={skirt} fill={warmRed} />
       {pair(<path d="M-16 9 Q-20 14 -23 18 M-34 6 Q-40 12 -45 18" {...line} stroke={shade(warmRed, 0.2)} strokeWidth={2.4} />)}
       {bow(0, 3, cream, 1.2)}
-    </>
+    </Ink>
   )
 }
 
@@ -165,8 +164,7 @@ export function sweater({ species }: Fit) {
       {/* the chest stripe */}
       <path d={hemBand(7, 12)} fill={cream} stroke="none" />
       {/* ribbed collar */}
-      <path d={collar} {...line} strokeWidth={14} />
-      <path d={collar} {...line} stroke={sageDark} strokeWidth={10} />
+      <Tube d={collar} outer={14} inner={10} colour={sageDark} />
       <path d={collar} {...line} stroke={ink} strokeOpacity={0.3} strokeWidth={10} strokeDasharray="2 7" strokeLinecap="butt" />
     </Garment>
   )

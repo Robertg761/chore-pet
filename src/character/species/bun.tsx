@@ -1,4 +1,5 @@
-import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
+import { PALETTE } from '../../art/palette'
+import { Ink } from '../ink'
 import type { Mood } from '../../domain/types'
 import type { Pose } from '../slots'
 import { Body, Cheeks, Face, MoodTint, Nub, Shadow } from '../parts'
@@ -26,7 +27,7 @@ export function ear(droop: number, fill: string, mood: Mood) {
   return (
     <g transform={`rotate(${-droop} 82 98)`}>
       <path d={EAR} fill={fill} />
-      <MoodTint d={EAR} mood={mood} smudges={[]} />
+      <MoodTint d={EAR} mood={mood} colour={fill} smudges={[]} />
       <path d="M75 90 C67 68 67 44 74 39 C81 35 87 62 86 90 Z" fill={PALETTE.blush} stroke="none" />
     </g>
   )
@@ -37,7 +38,7 @@ export const bunIdle: Pose = {
   renderBody: (bodyColour, mood) => {
     const [left, right] = EAR_DROOP[mood]
     return (
-      <g stroke={PALETTE.ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" strokeLinecap="round">
+      <Ink>
         <Shadow rx={56} />
         {ear(left, bodyColour, mood)}
         <g transform="translate(200 0) scale(-1 1)">
@@ -48,11 +49,11 @@ export const bunIdle: Pose = {
         <Nub cx={48} cy={148} rx={10} ry={13} rotate={-20} fill={bodyColour} />
         <Nub cx={152} cy={148} rx={10} ry={13} rotate={20} fill={bodyColour} />
         <Body d={BODY} colour={bodyColour} highlight={HIGHLIGHT} />
-        <MoodTint d={BODY} mood={mood} smudges={[[66, 160], [134, 118], [126, 168]]} />
+        <MoodTint d={BODY} mood={mood} colour={bodyColour} smudges={[[66, 160], [134, 118], [126, 168]]} />
         <Cheeks y={143} spread={36} />
         <Face mood={mood} eyeY={126} mouthY={145} />
         <path d="M95.5 134.5 h9 l-4.5 4.5 Z" fill={PALETTE.blush} strokeWidth={2.5} />
-      </g>
+      </Ink>
     )
   },
   silhouette: { d: BODY },

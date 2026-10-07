@@ -1,4 +1,4 @@
-import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
+import { Ink } from '../ink'
 import type { Pose } from '../slots'
 import { Body, Cheeks, Face, MoodTint, Nub, Shadow } from '../parts'
 
@@ -37,7 +37,7 @@ export function mochiPleats(weight = 3) {
 export const mochiIdle: Pose = {
   id: 'mochi-idle',
   renderBody: (bodyColour, mood) => (
-    <g stroke={PALETTE.ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" strokeLinecap="round">
+    <Ink>
       <Shadow rx={62} />
       <Nub cx={74} cy={178} rx={15} ry={9} fill={bodyColour} />
       <Nub cx={126} cy={178} rx={15} ry={9} fill={bodyColour} />
@@ -46,10 +46,10 @@ export const mochiIdle: Pose = {
       {mochiKnot(bodyColour)}
       <Body d={BODY} colour={bodyColour} highlight={HIGHLIGHT} />
       {mochiPleats()}
-      <MoodTint d={BODY} mood={mood} smudges={[[58, 158], [140, 112], [128, 166]]} />
+      <MoodTint d={BODY} mood={mood} colour={bodyColour} smudges={[[58, 158], [140, 112], [128, 166]]} />
       <Cheeks y={140} spread={40} />
       <Face mood={mood} eyeY={124} mouthY={138} />
-    </g>
+    </Ink>
   ),
   silhouette: { d: BODY },
   anchors: {

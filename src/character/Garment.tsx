@@ -1,5 +1,5 @@
 import { useId, type ReactNode } from 'react'
-import { CHARACTER_STROKE, PALETTE } from '../art/palette'
+import { Ink } from './ink'
 
 /**
  * Draws an outfit shape with its ink outline on top. `children` are details
@@ -9,13 +9,13 @@ import { CHARACTER_STROKE, PALETTE } from '../art/palette'
 export function Garment({ d, fill, children }: { d: string; fill: string; children?: ReactNode }) {
   const clip = `garment${useId().replace(/[^a-zA-Z0-9]/g, '')}`
   return (
-    <g stroke={PALETTE.ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" strokeLinecap="round">
+    <Ink>
       <clipPath id={clip}>
         <path d={d} />
       </clipPath>
       <path d={d} fill={fill} stroke="none" />
       <g clipPath={`url(#${clip})`}>{children}</g>
       <path d={d} fill="none" />
-    </g>
+    </Ink>
   )
 }

@@ -1,7 +1,8 @@
 import { PALETTE } from '../../art/palette'
 import { mix } from '../../art/color'
 import type { Species } from '../../domain/types'
-import { LINE, pair, type Fit } from './shared'
+import { Ink, Tube } from '../ink'
+import { pair, type Fit } from './shared'
 
 const { ink, warmRed, blush, leafDark, petDefault, woodDark, floorWood, cream, creamDark } = PALETTE
 
@@ -12,7 +13,7 @@ export function bow(fit: Fit) {
   const place = { mochi: 'translate(32 -6) rotate(14)', bun: 'translate(31 -3) rotate(14)', sprout: 'translate(28 -1) rotate(16)' }[fit.species]
   return (
     <g transform={place}>
-      <g {...LINE}>
+      <Ink>
         {pair(<>
           <path d="M-2 4 C-7 12 -13 20 -17 27 L-8 25 L-5 30 C-1 22 1 14 2 7 Z" fill={warmRed} />
         </>)}
@@ -21,7 +22,7 @@ export function bow(fit: Fit) {
           <path d="M-9 -3 C-13 -8 -19 -9 -22 -5" fill="none" stroke={blush} strokeWidth={3.5} />
         </>)}
         <rect x={-6.5} y={-7.5} width={13} height={15} rx={6} fill={warmRed} />
-      </g>
+      </Ink>
     </g>
   )
 }
@@ -52,9 +53,8 @@ export function leafCrown(_fit: Fit) {
     [43, 12, 74, leafDark],
   ]
   return (
-    <g {...LINE}>
-      <path d={twig} fill="none" stroke={ink} strokeWidth={9} />
-      <path d={twig} fill="none" stroke={woodDark} strokeWidth={4} />
+    <Ink>
+      <Tube d={twig} outer={9} inner={4} colour={woodDark} />
       {pair(
         <>
           {leaves.map(([x, y, a, c], i) => (
@@ -70,7 +70,7 @@ export function leafCrown(_fit: Fit) {
         <path d="M-8 1 C-8 -7 8 -7 8 1 Z" fill={woodDark} />
         <path d="M0 -5 V-8" fill="none" />
       </g>
-    </g>
+    </Ink>
   )
 }
 
@@ -128,7 +128,7 @@ export function beanie(fit: Fit) {
     ribs.push(`M${x} ${cuffTop + bow + 2.5} V${cuffBottom + bow - 2.5}`)
   }
   return (
-    <g {...LINE}>
+    <Ink>
       <path d={dome} fill={warmRed} />
       {rows.map((d) => (
         <path key={d} d={d} fill="none" stroke={KNIT} strokeWidth={2.5} />
@@ -143,6 +143,6 @@ export function beanie(fit: Fit) {
           <path d={`M${-pom.r * 0.55} ${-pom.r * 0.1} Q${-pom.r * 0.2} ${-pom.r * 0.6} ${pom.r * 0.3} ${-pom.r * 0.55}`} fill="none" stroke={creamDark} strokeWidth={2.5} />
         </g>
       )}
-    </g>
+    </Ink>
   )
 }

@@ -1,6 +1,7 @@
 import { useId, type ReactNode } from 'react'
 import { CHARACTER_STROKE, PALETTE } from '../art/palette'
 import { SLOT_RENDER_ORDER, type CharacterSlot, type Mood, type Species } from '../domain/types'
+import { StrokeScaleContext } from './strokeScale'
 import { ITEMS } from './items'
 import { DEFAULT_LOOK, LookContext, type Look } from './look'
 import { poseFor, poseNameFor, type PoseName } from './poses'
@@ -21,48 +22,55 @@ export interface CharacterProps {
   items?: Item[]
   /** Face options; defaults to classic eyes and round cheeks. */
   look?: Partial<Look>
+  /**
+   * Multiplies every outline the character draws (body, parts, outfit re-ink, item lines, face lines).
+   * Default 1. A pet drawn small, like the room's, passes about 1.5 so its line matches the objects'.
+   */
+  strokeScale?: number
   size?: number
   title?: string
 }
 
 /** The pet as SVG content in its 200x200 box (feet near y = 180), for use inside another SVG. */
-export function CharacterArt({ species, mood, bodyColour, equipped = {}, pose, items = ITEMS, look }: Omit<CharacterProps, 'size' | 'title'>) {
+export function CharacterArt({ species, mood, bodyColour, equipped = {}, pose, items = ITEMS, look, strokeScale = 1 }: Omit<CharacterProps, 'size' | 'title'>) {
   const p = poseFor(species, pose ?? poseNameFor(mood))
   const clip = `body${useId().replace(/[^a-zA-Z0-9]/g, '')}`
   const { d, transform } = p.silhouette
   /** The item worn in a slot, unless this pose hides that slot (tucked in bed). */
   const worn = (slot: CharacterSlot) => (p.hides?.includes(slot) ? undefined : items.find((i) => i.id === equipped[slot] && i.slot === slot))
   return (
-    <LookContext.Provider value={{ ...DEFAULT_LOOK, ...look }}>
-      {SLOT_RENDER_ORDER.map((slot) => {
-        if (slot === 'body') return <g key={slot}>{p.renderBody(bodyColour, mood)}</g>
-        const item = worn(slot)
-        const art = item && placed(p.anchors[slot], item.render({ species }))
-        // Front parts (a backpack's straps) go over the outfit, under the neck, face and head items.
-        const fronts =
-          slot === 'outfit' &&
-          SLOT_RENDER_ORDER.map((s) => {
-            const front = worn(s)?.front
-            return front ? <g key={`front-${s}`}>{placed(p.anchors[s], front({ species }))}</g> : null
-          })
-        if (slot !== 'outfit') return art ? <g key={slot}>{art}</g> : null
-        // Outfits are cut to the body outline, and the outline is inked again on top.
-        return (
-          <g key={slot}>
-            {art && (
-              <>
-                <clipPath id={clip}>
-                  <path d={d} transform={transform} />
-                </clipPath>
-                <g clipPath={`url(#${clip})`}>{art}</g>
-                <path d={d} transform={transform} fill="none" stroke={PALETTE.ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" />
-              </>
-            )}
-            {fronts}
-          </g>
-        )
-      })}
-    </LookContext.Provider>
+    <StrokeScaleContext.Provider value={strokeScale}>
+      <LookContext.Provider value={{ ...DEFAULT_LOOK, ...look }}>
+        {SLOT_RENDER_ORDER.map((slot) => {
+          if (slot === 'body') return <g key={slot}>{p.renderBody(bodyColour, mood)}</g>
+          const item = worn(slot)
+          const art = item && placed(p.anchors[slot], item.render({ species }))
+          // Front parts (a backpack's straps) go over the outfit, under the neck, face and head items.
+          const fronts =
+            slot === 'outfit' &&
+            SLOT_RENDER_ORDER.map((s) => {
+              const front = worn(s)?.front
+              return front ? <g key={`front-${s}`}>{placed(p.anchors[s], front({ species }))}</g> : null
+            })
+          if (slot !== 'outfit') return art ? <g key={slot}>{art}</g> : null
+          // Outfits are cut to the body outline, and the outline is inked again on top.
+          return (
+            <g key={slot}>
+              {art && (
+                <>
+                  <clipPath id={clip}>
+                    <path d={d} transform={transform} />
+                  </clipPath>
+                  <g clipPath={`url(#${clip})`}>{art}</g>
+                  <path d={d} transform={transform} fill="none" stroke={PALETTE.ink} strokeWidth={CHARACTER_STROKE * strokeScale} strokeLinejoin="round" />
+                </>
+              )}
+              {fronts}
+            </g>
+          )
+        })}
+      </LookContext.Provider>
+    </StrokeScaleContext.Provider>
   )
 }
 

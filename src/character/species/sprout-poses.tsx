@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
-import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
+import { CheerMarks } from '../accent'
+import { Ink } from '../ink'
 import type { Mood } from '../../domain/types'
 import type { MoodPoses } from '../poses'
 import type { Anchor, Pose } from '../slots'
@@ -89,7 +90,7 @@ function figure({ colour, face, tint, tf = {}, wilt, wiltRight, bend, arms }: Bo
       <Nub cx={100 - arms.dx} cy={arms.cy} rx={10} ry={arms.ry} rotate={-arms.rot} fill={colour} />
       <Nub cx={100 + arms.dx} cy={arms.cy} rx={10} ry={arms.ry} rotate={arms.rot} fill={colour} />
       <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
-      {tint && <MoodTint d={BODY} mood={tint} smudges={[[64, 160], [132, 108], [130, 166]]} />}
+      {tint && <MoodTint d={BODY} mood={tint} colour={colour} smudges={[[64, 160], [132, 108], [130, 166]]} />}
       <Cheeks y={142} spread={36} />
       <Face mood={face} eyeY={126} mouthY={140} />
     </g>
@@ -98,9 +99,9 @@ function figure({ colour, face, tint, tf = {}, wilt, wiltRight, bend, arms }: Bo
 
 function outlined(children: ReactNode) {
   return (
-    <g stroke={PALETTE.ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" strokeLinecap="round">
+    <Ink>
       {children}
-    </g>
+    </Ink>
   )
 }
 
@@ -233,11 +234,7 @@ const cheering: Pose = {
         wiltRight: -14,
         arms: { dx: 55, cy: 112, ry: 15, rot: 32 },
       })}
-      <g fill="none" strokeWidth={3}>
-        <path d="M70 187 l-6 5" />
-        <path d="M100 191 v7" />
-        <path d="M130 187 l6 5" />
-      </g>
+      <CheerMarks heart={[26, 66, 22]} star={[176, 52, 20]} />
     </>,
   )
   ),
@@ -257,11 +254,11 @@ const sick: Pose = {
     <>
       <Shadow rx={78} />
       <SickBedBack />
-      <g transform={tfString(SICK_TF)} strokeWidth={CHARACTER_STROKE / 0.8}>
+      <Ink k={1 / 0.8} transform={tfString(SICK_TF)}>
         {stemAndLeaves(WILT.sick + 8, WILT.sick + 16, { x: 0, y: -8 })}
         <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
-        <MoodTint d={BODY} mood="sick" smudges={[[64, 160], [132, 108], [130, 166]]} />
-      </g>
+        <MoodTint d={BODY} mood="sick" colour={colour} smudges={[[64, 160], [132, 108], [130, 166]]} />
+      </Ink>
       {/* face drawn at full size in final coordinates so its strokes match the other poses */}
       <Cheeks y={sickY(142)} spread={32} />
       <Face mood="sick" eyeY={sickY(126)} mouthY={sickY(140)} />
