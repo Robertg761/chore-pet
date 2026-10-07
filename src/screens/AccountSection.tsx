@@ -9,7 +9,7 @@ import {
   useAccount,
   type AccountResult,
 } from '../lib/account'
-import { useDataState } from '../data/appStore'
+import { appStore, useDataState } from '../data/appStore'
 import '../shell/controls.css'
 import './AccountSection.css'
 
@@ -86,8 +86,20 @@ export function AccountSection() {
     if (was === 'delete') requestAnimationFrame(() => askRef.current?.focus())
   }
 
-  // Some changes the server turned down were set aside; say so once, gently.
-  const rejected = (rejectedCount ?? 0) > 0 && <p className="account-note account-rejected">Some changes couldn't be saved to your account.</p>
+  // Some changes the server turned down were set aside: offer another go, or letting them go.
+  const rejected = (rejectedCount ?? 0) > 0 && (
+    <div className="account-confirm" role="group" aria-label="Changes not saved">
+      <p className="account-note account-rejected">Some changes couldn't be saved to your account.</p>
+      <div className="account-pair">
+        <button type="button" className="btn" onClick={() => appStore.retryRejected()}>
+          Try again
+        </button>
+        <button type="button" className="btn btn-quiet" onClick={() => appStore.dismissRejected()}>
+          Let them go
+        </button>
+      </div>
+    </div>
+  )
 
   const failure = error && (
     <p className="account-error" role="alert">

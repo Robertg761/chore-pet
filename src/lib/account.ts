@@ -160,11 +160,16 @@ export async function signOutSafely(): Promise<SignOutResult> {
   const supabase = await getSupabase().catch(() => null)
   if (!supabase) return { ok: false, unsynced: appStore.getState().pendingCount, message: "Couldn't reach the server. Try again when you're online." }
   await Promise.race([appStore.sync(), new Promise((r) => setTimeout(r, LAST_SYNC_MS))])
-  const unsynced = appStore.getState().pendingCount
+  const { pendingCount: unsynced, rejectedCount } = appStore.getState()
+  // A copy stays on this device only when the server can't give it back: unsynced or
+  // set-aside changes, or a guest's home (no way to sign back in to it). A fully saved
+  // account leaves nothing behind, so sign-out is a clean break on a shared browser.
+  const { data: current } = await supabase.auth.getSession()
+  const keep = unsynced > 0 || rejectedCount > 0 || current.session?.user.is_anonymous === true
   // No syncing in between: the old session must not pull its home back in, nor the new one claim it.
   const resume = appStore.pause()
   try {
-    await appStore.reset()
+    await appStore.reset({ backup: keep })
     clearLocalSettings()
     // Removes the session from this device even if the server can't be told.
     const { error } = await supabase.auth.signOut({ scope: 'local' })

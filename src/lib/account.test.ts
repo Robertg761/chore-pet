@@ -3,15 +3,20 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 const calls: string[] = []
 const store = {
   pendingCount: 0,
+  rejectedCount: 0,
   sync: vi.fn(async () => void calls.push('sync')),
-  getState: () => ({ pendingCount: store.pendingCount }),
+  getState: () => ({ pendingCount: store.pendingCount, rejectedCount: store.rejectedCount }),
   pause: vi.fn(() => {
     calls.push('pause')
     return () => void calls.push('resume')
   }),
   reset: vi.fn(async (options?: { backup?: boolean }) => void calls.push(`reset${options?.backup === false ? ' no-backup' : ''}`)),
 }
-const auth = { signOut: vi.fn(async (options: { scope: string }) => (calls.push(`signOut ${options.scope}`), { error: null })) }
+let anonymous = false
+const auth = {
+  signOut: vi.fn(async (options: { scope: string }) => (calls.push(`signOut ${options.scope}`), { error: null })),
+  getSession: async () => ({ data: { session: { user: { is_anonymous: anonymous } } } }),
+}
 const rpc = vi.fn()
 let configured = true
 vi.mock('../data/appStore', () => ({ appStore: store }))
@@ -32,6 +37,8 @@ function fakeStorage(keys: string[]) {
 beforeEach(() => {
   calls.length = 0
   store.pendingCount = 0
+  store.rejectedCount = 0
+  anonymous = false
   configured = true
   vi.stubGlobal('localStorage', fakeStorage([]))
 })
@@ -48,7 +55,19 @@ describe('signOutSafely', () => {
   it('syncs first, then resets with syncing held, then signs out on this device only', async () => {
     const result = await signOutSafely()
     expect(result).toEqual({ ok: true, unsynced: 0 })
-    expect(calls).toEqual(['sync', 'pause', 'reset', 'signOut local', 'resume'])
+    expect(calls).toEqual(['sync', 'pause', 'reset no-backup', 'signOut local', 'resume'])
+  })
+
+  it('keeps a backup only when the server could not give the home back', async () => {
+    store.pendingCount = 2
+    await signOutSafely()
+    store.pendingCount = 0
+    store.rejectedCount = 1
+    await signOutSafely()
+    store.rejectedCount = 0
+    anonymous = true
+    await signOutSafely()
+    expect(calls.filter((c) => c.startsWith('reset'))).toEqual(['reset', 'reset', 'reset'])
   })
 
   it('says how many changes had not synced (they are backed up by the reset)', async () => {
