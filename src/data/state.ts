@@ -319,6 +319,44 @@ export function mergeSnapshots(mine: Snapshot, base: Snapshot | null, stored: Sn
   }
 }
 
+/** Row by row, what one copy of the tables changed since another: rows added or changed, and rows removed. */
+export interface TableChanges {
+  put: { table: TableName; key: string; row: unknown }[]
+  removed: { table: TableName; key: string }[]
+}
+
+/** What `after` changed since `before`. */
+export function tableChanges(before: Tables, after: Tables): TableChanges {
+  const changes: TableChanges = { put: [], removed: [] }
+  for (const table of TABLES) {
+    const was = before[table] as Record<string, unknown>
+    const now = after[table] as Record<string, unknown>
+    for (const [key, row] of Object.entries(now)) if (!(key in was) || JSON.stringify(was[key]) !== JSON.stringify(row)) changes.put.push({ table, key, row })
+    for (const key of Object.keys(was)) if (!(key in now)) changes.removed.push({ table, key })
+  }
+  return changes
+}
+
+/** The changes `tables` doesn't have yet (none when it already matches them). */
+export function unapplied(changes: TableChanges, tables: Tables): TableChanges {
+  const rows = (table: TableName) => tables[table] as Record<string, unknown>
+  return {
+    put: changes.put.filter(({ table, key, row }) => JSON.stringify(rows(table)[key]) !== JSON.stringify(row)),
+    removed: changes.removed.filter(({ table, key }) => key in rows(table)),
+  }
+}
+
+/** `tables` with the changes made. */
+export function withChanges(tables: Tables, changes: TableChanges): Tables {
+  const out = { ...tables } as Record<TableName, Record<string, unknown>>
+  for (const { table, key, row } of changes.put) out[table] = { ...out[table], [key]: row }
+  for (const { table, key } of changes.removed) {
+    const { [key]: _gone, ...rest } = out[table]
+    out[table] = rest
+  }
+  return out as Tables
+}
+
 /** A home kept on this device (a backup), as offered back to the player. */
 export interface SavedHome {
   ownerId: string

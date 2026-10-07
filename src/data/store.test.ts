@@ -1006,6 +1006,24 @@ describe('saved homes (backups kept on this device)', () => {
     expect(choreNames((local.backups[`snapshot-backup-u1:${pipHome.id}`] as Snapshot).tables)).toEqual(['Sent from the other tab'])
   })
 
+  it('takes in another tab\u2019s sent removals and edits too, so the swapped-out copy never brings them back', async () => {
+    const { local, tabA, during, pipHome } = await restoreBetweenTabs()
+    tabA.apply(...addChore(pipHome, { name: 'Dishes', schedule: { kind: 'daily' } }, '2026-10-07'), ...addChore(pipHome, { name: 'Bins', schedule: { kind: 'daily' } }, '2026-10-07'))
+    await tabA.sync()
+    await settle()
+    during(async () => {
+      // The other tab removed Dishes and renamed Bins, sent both, and hasn't pulled yet.
+      const stored = local.current as Snapshot
+      const chores = Object.values(stored.tables.chores)
+      const dishes = chores.find((c) => c.name === 'Dishes')!
+      const bins = chores.find((c) => c.name === 'Bins')!
+      const { [dishes.id]: _gone, ...rest } = stored.tables.chores
+      local.current = { ...stored, seq: stored.seq + 2, tables: { ...stored.tables, chores: { ...rest, [bins.id]: { ...bins, name: 'Recycling' } } }, pulledAt: tabA.getState().snapshot.pulledAt }
+    })
+    expect(await tabA.restoreSaved('guest')).toBe(true)
+    expect(choreNames((local.backups[`snapshot-backup-u1:${pipHome.id}`] as Snapshot).tables)).toEqual(['Recycling'])
+  })
+
   it('stops when another tab signs out partway, and leaves its cleared copy alone', async () => {
     const { local, tabA, tabB, during } = await restoreBetweenTabs()
     during(() => tabB.reset({ backup: false }))
