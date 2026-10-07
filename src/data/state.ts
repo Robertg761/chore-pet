@@ -42,6 +42,18 @@ export interface Snapshot {
   rejected?: RejectedOp[]
   /** When `tables` last came from the server (an ISO time), so tabs can tell whose copy is fresher. */
   pulledAt?: string
+  /**
+   * On a backup only: the account it may be offered back to (missing means its
+   * own account). A guest home replaced by a sign-in is held for the account
+   * that replaced it, so a shared browser never offers one person's home to
+   * the next.
+   */
+  heldFor?: string | null
+}
+
+/** The account a backup may be offered back to. */
+export function heldFor(backup: Snapshot): string | null {
+  return backup.heldFor !== undefined ? backup.heldFor : backup.userId
 }
 
 export interface RejectedOp {

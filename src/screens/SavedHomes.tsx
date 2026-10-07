@@ -38,10 +38,16 @@ export function SavedHomes({ current, className = '' }: { current?: { homeId: st
 
   const bringBack = async (home: SavedHome) => {
     setBusy(true)
-    await appStore.restoreSaved(home.ownerId)
-    setBusy(false)
-    setAsking(null)
-    refresh()
+    try {
+      await appStore.restoreSaved(home.ownerId)
+    } catch (e) {
+      console.warn('Could not bring the saved home back', e)
+    } finally {
+      // Whatever happened, the buttons work again and the list is read afresh.
+      setBusy(false)
+      setAsking(null)
+      refresh()
+    }
   }
 
   if (homes.length === 0) return null

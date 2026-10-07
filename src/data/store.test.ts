@@ -815,8 +815,9 @@ describe('saved homes (backups kept on this device)', () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()
     const store = await onboarded(remote, local)
+    // As a sign-in would leave it: the guest's home, held for the account that took over.
     const guest = createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest'))
-    await local.backup!('guest', guest)
+    await local.backup!('guest', { ...guest, heldFor: 'u1' })
 
     expect((await store.savedHomes()).map((h) => [h.ownerId, h.petName])).toEqual([['guest', 'Bun']])
     expect(await store.restoreSaved('guest')).toBe(true)
@@ -833,13 +834,28 @@ describe('saved homes (backups kept on this device)', () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()
     const store = await onboarded(remote, local)
-    await local.backup!('guest', createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')))
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
     local.update = async () => {
       throw new Error('disk full')
     }
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     expect(await store.restoreSaved('guest')).toBe(true)
     expect(Object.keys(local.backups)).toContain('snapshot-backup-guest')
+  })
+
+  it('never offers a home held for another account, and clearing an account forgets its saved homes', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    const home = (name: string, owner: string) => createHousehold({ species: 'mochi', petName: name, userId: owner }).reduce(change, emptySnapshot(owner))
+    await local.backup!('someone', home('Theirs', 'someone')) // another person's sign-out copy
+    await local.backup!('guest', { ...home('Bun', 'guest'), heldFor: 'u1' })
+    expect((await store.savedHomes()).map((h) => h.petName)).toEqual(['Bun'])
+    expect(await store.restoreSaved('someone')).toBe(false)
+
+    await store.restoreSaved('guest') // swaps Pip's home out, held for u1
+    await store.reset({ backup: false })
+    expect(Object.keys(local.backups)).toEqual(['snapshot-backup-someone'])
   })
 
   it('has nothing to offer without a store that keeps backups', async () => {
