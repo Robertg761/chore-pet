@@ -574,7 +574,8 @@ export function createStore({
       await load()
       // One restore at a time for the account, across tabs: two at once would leave two homes.
       const lock = `restore-lock-${state.snapshot.userId ?? 'unclaimed'}`
-      const saved = await local.claimBackup(ownerId, lock, now().getTime(), CLAIM_STALE_MS)
+      const token = crypto.randomUUID()
+      const saved = await local.claimBackup(ownerId, lock, token, now().getTime(), CLAIM_STALE_MS)
       if (!saved) return false
       // No new syncs while the home is swapped, so the copy kept below is the one replaced.
       const resume = pause()
@@ -591,16 +592,18 @@ export function createStore({
           if (state.snapshot === before) break
           before = state.snapshot
         }
-        const ops = restoreHome(saved, state.snapshot)
-        if (ops.length === 0) return false
-        commit(ops.reduce(change, state.snapshot))
+        if (restoreHome(saved, state.snapshot).length === 0) return false
+        // Still ours? A tab paused past the lock's lifetime may have lost it to another restore.
+        if (local.holdLock && !(await local.holdLock(lock, token, now().getTime()))) return false
+        // Built from the latest state, with no wait before the commit.
+        commit(restoreHome(saved, state.snapshot).reduce(change, state.snapshot))
         // Forget the brought-back copy only once the restored home is really stored.
         await saving
         if (state.savedLocally) await local.dropBackup?.(ownerId)
         restored = true
         return true
       } finally {
-        await local.releaseLock?.(lock).catch(warn('Could not release the restore lock'))
+        await local.releaseLock?.(lock, token).catch(warn('Could not release the restore lock'))
         resume()
         if (restored) void sync()
       }

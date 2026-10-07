@@ -246,6 +246,23 @@ describe('restoreHome', () => {
     expect(Object.keys(ops.reduce(change, current).tables.homes)).toHaveLength(1)
   })
 
+  it('removes every home the account has, not just the one on screen', () => {
+    const saved = build('guest', 'Bun')
+    const two = createHousehold({ species: 'bun', petName: 'Other', userId: 'u1' }).reduce(change, build('u1', 'Pip'))
+    expect(Object.keys(two.tables.homes)).toHaveLength(2)
+    const after = restoreHome(saved, two).reduce(change, two)
+    expect(Object.keys(after.tables.homes)).toHaveLength(1)
+    expect(selectHome(after.tables).pet?.name).toBe('Bun')
+  })
+
+  it('moves banked counts of live chores to their new ids', () => {
+    const base = build('guest', 'Bun')
+    const homeId = selectHome(base.tables).home!.id
+    const saved: Snapshot = { ...base, tables: { ...base.tables, progress: { [homeId]: { ...base.tables.progress[homeId], retired: { c1: 3, gone: 2 } } } } }
+    const after = selectHome(restoreHome(saved, emptySnapshot('u1')).reduce(change, emptySnapshot('u1')).tables)
+    expect(after.progress?.retired).toEqual({ [after.chores[0].id]: 3, gone: 2 })
+  })
+
   it('does nothing for a backup without a home', () => {
     expect(restoreHome(emptySnapshot('guest'), emptySnapshot('u1'))).toEqual([])
   })

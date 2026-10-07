@@ -885,6 +885,17 @@ describe('saved homes (backups kept on this device)', () => {
     expect(local.locks).toEqual({})
   })
 
+  it('only the restore holding the lock may commit or release it', async () => {
+    const local = memoryStore()
+    await local.backup!('guest', emptySnapshot('guest'))
+    expect(await local.claimBackup!('guest', 'lock', 'a', 0, 60_000)).not.toBeNull()
+    expect(await local.claimBackup!('guest', 'lock', 'b', 30_000, 60_000)).toBeNull() // still held
+    expect(await local.claimBackup!('guest', 'lock', 'b', 70_000, 60_000)).not.toBeNull() // lapsed: b takes it
+    expect(await local.holdLock!('lock', 'a', 71_000)).toBe(false)
+    await local.releaseLock!('lock', 'a')
+    expect(local.locks.lock.token).toBe('b')
+  })
+
   it('has nothing to offer without a store that keeps backups', async () => {
     const store = createStore({ local: volatileStore(), remote: null })
     await store.start()

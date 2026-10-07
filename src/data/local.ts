@@ -18,13 +18,15 @@ export interface LocalStore {
   /** Every backup kept on this device, by the account it came from. */
   listBackups?(): Promise<{ ownerId: string; snapshot: Snapshot }[]>
   /**
-   * Start a restore, in one step: take the account's restore lock (`lock`) and
-   * read the backup. Null when the backup is gone or another restore (any tab)
-   * holds the lock, taken within `staleMs`.
+   * Start a restore, in one step: take the account's restore lock (`lock`) for
+   * `token` and read the backup. Null when the backup is gone or another
+   * restore (any tab) holds the lock, refreshed within `staleMs`.
    */
-  claimBackup?(ownerId: string, lock: string, now: number, staleMs: number): Promise<Snapshot | null>
-  /** End a restore: let go of the lock. */
-  releaseLock?(lock: string): Promise<void>
+  claimBackup?(ownerId: string, lock: string, token: string, now: number, staleMs: number): Promise<Snapshot | null>
+  /** Refresh the lock if `token` still holds it; false when another restore took it over. */
+  holdLock?(lock: string, token: string, now: number): Promise<boolean>
+  /** End a restore: let go of the lock, only if `token` still holds it. */
+  releaseLock?(lock: string, token: string): Promise<void>
   /** False when nothing survives a reload (the in-memory fallback). Missing means true. */
   durable?: boolean
 }
@@ -34,6 +36,12 @@ const STORE = 'kv'
 const KEY = 'snapshot'
 
 const BACKUP_PREFIX = 'snapshot-backup-'
+
+/** A restore's hold on its account's lock: who holds it, and when it last refreshed it. */
+interface Lease {
+  token: string
+  at: number
+}
 export const backupKey = (ownerId: string) => `${BACKUP_PREFIX}${ownerId}`
 
 function open(): Promise<IDBDatabase> {
@@ -61,6 +69,19 @@ export function indexedDbStore(): LocalStore {
       throw e
     })
     return db
+  }
+  /** Read the lease under `lock` and act on it, in one transaction. */
+  async function onLease(lock: string, act: (current: Lease | undefined, store: IDBObjectStore) => boolean): Promise<boolean> {
+    const d = await getDb()
+    return new Promise((resolve, reject) => {
+      let result = false
+      const tx = d.transaction(STORE, 'readwrite')
+      const store = tx.objectStore(STORE)
+      const req = store.get(lock)
+      req.onsuccess = () => (result = act(req.result as Lease | undefined, store))
+      tx.oncomplete = () => resolve(result)
+      tx.onerror = () => reject(tx.error)
+    })
   }
   async function put(key: string, value: Snapshot): Promise<void> {
     const d = await getDb()
@@ -103,7 +124,7 @@ export function indexedDbStore(): LocalStore {
       })
     },
     backup: (ownerId, snapshot) => put(backupKey(ownerId), snapshot),
-    async claimBackup(ownerId, lock, now, staleMs) {
+    async claimBackup(ownerId, lock, token, now, staleMs) {
       const d = await getDb()
       return new Promise((resolve, reject) => {
         let claimed: Snapshot | null = null
@@ -111,25 +132,28 @@ export function indexedDbStore(): LocalStore {
         const store = tx.objectStore(STORE)
         const held = store.get(lock)
         held.onsuccess = () => {
-          const at = held.result as number | undefined
-          if (at !== undefined && now - at < staleMs) return
+          const current = held.result as Lease | undefined
+          if (current && now - current.at < staleMs) return
           const req = store.get(backupKey(ownerId))
           req.onsuccess = () => {
             claimed = (req.result as Snapshot | undefined) ?? null
-            if (claimed) store.put(now, lock)
+            if (claimed) store.put({ token, at: now } satisfies Lease, lock)
           }
         }
         tx.oncomplete = () => resolve(claimed)
         tx.onerror = () => reject(tx.error)
       })
     },
-    async releaseLock(lock) {
-      const d = await getDb()
-      return new Promise((resolve, reject) => {
-        const tx = d.transaction(STORE, 'readwrite')
-        tx.objectStore(STORE).delete(lock)
-        tx.oncomplete = () => resolve()
-        tx.onerror = () => reject(tx.error)
+    holdLock: (lock, token, now) =>
+      onLease(lock, (current, store) => {
+        if (current?.token !== token) return false
+        store.put({ token, at: now } satisfies Lease, lock)
+        return true
+      }),
+    async releaseLock(lock, token) {
+      await onLease(lock, (current, store) => {
+        if (current?.token === token) store.delete(lock)
+        return true
       })
     },
     async listBackups() {
@@ -160,11 +184,11 @@ export function indexedDbStore(): LocalStore {
 }
 
 /** For tests (it stands in for IndexedDB, so it counts as durable). */
-export function memoryStore(initial: Snapshot | null = null): LocalStore & { current: Snapshot | null; backups: Record<string, Snapshot>; locks: Record<string, number> } {
+export function memoryStore(initial: Snapshot | null = null): LocalStore & { current: Snapshot | null; backups: Record<string, Snapshot>; locks: Record<string, Lease> } {
   const store = {
     current: initial,
     backups: {} as Record<string, Snapshot>,
-    locks: {} as Record<string, number>,
+    locks: {} as Record<string, Lease>,
     async load() {
       return store.current && structuredClone(store.current)
     },
@@ -181,16 +205,21 @@ export function memoryStore(initial: Snapshot | null = null): LocalStore & { cur
     async dropBackup(ownerId: string) {
       delete store.backups[backupKey(ownerId)]
     },
-    async claimBackup(ownerId: string, lock: string, now: number, staleMs: number) {
-      const at = store.locks[lock]
-      if (at !== undefined && now - at < staleMs) return null
+    async claimBackup(ownerId: string, lock: string, token: string, now: number, staleMs: number) {
+      const current = store.locks[lock]
+      if (current && now - current.at < staleMs) return null
       const found = store.backups[backupKey(ownerId)]
       if (!found) return null
-      store.locks[lock] = now
+      store.locks[lock] = { token, at: now }
       return structuredClone(found)
     },
-    async releaseLock(lock: string) {
-      delete store.locks[lock]
+    async holdLock(lock: string, token: string, now: number) {
+      if (store.locks[lock]?.token !== token) return false
+      store.locks[lock] = { token, at: now }
+      return true
+    },
+    async releaseLock(lock: string, token: string) {
+      if (store.locks[lock]?.token === token) delete store.locks[lock]
     },
     async listBackups() {
       return Object.entries(store.backups).map(([key, snapshot]) => ({ ownerId: key.slice(BACKUP_PREFIX.length), snapshot: structuredClone(snapshot) }))
