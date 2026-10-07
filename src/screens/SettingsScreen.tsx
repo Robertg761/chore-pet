@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { setSoundOn, soundOn } from '../audio/sfx'
 import { ReminderSettings } from '../reminders/ReminderSettings'
+import { ScreenHeader } from '../shell/ScreenHeader'
 import { AccountSection } from './AccountSection'
 import './SettingsScreen.css'
 
@@ -13,16 +14,13 @@ export interface SettingsScreenProps {
   account?: React.ReactNode
 }
 
+const PRIVACY_URL = 'https://github.com/Robertg761/chore-pet/blob/main/docs/PRIVACY.md'
+
 export function SettingsScreen({ petName, onClose, account }: SettingsScreenProps) {
   const [sound, setSound] = useState(soundOn)
   return (
-    <section className="settings" aria-labelledby="settings-title">
-      <div className="settings-head">
-        <h1 id="settings-title">Settings</h1>
-        <button type="button" className="link-button settings-back" onClick={onClose}>
-          Back
-        </button>
-      </div>
+    <section className="settings screen-fit" aria-labelledby="settings-title">
+      <ScreenHeader id="settings-title" title="Settings" onBack={onClose} />
 
       <div className="settings-cols">
         <div className="settings-col">
@@ -30,6 +28,7 @@ export function SettingsScreen({ petName, onClose, account }: SettingsScreenProp
             <label className="settings-toggle">
               <input
                 type="checkbox"
+                className="check"
                 checked={sound}
                 onChange={(e) => {
                   setSound(e.target.checked)
@@ -48,6 +47,11 @@ export function SettingsScreen({ petName, onClose, account }: SettingsScreenProp
 
         <div className="settings-col">
           <div className="settings-card">{account ?? <AccountSection />}</div>
+          <p className="settings-foot">
+            <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer">
+              How your data is kept<span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </p>
         </div>
       </div>
     </section>

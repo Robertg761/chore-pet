@@ -53,14 +53,24 @@ export function nextLines(progress: Progress, streak: number): { chores: NextLin
   return { chores: next.chores && describeNext(next.chores), streak: next.streak && describeNext(next.streak) }
 }
 
-/** Chores left until the next reward, e.g. "2 to go", or nothing when none is pending. */
+/** Chores left until the next gift, e.g. "Gift in 2", or nothing when none is pending. */
 export function rewardsNote(progress: Progress | null | undefined): string | undefined {
   if (!progress) return undefined
   const next = nextUnlocks(progress, progress.currentStreak).chores
-  return next && next.remaining > 0 ? `${next.remaining} to go` : undefined
+  return next && next.remaining > 0 ? `Gift in ${next.remaining}` : undefined
 }
 
-/** The rewards button: "Rewards · 2 to go", or just "Rewards" when nothing is pending. */
+/** The single reward closest to being earned, for the "next up" highlight on the rewards screen. */
+export function nextUpId(progress: Progress, streak: number): string | null {
+  const { chores, streak: days } = nextUnlocks(progress, streak)
+  const pick = chores && days ? (days.remaining < chores.remaining ? days : chores) : (chores ?? days)
+  return pick?.unlock.id ?? null
+}
+
+/** How a streak is counted, in one line. */
+export const STREAK_RULE = 'A day counts when you do a chore and nothing gets very late.'
+
+/** The rewards button: "Rewards · Gift in 2", or just "Rewards" when nothing is pending. */
 export function rewardsButtonLabel(progress: Progress | null | undefined): string {
   const note = rewardsNote(progress)
   return note ? `Rewards · ${note}` : 'Rewards'

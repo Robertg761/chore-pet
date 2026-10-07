@@ -3,19 +3,19 @@ import { CARD_HEIGHT, CARD_WIDTH, captionFontSize, captionText, exportSize, name
 
 describe('captionText', () => {
   it('lists chores and the streak', () => {
-    expect(captionText('Pip', 23, 4)).toBe("Pip's home · 23 chores done · 4 days in a row")
+    expect(captionText('Pip', 23, 4)).toBe('Home of Pip · 23 chores done · 4 days in a row')
   })
   it('skips the streak at 0', () => {
-    expect(captionText('Pip', 23, 0)).toBe("Pip's home · 23 chores done")
+    expect(captionText('Pip', 23, 0)).toBe('Home of Pip · 23 chores done')
   })
   it('uses singular words', () => {
-    expect(captionText('Pip', 1, 1)).toBe("Pip's home · 1 chore done · 1 day in a row")
+    expect(captionText('Pip', 1, 1)).toBe('Home of Pip · 1 chore done · 1 day in a row')
   })
   it('keeps it short when there is nothing yet', () => {
-    expect(captionText('Pip', 0, 0)).toBe("Pip's home")
+    expect(captionText('Pip', 0, 0)).toBe('Home of Pip')
   })
   it('falls back when the name is blank', () => {
-    expect(captionText('  ', 0, 0)).toBe("Your pet's home")
+    expect(captionText('  ', 0, 0)).toBe('Home of your pet')
   })
 })
 

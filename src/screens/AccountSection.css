@@ -1,22 +1,20 @@
-.account-note { margin: 0 0 8px; line-height: 1.35; font-size: 15px; }
+.account-note { margin: 0 0 8px; line-height: 1.35; font-size: 0.9375rem; }
+.account-rejected { color: var(--late-ink); font-weight: 700; }
 /* Label on top, then the email box and its button side by side to save height. */
 .account-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 8px; margin-bottom: 8px; }
-.account-label { grid-column: 1 / -1; }
-.account-form .account-primary { width: auto; padding: 0 16px; white-space: nowrap; }
-.account-input { min-width: 0; }
-.account-label { font-weight: 800; }
-.account-input { min-height: 44px; padding: 0 12px; font: inherit; border: 2px solid var(--ink); border-radius: 12px; background: var(--card); color: var(--ink); }
-.account-input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.account-primary,
-.account-secondary { min-height: 44px; width: 100%; font: inherit; font-weight: 800; border: 2px solid var(--ink); border-radius: 999px; cursor: pointer; color: var(--ink); }
-.account-primary { background: var(--accent); color: #fff; }
-.account-secondary { background: var(--card); }
-.account-primary:disabled,
-.account-secondary:disabled { opacity: 0.55; cursor: default; }
-.account-sent { margin: 0 0 8px; padding: 10px 12px; border-radius: 12px; background: var(--due-bg); }
-.account-error { margin: 8px 0 0; font-weight: 700; }
-.account-switch { margin-top: 2px; padding-left: 0; }
+.account-label { grid-column: 1 / -1; font-weight: 800; }
+.account-submit { white-space: nowrap; }
+.account-wide { width: 100%; }
+.account-sent { margin: 0 0 8px; padding: 10px 12px; border-radius: var(--ctl-radius); background: var(--due-bg); color: var(--due-ink); font-weight: 700; }
+.account-error { margin: 8px 0 0; font-weight: 700; color: var(--late-ink); }
+.account-switch { margin-top: 2px; padding-left: 0; justify-content: flex-start; }
+.account-delete { margin-top: 4px; padding-left: 0; justify-content: flex-start; }
 
-@media (min-width: 900px) {
-  .account-note { font-size: 16px; margin-bottom: 12px; }
+.account-confirm { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; background: var(--late-bg); border: var(--outline); border-radius: var(--radius); }
+.account-confirm p { margin: 0; font-weight: 800; color: var(--late-ink); line-height: 1.3; }
+.account-confirm .btn-danger { background: var(--card); }
+.account-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+  .account-note { font-size: 1rem; margin-bottom: 12px; }
 }

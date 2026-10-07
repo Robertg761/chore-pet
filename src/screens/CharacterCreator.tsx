@@ -11,7 +11,8 @@ import {
   sameColour,
   swatchesFor,
 } from './creatorModel'
-import { useViewport, WIDE_MIN } from '../shell/useViewport'
+import { ScreenHeader } from '../shell/ScreenHeader'
+import { useWide } from '../shell/useViewport'
 import './CharacterCreator.css'
 
 export type PetLookPatch = Partial<Pick<Pet, 'name' | 'species' | 'bodyColour' | 'eyes' | 'cheeks'>>
@@ -75,7 +76,7 @@ function ChoiceGroup<T extends string>({ label, value, options, onChange, classN
           aria-checked={o.value === value}
           aria-label={o.label}
           tabIndex={tabIndexFor(i)}
-          className="cc-choice"
+          className="cc-choice choice"
           onClick={() => onChange(o.value)}
         >
           {o.content}
@@ -98,7 +99,7 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
   const [draft, setDraft] = useState(() => draftFromPet(pet))
   const [cheering, setCheering] = useState(false)
   const [nameError, setNameError] = useState(false)
-  const wide = useViewport().width >= WIDE_MIN
+  const wide = useWide()
   const [part, setPart] = useState<Part>('who')
   const tabsRef = useRef<HTMLDivElement>(null)
   const timer = useRef<number | undefined>(undefined)
@@ -152,7 +153,7 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
 
   // Phones show one part at a time under tabs; wide screens show them all.
   const shows = (p: Part) => wide || part === p
-  const hide = wide ? undefined : 'cc-sr'
+  const hide = wide ? undefined : 'sr-only'
 
   const who = (
     <section className="cc-section" aria-labelledby="cc-species-h">
@@ -249,18 +250,18 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
   )
 
   return (
-    <form className="cc" onSubmit={submit} aria-labelledby="cc-title" noValidate>
-      <header className="cc-head">
-        <h1 className="cc-title" id="cc-title">Change look</h1>
-        <div className="cc-head-actions">
-          <button type="button" className="link-button cc-cancel" onClick={onClose}>
-            Cancel
-          </button>
-          <button type="submit" className="cc-save">
+    <form className="cc screen-fit" onSubmit={submit} aria-labelledby="cc-title" noValidate>
+      <ScreenHeader
+        id="cc-title"
+        title="Change look"
+        onBack={onClose}
+        backLabel="Cancel"
+        actions={
+          <button type="submit" className="btn btn-primary">
             Save
           </button>
-        </div>
-      </header>
+        }
+      />
 
       <div className="cc-body">
         <div className="cc-stage">
@@ -282,6 +283,7 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
               <label htmlFor="cc-name">Name</label>
               <input
                 id="cc-name"
+                className="field"
                 ref={nameRef}
                 type="text"
                 value={draft.name}
@@ -305,14 +307,14 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
 
         <div className="cc-side">
           {!wide && (
-            <div ref={tabsRef} className="cc-tabs" role="tablist" aria-label="What to change">
+            <div ref={tabsRef} className="cc-tabs seg" role="tablist" aria-label="What to change">
               {PARTS.map((p, i) => (
                 <button
                   key={p.part}
                   id={`cc-tab-${p.part}`}
                   type="button"
                   role="tab"
-                  className="cc-tab"
+                  className="cc-tab seg-btn"
                   aria-selected={part === p.part}
                   aria-controls="cc-panel"
                   tabIndex={part === p.part ? 0 : -1}
@@ -331,7 +333,7 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
               {options}
             </div>
           )}
-          {wide && <p className="cc-hint cc-note">Changes show here first. They are saved when you tap Save.</p>}
+          {wide && <p className="cc-hint cc-note">Changes show here first. Tap Save to keep them.</p>}
         </div>
       </div>
     </form>

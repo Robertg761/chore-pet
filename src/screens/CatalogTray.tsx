@@ -51,7 +51,7 @@ export function CatalogTray({ roomType, objects, onPick, unlocked = [], oneRow =
 
   return (
     <section className={oneRow ? 'tray tray-one-row' : 'tray'} aria-labelledby={`${uid}-title`}>
-      <h2 className="tray-title" id={`${uid}-title`}>
+      <h2 className={oneRow ? 'tray-title sr-only' : 'tray-title'} id={`${uid}-title`}>
         Add to your room
       </h2>
       {oneRow ? (

@@ -1,14 +1,8 @@
-/* Wardrobe: fits one view. Phones stack the pet over the tabs and a short panel; wide screens go two columns. */
-.app-view > .screen:has(> .wd) { height: 100%; padding: 8px 14px; }
-.wd { flex: 1 1 0; min-height: 0; align-self: stretch; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.wd-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.wd-sub { margin: 0; font-size: 18px; }
-.wd-note { margin: 0; font-size: 13px; font-weight: 700; color: var(--ink-soft); }
-
-.wd-head { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.wd-title { margin: 0; min-width: 0; font-size: 22px; line-height: 1.1; overflow-wrap: anywhere; }
-.wd-head-actions { flex: none; display: flex; align-items: center; gap: 6px; }
-.wd-back { padding: 0 8px; }
+/* Wardrobe: fits one view. Phones stack the pet over the tabs and a short panel;
+   wide screens (and phones on their side) go two columns. Header and screen frame: shell/ScreenHeader.css. */
+.wd { gap: 6px; }
+.wd-sub { margin: 0; font-size: 1.125rem; }
+.wd-note { margin: 0; font-size: 0.8125rem; font-weight: 700; color: var(--ink-soft); }
 
 .wd-body { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
 .wd-side { flex: none; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
@@ -26,44 +20,14 @@
   border-radius: var(--radius);
 }
 .wd-preview { flex: 1 1 0; min-height: 0; width: 100%; display: block; }
+.wd-poses { align-self: stretch; }
+.wd-poses .seg-btn { padding: 0 2px; font-size: 0.875rem; }
 
-.wd-poses { align-self: stretch; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-.wd-pose {
-  min-height: 44px;
-  min-width: 0;
-  padding: 0 4px;
-  font: inherit;
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--ink);
-  background: var(--card);
-  border: 2.5px solid var(--ink);
-  border-radius: 999px;
-  cursor: pointer;
-}
-.wd-pose[aria-pressed='true'] { color: #fff; background: var(--ink); }
-
-.wd-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
-.wd-tabs[data-count='6'] { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-.wd-tab {
-  position: relative;
-  min-height: 44px;
-  padding: 0 2px;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--ink);
-  background: var(--card);
-  border: 2.5px solid var(--ink);
-  border-radius: 12px;
-  cursor: pointer;
-}
-.wd-tab[aria-selected='true'] { color: #fff; background: var(--accent); }
-.wd-tab-dot { position: absolute; top: 4px; right: 5px; width: 8px; height: 8px; background: var(--accent); border: 2px solid var(--ink); border-radius: 50%; }
-.wd-tab[aria-selected='true'] .wd-tab-dot { background: #fff; }
+.wd-tab-dot { position: absolute; top: 5px; right: 6px; width: 8px; height: 8px; background: var(--accent); border: 2px solid var(--ink); border-radius: 50%; }
+.wd-tab[aria-selected='true'] .wd-tab-dot { background: var(--card); }
 
 .wd-panel { max-height: 224px; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 8px; padding: 5px; margin: -5px; }
-.wd-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+.wd-grid { list-style: none; margin: 0; padding: 0; display: grid; align-content: start; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
 .wd-grid > li { display: flex; min-width: 0; }
 .wd-tile {
   flex: 1;
@@ -75,20 +39,14 @@
   align-items: center;
   gap: 2px;
   font: inherit;
-  color: var(--ink);
   text-align: center;
-  background: var(--card);
-  border: var(--outline);
-  border-radius: var(--radius);
 }
-button.wd-tile { cursor: pointer; }
-button.wd-tile[aria-pressed='true'] { background: #fff; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent); }
-.wd-tile-locked { background: var(--due-bg); border-style: dashed; border-color: var(--ink-soft); color: var(--ink-soft); }
+.wd-tile-locked { cursor: default; background: var(--ground-soft); border-style: dashed; border-color: var(--ink-soft); color: var(--ink-soft); }
 .wd-tile-art { width: 52px; height: 52px; flex: none; display: block; }
-.wd-tile-name { font-size: 12px; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
+.wd-tile-name { font-size: 0.75rem; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
 
 .wd-saved { display: flex; flex-direction: column; gap: 8px; }
-.wd-outfits { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.wd-outfits { list-style: none; padding: 5px; margin: -5px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .wd-outfit { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .wd-outfit-try {
   width: 100%;
@@ -99,73 +57,21 @@ button.wd-tile[aria-pressed='true'] { background: #fff; border-color: var(--acce
   align-items: center;
   gap: 2px;
   font: inherit;
-  color: var(--ink);
-  background: var(--card);
-  border: var(--outline);
-  border-radius: var(--radius);
-  cursor: pointer;
 }
-.wd-outfit-on .wd-outfit-try { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent); }
 .wd-outfit-art { width: 100%; max-width: 54px; height: auto; display: block; }
-.wd-outfit-name { max-width: 100%; font-size: 13px; font-weight: 800; overflow-wrap: anywhere; line-height: 1.15; }
+.wd-outfit-name { max-width: 100%; font-size: 0.8125rem; font-weight: 800; overflow-wrap: anywhere; line-height: 1.15; }
 .wd-confirm { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; }
-.wd-confirm .wd-small { padding: 0 2px; font-size: 12px; }
-
-.wd-small {
-  width: 100%;
-  min-height: 44px;
-  padding: 0 6px;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--ink);
-  background: var(--card);
-  border: 2.5px solid var(--ink);
-  border-radius: 12px;
-  cursor: pointer;
-}
-.wd-small-danger { color: var(--late-ink); background: var(--late-bg); }
+.wd-confirm .btn { padding: 0 2px; font-size: 0.75rem; }
+.wd-outfit > .btn { width: 100%; }
 
 .wd-name-form { display: flex; flex-direction: column; gap: 2px; }
-.wd-label { font-size: 14px; font-weight: 800; }
+.wd-label { font-size: 0.875rem; font-weight: 800; }
 .wd-name-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.wd-input {
-  flex: 1 1 100px;
-  min-width: 0;
-  min-height: 44px;
-  padding: 0 12px;
-  font: inherit;
-  font-weight: 700;
-  color: var(--ink);
-  background: var(--card);
-  border: var(--outline);
-  border-radius: 12px;
-}
+.wd-input { flex: 1 1 100px; }
 
-.wd-btn {
-  min-height: 44px;
-  min-width: 44px;
-  padding: 0 14px;
-  font: inherit;
-  font-weight: 800;
-  color: var(--ink);
-  background: var(--card);
-  border: var(--outline);
-  border-radius: 12px;
-  cursor: pointer;
-}
-.wd-btn-solid { color: #fff; background: var(--ink); }
-.wd-btn:disabled { opacity: 0.45; cursor: default; }
 .wd-save-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
 .wd-save-outfit { flex: none; }
 .wd-save-row .wd-note { flex: 1 1 140px; }
-
-.wd button:focus-visible,
-.wd input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.wd-tab[aria-selected='true']:focus-visible,
-.wd-pose[aria-pressed='true']:focus-visible,
-.wd-btn-solid:focus-visible { outline-color: var(--ink); }
-.wd .link-button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 .wd-tile, .wd-outfit-try { transition: transform 0.12s ease; }
 button.wd-tile:active, .wd-outfit-try:active { transform: scale(0.97); }
@@ -179,22 +85,34 @@ button.wd-tile:active, .wd-outfit-try:active { transform: scale(0.97); }
   .wd-panel { max-height: 206px; }
 }
 
-/* Wide screens: the pet big on the left; tabs, items and saved outfits on the right. */
-@media (min-width: 900px) {
-  .app-view > .screen:has(> .wd) { padding: 24px 28px; }
-  .wd { gap: 14px; }
-  .wd-title { font-size: 30px; }
-  .wd-body { flex-direction: row; gap: 28px; }
-  .wd-stage { flex: 1 1 0; padding: 16px 20px 18px; gap: 14px; }
+/* Tablets standing up: the pet stays a sensible size and the panel gets the rest. */
+@media (min-width: 600px) and (max-width: 899px) {
+  .wd-stage { flex: 0 1 45vh; }
+  .wd-side { flex: 1 1 0; min-height: 0; }
+  .wd-panel { max-height: none; flex: 1 1 0; min-height: 0; }
+  .wd-tile-art { width: 64px; height: 64px; }
+}
+
+/* Wide screens, and phones on their side: the pet big on the left; tabs, items and saved outfits on the right. */
+@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+  .wd-body { flex-direction: row; gap: 20px; }
+  .wd-stage { flex: 1 1 0; max-height: none; padding: 10px 14px 12px; gap: 8px; }
+  .wd-side { flex: 0 0 min(500px, 56%); min-height: 0; gap: 8px; overflow-y: auto; overscroll-behavior: contain; padding: 5px; margin: -5px; }
+  .wd-panel { max-height: none; overflow: visible; padding: 0; margin: 0; flex: none; }
+  .wd-tile-art { width: 52px; height: 52px; }
   .wd-poses { width: min(100%, 440px); align-self: center; }
-  .wd-side { flex: 0 0 min(500px, 50%); min-height: 0; gap: 12px; overflow-y: auto; overscroll-behavior: contain; padding: 5px; margin: -5px; }
-  .wd-tab { font-size: 16px; }
-  .wd-panel { max-height: none; overflow: visible; padding: 0; margin: 0; }
+}
+@media (min-width: 900px) {
+  .wd { gap: 14px; }
+  .wd-body { gap: 28px; }
+  .wd-stage { padding: 16px 20px 18px; gap: 14px; }
+  .wd-side { gap: 12px; }
+  .wd-tab { font-size: 1rem; }
   .wd-grid { gap: 10px; }
   .wd-tile { padding: 8px 4px; gap: 4px; }
   .wd-tile-art { width: 72px; height: 72px; }
-  .wd-tile-name { font-size: 14px; }
+  .wd-tile-name { font-size: 0.875rem; }
   .wd-outfits { gap: 10px; }
   .wd-outfit-art { max-width: 80px; }
-  .wd-outfit-name { font-size: 14px; }
+  .wd-outfit-name { font-size: 0.875rem; }
 }

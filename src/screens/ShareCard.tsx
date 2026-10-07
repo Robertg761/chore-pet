@@ -5,7 +5,9 @@ import { CharacterArt } from '../character/Character'
 import type { Footprint } from '../room/grid'
 import { footprintOf, freeTile } from '../room/grid'
 import { Room } from '../room/Room'
+import { ROOM_VIEWBOX } from '../room/shell/geometry'
 import type { Pet, PlacedObject, Room as RoomRow } from '../domain/types'
+import { ScreenHeader } from '../shell/ScreenHeader'
 import './ShareCard.css'
 import { CARD_HEIGHT, CARD_WIDTH, captionFontSize, captionText, cardToPng, downloadPng, nameFontSize, shareFileName } from './shareImage'
 
@@ -24,11 +26,17 @@ const { ink, ground, accent, white } = PALETTE
 // Web fonts don't load inside an image, so the card names a system fallback.
 const CARD_FONT = "Nunito, 'Trebuchet MS', 'Segoe UI', system-ui, -apple-system, sans-serif"
 
-// Card layout in design px (1080 x 1350).
-const PANEL = { x: 60, y: 60, width: 960, height: 930, radius: 56 }
+// Card layout in design px (1080 x 1350). The white panel hugs the room; the name, caption and
+// badge sit below it with even gaps, so there is no empty band under the room.
 const ROOM_W = 960
+const ROOM_H = (ROOM_W * ROOM_VIEWBOX.height) / ROOM_VIEWBOX.width
 const ROOM_X = (CARD_WIDTH - ROOM_W) / 2
-const ROOM_Y = PANEL.y + 14
+const PANEL_PAD = 36
+const PANEL = { x: 60, y: 60, width: 960, height: PANEL_PAD * 2 + ROOM_H, radius: 56 }
+const ROOM_Y = PANEL.y + PANEL_PAD
+const NAME_Y = PANEL.y + PANEL.height + 150
+const CAPTION_Y = NAME_Y + 72
+const BADGE = { width: 260, height: 64, y: CAPTION_Y + 38 }
 
 type Status = 'making' | 'ready' | 'error'
 
@@ -99,15 +107,8 @@ export function ShareCard({ pet, room, objects, choreCount, streak, onClose }: S
   const nameSize = nameFontSize(pet.name)
 
   return (
-    <section className="share" aria-labelledby="share-title">
-      <div className="share-head">
-        <h1 id="share-title" className="share-title">
-          Share your home
-        </h1>
-        <button type="button" className="link-button share-back" onClick={onClose}>
-          Back
-        </button>
-      </div>
+    <section className="share screen-fit" aria-labelledby="share-title">
+      <ScreenHeader id="share-title" title="Share your home" onBack={onClose} />
 
       <div className="share-preview">
         <svg
@@ -147,14 +148,14 @@ export function ShareCard({ pet, room, objects, choreCount, streak, onClose }: S
             width={ROOM_W}
             svgProps={{ x: ROOM_X, y: ROOM_Y, role: 'presentation', 'aria-label': undefined }}
           />
-          <text x={CARD_WIDTH / 2} y={1135} textAnchor="middle" fontSize={nameSize} fontWeight={900} fill={ink}>
+          <text x={CARD_WIDTH / 2} y={NAME_Y} textAnchor="middle" fontSize={nameSize} fontWeight={900} fill={ink}>
             {pet.name}
           </text>
-          <text x={CARD_WIDTH / 2} y={1205} textAnchor="middle" fontSize={captionFontSize(caption)} fontWeight={700} fill={ink} fillOpacity={0.78}>
+          <text x={CARD_WIDTH / 2} y={CAPTION_Y} textAnchor="middle" fontSize={captionFontSize(caption)} fontWeight={700} fill={ink} fillOpacity={0.78}>
             {caption}
           </text>
-          <rect x={CARD_WIDTH / 2 - 130} y={1240} width={260} height={64} rx={32} fill={accent} stroke={ink} strokeWidth={5} />
-          <text x={CARD_WIDTH / 2} y={1283} textAnchor="middle" fontSize={36} fontWeight={900} fill={white} letterSpacing={1}>
+          <rect x={CARD_WIDTH / 2 - BADGE.width / 2} y={BADGE.y} width={BADGE.width} height={BADGE.height} rx={BADGE.height / 2} fill={accent} stroke={ink} strokeWidth={5} />
+          <text x={CARD_WIDTH / 2} y={BADGE.y + 43} textAnchor="middle" fontSize={36} fontWeight={900} fill={white} letterSpacing={1}>
             Chore Pet
           </text>
         </svg>
@@ -167,20 +168,20 @@ export function ShareCard({ pet, room, objects, choreCount, streak, onClose }: S
 
         <div className="share-actions">
           {canShare && (
-            <button type="button" className="share-btn share-btn-primary" onClick={share}>
+            <button type="button" className="btn btn-primary" onClick={share}>
               Share
             </button>
           )}
           <button
             type="button"
-            className={canShare ? 'share-btn' : 'share-btn share-btn-primary'}
+            className={canShare ? 'btn' : 'btn btn-primary'}
             onClick={save}
             disabled={status !== 'ready'}
           >
             Save image
           </button>
           {status === 'error' && (
-            <button type="button" className="share-btn" onClick={() => setAttempt((n) => n + 1)}>
+            <button type="button" className="btn" onClick={() => setAttempt((n) => n + 1)}>
               Try again
             </button>
           )}

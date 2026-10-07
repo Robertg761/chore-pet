@@ -1,20 +1,13 @@
 /* Share your home: the picture takes the space left over, the actions sit below it
-   (phones) or beside it (wide). Nothing here scrolls the page. */
-.share {
-  align-self: stretch;
-  width: 100%;
+   (phones) or beside it (wide). Nothing here scrolls the page. Header and screen frame: shell/ScreenHeader.css. */
+.share.screen-fit {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
   grid-template-areas: 'head' 'preview' 'side';
   gap: 6px;
 }
-.app-view > .screen:has(> .share) { height: 100%; min-height: 0; padding: 8px 14px; }
-.screen > .share { flex: 1 1 0; min-height: 0; }
-
-.share-head { grid-area: head; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.share-title { margin: 0; font-size: 24px; line-height: 1.1; }
-.share-back { padding: 0 8px; }
+.share > .screen-header { grid-area: head; }
 
 /* The card is one SVG, 4:5, sized to the box it sits in. */
 .share-preview {
@@ -29,7 +22,7 @@
   width: min(100cqw, 100cqh * 4 / 5);
   height: auto;
   aspect-ratio: 4 / 5;
-  border: 2px solid rgba(43, 30, 47, 0.18);
+  border: 2px solid var(--ink-veil);
   border-radius: 18px;
   background: var(--ground);
 }
@@ -40,53 +33,36 @@
   min-height: 1.4em;
   text-align: center;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 0.9375rem;
   color: var(--ink-soft);
 }
 .share-status[data-state='error'] { color: var(--late-ink); }
 
 .share-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-.share-btn {
-  flex: 1 1 120px;
-  min-height: 48px;
-  padding: 0 20px;
-  font: inherit;
-  font-weight: 800;
-  color: var(--ink);
-  background: var(--card);
-  border: var(--outline);
-  border-radius: 12px;
-  cursor: pointer;
-}
-.share-btn-primary { color: #fff; background: var(--accent); }
-.share-btn:disabled { opacity: 0.45; cursor: default; }
-.share-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.share-btn-primary:focus-visible { outline-color: var(--ink); }
+.share-actions .btn { flex: 1 1 120px; min-height: 48px; }
 
-@media (min-width: 900px) {
-  .app-view > .screen:has(> .share) { padding: 24px 28px; }
-  .share {
-    grid-template-columns: minmax(0, 1fr) 340px;
+/* Wide screens, and phones on their side: the picture on the left, the actions in a card at the top right. */
+@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+  .share.screen-fit {
+    grid-template-columns: minmax(0, 1fr) 300px;
     grid-template-rows: auto minmax(0, 1fr);
     grid-template-areas: 'head head' 'preview side';
-    column-gap: 40px;
-    row-gap: 10px;
+    column-gap: 28px;
+    row-gap: 8px;
   }
-  .share-title { font-size: 30px; }
   .share-side {
-    align-self: center;
-    gap: 14px;
-    padding: 20px;
+    align-self: start;
+    gap: 10px;
+    padding: 14px;
     background: var(--card);
     border: var(--outline);
     border-radius: var(--radius);
   }
-  .share-status { font-size: 16px; }
   .share-actions { flex-direction: column; flex-wrap: nowrap; }
-  .share-btn { flex: none; }
+  .share-actions .btn { flex: none; }
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .share-btn { transition: transform 0.1s ease; }
-  .share-btn:active:not(:disabled) { transform: translateY(1px); }
+@media (min-width: 900px) {
+  .share.screen-fit { grid-template-columns: minmax(0, 1fr) 340px; column-gap: 40px; row-gap: 10px; }
+  .share-side { gap: 14px; padding: 20px; }
+  .share-status { font-size: 1rem; }
 }

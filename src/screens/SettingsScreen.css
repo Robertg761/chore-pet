@@ -1,11 +1,7 @@
-/* Settings: sound and reminders, then the account. One column on phones, two on wide screens. */
-.settings { align-self: stretch; width: 100%; display: flex; flex-direction: column; gap: 6px; }
-.app-view > .screen:has(> .settings) { height: 100%; min-height: 0; padding: 8px 14px; }
-.screen > .settings { flex: 1 1 0; min-height: 0; }
-.settings-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.settings h1 { margin: 0; font-size: 24px; line-height: 1.1; }
-.settings h2 { margin: 0 0 4px; font-size: 17px; line-height: 1.2; }
-.settings-back { padding: 0 8px; }
+/* Settings: sound and reminders, then the account. One column on phones, two on wide screens and on their side.
+   Header and screen frame: shell/ScreenHeader.css. */
+.settings { gap: 6px; }
+.settings h2 { margin: 0 0 4px; font-size: 1.0625rem; line-height: 1.2; }
 
 /* If a longer state (the sign-in form) can't fit, only this region scrolls, never the page. */
 .settings-cols { flex: 1 1 0; display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 4px; margin: -4px; }
@@ -13,15 +9,19 @@
 .settings-card { padding: 8px 14px 10px; background: var(--card); border: 2px solid var(--ink); border-radius: var(--radius); }
 .settings-card:has(> .settings-toggle:only-child) { padding-block: 2px; }
 .settings-toggle { min-height: 44px; display: flex; align-items: center; gap: 12px; font-weight: 800; cursor: pointer; }
-.settings-toggle input { width: 24px; height: 24px; accent-color: var(--accent); }
 
-@media (min-width: 900px) {
-  .app-view > .screen:has(> .settings) { padding: 24px 28px; }
-  .settings { gap: 14px; }
-  .settings h1 { font-size: 30px; }
-  .settings h2 { font-size: 20px; margin-bottom: 8px; }
+.settings-foot { margin: 0; text-align: center; font-size: 0.875rem; font-weight: 700; }
+.settings-foot a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 12px; color: var(--ink-soft); }
+.settings-foot a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+
+@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
   .settings-cols { flex-direction: row; align-items: flex-start; gap: 20px; }
-  .settings-col { flex: 1 1 0; gap: 16px; }
+  .settings-col { flex: 1 1 0; gap: 8px; }
+}
+@media (min-width: 900px) {
+  .settings { gap: 14px; }
+  .settings h2 { font-size: 1.25rem; margin-bottom: 8px; }
+  .settings-col { gap: 16px; }
   .settings-card { padding: 16px 20px; }
   .settings-card:has(> .settings-toggle:only-child) { padding-block: 6px; }
 }

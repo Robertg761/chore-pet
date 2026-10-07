@@ -9,6 +9,7 @@ import {
   sortWindows,
   splitVacations,
   validateRange,
+  earliestStart,
 } from './vacationModel'
 
 const today = '2026-10-06'
@@ -37,8 +38,12 @@ describe('validateRange', () => {
   it('rejects an end before the start', () => {
     expect(validateRange('2026-10-10', '2026-10-09', today).end).toBeTruthy()
   })
-  it('rejects a start in the past', () => {
-    expect(validateRange('2026-10-05', '2026-10-09', today).start).toBeTruthy()
+  it('accepts a start up to 2 weeks back, for "I was away"', () => {
+    expect(validateRange('2026-09-22', '2026-10-03', today)).toEqual({})
+    expect(earliestStart(today)).toBe('2026-09-22')
+  })
+  it('rejects a start further back than that', () => {
+    expect(validateRange('2026-09-21', '2026-10-03', today).start).toBe('Pick a date up to 2 weeks back, or one coming up.')
   })
   it('rejects empty dates', () => {
     const e = validateRange('', '', today)

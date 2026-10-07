@@ -41,7 +41,7 @@
   .btn-danger { color: var(--late-ink); background: var(--late-bg); }
   .btn-quiet { padding: 0 12px; color: var(--ink-soft); background: transparent; border-color: transparent; text-decoration: underline; }
   .btn-quiet.btn-danger { color: var(--late-ink); }
-  .btn-sm { padding: 0 12px; font-size: 14px; }
+  .btn-sm { padding: 0 12px; font-size: 0.875rem; }
 
   /* Segmented control: one row, the selected segment filled with ink. Scrolls sideways if it runs out of room. */
   .seg {
@@ -63,7 +63,7 @@
     min-height: 44px;
     padding: 0 10px;
     font: inherit;
-    font-size: 15px;
+    font-size: 0.9375rem;
     font-weight: 800;
     color: var(--ink-soft);
     background: none;
@@ -148,6 +148,6 @@
   }
 
   /* "12/40" next to a field's label. */
-  .char-count { margin-left: auto; font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+  .char-count { margin-left: auto; font-size: 0.8125rem; font-weight: 700; color: var(--ink-soft); }
   .char-count-low { font-weight: 800; color: var(--late-ink); }
 }

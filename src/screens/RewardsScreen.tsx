@@ -3,9 +3,10 @@ import { CharacterArt } from '../character/Character'
 import { ITEMS } from '../character/items'
 import { currentStreak, isUnlocked, UNLOCKS, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Pet, Progress, VacationWindow } from '../domain/types'
+import { ScreenHeader } from '../shell/ScreenHeader'
 import { RewardArt } from './RewardArt'
 import './RewardsScreen.css'
-import { hasRewardArt, nextLines, requirementLabel, withEquipped, type NextLine } from './rewardsModel'
+import { STREAK_RULE, hasRewardArt, nextLines, nextUpId, requirementLabel, withEquipped, type NextLine } from './rewardsModel'
 
 export interface RewardsScreenProps {
   pet: Pet
@@ -16,7 +17,8 @@ export interface RewardsScreenProps {
   today: string
   /** The outfit to save after wearing or taking off an item. */
   onEquip: (equipped: Pet['equipped']) => void
-  onBack: () => void
+  /** Not used: this is a tab, so the tab bar is the way out. */
+  onBack?: () => void
 }
 
 type Group = 'dress' | 'home'
@@ -49,7 +51,7 @@ function NextCard({ line, label }: { line: NextLine; label: string }) {
   )
 }
 
-export function RewardsScreen({ pet, progress, chores, completions, vacations, today, onEquip, onBack }: RewardsScreenProps) {
+export function RewardsScreen({ pet, progress, chores, completions, vacations, today, onEquip }: RewardsScreenProps) {
   const titleId = useId()
   const [group, setGroup] = useState<Group>('dress')
   const streak = currentStreak(chores, completions, today, vacations)
@@ -57,13 +59,15 @@ export function RewardsScreen({ pet, progress, chores, completions, vacations, t
   const choreCount = progress?.choreCount ?? 0
   const next = progress ? nextLines(progress, streak) : { chores: null, streak: null }
   const earned = UNLOCKS.filter((x) => isUnlocked(progress, x.id))
+  const upNext = progress ? nextUpId(progress, streak) : null
 
   function tile(unlock: Unlock) {
     const got = earned.includes(unlock)
     const item = unlock.kind === 'item' ? ITEMS.find((i) => i.id === unlock.ref) : undefined
     const worn = Boolean(item && pet.equipped[item.slot] === item.id)
+    const isNext = !got && unlock.id === upNext
     return (
-      <li key={unlock.id} className={got ? 'rewards-tile' : 'rewards-tile rewards-tile-locked'}>
+      <li key={unlock.id} className={`rewards-tile${got ? '' : ' rewards-tile-locked'}${isNext ? ' rewards-tile-next' : ''}`}>
         <RewardArt unlock={unlock} pet={pet} locked={!got} className="rewards-tile-art" />
         {got ? (
           <>
@@ -71,7 +75,7 @@ export function RewardsScreen({ pet, progress, chores, completions, vacations, t
             {item ? (
               <button
                 type="button"
-                className={worn ? 'rewards-wear rewards-wear-on' : 'rewards-wear'}
+                className={worn ? 'btn btn-sm rewards-wear' : 'btn btn-sm btn-primary rewards-wear'}
                 aria-label={`${worn ? 'Take off' : 'Put on'} ${unlock.name}`}
                 onClick={() => onEquip(withEquipped(pet.equipped, item.slot, worn ? null : item.id))}
               >
@@ -84,7 +88,7 @@ export function RewardsScreen({ pet, progress, chores, completions, vacations, t
         ) : (
           <>
             <span className="rewards-tile-name">
-              <span className="rewards-sr">Locked gift. </span>
+              <span className="sr-only">{isNext ? 'Next up. Locked gift. ' : 'Locked gift. '}</span>
               {requirementLabel(unlock.rule)}
             </span>
             <span className="rewards-tile-meta">A surprise</span>
@@ -98,24 +102,19 @@ export function RewardsScreen({ pet, progress, chores, completions, vacations, t
     const list = UNLOCKS.filter(has)
     return (
       <section key={g} className="rewards-group" aria-labelledby={`${titleId}-${g}`}>
-        <h2 id={`${titleId}-${g}`} className="rewards-sr">
+        <h2 id={`${titleId}-${g}`} className="sr-only">
           {label}
         </h2>
-        <ul className="rewards-grid">{list.map(tile)}</ul>
+        <ul className="rewards-grid" tabIndex={0} aria-label={label}>
+          {list.map(tile)}
+        </ul>
       </section>
     )
   }
 
   return (
-    <section className="rewards" aria-labelledby={titleId}>
-      <header className="rewards-top">
-        <h1 id={titleId} className="rewards-title">
-          Rewards
-        </h1>
-        <button type="button" className="link-button rewards-back" onClick={onBack}>
-          Back
-        </button>
-      </header>
+    <section className="rewards screen-fit" aria-labelledby={titleId}>
+      <ScreenHeader id={titleId} title="Rewards" />
 
       <div className="rewards-body">
         <div className="rewards-side">
@@ -129,9 +128,10 @@ export function RewardsScreen({ pet, progress, chores, completions, vacations, t
               {best > 0 && <p className="rewards-stat rewards-best">Best: {plural(best, 'day', 'days')}</p>}
             </div>
           </div>
+          <p className="rewards-rule">{STREAK_RULE}</p>
 
           <section className="rewards-block" aria-labelledby={`${titleId}-next`}>
-            <h2 id={`${titleId}-next`} className="rewards-sr">
+            <h2 id={`${titleId}-next`} className="sr-only">
               Next up
             </h2>
             {next.chores || next.streak ? (
@@ -146,17 +146,17 @@ export function RewardsScreen({ pet, progress, chores, completions, vacations, t
         </div>
 
         <div className="rewards-main">
-          <div className="rewards-tabs" role="group" aria-label="Show">
+          <div className="rewards-tabs seg" role="group" aria-label="Show">
             {GROUPS.map((g) => {
               const list = UNLOCKS.filter(g.has)
               const got = list.filter((x) => earned.includes(x)).length
               return (
-                <button key={g.group} type="button" aria-pressed={group === g.group} onClick={() => setGroup(g.group)}>
+                <button key={g.group} type="button" className="seg-btn" aria-pressed={group === g.group} onClick={() => setGroup(g.group)}>
                   {g.label}
                   <span className="rewards-count" aria-hidden="true">
                     {got}/{list.length}
                   </span>
-                  <span className="rewards-sr">
+                  <span className="sr-only">
                     , {got} of {list.length} earned
                   </span>
                 </button>

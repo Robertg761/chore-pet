@@ -44,7 +44,7 @@ describe('round trip', () => {
   const schedules: Schedule[] = [
     { kind: 'daily' },
     { kind: 'everyNDays', n: 3 },
-    { kind: 'everyNDays', n: 60 },
+    { kind: 'everyNDays', n: 180 },
     { kind: 'weekdays', days: [1, 3, 5] },
     { kind: 'weekdays', days: [6, 0] },
     { kind: 'weekly', weekday: 0 },
@@ -87,11 +87,11 @@ describe('validateForm', () => {
     expect(validateForm(form({ kind: 'weekly', days: [] })).days).toBeUndefined()
   })
 
-  it('requires N from 2 to 60 for the every-few-days kind only', () => {
-    for (const bad of ['', '1', '0', '61', '2.5', '-3', 'abc', '1e2']) {
+  it('requires N from 2 to 180 for the every-few-days kind only', () => {
+    for (const bad of ['', '1', '0', '181', '2.5', '-3', 'abc', '1e2']) {
       expect(validateForm(form({ kind: 'everyNDays', n: bad })).n, bad).toBeTruthy()
     }
-    for (const ok of ['2', '30', '60', ' 7 ']) {
+    for (const ok of ['2', '30', '60', '180', ' 7 ']) {
       expect(validateForm(form({ kind: 'everyNDays', n: ok })).n, ok).toBeUndefined()
     }
     expect(validateForm(form({ kind: 'daily', n: '999' })).n).toBeUndefined()
@@ -159,10 +159,11 @@ describe('number and day helpers', () => {
   it('steps N within range', () => {
     expect(stepN('3', 1)).toBe('4')
     expect(stepN('2', -1)).toBe('2')
-    expect(stepN('60', 1)).toBe('60')
+    expect(stepN('60', 1)).toBe('61')
+    expect(stepN('180', 1)).toBe('180')
     expect(stepN('', 1)).toBe('2')
     expect(stepN('x', -1)).toBe('2')
-    expect(stepN('500', -1)).toBe('60')
+    expect(stepN('500', -1)).toBe('180')
   })
 
   it('toggles weekdays', () => {
@@ -178,6 +179,7 @@ describe('describeSchedule', () => {
     expect(describeSchedule({ kind: 'everyNDays', n: 3 })).toBe('Every 3 days')
     expect(describeSchedule({ kind: 'weekdays', days: [5, 1, 3] })).toBe('Mon, Wed, Fri')
     expect(describeSchedule({ kind: 'weekdays', days: [0, 6] })).toBe('Sat, Sun')
+    expect(describeSchedule({ kind: 'weekdays', days: [3] })).toBe('Every Wednesday')
     expect(describeSchedule({ kind: 'weekdays', days: [0, 1, 2, 3, 4, 5, 6] })).toBe('Every day')
     expect(describeSchedule({ kind: 'weekdays', days: [] })).toBe('No days picked')
     expect(describeSchedule({ kind: 'weekly', weekday: 0 })).toBe('Every Sunday')

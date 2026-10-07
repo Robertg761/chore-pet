@@ -2,7 +2,7 @@
   /* One header for every screen: back (when there is somewhere to go back to), the title, and trailing actions. */
   .screen-header { flex: none; min-width: 0; display: flex; align-items: center; gap: 8px; }
   .screen-header:has(.btn) { min-height: 44px; }
-  .sh-title { flex: 1 1 0; min-width: 0; margin: 0; font-size: 26px; line-height: 1.1; overflow-wrap: anywhere; }
+  .sh-title { flex: 1 1 0; min-width: 0; margin: 0; font-size: 1.625rem; line-height: 1.1; overflow-wrap: anywhere; }
   .sh-title:focus { outline: none; }
   .screen-header .sh-back { flex: none; margin-left: -6px; padding: 0 10px 0 4px; color: var(--ink); text-decoration: none; }
   .sh-back svg { flex: none; }
@@ -22,7 +22,7 @@
 
 @layer controls {
   @media (min-width: 900px) {
-    .sh-title { font-size: 30px; }
+    .sh-title { font-size: 1.875rem; }
     .screen-fit { gap: 14px; }
   }
   @media (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {

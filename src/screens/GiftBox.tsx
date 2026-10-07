@@ -6,6 +6,7 @@ import type { Pet } from '../domain/types'
 import type { Unlock } from '../domain/unlocks'
 import { Cheer } from '../effects'
 import { prefersReducedMotion } from '../effects/shapes'
+import '../shell/controls.css'
 import './GiftBox.css'
 import { RewardArt } from './RewardArt'
 import { giftTitle } from './rewardsModel'
@@ -16,6 +17,10 @@ export interface GiftBoxProps {
   pet: Pet
   /** Wear it now (items only) or put it away; either closes the gift. */
   onClose: (choice: { wear: boolean }) => void
+  /** Decor: "Place it". Called, then the gift closes itself, so this only needs to take the player to Build. */
+  onPlace?: () => void
+  /** Walls and floors: "Try it". Called, then the gift closes itself. */
+  onTry?: () => void
 }
 
 const { ink, warmRed, blush, white, sky, petDefault } = PALETTE
@@ -51,7 +56,7 @@ function WrappedBox({ opening }: { opening: boolean }) {
   )
 }
 
-export function GiftBox({ unlock, pet, onClose }: GiftBoxProps) {
+export function GiftBox({ unlock, pet, onClose, onPlace, onTry }: GiftBoxProps) {
   const uid = useId()
   const [phase, setPhase] = useState<'wrapped' | 'opening' | 'open'>('wrapped')
   const panel = useRef<HTMLDivElement>(null)
@@ -61,11 +66,15 @@ export function GiftBox({ unlock, pet, onClose }: GiftBoxProps) {
   const item = unlock.kind === 'item' ? ITEMS.find((i) => i.id === unlock.ref) : undefined
   const canWear = Boolean(item)
 
-  // Focus moves in, and goes back to where it was when the gift closes.
+  // Focus moves in, and goes back to where it was when the gift closes. If that has gone
+  // (the list re-drew, or the view changed), the next best place is the main heading.
   useEffect(() => {
     const before = document.activeElement instanceof HTMLElement ? document.activeElement : null
     openButton.current?.focus()
-    return () => before?.focus?.()
+    return () => {
+      const target = before?.isConnected ? before : document.querySelector<HTMLElement>('#cl-h-next, h1')
+      target?.focus?.()
+    }
   }, [])
 
   // When the reward appears, focus its first action.
@@ -112,13 +121,15 @@ export function GiftBox({ unlock, pet, onClose }: GiftBoxProps) {
   }
 
   const revealed = phase === 'open'
+  // A shortcut for gifts that live in Build: decor can be placed, walls and floors tried.
+  const shortcut = unlock.kind === 'decor' && onPlace ? { label: 'Place it', run: onPlace } : (unlock.kind === 'wall' || unlock.kind === 'floor') && onTry ? { label: 'Try it', run: onTry } : null
   const titleId = `${uid}-title`
   const hintId = `${uid}-hint`
   const hint =
     unlock.kind === 'decor'
-      ? 'Find it in Build.'
+      ? 'Find it in Build any time.'
       : unlock.kind === 'wall' || unlock.kind === 'floor'
-        ? 'Change it in Build.'
+        ? 'Change it in Build any time.'
         : canWear
           ? ''
           : 'Find it in Rewards.'
@@ -167,22 +178,40 @@ export function GiftBox({ unlock, pet, onClose }: GiftBoxProps) {
 
         <div className="gift-actions">
           {!revealed && (
-            <button ref={openButton} type="button" className="gift-btn gift-btn-primary" onClick={open} disabled={phase === 'opening'}>
+            <button ref={openButton} type="button" className="btn btn-primary gift-btn" onClick={open} disabled={phase === 'opening'}>
               Open it
             </button>
           )}
           {revealed && canWear && (
             <>
-              <button ref={primary} type="button" className="gift-btn gift-btn-primary" onClick={() => onClose({ wear: true })}>
+              <button ref={primary} type="button" className="btn btn-primary gift-btn" onClick={() => onClose({ wear: true })}>
                 Put it on
               </button>
-              <button type="button" className="gift-btn" onClick={() => onClose({ wear: false })}>
+              <button type="button" className="btn gift-btn" onClick={() => onClose({ wear: false })}>
                 Maybe later
               </button>
             </>
           )}
-          {revealed && !canWear && (
-            <button ref={primary} type="button" className="gift-btn gift-btn-primary" onClick={() => onClose({ wear: false })}>
+          {revealed && !canWear && shortcut && (
+            <>
+              <button
+                ref={primary}
+                type="button"
+                className="btn btn-primary gift-btn"
+                onClick={() => {
+                  shortcut.run()
+                  onClose({ wear: false })
+                }}
+              >
+                {shortcut.label}
+              </button>
+              <button type="button" className="btn gift-btn" onClick={() => onClose({ wear: false })}>
+                Maybe later
+              </button>
+            </>
+          )}
+          {revealed && !canWear && !shortcut && (
+            <button ref={primary} type="button" className="btn btn-primary gift-btn" onClick={() => onClose({ wear: false })}>
               Lovely!
             </button>
           )}

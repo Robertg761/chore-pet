@@ -1,8 +1,10 @@
 import { PALETTE } from '../art/palette'
-import { isUnlocked } from '../domain/unlocks'
+import { UNLOCKS, isUnlocked } from '../domain/unlocks'
 import type { Progress } from '../domain/types'
 import { FLOOR_STYLES, WALL_STYLES, type FloorStyle, type WallStyle } from '../room/shell/styles'
+import '../shell/controls.css'
 import './RoomStylePicker.css'
+import { requirementLabel } from './rewardsModel'
 
 // Walls and floor for the room. The starting styles are always there; the
 // rest are rewards (src/domain/unlocks.ts) and show how to earn them.
@@ -34,48 +36,50 @@ function FloorSwatch({ s }: { s: FloorStyle }) {
   )
 }
 
+/** A small padlock beside the requirement. */
+function Lock() {
+  return (
+    <svg className="rsp-lock" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false">
+      <path d="M4.5 7 V5 a3.5 3.5 0 0 1 7 0 V7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <rect x="2.5" y="7" width="11" height="7.5" rx="2" fill="currentColor" />
+    </svg>
+  )
+}
+
+/** "2-day streak" for a locked style, from the same rule that unlocks it. */
+function requirementFor(id: string): string | null {
+  const rule = UNLOCKS.find((u) => u.id === id)?.rule
+  return rule ? requirementLabel(rule) : null
+}
+
 export function RoomStylePicker({ wallStyle, floorStyle, progress, onChange }: RoomStylePickerProps) {
+  const option = (kind: 'wall' | 'floor', s: WallStyle | FloorStyle, selected: boolean, onPick: () => void) => {
+    const id = `${kind}:${s.id}`
+    const open = isUnlocked(progress, id)
+    const need = open ? null : requirementFor(id)
+    return (
+      <button key={s.id} type="button" className="rsp-option choice" aria-pressed={selected} disabled={!open} onClick={onPick}>
+        {kind === 'wall' ? <WallSwatch s={s as WallStyle} /> : <FloorSwatch s={s as FloorStyle} />}
+        <span className="rsp-name">{s.label}</span>
+        {!open && (
+          <span className="rsp-need">
+            <Lock />
+            <span className="sr-only">Locked: </span>
+            {need ?? 'surprise'}
+          </span>
+        )}
+      </button>
+    )
+  }
   return (
     <section className="rsp" aria-label="Room style">
       <fieldset className="rsp-group">
         <legend>Walls</legend>
-        {WALL_STYLES.map((s) => {
-          const open = isUnlocked(progress, `wall:${s.id}`)
-          return (
-            <button
-              key={s.id}
-              type="button"
-              className="rsp-option"
-              aria-pressed={wallStyle === s.id}
-              disabled={!open}
-              title={open ? s.label : `${s.label}: earn it with a streak`}
-              onClick={() => onChange({ wallStyle: s.id })}
-            >
-              <WallSwatch s={s} />
-              <span>{open ? s.label : 'Locked'}</span>
-            </button>
-          )
-        })}
+        {WALL_STYLES.map((s) => option('wall', s, wallStyle === s.id, () => onChange({ wallStyle: s.id })))}
       </fieldset>
       <fieldset className="rsp-group">
         <legend>Floor</legend>
-        {FLOOR_STYLES.map((s) => {
-          const open = isUnlocked(progress, `floor:${s.id}`)
-          return (
-            <button
-              key={s.id}
-              type="button"
-              className="rsp-option"
-              aria-pressed={floorStyle === s.id}
-              disabled={!open}
-              title={open ? s.label : `${s.label}: earn it with a streak`}
-              onClick={() => onChange({ floorStyle: s.id })}
-            >
-              <FloorSwatch s={s} />
-              <span>{open ? s.label : 'Locked'}</span>
-            </button>
-          )
-        })}
+        {FLOOR_STYLES.map((s) => option('floor', s, floorStyle === s.id, () => onChange({ floorStyle: s.id })))}
       </fieldset>
     </section>
   )

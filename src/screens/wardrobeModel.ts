@@ -17,7 +17,7 @@ export const WARDROBE_SLOTS: { slot: WardrobeSlot; label: string }[] = [
   { slot: 'face', label: 'Face' },
   { slot: 'neck', label: 'Neck' },
   { slot: 'outfit', label: 'Outfit' },
-  { slot: 'back', label: 'Back' },
+  { slot: 'back', label: 'On back' },
 ]
 
 /** The poses the player can check an outfit in. */

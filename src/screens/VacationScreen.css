@@ -1,21 +1,10 @@
 /* Vacation mode: the form first, the trips below it (phones) or beside it (wide).
-   A long trip list scrolls in its own box, never the page. */
-.vacation {
-  align-self: stretch;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.app-view > .screen:has(> .vacation) { height: 100%; min-height: 0; padding: 8px 14px; }
-.screen > .vacation { flex: 1 1 0; min-height: 0; }
-
-.vacation-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.vacation-back { padding: 0 8px; }
-.vacation-title { margin: 0; font-size: 24px; line-height: 1.1; }
+   A long trip list scrolls in its own box, never the page. Header and screen frame: shell/ScreenHeader.css. */
+.vacation { gap: 8px; }
 .vacation-lede { margin: 0; font-weight: 700; color: var(--ink-soft); }
-.vacation-subtitle { margin: 0; font-size: 17px; line-height: 1.2; }
+.vacation-subtitle { margin: 0; font-size: 1.0625rem; line-height: 1.2; }
 
+.vacation-body { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
 .vacation-main { display: flex; flex-direction: column; gap: 8px; }
 .vacation-side {
   flex: 1 1 0;
@@ -39,47 +28,23 @@
   border-radius: var(--radius);
 }
 .vacation-now { background: var(--due-bg); color: var(--due-ink); }
-.vacation-now-text { margin: 0; font-size: 17px; font-weight: 800; }
+.vacation-now-text { margin: 0; font-size: 1.0625rem; font-weight: 800; }
 
 .vacation-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .vacation-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .vacation-field label { font-weight: 800; }
-.vacation-field input {
-  min-height: 44px;
-  width: 100%;
-  min-width: 0;
-  padding: 0 10px;
-  font: inherit;
-  font-weight: 700;
-  color: var(--ink);
-  background: var(--card);
-  border: var(--outline);
-  border-radius: 12px;
-}
-.vacation-field input[aria-invalid='true'] { border-color: var(--late-ink); background: var(--late-bg); }
-.vacation-field input:focus-visible,
+.vacation-field .field { width: 100%; }
 .vacation-past summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-.vacation-error { margin: 0; font-weight: 700; font-size: 14px; color: var(--late-ink); }
+.vacation-hint { margin: 0; font-size: 0.8125rem; font-weight: 700; line-height: 1.3; color: var(--ink-soft); }
+.vacation-error { margin: 0; font-weight: 700; font-size: 0.875rem; color: var(--late-ink); }
 .vacation-notice:empty { margin-top: -8px; }
-.vacation-notice { margin: 0; font-weight: 700; font-size: 14px; color: var(--ink-soft); }
-
-.vacation-btn {
-  min-height: 44px;
-  padding: 0 16px;
-  font: inherit;
-  font-weight: 800;
-  color: #fff;
-  background: var(--ink);
-  border: var(--outline);
-  border-radius: 12px;
-  cursor: pointer;
-}
-.vacation-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.vacation-btn-quiet { color: var(--ink); background: var(--card); }
+.vacation-notice { margin: 0; font-weight: 700; font-size: 0.875rem; color: var(--ink-soft); }
 
 .vacation-group { display: flex; flex-direction: column; gap: 6px; }
-.vacation-empty { margin: 0; font-weight: 700; color: var(--ink-soft); }
+.vacation-empty { display: flex; align-items: center; gap: 12px; padding: 4px 4px 4px 0; }
+.vacation-empty p { margin: 0; font-weight: 700; color: var(--ink-soft); }
+.vacation-art { flex: none; width: 56px; height: 46px; display: block; }
 .vacation-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .vacation-item {
   display: flex;
@@ -92,7 +57,8 @@
   border-radius: var(--radius);
   font-weight: 800;
 }
-.vacation-item-past { padding: 10px 14px; font-weight: 700; color: var(--ink-soft); }
+.vacation-item-past { font-weight: 700; color: var(--ink-soft); }
+.vacation-item-past:not(:has(.btn)) { padding: 10px 14px; }
 
 .vacation-past summary {
   min-height: 44px;
@@ -104,29 +70,21 @@
 }
 .vacation-past[open] summary { margin-bottom: 6px; }
 
+/* Wide screens, and phones on their side: the form on the left, the trips on the right. */
+@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+  .vacation-body { flex-direction: row; gap: 20px; }
+  .vacation-main { flex: 1 1 0; min-width: 0; align-self: flex-start; max-height: 100%; overflow-y: auto; overscroll-behavior: contain; padding: 4px; margin: -4px; }
+  .vacation-side { flex: 1 1 0; min-width: 0; }
+  .vacation-card { padding: 8px 12px; gap: 6px; }
+}
 @media (min-width: 900px) {
-  .app-view > .screen:has(> .vacation) { padding: 24px 28px; }
-  .vacation {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: auto auto minmax(0, 1fr);
-    grid-template-areas: 'head head' 'lede lede' 'main side';
-    column-gap: 32px;
-    row-gap: 8px;
-  }
-  .vacation-head { grid-area: head; }
-  .vacation-lede { grid-area: lede; font-size: 17px; }
-  .vacation-main { grid-area: main; align-self: start; gap: 14px; }
-  .vacation-side { grid-area: side; }
-  .vacation-title { font-size: 30px; }
-  .vacation-subtitle { font-size: 20px; }
+  .vacation { gap: 10px; }
+  .vacation-body { gap: 32px; }
+  .vacation-lede { font-size: 1.0625rem; }
+  .vacation-main { gap: 14px; }
+  .vacation-subtitle { font-size: 1.25rem; }
   .vacation-card { padding: 18px 20px; gap: 12px; }
   .vacation-fields { gap: 12px; }
   .vacation-group { gap: 10px; }
   .vacation-list { gap: 8px; }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .vacation-btn { transition: transform 0.1s ease; }
-  .vacation-btn:active { transform: translateY(1px); }
 }
