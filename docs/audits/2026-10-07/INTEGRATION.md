@@ -7,7 +7,7 @@ All 13 actionable findings from the [baseline audit](AUDIT.md) are covered by fi
 | [Progress #11](https://github.com/Robertg761/chore-pet/pull/11) | 3, 7, 13 | `2eadf09` |
 | [Retained history #12](https://github.com/Robertg761/chore-pet/pull/12) | 2, 9 | `9836ade`, `ac205ce` |
 | [Gifts, Undo, keyboard #13](https://github.com/Robertg761/chore-pet/pull/13) | 5, 6 | `75a6a4c` |
-| [Account recovery #14](https://github.com/Robertg761/chore-pet/pull/14) | 1, 4, 8, 12 | `6e097b5` |
+| [Account recovery #14](https://github.com/Robertg761/chore-pet/pull/14) | 1, 4, 8, 12 | `6e097b5`, `87a92f6` |
 | [Navigation and sign-in #15](https://github.com/Robertg761/chore-pet/pull/15) | 10, 11 | `61ff6c5`, `bc4bd14` |
 
 ## Integration decisions
@@ -22,7 +22,7 @@ All 13 actionable findings from the [baseline audit](AUDIT.md) are covered by fi
 
 ## Verification
 
-- Combined `npm test`: **1,159 tests across 53 files passed** on local Node 26.
+- Combined `npm test`: **1,160 tests across 53 files passed** on CI Node 22.23.3 (the preceding tree also passed 1,159 on Node 26).
 - `npm run lint` and production builds at `/` and `/chore-pet/`: passed. Existing main-chunk size advisory remains (about 568 kB minified / 174 kB gzip).
 - `npm run test:browser`: **20/20 passed** against each production base path. Covers navigation/drafts/auth entry, gift/Undo focus and timing, touch sheet dismissal, room keyboard controls, selected-home reconciliation, and visible/pending gift Back/Forward behavior.
 - Four new combined domain tests cover old schedule maxima after a break/archive, same-day archive credit, rest-token preservation through idle periods, resumed completion gifts, archived sample exclusions and legacy count fallback. Temporarily removing the archive pause or historical maximum causes the tests to fail; restoring both passes.
@@ -31,7 +31,7 @@ All 13 actionable findings from the [baseline audit](AUDIT.md) are covered by fi
 - Independent UI review passed 25 focused tests with no actionable findings.
 - T3 phone preview at 390 × 664 verified returning-user entry/cancel and the combined native gift above All chores with visible Undo. [Screenshot](evidence/14-integrated-gift-undo.png).
 
-Final CI inspection found PR #14's account tests relying on Node 26's built-in Web Locks while CI uses Node 22. The recovery owner is correcting the test browser fixture without weakening the production guard; CI-version validation is pending that fix.
+Final CI inspection found PR #14's account tests relying on Node 26's built-in Web Locks while CI uses Node 22. Commit `87a92f6` supplies an explicit browser fixture and adds a missing-Web-Locks refusal regression without changing production code. The combined unit suite, lint, Pages build, and all 20 browser tests pass on actual Node 22.23.3. All five focused PR build checks passed on GitHub; deployment jobs were skipped.
 
 ## Rollout and remaining limits
 

@@ -11,7 +11,7 @@ Each thread must reproduce, implement, add regressions, run lint/tests/build, re
 - Findings: 1, 4, 8, 12
 - Branch: audit/account-recovery
 - Draft PR: [#14](https://github.com/Robertg761/chore-pet/pull/14)
-- Reviewed handoff commit: `6e097b5` (linked to coordinator)
+- Reviewed handoff commit: `6e097b5`; CI fixture fix `87a92f6` (linked to coordinator)
 - Thread: [Chore Pet: account recovery and home selection](t3-thread://v1/a7d1672f-f5c1-4d7b-bd6d-85ab1799f767/mcp%3Ae70d64fe-3e1f-4447-a852-5ea900b5fe8d)
 - ID: `mcp:e70d64fe-3e1f-4447-a852-5ea900b5fe8d`
 - Worktree: `/home/robert/.t3/worktrees/chore-pet/audit-account-recovery`
@@ -118,6 +118,6 @@ The coordinator combined all five bundles in `audit/integration-verification`, l
 - Four combined domain tests cover archive-date credit, schedule history/broken historical maximum, pause/token/resume behavior, completion-path gifts, sample archives, and retained-ID legacy-count fallback. Mutation checks confirmed failures when either the archive pause or historical-best tracking was removed.
 - Independent data review passed 79 focused tests and found one extreme-clock date-range mismatch. History PR fixed it with eight actual SQL regressions, aligning archive dates with migration 0006's accepted creation-date range.
 - Independent UI integration review found no actionable issues and passed 25 focused tests.
-- Final full suite: 1,159 tests across 53 files; lint passed. Production build passed with the existing chunk-size advisory. All 20 production browser regressions passed at root; Pages-base validation is recorded in INTEGRATION.md.
+- Final full suite: 1,160 tests across 53 files on actual Node 22.23.3; lint passed. Production build passed with the existing chunk-size advisory. All 20 production browser regressions passed at root; Pages-base validation is recorded in INTEGRATION.md.
 
 No PR has been merged and no migration or client deployed. Hosted Auth/PostgREST, truly simultaneous network transactions, physical phones, and non-Chromium engines remain unverified. Migration 0007 must precede the client. Legacy clients retain rows but lack archive-aware UI; previously destroyed history cannot be reconstructed.
