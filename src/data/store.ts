@@ -225,7 +225,7 @@ export function createStore({
    * device meanwhile, follow it instead and write nothing: this tab's data
    * belongs to the account that was just cleared.
    */
-  async function writeWith(next: (merged: Snapshot, stored: Snapshot | null) => Snapshot | null): Promise<void> {
+  async function writeWith(next: (merged: Snapshot, stored: Snapshot | null) => Snapshot | null, lease?: { lock: string; token: string }): Promise<void> {
     let written: Snapshot | null = null
     if (local.update) {
       await local.update((stored) => {
@@ -237,7 +237,7 @@ export function createStore({
         if (merged !== state.snapshot) set({ snapshot: merged })
         written = next(merged, stored)
         return written && stamped(written)
-      })
+      }, lease)
     } else {
       written = next(state.snapshot, null)
       if (written) await local.save(stamped(written))
@@ -693,8 +693,11 @@ export function createStore({
           // tab then follows). Otherwise that is taken in, and the next round keeps it too.
           let failed = false
           let swapped: Snapshot | null = null
+          /** The transaction found the lock still ours (and no reset elsewhere). */
+          let checked = false
           await queueSave(() =>
             writeWith((merged, stored) => {
+              checked = true
               // Changes in the stored copy, since this tab last saw it, that this tab doesn't have
               // (another tab sent them and hasn't pulled yet, so no merge brings them in): keep
               // them, then go round again.
@@ -711,7 +714,7 @@ export function createStore({
               swapped = restoreHome(saved, before).reduce(change, before)
               set({ snapshot: swapped })
               return swapped
-            }).catch((e: unknown) => {
+            }, { lock, token }).catch((e: unknown) => {
               failed = true
               throw e
             }),
@@ -723,7 +726,8 @@ export function createStore({
             return false
           }
           if (swapped) done = true
-          else if (!stillHere()) return false
+          // Lost the lock while waiting to be saved (another restore took over), or reset elsewhere.
+          else if (!checked || !stillHere()) return false
         }
         if (!done) return false
         // The restored home is stored: the swap has happened, whatever comes next.

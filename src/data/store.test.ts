@@ -946,6 +946,23 @@ describe('saved homes (backups kept on this device)', () => {
     expect((await store.savedHomes()).map((h) => h.petName)).toContain('Newer')
   })
 
+  it('does not swap when another restore took the lock while this one waited to be saved', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    const hold = local.holdLock!.bind(local)
+    local.holdLock = async (lock, token, at) => {
+      const ours = await hold(lock, token, at)
+      // The lease checks out, then lapses while the swap waits behind other saves.
+      local.locks[lock] = { token: 'the-other-restore', at }
+      return ours
+    }
+    expect(await store.restoreSaved('guest')).toBe(false)
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Pip')
+    expect(selectHome((local.current as Snapshot).tables).pet?.name).toBe('Pip')
+  })
+
   it('never offers a home held for another account, and clearing an account forgets its saved homes', async () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()

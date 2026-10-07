@@ -8,9 +8,10 @@ export interface LocalStore {
   /**
    * Read the stored copy and write what `fn` returns in one step, so another
    * tab's save can't land in between (null writes nothing). Stores without it
-   * fall back to save().
+   * fall back to save(). With `lease`, only while that restore lock is still
+   * held by its token, checked in the same step: otherwise `fn` isn't called.
    */
-  update?(fn: (stored: Snapshot | null) => Snapshot | null): Promise<void>
+  update?(fn: (stored: Snapshot | null) => Snapshot | null, lease?: { lock: string; token: string }): Promise<void>
   /** Keep a copy of a snapshot that is about to be dropped, under `snapshot-backup-<ownerId>`. */
   backup?(ownerId: string, snapshot: Snapshot): Promise<void>
   /**
@@ -108,19 +109,28 @@ export function indexedDbStore(): LocalStore {
       })
     },
     save: (snapshot) => put(KEY, snapshot),
-    async update(fn) {
+    async update(fn, lease) {
       const d = await getDb()
       return new Promise((resolve, reject) => {
         const tx = d.transaction(STORE, 'readwrite')
         const store = tx.objectStore(STORE)
-        const req = store.get(KEY)
-        req.onsuccess = () => {
-          try {
-            const next = fn((req.result as Snapshot | undefined) ?? null)
-            if (next) store.put(next, KEY)
-          } catch (e) {
-            tx.abort()
-            reject(e)
+        const write = () => {
+          const req = store.get(KEY)
+          req.onsuccess = () => {
+            try {
+              const next = fn((req.result as Snapshot | undefined) ?? null)
+              if (next) store.put(next, KEY)
+            } catch (e) {
+              tx.abort()
+              reject(e)
+            }
+          }
+        }
+        if (!lease) write()
+        else {
+          const held = store.get(lease.lock)
+          held.onsuccess = () => {
+            if ((held.result as Lease | undefined)?.token === lease.token) write()
           }
         }
         tx.oncomplete = () => resolve()
@@ -210,7 +220,8 @@ export function memoryStore(initial: Snapshot | null = null): LocalStore & { cur
     async save(snapshot: Snapshot) {
       store.current = structuredClone(snapshot)
     },
-    async update(fn: (stored: Snapshot | null) => Snapshot | null) {
+    async update(fn: (stored: Snapshot | null) => Snapshot | null, lease?: { lock: string; token: string }) {
+      if (lease && store.locks[lease.lock]?.token !== lease.token) return
       const next = fn(store.current && structuredClone(store.current))
       if (next) store.current = structuredClone(next)
     },
