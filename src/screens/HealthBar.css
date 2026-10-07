@@ -34,7 +34,7 @@
   background: #e4f5d2;
   color: var(--ink);
   font-weight: 800;
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 22px;
   pointer-events: none;
   animation: hb-float 1300ms ease-out forwards;

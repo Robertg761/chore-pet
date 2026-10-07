@@ -17,13 +17,22 @@ export function Landing({ onSample, onBuild }: LandingProps) {
     <section className="landing" aria-labelledby="landing-title">
       <h1 className="landing-title" id="landing-title">Chore Pet</h1>
 
-      <ul className="landing-pets" aria-hidden="true">
+      <div className="landing-pets" role="group" aria-label="Pick a sample pet">
         {SPECIES.map((s) => (
-          <li key={s} className={s === species ? 'landing-pet landing-pet-on' : 'landing-pet'}>
-            <Character species={s} mood="happy" bodyColour={SPECIES_COLOUR[s]} size={104} title={SAMPLE_PET_NAMES[s]} />
-          </li>
+          <button
+            key={s}
+            type="button"
+            className="landing-pet"
+            aria-pressed={s === species}
+            onClick={() => setSpecies(s)}
+          >
+            <span className="landing-pet-art" aria-hidden="true">
+              <Character species={s} mood="happy" bodyColour={SPECIES_COLOUR[s]} size={104} title={SAMPLE_PET_NAMES[s]} />
+            </span>
+            <span className="landing-pet-name">{SAMPLE_PET_NAMES[s]}</span>
+          </button>
         ))}
-      </ul>
+      </div>
 
       <p className="landing-pitch">A tiny pet that lives in a home you build. Do real chores, keep it happy.</p>
 
@@ -34,21 +43,6 @@ export function Landing({ onSample, onBuild }: LandingProps) {
         <button type="button" className="landing-secondary" onClick={onBuild}>
           Build my home
         </button>
-      </div>
-
-      <div className="landing-with" role="group" aria-label="Sample pet">
-        <span className="landing-with-label">Sample pet</span>
-        {SPECIES.map((s) => (
-          <button
-            key={s}
-            type="button"
-            className="landing-chip"
-            aria-pressed={s === species}
-            onClick={() => setSpecies(s)}
-          >
-            {SAMPLE_PET_NAMES[s]}
-          </button>
-        ))}
       </div>
     </section>
   )

@@ -60,6 +60,8 @@ export default defineConfig(({ mode }) => ({
       workbox: {
         // Lets a tap on a reminder open the app (public/sw-notifications.js).
         importScripts: ['sw-notifications.js'],
+        // The self-hosted Nunito is precached so the app looks the same offline.
+        globPatterns: ['**/*.{js,css,html,woff2}'],
         // Files (the demo video, icons) are fetched as themselves, never answered with the app.
         navigateFallbackDenylist: [/\/[^/?]+\.[a-z0-9]+$/i],
       },

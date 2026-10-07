@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { completionCounts } from '../domain/schedule'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import type { Chore, Completion, VacationWindow } from '../domain/types'
-import { buildSections, onVacation, type ChoreRow } from './choreListModel'
+import { allCaughtUp, buildSections, nextUpcoming, onVacation, shortRows, whenPhrase, type ChoreRow } from './choreListModel'
 import './ChoreList.css'
 
 export interface ChoreListProps {
@@ -31,13 +30,43 @@ function CheckIcon() {
   )
 }
 
+/** A small hand-drawn flourish for the all-done card: two stars and a dot, in the same thick outline as the rest. */
+function Sparkles() {
+  return (
+    <svg className="cl-sparkles" viewBox="0 0 64 56" width="56" height="49" aria-hidden="true" focusable="false">
+      <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="3" stroke="#2b1e2f">
+        <path d="M24 6c1.6 10 5.4 14 16 16-10.600 2-14.400 6-16 16-1.600-10-5.400-14-16-16 10.600-2 14.400-6 16-16z" fill="#FFD65C" />
+        <path d="M48 30c1 6.200 3.400 8.600 10 10-6.600 1.400-9 3.800-10 10-1-6.200-3.400-8.600-10-10 6.600-1.400 9-3.800 10-10z" fill="#F28FA0" />
+        <circle cx="9" cy="40" r="3.200" fill="#fff" />
+      </g>
+    </svg>
+  )
+}
+
+/** A row has something to tap unless it's an upcoming chore that's already covered. */
+const hasAction = (row: ChoreRow) => !row.allSet
+
+/** How long after a completion to keep trying to put focus back where it was lost. */
+const REFOCUS_MS = 3000
+
 export function ChoreList({ chores, completions, vacations, today, onComplete, onEdit, onAdd, limit, onSeeAll }: ChoreListProps) {
   const sections = buildSections(chores, completions, vacations, today)
   const away = onVacation(today, vacations)
+  const short = limit !== undefined
+  const caughtUp = allCaughtUp(sections)
+  const uid = useId()
+  const rootRef = useRef<HTMLElement>(null)
+  const rows = sections.flatMap((s) => s.rows)
+  const shown = short ? shortRows(sections).slice(0, limit) : rows
+  const shownRef = useRef<ChoreRow[]>(shown)
+  useEffect(() => {
+    shownRef.current = shown
+  })
 
   // Chores that were just tapped: they show a check for a moment, then complete.
   const [finishing, setFinishing] = useState<ReadonlySet<string>>(new Set())
   const timers = useRef(new Map<string, { timer: number; chore: Chore }>())
+  const refocus = useRef<{ next: string | null; until: number } | null>(null)
   const completeRef = useRef(onComplete)
   useEffect(() => {
     completeRef.current = onComplete
@@ -48,6 +77,11 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
     setFinishing((prev) => new Set(prev).add(chore.id))
     const timer = window.setTimeout(() => {
       timers.current.delete(chore.id)
+      // Once the row moves away, focus goes to the next row's button (or the heading) rather than the page.
+      const list = shownRef.current
+      const at = list.findIndex((r) => r.chore.id === chore.id)
+      const next = list.slice(at + 1).find((r) => hasAction(r) && !timers.current.has(r.chore.id))
+      refocus.current = { next: next?.chore.id ?? null, until: Date.now() + REFOCUS_MS }
       setFinishing((prev) => {
         const next = new Set(prev)
         next.delete(chore.id)
@@ -70,46 +104,75 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
     }
   }, [])
 
-  const renderRow = ({ chore, status, label }: ChoreRow) => {
+  // After a chore completes its row moves away; if that took focus with it, put focus somewhere useful.
+  useEffect(() => {
+    const pending = refocus.current
+    const root = rootRef.current
+    if (!pending || !root) return
+    if (Date.now() > pending.until) {
+      refocus.current = null
+      return
+    }
+    const active = document.activeElement
+    if (active && active !== document.body && active.isConnected) return
+    refocus.current = null
+    const target =
+      (pending.next && root.querySelector<HTMLElement>(`[data-chore-action="${CSS.escape(pending.next)}"]`)) ||
+      root.querySelector<HTMLElement>('[data-cl-fallback]')
+    target?.focus({ preventScroll: true })
+  })
+
+  const renderRow = (row: ChoreRow) => {
+    const { chore, status, label } = row
     const early = status.state === 'upcoming'
     const justDone = finishing.has(chore.id)
     return (
-      <li key={chore.id} className={`cl-row cl-row-${status.state}${status.neglect ? ` cl-row-late${status.neglect}` : ''}${justDone ? ' cl-row-done' : ''}`}>
+      <li key={chore.id} className={`cl-row cl-row-${status.state}${status.neglect ? ` cl-row-late${status.neglect}` : ''}${justDone ? ' cl-row-done' : ''}${row.doneToday ? ' cl-row-doneToday' : ''}`}>
         <div className="cl-info">
           <button type="button" className="cl-name" onClick={() => onEdit(chore)}>
             {chore.name}
           </button>
           <span className={`tag tag-${status.state}${status.neglect ? ` tag-late${status.neglect}` : ''}`}>{label}</span>
         </div>
-        {justDone ? (
-          <span className="cl-action cl-done-mark" role="status">
-            <CheckIcon />
-            <span>Nice</span>
-          </span>
-        ) : early && !completionCounts(chore, completions, today) ? (
+        {!hasAction(row) && !justDone ? (
           // Already done for this round: doing it again wouldn't count, so there's nothing to tap.
           <span className="cl-action cl-done-mark cl-set">
             <CheckIcon />
-            <span>All set</span>
+            <span>{row.doneToday ? 'Done' : 'All set'}</span>
           </span>
-        ) : early ? (
-          <button type="button" className="cl-action cl-early" aria-label={`Do ${chore.name} early`} onClick={() => finish(chore)}>
-            Do it early
-          </button>
         ) : (
-          <button type="button" className="cl-action cl-done" aria-label={`Mark ${chore.name} done`} onClick={() => finish(chore)}>
-            Done
+          // One button for every state, so focus stays put while the check shows.
+          <button
+            type="button"
+            className={`cl-action ${justDone ? 'cl-done-mark cl-nice' : early ? 'cl-early' : 'cl-done'}`}
+            data-chore-action={chore.id}
+            aria-disabled={justDone ? 'true' : undefined}
+            aria-label={justDone ? `Nice, ${chore.name} is done` : early ? `Do it early: ${chore.name}` : `Done: ${chore.name}`}
+            onClick={() => !justDone && finish(chore)}
+          >
+            {justDone ? (
+              <>
+                <CheckIcon />
+                <span>Nice</span>
+              </>
+            ) : early ? (
+              'Do it early'
+            ) : (
+              'Done'
+            )}
           </button>
         )}
+        <span className="sr-only" role="status">
+          {justDone ? `Nice, ${chore.name} is done` : ''}
+        </span>
       </li>
     )
   }
 
-  const rows = sections.flatMap((s) => s.rows)
-  const shown = limit === undefined ? rows : rows.slice(0, limit)
+  const next = nextUpcoming(sections)
 
   return (
-    <section className={limit === undefined ? 'cl' : 'cl cl-short'} aria-label="Chores">
+    <section ref={rootRef} className={short ? 'cl cl-short' : 'cl'} aria-label="Chores">
       {away && (
         <p className="cl-banner" role="status">
           On vacation. Chores are paused.
@@ -118,17 +181,31 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
 
       {chores.length === 0 ? (
         <p className="cl-empty">No chores yet. Add one and your pet will cheer you on.</p>
-      ) : limit !== undefined ? (
-        <section className="cl-section" aria-labelledby="cl-h-next">
-          <h2 id="cl-h-next" className="cl-heading">
+      ) : short && caughtUp ? (
+        <section className="cl-caught" aria-labelledby={`${uid}-caught`}>
+          <Sparkles />
+          <div className="cl-caught-text">
+            <h2 id={`${uid}-caught`} className="cl-caught-title" tabIndex={-1} data-cl-fallback>
+              {away ? 'Nothing due right now' : 'All done for today!'}
+            </h2>
+            {next && (
+              <p className="cl-caught-next">
+                Next: {next.chore.name}, {whenPhrase(next.label)}
+              </p>
+            )}
+          </div>
+        </section>
+      ) : short ? (
+        <section className="cl-section" aria-labelledby={`${uid}-next`}>
+          <h2 id={`${uid}-next`} className="cl-heading" tabIndex={-1} data-cl-fallback>
             Up next
           </h2>
           <ul className="cl-rows">{shown.map(renderRow)}</ul>
         </section>
       ) : (
-        sections.map((section) => (
-          <section key={section.id} className="cl-section" aria-labelledby={`cl-h-${section.id}`}>
-            <h2 id={`cl-h-${section.id}`} className={`cl-heading cl-heading-${section.id}`}>
+        sections.map((section, i) => (
+          <section key={section.id} className="cl-section" aria-labelledby={`${uid}-${section.id}`}>
+            <h2 id={`${uid}-${section.id}`} className={`cl-heading cl-heading-${section.id}`} tabIndex={-1} data-cl-fallback={i === 0 ? '' : undefined}>
               {section.title}
             </h2>
             <ul className="cl-rows">{section.rows.map(renderRow)}</ul>
@@ -139,7 +216,8 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
       <div className="cl-foot">
         {onSeeAll && rows.length > 0 && (
           <button type="button" className="cl-add cl-all" onClick={onSeeAll}>
-            {rows.length > shown.length ? `All chores (${rows.length})` : 'All chores'}
+            All<span className="cl-all-extra"> chores</span>
+            {rows.length > shown.length ? ` (${rows.length})` : ''}
           </button>
         )}
         <button type="button" className="cl-add" onClick={onAdd}>

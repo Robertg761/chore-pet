@@ -7,26 +7,59 @@
   min-width: 0;
 }
 
-.landing-title { margin: 8px 0 0; font-size: 36px; line-height: 1.1; text-align: center; }
+.landing-title { margin: 8px 0 0; font-size: 2.25rem; line-height: 1.1; text-align: center; }
 
 .landing-pets {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 4px;
 }
-.landing-pet { display: block; line-height: 0; text-align: center; transition: transform 0.15s ease; }
-.landing-pet svg { width: 100%; height: auto; max-width: 104px; }
-.landing-pet-on { transform: translateY(-4px); }
+/* Each big pet is a button: the chosen one stands on a soft ring and the others fade back. */
+.landing-pet {
+  position: relative;
+  min-height: 44px;
+  padding: 4px 0 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font: inherit;
+  color: var(--ink-soft);
+  background: none;
+  border: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.landing-pet-art { position: relative; z-index: 1; display: block; width: 100%; line-height: 0; text-align: center; opacity: 0.6; transition: opacity 0.15s ease; }
+.landing-pet-art svg { width: 100%; height: auto; max-width: 104px; }
+.landing-pet::before {
+  content: '';
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 2.25rem;
+  height: 22%;
+  border: 3px solid var(--accent);
+  border-radius: 50%;
+  background: rgba(111, 92, 240, 0.16);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.landing-pet-name { position: relative; z-index: 1; font-size: 1rem; font-weight: 800; }
+.landing-pet:hover .landing-pet-art { opacity: 0.85; }
+.landing-pet[aria-pressed='true'] { color: var(--ink); transform: translateY(-4px); }
+.landing-pet[aria-pressed='true']::before { opacity: 1; }
+.landing-pet[aria-pressed='true'] .landing-pet-art { opacity: 1; }
+.landing-pet[aria-pressed='true'] .landing-pet-name { font-weight: 900; }
+.landing-pet:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 .landing-pitch {
   margin: 0;
   max-width: 30ch;
   text-align: center;
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.35;
   font-weight: 700;
   color: var(--ink-soft);
@@ -39,7 +72,7 @@
   min-height: 56px;
   padding: 0 20px;
   font: inherit;
-  font-size: 19px;
+  font-size: 1.1875rem;
   font-weight: 800;
   border: var(--outline);
   border-radius: var(--radius);
@@ -51,32 +84,8 @@
 .landing-primary:focus-visible,
 .landing-secondary:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
-.landing-with {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-.landing-with-label { font-size: 14px; font-weight: 700; color: var(--ink-soft); margin-right: 2px; }
-.landing-chip {
-  min-height: 44px;
-  min-width: 44px;
-  padding: 0 14px;
-  font: inherit;
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--ink);
-  background: var(--card);
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  cursor: pointer;
-}
-.landing-chip[aria-pressed='true'] { background: var(--due-bg); color: var(--due-ink); border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
-.landing-chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-
 @media (prefers-reduced-motion: reduce) {
-  .landing-pet { transition: none; }
+  .landing-pet, .landing-pet-art, .landing-pet::before { transition: none; }
   .landing-primary:active { transform: none; }
 }
 .landing-back { align-self: flex-start; margin: -8px 0 -8px -12px; }

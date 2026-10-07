@@ -17,6 +17,15 @@ export interface HealthBarProps {
 
 const FLOAT_MS = 1400
 
+/** What shows for a mood. The pet is never "sick" to the person; it's just feeling poorly. */
+const MOOD_FEELING: Record<Mood, string> = {
+  happy: 'happy',
+  content: 'content',
+  meh: 'meh',
+  scruffy: 'scruffy',
+  sick: 'poorly',
+}
+
 export function HealthBar({ health, mood, away }: HealthBarProps) {
   // Compare with the last value during render so a rise shows its "+N" at once.
   const [seen, setSeen] = useState(health)
@@ -48,11 +57,11 @@ export function HealthBar({ health, mood, away }: HealthBarProps) {
 
   return (
     <div className="hb">
-      <div className="hb-track" role="meter" aria-label="Health" aria-valuemin={0} aria-valuemax={100} aria-valuenow={health} aria-valuetext={`${health} out of 100, feeling ${mood}`}>
+      <div className="hb-track" role="meter" aria-label="Health" aria-valuemin={0} aria-valuemax={100} aria-valuenow={health} aria-valuetext={`${health} out of 100, feeling ${MOOD_FEELING[mood]}`}>
         <div className="hb-fill" style={style} />
       </div>
       <div className="hb-row">
-        <p className="hb-text">Feeling {mood}</p>
+        <p className="hb-text">Feeling {MOOD_FEELING[mood]}</p>
         {gain && (
           <span key={gain.key} className="hb-gain" aria-hidden="true">
             +{gain.amount}

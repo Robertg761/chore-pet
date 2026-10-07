@@ -1,0 +1,153 @@
+/* Shared controls for the screens: buttons, segmented controls, choices, fields, checkboxes.
+   One look everywhere: ink outlines, a 14px radius on buttons and 12px on fields,
+   ink fill for the selected segment, an accent ring for the selected choice.
+   The :root values are local tokens; they belong in index.css next to the others.
+   The rules sit in a layer so a screen's own CSS always wins over them, whatever order the files load in. */
+:root {
+  --on-accent: #fff;
+  --ground-soft: #f6f2ff;
+  --late-wash: #fff7f2;
+  --ink-veil: rgba(43, 30, 47, 0.18);
+  --btn-radius: 14px;
+  --ctl-radius: 12px;
+  --ring: 0 0 0 3px var(--accent);
+  --press: 0 3px 0 var(--ink);
+}
+
+@layer controls {
+  /* Buttons: .btn (secondary), with .btn-primary, .btn-quiet or .btn-danger. */
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font: inherit;
+    font-weight: 800;
+    color: var(--ink);
+    text-align: center;
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: var(--btn-radius);
+    cursor: pointer;
+  }
+  .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .btn:disabled { opacity: 0.45; cursor: default; }
+  .btn-primary { color: var(--on-accent); background: var(--accent); box-shadow: var(--press); }
+  .btn-primary:focus-visible { outline-color: var(--ink); }
+  .btn-primary:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+  .btn-danger { color: var(--late-ink); background: var(--late-bg); }
+  .btn-quiet { padding: 0 12px; color: var(--ink-soft); background: transparent; border-color: transparent; text-decoration: underline; }
+  .btn-quiet.btn-danger { color: var(--late-ink); }
+  .btn-sm { padding: 0 12px; font-size: 14px; }
+
+  /* Segmented control: one row, the selected segment filled with ink. Scrolls sideways if it runs out of room. */
+  .seg {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    background: var(--card);
+    border: 2px solid var(--ink);
+    border-radius: var(--btn-radius);
+  }
+  .seg::-webkit-scrollbar { display: none; }
+  .seg-btn {
+    position: relative;
+    flex: 1 1 0;
+    min-width: max-content;
+    min-height: 44px;
+    padding: 0 10px;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    background: none;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .seg-btn[aria-pressed='true'],
+  .seg-btn[aria-selected='true'] { color: var(--on-accent); background: var(--ink); }
+  .seg-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+
+  /* A choice among a few: the selected one gets the accent ring. */
+  .choice {
+    color: var(--ink);
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: var(--btn-radius);
+    cursor: pointer;
+  }
+  .choice[aria-pressed='true'],
+  .choice[aria-checked='true'] { border-color: var(--accent); box-shadow: var(--ring); }
+  .choice:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+  /* Text, date, time and select fields. */
+  .field {
+    min-height: 44px;
+    min-width: 0;
+    padding: 0 12px;
+    font: inherit;
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: var(--ctl-radius);
+    color-scheme: light;
+  }
+  .field::placeholder { color: var(--ink-soft); opacity: 0.6; }
+  .field:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .field[aria-invalid='true'] { border-color: var(--late-ink); background: var(--late-wash); }
+  .field:disabled { opacity: 0.5; }
+  select.field { cursor: pointer; }
+  .field::-webkit-calendar-picker-indicator { padding: 4px; cursor: pointer; border-radius: 8px; }
+  .field::-webkit-date-and-time-value { text-align: left; }
+
+  /* Checkboxes and radios drawn in the same outline. The label around them is the touch target. */
+  .check {
+    appearance: none;
+    -webkit-appearance: none;
+    flex: none;
+    width: 26px;
+    height: 26px;
+    margin: 0;
+    display: inline-grid;
+    place-content: center;
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .check::after {
+    content: '';
+    width: 12px;
+    height: 6px;
+    margin-top: -2px;
+    border-left: 3px solid var(--on-accent);
+    border-bottom: 3px solid var(--on-accent);
+    border-radius: 1px;
+    transform: rotate(-45deg) scale(0);
+    transition: transform 0.12s ease;
+  }
+  .check:checked { background: var(--accent); }
+  .check:checked::after { transform: rotate(-45deg) scale(1); }
+  .check:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .check:disabled { opacity: 0.5; cursor: default; }
+  .check-radio { border-radius: 50%; }
+  .check-radio::after { width: 10px; height: 10px; margin: 0; border: none; border-radius: 50%; background: var(--on-accent); transform: scale(0); }
+  .check-radio:checked::after { transform: scale(1); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .check::after { transition: none; }
+    .btn-primary:active:not(:disabled) { transform: none; }
+  }
+
+  /* "12/40" next to a field's label. */
+  .char-count { margin-left: auto; font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+  .char-count-low { font-weight: 800; color: var(--late-ink); }
+}

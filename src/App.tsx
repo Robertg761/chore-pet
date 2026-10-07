@@ -60,8 +60,8 @@ import { play } from './audio/sfx'
 import { useReminders } from './reminders/reminders'
 import { AppNav, type MoreItem, type Tab } from './shell/AppNav'
 import { Sheet } from './shell/Sheet'
-import { upNextRows } from './shell/layout'
-import { useViewport, WIDE_MIN } from './shell/useViewport'
+import { ROOM_ASPECT_VARS, upNextRows } from './shell/layout'
+import { useViewport, useWide } from './shell/useViewport'
 
 type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; choreId?: string } | { name: 'vacation' } | { name: 'rewards' } | { name: 'week' } | { name: 'creator' } | { name: 'wardrobe' } | { name: 'share' } | { name: 'settings' }
 
@@ -112,11 +112,10 @@ export default function App() {
   const momentKey = useRef(0)
   const doneRef = useRef<HTMLButtonElement>(null)
   const viewport = useViewport()
+  const wide = useWide()
   // A chore being edited that no longer exists (deleted on another device) sends the editor home.
   const staleEdit = view.name === 'edit' && view.choreId !== undefined && !data.chores.some((c) => c.id === view.choreId)
-  useEffect(() => {
-    if (staleEdit) setView({ name: 'home' })
-  }, [staleEdit])
+  if (staleEdit) setView({ name: 'home' })
   // Each screen names itself and takes focus at its heading, so keyboard and screen-reader users land on it.
   useEffect(() => {
     document.title = VIEW_TITLE[view.name]
@@ -210,7 +209,6 @@ export default function App() {
     )
   }
 
-  const wide = viewport.width >= WIDE_MIN
   const syncNote = savedLocally || sync === 'synced' ? SYNC_LABEL[sync] : null
   const more: MoreItem[] = [
     { label: 'Your week', onSelect: () => setView({ name: 'week' }) },
@@ -426,6 +424,7 @@ export default function App() {
               step={step}
               choreCount={chores.filter((c) => roomObjects.some((o) => o.id === c.objectId)).length}
               sheetOpen={Boolean(selected)}
+              placing={Boolean(placing)}
               onSkip={() => (finishCoach(), doneRef.current?.focus())}
             />
           )}
@@ -525,7 +524,7 @@ export default function App() {
         />
       )}
 
-      <div className="home-stage">
+      <div className="home-stage" style={ROOM_ASPECT_VARS}>
         {room && (
           <LivingRoom
             room={room}
