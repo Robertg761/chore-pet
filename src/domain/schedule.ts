@@ -1,4 +1,5 @@
 import { activeDaysBetween, addDays, daysInMonth, weekdayOf } from './dates'
+import { neglectLevel, type NeglectLevel } from './neglect'
 import type { Chore, Completion, ISODate, Schedule, VacationWindow } from './types'
 
 export type ChoreState = 'upcoming' | 'due' | 'overdue'
@@ -9,6 +10,8 @@ export interface ChoreStatus {
   state: ChoreState
   /** Days past the due date, not counting vacation days. 0 unless overdue. */
   overdueDays: number
+  /** How neglected it is for its schedule (src/domain/neglect.ts). 0 unless overdue. */
+  neglect: NeglectLevel
 }
 
 /** First scheduled date on or after `date`. (everyNDays is handled separately.) */
@@ -127,8 +130,8 @@ export function choreStatus(
   vacations: VacationWindow[] = [],
 ): ChoreStatus {
   const dueDate = nextDueDate(chore, completions)
-  if (dueDate > today) return { choreId: chore.id, dueDate, state: 'upcoming', overdueDays: 0 }
-  if (dueDate === today) return { choreId: chore.id, dueDate, state: 'due', overdueDays: 0 }
+  if (dueDate > today) return { choreId: chore.id, dueDate, state: 'upcoming', overdueDays: 0, neglect: 0 }
+  if (dueDate === today) return { choreId: chore.id, dueDate, state: 'due', overdueDays: 0, neglect: 0 }
   const overdueDays = activeDaysBetween(dueDate, today, vacations)
-  return { choreId: chore.id, dueDate, state: overdueDays > 0 ? 'overdue' : 'due', overdueDays }
+  return { choreId: chore.id, dueDate, state: overdueDays > 0 ? 'overdue' : 'due', overdueDays, neglect: neglectLevel(overdueDays, chore.schedule) }
 }

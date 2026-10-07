@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { PALETTE, SPECIES_COLOUR } from '../art/palette'
 import { Character, CharacterArt } from '../character/Character'
 import { Cheer } from '../effects/Cheer'
@@ -11,6 +11,8 @@ import { OBJECT_SCALE, tileCorner } from '../room/shell/geometry'
 import { RoomShell } from '../room/shell/RoomShell'
 import { FLOOR_STYLES, WALL_STYLES } from '../room/shell/styles'
 import type { ObjectArt } from '../room/objects/types'
+import type { MessKind } from '../catalog/types'
+import { NeglectCue } from '../room/neglect'
 import { WeekView } from '../screens/WeekView'
 import { play, type Sound } from '../audio/sfx'
 import type { Chore, Completion } from '../domain/types'
@@ -23,14 +25,15 @@ const MOODS: Mood[] = ['happy', 'content', 'meh', 'scruffy', 'sick']
 const STAGES: MessStage[] = ['clean', 'messy1', 'messy2']
 const OBJECTS: ObjectArt[] = Object.values(OBJECT_ART)
 
-function ObjectTile({ art, stage, scale }: { art: ObjectArt; stage: MessStage; scale: number }) {
+function ObjectTile({ art, stage, scale, overlay, headroom = 0, sidePad = 0 }: { art: ObjectArt; stage: MessStage; scale: number; overlay?: ReactNode; headroom?: number; sidePad?: number }) {
   const { x, y, width, height } = art.bounds
   const { w, d } = art.footprint
   return (
-    <svg width={width * scale} height={height * scale} viewBox={`${x} ${y} ${width} ${height}`} role="img" aria-label={`${art.catalogId}, ${stage}`}>
+    <svg width={(width + sidePad * 2) * scale} height={(height + headroom) * scale} viewBox={`${x - sidePad} ${y - headroom} ${width + sidePad * 2} ${height + headroom}`} role="img" aria-label={`${art.catalogId}, ${stage}`}>
       <rect x={x} y={y} width={width} height={height} fill="none" stroke={PALETTE.accent} strokeDasharray="2 2" strokeWidth={0.5} />
       <polygon points={isoPoints([0, 0, 0], [w, 0, 0], [w, d, 0], [0, d, 0])} fill={PALETTE.floorWood} opacity={0.5} />
       {art.render(stage)}
+      {overlay}
     </svg>
   )
 }
@@ -128,12 +131,67 @@ export default function ArtGallery() {
         )}
       </section>
 
+      <NeglectSection />
       <EffectsSection />
       <WeekViewSection />
       <WardrobeCheck />
       <FaceOptions />
       <SoundsSection />
     </main>
+  )
+}
+
+// Neglect cues over a representative object each. `anchor` is the object's
+// top-centre in object-local units; the cue is drawn in room px, so it is scaled
+// by 1 / OBJECT_SCALE to sit in the same space as the art. Level 1 pairs with
+// messy1, levels 2 and 3 with messy2, as in the room.
+const NEGLECT_ROWS: { kind: MessKind; objectId: string; anchor: { x: number; y: number } }[] = [
+  { kind: 'stink', objectId: 'toilet', anchor: { x: 0, y: -42 } },
+  { kind: 'stink', objectId: 'trash', anchor: { x: 0, y: -34 } },
+  { kind: 'dust', objectId: 'couch', anchor: { x: -18, y: -46 } },
+  { kind: 'wilt', objectId: 'plant', anchor: { x: 0, y: -46 } },
+]
+const NEGLECT_LEVELS = [1, 2, 3] as const
+const CUE_HEADROOM = 70
+
+function NeglectSection() {
+  return (
+    <>
+      <h2>Neglect cues</h2>
+      {NEGLECT_ROWS.map(({ kind, objectId, anchor }) => {
+        const art = OBJECT_ART[objectId]
+        if (!art) return null
+        const tile = (level: 1 | 2 | 3, scale: number) => (
+          <figure key={level + '@' + scale}>
+            <ObjectTile
+              art={art}
+              stage={level === 1 ? 'messy1' : 'messy2'}
+              scale={scale}
+              headroom={CUE_HEADROOM}
+              sidePad={20}
+              overlay={
+                <g transform={`translate(${anchor.x} ${anchor.y}) scale(${1 / OBJECT_SCALE})`}>
+                  <NeglectCue kind={kind} level={level} />
+                </g>
+              }
+            />
+            <figcaption>
+              {kind} level {level} on {objectId}
+              {scale > 1.5 ? ' (2.5x)' : ''}
+            </figcaption>
+          </figure>
+        )
+        return (
+          <section key={kind + objectId} className="gallery-row">
+            <h3>
+              {kind} over {objectId}
+            </h3>
+            {NEGLECT_LEVELS.map((l) => tile(l, OBJECT_SCALE))}
+            {NEGLECT_LEVELS.map((l) => tile(l, 2.5))}
+          </section>
+        )
+      })}
+    </>
   )
 }
 

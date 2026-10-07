@@ -11,7 +11,7 @@
 Chore Pet is a tiny pet that lives in a home you build to look like yours.
 
 - **Your home sets up your chores.** Place a sink and you get "Wash the dishes". Place a bed and you get "Make the bed". You never fill in a form: the building is the setup.
-- **Late chores show as mess.** Mess appears on the object itself, so you can tell what's late just by looking at the room. A day late is a little messy. Three days late is properly messy. The pet wanders over to the worst spot and says something kind about it.
+- **Late chores show as mess.** Mess appears on the object itself, so you can tell what's late just by looking at the room, and it gets worse at a pace that fits the chore: dishes get stinky within a couple of days, a weekly toilet after a few, a monthly oven clean over a fortnight. Stink clouds, flies, dust and dry leaves float over the worst offenders. The pet wanders over to the worst spot and says something kind about it.
 - **The pet feels it.** Health drops with each late chore, and its mood goes from happy to content, meh and scruffy, down to sick in bed. It never dies, and catching up always brings it back.
 - **Rewards only come from real chores.** Your first chore earns a gift on the spot. After that, chore milestones and streaks unlock 16 rewards: outfits, hats, glasses, decor, wall colours and floors. Every reward is purely cosmetic, so nothing you earn brings new chores. Vacation mode pauses everything, so a holiday never costs you a streak.
 
@@ -74,7 +74,7 @@ All code was written fresh during the Yard, solo, with Claude Code:
   - a test writer.
 - **Review:** each result was checked against the art contract (`docs/ART.md`) in a live gallery (`/?art`) and by tests before it landed.
 - **Plan:** `docs/PLAN.md` holds the phase-by-phase plan and who did what.
-- **Tests:** 703 unit tests cover schedules, health, mess, streaks, unlocks, sync, tile maths and placement.
+- **Tests:** 789 unit tests cover schedules, health, mess, streaks, unlocks, sync, tile maths and placement.
 
 ## Honest limits
 

@@ -3,6 +3,7 @@ import { catalogEntry } from '../catalog/objects'
 import { CharacterArt } from '../character/Character'
 import { DONE_LINES, MOOD_LINES, OBJECT_LINES, TAP_LINES, VACATION_LINES, pickLine } from '../content/petLines'
 import { messiestObject } from '../domain/mess'
+import type { NeglectLevel } from '../domain/neglect'
 import type { ChoreStatus } from '../domain/schedule'
 import type { Chore, MessStage, Mood, Pet, PlacedObject, Room as RoomRow } from '../domain/types'
 import { footprintOf, freeTile, overlaps, tilesOf, type Footprint } from '../room/grid'
@@ -26,6 +27,8 @@ export interface LivingRoomProps {
   room: Pick<RoomRow, 'floorStyle' | 'wallStyle'>
   objects: PlacedObject[]
   stages: Record<string, MessStage>
+  /** Neglect level per object: the cues that float over late objects. */
+  neglect?: Record<string, NeglectLevel>
   pet: Pet
   mood: Mood
   away: boolean
@@ -43,7 +46,7 @@ function prefersReducedMotion(): boolean {
   return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 }
 
-export function LivingRoom({ room, objects, stages, pet, mood, away, chores, statuses, celebrate, overlay }: LivingRoomProps) {
+export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, chores, statuses, celebrate, overlay }: LivingRoomProps) {
   const solid = useMemo<Footprint[]>(
     () =>
       objects.flatMap((o) => {
@@ -136,6 +139,7 @@ export function LivingRoom({ room, objects, stages, pet, mood, away, chores, sta
         room={room}
         objects={objects}
         stages={stages}
+        neglect={neglect}
         className="home-room"
         overlay={overlay}
         pet={{

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { neglectLevel } from '../domain/neglect'
 import type { Chore, Completion } from '../domain/types'
 import { buildSections, shortDate, statusLabel } from './choreListModel'
 
@@ -54,10 +55,10 @@ describe('buildSections', () => {
 
 describe('statusLabel', () => {
   const today = '2026-10-06'
-  const base = { choreId: 'x', overdueDays: 0 }
+  const base = { choreId: 'x', overdueDays: 0, neglect: 0 as const }
   it('words overdue, due and upcoming', () => {
-    expect(statusLabel({ ...base, dueDate: '2026-10-05', state: 'overdue', overdueDays: 1 }, today)).toBe('1 day late')
-    expect(statusLabel({ ...base, dueDate: '2026-10-03', state: 'overdue', overdueDays: 3 }, today)).toBe('3 days late')
+    expect(statusLabel({ ...base, dueDate: '2026-10-05', state: 'overdue', overdueDays: 1, neglect: neglectLevel(1, { kind: 'daily' }) }, today)).toBe('1 day late')
+    expect(statusLabel({ ...base, dueDate: '2026-10-03', state: 'overdue', overdueDays: 3, neglect: neglectLevel(3, { kind: 'daily' }) }, today)).toBe('3 days late')
     expect(statusLabel({ ...base, dueDate: today, state: 'due' }, today)).toBe('Today')
     expect(statusLabel({ ...base, dueDate: '2026-10-07', state: 'upcoming' }, today)).toBe('Tomorrow')
     expect(statusLabel({ ...base, dueDate: '2026-10-08', state: 'upcoming' }, today)).toBe('Thu')

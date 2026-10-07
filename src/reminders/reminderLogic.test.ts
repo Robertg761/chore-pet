@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { neglectLevel } from '../domain/neglect'
 import type { ChoreStatus } from '../domain/schedule'
 import type { Chore } from '../domain/types'
 import {
@@ -21,6 +22,7 @@ const status = (choreId: string, state: ChoreStatus['state'], overdueDays = 0, d
   dueDate,
   state,
   overdueDays,
+  neglect: state === 'overdue' ? neglectLevel(overdueDays, { kind: 'daily' }) : 0,
 })
 const chore = (id: string, name: string): Chore => ({
   id,

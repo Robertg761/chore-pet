@@ -70,8 +70,8 @@ describe('healthPerDay', () => {
     // Created 10-01, never done: overdue grows each day after it is due.
     const result = healthPerDay([chore('a', '2026-10-01')], [], [], days)
     expect(result[0].health).toBe(100) // due that day, not overdue yet
-    expect(result[1].health).toBe(92) // 1 day overdue
-    expect(result[2].health).toBe(86) // 2 days overdue
+    expect(result[1].health).toBe(94) // 1 day overdue (level 1)
+    expect(result[2].health).toBe(85) // 2 days overdue (level 2)
     expect(result[6].health).toBeLessThan(result[2].health)
   })
 
@@ -80,7 +80,7 @@ describe('healthPerDay', () => {
     const completions = [done('a', '2026-10-05'), done('a', '2026-10-06'), done('a', '2026-10-07')]
     const result = healthPerDay(chores, completions, [], days)
     // 10-03: chore a is 2 days overdue, completions from 10-05 on don't exist yet.
-    expect(result[2].health).toBe(86)
+    expect(result[2].health).toBe(85)
     // The same day with every completion would look healthier, so it was not used.
     const naive = healthPerDay([chore('a', '2026-10-01')], [done('a', '2026-10-02')], [], days)
     expect(naive[2].health).toBeGreaterThan(result[2].health)
@@ -91,7 +91,7 @@ describe('healthPerDay', () => {
   it('does not count a chore before it was created', () => {
     const result = healthPerDay([chore('new', '2026-10-06')], [], [], days)
     expect(result.slice(0, 5).map((d) => d.health)).toEqual([100, 100, 100, 100, 100])
-    expect(result[6].health).toBe(92)
+    expect(result[6].health).toBe(94)
   })
 
   it('flags vacation days and stops overdue counting during them', () => {

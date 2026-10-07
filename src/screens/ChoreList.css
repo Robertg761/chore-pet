@@ -158,3 +158,9 @@
   .cl-row-done { transform: none; }
   .cl-check { animation: none; }
 }
+
+/* Late chores get louder as they're neglected (src/domain/neglect.ts). */
+.tag-late2 { background: #ffb98f; color: #6e2508; }
+.tag-late3 { background: #b8401a; color: #fff; }
+.cl-row-late2 { background: #ffeadd; }
+.cl-row-late3 { background: #ffe1d1; border-width: 3px; }

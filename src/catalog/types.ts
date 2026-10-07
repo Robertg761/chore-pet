@@ -15,6 +15,14 @@ export type Placement = 'wall' | 'floor'
  */
 export type Layer = 'solid' | 'flat' | 'hung'
 
+/**
+ * How neglect shows above the object as it gets worse (src/room/neglect.tsx):
+ * - stink: food, water and bathroom things get smelly, then flies arrive.
+ * - dust: furniture and fabric gather dust and cobwebs.
+ * - wilt: a plant droops and drops dry leaves.
+ */
+export type MessKind = 'stink' | 'dust' | 'wilt'
+
 export interface DefaultChore {
   name: string
   schedule: Schedule
@@ -31,6 +39,8 @@ export interface CatalogEntry {
   layer: Layer
   /** Chores created when the object is placed. Players can edit them later. Decor may have none. */
   chores: DefaultChore[]
+  /** How its neglect cue looks when its chores run late. */
+  mess: MessKind
   /** Decor earned as a reward: offered in the tray only once this unlock id is in progress (src/domain/unlocks.ts). */
   unlock?: string
 }

@@ -38,7 +38,10 @@ Hackyard: "The real task has to get done." A game about laundry doesn't count; a
 
 - Schedules: daily, every N days, specific weekdays, weekly, monthly (clamped to month length).
 - A chore is due on its date, overdue after. On-time, late and early completions are handled in `src/domain/schedule.ts` (see its doc comment).
-- Health starts at 100 and loses a penalty per overdue chore that grows with lateness and is capped per chore (`src/domain/health.ts`, `HEALTH_TUNING`).
+- Every chore's schedule is the player's to set: every day, every N days (2 to 60), chosen weekdays, weekly or monthly. Objects bring sensible defaults (washing the dishes daily, cleaning the toilet weekly, the oven monthly), and any chore can be tied to an object in the room, or to none.
+- A late chore's neglect level (0 to 3, `src/domain/neglect.ts`) follows its own rhythm: level 1 from one day late, level 2 at 40% of its cadence (2 to 7 days), level 3 after a whole cadence (4 to 14 days). A weekly toilet is level 1 the day after, level 2 after 3 days and level 3 after a week; daily dishes reach level 3 in 4 days; a monthly oven clean takes two weeks.
+- Neglect shows on the object it belongs to and grows: level 1 swaps in the object's messy art with a hint of a cue above it, level 2 the very messy art with a clear cue (stink and a fly, a dust puff, dry leaves), level 3 an unmistakable one (a big stink cloud with flies, a dust cloud with cobwebs). The chore list's late tags get louder with the same levels. It stays funny, never gross.
+- Health starts at 100 and loses a penalty per late chore by its neglect level (6, 15, 25), growing slowly while it stays at level 3 and capped per chore (`src/domain/health.ts`, `HEALTH_TUNING`). The pet feels what the room shows.
 - Moods by health: happy (85+), content (65+), meh (45+), scruffy (25+), sick.
 
 ## Open decisions

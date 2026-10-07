@@ -1,0 +1,104 @@
+/* Neglect cues (src/room/neglect.tsx). Transform and opacity only. Every
+   animated piece uses transform-box: fill-box so it moves about its own centre
+   inside SVG. --nc-dur / --nc-delay are set per piece. Reduced motion: no
+   animation at all, every cue reads as a still picture. */
+
+.nc-rise,
+.nc-drift,
+.nc-bob,
+.nc-breathe,
+.nc-hop,
+.nc-fall,
+.nc-swirl,
+.nc-orbit,
+.nc-counter {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-duration: var(--nc-dur, 3s);
+  animation-delay: var(--nc-delay, 0s);
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+/* Wisps rise and fade. */
+.nc-rise { animation-name: nc-rise; animation-timing-function: ease-out; }
+@keyframes nc-rise {
+  0% { transform: translateY(5px); opacity: 0; }
+  25% { opacity: 1; }
+  70% { opacity: 0.9; }
+  100% { transform: translateY(-9px); opacity: 0; }
+}
+
+/* Dust specks drift about. */
+.nc-drift { animation-name: nc-drift; }
+@keyframes nc-drift {
+  0%, 100% { transform: translate(0, 0); opacity: 1; }
+  30% { transform: translate(3px, -4px); opacity: 0.6; }
+  60% { transform: translate(-2px, -7px); opacity: 1; }
+  80% { transform: translate(2px, -3px); opacity: 0.7; }
+}
+
+/* A small hover. */
+.nc-bob { animation-name: nc-bob; }
+@keyframes nc-bob {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(1px, -3px); }
+}
+
+/* Clouds breathe from their base. */
+.nc-breathe { animation-name: nc-breathe; transform-origin: 50% 100%; }
+@keyframes nc-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.05, 1.07); }
+}
+
+/* Dust bunnies hop. */
+.nc-hop { animation-name: nc-hop; transform-origin: 50% 100%; animation-timing-function: cubic-bezier(0.3, 0, 0.4, 1); }
+@keyframes nc-hop {
+  0%, 55%, 100% { transform: translateY(0) scale(1.08, 0.92); }
+  25% { transform: translateY(-4px) scale(0.95, 1.06); }
+}
+
+/* Dry leaves flutter down, then fade out and start again. */
+.nc-fall { animation-name: nc-fall; animation-timing-function: linear; }
+@keyframes nc-fall {
+  0% { transform: translate(-1px, -8px) rotate(-14deg); opacity: 0; }
+  15% { opacity: 1; }
+  35% { transform: translate(4px, -2px) rotate(12deg); }
+  60% { transform: translate(-3px, 5px) rotate(-12deg); opacity: 1; }
+  85% { transform: translate(3px, 11px) rotate(14deg); opacity: 0.5; }
+  100% { transform: translate(0, 14px) rotate(-8deg); opacity: 0; }
+}
+
+/* The dizzy swirl spins. */
+.nc-swirl { animation-name: nc-spin; animation-timing-function: linear; }
+@keyframes nc-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Flies circle the cloud. The ring's box is centred on the cloud; the counter
+   spin keeps each fly upright. */
+.nc-orbit { animation-name: nc-orbit; animation-timing-function: linear; transform: rotate(var(--a0, 0deg)); }
+.nc-counter { animation-name: nc-counter; animation-timing-function: linear; transform: rotate(calc(-1 * var(--a0, 0deg))); }
+@keyframes nc-orbit {
+  from { transform: rotate(var(--a0, 0deg)); }
+  to { transform: rotate(calc(var(--a0, 0deg) + 360deg)); }
+}
+@keyframes nc-counter {
+  from { transform: rotate(calc(-1 * var(--a0, 0deg))); }
+  to { transform: rotate(calc(-1 * var(--a0, 0deg) - 360deg)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nc-rise,
+  .nc-drift,
+  .nc-bob,
+  .nc-breathe,
+  .nc-hop,
+  .nc-fall,
+  .nc-swirl,
+  .nc-orbit,
+  .nc-counter {
+    animation: none;
+  }
+}
