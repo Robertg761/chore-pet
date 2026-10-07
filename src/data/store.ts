@@ -570,27 +570,40 @@ export function createStore({
     },
     async restoreSaved(ownerId) {
       if (memoryOnly || !local.claimBackup || !local.backup) return false
+      const backup = local.backup.bind(local)
       await load()
-      // Claim the copy first, in one step, so another tab can't bring the same home back too.
-      const saved = await local.claimBackup(ownerId, now().getTime(), CLAIM_STALE_MS)
+      // One restore at a time for the account, across tabs: two at once would leave two homes.
+      const lock = `restore-lock-${state.snapshot.userId ?? 'unclaimed'}`
+      const saved = await local.claimBackup(ownerId, lock, now().getTime(), CLAIM_STALE_MS)
       if (!saved) return false
-      const ops = heldFor(saved) === state.snapshot.userId ? restoreHome(saved, state.snapshot) : []
-      if (ops.length === 0) {
-        await local.backup(ownerId, saved) // not this account's to restore: release the claim
-        return false
+      // No new syncs while the home is swapped, so the copy kept below is the one replaced.
+      const resume = pause()
+      let restored = false
+      try {
+        if (heldFor(saved) !== state.snapshot.userId) return false
+        // Keep the home being replaced on this device, so it can be swapped back. Its own key
+        // (account and home), so it never overwrites the copy being brought back. If a sync
+        // already under way lands meanwhile, keep the newer copy instead.
+        let before = state.snapshot
+        for (let tries = 0; tries < 3; tries++) {
+          const replaced = selectHome(before.tables).home
+          if (replaced) await backup(`${before.userId ?? 'unclaimed'}:${replaced.id}`, { ...before, heldFor: before.userId })
+          if (state.snapshot === before) break
+          before = state.snapshot
+        }
+        const ops = restoreHome(saved, state.snapshot)
+        if (ops.length === 0) return false
+        commit(ops.reduce(change, state.snapshot))
+        // Forget the brought-back copy only once the restored home is really stored.
+        await saving
+        if (state.savedLocally) await local.dropBackup?.(ownerId)
+        restored = true
+        return true
+      } finally {
+        await local.releaseLock?.(lock).catch(warn('Could not release the restore lock'))
+        resume()
+        if (restored) void sync()
       }
-      // Keep the home being replaced on this device, so it can be swapped back. Its own
-      // key (account and home), so it can never overwrite the copy being brought back.
-      const replaced = selectHome(state.snapshot.tables).home
-      if (replaced) await local.backup(`${state.snapshot.userId ?? 'unclaimed'}:${replaced.id}`, { ...state.snapshot, heldFor: state.snapshot.userId })
-      commit(ops.reduce(change, state.snapshot))
-      // Forget the brought-back copy only once the restored home is really stored;
-      // otherwise release the claim, so nothing is lost and it can be tried again.
-      await saving
-      if (state.savedLocally) await local.dropBackup?.(ownerId)
-      else await local.backup(ownerId, saved)
-      void sync()
-      return true
     },
   }
 }

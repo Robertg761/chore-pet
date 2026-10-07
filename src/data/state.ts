@@ -49,8 +49,6 @@ export interface Snapshot {
    * the next.
    */
   heldFor?: string | null
-  /** On a backup only: when a restore claimed it (ms since 1970), so two tabs can't both bring it back. */
-  claimedAt?: number
 }
 
 /** The account a backup may be offered back to. */
@@ -117,14 +115,29 @@ export function change(snapshot: Snapshot, op: NewOp): Snapshot {
   const key = outboxKey(op.table, op.key)
   const tables = applyOp(snapshot.tables, full)
   const outbox = { ...snapshot.outbox, [key]: full }
-  if (op.kind === 'delete') {
-    // Rows that went with it (the cascade) have nothing left to send: the server removes
-    // them the same way, and sending a child of a row that never reached it would fail.
-    for (const [k, queued] of Object.entries(outbox)) {
-      if (k !== key && queued.kind === 'upsert' && !(queued.key in tables[queued.table])) delete outbox[k]
-    }
+  if (op.kind !== 'delete') return { ...snapshot, seq, tables, outbox }
+
+  // Rows that went with it (the cascade) have nothing left to send, queued or set aside:
+  // the server removes them the same way, and a child of a row that never reached it
+  // would only be refused.
+  const removed = new Map<TableName, Set<string>>(TABLES.map((t) => [t, new Set(Object.keys(snapshot.tables[t]).filter((k) => !(k in tables[t])))]))
+  removed.get(op.table)!.add(op.key)
+  const under = (o: Op) =>
+    o.kind === 'upsert' &&
+    (removed.get(o.table)!.has(o.key) || CASCADES.some((c) => c.child === o.table && removed.get(c.parent)!.has(c.fk(o.value as never) ?? '')))
+  for (const [k, queued] of Object.entries(outbox)) if (k !== key && under(queued)) delete outbox[k]
+  // Set-aside rows may hang under other set-aside rows (not in the tables), so follow them down.
+  let rejected = snapshot.rejected
+  for (let grew = true; grew && rejected?.length; ) {
+    grew = false
+    rejected = rejected.filter((r) => {
+      if (!under(r.op)) return true
+      removed.get(r.op.table)!.add(r.op.key)
+      grew = true
+      return false
+    })
   }
-  return { ...snapshot, seq, tables, outbox }
+  return { ...snapshot, seq, tables, outbox, ...(rejected && { rejected }) }
 }
 
 export function upsertOp<T extends TableName>(table: T, value: TableMap[T]): NewOp {

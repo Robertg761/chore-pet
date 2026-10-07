@@ -18,6 +18,7 @@ import {
   selectHome,
   upsertOp,
   worthBackingUp,
+  type Op,
   type Snapshot,
 } from './state'
 
@@ -208,6 +209,15 @@ describe('change: deleting a row', () => {
     const gone = change(offline, deleteOp('homes', home.id))
     expect(Object.keys(gone.outbox)).toEqual(['homes:h1'])
     expect(gone.tables.chores).toEqual({})
+  })
+
+  it('drops set-aside changes under it too, but keeps unrelated ones', () => {
+    const synced = { ...change(emptySnapshot('u1'), upsertOp('homes', home)), outbox: {} }
+    const refused = (key: string, value: Chore) => ({ op: { table: 'chores', kind: 'upsert', key, value, seq: 1, id: key } as Op, message: 'no', at: '2026-10-07T00:00:00.000Z' })
+    const elsewhere: Chore = { ...chore('z'), homeId: 'other-home' }
+    const withRefused = { ...synced, rejected: [refused('a', chore('a')), refused('z', elsewhere)] }
+    const gone = change(withRefused, deleteOp('homes', home.id))
+    expect(gone.rejected?.map((r) => r.op.key)).toEqual(['z'])
   })
 })
 

@@ -18,10 +18,13 @@ export interface LocalStore {
   /** Every backup kept on this device, by the account it came from. */
   listBackups?(): Promise<{ ownerId: string; snapshot: Snapshot }[]>
   /**
-   * Claim a backup for a restore, in one step: returns it and marks it claimed,
-   * or null when it is gone or another restore claimed it within `staleMs`.
+   * Start a restore, in one step: take the account's restore lock (`lock`) and
+   * read the backup. Null when the backup is gone or another restore (any tab)
+   * holds the lock, taken within `staleMs`.
    */
-  claimBackup?(ownerId: string, now: number, staleMs: number): Promise<Snapshot | null>
+  claimBackup?(ownerId: string, lock: string, now: number, staleMs: number): Promise<Snapshot | null>
+  /** End a restore: let go of the lock. */
+  releaseLock?(lock: string): Promise<void>
   /** False when nothing survives a reload (the in-memory fallback). Missing means true. */
   durable?: boolean
 }
@@ -100,20 +103,32 @@ export function indexedDbStore(): LocalStore {
       })
     },
     backup: (ownerId, snapshot) => put(backupKey(ownerId), snapshot),
-    async claimBackup(ownerId, now, staleMs) {
+    async claimBackup(ownerId, lock, now, staleMs) {
       const d = await getDb()
       return new Promise((resolve, reject) => {
         let claimed: Snapshot | null = null
         const tx = d.transaction(STORE, 'readwrite')
         const store = tx.objectStore(STORE)
-        const req = store.get(backupKey(ownerId))
-        req.onsuccess = () => {
-          const found = (req.result as Snapshot | undefined) ?? null
-          if (!found || (found.claimedAt !== undefined && now - found.claimedAt < staleMs)) return
-          claimed = found
-          store.put({ ...found, claimedAt: now }, backupKey(ownerId))
+        const held = store.get(lock)
+        held.onsuccess = () => {
+          const at = held.result as number | undefined
+          if (at !== undefined && now - at < staleMs) return
+          const req = store.get(backupKey(ownerId))
+          req.onsuccess = () => {
+            claimed = (req.result as Snapshot | undefined) ?? null
+            if (claimed) store.put(now, lock)
+          }
         }
         tx.oncomplete = () => resolve(claimed)
+        tx.onerror = () => reject(tx.error)
+      })
+    },
+    async releaseLock(lock) {
+      const d = await getDb()
+      return new Promise((resolve, reject) => {
+        const tx = d.transaction(STORE, 'readwrite')
+        tx.objectStore(STORE).delete(lock)
+        tx.oncomplete = () => resolve()
         tx.onerror = () => reject(tx.error)
       })
     },
@@ -145,10 +160,11 @@ export function indexedDbStore(): LocalStore {
 }
 
 /** For tests (it stands in for IndexedDB, so it counts as durable). */
-export function memoryStore(initial: Snapshot | null = null): LocalStore & { current: Snapshot | null; backups: Record<string, Snapshot> } {
+export function memoryStore(initial: Snapshot | null = null): LocalStore & { current: Snapshot | null; backups: Record<string, Snapshot>; locks: Record<string, number> } {
   const store = {
     current: initial,
     backups: {} as Record<string, Snapshot>,
+    locks: {} as Record<string, number>,
     async load() {
       return store.current && structuredClone(store.current)
     },
@@ -165,11 +181,16 @@ export function memoryStore(initial: Snapshot | null = null): LocalStore & { cur
     async dropBackup(ownerId: string) {
       delete store.backups[backupKey(ownerId)]
     },
-    async claimBackup(ownerId: string, now: number, staleMs: number) {
+    async claimBackup(ownerId: string, lock: string, now: number, staleMs: number) {
+      const at = store.locks[lock]
+      if (at !== undefined && now - at < staleMs) return null
       const found = store.backups[backupKey(ownerId)]
-      if (!found || (found.claimedAt !== undefined && now - found.claimedAt < staleMs)) return null
-      store.backups[backupKey(ownerId)] = { ...found, claimedAt: now }
+      if (!found) return null
+      store.locks[lock] = now
       return structuredClone(found)
+    },
+    async releaseLock(lock: string) {
+      delete store.locks[lock]
     },
     async listBackups() {
       return Object.entries(store.backups).map(([key, snapshot]) => ({ ownerId: key.slice(BACKUP_PREFIX.length), snapshot: structuredClone(snapshot) }))

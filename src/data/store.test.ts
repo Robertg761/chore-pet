@@ -870,6 +870,21 @@ describe('saved homes (backups kept on this device)', () => {
     expect(results.filter(Boolean)).toHaveLength(1)
   })
 
+  it('runs one restore at a time per account, even for different saved homes', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const tabA = await onboarded(remote, local)
+    const tabB = createStore({ local, remote })
+    await tabB.start()
+    await tabB.sync()
+    const home = (name: string, owner: string) => ({ ...createHousehold({ species: 'mochi', petName: name, userId: owner }).reduce(change, emptySnapshot(owner)), heldFor: 'u1' })
+    await local.backup!('guest-1', home('Bun', 'guest-1'))
+    await local.backup!('guest-2', home('Sprout', 'guest-2'))
+    const results = await Promise.all([tabA.restoreSaved('guest-1'), tabB.restoreSaved('guest-2')])
+    expect(results.filter(Boolean)).toHaveLength(1)
+    expect(local.locks).toEqual({})
+  })
+
   it('has nothing to offer without a store that keeps backups', async () => {
     const store = createStore({ local: volatileStore(), remote: null })
     await store.start()
