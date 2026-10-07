@@ -55,115 +55,122 @@ export function VacationScreen({ vacations, today, onChange, onClose }: Vacation
 
   return (
     <section className="vacation" aria-labelledby={`${uid}-title`}>
-      <button type="button" className="link-button vacation-back" onClick={onClose}>
-        Back
-      </button>
-
-      <h1 id={`${uid}-title`} className="vacation-title">
-        Vacation mode
-      </h1>
+      <div className="vacation-head">
+        <h1 id={`${uid}-title`} className="vacation-title">
+          Vacation mode
+        </h1>
+        <button type="button" className="link-button vacation-back" onClick={onClose}>
+          Back
+        </button>
+      </div>
       <p className="vacation-lede">While you're away, chores pause and your pet won't get sick.</p>
 
-      {current && (
-        <div className="vacation-card vacation-now">
-          <p className="vacation-now-text">You're on vacation until {formatShortDate(current.end, today)}</p>
-          <button
-            type="button"
-            className="vacation-btn"
-            onClick={() => onChange(endEarly(vacations, current, today))}
-          >
-            I'm back early
-          </button>
-        </div>
-      )}
-
-      <form className="vacation-card vacation-form" onSubmit={submit} noValidate>
-        <h2 className="vacation-subtitle">Add a vacation</h2>
-
-        <div className="vacation-field">
-          <label htmlFor={`${uid}-start`}>Start date</label>
-          <input
-            id={`${uid}-start`}
-            type="date"
-            value={start}
-            min={today}
-            required
-            aria-invalid={errors.start ? true : undefined}
-            aria-describedby={errors.start ? startErrId : undefined}
-            onChange={(e) => edit(setStart, e.target.value)}
-          />
-          {errors.start && (
-            <p id={startErrId} className="vacation-error">
-              {errors.start}
-            </p>
-          )}
-        </div>
-
-        <div className="vacation-field">
-          <label htmlFor={`${uid}-end`}>End date</label>
-          <input
-            id={`${uid}-end`}
-            type="date"
-            value={end}
-            min={start || today}
-            required
-            aria-invalid={errors.end ? true : undefined}
-            aria-describedby={errors.end ? endErrId : undefined}
-            onChange={(e) => edit(setEnd, e.target.value)}
-          />
-          {errors.end && (
-            <p id={endErrId} className="vacation-error">
-              {errors.end}
-            </p>
-          )}
-        </div>
-
-        <button type="submit" className="vacation-btn">
-          Add vacation
-        </button>
-        <p className="vacation-notice" role="status">
-          {notice}
-        </p>
-      </form>
-
-      <div className="vacation-group">
-        <h2 className="vacation-subtitle">Upcoming trips</h2>
-        {upcoming.length === 0 ? (
-          <p className="vacation-empty">No trips planned.</p>
-        ) : (
-          <ul className="vacation-list">
-            {upcoming.map((w) => {
-              const label = formatRange(w, today)
-              return (
-                <li key={`${w.start}_${w.end}`} className="vacation-item">
-                  <span className="vacation-dates">{label}</span>
-                  <button
-                    type="button"
-                    className="vacation-btn vacation-btn-quiet"
-                    aria-label={`Remove trip ${label}`}
-                    onClick={() => onChange(removeWindow(vacations, w))}
-                  >
-                    Remove
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
+      <div className="vacation-main">
+        {current && (
+          <div className="vacation-card vacation-now">
+            <p className="vacation-now-text">You're on vacation until {formatShortDate(current.end, today)}</p>
+            <button
+              type="button"
+              className="vacation-btn"
+              onClick={() => onChange(endEarly(vacations, current, today))}
+            >
+              I'm back early
+            </button>
+          </div>
         )}
+
+        <form className="vacation-card vacation-form" onSubmit={submit} noValidate>
+          <h2 className="vacation-subtitle">Add a vacation</h2>
+
+          <div className="vacation-fields">
+            <div className="vacation-field">
+              <label htmlFor={`${uid}-start`}>Start date</label>
+              <input
+                id={`${uid}-start`}
+                type="date"
+                value={start}
+                min={today}
+                required
+                aria-invalid={errors.start ? true : undefined}
+                aria-describedby={errors.start ? startErrId : undefined}
+                onChange={(e) => edit(setStart, e.target.value)}
+              />
+              {errors.start && (
+                <p id={startErrId} className="vacation-error">
+                  {errors.start}
+                </p>
+              )}
+            </div>
+
+            <div className="vacation-field">
+              <label htmlFor={`${uid}-end`}>End date</label>
+              <input
+                id={`${uid}-end`}
+                type="date"
+                value={end}
+                min={start || today}
+                required
+                aria-invalid={errors.end ? true : undefined}
+                aria-describedby={errors.end ? endErrId : undefined}
+                onChange={(e) => edit(setEnd, e.target.value)}
+              />
+              {errors.end && (
+                <p id={endErrId} className="vacation-error">
+                  {errors.end}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <button type="submit" className="vacation-btn">
+            Add vacation
+          </button>
+          <p className="vacation-notice" role="status">
+            {notice}
+          </p>
+        </form>
       </div>
 
-      {past.length > 0 && (
-        <details className="vacation-past">
-          <summary>Past trips ({past.length})</summary>
-          <ul className="vacation-list">
-            {past.map((w) => (
-              <li key={`${w.start}_${w.end}`} className="vacation-item vacation-item-past">
-                <span className="vacation-dates">{formatRange(w, today)}</span>
-              </li>
-            ))}
-          </ul>
-        </details>
-      )}
+      <div className="vacation-side">
+        <div className="vacation-group">
+          <h2 className="vacation-subtitle">Upcoming trips</h2>
+          {upcoming.length === 0 ? (
+            <p className="vacation-empty">No trips planned.</p>
+          ) : (
+            <ul className="vacation-list">
+              {upcoming.map((w) => {
+                const label = formatRange(w, today)
+                return (
+                  <li key={`${w.start}_${w.end}`} className="vacation-item">
+                    <span className="vacation-dates">{label}</span>
+                    <button
+                      type="button"
+                      className="vacation-btn vacation-btn-quiet"
+                      aria-label={`Remove trip ${label}`}
+                      onClick={() => onChange(removeWindow(vacations, w))}
+                    >
+                      Remove
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
+
+        {past.length > 0 && (
+          <details className="vacation-past">
+            <summary>Past trips ({past.length})</summary>
+            <ul className="vacation-list">
+              {past.map((w) => (
+                <li key={`${w.start}_${w.end}`} className="vacation-item vacation-item-past">
+                  <span className="vacation-dates">{formatRange(w, today)}</span>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
+      </div>
     </section>
   )
 }

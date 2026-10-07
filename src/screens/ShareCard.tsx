@@ -100,85 +100,91 @@ export function ShareCard({ pet, room, objects, choreCount, streak, onClose }: S
 
   return (
     <section className="share" aria-labelledby="share-title">
-      <button type="button" className="link-button share-back" onClick={onClose}>
-        Back
-      </button>
-      <h1 id="share-title" className="share-title">
-        Share your home
-      </h1>
-
-      <svg
-        ref={svgRef}
-        className="share-card"
-        viewBox={`0 0 ${CARD_WIDTH} ${CARD_HEIGHT}`}
-        role="img"
-        aria-label={`Picture card: ${caption}`}
-        fontFamily={CARD_FONT}
-      >
-        <rect width={CARD_WIDTH} height={CARD_HEIGHT} fill={ground} />
-        <rect
-          x={PANEL.x}
-          y={PANEL.y}
-          width={PANEL.width}
-          height={PANEL.height}
-          rx={PANEL.radius}
-          fill={white}
-          stroke={ink}
-          strokeWidth={8}
-        />
-        <Room
-          room={room}
-          objects={objects}
-          pet={{
-            tile,
-            art: (
-              <CharacterArt
-                species={pet.species}
-                mood="happy"
-                bodyColour={pet.bodyColour}
-                equipped={pet.equipped}
-                look={{ eyes: pet.eyes, cheeks: pet.cheeks }}
-              />
-            ),
-          }}
-          width={ROOM_W}
-          svgProps={{ x: ROOM_X, y: ROOM_Y, role: 'presentation', 'aria-label': undefined }}
-        />
-        <text x={CARD_WIDTH / 2} y={1135} textAnchor="middle" fontSize={nameSize} fontWeight={900} fill={ink}>
-          {pet.name}
-        </text>
-        <text x={CARD_WIDTH / 2} y={1205} textAnchor="middle" fontSize={captionFontSize(caption)} fontWeight={700} fill={ink} fillOpacity={0.78}>
-          {caption}
-        </text>
-        <rect x={CARD_WIDTH / 2 - 130} y={1240} width={260} height={64} rx={32} fill={accent} stroke={ink} strokeWidth={5} />
-        <text x={CARD_WIDTH / 2} y={1283} textAnchor="middle" fontSize={36} fontWeight={900} fill={white} letterSpacing={1}>
-          Chore Pet
-        </text>
-      </svg>
-
-      <p className="share-status" role="status" aria-live="polite" data-state={status}>
-        {statusText}
-      </p>
-
-      <div className="share-actions">
-        {canShare && (
-          <button type="button" className="share-btn share-btn-primary" onClick={share}>
-            Share
-          </button>
-        )}
-        <button
-          type="button"
-          className={canShare ? 'share-btn' : 'share-btn share-btn-primary'}
-          onClick={save}
-          disabled={status !== 'ready'}
-        >
-          Save image
+      <div className="share-head">
+        <h1 id="share-title" className="share-title">
+          Share your home
+        </h1>
+        <button type="button" className="link-button share-back" onClick={onClose}>
+          Back
         </button>
-        {status === 'error' && (
-          <button type="button" className="share-btn" onClick={() => setAttempt((n) => n + 1)}>
-            Try again
+      </div>
+
+      <div className="share-preview">
+        <svg
+          ref={svgRef}
+          className="share-card"
+          viewBox={`0 0 ${CARD_WIDTH} ${CARD_HEIGHT}`}
+          role="img"
+          aria-label={`Picture card: ${caption}`}
+          fontFamily={CARD_FONT}
+        >
+          <rect width={CARD_WIDTH} height={CARD_HEIGHT} fill={ground} />
+          <rect
+            x={PANEL.x}
+            y={PANEL.y}
+            width={PANEL.width}
+            height={PANEL.height}
+            rx={PANEL.radius}
+            fill={white}
+            stroke={ink}
+            strokeWidth={8}
+          />
+          <Room
+            room={room}
+            objects={objects}
+            pet={{
+              tile,
+              art: (
+                <CharacterArt
+                  species={pet.species}
+                  mood="happy"
+                  bodyColour={pet.bodyColour}
+                  equipped={pet.equipped}
+                  look={{ eyes: pet.eyes, cheeks: pet.cheeks }}
+                />
+              ),
+            }}
+            width={ROOM_W}
+            svgProps={{ x: ROOM_X, y: ROOM_Y, role: 'presentation', 'aria-label': undefined }}
+          />
+          <text x={CARD_WIDTH / 2} y={1135} textAnchor="middle" fontSize={nameSize} fontWeight={900} fill={ink}>
+            {pet.name}
+          </text>
+          <text x={CARD_WIDTH / 2} y={1205} textAnchor="middle" fontSize={captionFontSize(caption)} fontWeight={700} fill={ink} fillOpacity={0.78}>
+            {caption}
+          </text>
+          <rect x={CARD_WIDTH / 2 - 130} y={1240} width={260} height={64} rx={32} fill={accent} stroke={ink} strokeWidth={5} />
+          <text x={CARD_WIDTH / 2} y={1283} textAnchor="middle" fontSize={36} fontWeight={900} fill={white} letterSpacing={1}>
+            Chore Pet
+          </text>
+        </svg>
+      </div>
+
+      <div className="share-side">
+        <p className="share-status" role="status" aria-live="polite" data-state={status}>
+          {statusText}
+        </p>
+
+        <div className="share-actions">
+          {canShare && (
+            <button type="button" className="share-btn share-btn-primary" onClick={share}>
+              Share
+            </button>
+          )}
+          <button
+            type="button"
+            className={canShare ? 'share-btn' : 'share-btn share-btn-primary'}
+            onClick={save}
+            disabled={status !== 'ready'}
+          >
+            Save image
           </button>
-        )}
+          {status === 'error' && (
+            <button type="button" className="share-btn" onClick={() => setAttempt((n) => n + 1)}>
+              Try again
+            </button>
+          )}
+        </div>
       </div>
     </section>
   )

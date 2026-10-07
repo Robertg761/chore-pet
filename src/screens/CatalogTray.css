@@ -65,3 +65,10 @@
   .tray-tile { transition: none; }
   .tray-tile:active:not(:disabled) { transform: none; }
 }
+
+/* Build mode's panel: one row that scrolls sideways, with smaller tiles. */
+.tray-one-row .tray-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.tray-one-row .tray-row { display: flex; overflow-x: auto; padding-bottom: 8px; }
+.tray-one-row .tray-tile { width: 92px; min-height: 112px; padding: 6px 4px; }
+.tray-one-row .tray-art { width: 52px; height: 52px; }
+.tray-one-row .tray-name { font-size: 13px; }

@@ -21,7 +21,7 @@ export function SampleBanner({ onKeep, onStartFresh }: SampleBannerProps) {
         </>
       ) : (
         <>
-          <p className="sample-banner-text">This is a sample home. Try finishing the dishes!</p>
+          <p className="sample-banner-text">A sample home. Try doing the dishes!</p>
           <div className="sample-banner-actions">
             <button type="button" className="sample-btn sample-btn-main" onClick={onKeep}>Make it mine</button>
             <button type="button" className="sample-btn" onClick={() => setConfirming(true)}>Start fresh</button>

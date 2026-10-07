@@ -26,6 +26,9 @@ function tfString({ dx = 0, dy = 0, rotate = 0, sx = 1, sy = 1 }: Tf) {
   return `translate(${dx} ${dy}) rotate(${rotate} ${x} ${y}) translate(${x} ${y}) scale(${sx} ${sy}) translate(${-x} ${-y})`
 }
 
+/** The body outline after the pose transform (outfits are clipped to it). */
+const silhouetteFor = (tf: Tf) => ({ d: BODY, transform: tfString(tf) })
+
 /** The same transform applied to an anchor point, so items follow the body. */
 function follow(a: Anchor, { dx = 0, dy = 0, rotate = 0, sx = 1, sy = 1 }: Tf): Anchor {
   const px = PIVOT.x + (a.x - PIVOT.x) * sx
@@ -122,6 +125,7 @@ const content: Pose = {
     </>,
   )
   ),
+  silhouette: silhouetteFor(CONTENT_TF),
   anchors: anchorsFor(CONTENT_TF),
 }
 
@@ -146,6 +150,7 @@ const meh: Pose = {
     </>,
   )
   ),
+  silhouette: silhouetteFor(MEH_TF),
   anchors: anchorsFor(MEH_TF),
 }
 
@@ -170,6 +175,7 @@ const scruffy: Pose = {
     </>,
   )
   ),
+  silhouette: silhouetteFor(SCRUFFY_TF),
   anchors: anchorsFor(SCRUFFY_TF),
 }
 
@@ -207,6 +213,7 @@ const sleeping: Pose = {
     </>,
   )
   ),
+  silhouette: silhouetteFor(SLEEP_TF),
   anchors: anchorsFor(SLEEP_TF),
 }
 
@@ -234,6 +241,7 @@ const cheering: Pose = {
     </>,
   )
   ),
+  silhouette: silhouetteFor(CHEER_TF),
   anchors: anchorsFor(CHEER_TF),
 }
 
@@ -268,6 +276,7 @@ const sick: Pose = {
   // The face is drawn full size in the bed (see sickY), so face items keep full size too.
   // Tucked in bed: the outfit, backpack and scarf or bow tie are under the covers.
   hides: ['outfit', 'back', 'neck'],
+  silhouette: silhouetteFor(SICK_TF),
   anchors: { ...anchorsFor(SICK_TF), face: { x: 100, y: sickY(126), scale: 1 } },
 }
 

@@ -12,6 +12,12 @@ export interface ChoreListProps {
   onComplete: (chore: Chore) => void
   onEdit: (chore: Chore) => void
   onAdd: () => void
+  /**
+   * Show only the first few rows (late, then today, then coming up) under one
+   * "Up next" heading, with a button to see them all. Leave unset for the full list.
+   */
+  limit?: number
+  onSeeAll?: () => void
 }
 
 /** How long the check shows before the chore is completed and the row moves. */
@@ -25,7 +31,7 @@ function CheckIcon() {
   )
 }
 
-export function ChoreList({ chores, completions, vacations, today, onComplete, onEdit, onAdd }: ChoreListProps) {
+export function ChoreList({ chores, completions, vacations, today, onComplete, onEdit, onAdd, limit, onSeeAll }: ChoreListProps) {
   const sections = buildSections(chores, completions, vacations, today)
   const away = onVacation(today, vacations)
 
@@ -99,8 +105,11 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
     )
   }
 
+  const rows = sections.flatMap((s) => s.rows)
+  const shown = limit === undefined ? rows : rows.slice(0, limit)
+
   return (
-    <section className="cl" aria-label="Chores">
+    <section className={limit === undefined ? 'cl' : 'cl cl-short'} aria-label="Chores">
       {away && (
         <p className="cl-banner" role="status">
           On vacation. Chores are paused.
@@ -109,6 +118,13 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
 
       {chores.length === 0 ? (
         <p className="cl-empty">No chores yet. Add one and your pet will cheer you on.</p>
+      ) : limit !== undefined ? (
+        <section className="cl-section" aria-labelledby="cl-h-next">
+          <h2 id="cl-h-next" className="cl-heading">
+            Up next
+          </h2>
+          <ul className="cl-rows">{shown.map(renderRow)}</ul>
+        </section>
       ) : (
         sections.map((section) => (
           <section key={section.id} className="cl-section" aria-labelledby={`cl-h-${section.id}`}>
@@ -120,9 +136,16 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
         ))
       )}
 
-      <button type="button" className="cl-add" onClick={onAdd}>
-        Add a chore
-      </button>
+      <div className="cl-foot">
+        {onSeeAll && rows.length > 0 && (
+          <button type="button" className="cl-add cl-all" onClick={onSeeAll}>
+            {rows.length > shown.length ? `All chores (${rows.length})` : 'All chores'}
+          </button>
+        )}
+        <button type="button" className="cl-add" onClick={onAdd}>
+          Add a chore
+        </button>
+      </div>
     </section>
   )
 }

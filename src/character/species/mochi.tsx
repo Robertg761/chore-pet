@@ -51,6 +51,7 @@ export const mochiIdle: Pose = {
       <Face mood={mood} eyeY={124} mouthY={138} />
     </g>
   ),
+  silhouette: { d: BODY },
   anchors: {
     back: { x: 100, y: 132 },
     body: { x: 100, y: 132 },

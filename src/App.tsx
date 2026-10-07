@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { catalogEntry } from './catalog/objects'
 import type { CatalogEntry } from './catalog/types'
 import { CharacterArt } from './character/Character'
@@ -46,7 +46,7 @@ import { GiftBox } from './screens/GiftBox'
 import { ObjectSheet } from './screens/ObjectSheet'
 import { PetPicker } from './screens/PetPicker'
 import { RewardsScreen } from './screens/RewardsScreen'
-import { rewardsButtonLabel } from './screens/rewardsModel'
+import { rewardsNote } from './screens/rewardsModel'
 import { SampleBanner } from './screens/SampleBanner'
 import { CoachCard, FirstDoneHint, Welcome } from './screens/Onboarding'
 import { coachStep, hasDueChore, hintKey, onboardedKey, readFlag, showFirstDoneHint, writeFlag } from './screens/onboardingModel'
@@ -58,6 +58,10 @@ import { SettingsScreen } from './screens/SettingsScreen'
 import { ShareCard } from './screens/ShareCard'
 import { play } from './audio/sfx'
 import { useReminders } from './reminders/reminders'
+import { AppNav, type MoreItem, type Tab } from './shell/AppNav'
+import { Sheet } from './shell/Sheet'
+import { upNextRows } from './shell/layout'
+import { useViewport, WIDE_MIN } from './shell/useViewport'
 
 type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; chore?: Chore } | { name: 'vacation' } | { name: 'rewards' } | { name: 'week' } | { name: 'creator' } | { name: 'wardrobe' } | { name: 'share' } | { name: 'settings' }
 
@@ -90,6 +94,9 @@ export default function App() {
   const [gifts, setGifts] = useState<Unlock[]>([])
   const momentKey = useRef(0)
   const doneRef = useRef<HTMLButtonElement>(null)
+  const viewport = useViewport()
+  const [allChores, setAllChores] = useState(false)
+  const [buildPanel, setBuildPanel] = useState<'things' | 'style'>('things')
 
   // The pet's daily nudge (while the app is open); needs the same view of the day as the screen.
   const reminderStatuses = data.home ? petCondition(data.chores, data.completions, today, data.home.vacations).statuses : []
@@ -171,10 +178,35 @@ export default function App() {
     )
   }
 
+  const wide = viewport.width >= WIDE_MIN
+  const syncNote = savedLocally || sync === 'synced' ? SYNC_LABEL[sync] : null
+  const more: MoreItem[] = [
+    { label: 'Your week', onSelect: () => setView({ name: 'week' }) },
+    { label: 'Change look', onSelect: () => setView({ name: 'creator' }) },
+    { label: 'Share your home', onSelect: () => setView({ name: 'share' }) },
+    { label: 'Vacation mode', onSelect: () => setView({ name: 'vacation' }) },
+    { label: 'Settings', onSelect: () => setView({ name: 'settings' }) },
+    ...(canInstall ? [{ label: 'Add to home screen', onSelect: () => void install() }] : []),
+  ]
+  /** A screen inside the app frame: the tabs along the bottom (phones) or down the left (wide). */
+  const framed = (active: Tab, content: ReactNode) => (
+    <div className="app">
+      <AppNav
+        active={active}
+        onNavigate={(tab) => (setSelectedId(null), setPlacing(null), tab === 'build' ? openBuild() : setView({ name: tab } as View))}
+        rewardsNote={rewardsNote(progress)}
+        more={more}
+        note={syncNote ?? undefined}
+      />
+      <div className="app-view">{content}</div>
+    </div>
+  )
+
   if (view.name === 'edit') {
     const { chore } = view
-    return (
-      <main className="shell">
+    return framed(
+      'home',
+      <main className="shell screen">
         <ChoreEditor
           chore={chore}
           onSave={(value) => {
@@ -190,29 +222,32 @@ export default function App() {
           }
           onCancel={back}
         />
-      </main>
+      </main>,
     )
   }
 
   if (view.name === 'vacation') {
-    return (
-      <main className="shell">
+    return framed(
+      'more',
+      <main className="shell screen">
         <VacationScreen vacations={home.vacations} today={today} onChange={(v) => appStore.apply(...setVacations(home, v))} onClose={back} />
-      </main>
+      </main>,
     )
   }
 
   if (view.name === 'settings') {
-    return (
-      <main className="shell">
+    return framed(
+      'more',
+      <main className="shell screen">
         <SettingsScreen petName={pet.name} onClose={back} />
-      </main>
+      </main>,
     )
   }
 
   if (view.name === 'share' && rooms[0]) {
-    return (
-      <main className="shell">
+    return framed(
+      'more',
+      <main className="shell screen">
         <ShareCard
           pet={pet}
           room={rooms[0]}
@@ -222,37 +257,41 @@ export default function App() {
           streak={currentStreak(chores, completions, today, home.vacations)}
           onClose={back}
         />
-      </main>
+      </main>,
     )
   }
 
   if (view.name === 'creator') {
-    return (
-      <main className="shell">
+    return framed(
+      'more',
+      <main className="shell screen">
         <CharacterCreator pet={pet} onSave={(patch) => appStore.apply(...updatePet(pet, patch))} onClose={back} />
-      </main>
+      </main>,
     )
   }
 
   if (view.name === 'wardrobe') {
-    return (
-      <main className="shell">
+    return framed(
+      'wardrobe',
+      <main className="shell screen">
         <Wardrobe pet={pet} progress={progress} onChange={(patch) => appStore.apply(...updatePet(pet, patch))} onClose={back} />
-      </main>
+      </main>,
     )
   }
 
   if (view.name === 'week') {
-    return (
-      <main className="shell">
+    return framed(
+      'more',
+      <main className="shell screen">
         <WeekView chores={chores} completions={completions} vacations={home.vacations} today={today} onClose={back} />
-      </main>
+      </main>,
     )
   }
 
   if (view.name === 'rewards') {
-    return (
-      <main className="shell">
+    return framed(
+      'rewards',
+      <main className="shell screen">
         <RewardsScreen
           pet={pet}
           progress={progress}
@@ -263,7 +302,7 @@ export default function App() {
           onEquip={(equipped) => appStore.apply(...updatePet(pet, { equipped }))}
           onBack={back}
         />
-      </main>
+      </main>,
     )
   }
 
@@ -306,8 +345,10 @@ export default function App() {
     const turnTo = selected && selectedEntry ? turned(selectedEntry, selected) : null
     const canTurn = Boolean(selected && selectedEntry && turnTo && checkPlacement(selectedEntry, turnTo, roomObjects, lookup, selected.id).ok)
 
-    return (
-      <main className="shell shell-wide">
+    const panelTab = coaching ? 'things' : buildPanel
+    return framed(
+      'build',
+      <main className="build">
         <header className="build-header">
           <h1>Build</h1>
           <button
@@ -319,166 +360,168 @@ export default function App() {
             Done
           </button>
         </header>
-        <BuildRoom
-          room={room}
-          objects={roomObjects}
-          stages={stages}
-          pet={petInRoom}
-          selectedId={selectedId}
-          onSelect={(id) => (setSelectedId(id), setPlacing(null))}
-          placing={placing}
-          onCommit={commit}
-          onPlacingDone={() => setPlacing(null)}
-        />
-        {coaching && (
-          <CoachCard
-            step={step}
-            choreCount={chores.filter((c) => roomObjects.some((o) => o.id === c.objectId)).length}
-            sheetOpen={Boolean(selected)}
-            onSkip={() => (finishCoach(), doneRef.current?.focus())}
+        <div className="build-stage">
+          <BuildRoom
+            room={room}
+            objects={roomObjects}
+            stages={stages}
+            pet={petInRoom}
+            selectedId={selectedId}
+            onSelect={(id) => (setSelectedId(id), setPlacing(null))}
+            placing={placing}
+            onCommit={commit}
+            onPlacingDone={() => setPlacing(null)}
           />
-        )}
-        {selected && selectedEntry ? (
-          <ObjectSheet
-            object={selected}
-            entry={selectedEntry}
-            chores={chores.filter((c) => c.objectId === selected.id)}
-            completions={completions}
-            vacations={home.vacations}
-            today={today}
-            canTurn={canTurn}
-            onSaveChore={(chore, value) =>
-              appStore.apply(...(chore ? updateChore(chore, value) : addChore(home, { ...value, objectId: selected.id }, today)))
-            }
-            onRemoveChore={(chore) => appStore.apply(...removeChore(chore.id, data))}
-            onTurn={() => turnTo && canTurn && appStore.apply(...moveObject(selected, turnTo))}
-            onRemove={() => (appStore.apply(...removeObject(selected.id, data)), setSelectedId(null))}
-            onClose={() => setSelectedId(null)}
-          />
-        ) : (
-          <div className={coaching && step === 1 ? 'build-extras coach-pulse' : 'build-extras'}>
-            <CatalogTray roomType={room.type} objects={roomObjects} unlocked={progress?.unlockedItems} onPick={(entry) => (setSelectedId(null), setPlacing(entry))} />
-            <RoomStylePicker
-              wallStyle={room.wallStyle}
-              floorStyle={room.floorStyle}
-              progress={progress}
-              onChange={(patch) => appStore.apply(...updateRoom(room, patch))}
+        </div>
+        <div className="build-panel">
+          {coaching && (
+            <CoachCard
+              step={step}
+              choreCount={chores.filter((c) => roomObjects.some((o) => o.id === c.objectId)).length}
+              sheetOpen={Boolean(selected)}
+              onSkip={() => (finishCoach(), doneRef.current?.focus())}
             />
-          </div>
-        )}
-      </main>
+          )}
+          {selected && selectedEntry ? (
+            <ObjectSheet
+              object={selected}
+              entry={selectedEntry}
+              chores={chores.filter((c) => c.objectId === selected.id)}
+              completions={completions}
+              vacations={home.vacations}
+              today={today}
+              canTurn={canTurn}
+              onSaveChore={(chore, value) =>
+                appStore.apply(...(chore ? updateChore(chore, value) : addChore(home, { ...value, objectId: selected.id }, today)))
+              }
+              onRemoveChore={(chore) => appStore.apply(...removeChore(chore.id, data))}
+              onTurn={() => turnTo && canTurn && appStore.apply(...moveObject(selected, turnTo))}
+              onRemove={() => (appStore.apply(...removeObject(selected.id, data)), setSelectedId(null))}
+              onClose={() => setSelectedId(null)}
+            />
+          ) : (
+            <div className={coaching && step === 1 ? 'build-extras coach-pulse' : 'build-extras'}>
+              {!wide && !coaching && (
+                <div className="build-tabs" role="group" aria-label="Show">
+                  <button type="button" aria-pressed={panelTab === 'things'} onClick={() => setBuildPanel('things')}>
+                    Add things
+                  </button>
+                  <button type="button" aria-pressed={panelTab === 'style'} onClick={() => setBuildPanel('style')}>
+                    Walls and floor
+                  </button>
+                </div>
+              )}
+              {(wide || panelTab === 'things') && (
+                <CatalogTray
+                  roomType={room.type}
+                  objects={roomObjects}
+                  unlocked={progress?.unlockedItems}
+                  oneRow={!wide}
+                  onPick={(entry) => (setSelectedId(null), setPlacing(entry))}
+                />
+              )}
+              {(wide || panelTab === 'style') && (
+                <RoomStylePicker
+                  wallStyle={room.wallStyle}
+                  floorStyle={room.floorStyle}
+                  progress={progress}
+                  onChange={(patch) => appStore.apply(...updateRoom(room, patch))}
+                />
+              )}
+            </div>
+          )}
+        </div>
+      </main>,
     )
   }
 
-  return (
-    <main className="shell">
-      <header className="pet-header">
-        <div className="pet-title">
-          <h1>{pet.name}</h1>
-          <div className="pet-actions">
-            <button type="button" className="chip-button" onClick={() => setView({ name: 'wardrobe' })}>
-              Wardrobe
-            </button>
-            <button type="button" className="chip-button" onClick={() => setView({ name: 'creator' })}>
-              Change look
-            </button>
-            <button type="button" className="chip-button" onClick={() => setView({ name: 'settings' })} aria-label="Settings">
-              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" strokeWidth="2.4" />
-                <path
-                  d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"
-                  stroke="currentColor"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
+  const sample = home.name === SAMPLE_HOME_NAME
+  const completeChore = (chore: Chore) => {
+    const done = completeChoreWithRewards(chore, progress, { chores, completions, vacations: home.vacations }, devNow())
+    appStore.apply(...done.ops)
+    flag(hintKey(home.id))
+    play('sparkle')
+    if (done.unlocked.length) setGifts((queue) => [...queue, ...done.unlocked])
+    const key = ++momentKey.current
+    setCelebrate({ key, choreName: chore.name })
+    const placed = roomObjects.find((o) => o.id === chore.objectId)
+    const entry = placed && catalogEntry(placed.catalogId)
+    if (placed && entry) setSparkles((list) => [...list, { id: key, ...sparkleSpot(placed, entry) }])
+  }
+  const choreList = (short: boolean) => (
+    <ChoreList
+      chores={chores}
+      completions={completions}
+      vacations={home.vacations}
+      today={today}
+      onComplete={completeChore}
+      onEdit={(chore) => (setAllChores(false), setView({ name: 'edit', chore }))}
+      onAdd={() => (setAllChores(false), setView({ name: 'edit' }))}
+      limit={short ? upNextRows(viewport.height, sample) : undefined}
+      onSeeAll={short ? () => setAllChores(true) : undefined}
+    />
+  )
+
+  return framed(
+    'home',
+    <main className="home">
+      <header className="home-top">
+        <h1>{pet.name}</h1>
         <HealthBar health={condition.health} mood={condition.mood} away={away} />
       </header>
 
-      {home.name === SAMPLE_HOME_NAME && (
+      {sample && (
         <SampleBanner
           onKeep={() => appStore.apply(...adoptSample(home))}
           onStartFresh={() => (setBuilding(false), setView({ name: 'home' }), appStore.apply(...removeHome(home.id)))}
         />
       )}
 
-      {room && (
-        <LivingRoom
-          room={room}
-          objects={roomObjects}
-          stages={stages}
-          pet={pet}
-          mood={condition.mood}
-          away={away}
-          chores={chores}
-          statuses={condition.statuses}
-          celebrate={celebrate}
-          overlay={sparkles.map((s) => (
-            <Sparkle key={s.id} x={s.x} y={s.y} size={s.size} onDone={() => setSparkles((list) => list.filter((o) => o.id !== s.id))} />
-          ))}
-        />
-      )}
+      <div className="home-stage">
+        {room && (
+          <LivingRoom
+            room={room}
+            objects={roomObjects}
+            stages={stages}
+            pet={pet}
+            mood={condition.mood}
+            away={away}
+            chores={chores}
+            statuses={condition.statuses}
+            celebrate={celebrate}
+            overlay={sparkles.map((s) => (
+              <Sparkle key={s.id} x={s.x} y={s.y} size={s.size} onDone={() => setSparkles((list) => list.filter((o) => o.id !== s.id))} />
+            ))}
+          />
+        )}
+        {roomObjects.length === 0 && (
+          <button type="button" className="home-build" onClick={openBuild}>
+            Build your room
+          </button>
+        )}
+      </div>
 
-      <button type="button" className="build-open" onClick={openBuild}>
-        {roomObjects.length ? 'Build' : 'Build your room'}
-      </button>
-      <button type="button" className="build-open" onClick={() => setView({ name: 'rewards' })}>
-        {rewardsButtonLabel(progress)}
-      </button>
-
-      {view.name === 'home' &&
-        showFirstDoneHint({
+      <div className="home-chores">
+        {showFirstDoneHint({
           onboarded: readFlag(onboardedKey(home.id)),
           hintDone: readFlag(hintKey(home.id)),
           completionCount: completions.length,
           dueChore: hasDueChore(chores, completions, today, home.vacations),
         }) && <FirstDoneHint onClose={() => flag(hintKey(home.id))} />}
+        {choreList(!wide)}
+      </div>
 
-      <ChoreList
-        chores={chores}
-        completions={completions}
-        vacations={home.vacations}
-        today={today}
-        onComplete={(chore) => {
-          const done = completeChoreWithRewards(chore, progress, { chores, completions, vacations: home.vacations }, devNow())
-          appStore.apply(...done.ops)
-          flag(hintKey(home.id))
-          play('sparkle')
-          if (done.unlocked.length) setGifts((queue) => [...queue, ...done.unlocked])
-          const key = ++momentKey.current
-          setCelebrate({ key, choreName: chore.name })
-          const placed = roomObjects.find((o) => o.id === chore.objectId)
-          const entry = placed && catalogEntry(placed.catalogId)
-          if (placed && entry) setSparkles((list) => [...list, { id: key, ...sparkleSpot(placed, entry) }])
-        }}
-        onEdit={(chore) => setView({ name: 'edit', chore })}
-        onAdd={() => setView({ name: 'edit' })}
-      />
-
-      <button type="button" className="link-button" onClick={() => setView({ name: 'week' })}>
-        Your week
-      </button>
-
-      <button type="button" className="link-button" onClick={() => setView({ name: 'share' })}>
-        Share your home
-      </button>
-
-      <button type="button" className="link-button" onClick={() => setView({ name: 'vacation' })}>
-        Vacation mode
-      </button>
-
-      {canInstall && (
-        <button type="button" className="link-button" onClick={() => void install()}>
-          Add to home screen
-        </button>
+      {!syncNote && (
+        <p className="home-alert" role="alert">
+          This browser isn't saving your home. Try a regular (not private) window.
+        </p>
       )}
 
-      <footer className="dev-note" role={savedLocally ? undefined : 'alert'}>
-        {savedLocally || sync === 'synced' ? SYNC_LABEL[sync] : "This browser isn't saving your home. Try a regular (not private) window."}
-      </footer>
+      {allChores && !wide && (
+        <Sheet title="All chores" onClose={() => setAllChores(false)}>
+          {choreList(false)}
+        </Sheet>
+      )}
 
       {gifts[0] && (
         <GiftBox
@@ -492,6 +535,6 @@ export default function App() {
           }}
         />
       )}
-    </main>
+    </main>,
   )
 }

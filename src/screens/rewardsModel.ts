@@ -53,11 +53,17 @@ export function nextLines(progress: Progress, streak: number): { chores: NextLin
   return { chores: next.chores && describeNext(next.chores), streak: next.streak && describeNext(next.streak) }
 }
 
-/** The home screen button: "Rewards · 2 to go", or just "Rewards" when nothing is pending. */
-export function rewardsButtonLabel(progress: Progress | null | undefined): string {
-  if (!progress) return 'Rewards'
+/** Chores left until the next reward, e.g. "2 to go", or nothing when none is pending. */
+export function rewardsNote(progress: Progress | null | undefined): string | undefined {
+  if (!progress) return undefined
   const next = nextUnlocks(progress, progress.currentStreak).chores
-  return next && next.remaining > 0 ? `Rewards · ${next.remaining} to go` : 'Rewards'
+  return next && next.remaining > 0 ? `${next.remaining} to go` : undefined
+}
+
+/** The rewards button: "Rewards · 2 to go", or just "Rewards" when nothing is pending. */
+export function rewardsButtonLabel(progress: Progress | null | undefined): string {
+  const note = rewardsNote(progress)
+  return note ? `Rewards · ${note}` : 'Rewards'
 }
 
 /** The outfit with one slot set or cleared (one item per slot). */

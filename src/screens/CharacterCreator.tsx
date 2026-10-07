@@ -11,6 +11,7 @@ import {
   sameColour,
   swatchesFor,
 } from './creatorModel'
+import { useViewport, WIDE_MIN } from '../shell/useViewport'
 import './CharacterCreator.css'
 
 export type PetLookPatch = Partial<Pick<Pet, 'name' | 'species' | 'bodyColour' | 'eyes' | 'cheeks'>>
@@ -23,6 +24,13 @@ export interface CharacterCreatorProps {
 
 const MAX_NAME = 20
 const CHEER_MS = 1000
+
+type Part = 'who' | 'colour' | 'face'
+const PARTS: { part: Part; label: string }[] = [
+  { part: 'who', label: 'Who' },
+  { part: 'colour', label: 'Colour' },
+  { part: 'face', label: 'Face' },
+]
 
 const SPECIES_LABEL: Record<Species, string> = { mochi: 'Mochi', bun: 'Bun', sprout: 'Sprout' }
 
@@ -90,6 +98,9 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
   const [draft, setDraft] = useState(() => draftFromPet(pet))
   const [cheering, setCheering] = useState(false)
   const [nameError, setNameError] = useState(false)
+  const wide = useViewport().width >= WIDE_MIN
+  const [part, setPart] = useState<Part>('who')
+  const tabsRef = useRef<HTMLDivElement>(null)
   const timer = useRef<number | undefined>(undefined)
   const nameRef = useRef<HTMLInputElement>(null)
 
@@ -130,87 +141,65 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
   const swatches = swatchesFor(bodyColour)
   const selectedColour = swatches.find((c) => sameColour(c.hex, bodyColour))?.hex
 
-  return (
-    <form className="cc" onSubmit={submit} aria-labelledby="cc-title" noValidate>
-      <div className="cc-stage">
-        <h1 className="cc-title" id="cc-title">Change look</h1>
-        <div className={`cc-preview${cheering ? ' cc-cheer' : ''}`}>
-          <Character
-            species={species}
-            mood="happy"
-            pose={cheering ? 'cheering' : undefined}
-            bodyColour={bodyColour}
-            equipped={pet.equipped}
-            look={look}
-            size={170}
-            title={`${draft.name.trim() || 'Your pet'}, ${SPECIES_LABEL[species]}`}
-          />
-        </div>
-      </div>
+  const onTabKey = (e: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
+    if (!step && e.key !== 'Home' && e.key !== 'End') return
+    e.preventDefault()
+    const next = e.key === 'Home' ? 0 : e.key === 'End' ? PARTS.length - 1 : (index + step + PARTS.length) % PARTS.length
+    setPart(PARTS[next].part)
+    tabsRef.current?.querySelectorAll<HTMLElement>('[role="tab"]')[next]?.focus()
+  }
 
-      <div className="cc-field">
-        <label htmlFor="cc-name">Name</label>
-        <input
-          id="cc-name"
-          ref={nameRef}
-          type="text"
-          value={draft.name}
-          maxLength={MAX_NAME}
-          autoComplete="off"
-          aria-invalid={nameError && !draft.name.trim()}
-          aria-describedby={nameError && !draft.name.trim() ? 'cc-name-error' : undefined}
-          onChange={(e) => {
-            setDraft((d) => ({ ...d, name: e.target.value }))
-            setNameError(false)
-          }}
-        />
-        {nameError && !draft.name.trim() && (
-          <p className="cc-error" id="cc-name-error" role="alert">
-            Every pet needs a name.
-          </p>
-        )}
-      </div>
+  // Phones show one part at a time under tabs; wide screens show them all.
+  const shows = (p: Part) => wide || part === p
+  const hide = wide ? undefined : 'cc-sr'
 
-      <section className="cc-section" aria-labelledby="cc-species-h">
-        <h2 id="cc-species-h">Who</h2>
-        <ChoiceGroup
-          className="cc-species"
-          label="Species"
-          value={species}
-          onChange={chooseSpecies}
-          options={SPECIES.map((s) => ({
-            value: s,
-            label: SPECIES_LABEL[s],
-            content: (
-              <>
-                <span className="cc-species-art" aria-hidden="true">
-                  <Character species={s} mood="happy" bodyColour={bodyColour} size={88} title={SPECIES_LABEL[s]} />
-                </span>
-                <span className="cc-species-name">{SPECIES_LABEL[s]}</span>
-              </>
-            ),
-          }))}
-        />
-        <p className="cc-hint">Your pet keeps what it is wearing.</p>
-      </section>
+  const who = (
+    <section className="cc-section" aria-labelledby="cc-species-h">
+      <h2 id="cc-species-h" className={hide}>Who</h2>
+      <ChoiceGroup
+        className="cc-species"
+        label="Species"
+        value={species}
+        onChange={chooseSpecies}
+        options={SPECIES.map((s) => ({
+          value: s,
+          label: SPECIES_LABEL[s],
+          content: (
+            <>
+              <span className="cc-species-art" aria-hidden="true">
+                <Character species={s} mood="happy" bodyColour={bodyColour} size={88} title={SPECIES_LABEL[s]} />
+              </span>
+              <span className="cc-species-name">{SPECIES_LABEL[s]}</span>
+            </>
+          ),
+        }))}
+      />
+      <p className="cc-hint">Your pet keeps what it is wearing.</p>
+    </section>
+  )
 
-      <section className="cc-section" aria-labelledby="cc-colour-h">
-        <h2 id="cc-colour-h">
-          Body colour <span className="cc-current">{colourName(bodyColour)}</span>
-        </h2>
-        <ChoiceGroup
-          className="cc-swatches"
-          label="Body colour"
-          value={selectedColour}
-          onChange={(hex) => change({ bodyColour: hex })}
-          options={swatches.map((c) => ({
-            value: c.hex,
-            label: c.name,
-            content: <span className="cc-swatch" style={{ backgroundColor: c.hex }} aria-hidden="true" />,
-          }))}
-        />
-      </section>
+  const colour = (
+    <section className="cc-section" aria-labelledby="cc-colour-h">
+      <h2 id="cc-colour-h">
+        Body colour <span className="cc-current">{colourName(bodyColour)}</span>
+      </h2>
+      <ChoiceGroup
+        className="cc-swatches"
+        label="Body colour"
+        value={selectedColour}
+        onChange={(hex) => change({ bodyColour: hex })}
+        options={swatches.map((c) => ({
+          value: c.hex,
+          label: c.name,
+          content: <span className="cc-swatch" style={{ backgroundColor: c.hex }} aria-hidden="true" />,
+        }))}
+      />
+    </section>
+  )
 
+  const face = (
+    <>
       <section className="cc-section" aria-labelledby="cc-eyes-h">
         <h2 id="cc-eyes-h">Eyes</h2>
         <ChoiceGroup
@@ -248,18 +237,103 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
           }))}
         />
       </section>
+    </>
+  )
 
-      <p className="cc-hint cc-note">Changes show here first. They are saved when you tap Save.</p>
+  const options = (
+    <>
+      {shows('who') && who}
+      {shows('colour') && colour}
+      {shows('face') && face}
+    </>
+  )
 
-      <div className="cc-actions">
-        <button type="button" className="cc-cancel" onClick={onClose}>
-          Cancel
-        </button>
-        <button type="submit" className="cc-save">
-          Save
-        </button>
+  return (
+    <form className="cc" onSubmit={submit} aria-labelledby="cc-title" noValidate>
+      <header className="cc-head">
+        <h1 className="cc-title" id="cc-title">Change look</h1>
+        <div className="cc-head-actions">
+          <button type="button" className="link-button cc-cancel" onClick={onClose}>
+            Cancel
+          </button>
+          <button type="submit" className="cc-save">
+            Save
+          </button>
+        </div>
+      </header>
+
+      <div className="cc-body">
+        <div className="cc-stage">
+          <div className={`cc-preview${cheering ? ' cc-cheer' : ''}`}>
+            <Character
+              species={species}
+              mood="happy"
+              pose={cheering ? 'cheering' : undefined}
+              bodyColour={bodyColour}
+              equipped={pet.equipped}
+              look={look}
+              size={170}
+              title={`${draft.name.trim() || 'Your pet'}, ${SPECIES_LABEL[species]}`}
+            />
+          </div>
+
+          <div className="cc-field">
+            <div className="cc-field-row">
+              <label htmlFor="cc-name">Name</label>
+              <input
+                id="cc-name"
+                ref={nameRef}
+                type="text"
+                value={draft.name}
+                maxLength={MAX_NAME}
+                autoComplete="off"
+                aria-invalid={nameError && !draft.name.trim()}
+                aria-describedby={nameError && !draft.name.trim() ? 'cc-name-error' : undefined}
+                onChange={(e) => {
+                  setDraft((d) => ({ ...d, name: e.target.value }))
+                  setNameError(false)
+                }}
+              />
+            </div>
+            {nameError && !draft.name.trim() && (
+              <p className="cc-error" id="cc-name-error" role="alert">
+                Every pet needs a name.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="cc-side">
+          {!wide && (
+            <div ref={tabsRef} className="cc-tabs" role="tablist" aria-label="What to change">
+              {PARTS.map((p, i) => (
+                <button
+                  key={p.part}
+                  id={`cc-tab-${p.part}`}
+                  type="button"
+                  role="tab"
+                  className="cc-tab"
+                  aria-selected={part === p.part}
+                  aria-controls="cc-panel"
+                  tabIndex={part === p.part ? 0 : -1}
+                  onClick={() => setPart(p.part)}
+                  onKeyDown={(e) => onTabKey(e, i)}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          )}
+          {wide ? (
+            <div className="cc-panel">{options}</div>
+          ) : (
+            <div id="cc-panel" role="tabpanel" aria-labelledby={`cc-tab-${part}`} className="cc-panel">
+              {options}
+            </div>
+          )}
+          {wide && <p className="cc-hint cc-note">Changes show here first. They are saved when you tap Save.</p>}
+        </div>
       </div>
     </form>
   )
 }
-

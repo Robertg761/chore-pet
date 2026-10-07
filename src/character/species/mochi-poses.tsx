@@ -31,6 +31,9 @@ function transformOf({ sx = 1, sy = 1, rotate = 0, lift = 0 }: Shape) {
   return `translate(0 ${-lift}) rotate(${rotate} 100 ${GROUND_Y}) translate(100 ${GROUND_Y}) scale(${sx} ${sy}) translate(-100 -${GROUND_Y})`
 }
 
+/** The body outline after the pose's squash, lean and lift (outfits are clipped to it). */
+const silhouetteFor = (shape: Shape) => ({ d: BODY, transform: transformOf(shape) })
+
 /** Maps an idle anchor through the same squash, lean and lift as the drawing. */
 function moved(a: Anchor, { sx = 1, sy = 1, rotate = 0, lift = 0 }: Shape): Anchor {
   const dx = (a.x - 100) * sx
@@ -134,6 +137,7 @@ const mochiContent: Pose = {
       knotTilt: KNOT_BENT,
     })
   ),
+  silhouette: silhouetteFor(CONTENT),
   anchors: anchorsFor(CONTENT),
 }
 
@@ -158,6 +162,7 @@ const mochiMeh: Pose = {
       shadowRx: 66,
     })
   ),
+  silhouette: silhouetteFor(MEH),
   anchors: anchorsFor(MEH),
 }
 
@@ -185,6 +190,7 @@ const mochiScruffy: Pose = {
       shadowRx: 70,
     })
   ),
+  silhouette: silhouetteFor(SCRUFFY),
   anchors: anchorsFor(SCRUFFY),
 }
 
@@ -231,6 +237,7 @@ const mochiSleeping: Pose = {
       {z(170, 18, 1.4)}
     </g>
   ),
+  silhouette: silhouetteFor(SLEEPING),
   anchors: anchorsFor(SLEEPING),
 }
 
@@ -269,6 +276,7 @@ const mochiCheering: Pose = {
       {sparkle(176, 40, 7)}
     </g>
   ),
+  silhouette: silhouetteFor(CHEERING),
   anchors: anchorsFor(CHEERING),
 }
 
@@ -306,6 +314,7 @@ const mochiSick: Pose = {
   ),
   // Tucked in bed: the outfit, backpack and scarf or bow tie are under the covers.
   hides: ['outfit', 'back', 'neck'],
+  silhouette: silhouetteFor(SICK),
   anchors: { ...sickAnchors, head: { x: sickAnchors.head.x + 8, y: sickAnchors.head.y, scale: 0.88, rotate: 8 } },
 }
 

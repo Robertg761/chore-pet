@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import { CharacterArt } from '../character/Character'
 import { ITEMS } from '../character/items'
 import { currentStreak, isUnlocked, UNLOCKS, type Unlock } from '../domain/unlocks'
@@ -18,6 +18,12 @@ export interface RewardsScreenProps {
   onEquip: (equipped: Pet['equipped']) => void
   onBack: () => void
 }
+
+type Group = 'dress' | 'home'
+const GROUPS: { group: Group; label: string; has: (u: Unlock) => boolean }[] = [
+  { group: 'dress', label: 'Dress-up', has: (u) => u.kind === 'item' },
+  { group: 'home', label: 'For your home', has: (u) => u.kind !== 'item' },
+]
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
 
@@ -45,6 +51,7 @@ function NextCard({ line, label }: { line: NextLine; label: string }) {
 
 export function RewardsScreen({ pet, progress, chores, completions, vacations, today, onEquip, onBack }: RewardsScreenProps) {
   const titleId = useId()
+  const [group, setGroup] = useState<Group>('dress')
   const streak = currentStreak(chores, completions, today, vacations)
   const best = Math.max(progress?.bestStreak ?? 0, streak)
   const choreCount = progress?.choreCount ?? 0
@@ -87,46 +94,78 @@ export function RewardsScreen({ pet, progress, chores, completions, vacations, t
     )
   }
 
+  const grid = ({ group: g, label, has }: (typeof GROUPS)[number]) => {
+    const list = UNLOCKS.filter(has)
+    return (
+      <section key={g} className="rewards-group" aria-labelledby={`${titleId}-${g}`}>
+        <h2 id={`${titleId}-${g}`} className="rewards-sr">
+          {label}
+        </h2>
+        <ul className="rewards-grid">{list.map(tile)}</ul>
+      </section>
+    )
+  }
+
   return (
     <section className="rewards" aria-labelledby={titleId}>
-      <button type="button" className="link-button rewards-back" onClick={onBack}>
-        Back
-      </button>
-
-      <header className="rewards-head">
-        <svg className="rewards-pet" viewBox="0 0 200 200" role="img" aria-label={pet.name}>
-          <CharacterArt species={pet.species} mood="happy" bodyColour={pet.bodyColour} equipped={pet.equipped} />
-        </svg>
-        <div className="rewards-stats">
-          <h1 id={titleId} className="rewards-title">
-            Rewards
-          </h1>
-          <p className="rewards-stat">{plural(choreCount, 'chore', 'chores')} done</p>
-          <p className="rewards-stat">{streak > 0 ? `${plural(streak, 'day', 'days')} in a row` : 'No streak yet'}</p>
-          {best > 0 && <p className="rewards-stat rewards-best">Best: {plural(best, 'day', 'days')}</p>}
-        </div>
+      <header className="rewards-top">
+        <h1 id={titleId} className="rewards-title">
+          Rewards
+        </h1>
+        <button type="button" className="link-button rewards-back" onClick={onBack}>
+          Back
+        </button>
       </header>
 
-      <section className="rewards-block" aria-labelledby={`${titleId}-next`}>
-        <h2 id={`${titleId}-next`} className="rewards-sub">
-          Next up
-        </h2>
-        {next.chores || next.streak ? (
-          <ul className="rewards-nexts">
-            {next.chores && <NextCard line={next.chores} label="chores" />}
-            {next.streak && <NextCard line={next.streak} label="days" />}
-          </ul>
-        ) : (
-          <p className="rewards-all">You have every reward. Lovely!</p>
-        )}
-      </section>
+      <div className="rewards-body">
+        <div className="rewards-side">
+          <div className="rewards-head">
+            <svg className="rewards-pet" viewBox="0 0 200 200" role="img" aria-label={pet.name}>
+              <CharacterArt species={pet.species} mood="happy" bodyColour={pet.bodyColour} equipped={pet.equipped} look={{ eyes: pet.eyes, cheeks: pet.cheeks }} />
+            </svg>
+            <div className="rewards-stats">
+              <p className="rewards-stat">{plural(choreCount, 'chore', 'chores')} done</p>
+              <p className="rewards-stat">{streak > 0 ? `${plural(streak, 'day', 'days')} in a row` : 'No streak yet'}</p>
+              {best > 0 && <p className="rewards-stat rewards-best">Best: {plural(best, 'day', 'days')}</p>}
+            </div>
+          </div>
 
-      <section className="rewards-block" aria-labelledby={`${titleId}-all`}>
-        <h2 id={`${titleId}-all`} className="rewards-sub">
-          All rewards
-        </h2>
-        <ul className="rewards-grid">{UNLOCKS.map(tile)}</ul>
-      </section>
+          <section className="rewards-block" aria-labelledby={`${titleId}-next`}>
+            <h2 id={`${titleId}-next`} className="rewards-sr">
+              Next up
+            </h2>
+            {next.chores || next.streak ? (
+              <ul className="rewards-nexts">
+                {next.chores && <NextCard line={next.chores} label="chores" />}
+                {next.streak && <NextCard line={next.streak} label="days" />}
+              </ul>
+            ) : (
+              <p className="rewards-all">You have every reward. Lovely!</p>
+            )}
+          </section>
+        </div>
+
+        <div className="rewards-main">
+          <div className="rewards-tabs" role="group" aria-label="Show">
+            {GROUPS.map((g) => {
+              const list = UNLOCKS.filter(g.has)
+              const got = list.filter((x) => earned.includes(x)).length
+              return (
+                <button key={g.group} type="button" aria-pressed={group === g.group} onClick={() => setGroup(g.group)}>
+                  {g.label}
+                  <span className="rewards-count" aria-hidden="true">
+                    {got}/{list.length}
+                  </span>
+                  <span className="rewards-sr">
+                    , {got} of {list.length} earned
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+          {grid(GROUPS.find((g) => g.group === group) ?? GROUPS[0])}
+        </div>
+      </div>
     </section>
   )
 }
