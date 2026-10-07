@@ -36,6 +36,7 @@ type Editing = null | 'new' | string
 type Focusable = HTMLElement | null
 
 function Sheet({
+  object,
   entry,
   chores,
   completions,
@@ -99,6 +100,7 @@ function Sheet({
               return (
                 <li key={chore.id} className="sheet-chore sheet-chore-editing">
                   <ChoreInlineEditor
+                    draftKey={`object:${object.id}`}
                     chore={chore}
                     onSave={(value) => {
                       onSaveChore(chore, value)
@@ -179,6 +181,7 @@ function Sheet({
           {editing === 'new' && (
             <li className="sheet-chore sheet-chore-editing">
               <ChoreInlineEditor
+                draftKey={`object:${object.id}`}
                 onSave={(value) => {
                   onSaveChore(null, value)
                   closeEditor('new')

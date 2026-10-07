@@ -10,16 +10,15 @@ import {
   WEEKDAY_SHORT,
   WEEK_ORDER,
   describeSchedule,
-  formFromChore,
   ordinal,
   scheduleFromForm,
   stepN,
   toggleDay,
   validateForm,
   valueFromForm,
-  type ChoreFormState,
   type ScheduleKind,
 } from './choreForm'
+import { useChoreDraft } from './choreDrafts'
 import { CharCounter } from './CharCounter'
 import '../shell/controls.css'
 
@@ -32,13 +31,14 @@ export interface ChoreInlineEditorProps {
   chore?: Chore
   onSave: (value: { name: string; schedule: Schedule }) => void
   onCancel: () => void
+  draftKey?: string
 }
 
 const MONTH_DAYS = Array.from({ length: 31 }, (_, i) => i + 1)
 
-export function ChoreInlineEditor({ chore, onSave, onCancel }: ChoreInlineEditorProps) {
+export function ChoreInlineEditor({ chore, onSave, onCancel, draftKey }: ChoreInlineEditorProps) {
   const uid = useId()
-  const [form, setForm] = useState<ChoreFormState>(() => formFromChore(chore))
+  const { form, patch, clear } = useChoreDraft(chore, draftKey)
   const [submitted, setSubmitted] = useState(false)
   const nameRef = useRef<HTMLInputElement>(null)
   const nRef = useRef<HTMLInputElement>(null)
@@ -49,14 +49,13 @@ export function ChoreInlineEditor({ chore, onSave, onCancel }: ChoreInlineEditor
   }, [])
 
   const errors = validateForm(form)
-  const patch = (p: Partial<ChoreFormState>) => setForm((f) => ({ ...f, ...p }))
   const schedule = scheduleFromForm(form)
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
     setSubmitted(true)
     const value = valueFromForm(form)
-    if (value) return onSave(value)
+    if (value) { clear(); return onSave(value) }
     if (errors.name) nameRef.current?.focus()
     else if (errors.n) nRef.current?.focus()
     else if (errors.days) daysRef.current?.querySelector('input')?.focus()
@@ -198,7 +197,7 @@ export function ChoreInlineEditor({ chore, onSave, onCancel }: ChoreInlineEditor
         <button type="submit" className="btn btn-primary">
           Save
         </button>
-        <button type="button" className="btn" onClick={onCancel}>
+        <button type="button" className="btn" onClick={() => { clear(); onCancel() }}>
           Cancel
         </button>
       </div>

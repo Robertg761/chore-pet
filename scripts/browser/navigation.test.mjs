@@ -1,0 +1,96 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { browserApp, snapshot } from './helpers.mjs'
+
+async function add(page) {
+  await page.getByRole('button', { name: 'Add a chore', exact: true }).click()
+  await page.getByRole('heading', { name: 'New chore' }).waitFor()
+}
+async function home(page) {
+  await page.getByRole('button', { name: 'Home', exact: true }).click()
+  await page.getByRole('heading', { name: 'Mochi', exact: true }).waitFor()
+}
+
+test('new and existing drafts survive tabs and history; Save and Cancel clear them', async (t) => {
+  const page = await browserApp(t, { viewport: { width: 1280, height: 800 } })
+  await add(page)
+  await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Clean air filter')
+  await home(page)
+  await page.goBack()
+  await page.getByRole('heading', { name: 'New chore' }).waitFor()
+  assert.equal(await page.getByRole('textbox', { name: 'Name', exact: true }).inputValue(), 'Clean air filter')
+  await page.goForward()
+  await add(page)
+  assert.equal(await page.getByRole('textbox', { name: 'Name', exact: true }).inputValue(), 'Clean air filter')
+  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  await page.getByRole('button', { name: 'Clean air filter', exact: true }).waitFor()
+  await add(page)
+  assert.equal(await page.getByRole('textbox', { name: 'Name', exact: true }).inputValue(), '')
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await page.getByRole('button', { name: 'Wash the dishes', exact: true }).click()
+  await page.getByRole('textbox', { name: 'Name', exact: true }).fill('A changed chore')
+  await home(page)
+  await page.getByRole('button', { name: 'Wash the dishes', exact: true }).click()
+  assert.equal(await page.getByRole('textbox', { name: 'Name', exact: true }).inputValue(), 'A changed chore')
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await page.getByRole('button', { name: 'Wash the dishes', exact: true }).click()
+  assert.equal(await page.getByRole('textbox', { name: 'Name', exact: true }).inputValue(), 'Wash the dishes')
+  assert.equal(Object.values((await snapshot(page)).tables.chores).filter((c) => c.name === 'Clean air filter').length, 1)
+})
+
+test('More and All chores dismiss with Back, menu selection replaces the sheet entry, deep links reload', async (t) => {
+  const page = await browserApp(t)
+  await page.getByRole('button', { name: 'More', exact: true }).click()
+  await page.getByRole('dialog', { name: 'More', exact: true }).waitFor()
+  await page.goBack()
+  await page.getByRole('dialog').waitFor({ state: 'hidden' })
+  await page.goForward()
+  await page.getByRole('dialog', { name: 'More', exact: true }).waitFor()
+  await page.getByRole('button', { name: 'Your week', exact: true }).click()
+  await page.getByRole('heading', { name: 'Your week', exact: true }).waitFor()
+  assert.equal(new URL(page.url()).searchParams.get('sheet'), null)
+  await page.reload()
+  await page.getByRole('heading', { name: 'Your week', exact: true }).waitFor()
+  await page.goBack()
+  await page.getByRole('heading', { name: 'Mochi', exact: true }).waitFor()
+  await page.getByRole('button', { name: /All chores/i }).click()
+  await page.getByRole('dialog', { name: 'All chores' }).waitFor()
+  await page.goBack()
+  await page.getByRole('dialog').waitFor({ state: 'hidden' })
+  await page.goForward()
+  await page.getByRole('dialog', { name: 'All chores' }).waitFor()
+  await page.keyboard.press('Escape')
+  await page.getByRole('dialog').waitFor({ state: 'hidden' })
+})
+
+test('landing sign-in and cancel do not create a disposable home', async (t) => {
+  const page = await browserApp(t)
+  const origin = new URL(page.url())
+  // A second isolated context represents a returning user on a new device.
+  const context = await page.context().browser().newContext()
+  t.after(() => context.close())
+  await context.route('https://**', (route) => route.abort())
+  const fresh = await context.newPage()
+  await fresh.goto(origin.origin + origin.pathname)
+  await fresh.getByRole('button', { name: 'I already have a home' }).click()
+  await fresh.getByRole('heading', { name: 'Welcome back' }).waitFor()
+  assert.equal(Object.keys((await snapshot(fresh))?.tables.homes ?? {}).length, 0)
+  await fresh.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await fresh.getByRole('button', { name: 'I already have a home' }).waitFor()
+  assert.equal(Object.keys((await snapshot(fresh))?.tables.homes ?? {}).length, 0)
+})
+
+test('reload warns about a draft; stale edit deep links never become a new chore', async (t) => {
+  const page = await browserApp(t, { viewport: { width: 1280, height: 800 } })
+  await add(page)
+  await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Unsaved work')
+  let warned = false
+  page.once('dialog', async (dialog) => { warned = dialog.type() === 'beforeunload'; await dialog.accept() })
+  await page.reload()
+  assert.equal(warned, true)
+  await page.getByRole('heading', { name: 'New chore' }).waitFor()
+  const url = new URL(page.url()); url.searchParams.set('chore', 'deleted-elsewhere')
+  await page.goto(url.href)
+  await page.getByRole('heading', { name: 'Mochi', exact: true }).waitFor()
+  assert.equal(await page.getByRole('heading', { name: 'New chore' }).count(), 0)
+})

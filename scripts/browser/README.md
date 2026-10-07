@@ -31,3 +31,8 @@ seconds check that the original Undo deadline cannot remove a blocked correction
 Interactive inspection in T3 uses a separate thread-owned preview tab and port.
 It does not replace this repeatable regression command. Physical-phone and other
 browser-engine coverage remain manual.
+
+The navigation bundle adds draft retention and Save/Cancel checks, screen and
+sheet Back/Forward, reload/deep links, landing sign-in without a temporary home,
+and stale-edit handling. Its fast React tests use jsdom through Vitest. Auth
+requests are simulated in those tests; live email/Google delivery is not tested.
