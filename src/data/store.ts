@@ -167,6 +167,12 @@ export function createStore({
   let memoryOnly = false
   /** What storage holds, as far as this tab knows: the base for merging another tab's saves. */
   let base: Snapshot | null = null
+  /** The reset this tab's data comes after (see Snapshot.generation). */
+  let generation: string | undefined
+  /** A reset is waiting to replace the stored copy. */
+  let resetting = false
+  /** Bumped by every reset, here or in another tab. */
+  let resets = 0
   let saving: Promise<void> = Promise.resolve()
   let writeQueued = false
   /** Ops applied before the local copy loaded, applied on top of it. */
@@ -196,33 +202,47 @@ export function createStore({
 
   // --- the offline copy ---
 
-  async function write() {
-    writeQueued = false
-    if (memoryOnly) return
+  /** What goes into storage: the snapshot, marked with the reset it comes after. */
+  const stamped = (snapshot: Snapshot): Snapshot => (generation === undefined ? snapshot : { ...snapshot, generation })
+
+  /**
+   * Inside a storage transaction: fold in another tab's save, then let `next`
+   * choose what to write (null writes nothing). If another tab reset this
+   * device meanwhile, follow it instead and write nothing: this tab's data
+   * belongs to the account that was just cleared.
+   */
+  async function writeWith(next: (merged: Snapshot) => Snapshot | null): Promise<void> {
+    let written: Snapshot | null = null
     if (local.update) {
-      let written: Snapshot | null = null
       await local.update((stored) => {
-        // Runs inside the storage transaction: fold in another tab's save, then write.
+        if (stored && stored.generation !== generation) {
+          followReset(stored)
+          return null
+        }
         const merged = stored ? mergeSnapshots(state.snapshot, base, stored, 'mine') : state.snapshot
         if (merged !== state.snapshot) set({ snapshot: merged })
-        written = merged
-        return merged
+        written = next(merged)
+        return written && stamped(written)
       })
-      // Only once it is really stored: a failed write must not count as the base.
-      base = written
     } else {
-      const snapshot = state.snapshot
-      await local.save(snapshot)
-      base = snapshot
+      written = next(state.snapshot)
+      if (written) await local.save(stamped(written))
     }
+    if (!written) return
+    // Only once it is really stored: a failed write must not count as the base.
+    base = written
     channel?.post({ type: 'saved', from: tabId })
   }
 
-  /** Save the latest snapshot. Saves already queued pick up later changes too. */
-  function persist() {
-    if (memoryOnly || writeQueued) return
-    writeQueued = true
-    saving = saving.then(write).then(
+  async function write() {
+    writeQueued = false
+    if (memoryOnly || resetting) return
+    await writeWith((merged) => merged)
+  }
+
+  /** Queue a save, keeping savedLocally up to date. */
+  function queueSave(step: () => Promise<void>): Promise<void> {
+    saving = saving.then(step).then(
       () => {
         if (!state.savedLocally && durable) set({ savedLocally: true })
       },
@@ -231,6 +251,14 @@ export function createStore({
         set({ savedLocally: false })
       },
     )
+    return saving
+  }
+
+  /** Save the latest snapshot. Saves already queued pick up later changes too. */
+  function persist() {
+    if (memoryOnly || writeQueued) return
+    writeQueued = true
+    void queueSave(write)
   }
 
   function commit(snapshot: Snapshot) {
@@ -243,15 +271,11 @@ export function createStore({
     if (message.from === tabId || memoryOnly || !state.ready) return
     saving = saving
       .then(async () => {
+        if (resetting) return
         const stored = await local.load()
         if (!stored) return
-        if (message.type === 'reset') {
-          // Don't sync from here: the other tab is still signing out, and a
-          // sync now would pull the old account's home straight back. The
-          // sign-out reaches this tab as an auth event, which syncs.
-          base = stored
-          switching = false
-          set({ snapshot: stored, hydrated: !remote, lastError: null })
+        if (message.type === 'reset' || stored.generation !== generation) {
+          followReset(stored)
           return
         }
         const merged = mergeSnapshots(state.snapshot, base, stored, 'stored')
@@ -261,6 +285,21 @@ export function createStore({
       .catch(warn('Could not read the other tab’s changes'))
   }
   channel?.listen(absorb)
+
+  /**
+   * Another tab reset this device (signed out, deleted the account): take its
+   * fresh copy whole. A restore under way here is cancelled (see `resets`).
+   */
+  function followReset(stored: Snapshot) {
+    resets++
+    switching = false
+    generation = stored.generation
+    base = stored
+    // Don't sync from here: the other tab is still signing out, and a sync now
+    // would pull the old account's home straight back. The sign-out reaches
+    // this tab as an auth event, which syncs.
+    set({ snapshot: stored, hydrated: !remote, lastError: null })
+  }
 
   function backUp(snapshot: Snapshot) {
     if (memoryOnly || !local.backup || !worthBackingUp(snapshot)) return
@@ -290,6 +329,7 @@ export function createStore({
         savedLocally = false
       }
       base = loaded
+      generation = loaded?.generation
       const pending = early
       early = []
       set({ ready: true, snapshot: pending.reduce(change, loaded ?? state.snapshot), savedLocally })
@@ -522,6 +562,7 @@ export function createStore({
         // A sync under way gets a moment to finish; one stuck on a hung request is left behind.
         if (inflight) await Promise.race([inflight, new Promise((r) => setTimeout(r, resetWaitMs))])
         epoch++
+        resets++
         inflight = null
         await load()
         clearRetry()
@@ -533,17 +574,21 @@ export function createStore({
         else if (owner && !memoryOnly) {
           saving = saving.then(() => dropBackupsFor(owner)).catch(warn('Could not remove the backups'))
         }
-        const fresh = emptySnapshot()
-        set({ snapshot: fresh, sync: remote ? 'offline' : 'local-only', lastError: null, hydrated: !remote })
+        set({ snapshot: emptySnapshot(), sync: remote ? 'offline' : 'local-only', lastError: null, hydrated: !remote })
         if (!memoryOnly) {
+          // Saves and reads queued before this one belong to the old account: skip them.
+          resetting = true
           // Replace, don't merge: the old account's rows must not come back.
           saving = saving
             .then(async () => {
-              await local.save(fresh)
+              generation = crypto.randomUUID()
+              const fresh = state.snapshot // empty, plus anything done since
+              await local.save(stamped(fresh))
               base = fresh
               channel?.post({ type: 'reset', from: tabId })
             })
             .catch(warn('Could not clear the offline copy'))
+            .finally(() => (resetting = false))
           await saving
         }
       } finally {
@@ -574,8 +619,8 @@ export function createStore({
       await load()
       // The account this restore is for: a sign-out, deletion or account switch meanwhile cancels it.
       const account = state.snapshot.userId
-      const started = epoch
-      const stillHere = () => epoch === started && state.snapshot.userId === account
+      const started = resets
+      const stillHere = () => resets === started && state.snapshot.userId === account
       // One restore at a time for the account, across tabs: two at once would leave two homes.
       const lock = `restore-lock-${account ?? 'unclaimed'}`
       const token = crypto.randomUUID()
@@ -585,26 +630,43 @@ export function createStore({
       const resume = pause()
       let restored = false
       try {
+        // A sync under way gets a moment to finish, so the home doesn't change under the swap.
+        if (inflight) await Promise.race([inflight, new Promise((r) => setTimeout(r, resetWaitMs))])
         if (!stillHere() || heldFor(saved) !== account) return false
+        if (!selectHome(saved.tables).home) return false
         // Keep the home being replaced on this device, so it can be swapped back. Its own key
         // (account and home), so it never overwrites the copy being brought back. Each round
         // also checks the lock is still ours (a tab paused past its lifetime may have lost it).
         // If anything lands meanwhile (a sync under way, another tab's save), go again with
         // the newer copy, so the one replaced below is exactly the one kept.
-        let before: Snapshot | null = null
-        for (let tries = 0; tries < 3 && before !== state.snapshot; tries++) {
-          before = state.snapshot
+        let done = false
+        for (let tries = 0; tries < 3 && !done; tries++) {
+          const before = state.snapshot
           const replaced = selectHome(before.tables).home
           if (replaced) await backup(`${account ?? 'unclaimed'}:${replaced.id}`, { ...before, heldFor: account })
           if (local.holdLock && !(await local.holdLock(lock, token, now().getTime()))) return false
+          if (!stillHere()) return false
+          if (state.snapshot !== before) continue
+          // The swap itself, in the storage transaction that reads the stored copy: it goes
+          // ahead only if nothing new is there (another tab's save, or its reset, which this
+          // tab then follows). Otherwise that is taken in, and the next round keeps it too.
+          let failed = false
+          await queueSave(() =>
+            writeWith((merged) => {
+              if (merged !== before || !stillHere()) return merged
+              const restoredSnapshot = restoreHome(saved, before).reduce(change, before)
+              set({ snapshot: restoredSnapshot })
+              done = true
+              return restoredSnapshot
+            }).catch((e: unknown) => {
+              failed = true
+              throw e
+            }),
+          )
+          if (!done && (failed || !stillHere())) return false
         }
-        // No wait from these checks to the commit, so nothing can land in between.
-        if (before !== state.snapshot || !stillHere()) return false
-        const ops = restoreHome(saved, state.snapshot)
-        if (ops.length === 0) return false
-        commit(ops.reduce(change, state.snapshot))
+        if (!done) return false
         // Forget the brought-back copy only once the restored home is really stored.
-        await saving
         if (state.savedLocally) await local.dropBackup?.(ownerId)
         restored = true
         return true

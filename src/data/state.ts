@@ -49,6 +49,11 @@ export interface Snapshot {
    * the next.
    */
   heldFor?: string | null
+  /**
+   * On the stored copy only: changes each time this device is reset (sign-out,
+   * account deletion). A tab still holding an older one must not write over it.
+   */
+  generation?: string
 }
 
 /** The account a backup may be offered back to. */

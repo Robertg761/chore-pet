@@ -724,6 +724,22 @@ describe('two tabs sharing one offline copy', () => {
     expect(b.getState().pendingCount).toBe(0)
   })
 
+  it('never writes the old account back over a sign-out it has not heard about yet', async () => {
+    const { server, remote } = fakeServer()
+    const shared = memoryStore()
+    const a = await onboarded(remote, shared)
+    const b = createStore({ local: shared, remote }) // no channel: the reset message hasn't reached A
+    await b.start()
+    await b.sync()
+    await b.reset({ backup: false })
+    server.offline = true // only this device's copy matters here
+    add(a, 'Late edit')
+    await settle()
+    await settle()
+    expect(selectHome((shared.current as Snapshot).tables).home).toBeNull()
+    expect(selectHome(a.getState().snapshot.tables).home).toBeNull()
+  })
+
   it('follows the other tab when it signs out', async () => {
     const { a, b } = await twoTabs()
     const resume = a.pause()
@@ -830,7 +846,7 @@ describe('saved homes (backups kept on this device)', () => {
     expect((await store.savedHomes()).map((h) => h.petName)).toEqual(['Bun'])
   })
 
-  it('keeps the saved copy when the restored home could not be stored', async () => {
+  it('changes nothing, and keeps the saved copy, when the restored home could not be stored', async () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()
     const store = await onboarded(remote, local)
@@ -839,8 +855,9 @@ describe('saved homes (backups kept on this device)', () => {
       throw new Error('disk full')
     }
     vi.spyOn(console, 'warn').mockImplementation(() => {})
-    expect(await store.restoreSaved('guest')).toBe(true)
+    expect(await store.restoreSaved('guest')).toBe(false)
     expect(Object.keys(local.backups)).toContain('snapshot-backup-guest')
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Pip')
   })
 
   it('never offers a home held for another account, and clearing an account forgets its saved homes', async () => {
@@ -939,6 +956,49 @@ describe('saved homes (backups kept on this device)', () => {
     release()
     expect(await restoring).toBe(true)
     expect(choreNames((local.backups[`snapshot-backup-u1:${pipHome.id}`] as Snapshot).tables)).toEqual(['Late'])
+  })
+
+  /** Two tabs on one offline copy, the second unheard (no channel), with a saved home to bring back. */
+  async function restoreBetweenTabs() {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const tabA = await onboarded(remote, local)
+    const tabB = createStore({ local, remote })
+    await tabB.start()
+    await tabB.sync()
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    /** Run `meanwhile` once, while tab A's restore checks its lock. */
+    const during = (meanwhile: () => Promise<void>) => {
+      const hold = local.holdLock!.bind(local)
+      let first = true
+      local.holdLock = async (lock, token, at) => {
+        if (first) {
+          first = false
+          await meanwhile()
+        }
+        return hold(lock, token, at)
+      }
+    }
+    return { local, tabA, tabB, during, pipHome: selectHome(tabA.getState().snapshot.tables).home! }
+  }
+
+  it('keeps another tab\u2019s edit, saved just before the swap, in the swapped-out copy', async () => {
+    const { local, tabA, tabB, during, pipHome } = await restoreBetweenTabs()
+    during(async () => {
+      tabB.apply(...addChore(pipHome, { name: 'From the other tab', schedule: { kind: 'daily' } }, '2026-10-07'))
+      await settle()
+    })
+    expect(await tabA.restoreSaved('guest')).toBe(true)
+    expect(choreNames((local.backups[`snapshot-backup-u1:${pipHome.id}`] as Snapshot).tables)).toEqual(['From the other tab'])
+    expect(selectHome(tabA.getState().snapshot.tables).pet?.name).toBe('Bun')
+  })
+
+  it('stops when another tab signs out partway, and leaves its cleared copy alone', async () => {
+    const { local, tabA, tabB, during } = await restoreBetweenTabs()
+    during(() => tabB.reset({ backup: false }))
+    expect(await tabA.restoreSaved('guest')).toBe(false)
+    expect(selectHome((local.current as Snapshot).tables).home).toBeNull()
+    expect(selectHome(tabA.getState().snapshot.tables).home).toBeNull()
   })
 
   it('has nothing to offer without a store that keeps backups', async () => {
