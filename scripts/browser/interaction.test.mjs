@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { browserApp, snapshot, seedProgress } from './helpers.mjs'
+import { browserApp, snapshot, seedCompletionMilestones } from './helpers.mjs'
 
 for (const key of ['Enter', 'Space']) {
   test(`Cancel with ${key} adds no washer or chores`, async (t) => {
@@ -131,8 +131,9 @@ for (const reducedMotion of ['reduce', 'no-preference']) {
 
 test('queued decor and style gifts survive Place it and Try it navigation', async (t) => {
   const page = await browserApp(t, { viewport: { width: 320, height: 568 }, reducedMotion: 'no-preference' })
-  // An older home with earned but unrevealed rewards catches up on its next chore.
-  await seedProgress(page, { retired: { 'retired-chore': 2 }, bestStreak: 4, unlockedItems: ['item:beanie-red'] })
+  // Today's completion earns both the third-chore decor and two-day style.
+  // Previously earned rewards reconcile silently on load, so use real history.
+  await seedCompletionMilestones(page)
   await page.getByRole('button', { name: /All chores/ }).click()
   await page.getByRole('dialog', { name: 'All chores', exact: true }).getByRole('button', { name: 'Done: Wash the dishes' }).click()
   await page.getByRole('button', { name: 'Open it' }).click()
@@ -141,15 +142,11 @@ test('queued decor and style gifts survive Place it and Try it navigation', asyn
   await page.getByRole('button', { name: 'Open it' }).click()
   await page.getByRole('heading', { name: /mint walls/i }).waitFor()
   await page.getByRole('button', { name: 'Try it', exact: true }).click()
-  await page.getByRole('button', { name: 'Open it' }).click()
-  await page.getByRole('heading', { name: /tiled floor/i }).waitFor()
-  await page.getByRole('button', { name: 'Try it', exact: true }).click()
   await page.locator('.gift-panel').waitFor({ state: 'hidden' })
   assert.equal(await page.locator('dialog[open]').count(), 0)
   await page.waitForFunction(() => document.activeElement?.matches('.app-view h1, .build-room'))
   const saved = await snapshot(page)
   assert.equal(Object.values(saved.tables.rooms)[0].wallStyle, 'mint')
-  assert.equal(Object.values(saved.tables.rooms)[0].floorStyle, 'tile')
   // The decor placement picked before the queued style gifts is still pending.
   await page.getByRole('button', { name: 'Place it', exact: true }).click()
   await page.waitForFunction(() => document.querySelectorAll('[data-object-id]').length > 7)

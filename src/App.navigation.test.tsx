@@ -9,10 +9,10 @@ const fixture = vi.hoisted(() => ({ state: null as unknown as DataState, sync: v
 vi.mock('./data/appStore', () => ({
   startAppStore: () => {},
   useDataState: () => fixture.state,
-  useHome: () => selectHome(fixture.state.snapshot.tables),
-  appStore: { sync: fixture.sync, apply: fixture.apply, savedHomes: async () => [] },
+  useHome: () => selectHome(fixture.state.snapshot.tables, fixture.state.snapshot.activeHomeId),
+  appStore: { getState: () => fixture.state, sync: fixture.sync, apply: fixture.apply, savedHomes: async () => [] },
 }))
-vi.mock('./lib/account', () => ({ useAccount: () => ({ kind: 'local' }) }))
+vi.mock('./lib/account', () => ({ useAccount: () => ({ kind: 'local' }), useAccountOperationError: () => null }))
 import App from './App'
 const cleanups: (() => void)[] = []
 beforeEach(() => {

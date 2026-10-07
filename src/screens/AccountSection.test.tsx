@@ -5,7 +5,7 @@ import { click, input, render } from '../test/react'
 import type { AccountState } from '../lib/account'
 
 const auth = vi.hoisted(() => ({ state: { kind: 'guest' } as AccountState, email: vi.fn(), google: vi.fn() }))
-vi.mock('../lib/account', () => ({ useAccount: () => auth.state, signInWithEmail: auth.email, signInWithGoogle: auth.google,
+vi.mock('../lib/account', () => ({ useAccount: () => auth.state, useAccountOperationError: () => null, signInWithEmail: auth.email, signInWithGoogle: auth.google,
   saveWithEmail: vi.fn(), saveWithGoogle: vi.fn(), deleteAccount: vi.fn(), signOutSafely: vi.fn() }))
 vi.mock('../data/appStore', () => ({ useDataState: () => ({ savedLocally: true, pendingCount: 0, rejectedCount: 0 }), appStore: {} }))
 import { AccountSection } from './AccountSection'

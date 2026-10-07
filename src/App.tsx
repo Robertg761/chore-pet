@@ -148,6 +148,17 @@ export default function App() {
   const [celebrate, setCelebrate] = useState<Celebration | null>(null)
   const [sparkles, setSparkles] = useState<(SparkleSpot & { id: number })[]>([])
   const [gifts, setGifts] = useState<Unlock[]>([])
+  // Back/Forward follows the URL and dismisses transient feedback. Gift
+  // shortcuts use app navigation directly and preserve the remaining queue.
+  const historyRevision = useRef(0)
+  useEffect(() => {
+    const dismissGifts = () => {
+      historyRevision.current++
+      setGifts([])
+    }
+    window.addEventListener('popstate', dismissGifts)
+    return () => window.removeEventListener('popstate', dismissGifts)
+  }, [])
   // The last chore ticked off, for a few seconds, so a slip can be undone.
   const [undo, setUndo] = useState<{ key: number; completionId: string; choreName: string } | null>(null)
   const currentScope = useRef(scope)
@@ -605,8 +616,9 @@ export default function App() {
     flag(hintKey(home.id))
     play('sparkle')
     // The gift waits for the cheer and sparkle to play, so the done moment is seen first.
+    const completedAtRevision = historyRevision.current
     if (done.unlocked.length) window.setTimeout(() => {
-      if (currentScope.current === scope) setGifts((queue) => [...queue, ...done.unlocked])
+      if (currentScope.current === scope && historyRevision.current === completedAtRevision) setGifts((queue) => [...queue, ...done.unlocked])
     }, GIFT_DELAY_MS)
     const key = ++momentKey.current
     const big = condition.statuses.some((s) => s.choreId === chore.id && s.neglect === 3)

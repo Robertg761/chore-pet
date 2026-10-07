@@ -64,3 +64,41 @@ export async function seedProgress(page, patch) {
   }), patch)
   await page.reload()
 }
+
+// Two real completions yesterday; the next one earns decor and a streak style.
+export async function seedCompletionMilestones(page) {
+  await page.evaluate(() => new Promise((resolve, reject) => {
+    const request = indexedDB.open('chore-pet', 1)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result
+      const tx = db.transaction('kv', 'readwrite')
+      const store = tx.objectStore('kv')
+      const read = store.get('snapshot')
+      read.onsuccess = () => {
+        const saved = read.result
+        const previous = new Date()
+        previous.setDate(previous.getDate() - 1)
+        const day = `${previous.getFullYear()}-${String(previous.getMonth() + 1).padStart(2, '0')}-${String(previous.getDate()).padStart(2, '0')}`
+        const chores = Object.values(saved.tables.chores)
+        const dishes = chores.find(c => c.name === 'Wash the dishes')
+        const other = chores.find(c => c.id !== dishes.id)
+        for (const chore of chores) chore.archivedOn = chore.createdOn
+        saved.tables.completions = {}
+        for (const chore of [dishes, other]) {
+          delete chore.archivedOn
+          chore.createdOn = day
+          chore.schedule = { kind: 'daily' }
+          saved.tables.completions[chore.id] = { id: chore.id, choreId: chore.id, completedOn: day, completedAt: previous.toISOString(), counts: true }
+        }
+        const progress = Object.values(saved.tables.progress)[0]
+        Object.assign(progress, { choreCount: 2, currentStreak: 1, bestStreak: 1, unlockedItems: ['item:beanie-red'] })
+        saved.outbox = {}
+        store.put(saved, 'snapshot')
+      }
+      tx.oncomplete = () => { db.close(); resolve() }
+      tx.onerror = () => { db.close(); reject(tx.error) }
+    }
+  }))
+  await page.reload()
+}
