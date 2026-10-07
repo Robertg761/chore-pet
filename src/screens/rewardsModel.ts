@@ -68,7 +68,7 @@ export function nextUpId(progress: Progress, streak: number): string | null {
 }
 
 /** How a streak is counted, in one line. */
-export const STREAK_RULE = 'A day counts when you do a chore and nothing gets very late.'
+export const STREAK_RULE = 'A day counts when you do a chore (or none are due) and nothing gets very late.'
 
 /** The rewards button: "Rewards · Gift in 2", or just "Rewards" when nothing is pending. */
 export function rewardsButtonLabel(progress: Progress | null | undefined): string {

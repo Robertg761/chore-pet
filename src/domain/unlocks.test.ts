@@ -77,6 +77,21 @@ describe('streaks', () => {
   })
 })
 
+describe('streaks after a schedule edit', () => {
+  it('does not turn long-skipped days into a streak when the chore is edited', () => {
+    // Made months ago, never done, then switched to every 2 days today and done once.
+    const chore: Chore = { ...daily('a', '2026-05-01'), schedule: { kind: 'everyNDays', n: 2, since: TODAY } }
+    expect(currentStreak([chore], [done('a', TODAY)], TODAY)).toBe(1)
+  })
+
+  it('keeps the streak of a chore that was done all along', () => {
+    const before = currentStreak([daily('a', '2026-09-01')], everyDay('a', '2026-09-01', TODAY), TODAY)
+    const edited: Chore = { ...daily('a', '2026-09-01'), schedule: { kind: 'everyNDays', n: 2, since: TODAY } }
+    expect(currentStreak([edited], everyDay('a', '2026-09-01', TODAY), TODAY)).toBe(before)
+    expect(before).toBeGreaterThan(30)
+  })
+})
+
 describe('unlocks', () => {
   it('gives the first reward for the very first chore', () => {
     const { progress: p, unlocked } = applyUnlocks(progress({ choreCount: 1 }), 0)

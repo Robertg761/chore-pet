@@ -1,6 +1,6 @@
 import { addDays, isInVacation } from './dates'
-import { completionDays, startReplay, type ChoreReplay } from './schedule'
-import type { Chore, Completion, ISODate, Progress, VacationWindow } from './types'
+import { completionDays, scheduleStart, startReplay, type ChoreReplay } from './schedule'
+import type { Chore, Completion, ISODate, Progress, Schedule, VacationWindow } from './types'
 
 // Rewards come only from real chores getting done (docs/SPEC.md), and every
 // reward is purely cosmetic: outfits, styles and decor that brings no chores.
@@ -108,6 +108,26 @@ interface Walker {
   days: ISODate[]
   /** How many of `days` have been fed in. */
   fed: number
+  /** The days this replay judges: from `from`, up to but not including `until`. */
+  from: ISODate
+  until?: ISODate
+}
+
+/**
+ * The replays that judge a chore's days. A chore whose schedule was changed
+ * gets two: its current schedule from the change on, and before that the same
+ * schedule as if it had always applied (the old one isn't kept). So days
+ * before an edit are still judged, and editing a chore neither wipes a streak
+ * nor makes long-skipped days look like nothing was due.
+ */
+function walkersFor(chore: Chore, completions: Completion[]): Walker[] {
+  const days = completionDays(chore, completions)
+  const start = scheduleStart(chore)
+  const current: Walker = { chore, replay: startReplay(chore), days, fed: 0, from: start }
+  if (start <= chore.createdOn) return [current]
+  const { since: _since, ...always } = chore.schedule
+  const before: Walker = { chore, replay: startReplay({ ...chore, schedule: always as Schedule }), days, fed: 0, from: chore.createdOn, until: start }
+  return [before, current]
 }
 
 /** Feed a walker every completion day up to and including `day`. */
@@ -122,7 +142,7 @@ function feedThrough(w: Walker, day: ISODate) {
  * through `day`.
  */
 function dayCounts(walkers: Walker[], active: Set<ISODate>, day: ISODate, vacations: VacationWindow[]): boolean {
-  const live = walkers.filter((w) => w.chore.createdOn <= day)
+  const live = walkers.filter((w) => w.from <= day && (w.until === undefined || day < w.until))
   let somethingDue = false
   for (const w of live) {
     feedThrough(w, addDays(day, -1))
@@ -159,7 +179,7 @@ export function currentStreak(chores: Chore[], completions: Completion[], today:
   }
 
   const ids = new Set(chores.map((c) => c.id))
-  const walkers: Walker[] = chores.map((chore) => ({ chore, replay: startReplay(chore), days: completionDays(chore, completions), fed: 0 }))
+  const walkers = chores.flatMap((chore) => walkersFor(chore, completions))
   const active = new Set(completions.filter((c) => c.counts !== false && ids.has(c.choreId)).map((c) => c.completedOn))
   const { daysPerRestToken, maxRestTokens } = STREAK_TUNING
 

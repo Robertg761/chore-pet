@@ -43,9 +43,15 @@
 * { box-sizing: border-box; }
 body { margin: 0; }
 
-/* Text for screen readers only. Clipped and out of flow, so it never adds scroll. */
+/*
+ * Text for screen readers only. Clipped and out of flow, and pinned to the top
+ * of its positioned box: left where it would sit, inside a scrolling list, it
+ * can hang below the list and make the whole page scroll.
+ */
 .sr-only {
   position: absolute;
+  top: 0;
+  left: 0;
   width: 1px;
   height: 1px;
   margin: -1px;

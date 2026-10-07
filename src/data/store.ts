@@ -91,12 +91,15 @@ export interface StoreDeps {
   channel?: StoreChannel | null
   /** Stop waiting for the local copy after this long and run from memory (not saving). */
   loadTimeoutMs?: number
+  /** How long reset waits for a sync already under way before leaving it behind. */
+  resetWaitMs?: number
   now?: () => Date
 }
 
 /** A change the server keeps refusing (without saying it's the data) is set aside after this many tries. */
 export const MAX_ATTEMPTS = 5
 export const LOAD_TIMEOUT_MS = 5000
+export const RESET_WAIT_MS = 2000
 
 /** The signed-in account changed in the middle of a sync. */
 class AccountChanged extends Error {}
@@ -128,6 +131,7 @@ export function createStore({
   backoff,
   channel = null,
   loadTimeoutMs = LOAD_TIMEOUT_MS,
+  resetWaitMs = RESET_WAIT_MS,
   now = () => new Date(),
 }: StoreDeps): Store {
   const durable = local.durable !== false
@@ -308,10 +312,16 @@ export function createStore({
       return 'done'
     }
     set({ sync: 'syncing' })
+    const mine = epoch
+    /** Stop if a reset happened while waiting on the server. */
+    const current = () => {
+      if (epoch !== mine) throw new AccountChanged()
+    }
     try {
       const before = state.snapshot.userId
       // Read the snapshot after the await: changes made while signing in must not be lost.
       const userId = await r.session()
+      current()
       if (claimDrops(state.snapshot, userId)) backUp(state.snapshot)
       commit(claim(state.snapshot, userId))
       // Signed in to another account: its home is on the way, so don't offer an empty one meanwhile.
@@ -322,13 +332,15 @@ export function createStore({
 
       /** Stop if the account changed since the claim, so its rows never go out under another account's token. */
       const stillMe = async () => {
-        const current = r.currentUser ? await r.currentUser() : await r.session()
-        if (current !== userId || state.snapshot.userId !== userId) throw new AccountChanged()
+        const signedIn = r.currentUser ? await r.currentUser() : await r.session()
+        current()
+        if (signedIn !== userId || state.snapshot.userId !== userId) throw new AccountChanged()
       }
 
       for (const step of planFlush(state.snapshot.outbox)) {
         await stillMe()
         const res = await send(r, step, step.ops)
+        current()
         if (res.ok) {
           ack(step.ops)
           continue
@@ -342,6 +354,7 @@ export function createStore({
           if (step.ops.length > 1) {
             await stillMe()
             one = await send(r, step, [op])
+            current()
           }
           if (one.ok) {
             ack([op])
@@ -379,7 +392,7 @@ export function createStore({
       if (repair()) again = true
       return 'done'
     } catch (e) {
-      if (e instanceof AccountChanged) return 'account-changed'
+      if (e instanceof AccountChanged || epoch !== mine) return 'account-changed'
       failures++
       // Offline or failing: carry on with what this device has, unless it just
       // signed in to an account whose home hasn't arrived yet (keep waiting for that).
@@ -407,6 +420,9 @@ export function createStore({
 
   let inflight: Promise<void> | null = null
   let again = false
+  // Bumped by reset. A sync that started before it (say, one stuck on a hung
+  // request) is left behind and must never touch the fresh home.
+  let epoch = 0
 
   function sync(): Promise<void> {
     if (!remote) return load()
@@ -419,10 +435,13 @@ export function createStore({
       return inflight
     }
     clearRetry()
-    inflight = (async () => {
+    const started = epoch
+    const job: Promise<void> = (async () => {
       await load()
       let switches = 0
       do {
+        // Left behind by a reset: the fresh home syncs on its own.
+        if (epoch !== started) break
         again = false
         if (paused > 0) {
           wanted = true
@@ -435,9 +454,10 @@ export function createStore({
         }
       } while (again)
     })().finally(() => {
-      inflight = null
+      if (inflight === job) inflight = null
     })
-    return inflight
+    inflight = job
+    return job
   }
 
   function pause(): () => void {
@@ -477,7 +497,10 @@ export function createStore({
     async reset({ backup = true } = {}) {
       const resume = pause()
       try {
-        await inflight
+        // A sync under way gets a moment to finish; one stuck on a hung request is left behind.
+        if (inflight) await Promise.race([inflight, new Promise((r) => setTimeout(r, resetWaitMs))])
+        epoch++
+        inflight = null
         await load()
         clearRetry()
         attempts.clear()

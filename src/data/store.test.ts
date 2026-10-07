@@ -628,6 +628,34 @@ describe('reset (signing out, deleting the account)', () => {
     expect(store.getState().snapshot.userId).toBe('u-new')
   })
 
+  it('does not hang on a stuck sync, and the stuck sync never touches the fresh home', async () => {
+    const { server, remote } = fakeServer('u1')
+    let release = () => {}
+    const gate = new Promise<void>((resolve) => (release = resolve))
+    let stuck = false
+    const hung: Remote = { ...remote, upsert: (table, rows) => (stuck ? gate.then(() => remote.upsert(table, rows)) : remote.upsert(table, rows)) }
+    const store = createStore({ local: memoryStore(), remote: hung, resetWaitMs: 10 })
+    await store.start()
+    await store.sync()
+    stuck = true
+    store.apply(...createHousehold({ species: 'bun', petName: 'Pip', userId: 'u1' }))
+    void store.sync() // hangs on the upsert
+    await new Promise((r) => setTimeout(r, 0))
+    await store.reset()
+    expect(store.getState().snapshot.userId).toBeNull()
+
+    stuck = false
+    server.user = 'u-new'
+    await store.sync() // the fresh home syncs without waiting for the stuck one
+    expect(store.getState()).toMatchObject({ sync: 'synced', hydrated: true })
+    const fresh = store.getState().snapshot
+    expect(fresh.userId).toBe('u-new')
+
+    release()
+    await new Promise((r) => setTimeout(r, 0))
+    expect(store.getState().snapshot).toBe(fresh)
+  })
+
   it('keeps no backup when the account was deleted', async () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()
