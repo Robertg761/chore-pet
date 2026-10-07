@@ -13,8 +13,10 @@ export interface LocalStore {
   update?(fn: (stored: Snapshot | null) => Snapshot | null): Promise<void>
   /** Keep a copy of a snapshot that is about to be dropped, under `snapshot-backup-<ownerId>`. */
   backup?(ownerId: string, snapshot: Snapshot): Promise<void>
-  /** Forget that backup (the account was deleted). */
+  /** Forget that backup (the account was deleted, or it was brought back). */
   dropBackup?(ownerId: string): Promise<void>
+  /** Every backup kept on this device, by the account it came from. */
+  listBackups?(): Promise<{ ownerId: string; snapshot: Snapshot }[]>
   /** False when nothing survives a reload (the in-memory fallback). Missing means true. */
   durable?: boolean
 }
@@ -23,7 +25,8 @@ const DB_NAME = 'chore-pet'
 const STORE = 'kv'
 const KEY = 'snapshot'
 
-export const backupKey = (ownerId: string) => `snapshot-backup-${ownerId}`
+const BACKUP_PREFIX = 'snapshot-backup-'
+export const backupKey = (ownerId: string) => `${BACKUP_PREFIX}${ownerId}`
 
 function open(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -92,6 +95,21 @@ export function indexedDbStore(): LocalStore {
       })
     },
     backup: (ownerId, snapshot) => put(backupKey(ownerId), snapshot),
+    async listBackups() {
+      const d = await getDb()
+      return new Promise((resolve, reject) => {
+        const found: { ownerId: string; snapshot: Snapshot }[] = []
+        const req = d.transaction(STORE).objectStore(STORE).openCursor()
+        req.onsuccess = () => {
+          const cursor = req.result
+          if (!cursor) return resolve(found)
+          const key = String(cursor.key)
+          if (key.startsWith(BACKUP_PREFIX)) found.push({ ownerId: key.slice(BACKUP_PREFIX.length), snapshot: cursor.value as Snapshot })
+          cursor.continue()
+        }
+        req.onerror = () => reject(req.error)
+      })
+    },
     async dropBackup(ownerId) {
       const d = await getDb()
       return new Promise((resolve, reject) => {
@@ -124,6 +142,9 @@ export function memoryStore(initial: Snapshot | null = null): LocalStore & { cur
     },
     async dropBackup(ownerId: string) {
       delete store.backups[backupKey(ownerId)]
+    },
+    async listBackups() {
+      return Object.entries(store.backups).map(([key, snapshot]) => ({ ownerId: key.slice(BACKUP_PREFIX.length), snapshot: structuredClone(snapshot) }))
     },
   }
   return store

@@ -282,6 +282,23 @@ export function mergeSnapshots(mine: Snapshot, base: Snapshot | null, stored: Sn
   }
 }
 
+/** A home kept on this device (a backup), as offered back to the player. */
+export interface SavedHome {
+  ownerId: string
+  homeId: string
+  petName: string
+  species: Pet['species']
+  bodyColour: string
+  choreCount: number
+}
+
+/** What a backup holds, for offering it back; null when it holds no home with a pet. */
+export function savedHomeOf(ownerId: string, snapshot: Snapshot): SavedHome | null {
+  const { home, pet, chores } = selectHome(snapshot.tables)
+  if (!home || !pet) return null
+  return { ownerId, homeId: home.id, petName: pet.name, species: pet.species, bodyColour: pet.bodyColour, choreCount: chores.length }
+}
+
 /** Everything the app shows for the player's home. One home per account for now. */
 export interface HomeData {
   home: Home | null

@@ -3,12 +3,15 @@ import { setSoundOn, soundOn } from '../audio/sfx'
 import { ReminderSettings } from '../reminders/ReminderSettings'
 import { ScreenHeader } from '../shell/ScreenHeader'
 import { AccountSection } from './AccountSection'
+import { SavedHomes } from './SavedHomes'
 import './SettingsScreen.css'
 
 // Settings: sound, reminders, and saving progress to an account.
 
 export interface SettingsScreenProps {
   petName: string
+  /** The home in use, so homes saved on this device can be offered as a swap. */
+  homeId?: string
   onClose: () => void
   /** Replaces the account section (sign in to keep progress on every device). */
   account?: React.ReactNode
@@ -16,7 +19,7 @@ export interface SettingsScreenProps {
 
 const PRIVACY_URL = 'https://github.com/Robertg761/chore-pet/blob/main/docs/PRIVACY.md'
 
-export function SettingsScreen({ petName, onClose, account }: SettingsScreenProps) {
+export function SettingsScreen({ petName, homeId, onClose, account }: SettingsScreenProps) {
   const [sound, setSound] = useState(soundOn)
   return (
     <section className="settings screen-fit" aria-labelledby="settings-title">
@@ -47,6 +50,7 @@ export function SettingsScreen({ petName, onClose, account }: SettingsScreenProp
 
         <div className="settings-col">
           <div className="settings-card">{account ?? <AccountSection />}</div>
+          {homeId && <SavedHomes current={{ homeId, petName }} className="settings-card" />}
           <p className="settings-foot">
             <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer">
               How your data is kept<span className="sr-only"> (opens in a new tab)</span>

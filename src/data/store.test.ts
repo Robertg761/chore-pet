@@ -3,7 +3,7 @@ import type { Chore, Progress } from '../domain/types'
 import { addChore, completeChore, completeChoreWithRewards, createHousehold, removeChore } from './actions'
 import { memoryStore, volatileStore, type LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
-import { emptyTables, selectHome, type Snapshot, type Tables } from './state'
+import { change, emptySnapshot, emptyTables, selectHome, type Snapshot, type Tables } from './state'
 import { MAX_ATTEMPTS, createStore, type Store, type StoreChannel, type StoreMessage } from './store'
 import { keyOf, type TableName } from './tables'
 
@@ -809,3 +809,29 @@ describe('a failed save', () => {
     expect(choreNames(store.getState().snapshot.tables)).toEqual(['Bins', 'Dishes'])
   })
 })
+
+describe('saved homes (backups kept on this device)', () => {
+  it('lists a saved home and brings it back, keeping the replaced one', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    const guest = createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest'))
+    await local.backup!('guest', guest)
+
+    expect((await store.savedHomes()).map((h) => [h.ownerId, h.petName])).toEqual([['guest', 'Bun']])
+    expect(await store.restoreSaved('guest')).toBe(true)
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Bun')
+    // The guest copy now lives in the account; Pip's home is kept on this device to swap back.
+    expect((await store.savedHomes()).map((h) => [h.ownerId, h.petName])).toEqual([['u1', 'Pip']])
+    expect(await store.restoreSaved('u1')).toBe(true)
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Pip')
+  })
+
+  it('has nothing to offer without a store that keeps backups', async () => {
+    const store = createStore({ local: volatileStore(), remote: null })
+    await store.start()
+    expect(await store.savedHomes()).toEqual([])
+    expect(await store.restoreSaved('guest')).toBe(false)
+  })
+})
+

@@ -1,3 +1,4 @@
+import { restoreHome } from './actions'
 import type { LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
 import type { ErrorKind } from './remoteErrors'
@@ -12,10 +13,13 @@ import {
   planFlush,
   rebase,
   reject,
+  selectHome,
   repairOps,
   requeueRejected,
+  savedHomeOf,
   worthBackingUp,
   type FlushStep,
+  type SavedHome,
   type NewOp,
   type Op,
   type Snapshot,
@@ -72,6 +76,13 @@ export interface Store {
   retryRejected(): void
   /** Forget the set-aside changes once the player has seen the note. */
   dismissRejected(): void
+  /** Homes kept on this device (backups) that could be brought back. */
+  savedHomes(): Promise<SavedHome[]>
+  /**
+   * Bring a saved home back into this account. The current home, if any, is
+   * kept on this device first (so it can be swapped back), then replaced.
+   */
+  restoreSaved(ownerId: string): Promise<boolean>
 }
 
 export type StoreMessage = { type: 'saved' | 'reset'; from: string }
@@ -538,6 +549,28 @@ export function createStore({
     dismissRejected() {
       if (!state.snapshot.rejected?.length) return
       commit({ ...state.snapshot, rejected: [] })
+    },
+    async savedHomes() {
+      if (memoryOnly || !local.listBackups) return []
+      const backups = await local.listBackups().catch(() => [])
+      return backups.flatMap(({ ownerId, snapshot }) => savedHomeOf(ownerId, snapshot) ?? [])
+    },
+    async restoreSaved(ownerId) {
+      if (memoryOnly || !local.listBackups || !local.backup) return false
+      await load()
+      const saved = (await local.listBackups()).find((b) => b.ownerId === ownerId)?.snapshot
+      if (!saved) return false
+      const ops = restoreHome(saved, state.snapshot)
+      if (ops.length === 0) return false
+      const owner = state.snapshot.userId ?? 'unclaimed'
+      const replacing = Boolean(selectHome(state.snapshot.tables).home)
+      // Keep the home being replaced on this device, so it can be swapped back.
+      if (replacing) await local.backup(owner, state.snapshot)
+      commit(ops.reduce(change, state.snapshot))
+      // The brought-back copy now lives in this account (unless that backup now holds the replaced home).
+      if (ownerId !== owner || !replacing) await local.dropBackup?.(ownerId)
+      void sync()
+      return true
     },
   }
 }
