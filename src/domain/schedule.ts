@@ -118,18 +118,20 @@ export function scheduleStart(chore: Chore): ISODate {
 
 /**
  * The chore as its schedule stood on `day`. Before a schedule change, that is
- * the rule in force then (from the `before` chain), applied as if from the
- * start; a change made before schedules kept `before` falls back to the
- * current rule. Used to judge past days (streaks, the week's health) by the
- * rule of the time.
+ * the rule in force then (from the `before` chain), starting on the day it
+ * took effect; the oldest rule kept applies from the chore's creation. A
+ * change made before schedules kept `before` falls back to the current rule.
+ * Used to judge past days (streaks, the week's health) by the rule of the time.
  */
 export function choreAsOf(chore: Chore, day: ISODate): Chore {
   if (day >= scheduleStart(chore)) return chore
   // Step back to the rule in force that day; the oldest one kept covers everything before it.
   let s: Schedule = chore.schedule
   while (s.before && s.since && day < s.since) s = s.before
-  const { since: _since, before: _before, ...rule } = s
-  return { ...chore, schedule: rule as Schedule }
+  // A rule with an earlier one behind it began on its `since`, exactly as it ran then
+  // (earlier completions don't count toward it); the oldest one kept reaches back to the start.
+  const { before, since, ...rule } = s
+  return { ...chore, schedule: (before && since ? { ...rule, since } : rule) as Schedule }
 }
 
 /** Past schedules kept on a chore, at most (each is a few dozen bytes of the row's JSON). */

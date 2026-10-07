@@ -146,9 +146,16 @@ describe('choreAsOf', () => {
   }
   it('gives the rule in force on each day', () => {
     expect(choreAsOf(c, '2026-01-15').schedule).toEqual({ kind: 'daily' })
-    expect(choreAsOf(c, '2026-02-15').schedule).toEqual({ kind: 'monthly', dayOfMonth: 1 })
+    expect(choreAsOf(c, '2026-02-15').schedule).toEqual({ kind: 'monthly', dayOfMonth: 1, since: '2026-02-01' })
     expect(choreAsOf(c, '2026-03-15')).toBe(c)
   })
+  it('starts a middle rule on the day it took effect, so older completions do not shift it', () => {
+    // Daily, done 31 Jan; every 7 days from 1 Feb; weekly from 1 Mar.
+    const edited: Chore = { ...c, schedule: { kind: 'weekly', weekday: 1, since: '2026-03-01', before: { kind: 'everyNDays', n: 7, since: '2026-02-01', before: { kind: 'daily' } } } }
+    const status = choreStatus(choreAsOf(edited, '2026-02-05'), [{ id: 'x', choreId: 'c', completedAt: '2026-01-31T10:00:00.000Z', completedOn: '2026-01-31' }], '2026-02-05')
+    expect(status.dueDate).toBe('2026-02-04')
+  })
+
   it('falls back to the current rule when no history was kept', () => {
     expect(choreAsOf({ ...c, schedule: { kind: 'weekly', weekday: 1, since: '2026-03-01' } }, '2026-01-15').schedule).toEqual({ kind: 'weekly', weekday: 1 })
   })
