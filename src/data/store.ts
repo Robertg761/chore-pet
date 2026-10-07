@@ -112,6 +112,8 @@ export interface StoreDeps {
 export const MAX_ATTEMPTS = 5
 export const LOAD_TIMEOUT_MS = 5000
 export const RESET_WAIT_MS = 2000
+/** A restore's claim on a backup lapses after this, in case its tab closed mid-way. */
+export const CLAIM_STALE_MS = 60_000
 
 /** The signed-in account changed in the middle of a sync. */
 class AccountChanged extends Error {}
@@ -567,20 +569,26 @@ export function createStore({
       return backups.flatMap(({ ownerId, snapshot }) => (heldFor(snapshot) === me ? (savedHomeOf(ownerId, snapshot) ?? []) : []))
     },
     async restoreSaved(ownerId) {
-      if (memoryOnly || !local.listBackups || !local.backup) return false
+      if (memoryOnly || !local.claimBackup || !local.backup) return false
       await load()
-      const saved = (await local.listBackups()).find((b) => b.ownerId === ownerId)?.snapshot
-      if (!saved || heldFor(saved) !== state.snapshot.userId) return false
-      const ops = restoreHome(saved, state.snapshot)
-      if (ops.length === 0) return false
+      // Claim the copy first, in one step, so another tab can't bring the same home back too.
+      const saved = await local.claimBackup(ownerId, now().getTime(), CLAIM_STALE_MS)
+      if (!saved) return false
+      const ops = heldFor(saved) === state.snapshot.userId ? restoreHome(saved, state.snapshot) : []
+      if (ops.length === 0) {
+        await local.backup(ownerId, saved) // not this account's to restore: release the claim
+        return false
+      }
       // Keep the home being replaced on this device, so it can be swapped back. Its own
       // key (account and home), so it can never overwrite the copy being brought back.
       const replaced = selectHome(state.snapshot.tables).home
       if (replaced) await local.backup(`${state.snapshot.userId ?? 'unclaimed'}:${replaced.id}`, { ...state.snapshot, heldFor: state.snapshot.userId })
       commit(ops.reduce(change, state.snapshot))
-      // Forget the brought-back copy only once the restored home is really stored.
+      // Forget the brought-back copy only once the restored home is really stored;
+      // otherwise release the claim, so nothing is lost and it can be tried again.
       await saving
       if (state.savedLocally) await local.dropBackup?.(ownerId)
+      else await local.backup(ownerId, saved)
       void sync()
       return true
     },

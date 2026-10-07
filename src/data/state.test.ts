@@ -202,6 +202,15 @@ describe('backups when an account switch drops data', () => {
   })
 })
 
+describe('change: deleting a row', () => {
+  it('drops queued changes to the rows that went with it', () => {
+    const offline = change(change(emptySnapshot('u1'), upsertOp('homes', home)), upsertOp('chores', chore('a')))
+    const gone = change(offline, deleteOp('homes', home.id))
+    expect(Object.keys(gone.outbox)).toEqual(['homes:h1'])
+    expect(gone.tables.chores).toEqual({})
+  })
+})
+
 describe('mergeSnapshots (two tabs, one offline copy)', () => {
   const start = change(emptySnapshot('u1'), upsertOp('homes', home))
 

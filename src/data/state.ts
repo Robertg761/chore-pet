@@ -49,6 +49,8 @@ export interface Snapshot {
    * the next.
    */
   heldFor?: string | null
+  /** On a backup only: when a restore claimed it (ms since 1970), so two tabs can't both bring it back. */
+  claimedAt?: number
 }
 
 /** The account a backup may be offered back to. */
@@ -112,12 +114,17 @@ export function applyOp(tables: Tables, op: Op): Tables {
 export function change(snapshot: Snapshot, op: NewOp): Snapshot {
   const seq = snapshot.seq + 1
   const full = { ...op, seq, id: newOpId() } as Op
-  return {
-    ...snapshot,
-    seq,
-    tables: applyOp(snapshot.tables, full),
-    outbox: { ...snapshot.outbox, [outboxKey(op.table, op.key)]: full },
+  const key = outboxKey(op.table, op.key)
+  const tables = applyOp(snapshot.tables, full)
+  const outbox = { ...snapshot.outbox, [key]: full }
+  if (op.kind === 'delete') {
+    // Rows that went with it (the cascade) have nothing left to send: the server removes
+    // them the same way, and sending a child of a row that never reached it would fail.
+    for (const [k, queued] of Object.entries(outbox)) {
+      if (k !== key && queued.kind === 'upsert' && !(queued.key in tables[queued.table])) delete outbox[k]
+    }
   }
+  return { ...snapshot, seq, tables, outbox }
 }
 
 export function upsertOp<T extends TableName>(table: T, value: TableMap[T]): NewOp {

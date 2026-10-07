@@ -17,6 +17,11 @@ export interface LocalStore {
   dropBackup?(ownerId: string): Promise<void>
   /** Every backup kept on this device, by the account it came from. */
   listBackups?(): Promise<{ ownerId: string; snapshot: Snapshot }[]>
+  /**
+   * Claim a backup for a restore, in one step: returns it and marks it claimed,
+   * or null when it is gone or another restore claimed it within `staleMs`.
+   */
+  claimBackup?(ownerId: string, now: number, staleMs: number): Promise<Snapshot | null>
   /** False when nothing survives a reload (the in-memory fallback). Missing means true. */
   durable?: boolean
 }
@@ -95,6 +100,23 @@ export function indexedDbStore(): LocalStore {
       })
     },
     backup: (ownerId, snapshot) => put(backupKey(ownerId), snapshot),
+    async claimBackup(ownerId, now, staleMs) {
+      const d = await getDb()
+      return new Promise((resolve, reject) => {
+        let claimed: Snapshot | null = null
+        const tx = d.transaction(STORE, 'readwrite')
+        const store = tx.objectStore(STORE)
+        const req = store.get(backupKey(ownerId))
+        req.onsuccess = () => {
+          const found = (req.result as Snapshot | undefined) ?? null
+          if (!found || (found.claimedAt !== undefined && now - found.claimedAt < staleMs)) return
+          claimed = found
+          store.put({ ...found, claimedAt: now }, backupKey(ownerId))
+        }
+        tx.oncomplete = () => resolve(claimed)
+        tx.onerror = () => reject(tx.error)
+      })
+    },
     async listBackups() {
       const d = await getDb()
       return new Promise((resolve, reject) => {
@@ -142,6 +164,12 @@ export function memoryStore(initial: Snapshot | null = null): LocalStore & { cur
     },
     async dropBackup(ownerId: string) {
       delete store.backups[backupKey(ownerId)]
+    },
+    async claimBackup(ownerId: string, now: number, staleMs: number) {
+      const found = store.backups[backupKey(ownerId)]
+      if (!found || (found.claimedAt !== undefined && now - found.claimedAt < staleMs)) return null
+      store.backups[backupKey(ownerId)] = { ...found, claimedAt: now }
+      return structuredClone(found)
     },
     async listBackups() {
       return Object.entries(store.backups).map(([key, snapshot]) => ({ ownerId: key.slice(BACKUP_PREFIX.length), snapshot: structuredClone(snapshot) }))
