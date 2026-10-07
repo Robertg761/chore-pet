@@ -1,5 +1,5 @@
 import type { AccountCleanup } from '../data/state'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const calls: string[] = []
 const store = {
@@ -45,7 +45,16 @@ beforeEach(() => {
   anonymous = false
   configured = true
   vi.stubGlobal('localStorage', fakeStorage([]))
+  // Model the browser explicitly: Node 22 has navigator but no Web Locks.
+  vi.stubGlobal('navigator', {
+    locks: {
+      request: async <T>(name: string, _options: LockOptions, callback: (lock: Lock) => T | Promise<T>) =>
+        callback({ name, mode: 'exclusive' }),
+    },
+  })
 })
+
+afterEach(() => vi.unstubAllGlobals())
 
 describe('clearLocalSettings', () => {
   it('forgets every chore-pet key except the sound setting, and nothing else', () => {
@@ -169,6 +178,17 @@ it('refuses a second tab account operation while the browser lock is held', asyn
     expect(rpc.mock.calls.length).toBe(before)
     expect(store.cleanup).toBeUndefined()
   } finally { vi.unstubAllGlobals() }
+})
+
+it('refuses account changes without Web Locks and preserves the device copy', async () => {
+  vi.stubGlobal('navigator', {})
+  const before = rpc.mock.calls.length
+  const refusal = { ok: false, message: expect.stringContaining("can't safely finish account changes") }
+  expect(await deleteAccount()).toMatchObject(refusal)
+  expect(await signOutSafely()).toMatchObject(refusal)
+  expect(calls).toEqual([])
+  expect(rpc.mock.calls.length).toBe(before)
+  expect(store.cleanup).toBeUndefined()
 })
 
 it('does not let a different tab cancel an account operation that still holds the lock', async () => {
