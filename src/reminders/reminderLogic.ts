@@ -10,6 +10,8 @@ export interface ReminderPrefs {
   enabled: boolean
   /** Local time of day, 24-hour "HH:MM". */
   time: string
+  /** Keep chore names off the lock screen: the nudge says only that jobs are ready. */
+  private?: boolean
 }
 
 export const DEFAULT_TIME = '09:00'
@@ -36,8 +38,8 @@ export function parsePrefs(raw: string | null | undefined): ReminderPrefs {
   try {
     const data: unknown = JSON.parse(raw)
     if (typeof data !== 'object' || data === null) return { ...DEFAULT_PREFS }
-    const { enabled, time } = data as Record<string, unknown>
-    return { enabled: enabled === true, time: isValidTime(time) ? time : DEFAULT_TIME }
+    const { enabled, time, private: hidden } = data as Record<string, unknown>
+    return { enabled: enabled === true, time: isValidTime(time) ? time : DEFAULT_TIME, ...(hidden === true && { private: true }) }
   } catch {
     return { ...DEFAULT_PREFS }
   }

@@ -88,4 +88,3 @@
   .landing-pet, .landing-pet-art, .landing-pet::before { transition: none; }
   .landing-primary:active { transform: none; }
 }
-.landing-back { align-self: flex-start; margin: -8px 0 -8px -12px; }

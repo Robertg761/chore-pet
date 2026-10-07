@@ -222,3 +222,10 @@ describe('reminderStore', () => {
     expect(loadPrefs(flaky)).toEqual({ ...on, time: '08:00' })
   })
 })
+
+describe('private nudges', () => {
+  it('remembers the choice to hide chore names', () => {
+    expect(parsePrefs(JSON.stringify({ enabled: true, time: '08:00', private: true }))).toEqual({ enabled: true, time: '08:00', private: true })
+    expect(parsePrefs(JSON.stringify({ enabled: true, time: '08:00', private: 'yes' }))).toEqual({ enabled: true, time: '08:00' })
+  })
+})

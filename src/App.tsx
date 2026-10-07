@@ -12,6 +12,7 @@ import {
   addChore,
   adoptSample,
   completeChoreWithRewards,
+  uncompleteChore,
   updatePet,
   updateRoom,
   createHousehold,
@@ -59,7 +60,10 @@ import { ShareCard } from './screens/ShareCard'
 import { play } from './audio/sfx'
 import { useReminders } from './reminders/reminders'
 import { AppNav, type MoreItem, type Tab } from './shell/AppNav'
+import { objectOverdue } from './room/cuePlan'
+import { PET_STROKE_SCALE } from './room/shell/geometry'
 import { Sheet } from './shell/Sheet'
+import { UndoToast } from './shell/UndoToast'
 import { ROOM_ASPECT_VARS, upNextRows } from './shell/layout'
 import { useViewport, useWide } from './shell/useViewport'
 
@@ -109,6 +113,8 @@ export default function App() {
   const [celebrate, setCelebrate] = useState<Celebration | null>(null)
   const [sparkles, setSparkles] = useState<(SparkleSpot & { id: number })[]>([])
   const [gifts, setGifts] = useState<Unlock[]>([])
+  // The last chore ticked off, for a few seconds, so a slip can be undone.
+  const [undo, setUndo] = useState<{ key: number; completionId: string; choreName: string } | null>(null)
   const momentKey = useRef(0)
   const doneRef = useRef<HTMLButtonElement>(null)
   const viewport = useViewport()
@@ -165,10 +171,8 @@ export default function App() {
       <main className="shell">
         {building ? (
           <>
-            <button type="button" className="link-button landing-back" onClick={() => setBuilding(false)}>
-              Back
-            </button>
             <PetPicker
+              onBack={() => setBuilding(false)}
               onChoose={({ species, name }) => {
                 setWelcome(true)
                 appStore.apply(...createHousehold({ species, petName: name, userId: snapshot.userId }))
@@ -317,7 +321,7 @@ export default function App() {
     return framed(
       'wardrobe',
       <main className="shell screen">
-        <Wardrobe pet={pet} progress={progress} onChange={(patch) => appStore.apply(...updatePet(pet, patch))} onClose={back} />
+        <Wardrobe pet={pet} progress={progress} onChange={(patch) => appStore.apply(...updatePet(pet, patch))} />
       </main>,
     )
   }
@@ -343,7 +347,6 @@ export default function App() {
           vacations={home.vacations}
           today={today}
           onEquip={(equipped) => appStore.apply(...updatePet(pet, { equipped }))}
-          onBack={back}
         />
       </main>,
     )
@@ -361,7 +364,7 @@ export default function App() {
   const petTile = freeTile(solid)
   const petInRoom = petTile && {
     tile: petTile,
-    art: <CharacterArt species={pet.species} mood={condition.mood} pose={away ? 'sleeping' : undefined} bodyColour={pet.bodyColour} equipped={pet.equipped} look={{ eyes: pet.eyes, cheeks: pet.cheeks }} />,
+    art: <CharacterArt species={pet.species} mood={condition.mood} pose={away ? 'sleeping' : undefined} bodyColour={pet.bodyColour} equipped={pet.equipped} look={{ eyes: pet.eyes, cheeks: pet.cheeks }} strokeScale={PET_STROKE_SCALE} />,
   }
 
   if (view.name === 'build' && room) {
@@ -410,6 +413,7 @@ export default function App() {
             objects={roomObjects}
             stages={stages}
             neglect={neglect}
+            overdue={objectOverdue(chores, condition.statuses)}
             pet={petInRoom}
             selectedId={selectedId}
             onSelect={(id) => (setSelectedId(id), setPlacing(null))}
@@ -442,7 +446,13 @@ export default function App() {
               }
               onRemoveChore={(chore) => appStore.apply(...removeChore(chore.id, data))}
               onTurn={() => turnTo && canTurn && appStore.apply(...moveObject(selected, turnTo))}
-              onRemove={() => (appStore.apply(...removeObject(selected.id, data)), setSelectedId(null))}
+              onRemove={(keepChores) => {
+                // Kept chores stay on the list without a home object; otherwise they go and their counts are retired.
+                const own = chores.filter((c) => c.objectId === selected.id)
+                if (keepChores) appStore.apply(...own.flatMap((c) => updateChore(c, { objectId: null }, today)), ...removeObject(selected.id))
+                else appStore.apply(...removeObject(selected.id, data))
+                setSelectedId(null)
+              }}
               onClose={() => setSelectedId(null)}
             />
           ) : (
@@ -490,7 +500,10 @@ export default function App() {
     // The gift waits for the cheer and sparkle to play, so the done moment is seen first.
     if (done.unlocked.length) window.setTimeout(() => setGifts((queue) => [...queue, ...done.unlocked]), GIFT_DELAY_MS)
     const key = ++momentKey.current
-    setCelebrate({ key, choreName: chore.name })
+    const big = condition.statuses.some((s) => s.choreId === chore.id && s.neglect === 3)
+    const first = !completions.some((c) => c.completedOn === today)
+    setCelebrate({ key, choreName: chore.name, big, first })
+    if (done.completion) setUndo({ key, completionId: done.completion.id, choreName: chore.name })
     const placed = roomObjects.find((o) => o.id === chore.objectId)
     const entry = placed && catalogEntry(placed.catalogId)
     if (placed && entry) setSparkles((list) => [...list, { id: key, ...sparkleSpot(placed, entry) }])
@@ -571,11 +584,37 @@ export default function App() {
         </Sheet>
       )}
 
+      {undo && (
+        <UndoToast
+          key={undo.key}
+          choreName={undo.choreName}
+          onUndo={() => {
+            // Any gift that tap earned stays: rewards are never taken back.
+            appStore.apply(...uncompleteChore(undo.completionId, progress, completions))
+            setUndo(null)
+          }}
+          onClose={() => setUndo(null)}
+        />
+      )}
+
       {gifts[0] && (
         <GiftBox
           key={gifts[0].id}
           unlock={gifts[0]}
           pet={pet}
+          onPlace={() => {
+            const entry = catalogEntry(gifts[0].ref)
+            setSelectedId(null)
+            setBuildPanel('things')
+            openBuild()
+            if (entry) setPlacing(entry)
+          }}
+          onTry={() => {
+            const unlock = gifts[0]
+            if (room) appStore.apply(...updateRoom(room, unlock.kind === 'wall' ? { wallStyle: unlock.ref } : { floorStyle: unlock.ref }))
+            setBuildPanel('style')
+            openBuild()
+          }}
           onClose={({ wear }) => {
             const item = ITEMS.find((i) => i.id === gifts[0].ref)
             if (wear && gifts[0].kind === 'item' && item) appStore.apply(...updatePet(pet, { equipped: { ...pet.equipped, [item.slot]: item.id } }))

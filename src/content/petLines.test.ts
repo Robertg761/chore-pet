@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { CATALOG } from '../catalog/objects'
 import {
   BIG_DONE_LINES,
+  doneLine,
   CAUGHT_UP_LINES,
   CHORE_LINES,
   CHORE_OBJECT_LINES,
@@ -283,5 +284,17 @@ describe('chore names in lines', () => {
     expect(pickLine(['How about we {chore} next?'], 0, { chore: 'Feed Mochi' })).toBe('How about we feed Mochi next?')
     expect(pickLine(['How about we {chore} next?'], 0, { chore: 'Wash the dishes' })).toBe('How about we wash the dishes next?')
     expect(pickLine(['On my list: {chore}.'], 0, { chore: 'TV dusting' })).toBe('On my list: TV dusting.')
+  })
+})
+
+describe('doneLine', () => {
+  it('cheers bigger for a chore that had piled up', () => {
+    expect(BIG_DONE_LINES).toContain(doneLine(3, 'Wash the dishes', { big: true, first: true }))
+  })
+  it('says good morning for the first chore of the day', () => {
+    expect(FIRST_OF_DAY_LINES).toContain(doneLine(1, 'Wash the dishes', { first: true }))
+  })
+  it('otherwise uses the usual cheer, with the chore filled in', () => {
+    expect(doneLine(1, 'Wash the dishes')).toBe('Wash the dishes: done! Hooray!')
   })
 })

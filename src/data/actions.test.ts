@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { catalogEntry } from '../catalog/objects'
 import { SAMPLE_HOME_NAME, sampleHome } from '../content/sampleHome'
 import { choreStatus } from '../domain/schedule'
-import type { Chore, Schedule } from '../domain/types'
-import { adoptSample, completeChore, completeChoreWithRewards, createHousehold, moveObject, placeObject, removeHome, removeObject, updateChore } from './actions'
+import type { Chore, Progress, Schedule } from '../domain/types'
+import { adoptSample, completeChore, completeChoreWithRewards, createHousehold, moveObject, placeObject, removeHome, removeObject, uncompleteChore, updateChore } from './actions'
 import { change, emptySnapshot, selectHome, type NewOp, type Snapshot } from './state'
 
 function apply(s: Snapshot, ops: ReturnType<typeof createHousehold>): Snapshot {
@@ -161,5 +161,21 @@ describe('completions never land in the future', () => {
   it('seeded sample history can opt out with realNow: null', () => {
     const later = new Date(2028, 1, 29, 9, 0)
     expect(stamped(completeChore(dishes, null, later, { counts: false, realNow: null })).completedOn).toBe('2028-02-29')
+  })
+})
+
+describe('uncompleteChore', () => {
+  const done = (id: string, choreId: string, completedOn: string) => ({ id, choreId, completedAt: `${completedOn}T09:00:00.000Z`, completedOn, counts: true })
+
+  it('deletes just that completion when there is no progress row', () => {
+    expect(uncompleteChore('c-1', null, [])).toEqual([{ table: 'completions', kind: 'delete', key: 'c-1' }])
+  })
+
+  it('recounts the chores done without the undone one and keeps unlocks', () => {
+    const completions = [done('c-1', 'a', '2026-10-06'), done('c-2', 'b', '2026-10-07')]
+    const progress: Progress = { homeId: 'h', choreCount: 2, retired: {}, currentStreak: 2, bestStreak: 2, unlockedItems: ['beanie'] }
+    const ops = uncompleteChore('c-2', progress, completions)
+    expect(ops[0]).toEqual({ table: 'completions', kind: 'delete', key: 'c-2' })
+    expect(ops[1]).toMatchObject({ table: 'progress', kind: 'upsert', value: { choreCount: 1, unlockedItems: ['beanie'] } })
   })
 })

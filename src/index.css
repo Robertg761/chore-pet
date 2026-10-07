@@ -66,6 +66,9 @@ body { margin: 0; }
   gap: 16px;
 }
 
+/* Screen titles take focus on arrival so screen readers land there; they are not controls, so no ring. */
+h1[tabindex='-1']:focus { outline: none; }
+
 .pet-header { align-self: stretch; }
 .pet-header h1 { margin: 0; font-size: 2rem; }
 .health { margin: 4px 0 0; font-weight: 700; color: var(--ink-soft); }
@@ -312,6 +315,9 @@ body { margin: 0; }
 
 /* The object sheet in build mode's panel: tighter, and the panel grows a little while it's open. */
 .build-panel:has(.sheet) { max-height: 58%; }
+@media (min-height: 640px) { .build-panel:has(.sheet) { max-height: 62%; } }
+/* On short phones the move hint gives its line to the sheet's buttons. */
+@media (max-height: 760px) { .build-panel .sheet-hint { display: none; } }
 .build-panel .sheet { padding: 10px 12px; gap: 8px; box-shadow: none; }
 .build-panel .sheet-art { width: 40px; height: 40px; }
 .build-panel .sheet-title { font-size: 1.25rem; }

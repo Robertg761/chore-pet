@@ -126,6 +126,20 @@ export function completeChore(
 }
 
 /**
+ * Take back a completion tapped by mistake (the undo after Done). The chore
+ * count follows, since it is worked out from completions; a reward that tap
+ * earned stays, because rewards are never taken away.
+ */
+export function uncompleteChore(completionId: string, progress: Progress | null, completions: Completion[]): NewOp[] {
+  const ops: NewOp[] = [deleteOp('completions', completionId)]
+  if (progress) {
+    const left = completions.filter((c) => c.id !== completionId)
+    ops.push(upsertOp('progress', { ...progress, choreCount: choreCountOf(left, progress.retired) }))
+  }
+  return ops
+}
+
+/**
  * Finish a chore and count it toward rewards: records the completion (at
  * `now`, never after the real clock `realNow`), bumps the chore count, works
  * out today's streak with this completion included, and returns any rewards
@@ -137,18 +151,18 @@ export function completeChoreWithRewards(
   context: { chores: Chore[]; completions: Completion[]; vacations: VacationWindow[] },
   now: Date = new Date(),
   realNow: Date = new Date(),
-): { ops: NewOp[]; unlocked: Unlock[] } {
+): { ops: NewOp[]; unlocked: Unlock[]; completion?: Completion } {
   const at = stampTime(now, realNow)
   const completion: Completion = { id: id(), choreId: chore.id, completedAt: at.toISOString(), completedOn: toISODate(at), counts: true }
   // A repeat the schedule ignores (same day, or a second early one) is neither recorded nor counted.
   if (!completionCounts(chore, context.completions, completion.completedOn)) return { ops: [], unlocked: [] }
   const ops: NewOp[] = [upsertOp('completions', completion)]
-  if (!progress) return { ops, unlocked: [] }
+  if (!progress) return { ops, unlocked: [], completion }
   const streak = currentStreak(context.chores, [...context.completions, completion], completion.completedOn, context.vacations)
   const choreCount = choreCountOf([...context.completions, completion], progress.retired)
   const result = applyUnlocks({ ...progress, choreCount }, streak)
   ops.push(upsertOp('progress', result.progress))
-  return { ops, unlocked: result.unlocked }
+  return { ops, unlocked: result.unlocked, completion }
 }
 
 export function setVacations(home: Home, vacations: VacationWindow[]): NewOp[] {

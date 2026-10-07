@@ -308,6 +308,17 @@ export function objectLine(catalogId: string, choreName: string, beat: number): 
 }
 
 /**
+ * The cheer for a finished chore: a bigger one for clearing something that had
+ * piled up (neglect level 3), a morning one for the first chore of the day,
+ * and otherwise the usual DONE_LINES.
+ */
+export function doneLine(seed: number, choreName: string, moment: { big?: boolean; first?: boolean } = {}): string {
+  if (moment.big) return pickLine(BIG_DONE_LINES, seed)
+  if (moment.first) return pickLine(FIRST_OF_DAY_LINES, seed)
+  return pickLine(DONE_LINES, seed, { chore: choreName })
+}
+
+/**
  * The pet's line about a messy object. Only neglect levels 2 and 3 have lines
  * (higher counts as 3); anything lower gives ''.
  */
