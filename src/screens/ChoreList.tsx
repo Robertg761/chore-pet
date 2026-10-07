@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } from 'react'
+import { withViewTransition } from '../shell/viewTransition'
 import type { Chore, Completion, VacationWindow } from '../domain/types'
 import { allCaughtUp, buildSections, nextUpcoming, onVacation, shortRows, whenPhrase, type ChoreRow } from './choreListModel'
 import './ChoreList.css'
@@ -59,8 +60,10 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
   const rows = sections.flatMap((s) => s.rows)
   const shown = short ? shortRows(sections).slice(0, limit) : rows
   const shownRef = useRef<ChoreRow[]>(shown)
+  const shortRef = useRef(short)
   useEffect(() => {
     shownRef.current = shown
+    shortRef.current = short
   })
 
   // Chores that were just tapped: they show a check for a moment, then complete.
@@ -74,6 +77,8 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
 
   const finish = useCallback((chore: Chore) => {
     if (timers.current.has(chore.id)) return
+    // A light tick under the thumb, where the phone can.
+    navigator.vibrate?.(12)
     setFinishing((prev) => new Set(prev).add(chore.id))
     const timer = window.setTimeout(() => {
       timers.current.delete(chore.id)
@@ -82,12 +87,18 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
       const at = list.findIndex((r) => r.chore.id === chore.id)
       const next = list.slice(at + 1).find((r) => hasAction(r) && !timers.current.has(r.chore.id))
       refocus.current = { next: next?.chore.id ?? null, until: Date.now() + REFOCUS_MS }
-      setFinishing((prev) => {
-        const next = new Set(prev)
-        next.delete(chore.id)
-        return next
-      })
-      completeRef.current(chore)
+      const complete = () => {
+        setFinishing((prev) => {
+          const next = new Set(prev)
+          next.delete(chore.id)
+          return next
+        })
+        completeRef.current(chore)
+      }
+      // On the home screen the row folds away and the rest glide into place (rows and room
+      // carry view-transition names while it runs; see ChoreList.css). The full list just updates.
+      if (shortRef.current) withViewTransition(complete, 'chores')
+      else complete()
     }, FEEDBACK_MS)
     timers.current.set(chore.id, { timer, chore })
   }, [])
@@ -128,6 +139,7 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
     const justDone = finishing.has(chore.id)
     return (
       <li key={chore.id} className={`cl-row cl-row-${status.state}${status.neglect ? ` cl-row-late${status.neglect}` : ''}${justDone ? ' cl-row-done' : ''}${row.doneToday ? ' cl-row-doneToday' : ''}`}
+        style={{ '--cl-vt': `cl-${chore.id.replace(/[^\w-]/g, '_')}` } as CSSProperties}
         // Ticked but not saved until the feedback ends: an app update must not reload over it.
         data-unsaved={justDone || undefined}
       >
