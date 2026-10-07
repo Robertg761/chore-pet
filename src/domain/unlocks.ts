@@ -157,7 +157,7 @@ function dayCounts(walkers: Walker[], active: Set<ISODate>, day: ISODate, vacati
 }
 
 /**
- * Days in a row the home was kept going, ending today. A day counts when at
+ * Current and best runs from one replay of the home through today. A day counts when at
  * least one chore was done (or nothing was due) and nothing was left to get
  * very neglected (level 2 or worse). Today counts as soon as it qualifies, and
  * while it doesn't yet it is simply not judged.
@@ -168,8 +168,8 @@ function dayCounts(walkers: Walker[], active: Set<ISODate>, day: ISODate, vacati
  * Seeded sample history (counts: false) isn't the player's, so it doesn't
  * make a day count.
  */
-export function currentStreak(chores: Chore[], completions: Completion[], today: ISODate, vacations: VacationWindow[] = []): number {
-  if (chores.length === 0) return 0
+export function streakHistory(chores: Chore[], completions: Completion[], today: ISODate, vacations: VacationWindow[] = []): { currentStreak: number; bestStreak: number } {
+  if (chores.length === 0) return { currentStreak: 0, bestStreak: 0 }
   const firstDay = chores.reduce((min, c) => (c.createdOn < min ? c.createdOn : min), chores[0].createdOn)
   const { daysPerRestToken, maxRestTokens } = STREAK_TUNING
 
@@ -178,6 +178,7 @@ export function currentStreak(chores: Chore[], completions: Completion[], today:
   const active = new Set(completions.filter((c) => c.counts !== false && ids.has(c.choreId)).map((c) => c.completedOn))
 
   let streak = 0
+  let bestStreak = 0
   // Every day from the first chore on, so rest tokens are exactly what was banked.
   let tokens = 0
   let towardToken = 0
@@ -185,6 +186,7 @@ export function currentStreak(chores: Chore[], completions: Completion[], today:
     if (isInVacation(day, vacations)) continue
     if (dayCounts(walkers, active, day, vacations)) {
       streak++
+      bestStreak = Math.max(bestStreak, streak)
       if (++towardToken >= daysPerRestToken) {
         towardToken = 0
         tokens = Math.min(maxRestTokens, tokens + 1)
@@ -198,7 +200,12 @@ export function currentStreak(chores: Chore[], completions: Completion[], today:
       towardToken = 0
     }
   }
-  return streak
+  return { currentStreak: streak, bestStreak }
+}
+
+/** Current run, using the same replay that recovers historical milestones. */
+export function currentStreak(chores: Chore[], completions: Completion[], today: ISODate, vacations: VacationWindow[] = []): number {
+  return streakHistory(chores, completions, today, vacations).currentStreak
 }
 
 function earned(rule: UnlockRule, choreCount: number, streak: number): boolean {

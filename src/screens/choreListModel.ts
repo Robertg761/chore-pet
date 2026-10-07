@@ -93,7 +93,9 @@ export function allCaughtUp(sections: ChoreSection[]): boolean {
 
 /** The next chore coming up, for the "all done" card. Null when nothing is scheduled ahead. */
 export function nextUpcoming(sections: ChoreSection[]): ChoreRow | null {
-  return sections.find((s) => s.id === 'soon')?.rows[0] ?? null
+  return sections.flatMap((s) => s.rows)
+    .filter((r) => r.status.state === 'upcoming')
+    .sort((a, b) => a.status.dueDate.localeCompare(b.status.dueDate) || a.chore.name.localeCompare(b.chore.name))[0] ?? null
 }
 
 /**
