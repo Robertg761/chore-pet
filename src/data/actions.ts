@@ -196,7 +196,7 @@ function fresh<T extends object>(row: T): T {
  * home per account. Returns nothing when the backup holds no home.
  */
 export function restoreHome(saved: Snapshot, current: Snapshot): NewOp[] {
-  const { home, pet, rooms, objects, chores, completions } = selectHome(saved.tables)
+  const { home, pet, rooms, objects, chores, completions } = selectHome(saved.tables, saved.activeHomeId)
   if (!home) return []
   const progress = saved.tables.progress[home.id]
   const homeId = id()

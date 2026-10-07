@@ -7,6 +7,7 @@ import {
   signInWithGoogle,
   signOutSafely,
   useAccount,
+  useAccountOperationError,
   type AccountResult,
 } from '../lib/account'
 import { appStore, useDataState } from '../data/appStore'
@@ -31,6 +32,7 @@ function hideUnknownEmail(r: AccountResult): AccountResult {
 
 export function AccountSection() {
   const account = useAccount()
+  const operationError = useAccountOperationError()
   const { savedLocally, pendingCount, rejectedCount } = useDataState()
   const [mode, setMode] = useState<Mode>('save')
   const [email, setEmail] = useState('')
@@ -77,7 +79,7 @@ export function AccountSection() {
     setBusy(false)
     if (r.ok) return
     setConfirm(null)
-    setError(r.reason === 'offline' ? OFFLINE : "Couldn't delete right now. Try again later.")
+    setError(r.reason === 'offline' ? OFFLINE : r.message)
     requestAnimationFrame(() => askRef.current?.focus())
   }
 
@@ -102,9 +104,9 @@ export function AccountSection() {
     </div>
   )
 
-  const failure = error && (
+  const failure = (error || operationError) && (
     <p className="account-error" role="alert">
-      {error}
+      {error || operationError}
     </p>
   )
 

@@ -21,6 +21,8 @@ export interface Remote {
    * sent with another account's token. Falls back to session() when missing.
    */
   currentUser?(): Promise<string | null>
+  /** Only report provenance for the session whose ID was just claimed. */
+  ownerKind?(userId: string): Promise<'guest' | 'saved'>
   pull(): Promise<Tables>
   upsert<T extends TableName>(table: T, rows: TableMap[T][]): Promise<RemoteResult>
   remove(table: TableName, keys: string[]): Promise<RemoteResult>
@@ -73,6 +75,13 @@ export function supabaseRemote(getClient: () => Promise<SupabaseClient>): Remote
       const { data, error } = await client.auth.getSession()
       if (error) throw error
       return data.session?.user.id ?? null
+    },
+    async ownerKind(userId) {
+      const client = await getClient()
+      const { data, error } = await client.auth.getSession()
+      if (error) throw error
+      if (data.session?.user.id !== userId) throw new Error('The account changed while syncing')
+      return data.session.user.is_anonymous ? 'guest' : 'saved'
     },
     async pull() {
       const client = await getClient()
