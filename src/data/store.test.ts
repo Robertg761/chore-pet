@@ -886,11 +886,11 @@ describe('saved homes (backups kept on this device)', () => {
     await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
     local.holdLock = async () => {
       // This restore was paused past its lock; another took over and wrote its own copy.
-      local.backups[key] = { ...local.backups[key], keptBy: 'the-other-restore' }
+      local.backups[key] = { ...local.backups[key], restoreToken: 'the-other-restore' }
       return false
     }
     expect(await store.restoreSaved('guest')).toBe(false)
-    expect(local.backups[key]?.keptBy).toBe('the-other-restore')
+    expect(local.backups[key]?.restoreToken).toBe('the-other-restore')
   })
 
   it('keeps the swapped-out copy, and counts the swap, when forgetting the brought-back copy fails', async () => {
@@ -900,9 +900,9 @@ describe('saved homes (backups kept on this device)', () => {
     const pipHome = selectHome(store.getState().snapshot.tables).home!
     await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
     const drop = local.dropBackup!.bind(local)
-    local.dropBackup = async (owner, keptBy) => {
+    local.dropBackup = async (owner, restoreToken) => {
       if (owner === 'guest') throw new Error('UnknownError')
-      return drop(owner, keptBy)
+      return drop(owner, restoreToken)
     }
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     expect(await store.restoreSaved('guest')).toBe(true)
@@ -928,6 +928,22 @@ describe('saved homes (backups kept on this device)', () => {
     expect((await store.savedHomes()).map((h) => h.petName)).toEqual(['Bun'])
     expect(await store.restoreSaved('anon-1')).toBe(true)
     expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Bun')
+  })
+
+  it('leaves a newer backup another tab wrote over the brought-back copy', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    const home = (name: string) => ({ ...createHousehold({ species: 'mochi', petName: name, userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    await local.backup!('guest', home('Bun'))
+    const drop = local.dropBackup!.bind(local)
+    local.dropBackup = async (owner, token) => {
+      // Just after the swap, another tab signs out with unsynced changes and backs up there.
+      if (owner === 'guest') await local.backup!('guest', home('Newer'))
+      return drop(owner, token)
+    }
+    expect(await store.restoreSaved('guest')).toBe(true)
+    expect((await store.savedHomes()).map((h) => h.petName)).toContain('Newer')
   })
 
   it('never offers a home held for another account, and clearing an account forgets its saved homes', async () => {

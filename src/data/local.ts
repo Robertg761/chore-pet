@@ -15,15 +15,17 @@ export interface LocalStore {
   backup?(ownerId: string, snapshot: Snapshot): Promise<void>
   /**
    * Forget that backup (the account was deleted, or it was brought back). With
-   * `keptBy`, only if the backup there is still the one that restore wrote.
+   * `restoreToken`, only if the backup there is still the one that restore
+   * wrote or claimed.
    */
-  dropBackup?(ownerId: string, keptBy?: string): Promise<void>
+  dropBackup?(ownerId: string, restoreToken?: string): Promise<void>
   /** Every backup kept on this device, by the account it came from. */
   listBackups?(): Promise<{ ownerId: string; snapshot: Snapshot }[]>
   /**
    * Start a restore, in one step: take the account's restore lock (`lock`) for
-   * `token` and read the backup. Null when the backup is gone or another
-   * restore (any tab) holds the lock, refreshed within `staleMs`.
+   * `token`, read the backup and mark it as claimed by `token`. Null when the
+   * backup is gone or another restore (any tab) holds the lock, refreshed
+   * within `staleMs`.
    */
   claimBackup?(ownerId: string, lock: string, token: string, now: number, staleMs: number): Promise<Snapshot | null>
   /** Refresh the lock if `token` still holds it; false when another restore took it over. */
@@ -139,8 +141,11 @@ export function indexedDbStore(): LocalStore {
           if (current && now - current.at < staleMs) return
           const req = store.get(backupKey(ownerId))
           req.onsuccess = () => {
-            claimed = (req.result as Snapshot | undefined) ?? null
-            if (claimed) store.put({ token, at: now } satisfies Lease, lock)
+            const found = (req.result as Snapshot | undefined) ?? null
+            if (!found) return
+            claimed = { ...found, restoreToken: token }
+            store.put(claimed, backupKey(ownerId))
+            store.put({ token, at: now } satisfies Lease, lock)
           }
         }
         tx.oncomplete = () => resolve(claimed)
@@ -174,16 +179,16 @@ export function indexedDbStore(): LocalStore {
         req.onerror = () => reject(req.error)
       })
     },
-    async dropBackup(ownerId, keptBy) {
+    async dropBackup(ownerId, restoreToken) {
       const d = await getDb()
       return new Promise((resolve, reject) => {
         const tx = d.transaction(STORE, 'readwrite')
         const store = tx.objectStore(STORE)
-        if (keptBy === undefined) store.delete(backupKey(ownerId))
+        if (restoreToken === undefined) store.delete(backupKey(ownerId))
         else {
           const req = store.get(backupKey(ownerId))
           req.onsuccess = () => {
-            if ((req.result as Snapshot | undefined)?.keptBy === keptBy) store.delete(backupKey(ownerId))
+            if ((req.result as Snapshot | undefined)?.restoreToken === restoreToken) store.delete(backupKey(ownerId))
           }
         }
         tx.oncomplete = () => resolve()
@@ -212,8 +217,8 @@ export function memoryStore(initial: Snapshot | null = null): LocalStore & { cur
     async backup(ownerId: string, snapshot: Snapshot) {
       store.backups[backupKey(ownerId)] = structuredClone(snapshot)
     },
-    async dropBackup(ownerId: string, keptBy?: string) {
-      if (keptBy === undefined || store.backups[backupKey(ownerId)]?.keptBy === keptBy) delete store.backups[backupKey(ownerId)]
+    async dropBackup(ownerId: string, restoreToken?: string) {
+      if (restoreToken === undefined || store.backups[backupKey(ownerId)]?.restoreToken === restoreToken) delete store.backups[backupKey(ownerId)]
     },
     async claimBackup(ownerId: string, lock: string, token: string, now: number, staleMs: number) {
       const current = store.locks[lock]
@@ -221,7 +226,8 @@ export function memoryStore(initial: Snapshot | null = null): LocalStore & { cur
       const found = store.backups[backupKey(ownerId)]
       if (!found) return null
       store.locks[lock] = { token, at: now }
-      return structuredClone(found)
+      store.backups[backupKey(ownerId)] = { ...found, restoreToken: token }
+      return structuredClone(store.backups[backupKey(ownerId)])
     },
     async holdLock(lock: string, token: string, now: number) {
       if (store.locks[lock]?.token !== token) return false

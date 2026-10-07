@@ -683,7 +683,7 @@ export function createStore({
           const replaced = selectHome(kept).home
           if (replaced) {
             keptKey = `${account ?? 'unclaimed'}:${replaced.id}`
-            await backup(keptKey, { ...before, tables: kept, heldFor: account, keptBy: token })
+            await backup(keptKey, { ...before, tables: kept, heldFor: account, restoreToken: token })
           }
           if (local.holdLock && !(await local.holdLock(lock, token, now().getTime()))) return false
           if (!stillHere()) return false
@@ -728,8 +728,9 @@ export function createStore({
         if (!done) return false
         // The restored home is stored: the swap has happened, whatever comes next.
         restored = true
-        // Forget the brought-back copy. If that fails it is only offered again.
-        await local.dropBackup?.(ownerId)?.catch(warn('Could not forget the brought-back copy'))
+        // Forget the brought-back copy (only if it is still the one claimed: another tab may have
+        // written a newer backup there since). If that fails it is only offered again.
+        await local.dropBackup?.(ownerId, token)?.catch(warn('Could not forget the brought-back copy'))
         return true
       } finally {
         // Not restored (cancelled by a sign-out or account deletion, say): the home being
