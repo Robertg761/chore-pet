@@ -1,8 +1,9 @@
 -- Apply before deploying the archive-aware client. Legacy DELETE requests are
 -- intercepted too; a cached count cannot destroy unseen completion rows.
 alter table public.chores add column archived_on date;
+-- Match 0006's accepted creation range, including dates from a bad device clock.
 alter table public.chores add constraint chores_archive_date
-  check (archived_on is null or (archived_on >= created_on and archived_on < date '2100-01-01')) not valid;
+  check (archived_on is null or (archived_on >= created_on and archived_on <= date '2999-12-31')) not valid;
 
 -- Keep the composite tenant FK, but furniture removal must not delete tasks.
 alter table public.chores drop constraint chores_object_fkey;
