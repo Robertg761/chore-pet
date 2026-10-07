@@ -53,9 +53,16 @@ export default defineConfig(({ mode }) => ({
     react(),
     contentSecurityPolicy(loadEnv(mode, process.cwd(), 'VITE_').VITE_SUPABASE_URL || undefined),
     VitePWA({
-      registerType: 'autoUpdate',
-      // Lets a tap on a reminder open the app (public/sw-notifications.js).
-      workbox: { importScripts: ['sw-notifications.js'] },
+      // A new deploy waits for the player's go-ahead (src/pwa/UpdateBanner.tsx) or for the app
+      // to go into the background, so nobody is reloaded mid-chore.
+      registerType: 'prompt',
+      injectRegister: false,
+      workbox: {
+        // Lets a tap on a reminder open the app (public/sw-notifications.js).
+        importScripts: ['sw-notifications.js'],
+        // Files (the demo video, icons) are fetched as themselves, never answered with the app.
+        navigateFallbackDenylist: [/\/[^/?]+\.[a-z0-9]+$/i],
+      },
       manifest: {
         name: 'Chore Pet',
         short_name: 'Chore Pet',
