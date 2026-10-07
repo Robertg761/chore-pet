@@ -1,6 +1,6 @@
 import { addDays, isInVacation } from './dates'
-import { completionDays, scheduleStart, startReplay, type ChoreReplay } from './schedule'
-import type { Chore, Completion, ISODate, Progress, Schedule, VacationWindow } from './types'
+import { choreAsOf, completionDays, scheduleStart, startReplay, type ChoreReplay } from './schedule'
+import type { Chore, Completion, ISODate, Progress, VacationWindow } from './types'
 
 // Rewards come only from real chores getting done (docs/SPEC.md), and every
 // reward is purely cosmetic: outfits, styles and decor that brings no chores.
@@ -126,8 +126,7 @@ function walkersFor(chore: Chore, completions: Completion[]): Walker[] {
   const start = scheduleStart(chore)
   const current: Walker = { chore, replay: startReplay(chore), days, fed: 0, from: start }
   if (start <= chore.createdOn) return [current]
-  const { since: _since, ...always } = chore.schedule.before ?? { ...chore.schedule, before: undefined }
-  const before: Walker = { chore, replay: startReplay({ ...chore, schedule: always as Schedule }), days, fed: 0, from: chore.createdOn, until: start }
+  const before: Walker = { chore, replay: startReplay(choreAsOf(chore, chore.createdOn)), days, fed: 0, from: chore.createdOn, until: start }
   return [before, current]
 }
 

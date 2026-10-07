@@ -188,7 +188,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     const level = neglect?.[messObject.id] ?? 0
     line = (state.beat % 2 === 0 && messLine(messEntry.mess, level, state.beat)) || objectLine(messEntry.id, messiest.chore.name, state.beat) || null
   } else if (a.kind === 'idle' && state.beat % 4 === 0 && state.beat > 0 && !away) {
-    const caughtUp = chores.length > 0 && !statuses.some((s) => s.state === 'overdue')
+    const caughtUp = chores.length > 0 && !statuses.some((s) => s.state === 'overdue' || s.state === 'due')
     line = pickLine(caughtUp && state.beat % 8 === 0 ? CAUGHT_UP_LINES : MOOD_LINES[mood], state.beat)
   }
 

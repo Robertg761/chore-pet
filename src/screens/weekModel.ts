@@ -1,5 +1,6 @@
 import { addDays, isInVacation, weekdayOf } from '../domain/dates'
 import { petCondition } from '../domain/health'
+import { choreAsOf } from '../domain/schedule'
 import type { Chore, Completion, ISODate, Mood, VacationWindow } from '../domain/types'
 
 // Pure helpers for the week view: the last seven days, how many chores were
@@ -78,7 +79,8 @@ export function healthPerDay(
   days: WeekDay[],
 ): DayHealth[] {
   return days.map((d) => {
-    const existing = chores.filter((c) => c.createdOn <= d.date)
+    // Each chore as its schedule stood that day, so a later edit doesn't rewrite the past.
+    const existing = chores.filter((c) => c.createdOn <= d.date).map((c) => choreAsOf(c, d.date))
     const doneByThen = completions.filter((c) => c.completedOn <= d.date)
     const { health, mood } = petCondition(existing, doneByThen, d.date, vacations)
     return { date: d.date, health, mood, away: isInVacation(d.date, vacations) }

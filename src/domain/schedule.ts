@@ -116,6 +116,18 @@ export function scheduleStart(chore: Chore): ISODate {
   return since && since > chore.createdOn ? since : chore.createdOn
 }
 
+/**
+ * The chore as its schedule stood on `day`. Before a schedule change, that is
+ * the schedule it replaced (`before`), applied as if from the start; a change
+ * made before schedules kept `before` falls back to the current rule. Used to
+ * judge past days (streaks, the week's health) by the rule of the time.
+ */
+export function choreAsOf(chore: Chore, day: ISODate): Chore {
+  if (day >= scheduleStart(chore)) return chore
+  const { since: _since, ...rule } = chore.schedule.before ?? { ...chore.schedule, before: undefined }
+  return { ...chore, schedule: rule as Schedule }
+}
+
 /** A chore's completion days for the replay: its own, one per calendar day, in order. */
 export function completionDays(chore: Chore, completions: Completion[]): ISODate[] {
   return [...new Set(completions.filter((c) => c.choreId === chore.id).map((c) => c.completedOn))].sort()

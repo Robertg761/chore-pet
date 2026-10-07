@@ -85,6 +85,15 @@ describe('healthPerDay', () => {
     expect(result[6].health).toBeLessThan(100)
   })
 
+  it('keeps past days as they were when a chore is edited today', () => {
+    // Daily since 10-01 and never done, then switched to weekly today.
+    const before = healthPerDay([chore('a', '2026-10-01')], [], [], days)
+    const edited: Chore = { ...chore('a', '2026-10-01'), schedule: { kind: 'weekly', weekday: 3, since: TODAY, before: { kind: 'daily' } } }
+    const after = healthPerDay([edited], [], [], days)
+    expect(after.slice(0, 6).map((d) => d.health)).toEqual(before.slice(0, 6).map((d) => d.health))
+    expect(after[5].health).toBeLessThan(100)
+  })
+
   it('ignores completions made after a day and chores created after it', () => {
     const chores = [chore('a', '2026-10-01'), chore('late', '2026-10-06')]
     const completions = [done('a', '2026-10-05'), done('a', '2026-10-06'), done('a', '2026-10-07')]
