@@ -8,5 +8,11 @@ export interface ObjectArt {
   footprint: { w: number; d: number }
   /** Shared by every mess stage, so swapping stages never shifts the object. */
   bounds: { x: number; y: number; width: number; height: number }
+  /**
+   * The visual top of the clean drawing (object-local y). `bounds` leaves
+   * headroom for the messiest stage, so this is where neglect cues sit and
+   * where catalog thumbnails are cropped. Without it, cleanTop() in ./index.ts estimates one.
+   */
+  cueY?: number
   render: (stage: MessStage) => ReactNode
 }

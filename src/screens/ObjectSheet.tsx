@@ -5,6 +5,7 @@ import { dueText } from './buildModel'
 import { describeSchedule } from './choreForm'
 import { ChoreInlineEditor } from './ChoreInlineEditor'
 import { ObjectThumb } from './ObjectThumb'
+import '../shell/controls.css'
 import './ObjectSheet.css'
 
 export interface ObjectSheetProps {
@@ -21,7 +22,8 @@ export interface ObjectSheetProps {
   onSaveChore: (chore: Chore | null, value: { name: string; schedule: Schedule }) => void
   onRemoveChore: (chore: Chore) => void
   onTurn: () => void
-  onRemove: () => void
+  /** Takes the object out of the room. `keepChores` leaves its chores in the list, no longer tied to a place. */
+  onRemove: (keepChores: boolean) => void
   onClose: () => void
 }
 
@@ -111,11 +113,11 @@ function Sheet({
             if (removingChore === chore.id) {
               return (
                 <li key={chore.id} className="sheet-chore sheet-confirm" role="group" aria-label={`Remove ${chore.name}`}>
-                  <p>Remove “{chore.name}”?</p>
+                  <p>Remove “{chore.name}”? Rewards you earned stay.</p>
                   <div className="sheet-pair">
                     <button
                       type="button"
-                      className="os-btn os-btn-danger"
+                      className="btn btn-danger os-btn"
                       onClick={() => {
                         pendingFocus.current = () => addRef.current
                         setRemovingChore(null)
@@ -127,7 +129,7 @@ function Sheet({
                     <button
                       ref={keepChoreRef}
                       type="button"
-                      className="os-btn"
+                      className="btn os-btn"
                       onClick={() => {
                         pendingFocus.current = () => rowRefs.current.get(`${chore.id}:remove`) ?? null
                         setRemovingChore(null)
@@ -145,13 +147,15 @@ function Sheet({
                   type="button"
                   className="sheet-chore-main"
                   ref={(el) => void rowRefs.current.set(chore.id, el)}
-                  aria-label={`Edit ${chore.name}`}
                   onClick={() => {
                     setRemovingChore(null)
                     setEditing(chore.id)
                   }}
                 >
-                  <span className="sheet-chore-name">{chore.name}</span>
+                  <span className="sheet-chore-name">
+                    <span className="sr-only">Edit </span>
+                    {chore.name}
+                  </span>
                   <span className="sheet-chore-when">{describeSchedule(chore.schedule)}</span>
                   <span className={`sheet-chore-due${due.late ? ' is-late' : ''}`}>{due.text}</span>
                 </button>
@@ -188,7 +192,7 @@ function Sheet({
           <button
             ref={addRef}
             type="button"
-            className="os-btn sheet-add"
+            className="btn os-btn sheet-add"
             onClick={() => {
               setRemovingChore(null)
               setEditing('new')
@@ -202,39 +206,44 @@ function Sheet({
       <div className="sheet-block">
         {removing ? (
           <div className="sheet-confirm" role="group" aria-label={`Remove ${lowerName} from room`}>
-            <p>Remove the {lowerName}? Its chores go too.</p>
-            <div className="sheet-pair">
-              <button type="button" className="os-btn os-btn-danger" onClick={onRemove}>
-                Remove
+            <p>{chores.length > 0 ? `Remove the ${lowerName}? Its chores go too. Rewards stay.` : `Remove the ${lowerName}? Rewards stay.`}</p>
+            <div className="sheet-choices">
+              <button type="button" className="btn btn-danger os-btn" onClick={() => onRemove(false)}>
+                {chores.length > 0 ? 'Remove with its chores' : 'Remove'}
               </button>
+              {chores.length > 0 && (
+                <button type="button" className="btn os-btn" onClick={() => onRemove(true)}>
+                  Keep its chores
+                </button>
+              )}
               <button
                 ref={keepRef}
                 type="button"
-                className="os-btn"
+                className="btn btn-quiet os-btn sheet-cancel"
                 onClick={() => {
                   pendingFocus.current = () => removeRef.current
                   setRemoving(false)
                 }}
               >
-                Keep it
+                Cancel
               </button>
             </div>
           </div>
         ) : (
           <div className="sheet-pair">
-            <button type="button" className="os-btn" onClick={onTurn} disabled={!canTurn} aria-describedby={canTurn ? undefined : `${uid}-turn-hint`}>
+            <button type="button" className="btn os-btn" onClick={onTurn} disabled={!canTurn} aria-describedby={canTurn ? undefined : `${uid}-turn-hint`}>
               Turn
             </button>
             <button
               ref={removeRef}
               type="button"
-              className="os-btn os-btn-quiet"
+              className="btn btn-danger os-btn"
               onClick={() => {
                 pendingFocus.current = () => keepRef.current
                 setRemoving(true)
               }}
             >
-              Remove from room
+              Remove
             </button>
           </div>
         )}

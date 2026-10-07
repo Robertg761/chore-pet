@@ -1,5 +1,5 @@
 import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room } from '../domain/types'
-import type { TableMap, TableName } from './tables'
+import type { Created, TableMap, TableName } from './tables'
 
 // Domain objects (camelCase) <-> database rows (snake_case). owner_id is never
 // written: the database fills it from auth.uid() and row-level security checks it.
@@ -11,12 +11,21 @@ interface Mapper<T> {
   fromRow: (row: Row) => T
 }
 
-const homes: Mapper<Home> = {
+/** created_at is read, never written: the database sets it on insert. */
+const created = (r: Row): Created => (typeof r.created_at === 'string' ? { createdAt: r.created_at } : {})
+
+const homes: Mapper<Home & Created> = {
   toRow: (h) => ({ id: h.id, name: h.name, vacations: h.vacations }),
-  fromRow: (r) => ({ id: r.id as string, ownerId: r.owner_id as string, name: r.name as string, vacations: (r.vacations as Home['vacations']) ?? [] }),
+  fromRow: (r) => ({
+    id: r.id as string,
+    ownerId: r.owner_id as string,
+    name: r.name as string,
+    vacations: (r.vacations as Home['vacations']) ?? [],
+    ...created(r),
+  }),
 }
 
-const rooms: Mapper<Room> = {
+const rooms: Mapper<Room & Created> = {
   toRow: (r) => ({ id: r.id, home_id: r.homeId, type: r.type, floor_style: r.floorStyle, wall_style: r.wallStyle }),
   fromRow: (r) => ({
     id: r.id as string,
@@ -24,6 +33,7 @@ const rooms: Mapper<Room> = {
     type: r.type as Room['type'],
     floorStyle: r.floor_style as string,
     wallStyle: r.wall_style as string,
+    ...created(r),
   }),
 }
 

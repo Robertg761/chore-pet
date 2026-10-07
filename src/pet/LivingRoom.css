@@ -43,3 +43,9 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* The pet button in the room (src/room/Room.tsx): no box on tap or click; a
+   clear accent ring round its feet when reached by keyboard. */
+.room-pet { outline: none; }
+.room-pet .room-pet-ring { opacity: 0; }
+.room-pet:focus-visible .room-pet-ring { opacity: 1; }

@@ -173,7 +173,7 @@ export function sampleHome(input: SampleHomeInput): NewOp[] {
     const late = SAMPLE_LATE_CHORES.find((l) => l.catalogId === catalogId && l.choreName === chore.name)
     const dates = late ? lateHistory(chore, late, start, input.today) : upToDateHistory(chore, start, yesterday)
     for (const date of dates) {
-      ops.push(...completeChore(chore, null, momentOn(date, count), { counts: false }))
+      ops.push(...completeChore(chore, null, momentOn(date, count), { counts: false, realNow: null }))
       count++
     }
   }

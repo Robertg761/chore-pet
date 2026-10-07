@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { useViewport, WIDE_MIN } from '../shell/useViewport'
+import { ScreenHeader } from '../shell/ScreenHeader'
+import { useWide } from '../shell/useViewport'
 import { PALETTE } from '../art/palette'
 import type { Chore, Completion, ISODate, VacationWindow } from '../domain/types'
 import { healthColour } from './doneMoment'
@@ -83,7 +84,7 @@ function layout(wide: boolean, plotH: number) {
 }
 
 export function WeekView({ chores, completions, vacations, today, onClose }: WeekViewProps) {
-  const wide = useViewport().width >= WIDE_MIN
+  const wide = useWide()
   // Inside the app frame the chart stretches to the space it is given (no page scroll);
   // elsewhere it keeps its default shape.
   const plotRef = useRef<HTMLDivElement>(null)
@@ -117,17 +118,8 @@ export function WeekView({ chores, completions, vacations, today, onClose }: Wee
   const points = health.map((h, i) => `${centreX(i)},${healthY(h.health)}`).join(' ')
 
   return (
-    <section className="wk" aria-labelledby="wk-title">
-      <div className="wk-head">
-        <h1 id="wk-title" className="wk-title">
-          This week
-        </h1>
-        {onClose && (
-          <button type="button" className="link-button wk-close" onClick={onClose}>
-            Back
-          </button>
-        )}
-      </div>
+    <section className="wk screen-fit" aria-labelledby="wk-title">
+      <ScreenHeader id="wk-title" title="Your week" onBack={onClose} />
       <p className="wk-summary">{summary.line}</p>
 
       <div className="wk-card">
@@ -225,7 +217,7 @@ export function WeekView({ chores, completions, vacations, today, onClose }: Wee
         <p className="wk-note">Dots show how your pet felt at the end of each day.</p>
       </div>
 
-      <div className="wk-sr">
+      <div className="sr-only">
         <table>
           <caption>Chores done and health for the last seven days</caption>
           <thead>

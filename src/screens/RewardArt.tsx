@@ -12,19 +12,26 @@ import { hasRewardArt } from './rewardsModel'
 // Small pictures of rewards, shared by the gift box and the rewards screen.
 // Everything here is decorative: the name is always written next to it.
 
-const { ink, white } = PALETTE
-const SOFT = '#e4dcf7'
+const { ink, white, warmRed, blush } = PALETTE
 
-/** A soft wrapped gift: for rewards not earned yet, or whose art isn't ready. */
-export function GiftSilhouette({ className, tint = SOFT }: { className?: string; tint?: string }) {
+/** A wrapped gift in the gift box's red and pink, softened: for rewards not earned yet, or whose art isn't ready. */
+export function GiftSilhouette({ className, lock = false }: { className?: string; lock?: boolean }) {
   return (
     <svg className={className} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <g stroke={ink} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" opacity="0.55">
-        <rect x="8" y="21" width="32" height="20" rx="4" fill={tint} />
-        <rect x="6" y="15" width="36" height="9" rx="3.5" fill={tint} />
-        <path d="M24 15 V41" fill="none" stroke={ink} />
-        <path d="M24 15 C18 6 10 9 15 14 C18 16 22 15 24 15 C26 15 30 16 33 14 C38 9 30 6 24 15 Z" fill="#fff" />
+      <g stroke={ink} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" opacity="0.6">
+        <rect x="8" y="21" width="32" height="20" rx="4" fill={warmRed} />
+        <rect x="6" y="15" width="36" height="9" rx="3.5" fill={warmRed} />
+        <path d="M24 15 V41" fill="none" />
+        <rect x="21" y="15" width="6" height="26" fill={blush} strokeWidth="0" />
+        <path d="M24 15 C18 6 10 9 15 14 C18 16 22 15 24 15 C26 15 30 16 33 14 C38 9 30 6 24 15 Z" fill={blush} />
       </g>
+      {lock && (
+        <g stroke={ink} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round">
+          <path d="M33 33 V30.5 A4.5 4.5 0 0 1 42 30.5 V33" fill="none" />
+          <rect x="30" y="32.5" width="15" height="11.5" rx="3.5" fill={white} />
+          <circle cx="37.5" cy="38" r="1.7" fill={ink} stroke="none" />
+        </g>
+      )}
     </svg>
   )
 }
@@ -88,7 +95,7 @@ function StyleSwatch({ unlock, className }: { unlock: Unlock; className?: string
 
 /** The reward's picture, or a wrapped gift when it isn't earned or isn't drawn yet. */
 export function RewardArt({ unlock, pet, locked = false, className }: { unlock: Unlock; pet: Pet; locked?: boolean; className?: string }) {
-  if (locked || !hasRewardArt(unlock)) return <GiftSilhouette className={className} />
+  if (locked || !hasRewardArt(unlock)) return <GiftSilhouette className={className} lock={locked} />
   if (unlock.kind === 'item') return <ItemOnPet unlock={unlock} pet={pet} className={className} />
   if (unlock.kind === 'decor') {
     const entry = catalogEntry(unlock.ref)

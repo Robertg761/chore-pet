@@ -20,6 +20,8 @@ import {
   type ChoreFormState,
   type ScheduleKind,
 } from './choreForm'
+import { CharCounter } from './CharCounter'
+import '../shell/controls.css'
 
 // A compact chore form for the object sheet. The full-page ChoreEditor has its
 // own title, delete flow and big cards, so it doesn't fit inside a card.
@@ -69,14 +71,17 @@ export function ChoreInlineEditor({ chore, onSave, onCancel }: ChoreInlineEditor
   return (
     <form className="ce" onSubmit={submit} noValidate aria-label={chore ? 'Edit chore' : 'Add a chore'}>
       <div className="ce-field">
-        <label htmlFor={nameId}>Name</label>
+        <div className="ce-label-row">
+          <label htmlFor={nameId}>Name</label>
+          <CharCounter value={form.name} max={NAME_MAX} />
+        </div>
         <input
           ref={nameRef}
           id={nameId}
-          className="ce-input"
+          className="field ce-input"
           type="text"
           value={form.name}
-          maxLength={NAME_MAX + 10}
+          maxLength={NAME_MAX}
           placeholder="Wipe the counter"
           autoComplete="off"
           enterKeyHint="done"
@@ -95,7 +100,7 @@ export function ChoreInlineEditor({ chore, onSave, onCancel }: ChoreInlineEditor
         <label htmlFor={kindId}>How often?</label>
         <select
           id={kindId}
-          className="ce-input"
+          className="field ce-input"
           value={form.kind}
           onChange={(e) => patch({ kind: e.target.value as ScheduleKind })}
         >
@@ -111,13 +116,13 @@ export function ChoreInlineEditor({ chore, onSave, onCancel }: ChoreInlineEditor
         <div className="ce-field">
           <label htmlFor={nId}>Every how many days?</label>
           <div className="ce-stepper">
-            <button type="button" className="ce-step" aria-label="One day fewer" onClick={() => patch({ n: stepN(form.n, -1) })}>
+            <button type="button" className="btn ce-step" aria-label="One day fewer" onClick={() => patch({ n: stepN(form.n, -1) })}>
               <span aria-hidden="true">-</span>
             </button>
             <input
               ref={nRef}
               id={nId}
-              className="ce-input ce-n"
+              className="field ce-input ce-n"
               type="text"
               inputMode="numeric"
               autoComplete="off"
@@ -126,7 +131,7 @@ export function ChoreInlineEditor({ chore, onSave, onCancel }: ChoreInlineEditor
               aria-describedby={err('n') ? `${nId}-err` : undefined}
               onChange={(e) => patch({ n: e.target.value })}
             />
-            <button type="button" className="ce-step" aria-label="One day more" onClick={() => patch({ n: stepN(form.n, 1) })}>
+            <button type="button" className="btn ce-step" aria-label="One day more" onClick={() => patch({ n: stepN(form.n, 1) })}>
               <span aria-hidden="true">+</span>
             </button>
             <span className="ce-unit" aria-hidden="true">
@@ -157,7 +162,7 @@ export function ChoreInlineEditor({ chore, onSave, onCancel }: ChoreInlineEditor
                   <input type="radio" name={`${uid}-weekday`} checked={form.weekday === d} onChange={() => patch({ weekday: d })} />
                 )}
                 <span aria-hidden="true">{WEEKDAY_SHORT[d]}</span>
-                <span className="ce-sr">{WEEKDAY_LONG[d]}</span>
+                <span className="sr-only">{WEEKDAY_LONG[d]}</span>
               </label>
             ))}
           </div>
@@ -172,7 +177,7 @@ export function ChoreInlineEditor({ chore, onSave, onCancel }: ChoreInlineEditor
       {form.kind === 'monthly' && (
         <div className="ce-field">
           <label htmlFor={domId}>Day of the month</label>
-          <select id={domId} className="ce-input" value={form.dayOfMonth} onChange={(e) => patch({ dayOfMonth: Number(e.target.value) })}>
+          <select id={domId} className="field ce-input" value={form.dayOfMonth} onChange={(e) => patch({ dayOfMonth: Number(e.target.value) })}>
             {MONTH_DAYS.map((d) => (
               <option key={d} value={d}>
                 {ordinal(d)}
@@ -185,15 +190,15 @@ export function ChoreInlineEditor({ chore, onSave, onCancel }: ChoreInlineEditor
 
       {schedule && (
         <p className="ce-summary" aria-live="polite">
-          <span className="ce-summary-label">Repeats</span> {describeSchedule(schedule)}
+          {describeSchedule(schedule)}
         </p>
       )}
 
       <div className="ce-actions">
-        <button type="submit" className="os-btn os-btn-primary">
+        <button type="submit" className="btn btn-primary">
           Save
         </button>
-        <button type="button" className="os-btn" onClick={onCancel}>
+        <button type="button" className="btn" onClick={onCancel}>
           Cancel
         </button>
       </div>

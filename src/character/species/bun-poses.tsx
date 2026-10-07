@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
-import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
+import { PALETTE } from '../../art/palette'
+import { CheerMarks } from '../accent'
+import { Ink } from '../ink'
 import type { Mood } from '../../domain/types'
 import type { MoodPoses } from '../poses'
 import type { Anchor, Pose } from '../slots'
@@ -8,8 +10,6 @@ import { BODY, HIGHLIGHT, ear } from './bun'
 
 // Bun mood poses. Ears carry the mood (see EAR_DROOP in bun.tsx); posture does
 // the rest by squashing, tilting and lowering the same idle silhouette.
-
-const { ink } = PALETTE
 
 /** Posture of the idle silhouette: squash about the ground point, tilt, then lift. */
 interface Posture {
@@ -95,7 +95,7 @@ function figure(props: FigureProps) {
   const my = squashY(mouthY, posture)
   const cy = squashY(mouthY - 2, posture)
   return (
-    <g stroke={ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" strokeLinecap="round">
+    <Ink>
       <Shadow rx={shadowRx} />
       <g transform={figureTransform(posture)}>
         <g transform={`translate(100 ${GROUND}) scale(${posture.sx} ${posture.sy}) translate(-100 ${-GROUND})`}>
@@ -103,7 +103,7 @@ function figure(props: FigureProps) {
           <g transform="translate(200 0) scale(-1 1)">{ear(droop[1], colour, mood)}</g>
           {behind}
           <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
-          <MoodTint d={BODY} mood={mood} smudges={smudges ?? [[66, 160], [134, 118], [126, 168]]} />
+          <MoodTint d={BODY} mood={mood} colour={colour} smudges={smudges ?? [[66, 160], [134, 118], [126, 168]]} />
           {front}
         </g>
         <Cheeks y={cy} spread={36} />
@@ -111,7 +111,7 @@ function figure(props: FigureProps) {
         <path d="M95.5 134.5 h9 l-4.5 4.5 Z" fill={PALETTE.blush} strokeWidth={2.5} transform={`translate(0 ${squashY(134.5, posture) - 134.5})`} />
       </g>
       {extras}
-    </g>
+    </Ink>
   )
 }
 
@@ -243,10 +243,6 @@ const bunSleeping: Pose = {
 // cheering: arms up, ears fully perked, a little hop with a smaller shadow.
 const CHEERING: Posture = { sx: 0.98, sy: 1, tilt: 0, dy: -13 }
 
-function sparkle(x: number, y: number, s: number) {
-  return <path d={`M${x} ${y - s} V${y + s} M${x - s} ${y} H${x + s}`} fill="none" strokeWidth={3.5} />
-}
-
 const bunCheering: Pose = {
   id: 'bun-cheering',
   renderBody: (colour) =>
@@ -268,10 +264,7 @@ const bunCheering: Pose = {
         </>
       ),
       extras: (
-        <>
-          {sparkle(22, 70, 7)}
-          {sparkle(178, 52, 8)}
-        </>
+        <CheerMarks heart={[24, 72, 22]} star={[177, 54, 20]} />
       ),
     }),
   silhouette: silhouetteFor(CHEERING),
@@ -288,7 +281,7 @@ const sickY = (y: number) => SICK_BOTTOM - (GROUND - y) * SICK_SCALE
 const bunSick: Pose = {
   id: 'bun-sick',
   renderBody: (colour) => (
-    <g stroke={ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" strokeLinecap="round">
+    <Ink>
       <Shadow rx={80} />
       <SickBedBack />
       {/* Bun, shrunk into the bed */}
@@ -296,7 +289,7 @@ const bunSick: Pose = {
         {ear(128, colour, 'sick')}
         <g transform="translate(200 0) scale(-1 1)">{ear(128, colour, 'sick')}</g>
         <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
-        <MoodTint d={BODY} mood="sick" smudges={[[62, 128], [140, 116], [118, 104]]} />
+        <MoodTint d={BODY} mood="sick" colour={colour} smudges={[[62, 128], [140, 116], [118, 104]]} />
       </g>
       <Cheeks y={sickY(143)} spread={31} />
       <Face mood="sick" eyeY={sickY(126)} mouthY={sickY(145)} />
@@ -306,7 +299,7 @@ const bunSick: Pose = {
       <Nub cx={54} cy={151} rx={11} ry={8} rotate={-10} fill={colour} />
       <Nub cx={152} cy={152} rx={11} ry={8} rotate={10} fill={colour} />
       <Thermometer x={103} y={139} rotate={18} />
-    </g>
+    </Ink>
   ),
   // Tucked in bed: the outfit, backpack and scarf or bow tie are under the covers.
   hides: ['outfit', 'back', 'neck'],

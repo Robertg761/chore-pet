@@ -2,10 +2,13 @@ import { useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { Character } from '../character/Character'
 import { SPECIES_COLOUR } from '../art/palette'
 import { SPECIES, type Species } from '../domain/types'
+import { ScreenHeader } from '../shell/ScreenHeader'
 import './PetPicker.css'
 
 export interface PetPickerProps {
   onChoose: (choice: { species: Species; name: string }) => void
+  /** Shows a Back button in the header (replaces a Back link placed above this screen). */
+  onBack?: () => void
 }
 
 const INFO: Record<Species, { label: string; blurb: string }> = {
@@ -16,7 +19,7 @@ const INFO: Record<Species, { label: string; blurb: string }> = {
 
 const MAX_NAME = 20
 
-export function PetPicker({ onChoose }: PetPickerProps) {
+export function PetPicker({ onChoose, onBack }: PetPickerProps) {
   const [species, setSpecies] = useState<Species>('mochi')
   const [name, setName] = useState('')
   const cardRefs = useRef<Partial<Record<Species, HTMLButtonElement | null>>>({})
@@ -45,7 +48,7 @@ export function PetPicker({ onChoose }: PetPickerProps) {
 
   return (
     <form className="picker" onSubmit={submit}>
-      <h1 className="picker-title" id="picker-title">Who's moving in?</h1>
+      <ScreenHeader id="picker-title" title="Who's moving in?" onBack={onBack} />
       <p className="picker-sub">Pick a friend for your new home. You can change how they look later.</p>
 
       <div className="picker-cards" role="radiogroup" aria-labelledby="picker-title" onKeyDown={onKeyDown}>
@@ -61,7 +64,7 @@ export function PetPicker({ onChoose }: PetPickerProps) {
               role="radio"
               aria-checked={selected}
               tabIndex={selected ? 0 : -1}
-              className="picker-card"
+              className="picker-card choice"
               onClick={() => select(s)}
             >
               <span className="picker-art" aria-hidden="true">
@@ -85,6 +88,7 @@ export function PetPicker({ onChoose }: PetPickerProps) {
         <label htmlFor="pet-name">Name your pet</label>
         <input
           id="pet-name"
+          className="field"
           type="text"
           value={name}
           maxLength={MAX_NAME}
@@ -94,7 +98,7 @@ export function PetPicker({ onChoose }: PetPickerProps) {
         />
       </div>
 
-      <button type="submit" className="picker-go">Move in</button>
+      <button type="submit" className="btn btn-primary picker-go">Move in</button>
     </form>
   )
 }

@@ -1,4 +1,6 @@
-import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
+import { PALETTE } from '../../art/palette'
+import { CheerMarks } from '../accent'
+import { Ink } from '../ink'
 import type { Mood } from '../../domain/types'
 import type { MoodPoses } from '../poses'
 import { Body, Cheeks, Face, IcePack, MoodTint, Nub, Shadow, SickBedBack, SickBedFront, Thermometer } from '../parts'
@@ -8,7 +10,7 @@ import { BODY, HIGHLIGHT, mochiKnot, mochiPleats } from './mochi'
 // Mochi mood poses (Phase 0 batch A). Each reuses the idle dumpling, squashed,
 // leaned or lifted around the ground point, so they stay one family.
 
-const { ink, white } = PALETTE
+const { ink } = PALETTE
 
 const GROUND_Y = 181
 const IDLE_ANCHORS = {
@@ -99,7 +101,7 @@ function figure({
   shadowRx = 62,
 }: FigureProps) {
   return (
-    <g stroke={ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" strokeLinecap="round">
+    <Ink>
       <Shadow rx={shadowRx} />
       <g transform={transformOf(shape)}>
         <Nub cx={feet[0]} cy={178} rx={15} ry={9} fill={colour} />
@@ -110,11 +112,11 @@ function figure({
         {mochiKnot(colour, knotTilt)}
         <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
         {mochiPleats()}
-        <MoodTint d={BODY} mood={tintMood} smudges={smudges} />
+        <MoodTint d={BODY} mood={tintMood} colour={colour} smudges={smudges} />
         <Cheeks y={cheekY} spread={40} />
         <Face mood={faceMood} eyeY={eyeY} mouthY={mouthY} />
       </g>
-    </g>
+    </Ink>
   )
 }
 
@@ -245,21 +247,10 @@ const mochiSleeping: Pose = {
 
 const CHEERING: Shape = { sx: 0.97, sy: 1.04, lift: 14 }
 
-function sparkle(x: number, y: number, r: number) {
-  const k = r * 0.35
-  return (
-    <path
-      d={`M${x} ${y - r} Q${x + k} ${y - k} ${x + r} ${y} Q${x + k} ${y + k} ${x} ${y + r} Q${x - k} ${y + k} ${x - r} ${y} Q${x - k} ${y - k} ${x} ${y - r} Z`}
-      fill={white}
-      strokeWidth={3}
-    />
-  )
-}
-
 const mochiCheering: Pose = {
   id: 'mochi-cheering',
   renderBody: (colour) => (
-    <g stroke={ink} strokeLinejoin="round" strokeLinecap="round">
+    <g>
       {figure({
         colour,
         tintMood: 'happy',
@@ -272,8 +263,7 @@ const mochiCheering: Pose = {
         feet: [78, 122],
         shadowRx: 46,
       })}
-      {sparkle(26, 52, 9)}
-      {sparkle(176, 40, 7)}
+      <CheerMarks heart={[26, 54, 22]} star={[176, 42, 20]} />
     </g>
   ),
   silhouette: silhouetteFor(CHEERING),
@@ -290,17 +280,17 @@ const sickAnchors = anchorsFor(SICK)
 
 const mochiSick: Pose = {
   id: 'mochi-sick',
-  renderBody: (colour, mood) => (
-    <g stroke={ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" strokeLinecap="round">
+  renderBody: (colour) => (
+    <Ink>
       <Shadow rx={84} />
       <SickBedBack />
       {/* Mochi, propped up on the pillow */}
-      <g transform={transformOf(SICK)} strokeWidth={CHARACTER_STROKE / SICK_SCALE}>
+      <Ink k={1 / SICK_SCALE} transform={transformOf(SICK)}>
         {mochiKnot(colour, KNOT_DROOP)}
         <Body d={BODY} colour={colour} highlight={HIGHLIGHT} />
         {mochiPleats(3 / SICK_SCALE)}
-        <MoodTint d={BODY} mood={mood === 'sick' ? mood : 'sick'} smudges={[[54, 126], [142, 108], [128, 140]]} />
-      </g>
+        <MoodTint d={BODY} mood="sick" colour={colour} smudges={[[54, 126], [142, 108], [128, 140]]} />
+      </Ink>
       <g transform="rotate(-3 100 132)">
         <Cheeks y={139} spread={34} />
         <Face mood="sick" eyeY={126} mouthY={138} />
@@ -310,7 +300,7 @@ const mochiSick: Pose = {
       <Nub cx={54} cy={153} rx={12} ry={9} rotate={-15} fill={colour} />
       <Nub cx={150} cy={153} rx={12} ry={9} rotate={15} fill={colour} />
       <Thermometer x={101} y={138} rotate={12} />
-    </g>
+    </Ink>
   ),
   // Tucked in bed: the outfit, backpack and scarf or bow tie are under the covers.
   hides: ['outfit', 'back', 'neck'],

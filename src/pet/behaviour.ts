@@ -218,6 +218,30 @@ export function positionAt(state: PetState, now: number): Tile {
   return { tx: state.tile.tx + (next.tx - state.tile.tx) * t, ty: state.tile.ty + (next.ty - state.tile.ty) * t }
 }
 
+/**
+ * Whether the pet looks different between two states in a way the room has to
+ * re-render for: a new activity (and so pose or line), facing, or beat. Moving
+ * along a walk is not one of them: the living room slides the pet by updating
+ * its transform directly, and re-renders only when it crosses into a new tile
+ * for depth sorting.
+ */
+export function needsRender(prev: PetState, next: PetState): boolean {
+  if (prev === next) return false
+  const a = prev.activity
+  const b = next.activity
+  return (
+    a.kind !== b.kind ||
+    prev.facing !== next.facing ||
+    prev.beat !== next.beat ||
+    (a.kind === 'look' && b.kind === 'look' && a.objectId !== b.objectId)
+  )
+}
+
+/** The tile the pet is drawn as standing on, for depth sorting: the one it is mostly on. */
+export function sortTile(pos: Tile): Tile {
+  return { tx: Math.round(pos.tx), ty: Math.round(pos.ty) }
+}
+
 /** Which pose to draw. */
 export function poseFor(state: PetState): PoseName | undefined {
   switch (state.activity.kind) {

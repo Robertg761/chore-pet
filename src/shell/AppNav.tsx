@@ -64,6 +64,7 @@ export function AppNav({ active, onNavigate, rewardsNote, more, note }: AppNavPr
             <button
               type="button"
               className="app-nav-tab"
+              title={LABELS[tab]}
               aria-current={tab === active ? 'page' : undefined}
               aria-haspopup={tab === 'more' ? 'dialog' : undefined}
               onClick={() => (tab === 'more' ? setMenu(true) : onNavigate(tab))}

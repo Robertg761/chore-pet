@@ -33,11 +33,19 @@ export interface RangeErrors {
   end?: string
 }
 
+/** How far back a trip may start, for "I was away". */
+export const MAX_BACKDATE_DAYS = 14
+
+/** The earliest start date that can be added today. */
+export function earliestStart(today: ISODate): ISODate {
+  return addDays(today, -MAX_BACKDATE_DAYS)
+}
+
 /** Kind inline errors for a window someone wants to add. Empty object means it is fine. */
 export function validateRange(start: string, end: string, today: ISODate): RangeErrors {
   const errors: RangeErrors = {}
   if (!isValidISO(start)) errors.start = 'Pick a start date.'
-  else if (start < today) errors.start = "Pick today or a day coming up. Past days can't be added."
+  else if (start < earliestStart(today)) errors.start = 'Pick a date up to 2 weeks back, or one coming up.'
   if (!isValidISO(end)) errors.end = 'Pick an end date.'
   else if (isValidISO(start) && end < start) errors.end = 'Pick an end date on or after the start.'
   return errors

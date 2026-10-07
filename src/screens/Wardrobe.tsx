@@ -5,7 +5,8 @@ import { poseFor } from '../character/poses'
 import type { Item } from '../character/slots'
 import type { Mood, Pet, Progress, SavedOutfit } from '../domain/types'
 import { GiftSilhouette } from './RewardArt'
-import { useViewport, WIDE_MIN } from '../shell/useViewport'
+import { ScreenHeader } from '../shell/ScreenHeader'
+import { useWide } from '../shell/useViewport'
 import './Wardrobe.css'
 import {
   MAX_OUTFIT_NAME,
@@ -30,8 +31,10 @@ import {
 export interface WardrobeProps {
   pet: Pet
   progress: Progress | null
+  /** Every change lands straight away: wearing an item, taking it off, saving or removing an outfit. */
   onChange: (patch: Partial<Pick<Pet, 'equipped' | 'outfits'>>) => void
-  onClose: () => void
+  /** Not used: this is a tab, so the tab bar is the way out. */
+  onClose?: () => void
 }
 
 const MOOD_FOR_POSE: Partial<Record<PoseName, Mood>> = { sick: 'sick' }
@@ -69,10 +72,10 @@ function NoneArt() {
 /** A tab: one of the slots, or (on phones) the saved outfits. */
 type Section = WardrobeSlot | 'saved'
 
-export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
+export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
   const uid = useId()
-  const [draft, setDraft] = useState<Pet['equipped']>(pet.equipped)
-  const wide = useViewport().width >= WIDE_MIN
+  const equipped = pet.equipped
+  const wide = useWide()
   const [picked, setPicked] = useState<Section>('head')
   const [pose, setPose] = useState<PoseName>('idle')
   const [naming, setNaming] = useState(false)
@@ -81,19 +84,24 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
   const nameRef = useRef<HTMLInputElement>(null)
 
   const outfits = pet.outfits ?? []
-  const dirty = !sameOutfit(draft, pet.equipped)
-  const current = activeOutfit(outfits, draft)
+  const current = activeOutfit(outfits, equipped)
   const full = isFull(outfits)
   // On wide screens the saved outfits sit under the items; on phones they are one more tab.
   const slot: WardrobeSlot = picked === 'saved' ? 'head' : picked
   const showing: Section = wide && picked === 'saved' ? 'head' : picked
   const sections: { key: Section; label: string }[] = wide ? WARDROBE_SLOTS.map((s) => ({ key: s.slot, label: s.label })) : [...WARDROBE_SLOTS.map((s) => ({ key: s.slot as Section, label: s.label })), { key: 'saved', label: 'Saved' }]
   const entries = itemsForSlot(slot, progress)
-  const worn = draft[slot]
+  const worn = equipped[slot]
+  const wear = (next: Pet['equipped']) => onChange({ equipped: next })
 
   useEffect(() => {
     if (naming) nameRef.current?.select()
   }, [naming])
+
+  // Keep the chosen tab in view when the row scrolls sideways.
+  useEffect(() => {
+    document.getElementById(`${uid}-tab-${showing}`)?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' })
+  }, [uid, showing])
 
   function onTabKey(e: KeyboardEvent<HTMLButtonElement>, index: number) {
     const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
@@ -110,7 +118,7 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
   }
 
   function saveOutfit() {
-    onChange({ outfits: addOutfit(outfits, name, draft, crypto.randomUUID()) })
+    onChange({ outfits: addOutfit(outfits, name, equipped, crypto.randomUUID()) })
     setNaming(false)
   }
 
@@ -119,14 +127,9 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
     setRemoving(null)
   }
 
-  function save() {
-    onChange({ equipped: draft })
-    onClose()
-  }
-
   const saveHint = full
     ? `You have ${MAX_OUTFITS} outfits. Remove one to save another.`
-    : isEmptyOutfit(draft)
+    : isEmptyOutfit(equipped)
       ? 'Put something on to save an outfit.'
       : current
         ? `This is already saved as ${current.name}.`
@@ -136,7 +139,7 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
     <>
       <ul className="wd-grid">
         <li>
-          <button type="button" className="wd-tile" aria-pressed={!worn} onClick={() => setDraft(clearSlot(draft, slot))}>
+          <button type="button" className="wd-tile choice" aria-pressed={!worn} onClick={() => wear(clearSlot(equipped, slot))}>
             <NoneArt />
             <span className="wd-tile-name">None</span>
           </button>
@@ -144,15 +147,15 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
         {entries.map(({ item, unlocked, requirement }) => (
           <li key={item.id}>
             {unlocked ? (
-              <button type="button" className="wd-tile" aria-pressed={worn === item.id} onClick={() => setDraft(toggleItem(draft, slot, item.id))}>
+              <button type="button" className="wd-tile choice" aria-pressed={worn === item.id} onClick={() => wear(toggleItem(equipped, slot, item.id))}>
                 <ItemCrop pet={pet} item={item} />
                 <span className="wd-tile-name">{item.name}</span>
               </button>
             ) : (
               <div className="wd-tile wd-tile-locked">
-                <GiftSilhouette className="wd-tile-art" />
+                <GiftSilhouette className="wd-tile-art" lock />
                 <span className="wd-tile-name">
-                  <span className="wd-sr">Locked gift. </span>
+                  <span className="sr-only">Locked gift. </span>
                   {requirement ?? 'A surprise'}
                 </span>
               </div>
@@ -166,28 +169,28 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
 
   const saved = (
     <section className="wd-saved" aria-labelledby={`${uid}-saved`}>
-      <h2 id={`${uid}-saved`} className={wide ? 'wd-sub' : 'wd-sr'}>
+      <h2 id={`${uid}-saved`} className={wide ? 'wd-sub' : 'sr-only'}>
         Saved outfits
       </h2>
       {outfits.length > 0 ? (
         <ul className="wd-outfits">
           {outfits.map((o) => (
-            <li key={o.id} className={sameOutfit(o.equipped, draft) ? 'wd-outfit wd-outfit-on' : 'wd-outfit'}>
-              <button type="button" className="wd-outfit-try" aria-pressed={sameOutfit(o.equipped, draft)} aria-label={`Try on ${o.name}`} onClick={() => setDraft(wearableOutfit(o.equipped, progress))}>
+            <li key={o.id} className="wd-outfit">
+              <button type="button" className="wd-outfit-try choice" aria-pressed={sameOutfit(o.equipped, equipped)} aria-label={`Wear ${o.name}`} onClick={() => wear(wearableOutfit(o.equipped, progress))}>
                 <PetArt className="wd-outfit-art" pet={pet} equipped={wearableOutfit(o.equipped, progress)} pose="idle" />
                 <span className="wd-outfit-name">{o.name}</span>
               </button>
               {removing === o.id ? (
                 <div className="wd-confirm" role="group" aria-label={`Remove ${o.name}?`}>
-                  <button type="button" className="wd-small wd-small-danger" onClick={() => confirmRemove(o)}>
+                  <button type="button" className="btn btn-sm btn-danger" onClick={() => confirmRemove(o)}>
                     Remove
                   </button>
-                  <button type="button" className="wd-small" onClick={() => setRemoving(null)}>
+                  <button type="button" className="btn btn-sm" onClick={() => setRemoving(null)}>
                     Keep
                   </button>
                 </div>
               ) : (
-                <button type="button" className="wd-small" aria-label={`Remove ${o.name}`} onClick={() => setRemoving(o.id)}>
+                <button type="button" className="btn btn-sm" aria-label={`Remove ${o.name}`} onClick={() => setRemoving(o.id)}>
                   Remove
                 </button>
               )}
@@ -210,18 +213,18 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
             Outfit name
           </label>
           <div className="wd-name-row">
-            <input ref={nameRef} id={`${uid}-name`} className="wd-input" type="text" value={name} maxLength={MAX_OUTFIT_NAME} autoComplete="off" onChange={(e) => setName(e.target.value)} />
-            <button type="submit" className="wd-btn wd-btn-solid">
+            <input ref={nameRef} id={`${uid}-name`} className="field wd-input" type="text" value={name} maxLength={MAX_OUTFIT_NAME} autoComplete="off" onChange={(e) => setName(e.target.value)} />
+            <button type="submit" className="btn btn-primary">
               Save outfit
             </button>
-            <button type="button" className="wd-btn" onClick={() => setNaming(false)}>
+            <button type="button" className="btn" onClick={() => setNaming(false)}>
               Not now
             </button>
           </div>
         </form>
       ) : (
         <div className="wd-save-row">
-          <button type="button" className="wd-btn wd-save-outfit" disabled={full || isEmptyOutfit(draft) || Boolean(current)} onClick={startNaming}>
+          <button type="button" className="btn wd-save-outfit" disabled={full || isEmptyOutfit(equipped) || Boolean(current)} onClick={startNaming}>
             Save this outfit
           </button>
           {saveHint && <p className="wd-note">{saveHint}</p>}
@@ -231,27 +234,15 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
   )
 
   return (
-    <section className="wd" aria-labelledby={`${uid}-title`}>
-      <header className="wd-head">
-        <h1 id={`${uid}-title`} className="wd-title">
-          Dress up {pet.name}
-        </h1>
-        <div className="wd-head-actions">
-          <button type="button" className="link-button wd-back" onClick={onClose}>
-            {dirty ? 'Cancel' : 'Back'}
-          </button>
-          <button type="button" className="wd-btn wd-btn-solid" disabled={!dirty} onClick={save}>
-            Save
-          </button>
-        </div>
-      </header>
+    <section className="wd screen-fit" aria-labelledby={`${uid}-title`}>
+      <ScreenHeader id={`${uid}-title`} title={`Dress up ${pet.name}`} />
 
       <div className="wd-body">
         <div className="wd-stage">
-          <PetArt className="wd-preview" pet={pet} equipped={draft} pose={pose} label={`${pet.name} wearing ${describeOutfit(draft)}`} />
-          <div className="wd-poses" role="group" aria-label="Pose">
+          <PetArt className="wd-preview" pet={pet} equipped={equipped} pose={pose} label={`${pet.name} wearing ${describeOutfit(equipped)}`} />
+          <div className="wd-poses seg" role="group" aria-label="Pose">
             {WARDROBE_POSES.map((p) => (
-              <button key={p.pose} type="button" className="wd-pose" aria-pressed={pose === p.pose} onClick={() => setPose(p.pose)}>
+              <button key={p.pose} type="button" className="seg-btn" aria-pressed={pose === p.pose} onClick={() => setPose(p.pose)}>
                 {p.label}
               </button>
             ))}
@@ -259,14 +250,14 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
         </div>
 
         <div className="wd-side">
-          <div className="wd-tabs" role="tablist" aria-label="Where it goes" data-count={sections.length}>
+          <div className="wd-tabs seg" role="tablist" aria-label="Where it goes">
             {sections.map((s, i) => (
               <button
                 key={s.key}
                 id={`${uid}-tab-${s.key}`}
                 type="button"
                 role="tab"
-                className="wd-tab"
+                className="wd-tab seg-btn"
                 aria-selected={showing === s.key}
                 aria-controls={`${uid}-panel`}
                 tabIndex={showing === s.key ? 0 : -1}
@@ -274,7 +265,7 @@ export function Wardrobe({ pet, progress, onChange, onClose }: WardrobeProps) {
                 onKeyDown={(e) => onTabKey(e, i)}
               >
                 {s.label}
-                {s.key !== 'saved' && draft[s.key] && <span className="wd-tab-dot" aria-hidden="true" />}
+                {s.key !== 'saved' && equipped[s.key] && <span className="wd-tab-dot" aria-hidden="true" />}
               </button>
             ))}
           </div>

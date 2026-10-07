@@ -1,0 +1,39 @@
+@layer controls {
+  /* One header for every screen: back (when there is somewhere to go back to), the title, and trailing actions. */
+  .screen-header { flex: none; min-width: 0; display: flex; align-items: center; gap: 8px; }
+  .screen-header:has(.btn) { min-height: 44px; }
+  .sh-title { flex: 1 1 0; min-width: 0; margin: 0; font-size: 1.625rem; line-height: 1.1; overflow-wrap: anywhere; }
+  .sh-title:focus { outline: none; }
+  .screen-header .sh-back { flex: none; margin-left: -6px; padding: 0 10px 0 4px; color: var(--ink); text-decoration: none; }
+  .sh-back svg { flex: none; }
+  /* On the narrowest phones the title needs the room: the arrow stays, its word is read aloud only. */
+  @media (max-width: 359px) {
+    .screen-header .sh-back { padding: 0 6px; }
+    .sh-back-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  }
+  .sh-actions { flex: none; display: flex; align-items: center; gap: 6px; }
+}
+
+/* A screen that fits the view: the header on top, the rest fills what's left, and the page never scrolls. */
+.app-view > .screen:has(> .screen-fit) { height: 100%; min-height: 0; padding: 8px 14px; }
+@layer controls {
+  .screen-fit { flex: 1 1 0; min-height: 0; align-self: stretch; width: 100%; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+}
+
+@layer controls {
+  @media (min-width: 900px) {
+    .sh-title { font-size: 1.875rem; }
+    .screen-fit { gap: 14px; }
+  }
+  @media (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+    .screen-fit { gap: 8px; }
+  }
+}
+
+/* Wide screens, and phones on their side: more room across, less up and down. */
+@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+  .app-view > .screen:has(> .screen-fit) { max-width: 1040px; padding: 24px 28px; }
+}
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+  .app-view > .screen:has(> .screen-fit) { padding: 10px 20px; }
+}

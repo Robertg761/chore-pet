@@ -1,4 +1,5 @@
-import { CHARACTER_STROKE, PALETTE } from '../../art/palette'
+import { PALETTE } from '../../art/palette'
+import { Ink, Tube } from '../ink'
 import type { Mood } from '../../domain/types'
 import type { Pose } from '../slots'
 import { Body, Cheeks, Face, MoodTint, Nub, Shadow } from '../parts'
@@ -39,8 +40,7 @@ export function stemAndLeaves(wilt: number, wiltRight = wilt, bend = { x: 0, y: 
   const d = `M100 74 C100 62 ${98 + bend.x * 0.5} ${54 + bend.y * 0.5} ${101 + bend.x} ${46 + bend.y}`
   return (
     <>
-      <path d={d} fill="none" strokeWidth={11} />
-      <path d={d} fill="none" stroke={PALETTE.leaf} strokeWidth={4} />
+      <Tube d={d} outer={11} inner={4} colour={PALETTE.leaf} />
       <g transform={`translate(${bend.x} ${bend.y})`}>{leaves(wilt, wiltRight)}</g>
     </>
   )
@@ -49,7 +49,7 @@ export function stemAndLeaves(wilt: number, wiltRight = wilt, bend = { x: 0, y: 
 export const sproutIdle: Pose = {
   id: 'sprout-idle',
   renderBody: (bodyColour, mood) => (
-    <g stroke={PALETTE.ink} strokeWidth={CHARACTER_STROKE} strokeLinejoin="round" strokeLinecap="round">
+    <Ink>
       <Shadow rx={58} />
       {stemAndLeaves(WILT[mood])}
       <Nub cx={78} cy={178} rx={15} ry={9} fill={bodyColour} />
@@ -57,10 +57,10 @@ export const sproutIdle: Pose = {
       <Nub cx={46} cy={148} rx={10} ry={13} rotate={-20} fill={bodyColour} />
       <Nub cx={154} cy={148} rx={10} ry={13} rotate={20} fill={bodyColour} />
       <Body d={BODY} colour={bodyColour} highlight={HIGHLIGHT} />
-      <MoodTint d={BODY} mood={mood} smudges={[[64, 160], [132, 108], [130, 166]]} />
+      <MoodTint d={BODY} mood={mood} colour={bodyColour} smudges={[[64, 160], [132, 108], [130, 166]]} />
       <Cheeks y={142} spread={36} />
       <Face mood={mood} eyeY={126} mouthY={140} />
-    </g>
+    </Ink>
   ),
   silhouette: { d: BODY },
   anchors: {

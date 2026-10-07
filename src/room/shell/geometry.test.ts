@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { TILE_W } from '../iso'
-import { PET_SCALE } from './geometry'
+import { CHARACTER_STROKE, ROOM_STROKE } from '../../art/palette'
+import { PET_SCALE, PET_STROKE_SCALE, ROOM_INK } from './geometry'
 import {
   OBJECT_SCALE,
   ROOM_ORIGIN,
@@ -8,6 +9,7 @@ import {
   ROOM_TILE_H,
   ROOM_TILE_W,
   ROOM_VIEWBOX,
+  SLAB_BOTTOM,
   ROOM_WIDTH,
   SLAB_DEPTH,
   TILE_SCALE,
@@ -118,6 +120,13 @@ describe('the viewBox', () => {
     expect(roomPoint(0, ROOM_TILES).x).toBeGreaterThanOrEqual(ROOM_VIEWBOX.x)
   })
 
+  it('ends just under the slab, with no dead space below', () => {
+    const bottom = ROOM_VIEWBOX.y + ROOM_VIEWBOX.height
+    expect(bottom - (floorBottom + SLAB_DEPTH)).toBeGreaterThanOrEqual(2)
+    expect(bottom - (floorBottom + SLAB_DEPTH)).toBeLessThanOrEqual(8)
+    expect(SLAB_BOTTOM).toBeCloseTo(floorBottom + SLAB_DEPTH)
+  })
+
   it('contains the top of the walls', () => {
     expect(ROOM_ORIGIN.y - WALL_HEIGHT).toBeGreaterThanOrEqual(ROOM_VIEWBOX.y)
   })
@@ -203,5 +212,17 @@ describe('roomPoints', () => {
 
   it('returns an empty string for no corners', () => {
     expect(roomPoints()).toBe('')
+  })
+})
+
+describe('outline widths in the room', () => {
+  // Walls, objects and the pet should read as one drawing: about 2 to 2.3 room px.
+  it.each([
+    ['shell and cues', ROOM_INK],
+    ['objects', ROOM_STROKE * OBJECT_SCALE],
+    ['pet', CHARACTER_STROKE * PET_SCALE * PET_STROKE_SCALE],
+  ])('%s', (_, width) => {
+    expect(width).toBeGreaterThanOrEqual(1.95)
+    expect(width).toBeLessThanOrEqual(2.35)
   })
 })

@@ -64,8 +64,9 @@ export function useReminders(context: ReminderContext | null): void {
       const ctx = latest.current
       if (!ctx || sending || !canNotify()) return
       const now = new Date()
-      if (!shouldNotify(now, loadPrefs(), loadLastSent(), ctx.statuses, ctx.away)) return
-      const message = pickReminder(ctx.pet.name, ctx.chores, ctx.statuses, ctx.today)
+      const prefs = loadPrefs()
+      if (!shouldNotify(now, prefs, loadLastSent(), ctx.statuses, ctx.away)) return
+      const message = pickReminder(ctx.pet.name, ctx.chores, ctx.statuses, ctx.today, { private: prefs.private })
       if (!message) return
 
       sending = true

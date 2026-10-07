@@ -46,14 +46,33 @@ export function isInVacation(date: ISODate, vacations: VacationWindow[]): boolea
   return vacations.some((v) => date >= v.start && date <= v.end)
 }
 
+/** The first day on or after `date` that is not inside a vacation window. */
+export function firstActiveOnOrAfter(date: ISODate, vacations: VacationWindow[]): ISODate {
+  let day = date
+  for (let window = vacations.find((v) => day >= v.start && day <= v.end); window; window = vacations.find((v) => day >= v.start && day <= v.end)) {
+    day = addDays(window.end, 1)
+  }
+  return day
+}
+
 /**
  * Days strictly after `from` up to and including `to` that are NOT inside a
  * vacation window. Used so overdue time stops counting during vacation.
  */
 export function activeDaysBetween(from: ISODate, to: ISODate, vacations: VacationWindow[]): number {
-  let count = 0
-  for (let d = addDays(from, 1); d <= to; d = addDays(d, 1)) {
-    if (!isInVacation(d, vacations)) count++
+  if (to <= from) return 0
+  // Clip each window to (from, to], merge overlaps, and take the covered days off.
+  const first = addDays(from, 1)
+  const clipped = vacations
+    .map((v) => ({ start: v.start > first ? v.start : first, end: v.end < to ? v.end : to }))
+    .filter((v) => v.start <= v.end)
+    .sort((a, b) => a.start.localeCompare(b.start))
+  let away = 0
+  let coveredTo: ISODate | null = null
+  for (const v of clipped) {
+    const start = coveredTo && v.start <= coveredTo ? addDays(coveredTo, 1) : v.start
+    if (start <= v.end) away += diffDays(start, v.end) + 1
+    if (!coveredTo || v.end > coveredTo) coveredTo = v.end
   }
-  return count
+  return diffDays(from, to) - away
 }

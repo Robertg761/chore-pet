@@ -1,6 +1,25 @@
 import { describe, expect, it } from 'vitest'
-import type { Chore, Completion, Home } from '../domain/types'
-import { acknowledge, applyOp, change, claim, deleteOp, emptySnapshot, emptyTables, planFlush, rebase, selectHome, upsertOp } from './state'
+import type { Chore, Completion, Home, PlacedObject, Room } from '../domain/types'
+import {
+  acknowledge,
+  applyOp,
+  change,
+  claim,
+  claimDrops,
+  deleteOp,
+  emptySnapshot,
+  emptyTables,
+  mergeSnapshots,
+  planFlush,
+  rebase,
+  reject,
+  repairOps,
+  requeueRejected,
+  selectHome,
+  upsertOp,
+  worthBackingUp,
+  type Snapshot,
+} from './state'
 
 const home: Home = { id: 'h1', ownerId: 'u1', name: 'Home', vacations: [] }
 const chore = (id: string, extra: Partial<Chore> = {}): Chore => ({
@@ -111,5 +130,163 @@ describe('selectHome', () => {
     expect(data.chores.map((c) => c.id)).toEqual(['c1'])
     expect(data.completions.map((c) => c.id)).toEqual(['x1'])
     expect(data.progress?.choreCount).toBe(1)
+  })
+})
+
+describe('which home and rooms show', () => {
+  const room = (id: string, homeId: string, createdAt?: string): Room & { createdAt?: string } => ({ id, homeId, type: 'kitchen', floorStyle: 'wood', wallStyle: 'peach', ...(createdAt ? { createdAt } : {}) })
+  const object = (id: string, roomId: string): PlacedObject => ({ id, roomId, catalogId: 'sink', tileX: 0, tileY: 0, rotation: 0 })
+
+  it('shows rooms oldest first, rooms not yet on the server last', () => {
+    const t = emptyTables()
+    t.homes = { h1: home }
+    t.rooms = { b: room('b', 'h1'), z: room('z', 'h1', '2026-01-01T00:00:00+00:00'), a: room('a', 'h1', '2026-03-01T00:00:00+00:00') }
+    expect(selectHome(t).rooms.map((r) => r.id)).toEqual(['z', 'a', 'b'])
+  })
+
+  it('prefers the home being lived in, then the oldest, never the lowest id', () => {
+    const t = emptyTables()
+    t.homes = {
+      a: { ...home, id: 'a', createdAt: '2026-05-01T00:00:00+00:00' },
+      b: { ...home, id: 'b', createdAt: '2026-01-01T00:00:00+00:00' },
+      c: { ...home, id: 'c' },
+    }
+    expect(selectHome(t).home?.id).toBe('b')
+    t.rooms = { r: room('r', 'c') }
+    t.placed_objects = { o: object('o', 'r') }
+    expect(selectHome(t).home?.id).toBe('c')
+  })
+})
+
+describe('the chore count', () => {
+  it('counts a deleted chore once: its banked count, not its completions still waiting to be removed', () => {
+    const t = emptyTables()
+    t.homes = { h1: home }
+    t.completions = { x1: completion('x1', 'gone') } // the chore row is already gone locally
+    t.progress = { h1: { homeId: 'h1', choreCount: 1, retired: { gone: 1 }, currentStreak: 0, bestStreak: 0, unlockedItems: [] } }
+    expect(selectHome(t).progress?.choreCount).toBe(1)
+  })
+})
+
+describe('refused changes', () => {
+  it('leave the queue for the rejected list, and can be queued again', () => {
+    let s = change(emptySnapshot('u1'), upsertOp('chores', chore('c1')))
+    const op = Object.values(s.outbox)[0]
+    s = reject(s, [op], 'refused', '2026-10-07T00:00:00Z')
+    expect(s.outbox).toEqual({})
+    expect(s.rejected).toEqual([{ op, message: 'refused', at: '2026-10-07T00:00:00Z' }])
+    const again = requeueRejected(s)
+    expect(again.rejected).toEqual([])
+    expect(Object.values(again.outbox)).toMatchObject([{ table: 'chores', key: 'c1' }])
+  })
+
+  it('only keep the latest change to a row (an older refused one is moot)', () => {
+    let s = change(emptySnapshot('u1'), upsertOp('chores', chore('c1', { name: 'A' })))
+    const old = Object.values(s.outbox)[0]
+    s = change(s, upsertOp('chores', chore('c1', { name: 'B' })))
+    s = reject(s, [old], 'refused', '')
+    expect(s.rejected).toEqual([])
+    expect(Object.values(s.outbox)).toHaveLength(1)
+  })
+})
+
+describe('backups when an account switch drops data', () => {
+  it('drops only another account’s data, and backs up anything unsynced or any home', () => {
+    const guest = change(emptySnapshot('anon'), upsertOp('homes', home))
+    expect(claimDrops(guest, 'u1')).toBe(true)
+    expect(claimDrops(guest, 'anon')).toBe(false)
+    expect(claimDrops(emptySnapshot(null), 'u1')).toBe(false)
+    expect(worthBackingUp(guest)).toBe(true)
+    expect(worthBackingUp({ ...guest, outbox: {} })).toBe(true) // a guest home lives nowhere else
+    expect(worthBackingUp(emptySnapshot('u1'))).toBe(false)
+  })
+})
+
+describe('mergeSnapshots (two tabs, one offline copy)', () => {
+  const start = change(emptySnapshot('u1'), upsertOp('homes', home))
+
+  it('takes a change only the other tab made, and applies it', () => {
+    const theirs = change(start, upsertOp('chores', chore('b')))
+    const merged = mergeSnapshots(start, start, theirs, 'mine')
+    expect(Object.keys(merged.tables.chores)).toEqual(['b'])
+    expect(Object.keys(merged.outbox).sort()).toEqual(['chores:b', 'homes:h1'])
+  })
+
+  it('takes the other tab\'s fresher pull and keeps this tab\'s pending changes on top', () => {
+    const synced: Snapshot = { ...change(start, upsertOp('chores', chore('a'))), outbox: {}, pulledAt: '2026-10-07T08:00:00.000Z' }
+    // The other tab pulled later: chore a was renamed on another device and chore b appeared.
+    const theirs: Snapshot = {
+      ...synced,
+      tables: { ...synced.tables, chores: { a: { ...chore('a'), name: 'Renamed' }, b: chore('b') } },
+      pulledAt: '2026-10-07T09:00:00.000Z',
+    }
+    const mine = change(synced, upsertOp('chores', chore('c')))
+    const merged = mergeSnapshots(mine, synced, theirs, 'stored')
+    expect(merged.tables.chores.a.name).toBe('Renamed')
+    expect(Object.keys(merged.tables.chores).sort()).toEqual(['a', 'b', 'c'])
+    expect(Object.keys(merged.outbox)).toEqual(['chores:c'])
+    expect(merged.pulledAt).toBe('2026-10-07T09:00:00.000Z')
+    // And an older pull never replaces a fresher one.
+    expect(mergeSnapshots(theirs, theirs, synced, 'stored')).toBe(theirs)
+  })
+
+  it('keeps changes from both tabs', () => {
+    const mine = change(start, upsertOp('chores', chore('a')))
+    const theirs = change(start, upsertOp('chores', chore('b')))
+    const merged = mergeSnapshots(mine, start, theirs, 'mine')
+    expect(Object.keys(merged.tables.chores).sort()).toEqual(['a', 'b'])
+    expect(Object.keys(merged.outbox)).toHaveLength(3)
+    expect(merged.seq).toBe(2)
+  })
+
+  it('drops a change the other tab already sent, but not one this tab made since', () => {
+    const sentByThem = { ...start, outbox: {} }
+    expect(mergeSnapshots(start, start, sentByThem, 'mine').outbox).toEqual({})
+    const changedAgain = change(start, upsertOp('homes', { ...home, name: 'Newer' }))
+    expect(mergeSnapshots(changedAgain, start, sentByThem, 'mine').outbox['homes:h1']).toBe(changedAgain.outbox['homes:h1'])
+  })
+
+  it('does not bring back a change this tab sent', () => {
+    const sentByMe = { ...start, outbox: {} }
+    expect(mergeSnapshots(sentByMe, start, start, 'mine').outbox).toEqual({})
+  })
+
+  it('lets the later change win when both tabs changed the same row', () => {
+    const mine = change(start, upsertOp('homes', { ...home, name: 'Mine' }))
+    const theirs = change(change(start, upsertOp('homes', { ...home, name: 'x' })), upsertOp('homes', { ...home, name: 'Theirs' }))
+    const merged = mergeSnapshots(mine, start, theirs, 'mine')
+    expect(merged.tables.homes.h1.name).toBe('Theirs')
+  })
+
+  it('returns the same snapshot when nothing changed, so nothing re-renders', () => {
+    expect(mergeSnapshots(start, start, start, 'mine')).toBe(start)
+  })
+
+  it('lets the newer decision win when the tabs are on different accounts', () => {
+    const other = emptySnapshot('u2')
+    expect(mergeSnapshots(start, start, other, 'mine')).toBe(start)
+    expect(mergeSnapshots(start, start, other, 'stored')).toBe(other)
+  })
+
+  it('keeps a rejected change dismissed in either tab dismissed', () => {
+    const op = Object.values(start.outbox)[0]
+    const withRejected: Snapshot = { ...start, rejected: [{ op, message: 'no', at: '' }] }
+    const dismissed: Snapshot = { ...withRejected, rejected: [] }
+    expect(mergeSnapshots(dismissed, withRejected, withRejected, 'mine').rejected).toEqual([])
+    expect(mergeSnapshots(withRejected, withRejected, dismissed, 'stored').rejected).toEqual([])
+    expect(mergeSnapshots(start, start, withRejected, 'stored').rejected).toHaveLength(1)
+  })
+})
+
+describe('repairOps', () => {
+  it('recreates a missing progress row with the count and the rewards it earned', () => {
+    const t = emptyTables()
+    t.homes = { h1: home }
+    t.chores = { c1: chore('c1') }
+    t.completions = { x1: completion('x1', 'c1') }
+    expect(repairOps(t)).toEqual([upsertOp('progress', { homeId: 'h1', choreCount: 1, retired: {}, currentStreak: 0, bestStreak: 0, unlockedItems: ['item:beanie-red'] })])
+    t.progress = { h1: { homeId: 'h1', choreCount: 1, currentStreak: 0, bestStreak: 0, unlockedItems: [] } }
+    expect(repairOps(t)).toEqual([])
+    expect(repairOps(emptyTables())).toEqual([])
   })
 })

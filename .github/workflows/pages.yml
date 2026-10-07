@@ -11,10 +11,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Least privilege: every job can only read the repository. The deploy job
+# alone gets the Pages and OIDC permissions it needs.
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -48,6 +48,9 @@ jobs:
     if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

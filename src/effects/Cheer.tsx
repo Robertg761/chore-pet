@@ -1,33 +1,37 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
-import { CHARACTER_STROKE, PALETTE } from '../art/palette'
+import { PALETTE } from '../art/palette'
+import { AccentMark } from '../character/accent'
 import './effects.css'
-import { heartPath, prefersReducedMotion, starPath } from './shapes'
+import { prefersReducedMotion } from './shapes'
 
 // The pet's celebration, in its own 200x200 box: the art hops twice (squash,
-// stretch, squash) while two waves of hearts and stars pop around it.
+// stretch, squash) while two waves of hearts and stars pop around it. The marks
+// are the shared AccentMark (the same heart and star each species' cheering pose
+// draws), so every pet celebrates the same way; only the pet's motion is its own.
 
-const { ink, blush, warmRed, sky, petDefault } = PALETTE
+const { blush, warmRed, sky, petDefault } = PALETTE
 
 const HOP_MS = 700
 const HOPS = 2
 const DURATION = 1750
 const REDUCED_DURATION = 1200
 
-// [x, y, kind, size, fill, delay ms]. Absolute spots in the 200 box, round the pet, clear of the face.
+// [x, y, kind, size, fill, delay ms]. Absolute spots in the 200 box, round the pet, clear of the face
+// and of the heart and star the cheering poses draw themselves (about (26, 60) and (176, 48)).
 type Burst = [number, number, 'heart' | 'star', number, string, number]
 const BURSTS: Burst[] = [
-  [28, 62, 'heart', 28, blush, 40],
-  [176, 54, 'star', 22, petDefault, 90],
+  [18, 106, 'heart', 26, blush, 40],
+  [190, 92, 'star', 22, petDefault, 90],
   [60, 18, 'star', 18, sky, 150],
   [150, 16, 'heart', 22, warmRed, 110],
   [100, 6, 'heart', 20, blush, 190],
-  [20, 124, 'star', 16, sky, 230],
-  [184, 120, 'heart', 20, warmRed, 250],
+  [8, 142, 'star', 16, sky, 230],
+  [184, 122, 'heart', 20, warmRed, 250],
   [42, 30, 'heart', 22, warmRed, 740],
-  [164, 30, 'heart', 26, blush, 770],
+  [138, 34, 'heart', 26, blush, 770],
   [128, 4, 'star', 20, sky, 820],
-  [12, 90, 'star', 20, petDefault, 800],
-  [190, 88, 'star', 16, sky, 880],
+  [8, 76, 'star', 20, petDefault, 800],
+  [192, 66, 'star', 16, sky, 880],
 ]
 
 export interface CheerProps {
@@ -53,13 +57,13 @@ export function Cheer({ children, onDone }: CheerProps) {
       <g className="fx-cheer-hop" style={{ '--fx-hop': `${HOP_MS}ms`, '--fx-hops': `${HOPS}` } as Vars}>
         {children}
       </g>
-      <g style={{ pointerEvents: 'none' }} aria-hidden="true" stroke={ink} strokeWidth={CHARACTER_STROKE - 1} strokeLinejoin="round">
+      <g style={{ pointerEvents: 'none' }} aria-hidden="true">
         {BURSTS.map(([x, y, kind, size, fill, delay], i) => {
           // Start pulled toward the pet's middle so each one pops outward.
           const style = { '--fx-delay': `${delay}ms`, '--fx-sx': `${(100 - x) * 0.6}px`, '--fx-sy': `${(104 - y) * 0.6}px`, '--fx-spin': `${i % 2 ? 14 : -14}deg` } as Vars
           return (
             <g key={i} transform={`translate(${x} ${y})`}>
-              <path className="fx-cheer-pop" style={style} d={kind === 'heart' ? heartPath(size) : starPath(size / 2, 0.26)} fill={fill} />
+              <AccentMark className="fx-cheer-pop" style={style} kind={kind} size={size} fill={fill} />
             </g>
           )
         })}

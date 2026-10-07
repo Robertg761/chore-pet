@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { activeDaysBetween, addDays, daysInMonth, diffDays, isInVacation, toISODate, weekdayOf } from './dates'
+import { activeDaysBetween, addDays, daysInMonth, diffDays, firstActiveOnOrAfter, isInVacation, toISODate, weekdayOf } from './dates'
 
 describe('daysInMonth', () => {
   it('handles February in century, 400-year, leap and common years', () => {
@@ -181,5 +181,43 @@ describe('activeDaysBetween', () => {
     expect(activeDaysBetween('2026-02-27', '2026-03-02', [])).toBe(3) // 28, 01, 02
     expect(activeDaysBetween('2026-03-06', '2026-03-10', [{ start: '2026-03-08', end: '2026-03-08' }])).toBe(3)
     expect(activeDaysBetween('2026-12-30', '2027-01-02', [])).toBe(3)
+  })
+})
+
+describe('activeDaysBetween matches counting day by day', () => {
+  const naive = (from: string, to: string, vacations: { start: string; end: string }[]) => {
+    let n = 0
+    for (let d = addDays(from, 1); d <= to; d = addDays(d, 1)) if (!isInVacation(d, vacations)) n++
+    return n
+  }
+  it('for overlapping, nested, touching and out-of-range windows', () => {
+    let seed = 7
+    const rand = (n: number) => {
+      seed = (seed * 1103515245 + 12345) % 2147483648
+      return seed % n
+    }
+    for (let i = 0; i < 400; i++) {
+      const from = addDays('2026-09-20', rand(20))
+      const to = addDays(from, rand(30) - 3)
+      const vacations = Array.from({ length: rand(4) }, () => {
+        const start = addDays('2026-09-15', rand(50))
+        return { start, end: addDays(start, rand(12)) }
+      })
+      expect(activeDaysBetween(from, to, vacations), JSON.stringify({ from, to, vacations })).toBe(naive(from, to, vacations))
+    }
+  })
+})
+
+describe('firstActiveOnOrAfter', () => {
+  it('is the day itself outside a vacation, else the day after the break ends', () => {
+    expect(firstActiveOnOrAfter('2026-10-06', [])).toBe('2026-10-06')
+    expect(firstActiveOnOrAfter('2026-10-06', [{ start: '2026-10-01', end: '2026-10-05' }])).toBe('2026-10-06')
+    expect(firstActiveOnOrAfter('2026-10-06', [{ start: '2026-10-06', end: '2026-10-06' }])).toBe('2026-10-07')
+    const chain = [
+      { start: '2026-10-08', end: '2026-10-12' },
+      { start: '2026-10-05', end: '2026-10-07' },
+      { start: '2026-10-13', end: '2026-10-13' },
+    ]
+    expect(firstActiveOnOrAfter('2026-10-06', chain)).toBe('2026-10-14')
   })
 })

@@ -10,7 +10,7 @@ Open the app and tap **Try a sample home**: a furnished kitchen with two late ch
 
 1. `npm install`
 2. Create a Supabase project, then in Authentication settings turn on **Allow anonymous sign-ins**.
-3. Run the files in `supabase/migrations/` in order (`0001` to `0005`) in the Supabase SQL editor (or with the Supabase CLI).
+3. Run the files in `supabase/migrations/` in order (`0001` to `0006`) in the Supabase SQL editor (or with the Supabase CLI).
 4. Copy `.env.example` to `.env` and fill in your project URL and anon key.
 5. `npm run dev`
 
@@ -20,11 +20,22 @@ The app also runs without Supabase keys: everything is saved on the device (Inde
 
 Everyone starts as a guest (an anonymous Supabase user). In Settings a guest can save their home with email or Google. This links the same user, so no data moves. On another device, "Sign in" replaces that device's guest home with the saved one. To enable it, in Supabase:
 
-- **Authentication > URL Configuration:** set the Site URL to the live URL and add it (and `http://localhost:5173`) to Redirect URLs.
+- **Authentication > URL Configuration:** set the Site URL to the live URL and add it to Redirect URLs. Use a separate Supabase project for local development, with `http://localhost:5173` as its redirect URL (see the checklist below).
 - **Authentication > Sign In / Providers:**
   - Keep Email on. Leave "Secure email change" on: the guest confirms the address from a link.
   - To offer Google, turn on Google with an OAuth client ID and secret.
   - Turn on **Allow manual linking**, which Google linking (`linkIdentity`) needs.
+
+### Production checklist (Supabase dashboard)
+
+These settings live in the dashboard, not in the migrations, so set them by hand on the live project:
+
+1. **Apply `0006_tenant_integrity.sql`** (SQL editor, or `supabase db push`). It stops one account from attaching rows to another account's home, adds size limits, and adds `delete_my_account()` for Settings > "Delete my home and account". If an older database has rows that point across accounts, it deletes them first; the comment at the top of the file has a query to count them beforehand.
+2. **Rate limits** (Authentication > Rate Limits): every visit can create a guest, so keep **anonymous sign-ins** per IP low (for example 30 an hour), and keep the **email sending** limit low too (sign-in and save links). (Don't turn on CAPTCHA without app changes: the app doesn't send a captcha token, so guest sign-in would fail.)
+3. **Redirect URLs** (Authentication > URL Configuration): only the live URL. Remove any `localhost` entry from the production project, so a sign-in link can't be sent back to a local server; develop against a separate project instead.
+4. Optional: delete guests nobody has used in months. Section 5 of `0006_tenant_integrity.sql` has a pg_cron job, left switched off, with instructions.
+
+What is stored and how players delete it is in `docs/PRIVACY.md`.
 
 ### Deploy
 

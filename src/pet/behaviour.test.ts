@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { besideTiles, findPath, initialPet, positionAt, poseFor, step, tap, TIMING, type PetState, type Tile, type World } from './behaviour'
+import { besideTiles, findPath, initialPet, needsRender, positionAt, poseFor, sortTile, step, tap, TIMING, type PetState, type Tile, type World } from './behaviour'
 import { ROOM_SIZE } from '../room/grid'
 
 const blocked = (tiles: Tile[]) => {
@@ -105,5 +105,34 @@ describe('wandering and looking at mess', () => {
     const pet = step(initialPet({ tx: 3, ty: 3 }, 0), world(), 2000, always(0.3))
     expect(pet.activity.kind).toBe('walk')
     if (pet.activity.kind === 'walk') expect(pet.activity.path.length).toBeLessThanOrEqual(TIMING.wanderRange)
+  })
+})
+
+describe('re-rendering', () => {
+  const start = initialPet({ tx: 2, ty: 2 }, 0)
+
+  it('skips the frames of a walk that only slide the pet along', () => {
+    const walking: PetState = { ...start, activity: { kind: 'walk', path: [{ tx: 3, ty: 2 }, { tx: 4, ty: 2 }], stepStart: 0, then: 'idle' } }
+    const later = step(walking, world(), 100, always(0.5))
+    expect(later).not.toBe(walking)
+    expect(needsRender(walking, later)).toBe(false)
+    // One tile on, still walking the same way: the depth sort follows the drawn tile instead.
+    const nextTile = step(walking, world(), TIMING.stepMs + 10, always(0.5))
+    expect(nextTile.tile).toEqual({ tx: 3, ty: 2 })
+    expect(needsRender(walking, nextTile)).toBe(false)
+  })
+
+  it('re-renders when the activity, facing or beat changes', () => {
+    expect(needsRender(start, start)).toBe(false)
+    expect(needsRender(start, tap(start, 10))).toBe(true)
+    expect(needsRender(start, { ...start, facing: -1 })).toBe(true)
+    const look = (objectId: string): PetState => ({ ...start, activity: { kind: 'look', objectId, until: 10 } })
+    expect(needsRender(look('sink'), look('bed'))).toBe(true)
+    expect(needsRender(look('sink'), { ...look('sink') })).toBe(false)
+  })
+
+  it('sorts the pet as the tile it is mostly on', () => {
+    expect(sortTile({ tx: 2.4, ty: 3 })).toEqual({ tx: 2, ty: 3 })
+    expect(sortTile({ tx: 2.6, ty: 3 })).toEqual({ tx: 3, ty: 3 })
   })
 })

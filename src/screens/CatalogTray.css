@@ -5,9 +5,9 @@
   flex-direction: column;
   gap: 10px;
 }
-.tray-title { margin: 0; font-size: 22px; line-height: 1.2; }
+.tray-title { margin: 0; font-size: 1.375rem; line-height: 1.2; }
 .tray-group { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
-.tray-subheading { margin: 0; font-size: 14px; font-weight: 800; color: var(--ink-soft); }
+.tray-subheading { margin: 0; font-size: 0.875rem; font-weight: 800; color: var(--ink-soft); }
 
 /* Only this row scrolls sideways; the page never does. */
 .tray-row {
@@ -46,8 +46,8 @@
 .tray-tile:disabled .tray-art { opacity: 0.45; }
 
 .tray-art { width: 64px; height: 64px; flex: none; display: block; }
-.tray-name { font-size: 14px; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
-.tray-meta { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
+.tray-name { font-size: 0.875rem; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
+.tray-meta { font-size: 0.75rem; font-weight: 700; color: var(--ink-soft); }
 
 /* Wider screens: a 3-column grid instead of a scrolling row. */
 @media (min-width: 520px) {
@@ -67,8 +67,7 @@
 }
 
 /* Build mode's panel: one row that scrolls sideways, with smaller tiles. */
-.tray-one-row .tray-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .tray-one-row .tray-row { display: flex; overflow-x: auto; padding-bottom: 8px; }
 .tray-one-row .tray-tile { width: 92px; min-height: 112px; padding: 6px 4px; }
 .tray-one-row .tray-art { width: 52px; height: 52px; }
-.tray-one-row .tray-name { font-size: 13px; }
+.tray-one-row .tray-name { font-size: 0.8125rem; }

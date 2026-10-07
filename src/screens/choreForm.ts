@@ -16,7 +16,7 @@ export const SCHEDULE_KINDS: readonly { kind: ScheduleKind; label: string }[] = 
 
 export const NAME_MAX = 40
 export const N_MIN = 2
-export const N_MAX = 60
+export const N_MAX = 180
 
 /** The UI week starts on Monday; stored values use 0 = Sunday. */
 export const WEEK_ORDER: readonly Weekday[] = [1, 2, 3, 4, 5, 6, 0]
@@ -97,7 +97,7 @@ export function toggleDay(days: readonly Weekday[], day: Weekday): Weekday[] {
   return sortDays(days.includes(day) ? days.filter((d) => d !== day) : [...days, day])
 }
 
-/** Parses the "every N days" text. Returns null unless it is a whole number from 2 to 60. */
+/** Parses the "every N days" text. Returns null unless it is a whole number from 2 to 180. */
 export function parseN(text: string): number | null {
   const t = text.trim()
   if (!/^\d+$/.test(t)) return null
@@ -190,6 +190,7 @@ export function describeSchedule(schedule: Schedule): string {
       const days = sortDays(schedule.days)
       if (days.length === 0) return 'No days picked'
       if (days.length === 7) return 'Every day'
+      if (days.length === 1) return `Every ${WEEKDAY_LONG[days[0]]}`
       return days.map((d) => WEEKDAY_SHORT[d]).join(', ')
     }
     case 'weekly':

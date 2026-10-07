@@ -102,6 +102,7 @@ export const dishwasherArt: ObjectArt = {
   catalogId: 'dishwasher',
   footprint: { w: 1, d: 1 },
   bounds: { x: -46, y: -88, width: 92, height: 128 },
+  cueY: -35,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {body()}

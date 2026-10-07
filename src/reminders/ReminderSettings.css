@@ -4,23 +4,10 @@
 
 .reminder-time { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .reminder-time label { font-weight: 800; }
-.reminder-time input {
-  min-height: 44px;
-  min-width: 130px;
-  padding: 0 12px;
-  font: inherit;
-  font-weight: 700;
-  color: var(--ink);
-  background: var(--card);
-  border: 2px solid var(--ink);
-  border-radius: 12px;
-}
-.reminder-time input:disabled { opacity: 0.5; }
-.reminder-toggle input:focus-visible,
-.reminder-time input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.reminder-time .field { min-width: 130px; }
 
-.reminder-status { margin: 0; font-weight: 700; font-size: 15px; color: var(--ink); }
-.reminder-note { margin: 0; font-size: 13px; line-height: 1.3; color: var(--ink-soft); }
+.reminder-status { margin: 0; font-weight: 700; font-size: 0.9375rem; color: var(--ink); }
+.reminder-note { margin: 0; font-size: 0.8125rem; line-height: 1.3; color: var(--ink-soft); }
 
 .home-hint {
   display: flex;
@@ -32,12 +19,15 @@
   border: 2px solid var(--ink);
   border-radius: var(--radius);
 }
-.home-hint p { margin: 0; font-weight: 700; font-size: 14px; line-height: 1.3; }
+.home-hint p { margin: 0; font-weight: 700; font-size: 0.875rem; line-height: 1.3; }
 .home-hint-icon { flex: none; }
+.home-hint-icon rect { fill: var(--due-bg); }
+.home-hint-icon rect,
+.home-hint-icon path { stroke: var(--ink); }
 
 @media (min-width: 900px) {
   .reminders { gap: 10px; }
-  .reminder-note { font-size: 14px; }
-  .reminder-status { font-size: 16px; }
-  .home-hint p { font-size: 16px; }
+  .reminder-note { font-size: 0.875rem; }
+  .reminder-status { font-size: 1rem; }
+  .home-hint p { font-size: 1rem; }
 }

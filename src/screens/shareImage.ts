@@ -15,9 +15,9 @@ const CAPTION_MIN_SIZE = 26
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
 
-/** "Pip's home · 23 chores done · 4 days in a row"; parts with nothing to say are left out. */
+/** "Home of Pip · 23 chores done · 4 days in a row"; parts with nothing to say are left out. */
 export function captionText(name: string, choreCount: number, streak: number): string {
-  const parts = [`${name.trim() || 'Your pet'}'s home`]
+  const parts = [`Home of ${name.trim() || 'your pet'}`]
   if (choreCount > 0) parts.push(`${plural(choreCount, 'chore', 'chores')} done`)
   if (streak > 0) parts.push(`${plural(streak, 'day', 'days')} in a row`)
   return parts.join(' · ')

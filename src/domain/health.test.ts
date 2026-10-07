@@ -11,14 +11,16 @@ describe('penalties', () => {
     expect(penaltyFor({ neglect: 0 })).toBe(0)
   })
   it('costs more the more neglected the chore is, and caps per chore', () => {
-    expect(penaltyFor({ neglect: 1 })).toBe(6)
-    expect(penaltyFor({ neglect: 2 })).toBe(15)
+    expect(penaltyFor({ neglect: 1 })).toBe(4)
+    expect(penaltyFor({ neglect: 2 })).toBe(12)
     expect(penaltyFor({ neglect: 3 })).toBe(25)
     expect(penaltyFor({ neglect: 3, daysAtWorst: 300 })).toBe(35)
   })
   it('uses the tuning table', () => {
-    expect(HEALTH_TUNING.levelPenalty).toEqual([0, 6, 15, 25])
+    expect(HEALTH_TUNING.levelPenalty).toEqual([0, 4, 12, 25])
     expect(HEALTH_TUNING.maxPenaltyPerChore).toBe(35)
+    expect(HEALTH_TUNING.maxLevel1Total).toBe(20)
+    expect(HEALTH_TUNING.moodThresholds).toEqual({ happy: 88, content: 70, meh: 50, scruffy: 33 })
   })
 })
 
@@ -27,9 +29,10 @@ describe('health and mood', () => {
     expect(healthFromStatuses([])).toBe(100)
     expect(moodFor(100)).toBe('happy')
   })
-  it('never drops below zero, and zero is sick (not dead)', () => {
+  it('stays above zero however bad it gets, and low health is sick (not dead)', () => {
     const statuses = Array.from({ length: 10 }, () => ({ neglect: 3 as const, daysAtWorst: 20 }))
-    expect(healthFromStatuses(statuses)).toBe(0)
+    expect(healthFromStatuses(statuses)).toBe(22)
+    expect(moodFor(22)).toBe('sick')
     expect(moodFor(0)).toBe('sick')
   })
   it('recovers immediately when chores are done', () => {
@@ -45,7 +48,7 @@ describe('health and mood', () => {
     )
     expect(before.health).toBeLessThan(after.health)
     expect(after.health).toBe(100)
-    expect(before.worst?.overdueDays).toBe(3)
-    expect(before.health).toBe(70) // two daily chores, each 3 days late (level 2): 100 - 15 - 15
+    expect(before.worst?.overdueDays).toBe(2) // due 10-01, a new chore's grace day 10-02, then 10-03 and 10-04
+    expect(before.health).toBe(81) // two daily chores at level 2: 100 * 100 / (100 + 12 + 12)
   })
 })

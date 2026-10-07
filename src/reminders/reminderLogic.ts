@@ -10,6 +10,8 @@ export interface ReminderPrefs {
   enabled: boolean
   /** Local time of day, 24-hour "HH:MM". */
   time: string
+  /** Keep chore names off the lock screen: the nudge says only that jobs are ready. */
+  private?: boolean
 }
 
 export const DEFAULT_TIME = '09:00'
@@ -36,8 +38,8 @@ export function parsePrefs(raw: string | null | undefined): ReminderPrefs {
   try {
     const data: unknown = JSON.parse(raw)
     if (typeof data !== 'object' || data === null) return { ...DEFAULT_PREFS }
-    const { enabled, time } = data as Record<string, unknown>
-    return { enabled: enabled === true, time: isValidTime(time) ? time : DEFAULT_TIME }
+    const { enabled, time, private: hidden } = data as Record<string, unknown>
+    return { enabled: enabled === true, time: isValidTime(time) ? time : DEFAULT_TIME, ...(hidden === true && { private: true }) }
   } catch {
     return { ...DEFAULT_PREFS }
   }
@@ -64,23 +66,27 @@ export function shouldNotify(
   return statuses.some((s) => s.state === 'due' || s.state === 'overdue')
 }
 
-// The pet's voice, in line with src/content/petLines.ts. Chore names are the
-// player's own words ("Dishes", "Water the plants"), so these read well with
-// either, and none of them blames or hurries.
+// The pet's voice, in line with src/content/petLines.ts. `{chore}` is filled
+// with the chore name lowercased ("wash the dishes"), so every line puts it
+// after a colon, where a verb phrase ("Up today: wash the dishes.") and a plain
+// noun ("On my mind today: dishes.") both read well. None of them blames or hurries.
 export const REMINDER_OVERDUE_LINES: string[] = [
-  '{chore} is waiting, no rush!',
+  'No rush, just a nudge: {chore}.',
   'When you have a moment: {chore}.',
   'A friendly nudge: {chore}. I believe in us.',
-  '{chore} would be so nice to tick off.',
-  'Thinking about {chore} today. Shall we?',
+  'One to tick off when you can: {chore}.',
+  'On my mind today: {chore}. Shall we?',
 ]
 
 export const REMINDER_DUE_LINES: string[] = [
   "Today's little job: {chore}.",
-  '{chore} is on today’s list. Easy peasy!',
-  'A gentle hello! {chore} is up today.',
+  "On today's list: {chore}. Easy peasy!",
+  'A gentle hello! Up today: {chore}.',
   'Ready when you are: {chore}.',
 ]
+
+/** Shown instead of a chore name when the player keeps reminders private. */
+export const PRIVATE_REMINDER_BODY = 'A few little jobs are ready.'
 
 export interface ReminderMessage {
   title: string
@@ -94,20 +100,33 @@ function seedFromDate(date: string): number {
   return total
 }
 
+export interface ReminderOptions {
+  /**
+   * Keep chore names off the lock screen: the body is the generic
+   * "A few little jobs are ready." with no chore name and no count.
+   */
+  private?: boolean
+}
+
 /**
  * The nudge text: the pet's name as the title, and a line about the most
  * overdue chore (or a gentle one about what is due today). Null when nothing
- * is due, so there is never an empty nudge.
+ * is due, so there is never an empty nudge. With `{ private: true }` the body
+ * is generic (PRIVATE_REMINDER_BODY) and never names a chore.
  */
-export function pickReminder(
+export function reminderMessage(
   petName: string,
   chores: Chore[],
   statuses: ChoreStatus[],
   today: string,
+  options: ReminderOptions = {},
 ): ReminderMessage | null {
   const nameOf = new Map(chores.map((c) => [c.id, c.name]))
   const waiting = statuses.filter((s) => (s.state === 'due' || s.state === 'overdue') && nameOf.has(s.choreId))
   if (waiting.length === 0) return null
+
+  const title = petName.trim() || 'Chore Pet'
+  if (options.private) return { title, body: PRIVATE_REMINDER_BODY }
 
   const rank = (s: ChoreStatus) => (s.state === 'overdue' ? s.overdueDays : -1)
   const top = [...waiting].sort(
@@ -122,6 +141,8 @@ export function pickReminder(
   const more = waiting.length - 1
   if (more > 0) body += ` Plus ${more} more.`
 
-  const title = petName.trim() || 'Chore Pet'
   return { title, body }
 }
+
+/** The same as `reminderMessage`; the name the scheduler already uses. */
+export const pickReminder = reminderMessage

@@ -12,7 +12,7 @@ export interface FlagStorage {
 
 /** Set once a home has been through its first build (or the player skipped it). */
 export const onboardedKey = (homeId: string) => `chore-pet:onboarded:${homeId}`
-/** Set once the "Tap Done" hint has been used or closed. */
+/** Set once the first-done hint has been used or closed. */
 export const hintKey = (homeId: string) => `chore-pet:first-done-hint:${homeId}`
 
 function defaultStorage(): FlagStorage | null {
@@ -47,17 +47,38 @@ export function coachStep(objectCount: number): CoachStep {
   return objectCount === 1 ? 2 : 1
 }
 
-export function coachCopy(step: CoachStep, choreCount: number, sheetOpen = false): { text: string; count: string | null } {
-  if (step === 1) return { text: 'Tap something to put it in your room.', count: null }
-  const count = `${choreCount} ${choreCount === 1 ? 'chore' : 'chores'} so far`
+/** Shown while an object is being dragged into place (any step). */
+export const PLACING_COPY = 'Drag it where it goes, then tap Place it.'
+
+/** The first-done hint on the home screen. */
+export const FIRST_DONE_HINT = 'Do it for real, then tap Done. Your pet will notice!'
+
+/**
+ * The coach card text. `sheetOpen`: the object sheet hides the tray, so say how
+ * to get it back. `placing`: an object is being placed, so say how to put it
+ * down; it wins over the step's own text (the chore count still shows after step 1).
+ */
+export function coachCopy(
+  step: CoachStep,
+  choreCount: number,
+  sheetOpen = false,
+  placing = false,
+): { text: string; count: string | null } {
+  const count = step === 1 ? null : `${choreCount} ${choreCount === 1 ? 'chore' : 'chores'} so far`
+  if (placing) return { text: PLACING_COPY, count }
+  if (step === 1) return { text: 'Tap something to put it in your room.', count }
   if (step === 2) {
-    // With the object sheet open the tray is hidden, so say how to get it back.
-    return { text: sheetOpen ? 'Every thing brings its chores. Tap the X to add one or two more.' : 'Every thing brings its chores. Add one or two more.', count }
+    return {
+      text: sheetOpen
+        ? 'Everything you place brings its own chores. Tap the X to add one or two more.'
+        : 'Everything you place brings its own chores. Add one or two more.',
+      count,
+    }
   }
-  return { text: 'Looks cosy! Tap Done to meet your chores.', count }
+  return { text: 'Looks cosy! Tap Finish to meet your chores.', count }
 }
 
-/** Whether the "Tap Done" hint has something to point at: a chore that can be done today. */
+/** Whether the first-done hint has something to point at: a chore that can be done today. */
 export function hasDueChore(chores: Chore[], completions: Completion[], today: ISODate, vacations: VacationWindow[]): boolean {
   return chores.some((c) => {
     const state = choreStatus(c, completions, today, vacations).state

@@ -1,7 +1,8 @@
 import { useContext, useId } from 'react'
-import { bodyShade } from '../art/color'
+import { bodyShade, mix } from '../art/color'
 import { PALETTE } from '../art/palette'
 import type { EyeStyle, Mood } from '../domain/types'
+import { useStrokeScale } from './strokeScale'
 import { LookContext } from './look'
 
 // Shared building blocks for every species, so Mochi, Bun and Sprout read as
@@ -103,13 +104,14 @@ function Glint({ x, y, r }: { x: number; y: number; r: number }) {
 }
 
 /** A big glossy eye: two highlights make it read as wet and alive. */
-function OpenEye({ x, y, scale = 1, style }: { x: number; y: number; scale?: number; style: EyeStyle }) {
+function OpenEye({ x, y, scale = 1, drop = 0, style }: { x: number; y: number; scale?: number; drop?: number; style: EyeStyle }) {
+  // `drop` sinks the main highlight toward the middle of the eye: a softer, wetter, sadder gaze.
   if (style === 'button') {
     // Smaller, perfectly round and shiny: a bead of ink.
     return (
       <g stroke="none">
         <circle cx={x} cy={y} r={7.8 * scale} fill={ink} />
-        <circle cx={x + 2.4 * scale} cy={y - 2.8 * scale} r={2.7 * scale} fill={white} />
+        <circle cx={x + 2.4 * scale} cy={y - (2.8 - drop) * scale} r={2.7 * scale} fill={white} />
         <circle cx={x - 2.3 * scale} cy={y + 2.6 * scale} r={1.2 * scale} fill={white} />
       </g>
     )
@@ -119,7 +121,7 @@ function OpenEye({ x, y, scale = 1, style }: { x: number; y: number; scale?: num
     return (
       <g stroke="none">
         <ellipse cx={x} cy={y} rx={9 * scale} ry={11 * scale} fill={ink} />
-        <circle cx={x + 3 * scale} cy={y - 4.6 * scale} r={4.2 * scale} fill={white} />
+        <circle cx={x + 3 * scale} cy={y - (4.6 - drop) * scale} r={4.2 * scale} fill={white} />
         <Glint x={x - 3.2 * scale} y={y + 4 * scale} r={3.4 * scale} />
         <circle cx={x + 4.6 * scale} cy={y + 3.4 * scale} r={0.9 * scale} fill={white} />
       </g>
@@ -128,7 +130,7 @@ function OpenEye({ x, y, scale = 1, style }: { x: number; y: number; scale?: num
   return (
     <g stroke="none">
       <ellipse cx={x} cy={y} rx={8.5 * scale} ry={10.5 * scale} fill={ink} />
-      <circle cx={x + 2.9 * scale} cy={y - 4.2 * scale} r={3.3 * scale} fill={white} />
+      <circle cx={x + 2.9 * scale} cy={y - (4.2 - drop) * scale} r={3.3 * scale} fill={white} />
       <circle cx={x - 2.8 * scale} cy={y + 4 * scale} r={1.5 * scale} fill={white} />
     </g>
   )
@@ -147,12 +149,12 @@ function Lashes({ x, y, mood, side }: { x: number; y: number; mood: Expression; 
     sick: [[6, -6, 11.4, -9.2], [6, 6, 11.4, 9.2]],
   }
   const d = lashes[mood].map(([a, b, c, e]) => `M${x + a * side} ${y + b} L${x + c * side} ${y + e}`).join(' ')
-  return <path d={d} strokeWidth={3} />
+  return <path d={d} strokeWidth={3 * useStrokeScale()} />
 }
 
 /** Worried brows: the inner end sits higher, which reads as sad, never cross. */
 function Brow({ x, y, side }: { x: number; y: number; side: -1 | 1 }) {
-  return <path d={`M${x + 7 * side} ${y - 13} Q${x} ${y - 17} ${x - 6 * side} ${y - 18}`} strokeWidth={3} />
+  return <path d={`M${x + 7 * side} ${y - 13} Q${x} ${y - 17} ${x - 6 * side} ${y - 18}`} strokeWidth={3 * useStrokeScale()} />
 }
 
 function Eye({ x, y, mood, side }: { x: number; y: number; mood: Expression; side: -1 | 1 }) {
@@ -182,12 +184,12 @@ function EyeShape({ x, y, mood, side, style }: { x: number; y: number; mood: Exp
       // Still bright, a touch smaller: "hm, okay". No lids, so it never looks unimpressed.
       return <OpenEye x={x} y={y + 1} scale={0.82} style={style} />
     case 'scruffy':
-      // Tired and a little sad: drowsy half eyes under worried brows.
+      // Tired and a bit sad, but hopeful: the same open eye as meh (smaller, glossy, no lid,
+      // so never smug or cross) with its main highlight sunk lower, under worried brows.
       return (
         <g>
           <Brow x={x} y={y} side={side} />
-          <path d={`M${x - 8} ${y - 1} a8 8.5 0 0 0 16 0 Z`} fill={ink} stroke="none" />
-          <circle cx={x + 2.6} cy={y + 2.2} r={1.8} fill={white} stroke="none" />
+          <OpenEye x={x} y={y + 1.5} scale={0.78} drop={2.4} style={style} />
         </g>
       )
     case 'sick':
@@ -226,30 +228,43 @@ function Mouth({ y, mood }: { y: number; mood: Expression }) {
 
 /** Eyes and mouth. Eyes sit at (100 +/- EYE_SPREAD, eyeY). */
 export function Face({ mood, eyeY, mouthY }: { mood: Expression; eyeY: number; mouthY: number }) {
+  const scale = useStrokeScale()
   return (
-    <g stroke={ink} strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round" fill="none">
+    <g stroke={ink} strokeWidth={3.5 * scale} strokeLinecap="round" strokeLinejoin="round" fill="none">
       <Eye x={100 - EYE_SPREAD} y={eyeY} mood={mood} side={-1} />
       <Eye x={100 + EYE_SPREAD} y={eyeY} mood={mood} side={1} />
       <Mouth y={mouthY} mood={mood} />
       {mood === 'sick' && (
         <path d={`M151 ${eyeY - 16} q-6 9 0 12 q6 -3 0 -12 Z`} fill={sky} strokeWidth={2.5} />
       )}
+      {mood === 'scruffy' && (
+        <path d={`M148 ${eyeY - 14} q-4.5 6.5 0 8.5 q4.5 -2.2 0 -8.5 Z`} fill={sky} strokeWidth={2.2} />
+      )}
     </g>
   )
 }
 
+/** A light, cool, minty green: sick-tint pulled toward sky so it never drifts olive on warm bodies. */
+const MINT = mix(sickTint, sky, 0.45)
+/** The sick wash: that mint lightened toward white. */
+const SICK_WASH = mix(MINT, white, 0.4)
+/** The scruffy cast: the same mint, a little paler, so a yellow body goes lime-pastel rather than khaki. */
+const SCRUFFY_WASH = mix(MINT, white, 0.4)
+
 /**
  * How scruffy and sick show on the body, kept funny rather than gross:
- * scruffy gets a faint green cast and a few dirt smudges; sick goes pale with
- * a light green cast. `d` is the body outline path.
+ * scruffy gets a faint minty cast and a few smudges of dirt blended into the body
+ * colour; sick goes pale with a light minty wash. `d` is the body outline path and
+ * `colour` the body colour the smudges are blended with.
  */
-export function MoodTint({ d, mood, smudges }: { d: string; mood: Mood; smudges: [number, number][] }) {
+export function MoodTint({ d, mood, smudges, colour }: { d: string; mood: Mood; smudges: [number, number][]; colour: string }) {
   if (mood !== 'scruffy' && mood !== 'sick') return null
+  const smudge = mix(dirt, colour, 0.5)
   return (
     <g stroke="none">
-      {mood === 'sick' && <path d={d} fill={white} opacity={0.3} />}
-      <path d={d} fill={sickTint} opacity={mood === 'sick' ? 0.2 : 0.12} />
-      <g fill={dirt} opacity={0.45}>
+      {mood === 'sick' && <path d={d} fill={white} opacity={0.36} />}
+      <path d={d} fill={mood === 'sick' ? SICK_WASH : SCRUFFY_WASH} opacity={mood === 'sick' ? 0.28 : 0.16} />
+      <g fill={smudge} opacity={0.55}>
         {smudges.map(([x, y], i) => (
           <ellipse key={i} cx={x} cy={y} rx={i % 2 ? 5 : 7} ry={i % 2 ? 3.5 : 4.5} transform={`rotate(${i % 2 ? 20 : -15} ${x} ${y})`} />
         ))}

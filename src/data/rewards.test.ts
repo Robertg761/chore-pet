@@ -187,7 +187,7 @@ describe('progress that chores take with them', () => {
     let s = homeData()
     const data = selectHome(s.tables)
     const done = data.chores.find((c) => data.completions.some((x) => x.choreId === c.id && x.completedOn === TODAY))!
-    s = apply(s, updateChore(done, { schedule: { kind: 'monthly', dayOfMonth: 1 } }))
+    s = apply(s, updateChore(done, { schedule: { kind: 'monthly', dayOfMonth: 1 } }, TODAY))
     expect(selectHome(s.tables).progress!.choreCount).toBe(3)
   })
 

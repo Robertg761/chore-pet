@@ -1,20 +1,21 @@
 import { PALETTE } from '../../art/palette'
-import { LINE, pair, type Fit } from './shared'
+import { Ink, Tube } from '../ink'
+import { pair, type Fit } from './shared'
 
-const { ink, warmRed, blush, fabricBlue, sky, leaf, leafDark, cream, white } = PALETTE
+const { warmRed, blush, fabricBlue, sky, leaf, leafDark, cream, white, steel, steelDark } = PALETTE
 
 
 /** Round glasses: the lenses sit on the eyes at (+/-20, 0), white shine on each. */
 export function glasses(_fit: Fit) {
   return (
-    <g stroke={ink} strokeWidth={3.5} strokeLinejoin="round" strokeLinecap="round">
+    <Ink k={0.875}>
       {pair(<>
         <circle cx={-20} cy={0} r={14.5} fill={sky} fillOpacity={0.3} />
         <path d="M-34 -3 L-39 -6" fill="none" />
         <path d="M-30 -8 A11.5 11.5 0 0 1 -26 -10.8" fill="none" stroke={white} strokeWidth={3.5} />
       </>)}
       <path d="M-6 -2 Q0 -7 6 -2" fill="none" />
-    </g>
+    </Ink>
   )
 }
 
@@ -28,7 +29,7 @@ export function scarf({ species }: Fit) {
   const band = `M${-w} -16 Q0 14 ${w} -16 L${w} -1 Q0 35 ${-w} -1 Z`
   return (
     <g transform="translate(0 -2)">
-      <g {...LINE}>
+      <Ink>
         {/* tail first, so the wrap sits over its top */}
         <g transform="rotate(-7 32 8)">
           <rect x={20} y={2} width={22} height={28} rx={6} fill={fabricBlue} />
@@ -38,7 +39,7 @@ export function scarf({ species }: Fit) {
         <path d={band} fill={fabricBlue} stroke="none" />
         <path d={`M${-i} -9 Q0 21 ${i} -9 L${i} -4 Q0 26 ${-i} -4 Z`} fill={cream} stroke="none" />
         <path d={band} fill="none" />
-      </g>
+      </Ink>
     </g>
   )
 }
@@ -59,14 +60,14 @@ export function bowTie(_fit: Fit) {
   )
   return (
     <g transform="translate(0 4) scale(1.1)">
-      <g {...LINE}>
+      <Ink>
         <g strokeWidth={10} stroke={cream}>{shapes(cream)}</g>
         {pair(<>
           <path d={BOW_WINGS} fill={warmRed} />
           <path d="M-10 -1 L-19 -4.5" fill="none" stroke={blush} strokeWidth={3} />
         </>)}
         <rect x={-6} y={-7} width={12} height={14} rx={5} fill={warmRed} />
-      </g>
+      </Ink>
     </g>
   )
 }
@@ -78,37 +79,39 @@ export function bowTie(_fit: Fit) {
 type Pt = readonly [number, number]
 
 /**
- * Per-pet cut, in back-anchor space. The pack is small: only its top corners
- * and handle peek past the shoulders. `strap` is a cubic (start, two controls,
- * end): it starts on the shoulder curve (about 70% of the way out) and runs
- * down the body's side, outside the cheeks.
+ * Per-pet cut, in back-anchor space (y up is negative). The pack is a rounded box
+ * a little narrower than the body, so its top corners stand clear of the round
+ * shoulders and the top reads as a bag. `handleX` puts the grab handle over one
+ * shoulder (the viewer's right), `handleW` and `handleH` size its loop. `strap` is
+ * a cubic (start, two controls, end): it leaves the shoulder just inside the
+ * bag's corner and runs down the body's side, outside the cheeks.
  */
 const PACK = {
-  mochi: { top: -61, hw: 59, r: 24, handleW: 13, handleH: 8, strap: [[-50, -44], [-56, -32], [-60, -12], [-59, 14]] },
-  bun: { top: -57, hw: 52, r: 22, handleW: 10, handleH: 7, strap: [[-39, -44], [-46, -32], [-52, -15], [-50, 2]] },
-  sprout: { top: -66, hw: 50, r: 24, handleW: 9, handleH: 7, strap: [[-43, -42], [-49, -30], [-54, -14], [-52, 8]] },
-} as const satisfies Record<string, { top: number; hw: number; r: number; handleW: number; handleH: number; strap: readonly [Pt, Pt, Pt, Pt] }>
+  mochi: { top: -60, hw: 46, r: 17, handleX: 29, handleW: 9, handleH: 11, strap: [[-40, -44], [-52, -34], [-60, -14], [-59, 14]] },
+  bun: { top: -62, hw: 49, r: 17, handleX: 0, handleW: 8, handleH: 10, strap: [[-38, -38], [-46, -30], [-52, -15], [-50, 2]] },
+  sprout: { top: -64, hw: 46, r: 17, handleX: 32, handleW: 8, handleH: 12, strap: [[-38, -38], [-47, -29], [-54, -14], [-52, 8]] },
+} as const satisfies Record<string, { top: number; hw: number; r: number; handleX: number; handleW: number; handleH: number; strap: readonly [Pt, Pt, Pt, Pt] }>
 
 /**
- * A small rounded backpack drawn behind the body. Only its handle and top
- * corners show above the shoulders, and its sides just clear the upper body.
+ * A rounded backpack drawn behind the body. Its top edge, a stitched seam and a
+ * grab handle over the right shoulder show above the body's curve; the rest hides.
  */
 export function backpack({ species }: Fit) {
-  const { top, hw, r, handleW: hx, handleH: hh } = PACK[species]
+  const { top, hw, r, handleX, handleW: hx, handleH: hh } = PACK[species]
   const bottom = 6
-  const handle = `M${-hx} ${top + 3} V${top - hh + 5} Q${-hx} ${top - hh} ${-hx + 5} ${top - hh} H${hx - 5} Q${hx} ${top - hh} ${hx} ${top - hh + 5} V${top + 3}`
+  const handle = `M${handleX - hx} ${top + 4} V${top - hh + 5} Q${handleX - hx} ${top - hh} ${handleX - hx + 5} ${top - hh} H${handleX + hx - 5} Q${handleX + hx} ${top - hh} ${handleX + hx} ${top - hh + 5} V${top + 4}`
   const body = <rect x={-hw} y={top} width={hw * 2} height={bottom - top} rx={r} />
+  const seam = `M${-hw + 6} ${top + 14} Q0 ${top + 19} ${hw - 6} ${top + 14}`
   return (
-    <g {...LINE}>
-      {/* top handle: ink outline, then a leaf-dark core */}
-      <path d={handle} fill="none" strokeWidth={11} />
-      <path d={handle} fill="none" stroke={leafDark} strokeWidth={3.5} />
+    <Ink>
+      <Tube d={handle} outer={11} inner={4} colour={leafDark} />
       <g fill={leaf}>{body}</g>
       {/* darker top flap with a stitched edge */}
-      <path d={`M${-hw} ${top + 30} V${top + r} A${r} ${r} 0 0 1 ${-hw + r} ${top} H${hw - r} A${r} ${r} 0 0 1 ${hw} ${top + r} V${top + 30} Q0 ${top + 40} ${-hw} ${top + 30} Z`} fill={leafDark} stroke="none" />
-      <path d={`M${-hw} ${top + 30} Q0 ${top + 40} ${hw} ${top + 30}`} fill="none" strokeWidth={3.5} />
+      <path d={`M${-hw} ${top + 24} V${top + r} A${r} ${r} 0 0 1 ${-hw + r} ${top} H${hw - r} A${r} ${r} 0 0 1 ${hw} ${top + r} V${top + 24} Q0 ${top + 34} ${-hw} ${top + 24} Z`} fill={leafDark} stroke="none" />
+      <path d={`M${-hw} ${top + 24} Q0 ${top + 34} ${hw} ${top + 24}`} fill="none" strokeWidth={3.5} />
+      <path d={seam} fill="none" stroke={leaf} strokeWidth={2} strokeDasharray="4 4" />
       <g fill="none">{body}</g>
-    </g>
+    </Ink>
   )
 }
 
@@ -122,24 +125,26 @@ function onCubic([p0, p1, p2, p3]: readonly [Pt, Pt, Pt, Pt], t: number) {
 
 /**
  * The backpack's shoulder straps (`Item.front`), drawn in front of the body and
- * outfit at the same `back` anchor. Each comes over the shoulder, runs down the
- * body's side to the hip, and has a small adjuster buckle. They stay outside
- * the eyes and cheeks.
+ * outfit at the same `back` anchor. Each comes over the shoulder and runs down the
+ * body's side to the hip, with a small steel buckle. They stay outside the eyes and
+ * cheeks.
  */
 export function backpackStraps({ species }: Fit) {
   const { strap } = PACK[species]
   const [[sx, sy], [c1x, c1y], [c2x, c2y], [ex, ey]] = strap
   const d = `M${sx} ${sy} C${c1x} ${c1y} ${c2x} ${c2y} ${ex} ${ey}`
-  const b = onCubic(strap, 0.62)
+  const b = onCubic(strap, 0.5)
   return (
-    <g {...LINE}>
+    <Ink>
       {pair(<>
-        <path d={d} fill="none" strokeWidth={11.5} />
-        <path d={d} fill="none" stroke={leaf} strokeWidth={4.5} />
-        {/* adjuster buckle, a little wider than the strap */}
-        <rect x={-8} y={-3.5} width={16} height={7} rx={3} fill={leafDark} strokeWidth={3} transform={`translate(${b.x} ${b.y}) rotate(${b.angle + 90})`} />
+        <Tube d={d} outer={11.5} inner={4.5} colour={leaf} />
+        {/* buckle: a steel clip across the strap, with a slot */}
+        <g transform={`translate(${b.x} ${b.y}) rotate(${b.angle + 90})`}>
+          <rect x={-8.5} y={-5.5} width={17} height={11} rx={4} fill={steel} strokeWidth={3} />
+          <path d="M-3.5 0 H3.5" fill="none" stroke={steelDark} strokeWidth={3} />
+        </g>
       </>)}
-    </g>
+    </Ink>
   )
 }
 

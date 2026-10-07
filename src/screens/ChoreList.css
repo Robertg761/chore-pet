@@ -1,4 +1,5 @@
 .cl {
+  container: cl / inline-size;
   align-self: stretch;
   display: flex;
   flex-direction: column;
@@ -30,12 +31,15 @@
 .cl-section { display: flex; flex-direction: column; gap: 8px; }
 .cl-heading {
   margin: 0;
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 900;
   letter-spacing: 0.02em;
   color: var(--ink-soft);
 }
 .cl-heading-late { color: var(--late-ink); }
+.cl-heading-done { color: var(--due-ink); }
+.cl-heading:focus-visible,
+.cl-caught-title:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
 
 .cl-rows {
   margin: 0;
@@ -47,6 +51,7 @@
 }
 
 .cl-row {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -59,6 +64,7 @@
 }
 .cl-row-overdue { background: #fff6f0; border-color: var(--late-ink); }
 .cl-row-upcoming { border-color: var(--ink-soft); }
+.cl-row-doneToday { background: #f6f2fd; border-color: var(--ink-soft); }
 .cl-row-done { opacity: 0.55; transform: scale(0.98); background: var(--due-bg); }
 
 .cl-info {
@@ -75,7 +81,7 @@
   padding: 0;
   font: inherit;
   font-weight: 800;
-  font-size: 16px;
+  font-size: 1rem;
   text-align: left;
   color: var(--ink);
   background: none;
@@ -86,12 +92,54 @@
 }
 .cl-info .tag { margin: 0 0 2px; font-weight: 800; white-space: nowrap; }
 
-/* The home screen's short list: one line per chore. */
+/* The home screen's short list: one line per chore, until space (or text size) runs tight. */
 .cl-short .cl-info { flex-wrap: nowrap; }
-.cl-short .cl-name { flex: 0 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; overflow-wrap: normal; }
+.cl-short .cl-name { flex: 0 1 auto; min-width: 6em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; overflow-wrap: normal; }
 .cl-short .cl-info .tag { margin: 0; }
+@container cl (max-width: 22em) {
+  /* The tag drops under the name rather than squeezing it. */
+  .cl-short .cl-info { flex-wrap: wrap; }
+  .cl-short .cl-name { flex: 0 1 auto; min-width: 6em; }
+  .cl-short .cl-info .tag { margin: 0 0 4px; }
+}
+
+/* Narrower still (or big text): the button sits under the name instead of squeezing it. */
+@container cl (max-width: 13em) {
+  .cl-row { grid-template-columns: minmax(0, 1fr); padding: 4px 12px 8px; gap: 4px; }
+  .cl-action { justify-self: start; }
+  .cl-short .cl-name { white-space: normal; overflow: visible; text-overflow: clip; }
+}
+
+/* The all-done card. */
+.cl-caught {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--due-bg);
+  color: var(--due-ink);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+}
+.cl-sparkles { flex: none; width: 3.5rem; height: auto; }
+.cl-caught-text { min-width: 0; }
+.cl-caught-title { margin: 0; font-size: 1.1875rem; font-weight: 900; line-height: 1.2; color: var(--ink); }
+.cl-caught-next { margin: 2px 0 0; font-size: 0.9375rem; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: no-preference) {
+  .cl-sparkles { animation: cl-twinkle 2.4s ease-in-out infinite; transform-origin: center; }
+}
+@keyframes cl-twinkle {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(-6deg) scale(1.06); }
+}
 
 .cl-foot { display: flex; gap: 8px; }
+.cl-all-extra { display: inline; }
+@container cl (max-width: 22em) {
+  /* "All (12)" still reads as "All chores (12)" to a screen reader. */
+  .cl-all-extra { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .cl-foot .cl-add { padding: 0 10px; }
+}
 .cl-foot .cl-add { flex: 1 1 0; }
 
 .cl-action {
@@ -111,7 +159,7 @@
 .cl-early {
   min-width: 0;
   padding: 0 6px;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--ink-soft);
   background: none;
   border: none;
@@ -126,7 +174,9 @@
   color: var(--due-ink);
 }
 .cl-check { animation: cl-pop 0.3s ease-out; }
-.cl-set { font-size: 14px; }
+.cl-set { font-size: 0.875rem; }
+/* The check that holds a tapped Done button's place (a real button, so focus stays): it looks settled, not tappable. */
+.cl-nice { background: none; border: 0; cursor: default; }
 .cl-set .cl-check { animation: none; }
 
 .cl-name:focus-visible,

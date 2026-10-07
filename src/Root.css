@@ -1,0 +1,21 @@
+/* The kind fallback when something breaks while rendering (src/Root.tsx). */
+.wobbly { min-height: 100vh; min-height: 100dvh; justify-content: center; text-align: center; }
+.wobbly-title { margin: 0; font-size: 28px; color: var(--ink); }
+.wobbly-text { margin: 0; font-weight: 700; color: var(--ink-soft); }
+.wobbly-reload {
+  min-height: 44px;
+  padding: 0 24px;
+  font: inherit;
+  font-weight: 800;
+  color: #fff;
+  background: var(--accent);
+  border: var(--outline);
+  border-radius: var(--radius);
+  box-shadow: 0 3px 0 var(--ink);
+  cursor: pointer;
+}
+.wobbly-reload:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.wobbly-reload:active { transform: translateY(1px); box-shadow: 0 2px 0 var(--ink); }
+@media (prefers-reduced-motion: reduce) {
+  .wobbly-reload:active { transform: none; }
+}

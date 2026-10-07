@@ -3,6 +3,7 @@ import type { Chore, Weekday } from '../domain/types'
 import {
   N_MAX,
   N_MIN,
+  NAME_MAX,
   SCHEDULE_KINDS,
   SHORT_MONTH_LIMIT,
   WEEKDAY_LONG,
@@ -22,6 +23,8 @@ import {
   type ChoreValue,
   type ScheduleKind,
 } from './choreForm'
+import { ScreenHeader } from '../shell/ScreenHeader'
+import { CharCounter } from './CharCounter'
 import './ChoreEditor.css'
 
 export interface ChoreEditorProps {
@@ -96,19 +99,39 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
   const where = resolveObjectId(form.objectId, places)
 
   return (
-    <form className="editor" onSubmit={submit} noValidate>
-      <h1 className="editor-title">{chore ? 'Edit chore' : 'New chore'}</h1>
+    <form className="editor" onSubmit={submit} aria-labelledby={`${uid}-title`} noValidate>
+      <ScreenHeader
+        id={`${uid}-title`}
+        title={chore ? 'Edit chore' : 'New chore'}
+        onBack={onCancel}
+        backLabel="Cancel"
+        actions={
+          onDelete &&
+          !confirmingDelete && (
+            <button ref={deleteRef} type="button" className="btn btn-quiet btn-danger editor-trash" onClick={askDelete}>
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+                <path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span className="editor-trash-text">Delete chore</span>
+            </button>
+          )
+        }
+      />
 
       <div className="editor-cols">
         <div className="editor-col">
           <div className="editor-field">
-            <label htmlFor={nameId}>Name</label>
+            <div className="editor-label-row">
+              <label htmlFor={nameId}>Name</label>
+              <CharCounter value={form.name} max={NAME_MAX} />
+            </div>
             <input
               ref={nameRef}
               id={nameId}
-              className="editor-input"
+              className="field editor-input"
               type="text"
               value={form.name}
+              maxLength={NAME_MAX}
               placeholder="Wash the dishes"
               autoComplete="off"
               enterKeyHint="done"
@@ -131,6 +154,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
                 <label key={kind} className="editor-kind">
                   <input
                     type="radio"
+                    className="check check-radio"
                     name={`${uid}-kind`}
                     value={kind}
                     checked={form.kind === kind}
@@ -150,7 +174,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
               <div className="editor-stepper">
                 <button
                   type="button"
-                  className="editor-step"
+                  className="btn editor-step"
                   aria-label="One day fewer"
                   onClick={() => {
                     patch({ n: stepN(form.n, -1) })
@@ -162,7 +186,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
                 <input
                   ref={nRef}
                   id={nId}
-                  className="editor-input editor-n"
+                  className="field editor-input editor-n"
                   type="text"
                   inputMode="numeric"
                   autoComplete="off"
@@ -174,7 +198,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
                 />
                 <button
                   type="button"
-                  className="editor-step"
+                  className="btn editor-step"
                   aria-label="One day more"
                   onClick={() => {
                     patch({ n: stepN(form.n, 1) })
@@ -252,7 +276,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
               <label htmlFor={domId}>Day of the month</label>
               <select
                 id={domId}
-                className="editor-input editor-select"
+                className="field editor-input editor-select"
                 value={form.dayOfMonth}
                 aria-describedby={form.dayOfMonth > SHORT_MONTH_LIMIT ? domHintId : undefined}
                 onChange={(e) => patch({ dayOfMonth: Number(e.target.value) })}
@@ -273,7 +297,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
 
           {summary && (
             <p className="editor-summary" aria-live="polite">
-              <span className="editor-summary-label">Repeats</span> {summary}
+              {summary}
             </p>
           )}
 
@@ -282,7 +306,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
               <label htmlFor={whereId}>Where is it?</label>
               <select
                 id={whereId}
-                className="editor-input editor-select"
+                className="field editor-input editor-select"
                 value={where ?? ''}
                 aria-describedby={whereHintId}
                 onChange={(e) => patch({ objectId: e.target.value || null })}
@@ -301,33 +325,24 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
           )}
 
           <div className="editor-actions">
-            <button type="submit" className="editor-save">
+            <button type="submit" className="btn btn-primary editor-save">
               Save
-            </button>
-            <button type="button" className="editor-cancel" onClick={onCancel}>
-              Cancel
             </button>
           </div>
 
-          {onDelete && (
+          {onDelete && confirmingDelete && (
             <div className="editor-danger">
-              {confirmingDelete ? (
-                <div className="editor-confirm" role="group" aria-label="Delete this chore">
-                  <p>Delete this chore? Its history goes too.</p>
-                  <div className="editor-confirm-actions">
-                    <button type="button" className="editor-delete" onClick={onDelete}>
-                      Delete
-                    </button>
-                    <button ref={keepRef} type="button" className="editor-cancel" onClick={keep}>
-                      Keep it
-                    </button>
-                  </div>
+              <div className="editor-confirm" role="group" aria-label="Delete this chore">
+                <p>Delete this chore? Rewards you earned stay.</p>
+                <div className="editor-confirm-actions">
+                  <button type="button" className="btn btn-danger" onClick={onDelete}>
+                    Delete
+                  </button>
+                  <button ref={keepRef} type="button" className="btn" onClick={keep}>
+                    Keep it
+                  </button>
                 </div>
-              ) : (
-                <button ref={deleteRef} type="button" className="link-button editor-delete-link" onClick={askDelete}>
-                  Delete chore
-                </button>
-              )}
+              </div>
             </div>
           )}
         </div>

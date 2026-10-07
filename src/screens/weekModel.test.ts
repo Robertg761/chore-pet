@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import type { Chore, Completion } from '../domain/types'
+import { petCondition } from '../domain/health'
 import { completedPerDay, healthPerDay, weekDays, weekSummary } from './weekModel'
+
+// Health numbers come from the domain's own petCondition, so retuning its curve doesn't break these.
 
 // 2026-10-07 is a Wednesday.
 const TODAY = '2026-10-07'
@@ -57,6 +60,12 @@ describe('completedPerDay', () => {
     ]
     expect(completedPerDay(completions, days)).toEqual([2, 0, 0, 0, 0, 0, 1])
   })
+
+  it('counts a chore once per day, even when two devices both ticked it off', () => {
+    const days = weekDays(TODAY)
+    const twice = [done('a', '2026-10-07'), { ...done('a', '2026-10-07'), id: 'a-again' }, done('b', '2026-10-07')]
+    expect(completedPerDay(twice, days)).toEqual([0, 0, 0, 0, 0, 0, 2])
+  })
 })
 
 describe('healthPerDay', () => {
@@ -67,31 +76,43 @@ describe('healthPerDay', () => {
   })
 
   it('replays only what was true by each day', () => {
-    // Created 10-01, never done: overdue grows each day after it is due.
-    const result = healthPerDay([chore('a', '2026-10-01')], [], [], days)
+    // Created 10-01, never done: it only ever gets later, so health only ever drops.
+    const a = chore('a', '2026-10-01')
+    const result = healthPerDay([a], [], [], days)
     expect(result[0].health).toBe(100) // due that day, not overdue yet
-    expect(result[1].health).toBe(94) // 1 day overdue (level 1)
-    expect(result[2].health).toBe(85) // 2 days overdue (level 2)
-    expect(result[6].health).toBeLessThan(result[2].health)
+    result.forEach((d) => expect(d.health).toBe(petCondition([a], [], d.date).health))
+    for (let i = 1; i < result.length; i++) expect(result[i].health).toBeLessThanOrEqual(result[i - 1].health)
+    expect(result[6].health).toBeLessThan(100)
+  })
+
+  it('keeps past days as they were when a chore is edited today', () => {
+    // Daily since 10-01 and never done, then switched to weekly today.
+    const before = healthPerDay([chore('a', '2026-10-01')], [], [], days)
+    const edited: Chore = { ...chore('a', '2026-10-01'), schedule: { kind: 'weekly', weekday: 3, since: TODAY, before: { kind: 'daily' } } }
+    const after = healthPerDay([edited], [], [], days)
+    expect(after.slice(0, 6).map((d) => d.health)).toEqual(before.slice(0, 6).map((d) => d.health))
+    expect(after[5].health).toBeLessThan(100)
   })
 
   it('ignores completions made after a day and chores created after it', () => {
     const chores = [chore('a', '2026-10-01'), chore('late', '2026-10-06')]
     const completions = [done('a', '2026-10-05'), done('a', '2026-10-06'), done('a', '2026-10-07')]
     const result = healthPerDay(chores, completions, [], days)
-    // 10-03: chore a is 2 days overdue, completions from 10-05 on don't exist yet.
-    expect(result[2].health).toBe(85)
+    // 10-04: chore a was never done yet; completions from 10-05 on don't exist yet, nor does chore 'late'.
+    expect(result[3].health).toBe(petCondition([chores[0]], [], '2026-10-04').health)
+    expect(result[3].health).toBeLessThan(100)
     // The same day with every completion would look healthier, so it was not used.
-    const naive = healthPerDay([chore('a', '2026-10-01')], [done('a', '2026-10-02')], [], days)
-    expect(naive[2].health).toBeGreaterThan(result[2].health)
+    expect(petCondition(chores, completions, '2026-10-04').health).toBeGreaterThan(result[3].health)
     // On 10-05 chore a was just done and the other chore did not exist yet.
     expect(result[4].health).toBe(100)
   })
 
   it('does not count a chore before it was created', () => {
-    const result = healthPerDay([chore('new', '2026-10-06')], [], [], days)
+    const fresh = chore('new', '2026-10-01')
+    const result = healthPerDay([{ ...fresh, createdOn: '2026-10-06' }], [], [], days)
     expect(result.slice(0, 5).map((d) => d.health)).toEqual([100, 100, 100, 100, 100])
-    expect(result[6].health).toBe(94)
+    // Had it existed all week, it would already be costing health by 10-05.
+    expect(petCondition([fresh], [], '2026-10-05').health).toBeLessThan(100)
   })
 
   it('flags vacation days and stops overdue counting during them', () => {
@@ -120,7 +141,7 @@ describe('weekSummary', () => {
   })
 
   it('is kind on quiet weeks', () => {
-    const quiet = 'A quiet week. Even one chore makes a difference.'
+    const quiet = "A quiet week. I'm here whenever you're ready."
     expect(weekSummary(days, [0, 0, 0, 0, 0, 0, 0], []).line).toBe(quiet)
     expect(weekSummary(days, [0, 1, 0, 0, 0, 0, 0], []).line).toBe(quiet)
   })

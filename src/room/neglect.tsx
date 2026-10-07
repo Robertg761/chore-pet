@@ -1,19 +1,33 @@
-import type { CSSProperties, ReactNode } from 'react'
+import { createContext, memo, useContext, type CSSProperties, type ReactNode } from 'react'
 import { mix } from '../art/color'
 import { PALETTE, ROOM_STROKE } from '../art/palette'
 import type { MessKind } from '../catalog/types'
+import { CUE_SIZE, type CueLevel } from './cuePlan'
 import { fly } from './objects/mess'
 import './neglect.css'
 
 // Neglect cues: overlays that float above a room object and get worse the
 // longer its chores go undone. Drawn around (0,0), the top-centre of the
-// object, in room px. They rise from y = 0, spread about +-30 px and ignore
-// pointer events. Level 1 is a hint, 2 is clearly a problem, 3 is visible from
-// across the room. Funny and colourful, never gross (docs/ART.md).
+// object, in reference-room px (the room scales them by TILE_SCALE). They rise
+// from y = 0 and ignore pointer events. Level 1 is a hint, 2 is clearly a
+// problem, 3 is visible from across the room. Levels 2 and 3 are drawn smaller
+// than designed (CUE_SIZE in ./cuePlan) with outlines kept at full width.
+// Which cues show, and which animate, is decided in ./cuePlan.
+// Funny and colourful, never gross (docs/ART.md).
 
 const { ink, white, sickTint, steel, steelDark, dirt, cream, creamDark, sky, blush, petDefault } = PALETTE
 
-export type CueLevel = 1 | 2 | 3
+export type { CueLevel } from './cuePlan'
+
+/**
+ * Outline multiplier inside a shrunk cue: 1 / its drawn size, so every line
+ * keeps the room's outline width however small the cue is drawn.
+ */
+const InkScale = createContext(1)
+function useInk() {
+  const m = useContext(InkScale)
+  return (n: number) => n * m
+}
 
 type Vars = CSSProperties & Record<`--${string}`, string | number>
 const vars = (v: Vars): Vars => v
@@ -36,7 +50,8 @@ type Blob = [number, number, number][]
  * inside. A shade layer and a slightly smaller, offset light layer give the
  * one darker shade along the lower right.
  */
-function Puff({ blob, face, outline = ROOM_STROKE }: { blob: Blob; face: readonly [string, string]; outline?: number }) {
+function Puff({ blob, face, outline: base = ROOM_STROKE }: { blob: Blob; face: readonly [string, string]; outline?: number }) {
+  const outline = useInk()(base)
   return (
     <g>
       {blob.map(([x, y, r], i) => (
@@ -67,11 +82,12 @@ function Wisp({ x, y, waves, seg = 9, amp = 4, core = 2.6, colour = sickTint, du
   /** Opacity when static (reduced motion); animation fades it in and out. */
   still?: number
 }) {
+  const w = useInk()
   let d = `M${x} ${y}`
   for (let i = 0; i < waves * 2; i++) d += ` q${(i % 2 === 0) !== flip ? -amp * 2 : amp * 2} ${-seg / 2} 0 ${-seg}`
   return (
     <g className="nc-rise" style={timing(dur, delay)} opacity={still}>
-      <path d={d} fill="none" stroke={ink} strokeWidth={core + 2.6} strokeLinecap="round" />
+      <path d={d} fill="none" stroke={ink} strokeWidth={core + w(2.6)} strokeLinecap="round" />
       <path d={d} fill="none" stroke={colour} strokeWidth={core} strokeLinecap="round" />
     </g>
   )
@@ -80,7 +96,7 @@ function Wisp({ x, y, waves, seg = 9, amp = 4, core = 2.6, colour = sickTint, du
 /** A fly with no flight-path squiggle (the orbit ring draws the path). Centred on (0,0). */
 function FlyBody() {
   return (
-    <g stroke={ink} strokeWidth={1.6}>
+    <g stroke={ink} strokeWidth={useInk()(1.6)}>
       <ellipse cx={-3} cy={-3.2} rx={3.6} ry={2.2} fill={white} transform="rotate(-30 -3 -3.2)" />
       <ellipse cx={3} cy={-3.2} rx={3.6} ry={2.2} fill={white} transform="rotate(30 3 -3.2)" />
       <ellipse cx={0} cy={0} rx={3.1} ry={2.6} fill={ink} />
@@ -98,9 +114,10 @@ function Orbit({ cx, cy, rx, squash = 0.7, angles, dur = 5, children }: {
   dur?: number
   children?: ReactNode
 }) {
+  const w = useInk()
   return (
     <g transform={`translate(${cx} ${cy}) scale(1 ${squash})`}>
-      <ellipse cx={0} cy={0} rx={rx} ry={rx} fill="none" stroke={ink} strokeWidth={1.4} strokeDasharray="2 4" strokeLinecap="round" opacity={0.35} />
+      <ellipse cx={0} cy={0} rx={rx} ry={rx} fill="none" stroke={ink} strokeWidth={w(1.4)} strokeDasharray="2 4" strokeLinecap="round" opacity={0.35} />
       {angles.map((a, i) => (
         // The ring circle has the group's box centred on the cloud, so the group
         // can rotate about its own centre. The counter-rotation keeps each fly upright.
@@ -122,13 +139,14 @@ function Orbit({ cx, cy, rx, squash = 0.7, angles, dur = 5, children }: {
 
 /** A wavy-mouthed queasy face for the big stink cloud. */
 function QueasyFace({ x, y }: { x: number; y: number }) {
+  const w = useInk()
   return (
     <g transform={`translate(${x} ${y})`}>
       <circle cx={-7} cy={0} r={2.6} fill={ink} />
       <circle cx={7} cy={0} r={2.6} fill={ink} />
       <circle cx={-6.2} cy={-0.9} r={0.9} fill={white} />
       <circle cx={7.8} cy={-0.9} r={0.9} fill={white} />
-      <path d="M-5 7 q2.5 -3 5 0 q2.5 3 5 0" fill="none" stroke={ink} strokeWidth={2} strokeLinecap="round" />
+      <path d="M-5 7 q2.5 -3 5 0 q2.5 3 5 0" fill="none" stroke={ink} strokeWidth={w(2)} strokeLinecap="round" />
       <ellipse cx={-12} cy={5} rx={3} ry={2} fill={blush} opacity={0.7} />
       <ellipse cx={12} cy={5} rx={3} ry={2} fill={blush} opacity={0.7} />
     </g>
@@ -137,6 +155,7 @@ function QueasyFace({ x, y }: { x: number; y: number }) {
 
 /** A tiny dizzy spiral. */
 function Swirl({ x, y, r = 6 }: { x: number; y: number; r?: number }) {
+  const w = useInk()
   let d = ''
   for (let i = 0; i <= 28; i++) {
     const t = i / 28
@@ -147,7 +166,7 @@ function Swirl({ x, y, r = 6 }: { x: number; y: number; r?: number }) {
   return (
     <g transform={`translate(${x} ${y})`}>
       <g className="nc-swirl" style={timing(2.4)}>
-        <path d={d} fill="none" stroke={ink} strokeWidth={4.4} strokeLinecap="round" strokeLinejoin="round" />
+        <path d={d} fill="none" stroke={ink} strokeWidth={2 + w(2.4)} strokeLinecap="round" strokeLinejoin="round" />
         <path d={d} fill="none" stroke={white} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         <circle r={r + 1} fill="none" />
       </g>
@@ -157,18 +176,15 @@ function Swirl({ x, y, r = 6 }: { x: number; y: number; r?: number }) {
 
 // ---- stink ---------------------------------------------------------------
 
+// Seven circles: a puffy outline with as few nodes as reads as a cloud.
 const STINK_CLOUD: Blob = [
-  [0, -26, 17],
-  [-19, -17, 9],
-  [-11, -9, 9],
-  [2, -7, 10],
-  [14, -9, 9],
-  [22, -18, 9],
-  [24, -31, 8],
-  [16, -41, 10],
-  [3, -46, 11],
-  [-10, -43, 10],
-  [-21, -35, 9],
+  [0, -27, 18],
+  [-17, -15, 10],
+  [0, -10, 11],
+  [17, -15, 10],
+  [20, -33, 10],
+  [3, -44, 12],
+  [-17, -36, 10],
 ]
 
 function Stink({ level }: { level: CueLevel }) {
@@ -205,7 +221,7 @@ function Stink({ level }: { level: CueLevel }) {
 function Speck({ x, y, r = 2.4, fill = steelDark, dur, delay }: { x: number; y: number; r?: number; fill?: string; dur: number; delay: number }) {
   return (
     <g className="nc-drift" style={timing(dur, delay)}>
-      <circle cx={x} cy={y} r={r} fill={fill} stroke={ink} strokeWidth={1.5} />
+      <circle cx={x} cy={y} r={r} fill={fill} stroke={ink} strokeWidth={useInk()(1.5)} />
     </g>
   )
 }
@@ -229,7 +245,7 @@ function Cobweb({ x, y, s = 16, flip = false }: { x: number; y: number; s?: numb
     return d
   }
   return (
-    <g transform={`translate(${x} ${y})`} fill="none" stroke={ink} strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" opacity={0.9}>
+    <g transform={`translate(${x} ${y})`} fill="none" stroke={ink} strokeWidth={useInk()(1.4)} strokeLinecap="round" strokeLinejoin="round" opacity={0.9}>
       <path d={rays.map(([u, v]) => `M0 0 L${pt(u, v)}`).join(' ')} />
       <path d={ring(0.5)} />
       <path d={ring(0.85)} fill={white} fillOpacity={0.5} />
@@ -248,13 +264,14 @@ function DustBunny({ x, y, s = 1, dur, delay }: { x: number; y: number; s?: numb
     [-3.2, 5, 3.8],
     [3.2, 5, 3.8],
   ]
+  const w = useInk()
   return (
     <g transform={`translate(${x} ${y}) scale(${s})`}>
       <g className="nc-hop" style={timing(dur, delay)}>
         <Puff blob={ring} face={DUST_FACE} outline={2.2} />
         <circle cx={-2.7} cy={-0.8} r={1.25} fill={ink} />
         <circle cx={2.7} cy={-0.8} r={1.25} fill={ink} />
-        <path d="M-2 2 q2 2.4 4 0" fill="none" stroke={ink} strokeWidth={1.2} strokeLinecap="round" />
+        <path d="M-2 2 q2 2.4 4 0" fill="none" stroke={ink} strokeWidth={w(1.2)} strokeLinecap="round" />
         <circle cx={-5} cy={2} r={1.2} fill={blush} opacity={0.8} />
         <circle cx={5} cy={2} r={1.2} fill={blush} opacity={0.8} />
       </g>
@@ -271,17 +288,13 @@ const DUST_PUFF_SMALL: Blob = [
 ]
 
 const DUST_CLOUD: Blob = [
-  [0, -24, 16],
-  [-19, -14, 9],
-  [-9, -8, 9],
-  [5, -7, 10],
-  [17, -10, 9],
-  [24, -20, 8],
-  [20, -32, 9],
-  [8, -40, 10],
-  [-6, -40, 10],
-  [-18, -33, 9],
-  [-26, -23, 6],
+  [0, -24, 17],
+  [-18, -14, 10],
+  [1, -9, 11],
+  [18, -13, 10],
+  [20, -30, 10],
+  [1, -40, 12],
+  [-18, -33, 10],
 ]
 
 function Dust({ level }: { level: CueLevel }) {
@@ -329,13 +342,14 @@ function Dust({ level }: { level: CueLevel }) {
 
 /** A dry leaf with a midrib and a little curl, centred on (0,0), about 15 px long. */
 function Leaf({ x, y, rot = 0, s = 1, dur, delay, fall = true }: { x: number; y: number; rot?: number; s?: number; dur: number; delay: number; fall?: boolean }) {
+  const w = useInk()
   return (
     <g transform={`translate(${x} ${y}) rotate(${rot}) scale(${s})`}>
       <g className={fall ? 'nc-fall' : 'nc-bob'} style={timing(dur, delay)}>
-        <path d="M-8 1 Q-3 -8 8 -3 Q4 8 -8 1 Z" fill={LEAF} stroke={ink} strokeWidth={2} strokeLinejoin="round" />
+        <path d="M-8 1 Q-3 -8 8 -3 Q4 8 -8 1 Z" fill={LEAF} stroke={ink} strokeWidth={w(2)} strokeLinejoin="round" />
         <path d="M-1 3 Q4 7 8 -3 Q4 8 -1 3 Z" fill={LEAF_DARK} />
-        <path d="M-8 1 Q-1 0 6 -2" fill="none" stroke={ink} strokeWidth={1.3} strokeLinecap="round" />
-        <path d="M-1.5 0.4 l2.5 3.2 M2.4 -0.8 l2.4 -3" fill="none" stroke={ink} strokeWidth={1} strokeLinecap="round" />
+        <path d="M-8 1 Q-1 0 6 -2" fill="none" stroke={ink} strokeWidth={w(1.3)} strokeLinecap="round" />
+        <path d="M-1.5 0.4 l2.5 3.2 M2.4 -0.8 l2.4 -3" fill="none" stroke={ink} strokeWidth={w(1)} strokeLinecap="round" />
       </g>
     </g>
   )
@@ -344,9 +358,10 @@ function Leaf({ x, y, rot = 0, s = 1, dur, delay, fall = true }: { x: number; y:
 /** A droplet outline, sky blue, dashed when `empty`. */
 function Droplet({ empty = false, s = 1 }: { empty?: boolean; s?: number }) {
   const d = 'M0 -10 C5 -3 8 1 8 4.5 A8 8 0 0 1 -8 4.5 C-8 1 -5 -3 0 -10 Z'
+  const w = useInk()
   return (
     <g transform={`scale(${s})`}>
-      <path d={d} fill={empty ? 'none' : white} fillOpacity={0.7} stroke={ink} strokeWidth={ROOM_STROKE - (empty ? 0.6 : 0)} strokeLinejoin="round" />
+      <path d={d} fill={empty ? 'none' : white} fillOpacity={0.7} stroke={ink} strokeWidth={w(ROOM_STROKE - (empty ? 0.6 : 0))} strokeLinejoin="round" />
       {!empty && <path d={d} fill="none" stroke={sky} strokeWidth={1.4} strokeDasharray="3 3.4" transform="scale(0.62)" />}
       {empty && <path d={d} fill="none" stroke={sky} strokeWidth={1.8} strokeDasharray="3 3.4" transform="scale(0.72)" />}
     </g>
@@ -355,33 +370,33 @@ function Droplet({ empty = false, s = 1 }: { empty?: boolean; s?: number }) {
 
 /** A bubble with an empty droplet inside: the plant is thirsty. */
 function ThirstBubble({ x, y }: { x: number; y: number }) {
+  const w = useInk()
   return (
     <g transform={`translate(${x} ${y})`}>
       <g className="nc-bob" style={timing(2.2)}>
-        <circle r={12} fill={white} fillOpacity={0.85} stroke={ink} strokeWidth={ROOM_STROKE} />
+        <circle r={12} fill={white} fillOpacity={0.85} stroke={ink} strokeWidth={w(ROOM_STROKE)} />
         <path d="M-6 -7 q-3 3 -2.4 7" fill="none" stroke={white} strokeWidth={2} strokeLinecap="round" />
         <g transform="translate(0 1)">
           <Droplet empty s={0.85} />
         </g>
-        <circle cx={-9} cy={13.5} r={2.6} fill={white} fillOpacity={0.85} stroke={ink} strokeWidth={2} />
-        <circle cx={-14} cy={19} r={1.6} fill={white} fillOpacity={0.85} stroke={ink} strokeWidth={1.6} />
+        <circle cx={-9} cy={13.5} r={2.6} fill={white} fillOpacity={0.85} stroke={ink} strokeWidth={w(2)} />
+        <circle cx={-14} cy={19} r={1.6} fill={white} fillOpacity={0.85} stroke={ink} strokeWidth={w(1.6)} />
       </g>
     </g>
   )
 }
 
 const EARTH_PUFF: Blob = [
-  [0, -20, 12],
-  [-11, -14, 7],
-  [-4, -9, 7],
-  [8, -10, 7],
-  [13, -19, 7],
-  [7, -28, 8],
-  [-6, -28, 8],
-  [-14, -22, 6],
+  [0, -19, 13],
+  [-11, -12, 8],
+  [7, -10, 8],
+  [13, -21, 8],
+  [3, -29, 9],
+  [-12, -25, 7.5],
 ]
 
 function Wilt({ level }: { level: CueLevel }) {
+  const w = useInk()
   if (level === 1) return <Leaf x={4} y={-12} rot={-20} dur={4} delay={0} />
   if (level === 2) {
     return (
@@ -402,7 +417,7 @@ function Wilt({ level }: { level: CueLevel }) {
       <g className="nc-breathe" style={timing(3.2)}>
         <g transform="scale(1.3)">
           <Puff blob={EARTH_PUFF} face={EARTH_FACE} />
-          <g fill="none" stroke={ink} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" opacity={0.85}>
+          <g fill="none" stroke={ink} strokeWidth={w(1.8)} strokeLinecap="round" strokeLinejoin="round" opacity={0.85}>
             <path d="M-8 -14 l4 -5 l-2 -5 l5 -4" />
             <path d="M2 -9 l-1 -6 l5 -3 l1 -6" />
             <path d="M11 -22 l-4 2 l1 5" />
@@ -420,12 +435,28 @@ function Wilt({ level }: { level: CueLevel }) {
 
 // ---- entry ---------------------------------------------------------------
 
-export function NeglectCue({ kind, level }: { kind: MessKind; level: CueLevel }) {
+export interface NeglectCueProps {
+  kind: MessKind
+  level: CueLevel
+  /** A still picture: only the most neglected cues in the room animate. */
+  still?: boolean
+}
+
+/**
+ * One cue, drawn at its level's size (CUE_SIZE). Memoised: the room re-renders
+ * as the pet walks, the cues only when their level changes.
+ */
+export const NeglectCue = memo(function NeglectCue({ kind, level, still = false }: NeglectCueProps) {
+  const size = CUE_SIZE[level]
   return (
-    <g className="nc-cue" data-kind={kind} data-level={level} style={{ pointerEvents: 'none' }} aria-hidden="true">
-      {kind === 'stink' && <Stink level={level} />}
-      {kind === 'dust' && <Dust level={level} />}
-      {kind === 'wilt' && <Wilt level={level} />}
+    <g className={still ? 'nc-cue nc-still' : 'nc-cue'} data-kind={kind} data-level={level} style={{ pointerEvents: 'none' }} aria-hidden="true">
+      <g transform={size === 1 ? undefined : `scale(${size})`}>
+        <InkScale.Provider value={1 / size}>
+          {kind === 'stink' && <Stink level={level} />}
+          {kind === 'dust' && <Dust level={level} />}
+          {kind === 'wilt' && <Wilt level={level} />}
+        </InkScale.Provider>
+      </g>
     </g>
   )
-}
+})

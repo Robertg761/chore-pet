@@ -6,12 +6,27 @@ export type ISODate = string
 /** 0 = Sunday ... 6 = Saturday */
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6
 
-export type Schedule =
+/** What a schedule asks for. */
+export type ScheduleRule =
   | { kind: 'daily' }
   | { kind: 'everyNDays'; n: number }
   | { kind: 'weekdays'; days: Weekday[] }
   | { kind: 'weekly'; weekday: Weekday }
   | { kind: 'monthly'; dayOfMonth: number } // clamped to the month's length
+
+/**
+ * How often a chore comes round. `since` is the day the chore moved to this
+ * schedule (set by updateChore when the schedule changes): nothing is owed
+ * from before it, so a schedule change is never retroactive. `before` is the
+ * schedule it replaced, with its own `since` and `before` (a short chain, see
+ * SCHEDULE_HISTORY), so past days are judged by the rule that applied then.
+ * Both are missing on a schedule that was never changed, and neither is part
+ * of what the schedule asks for, so `sameSchedule` ignores them.
+ */
+export type Schedule = ScheduleRule & {
+  since?: ISODate
+  before?: Schedule
+}
 
 export interface VacationWindow {
   start: ISODate

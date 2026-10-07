@@ -149,6 +149,7 @@ export const bedArt: ObjectArt = {
   catalogId: 'bed',
   footprint: { w: 3, d: 2 },
   bounds: { x: -72, y: -64, width: 176, height: 152 },
+  cueY: -46,
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {frame()}

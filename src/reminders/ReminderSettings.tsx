@@ -2,6 +2,7 @@ import { useId, useState } from 'react'
 import { useInstallPrompt } from '../pwa/useInstallPrompt'
 import { isValidTime, type ReminderPrefs } from './reminderLogic'
 import { loadPrefs, savePrefs } from './reminderStore'
+import '../shell/controls.css'
 import './ReminderSettings.css'
 
 export interface ReminderSettingsProps {
@@ -36,9 +37,9 @@ function friendlyTime(time: string): string {
 function ShareIcon() {
   return (
     <svg className="home-hint-icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false">
-      <rect x="1.5" y="1.5" width="29" height="29" rx="8" fill="#e4dcf7" stroke="#2b1e2f" strokeWidth="2" />
-      <path d="M11 14.5H9.5v10h13v-10H21" fill="none" stroke="#2b1e2f" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M16 20V7M11.5 11.5L16 7l4.5 4.5" fill="none" stroke="#2b1e2f" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="1.5" y="1.5" width="29" height="29" rx="8" strokeWidth="2" />
+      <path d="M11 14.5H9.5v10h13v-10H21" fill="none" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M16 20V7M11.5 11.5L16 7l4.5 4.5" fill="none" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
@@ -110,6 +111,7 @@ export function ReminderSettings({ petName }: ReminderSettingsProps) {
           <label className="settings-toggle reminder-toggle">
             <input
               type="checkbox"
+              className="check"
               checked={isOn}
               disabled={unavailable || asking}
               aria-describedby={statusId}
@@ -122,6 +124,7 @@ export function ReminderSettings({ petName }: ReminderSettingsProps) {
             <label htmlFor={timeId}>Nudge time</label>
             <input
               id={timeId}
+              className="field"
               type="time"
               value={prefs.time}
               disabled={!isOn}
@@ -130,6 +133,17 @@ export function ReminderSettings({ petName }: ReminderSettingsProps) {
               }}
             />
           </div>
+
+          <label className="settings-toggle reminder-toggle">
+            <input
+              type="checkbox"
+              className="check"
+              checked={prefs.private === true}
+              disabled={!isOn}
+              onChange={(e) => update({ ...prefs, private: e.target.checked })}
+            />
+            <span>Hide chore names in nudges</span>
+          </label>
         </>
       )}
 

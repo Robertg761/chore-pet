@@ -1,6 +1,6 @@
 import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room } from '../domain/types'
-import { choreCountOf } from '../domain/unlocks'
-import { CASCADES, TABLES, keyOf, type TableMap, type TableName } from './tables'
+import { applyUnlocks, choreCountOf } from '../domain/unlocks'
+import { CASCADES, TABLES, keyOf, type Created, type TableMap, type TableName } from './tables'
 
 // Pure state for the offline-first data layer. No IO here, so it's all testable.
 //
@@ -12,12 +12,17 @@ import { CASCADES, TABLES, keyOf, type TableMap, type TableName } from './tables
 
 export type Tables = { [T in TableName]: Record<string, TableMap[T]> }
 
+/**
+ * A queued change. `seq` orders changes within a snapshot; `id` tells two
+ * changes apart across tabs, whose seq counters can collide (missing on
+ * changes queued before ids existed).
+ */
 export type Op =
-  | { [T in TableName]: { table: T; kind: 'upsert'; key: string; value: TableMap[T]; seq: number } }[TableName]
-  | { table: TableName; kind: 'delete'; key: string; seq: number }
+  | { [T in TableName]: { table: T; kind: 'upsert'; key: string; value: TableMap[T]; seq: number; id?: string } }[TableName]
+  | { table: TableName; kind: 'delete'; key: string; seq: number; id?: string }
 
-/** A change before it is queued (no sequence number yet). */
-export type NewOp = Op extends infer O ? (O extends Op ? Omit<O, 'seq'> : never) : never
+/** A change before it is queued (no sequence number or id yet). */
+export type NewOp = Op extends infer O ? (O extends Op ? Omit<O, 'seq' | 'id'> : never) : never
 
 /** Latest pending change per row, keyed `${table}:${key}`. */
 export type Outbox = Record<string, Op>
@@ -29,6 +34,22 @@ export interface Snapshot {
   outbox: Outbox
   /** Monotonic counter for op sequence numbers. */
   seq: number
+  /**
+   * Changes the server refused for good (or kept refusing), set aside so they
+   * stop blocking the queue but are never dropped silently. Missing on
+   * snapshots saved before this existed.
+   */
+  rejected?: RejectedOp[]
+  /** When `tables` last came from the server (an ISO time), so tabs can tell whose copy is fresher. */
+  pulledAt?: string
+}
+
+export interface RejectedOp {
+  op: Op
+  /** What the server said. */
+  message: string
+  /** When it was set aside, as an ISO timestamp. */
+  at: string
 }
 
 export function emptyTables(): Tables {
@@ -36,7 +57,21 @@ export function emptyTables(): Tables {
 }
 
 export function emptySnapshot(userId: string | null = null): Snapshot {
-  return { userId, tables: emptyTables(), outbox: {}, seq: 0 }
+  return { userId, tables: emptyTables(), outbox: {}, seq: 0, rejected: [] }
+}
+
+function newOpId(): string {
+  return typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
+
+/** Identifies one queued change, even across tabs. */
+export function opIdOf(op: Op): string {
+  return op.id ?? `${op.table}:${op.key}#${op.seq}`
+}
+
+function sameOp(a: Op | undefined, b: Op | undefined): boolean {
+  if (!a || !b) return a === b
+  return opIdOf(a) === opIdOf(b) && a.seq === b.seq
 }
 
 function outboxKey(table: TableName, key: string): string {
@@ -64,7 +99,7 @@ export function applyOp(tables: Tables, op: Op): Tables {
 /** Apply a change locally and queue it, replacing any older queued change to the same row. */
 export function change(snapshot: Snapshot, op: NewOp): Snapshot {
   const seq = snapshot.seq + 1
-  const full = { ...op, seq } as Op
+  const full = { ...op, seq, id: newOpId() } as Op
   return {
     ...snapshot,
     seq,
@@ -110,9 +145,40 @@ export function acknowledge(outbox: Outbox, sent: Op[]): Outbox {
   const next = { ...outbox }
   for (const op of sent) {
     const k = outboxKey(op.table, op.key)
-    if (next[k]?.seq === op.seq) delete next[k]
+    if (sameOp(next[k], op)) delete next[k]
   }
   return next
+}
+
+/**
+ * Take refused changes out of the queue and keep them on the snapshot's
+ * rejected list. A change already replaced by a newer one to the same row is
+ * moot (the newer one gets its own try), so it isn't kept.
+ */
+export function reject(snapshot: Snapshot, ops: Op[], message: string, at: string): Snapshot {
+  const current = ops.filter((op) => sameOp(snapshot.outbox[outboxKey(op.table, op.key)], op))
+  const gone = new Set(current.map(opIdOf))
+  const kept = (snapshot.rejected ?? []).filter((r) => !gone.has(opIdOf(r.op)))
+  return {
+    ...snapshot,
+    outbox: acknowledge(snapshot.outbox, current),
+    rejected: [...kept, ...current.map((op) => ({ op, message, at }))],
+  }
+}
+
+/** Queue rejected changes again (fresh sequence numbers, so they win over nothing newer). */
+export function requeueRejected(snapshot: Snapshot): Snapshot {
+  const rejected = snapshot.rejected ?? []
+  const cleared: Snapshot = { ...snapshot, rejected: [] }
+  return rejected
+    .filter((r) => !cleared.outbox[outboxKey(r.op.table, r.op.key)]) // a newer change to the row wins
+    .sort((a, b) => a.op.seq - b.op.seq)
+    .reduce((s, r) => change(s, stripQueue(r.op)), cleared)
+}
+
+function stripQueue(op: Op): NewOp {
+  const { seq: _seq, id: _id, ...rest } = op
+  return rest as NewOp
 }
 
 /** Server state with everything still queued re-applied on top. */
@@ -133,6 +199,89 @@ export function claim(snapshot: Snapshot, userId: string): Snapshot {
   return emptySnapshot(userId)
 }
 
+/** Whether claim() would drop this snapshot for `userId`. */
+export function claimDrops(snapshot: Snapshot, userId: string): boolean {
+  return snapshot.userId !== null && snapshot.userId !== userId
+}
+
+/**
+ * Worth a backup before it is dropped: anything not yet on the server, or any
+ * home at all (a guest's home lives only under its anonymous account, which is
+ * gone once this device signs in elsewhere).
+ */
+export function worthBackingUp(snapshot: Snapshot): boolean {
+  return (
+    Object.keys(snapshot.outbox).length > 0 ||
+    (snapshot.rejected?.length ?? 0) > 0 ||
+    Object.keys(snapshot.tables.homes).length > 0
+  )
+}
+
+/**
+ * Fold what another tab saved (`stored`) into this tab's snapshot (`mine`).
+ * `base` is what this tab last read from or wrote to storage, so each queued
+ * row gets a three-way merge: a change the other tab sent is gone from
+ * storage but was in base, while one it never saw is missing from both.
+ * Changes only the other tab made are applied to this tab's tables.
+ *
+ * When the two belong to different accounts, `prefer` decides: a save keeps
+ * this tab's (it is the newer decision), a reload takes the stored one.
+ */
+export function mergeSnapshots(mine: Snapshot, base: Snapshot | null, stored: Snapshot, prefer: 'mine' | 'stored'): Snapshot {
+  if (mine.userId !== null && stored.userId !== null && mine.userId !== stored.userId) return prefer === 'mine' ? mine : stored
+  const baseOutbox = base?.outbox ?? {}
+  const outbox: Outbox = {}
+  const incoming: Op[] = []
+  const take = (op: Op | undefined) => {
+    if (op) incoming.push(op)
+    return op
+  }
+  for (const k of new Set([...Object.keys(mine.outbox), ...Object.keys(stored.outbox), ...Object.keys(baseOutbox)])) {
+    const m = mine.outbox[k]
+    const s = stored.outbox[k]
+    const b = baseOutbox[k]
+    let pick: Op | undefined
+    if (sameOp(m, s) || sameOp(b, s)) pick = m // nothing new from the other tab
+    else if (sameOp(b, m)) pick = take(s) // only the other tab changed it (or sent it)
+    else if (!m) pick = take(s) // this tab sent it; the other tab changed it again
+    else if (!s) pick = m // the other tab sent it; this tab changed it again
+    else pick = s.seq > m.seq || (s.seq === m.seq && opIdOf(s) > opIdOf(m)) ? take(s) : m
+    if (pick) outbox[k] = pick
+  }
+
+  const baseRejected = new Set((base?.rejected ?? []).map((r) => opIdOf(r.op)))
+  const storedRejected = new Set((stored.rejected ?? []).map((r) => opIdOf(r.op)))
+  const rejected = [
+    ...(mine.rejected ?? []).filter((r) => storedRejected.has(opIdOf(r.op)) || !baseRejected.has(opIdOf(r.op))),
+    ...(stored.rejected ?? []).filter((r) => !baseRejected.has(opIdOf(r.op)) && !(mine.rejected ?? []).some((x) => opIdOf(x.op) === opIdOf(r.op))),
+  ]
+
+  const userId = mine.userId ?? stored.userId
+  const seq = Math.max(mine.seq, stored.seq)
+  // The other tab pulled from the server more recently: its tables are the fresher view
+  // of the server (renames, deletions, rows from other devices), with every pending change
+  // still to send applied on top.
+  const fresher = stored.pulledAt !== undefined && (mine.pulledAt === undefined || stored.pulledAt > mine.pulledAt)
+  const unchanged =
+    !fresher &&
+    incoming.length === 0 &&
+    userId === mine.userId &&
+    seq === mine.seq &&
+    Object.keys(outbox).length === Object.keys(mine.outbox).length &&
+    Object.keys(outbox).every((k) => outbox[k] === mine.outbox[k]) &&
+    rejected.length === (mine.rejected ?? []).length &&
+    rejected.every((r, i) => r === mine.rejected?.[i])
+  if (unchanged) return mine
+  return {
+    userId,
+    tables: fresher ? rebase(stored.tables, outbox) : incoming.sort((a, b) => a.seq - b.seq).reduce(applyOp, mine.tables),
+    outbox,
+    seq,
+    rejected,
+    ...((fresher ? stored.pulledAt : mine.pulledAt) !== undefined && { pulledAt: fresher ? stored.pulledAt : mine.pulledAt }),
+  }
+}
+
 /** Everything the app shows for the player's home. One home per account for now. */
 export interface HomeData {
   home: Home | null
@@ -144,11 +293,43 @@ export interface HomeData {
   completions: Completion[]
 }
 
+/** Server creation time, or last when the row has not been pulled yet. */
+function createdTime(row: Created): number {
+  const t = row.createdAt ? Date.parse(row.createdAt) : Number.NaN
+  return Number.isNaN(t) ? Number.POSITIVE_INFINITY : t
+}
+
+/** Oldest first; rows not yet on the server last; ties by id so the order never flips. */
+function byCreation(a: Created & { id: string }, b: Created & { id: string }): number {
+  const ta = createdTime(a)
+  const tb = createdTime(b)
+  if (ta !== tb) return ta < tb ? -1 : 1
+  return a.id.localeCompare(b.id)
+}
+
+/**
+ * The home to show when an account somehow has several (two devices
+ * onboarding offline): the one with the most placed objects, which is the one
+ * being lived in, then the oldest. Stable, so the shown home never flips.
+ */
+function pickHome(tables: Tables): (Home & Created) | null {
+  const homes = Object.values(tables.homes)
+  if (homes.length <= 1) return homes[0] ?? null
+  const homeOfRoom = new Map(Object.values(tables.rooms).map((r) => [r.id, r.homeId]))
+  const objects = new Map<string, number>()
+  for (const o of Object.values(tables.placed_objects)) {
+    const h = homeOfRoom.get(o.roomId)
+    if (h) objects.set(h, (objects.get(h) ?? 0) + 1)
+  }
+  return homes.sort((a, b) => (objects.get(b.id) ?? 0) - (objects.get(a.id) ?? 0) || byCreation(a, b))[0]
+}
+
 export function selectHome(tables: Tables): HomeData {
-  // Sorted so a stray second home (two devices onboarding offline) never flips which one shows.
-  const home = Object.values(tables.homes).sort((a, b) => a.id.localeCompare(b.id))[0] ?? null
+  const home = pickHome(tables)
   if (!home) return { home: null, pet: null, progress: null, rooms: [], objects: [], chores: [], completions: [] }
-  const rooms = Object.values(tables.rooms).filter((r) => r.homeId === home.id)
+  const rooms = Object.values(tables.rooms)
+    .filter((r) => r.homeId === home.id)
+    .sort(byCreation)
   const roomIds = new Set(rooms.map((r) => r.id))
   const chores = Object.values(tables.chores)
     .filter((c) => c.homeId === home.id)
@@ -160,10 +341,25 @@ export function selectHome(tables: Tables): HomeData {
     home,
     pet: Object.values(tables.pets).find((p) => p.homeId === home.id) ?? null,
     // The chore count comes from the completions themselves, so it is right whichever device recorded them.
-    progress: stored && { ...stored, choreCount: choreCountOf(completions, stored.retired) },
+    // Live chore ids, so a deleted chore's completions still waiting to be removed aren't counted on top of its banked count.
+    progress: stored && { ...stored, choreCount: choreCountOf(completions, stored.retired, choreIds) },
     rooms,
     objects: Object.values(tables.placed_objects).filter((o) => roomIds.has(o.roomId)),
     chores,
     completions,
   }
+}
+
+/**
+ * Repairs for a home whose progress row is missing (a refused or lost
+ * upsert): recreate it, with the chore count and every reward it has earned.
+ * Only run once the server's copy has been pulled (or with no server), or a
+ * fresh row could overwrite the real one's streak.
+ */
+export function repairOps(tables: Tables): NewOp[] {
+  const { home, completions, chores } = selectHome(tables)
+  if (!home || tables.progress[home.id]) return []
+  const choreCount = choreCountOf(completions, {}, new Set(chores.map((c) => c.id)))
+  const { progress } = applyUnlocks({ homeId: home.id, choreCount, retired: {}, currentStreak: 0, bestStreak: 0, unlockedItems: [] }, 0)
+  return [upsertOp('progress', progress)]
 }

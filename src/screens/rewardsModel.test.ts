@@ -1,7 +1,7 @@
 import { UNLOCKS } from '../domain/unlocks'
 import { describe, expect, it } from 'vitest'
 import type { Progress } from '../domain/types'
-import { giftTitle, nextLines, requirementLabel, rewardsButtonLabel, rewardsNote, withEquipped } from './rewardsModel'
+import { giftTitle, nextLines, nextUpId, requirementLabel, rewardsButtonLabel, rewardsNote, withEquipped } from './rewardsModel'
 
 const progress = (over: Partial<Progress> = {}): Progress => ({ homeId: 'h', choreCount: 0, currentStreak: 0, bestStreak: 0, unlockedItems: [], ...over })
 
@@ -41,9 +41,17 @@ describe('rewardsModel', () => {
 
   it('labels the home button', () => {
     expect(rewardsButtonLabel(null)).toBe('Rewards')
-    expect(rewardsButtonLabel(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }))).toBe('Rewards · 2 to go')
+    expect(rewardsButtonLabel(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }))).toBe('Rewards · Gift in 2')
     expect(rewardsNote(null)).toBeUndefined()
-    expect(rewardsNote(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }))).toBe('2 to go')
+    expect(rewardsNote(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }))).toBe('Gift in 2')
+  })
+
+  it('picks the one reward that is closest', () => {
+    // 1 chore done and a 1-day best streak: the 3-chore teddy is 2 away, the 2-day mint walls 1 away.
+    expect(nextUpId(progress({ choreCount: 1, bestStreak: 1, unlockedItems: ['item:beanie-red'] }), 1)).toBe('wall:mint')
+    // Tie goes to chores.
+    expect(nextUpId(progress({ choreCount: 1, bestStreak: 0, unlockedItems: ['item:beanie-red'] }), 0)).toBe('decor:teddy')
+    expect(nextUpId(progress({ choreCount: 99, bestStreak: 99, unlockedItems: nextLinesAll() }), 99)).toBeNull()
   })
 
   it('keeps one item per slot', () => {

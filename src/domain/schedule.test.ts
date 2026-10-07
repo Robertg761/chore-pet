@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { weekdayOf } from './dates'
-import { choreStatus, completionCounts, nextDueDate } from './schedule'
+import { choreAsOf, choreStatus, completionCounts, nextDueDate } from './schedule'
 import type { Chore, Completion, Schedule } from './types'
 
 // Reference: 2026-10-06 is a Tuesday, 2026-10-10 is a Saturday.
@@ -75,9 +75,10 @@ describe('monthly', () => {
 describe('everyNDays', () => {
   it('is due N days after the last completion', () => {
     const c = chore({ kind: 'everyNDays', n: 3 })
-    expect(nextDueDate(c, [])).toBe('2026-10-06')
+    expect(nextDueDate(c, [])).toBe('2026-10-07') // first due halfway through its first 3 days
     expect(nextDueDate(c, done('2026-10-06'))).toBe('2026-10-09')
-    expect(nextDueDate(c, done('2026-10-06', '2026-10-07'))).toBe('2026-10-10')
+    expect(nextDueDate(c, done('2026-10-06', '2026-10-07'))).toBe('2026-10-09') // the next day is a repeat
+    expect(nextDueDate(c, done('2026-10-06', '2026-10-08'))).toBe('2026-10-11') // from halfway it counts
   })
 })
 
@@ -98,7 +99,32 @@ describe('completionCounts', () => {
     const daily = chore({ kind: 'daily' })
     expect(completionCounts(daily, [], '2026-10-06')).toBe(true)
     const weekly = chore({ kind: 'weekdays', days: [1] }) // Mondays
-    expect(completionCounts(weekly, [on('2026-09-28')], '2026-10-01')).toBe(true) // early for Mon 5 Oct
+    expect(completionCounts(weekly, [on('2026-09-28')], '2026-10-02')).toBe(true) // early for Mon 5 Oct (from halfway, Fri 2 Oct)
+    expect(completionCounts(weekly, [on('2026-09-21')], '2026-09-29')).toBe(true) // a day late for Mon 28 Sep
+  })
+
+  it('does not count a repeat soon after the last time', () => {
+    const weekly = chore({ kind: 'weekdays', days: [1] })
+    expect(completionCounts(weekly, [on('2026-09-28')], '2026-09-29')).toBe(false) // the day after doing it on time
+    expect(completionCounts(weekly, [on('2026-09-30')], '2026-10-01')).toBe(false) // late on Wed, again on Thu
+    const plant = chore({ kind: 'everyNDays', n: 7 })
+    expect(completionCounts(plant, [on('2026-10-01')], '2026-10-04')).toBe(false)
+    expect(completionCounts(plant, [on('2026-10-01')], '2026-10-05')).toBe(true)
+  })
+
+  it('agrees with nextDueDate: a completion counts exactly when it moves the due date', () => {
+    const schedules: Schedule[] = [{ kind: 'daily' }, { kind: 'everyNDays', n: 5 }, { kind: 'weekdays', days: [1, 4] }, { kind: 'weekly', weekday: 6 }, { kind: 'monthly', dayOfMonth: 10 }]
+    for (const schedule of schedules) {
+      const c = chore(schedule)
+      const history: Completion[] = []
+      for (let d = 0; d < 60; d++) {
+        const day = new Date(Date.UTC(2026, 8, 1 + d)).toISOString().slice(0, 10)
+        const counts = completionCounts(c, history, day)
+        const moved = nextDueDate(c, [...history, on(day)]) !== nextDueDate(c, history)
+        expect(counts, `${schedule.kind} ${day}`).toBe(moved)
+        if (d % 2 === 0) history.push(on(day))
+      }
+    }
   })
 
   it('does not count doing it again the same day', () => {
@@ -109,6 +135,29 @@ describe('completionCounts', () => {
 
   it('does not count a second early completion in the same period', () => {
     const weekly = chore({ kind: 'weekdays', days: [1] })
-    expect(completionCounts(weekly, [on('2026-09-28'), on('2026-10-01')], '2026-10-02')).toBe(false)
+    expect(completionCounts(weekly, [on('2026-09-28'), on('2026-10-02')], '2026-10-03')).toBe(false)
   })
 })
+
+describe('choreAsOf', () => {
+  const c: Chore = {
+    id: 'c', homeId: 'h', objectId: null, name: 'c', createdOn: '2026-01-01', photoProof: false,
+    schedule: { kind: 'weekly', weekday: 1, since: '2026-03-01', before: { kind: 'monthly', dayOfMonth: 1, since: '2026-02-01', before: { kind: 'daily' } } },
+  }
+  it('gives the rule in force on each day', () => {
+    expect(choreAsOf(c, '2026-01-15').schedule).toEqual({ kind: 'daily' })
+    expect(choreAsOf(c, '2026-02-15').schedule).toEqual({ kind: 'monthly', dayOfMonth: 1, since: '2026-02-01' })
+    expect(choreAsOf(c, '2026-03-15')).toBe(c)
+  })
+  it('starts a middle rule on the day it took effect, so older completions do not shift it', () => {
+    // Daily, done 31 Jan; every 7 days from 1 Feb; weekly from 1 Mar.
+    const edited: Chore = { ...c, schedule: { kind: 'weekly', weekday: 1, since: '2026-03-01', before: { kind: 'everyNDays', n: 7, since: '2026-02-01', before: { kind: 'daily' } } } }
+    const status = choreStatus(choreAsOf(edited, '2026-02-05'), [{ id: 'x', choreId: 'c', completedAt: '2026-01-31T10:00:00.000Z', completedOn: '2026-01-31' }], '2026-02-05')
+    expect(status.dueDate).toBe('2026-02-04')
+  })
+
+  it('falls back to the current rule when no history was kept', () => {
+    expect(choreAsOf({ ...c, schedule: { kind: 'weekly', weekday: 1, since: '2026-03-01' } }, '2026-01-15').schedule).toEqual({ kind: 'weekly', weekday: 1 })
+  })
+})
+
