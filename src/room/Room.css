@@ -1,0 +1,19 @@
+/* A just-placed object (useJustPlaced in Room.tsx) drops onto its tiles: a short fall,
+   a squash on landing and a little spring back. Transform only, anchored at its base. */
+.room-obj-drop {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: room-obj-drop 620ms var(--ease-out) both;
+}
+
+@keyframes room-obj-drop {
+  0% { opacity: 0; transform: translateY(-22px) scale(0.96, 1.04); }
+  35% { opacity: 1; transform: translateY(0) scale(1.07, 0.9); }
+  60% { transform: translateY(-3px) scale(0.98, 1.03); }
+  80% { transform: translateY(0) scale(1.01, 0.99); }
+  100% { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-obj-drop { animation: none; }
+}

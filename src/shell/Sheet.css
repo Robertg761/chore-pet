@@ -10,9 +10,16 @@
   border-bottom: 0;
   border-radius: 22px 22px 0 0;
   box-shadow: 0 -4px 0 rgba(43, 30, 47, 0.12);
-  animation: sheet-up 220ms ease-out;
+  /* --sheet-drag follows a finger dragging it down by the handle (Sheet.tsx). */
+  translate: 0 var(--sheet-drag, 0px);
+  transition: translate var(--dur-base) var(--ease-spring);
+  animation: sheet-up var(--dur-slow) var(--ease-spring) both;
 }
-.app-sheet::backdrop { background: rgba(43, 30, 47, 0.35); }
+.app-sheet.app-sheet-dragging { transition: none; }
+.app-sheet::backdrop { background: rgba(43, 30, 47, 0.35); animation: sheet-backdrop-in var(--dur-base) var(--ease-out) both; }
+/* Leaving: quicker than arriving, carried on from wherever a drag left it. */
+.app-sheet.app-sheet-closing { animation: sheet-down var(--dur-quick) var(--ease-in) both; }
+.app-sheet.app-sheet-closing::backdrop { animation: sheet-backdrop-out var(--dur-quick) var(--ease-in) both; }
 .app-sheet-body {
   max-height: inherit;
   display: flex;
@@ -22,6 +29,9 @@
   overflow-y: auto;
   overscroll-behavior: contain;
 }
+/* The handle and title bar: drag them down to close (touch only; the page doesn't pan meanwhile). */
+.app-sheet-grab { display: flex; flex-direction: column; gap: 4px; margin-top: -6px; touch-action: none; }
+.app-sheet-handle { align-self: center; width: 40px; height: 5px; border-radius: 999px; background: var(--ink-veil, rgba(43, 30, 47, 0.18)); }
 .app-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .app-sheet-head h2 { margin: 0; font-size: 1.375rem; }
 .app-sheet-close {
@@ -43,13 +53,30 @@
 
 /* Desktop: a centred card rather than a bottom sheet. */
 @media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
-  .app-sheet { margin: auto; border-bottom: var(--outline); border-radius: 22px; box-shadow: 0 6px 0 var(--ink); }
+  .app-sheet { margin: auto; border-bottom: var(--outline); border-radius: 22px; box-shadow: 0 6px 0 var(--ink); animation-name: sheet-pop; }
+  .app-sheet.app-sheet-closing { animation-name: sheet-unpop; }
+  /* A centred card isn't dragged; the handle would only be clutter. */
+  .app-sheet-handle { display: none; }
+  .app-sheet-grab { margin-top: 0; touch-action: auto; }
 }
 
 @keyframes sheet-up {
-  from { transform: translateY(24px); opacity: 0; }
+  from { transform: translateY(60%); opacity: 0; }
+  30% { opacity: 1; }
   to { transform: none; opacity: 1; }
 }
+@keyframes sheet-down {
+  to { transform: translateY(100%); opacity: 0.6; }
+}
+@keyframes sheet-pop {
+  from { transform: scale(0.94) translateY(8px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes sheet-unpop {
+  to { transform: scale(0.96); opacity: 0; }
+}
+@keyframes sheet-backdrop-in { from { opacity: 0; } }
+@keyframes sheet-backdrop-out { to { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
-  .app-sheet { animation: none; }
+  .app-sheet, .app-sheet::backdrop { animation: none; transition: none; }
 }

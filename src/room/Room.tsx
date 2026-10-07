@@ -1,4 +1,4 @@
-import { memo, useMemo, type KeyboardEvent, type ReactNode, type Ref, type SVGProps } from 'react'
+import { memo, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode, type Ref, type SVGProps } from 'react'
 import { PALETTE, ROOM_STROKE } from '../art/palette'
 import { catalogEntry } from '../catalog/objects'
 import type { CatalogEntry } from '../catalog/types'
@@ -10,6 +10,7 @@ import { NeglectCue } from './neglect'
 import { OBJECT_ART, cleanTop } from './objects'
 import { neglectSummary } from './roomSummary'
 import { RoomShell } from './shell/RoomShell'
+import './Room.css'
 import { OBJECT_SCALE, PET_SCALE, ROOM_INK, TILE_SCALE, petTransform, roomPoint, roomPoints } from './shell/geometry'
 
 // The room: shell, floor highlights, then every object and the pet drawn back
@@ -142,6 +143,31 @@ function Selection({ footprint, top }: { footprint: Footprint; top: { x: number;
   )
 }
 
+/** How long a just-placed object plays its drop (Room.css). */
+const DROP_MS = 700
+
+/**
+ * Objects that have just arrived in this room (placed since it was first drawn), for a
+ * moment: they drop into place. Ones already there when the room appears never do.
+ */
+function useJustPlaced(objects: PlacedObject[]): ReadonlySet<string> {
+  const seen = useRef<Set<string> | null>(null)
+  const [fresh, setFresh] = useState<ReadonlySet<string>>(() => new Set())
+  const ids = objects.map((o) => o.id).join(' ')
+  useEffect(() => {
+    const now = new Set(ids ? ids.split(' ') : [])
+    const before = seen.current
+    seen.current = now
+    if (!before) return
+    const added = [...now].filter((id) => !before.has(id))
+    if (!added.length) return
+    setFresh(new Set(added))
+    const timer = window.setTimeout(() => setFresh(new Set()), DROP_MS)
+    return () => window.clearTimeout(timer)
+  }, [ids])
+  return fresh
+}
+
 /** Room-px size of the pet's invisible hit area (at least 44 css px on a phone). */
 const PET_HIT = 64
 
@@ -151,6 +177,7 @@ const NO_NEGLECT: Record<string, NeglectLevel> = {}
 
 export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, overdue, selectedId, ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
   const items: Item[] = []
+  const justPlaced = useJustPlaced(objects)
 
   for (const o of objects) {
     const entry = catalogEntry(o.catalogId)
@@ -160,7 +187,7 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, 
       footprint: footprintOf(o, entry),
       layer: entry.layer,
       draw: () => (
-        <g key={o.id} data-object-id={o.id} style={{ cursor: 'pointer' }}>
+        <g key={o.id} data-object-id={o.id} className={justPlaced.has(o.id) ? 'room-obj-drop' : undefined} style={{ cursor: 'pointer' }}>
           <PlacedArt entry={entry} placement={o} stage={stages[o.id] ?? 'clean'} />
         </g>
       ),

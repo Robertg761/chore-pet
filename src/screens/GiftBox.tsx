@@ -90,6 +90,7 @@ export function GiftBox({ unlock, pet, onClose, onPlace, onTry }: GiftBoxProps) 
 
   function open() {
     panel.current?.focus() // the Open button is about to go away
+    navigator.vibrate?.([8, 60, 18]) // a little rattle and pop, where the phone can
     setPhase('opening')
   }
 

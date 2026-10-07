@@ -88,3 +88,27 @@
   .landing-pet, .landing-pet-art, .landing-pet::before { transition: none; }
   .landing-primary:active { transform: none; }
 }
+
+/* Arrival: the title, then the three pets one after another, then the words and buttons. */
+.landing > * { animation: landing-in var(--dur-slow) var(--ease-out) backwards; }
+.landing > .landing-title { animation-delay: 40ms; }
+.landing > .landing-pets { animation: none; }
+.landing-pet { animation: landing-pet-in 560ms var(--ease-bounce) backwards; }
+.landing-pet:nth-child(1) { animation-delay: 140ms; }
+.landing-pet:nth-child(2) { animation-delay: 220ms; }
+.landing-pet:nth-child(3) { animation-delay: 300ms; }
+.landing > .landing-pitch { animation-delay: 380ms; }
+.landing > :nth-child(n + 4) { animation-delay: 440ms; }
+/* The chosen pet springs up rather than sliding. */
+.landing-pet { transition: transform var(--dur-base) var(--ease-spring), color var(--dur-quick) ease; }
+.landing-pet::before, .landing-pet-art { transition-duration: var(--dur-quick); }
+
+@keyframes landing-in {
+  from { opacity: 0; transform: translateY(10px); }
+}
+@keyframes landing-pet-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.85); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing > *, .landing-pet { animation: none; }
+}
