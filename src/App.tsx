@@ -19,6 +19,7 @@ import {
   createRoom,
   moveObject,
   placeObject,
+  reconcileProgress,
   removeChore,
   removeHome,
   removeObject,
@@ -26,6 +27,7 @@ import {
   updateChore,
 } from './data/actions'
 import { appStore, startAppStore, useDataState, useHome } from './data/appStore'
+import { selectHome } from './data/state'
 import type { SyncStatus } from './data/store'
 import { devNow } from './lib/devClock'
 import { useToday } from './lib/useToday'
@@ -103,6 +105,17 @@ export default function App() {
   const { ready, hydrated, sync, snapshot, savedLocally, lastError } = useDataState()
   const data = useHome()
   const today = useToday()
+  // Hydration, sync, edits and midnight can earn rewards without another tap.
+  // Read fresh state so StrictMode's repeated effect cannot queue the same write.
+  useEffect(() => {
+    const state = appStore.getState()
+    if (!state.ready || !state.hydrated) return
+    const history = selectHome(state.snapshot.tables)
+    if (!history.home) return
+    const { ops } = reconcileProgress(state.snapshot.tables.progress[history.home.id] ?? null,
+      { chores: history.chores, completions: history.completions, vacations: history.home.vacations }, today)
+    if (ops.length) appStore.apply(...ops)
+  }, [ready, hydrated, snapshot.tables, today])
   const [view, setViewNow] = useState<View>({ name: 'home' })
   /** Change screen with a short slide: forward when going deeper (to the right), back when returning. */
   const setView = (next: View) => {
@@ -310,7 +323,7 @@ export default function App() {
           room={rooms[0]}
           objects={objects.filter((o) => o.roomId === rooms[0].id)}
           choreCount={progress?.choreCount ?? 0}
-          // Worked out for today, like the rewards screen: the stored streak is from the last chore done.
+          // Worked out for the displayed day, like the rewards screen.
           streak={currentStreak(chores, completions, today, home.vacations)}
           onClose={back}
         />
