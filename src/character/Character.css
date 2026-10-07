@@ -1,0 +1,45 @@
+/* Idle life for the pet: a slow breath and now-and-then blinks. Transform only.
+   --ch-phase (0 to 1, set per pet in Character.tsx) staggers pets so none move in lockstep.
+   The share image serialises the SVG without this sheet, so it stays still there. */
+
+.ch-breathe {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ch-breathe 3.4s var(--ease-in-out) calc(var(--ch-phase, 0) * -3.4s) infinite alternate;
+}
+
+.ch-breathe-sleep {
+  animation-name: ch-breathe-sleep;
+  animation-duration: 4.6s;
+  animation-delay: calc(var(--ch-phase, 0) * -4.6s);
+}
+
+@keyframes ch-breathe {
+  from { transform: scale(1, 1); }
+  to { transform: scale(0.99, 1.022); }
+}
+
+@keyframes ch-breathe-sleep {
+  from { transform: scale(1, 1); }
+  to { transform: scale(0.986, 1.03); }
+}
+
+/* Eyes stay open, then close and open in about 140ms. A longer cycle holds one single
+   blink and one double blink, so it never feels metronomic. */
+.ch-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ch-blink 9.6s linear calc(var(--ch-phase, 0) * -9.6s) infinite;
+}
+
+@keyframes ch-blink {
+  0%, 44%, 45.5%, 93%, 94.5%, 95.5%, 97%, 100% { transform: scaleY(1); }
+  44.7%, 93.7%, 96.2% { transform: scaleY(0.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ch-breathe,
+  .ch-eye {
+    animation: none;
+  }
+}
