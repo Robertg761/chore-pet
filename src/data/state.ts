@@ -54,6 +54,8 @@ export interface Snapshot {
    * account deletion). A tab still holding an older one must not write over it.
    */
   generation?: string
+  /** On a swapped-out copy only: the restore that wrote it, so only that restore cleans it up. */
+  keptBy?: string
 }
 
 /** The account a backup may be offered back to. */

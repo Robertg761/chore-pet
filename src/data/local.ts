@@ -13,8 +13,11 @@ export interface LocalStore {
   update?(fn: (stored: Snapshot | null) => Snapshot | null): Promise<void>
   /** Keep a copy of a snapshot that is about to be dropped, under `snapshot-backup-<ownerId>`. */
   backup?(ownerId: string, snapshot: Snapshot): Promise<void>
-  /** Forget that backup (the account was deleted, or it was brought back). */
-  dropBackup?(ownerId: string): Promise<void>
+  /**
+   * Forget that backup (the account was deleted, or it was brought back). With
+   * `keptBy`, only if the backup there is still the one that restore wrote.
+   */
+  dropBackup?(ownerId: string, keptBy?: string): Promise<void>
   /** Every backup kept on this device, by the account it came from. */
   listBackups?(): Promise<{ ownerId: string; snapshot: Snapshot }[]>
   /**
@@ -171,11 +174,18 @@ export function indexedDbStore(): LocalStore {
         req.onerror = () => reject(req.error)
       })
     },
-    async dropBackup(ownerId) {
+    async dropBackup(ownerId, keptBy) {
       const d = await getDb()
       return new Promise((resolve, reject) => {
         const tx = d.transaction(STORE, 'readwrite')
-        tx.objectStore(STORE).delete(backupKey(ownerId))
+        const store = tx.objectStore(STORE)
+        if (keptBy === undefined) store.delete(backupKey(ownerId))
+        else {
+          const req = store.get(backupKey(ownerId))
+          req.onsuccess = () => {
+            if ((req.result as Snapshot | undefined)?.keptBy === keptBy) store.delete(backupKey(ownerId))
+          }
+        }
         tx.oncomplete = () => resolve()
         tx.onerror = () => reject(tx.error)
       })
@@ -202,8 +212,8 @@ export function memoryStore(initial: Snapshot | null = null): LocalStore & { cur
     async backup(ownerId: string, snapshot: Snapshot) {
       store.backups[backupKey(ownerId)] = structuredClone(snapshot)
     },
-    async dropBackup(ownerId: string) {
-      delete store.backups[backupKey(ownerId)]
+    async dropBackup(ownerId: string, keptBy?: string) {
+      if (keptBy === undefined || store.backups[backupKey(ownerId)]?.keptBy === keptBy) delete store.backups[backupKey(ownerId)]
     },
     async claimBackup(ownerId: string, lock: string, token: string, now: number, staleMs: number) {
       const current = store.locks[lock]

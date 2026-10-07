@@ -877,6 +877,39 @@ describe('saved homes (backups kept on this device)', () => {
     local.update = update
   })
 
+  it('leaves alone a swapped-out copy another restore wrote after this one lost its lock', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    const pipHome = selectHome(store.getState().snapshot.tables).home!
+    const key = `snapshot-backup-u1:${pipHome.id}`
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    local.holdLock = async () => {
+      // This restore was paused past its lock; another took over and wrote its own copy.
+      local.backups[key] = { ...local.backups[key], keptBy: 'the-other-restore' }
+      return false
+    }
+    expect(await store.restoreSaved('guest')).toBe(false)
+    expect(local.backups[key]?.keptBy).toBe('the-other-restore')
+  })
+
+  it('keeps the swapped-out copy, and counts the swap, when forgetting the brought-back copy fails', async () => {
+    const { remote } = fakeServer('u1')
+    const local = memoryStore()
+    const store = await onboarded(remote, local)
+    const pipHome = selectHome(store.getState().snapshot.tables).home!
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    const drop = local.dropBackup!.bind(local)
+    local.dropBackup = async (owner, keptBy) => {
+      if (owner === 'guest') throw new Error('UnknownError')
+      return drop(owner, keptBy)
+    }
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    expect(await store.restoreSaved('guest')).toBe(true)
+    expect(selectHome(store.getState().snapshot.tables).pet?.name).toBe('Bun')
+    expect(Object.keys(local.backups)).toContain(`snapshot-backup-u1:${pipHome.id}`)
+  })
+
   it('never offers a home held for another account, and clearing an account forgets its saved homes', async () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()

@@ -659,7 +659,7 @@ export function createStore({
           const replaced = selectHome(kept).home
           if (replaced) {
             keptKey = `${account ?? 'unclaimed'}:${replaced.id}`
-            await backup(keptKey, { ...before, tables: kept, heldFor: account })
+            await backup(keptKey, { ...before, tables: kept, heldFor: account, keptBy: token })
           }
           if (local.holdLock && !(await local.holdLock(lock, token, now().getTime()))) return false
           if (!stillHere()) return false
@@ -702,14 +702,17 @@ export function createStore({
           else if (!stillHere()) return false
         }
         if (!done) return false
-        // The restored home is stored: forget the brought-back copy.
-        await local.dropBackup?.(ownerId)
+        // The restored home is stored: the swap has happened, whatever comes next.
         restored = true
+        // Forget the brought-back copy. If that fails it is only offered again.
+        await local.dropBackup?.(ownerId)?.catch(warn('Could not forget the brought-back copy'))
         return true
       } finally {
         // Not restored (cancelled by a sign-out or account deletion, say): the home being
         // replaced is still here, so its swapped-out copy goes, and nothing outlives a deletion.
-        if (!restored && keptKey) await local.dropBackup?.(keptKey).catch(warn('Could not remove the swapped-out copy'))
+        // Only the copy this restore wrote: another restore, after this one's lock lapsed, may
+        // have written its own under the same key.
+        if (!restored && keptKey) await local.dropBackup?.(keptKey, token)?.catch(warn('Could not remove the swapped-out copy'))
         await local.releaseLock?.(lock, token).catch(warn('Could not release the restore lock'))
         resume()
         if (restored) void sync()
