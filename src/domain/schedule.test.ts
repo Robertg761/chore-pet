@@ -196,3 +196,12 @@ describe('restartOn', () => {
     expect(restartOn(daily, [done('2026-10-08')], '2026-10-08', [{ start: '2026-10-09', end: '2026-10-12' }])).toBe('2026-10-09')
   })
 })
+
+describe('restartOn never starts in the past', () => {
+  it('an every-N-days chore added back late in its interval starts today and comes due a little later', () => {
+    // Every 4 days, done Oct 1 (due Oct 5), added back Oct 4: it can't start Oct 3, so it starts Oct 4, due Oct 6.
+    const every4: Chore = { id: 'c', homeId: 'h', objectId: null, name: 'Mop', createdOn: '2026-09-20', schedule: { kind: 'everyNDays', n: 4 }, photoProof: false, archivedOn: '2026-10-04' }
+    const done: Completion[] = [{ id: 'd', choreId: 'c', completedOn: '2026-10-01', completedAt: '2026-10-01T12:00:00Z' }]
+    expect(restartOn(every4, done, '2026-10-04')).toBe('2026-10-04')
+  })
+})

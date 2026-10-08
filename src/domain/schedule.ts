@@ -26,6 +26,11 @@ export function archiveEnd(chore: Chore, day: ISODate): ISODate {
  * round was already done (it would be upcoming had it never been removed), it
  * starts so its first occurrence is that next due date: nothing is owed before
  * then, so the round can't be earned twice or missed. Otherwise it starts today.
+ *
+ * Never before today: a start in the past would make days already judged as
+ * paused (nothing on the list) count toward the streak. So an every-N-days
+ * chore added back late in its interval is first due a little later than it
+ * would have been (at most half an interval), which earns nothing either way.
  */
 export function restartOn(chore: Chore, completions: Completion[], today: ISODate, vacations: VacationWindow[] = []): ISODate {
   const done = completions.filter((c) => c.choreId === chore.id)
