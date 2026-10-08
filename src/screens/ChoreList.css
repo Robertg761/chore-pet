@@ -91,6 +91,7 @@
   overflow-wrap: anywhere;
 }
 .cl-name-text { min-width: 0; }
+.cl-name-end { white-space: nowrap; }
 .cl-pencil { flex: none; margin-left: 6px; vertical-align: -2px; color: var(--ink-soft); }
 .cl-name:hover .cl-pencil { color: var(--ink); }
 .cl-info .tag { margin: 0 0 2px; font-weight: 800; white-space: nowrap; }
@@ -183,6 +184,7 @@
 /* The check that holds a tapped Done button's place (a real button, so focus stays): it looks settled, not tappable. */
 .cl-nice { background: none; border: 0; cursor: default; }
 .cl-set .cl-check { animation: none; }
+.cl-skipped { color: var(--ink-soft); }
 
 .cl-name:focus-visible,
 .cl-action:focus-visible,
@@ -247,3 +249,10 @@ html[data-vt='chores']::view-transition-new(root) { animation-duration: 160ms; a
 }
 /* The room moves the furthest, so it eases in and out rather than lurching off. */
 html[data-vt='chores']::view-transition-group(home-room) { animation-duration: 420ms; animation-timing-function: var(--ease-in-out); }
+
+/* The home screen's undo toast stands in for the buttons under the list for a few seconds. */
+.cl-foot-toast > .undo-toast-inline { animation: cl-foot-toast-in var(--dur-slow) var(--ease-spring); }
+@keyframes cl-foot-toast-in { from { opacity: 0; transform: translateY(8px) scale(0.96); } }
+@media (prefers-reduced-motion: reduce) {
+  .cl-foot-toast > .undo-toast-inline { animation: none; }
+}

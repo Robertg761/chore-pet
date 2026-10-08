@@ -52,9 +52,10 @@ function PetArt({ pet, equipped, pose, viewBox = '0 0 200 200', className, label
 /** One item on the pet, cropped to the part of the body it goes on. */
 function ItemCrop({ pet, item }: { pet: Pet; item: Item }) {
   const anchor = poseFor(pet.species, 'idle').anchors[item.slot]
-  // Clothes sit low on the body, so look a little higher and wider to see the whole thing.
-  const half = item.slot === 'outfit' ? 62 : 58
-  const centre = item.slot === 'outfit' ? anchor.y - 22 : anchor.y + 14
+  // Clothes sit low on the body, so look a little higher and wider to see the whole thing;
+  // hats can be tall (the chef's hat), so their crop starts higher too.
+  const half = item.slot === 'outfit' || item.slot === 'head' ? 62 : 58
+  const centre = item.slot === 'outfit' ? anchor.y - 22 : item.slot === 'head' ? anchor.y + 2 : anchor.y + 14
   return <PetArt className="wd-tile-art" pet={pet} equipped={{ [item.slot]: item.id }} pose="idle" viewBox={`${anchor.x - half} ${centre - half} ${half * 2} ${half * 2}`} />
 }
 

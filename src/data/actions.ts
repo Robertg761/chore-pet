@@ -1,6 +1,6 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
-import { archiveEnd, choreRetiredBy, completionCounts, resumeFrom, sameSchedule, SCHEDULE_HISTORY, trimHistory } from '../domain/schedule'
+import { archiveEnd, choreRetiredBy, completionCounts, resumeFrom, sameSchedule, SCHEDULE_HISTORY, SKIP_HISTORY, skipDays, trimHistory } from '../domain/schedule'
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, choreCountOf, streakHistory, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
@@ -60,6 +60,14 @@ export function removeObject(objectId: string, _history?: History, today = toISO
   return [{ ...deleteOp('placed_objects', objectId), removal: { archivedOn: today, keepChores } } as NewOp]
 }
 
+/**
+ * Remove a room: its furniture goes the way removing each piece does (its
+ * chores are archived, their history kept), then the room itself.
+ */
+export function removeRoom(room: Room, objects: PlacedObject[], today: ISODate): NewOp[] {
+  return [...objects.filter((o) => o.roomId === room.id).flatMap((o) => removeObject(o.id, undefined, today)), deleteOp('rooms', room.id)]
+}
+
 export function updateRoom(room: Room, patch: Partial<Pick<Room, 'type' | 'floorStyle' | 'wallStyle'>>): NewOp[] {
   return [upsertOp('rooms', { ...room, ...patch })]
 }
@@ -79,10 +87,41 @@ export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 's
   const { schedule, ...rest } = patch
   if (schedule === undefined || sameSchedule(schedule, chore.schedule)) return [upsertOp('chores', { ...chore, ...rest })]
   // A second change on the same day replaces the first, which never got to apply.
-  const previous = chore.schedule.since === today ? chore.schedule.before : chore.schedule
-  const { before: _ignored, ...next } = schedule
-  const before = previous && trimHistory(previous, SCHEDULE_HISTORY - 1)
-  return [upsertOp('chores', { ...chore, ...rest, schedule: { ...next, since: today, ...(before && { before }) } as Schedule })]
+  const replaced = chore.schedule.since === today ? chore.schedule.before : chore.schedule
+  // Skips live on the current schedule only (they stay with the chore, like its completions).
+  const { skips: _old, ...previous } = replaced ?? ({} as Schedule)
+  const skips = chore.schedule.skips
+  const { before: _ignored, skips: _skips, ...next } = schedule
+  const before = replaced && trimHistory(previous as Schedule, SCHEDULE_HISTORY - 1)
+  return [upsertOp('chores', { ...chore, ...rest, schedule: { ...next, since: today, ...(before && { before }), ...(skips?.length && { skips }) } as Schedule })]
+}
+
+/**
+ * "Skip this time": the round owed on `today` isn't needed (no laundry this
+ * week, ate out). It settles the round like a completion, so nothing turns
+ * messy or late, but it is no completion: no reward, no streak day (see
+ * Schedule.skips). The UI offers it only while the round is owed (canSkip).
+ */
+export function skipChore(chore: Chore, today: ISODate): NewOp[] {
+  const days = skipDays(chore)
+  if (days.includes(today)) return []
+  const skips = [...days, today].sort().slice(-SKIP_HISTORY)
+  return [upsertOp('chores', { ...chore, schedule: { ...chore.schedule, skips } })]
+}
+
+/** The day a skip is recorded on: `today`, but like a completion never later than the real date (the dev clock set ahead). */
+export function skipDayFor(today: ISODate, realNow: Date = new Date()): ISODate {
+  const real = toISODate(realNow)
+  return today < real ? today : real
+}
+
+/** Take back a skip (the undo after skipping). */
+export function unskipChore(chore: Chore, day: ISODate): NewOp[] {
+  const days = skipDays(chore)
+  if (!days.includes(day)) return []
+  const skips = days.filter((d) => d !== day)
+  const { skips: _old, ...schedule } = chore.schedule
+  return [upsertOp('chores', { ...chore, schedule: (skips.length ? { ...schedule, skips } : schedule) as Schedule })]
 }
 
 /** Stop future obligations, retaining dated work and the schedule that earned it. */
@@ -212,6 +251,10 @@ export function removeHome(homeId: string): NewOp[] {
  * them one by one (one already ending later ends today instead), so past work
  * and rewards stay. Then one clear for the server catches anything another
  * device added before `now` that this one hasn't pulled yet.
+ *
+ * Every room stays, emptied. Rooms are never deleted here: a plain room
+ * delete would also take furniture another device added after the press,
+ * which only the server's clear_home (with its cutoff) can tell apart.
  */
 export function clearHome(history: History & { home: Home; objects: PlacedObject[] }, today: ISODate, now: Date = new Date()): NewOp[] {
   const placed = new Set(history.objects.map((o) => o.id))

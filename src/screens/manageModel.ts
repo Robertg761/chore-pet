@@ -29,11 +29,11 @@ const byName = (a: Chore, b: Chore) => a.name.localeCompare(b.name)
 /**
  * The chores on the list (including any dated to start later, so a clock set
  * ahead can't hide one) by object, in the room's order, then those tied to
- * nothing. Empty groups are left out.
+ * nothing. Empty groups are left out. `places` names each object (across
+ * rooms, placesAcrossRooms); by default they're named within one room.
  */
-export function choreGroups(chores: Chore[], objects: PlacedObject[], today: ISODate): ChoreGroup[] {
+export function choreGroups(chores: Chore[], objects: PlacedObject[], today: ISODate, places = placeNames(objects)): ChoreGroup[] {
   const active = chores.filter((c) => !choreRetiredBy(c, today))
-  const places = placeNames(objects)
   const placed = new Set(places.map((p) => p.id))
   const groups: ChoreGroup[] = places.map((p) => ({ id: p.id, title: p.name, chores: active.filter((c) => c.objectId === p.id).sort(byName) }))
   groups.push({ id: 'anywhere', title: 'Anywhere', chores: active.filter((c) => !c.objectId || !placed.has(c.objectId)).sort(byName) })
@@ -77,8 +77,8 @@ export function pastChores(chores: Chore[], today: ISODate): Chore[] {
 
 /** A past chore as a new one: same name and rule, a fresh schedule history, and its object if it's still in the room. */
 export function againInput(chore: Chore, objects: PlacedObject[]): { name: string; schedule: Schedule; objectId: string | null } {
-  // Only the rule: where the old one stood in its round is worked out afresh (resumeFrom).
-  const { since: _since, before: _before, resume: _resume, ...rule } = chore.schedule
+  // Only the rule: where the old one stood in its round (skips included) is worked out afresh (resumeFrom).
+  const { since: _since, before: _before, resume: _resume, skips: _skips, ...rule } = chore.schedule
   const objectId = chore.objectId && objects.some((o) => o.id === chore.objectId) ? chore.objectId : null
   return { name: chore.name, schedule: rule as Schedule, objectId }
 }

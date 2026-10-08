@@ -1,5 +1,5 @@
 .rsp { align-self: stretch; display: flex; flex-wrap: wrap; gap: 12px; }
-.rsp-group { flex: 1 1 160px; min-width: 0; margin: 0; padding: 10px 12px 12px; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--card); display: flex; gap: 8px; flex-wrap: wrap; }
+.rsp-group { flex: 1 1 160px; min-width: 0; margin: 0; padding: 10px 12px 12px; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--card); display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); align-content: start; gap: 8px; }
 .rsp-group legend { padding: 0 6px; font-weight: 800; }
 .rsp-option {
   min-width: 64px;

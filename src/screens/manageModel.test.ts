@@ -89,4 +89,9 @@ describe('againInput', () => {
     expect(againInput(old, [object('s', 'sink')])).toEqual({ name: 'Dishes', schedule: { kind: 'everyNDays', n: 3 }, objectId: 's' })
     expect(againInput(old, [])).toEqual({ name: 'Dishes', schedule: { kind: 'everyNDays', n: 3 }, objectId: null })
   })
+
+  it('leaves the old chore\'s skips behind (resumeFrom already counts them)', () => {
+    const old = chore('a', { name: 'Dishes', schedule: { kind: 'daily', skips: ['2026-10-05'] } })
+    expect(againInput(old, []).schedule).toEqual({ kind: 'daily' })
+  })
 })

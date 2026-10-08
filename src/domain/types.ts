@@ -27,11 +27,18 @@ export type ScheduleRule =
  * stood (its next due date and the last day it was done), so the new one picks
  * up exactly there instead of starting a fresh round (see resumeFrom). Also
  * ignored by `sameSchedule`.
+ *
+ * `skips` are the days the player said a round wasn't needed ("Skip this
+ * time"). A skip settles the round it was taken on like a completion does, so
+ * nothing is late, but it is not a completion: it never counts toward rewards
+ * or makes a streak day (see skipDays). Kept on the current schedule only
+ * (updateChore carries them over), oldest first, at most SKIP_HISTORY.
  */
 export type Schedule = ScheduleRule & {
   since?: ISODate
   before?: Schedule
   resume?: { due: ISODate; last: ISODate }
+  skips?: ISODate[]
 }
 
 export interface VacationWindow {

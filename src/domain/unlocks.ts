@@ -1,5 +1,5 @@
 import { addDays, isInVacation } from './dates'
-import { choreActiveOn, choreAsOf, completionDays, scheduleStart, startReplay, type ChoreReplay } from './schedule'
+import { choreActiveOn, choreAsOf, scheduleDays, scheduleStart, skipDays, startReplay, type ChoreReplay } from './schedule'
 import type { Chore, Completion, ISODate, Progress, VacationWindow } from './types'
 
 // Rewards come only from real chores getting done (docs/SPEC.md), and every
@@ -45,6 +45,17 @@ export const UNLOCKS: Unlock[] = [
   // The autumn set: a seasonal outfit and a matching hat.
   u('item', 'knit-sweater', 'Cosy knit sweater', { type: 'streak', days: 10 }),
   u('item', 'leaf-crown', 'Autumn leaf crown', { type: 'chores', count: 50 }),
+  // The second tier, for players who keep going: a household set, then the crown.
+  u('item', 'chef-hat', "Chef's hat", { type: 'chores', count: 60 }),
+  u('wall', 'sky', 'Sky walls', { type: 'streak', days: 21 }),
+  u('decor', 'bookshelf', 'Bookshelf', { type: 'chores', count: 75 }),
+  u('item', 'heart-glasses', 'Heart glasses', { type: 'chores', count: 90 }),
+  u('floor', 'seaside', 'Seaside tiles', { type: 'streak', days: 30 }),
+  u('item', 'bandana', 'Bandana', { type: 'chores', count: 110 }),
+  u('decor', 'wall-clock', 'Wall clock', { type: 'chores', count: 130 }),
+  u('item', 'apron', 'Apron', { type: 'chores', count: 150 }),
+  u('decor', 'bean-bag', 'Bean bag', { type: 'chores', count: 175 }),
+  u('item', 'crown', 'Golden crown', { type: 'chores', count: 200 }),
 ]
 
 /** Styles every home has from the start. */
@@ -106,6 +117,8 @@ interface Walker {
   /** The days this replay judges: from `from`, up to but not including `until`. */
   from: ISODate
   until?: ISODate
+  /** Days the player skipped this chore's round. */
+  skips: Set<ISODate>
 }
 
 /**
@@ -117,16 +130,17 @@ interface Walker {
  * schedules kept `before` falls back to the current rule.)
  */
 function walkersFor(chore: Chore, completions: Completion[]): Walker[] {
-  const days = completionDays(chore, completions)
+  const days = scheduleDays(chore, completions)
+  const skips = new Set(skipDays(chore))
   const start = scheduleStart(chore)
-  const walkers: Walker[] = [{ chore, replay: startReplay(chore), days, fed: 0, from: start }]
+  const walkers: Walker[] = [{ chore, replay: startReplay(chore), days, fed: 0, from: start, skips }]
   // Each earlier rule judges the days from its own start up to the next change.
   // The oldest rule kept (as choreAsOf sees it) reaches back to the chore's creation.
   let until = start
   let link = chore.schedule.before
   while (until > chore.createdOn) {
     const from = link?.before && link.since && link.since > chore.createdOn && link.since < until ? link.since : chore.createdOn
-    walkers.unshift({ chore, replay: startReplay(choreAsOf(chore, addDays(until, -1))), days, fed: 0, from, until })
+    walkers.unshift({ chore, replay: startReplay(choreAsOf(chore, addDays(until, -1))), days, fed: 0, from, until, skips })
     until = from
     link = link?.before
   }
@@ -139,21 +153,31 @@ function feedThrough(w: Walker, day: ISODate) {
 }
 
 /**
- * Whether a day counts toward the streak: at least one chore was done that
- * day (or nothing was due), and no chore ended the day at neglect level 2 or
- * worse. For today, "ended the day" means right now. Leaves every walker fed
- * through `day`.
+ * How a day sits with the streak:
+ * - 'counts': at least one chore was done that day (or nothing was due), and
+ *   no chore ended the day at neglect level 2 or worse. For today, "ended the
+ *   day" means right now.
+ * - 'paused': nothing was done, but every chore owed that day was skipped and
+ *   nothing got very neglected. A skip is not doing a chore, so the day adds
+ *   nothing, but saying a round wasn't needed never costs the streak either.
+ * - 'missed': anything else.
+ * Leaves every walker fed through `day`.
  */
-function dayCounts(walkers: Walker[], active: Set<ISODate>, day: ISODate, vacations: VacationWindow[]): boolean {
+function dayResult(walkers: Walker[], active: Set<ISODate>, day: ISODate, vacations: VacationWindow[]): 'counts' | 'paused' | 'missed' {
   const live = walkers.filter((w) => choreActiveOn(w.chore, day) && w.from <= day && (w.until === undefined || day < w.until))
   let somethingDue = false
+  let allSkipped = true
   for (const w of live) {
     feedThrough(w, addDays(day, -1))
-    if (w.replay.statusOn(day, vacations).state !== 'upcoming') somethingDue = true
+    if (w.replay.statusOn(day, vacations).state !== 'upcoming') {
+      somethingDue = true
+      if (!w.skips.has(day)) allSkipped = false
+    }
   }
   for (const w of walkers) feedThrough(w, day)
-  if (somethingDue && !active.has(day)) return false
-  return live.every((w) => w.replay.statusOn(day, vacations).neglect < 2)
+  if (!live.every((w) => w.replay.statusOn(day, vacations).neglect < 2)) return 'missed'
+  if (!somethingDue || active.has(day)) return 'counts'
+  return allSkipped ? 'paused' : 'missed'
 }
 
 /**
@@ -164,7 +188,8 @@ function dayCounts(walkers: Walker[], active: Set<ISODate>, day: ISODate, vacati
  *
  * Every 7 counted days bank a rest token (at most 2). A day that doesn't count
  * spends a token instead of breaking the streak, and adds nothing to it.
- * Vacation days are skipped: they don't count, break or spend anything.
+ * Vacation days are skipped: they don't count, break or spend anything, and
+ * neither do days when every chore owed was skipped ("Skip this time").
  * Seeded sample history (counts: false) isn't the player's, so it doesn't
  * make a day count.
  */
@@ -187,7 +212,9 @@ export function streakHistory(chores: Chore[], completions: Completion[], today:
     // A home with no remaining chores pauses its streak. Work recorded on the
     // removal day still counts, including a completion synced by another device.
     if (!chores.some((c) => choreActiveOn(c, day)) && !active.has(day)) continue
-    if (dayCounts(walkers, active, day, vacations)) {
+    const result = dayResult(walkers, active, day, vacations)
+    if (result === 'paused') continue
+    if (result === 'counts') {
       streak++
       bestStreak = Math.max(bestStreak, streak)
       if (++towardToken >= daysPerRestToken) {

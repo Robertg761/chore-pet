@@ -2,7 +2,7 @@ import { authReturnMessage } from '../lib/authReturn'
 
 /** Query routes work on static hosts without rewriting paths or consuming auth hashes. */
 export type View = { name: 'home' | 'build' | 'chores' | 'vacation' | 'rewards' | 'week' | 'creator' | 'wardrobe' | 'share' | 'settings' | 'sign-in' | 'pick-pet' } | { name: 'edit'; choreId?: string; from?: 'chores' }
-export type Route = View & { sheet?: 'more' | 'all' }
+export type Route = View & { sheet?: 'more' | 'all' | 'rooms' }
 const names = new Set(['home', 'build', 'chores', 'edit', 'vacation', 'rewards', 'week', 'creator', 'wardrobe', 'share', 'settings', 'sign-in', 'pick-pet'])
 
 export function readRoute(search: string, hash = ''): Route {
@@ -13,7 +13,7 @@ export function readRoute(search: string, hash = ''): Route {
     ? { name, ...(params.get('chore') ? { choreId: params.get('chore')! } : {}), ...(params.get('from') === 'chores' ? { from: 'chores' as const } : {}) }
     : { name: name as Exclude<View['name'], 'edit'> }
   const sheet = params.get('sheet')
-  if (sheet === 'more' || (sheet === 'all' && name === 'home')) route.sheet = sheet
+  if (sheet === 'more' || (sheet === 'all' && name === 'home') || (sheet === 'rooms' && (name === 'home' || name === 'build'))) route.sheet = sheet
   return route
 }
 

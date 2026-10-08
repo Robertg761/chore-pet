@@ -34,6 +34,10 @@ export interface ChoreEditorProps {
   /** objectId is always set: an id, or null for "nowhere in particular". */
   onSave: (value: ChoreValue) => void
   onDelete?: () => void
+  /** "Skip this time": shown while the chore's round is owed (due or late). */
+  onSkip?: () => void
+  /** Take back today's skip: shown once the chore was skipped today. */
+  onUnskip?: () => void
   onCancel: () => void
 }
 
@@ -41,7 +45,7 @@ type Field = 'name' | 'n' | 'days'
 
 const MONTH_DAYS = Array.from({ length: 31 }, (_, i) => i + 1)
 
-export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: ChoreEditorProps) {
+export function ChoreEditor({ chore, places = [], onSave, onDelete, onSkip, onUnskip, onCancel }: ChoreEditorProps) {
   const uid = useId()
   const { form, patch, clear } = useChoreDraft(chore)
   const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({})
@@ -98,7 +102,19 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
   const where = resolveObjectId(form.objectId, places)
 
   return (
-    <form className="editor" onSubmit={submit} aria-labelledby={`${uid}-title`} noValidate>
+    <form
+      className="editor"
+      onSubmit={submit}
+      aria-labelledby={`${uid}-title`}
+      noValidate
+      // Escape backs out like Cancel (the delete question first, if it's open).
+      onKeyDown={(e) => {
+        if (e.key !== 'Escape' || e.defaultPrevented) return
+        e.preventDefault()
+        if (confirmingDelete) keep()
+        else { clear(); onCancel() }
+      }}
+    >
       <ScreenHeader
         id={`${uid}-title`}
         title={chore ? 'Edit chore' : 'New chore'}
@@ -323,10 +339,21 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
             </div>
           )}
 
-          <div className="editor-actions">
+          <div className={onSkip || onUnskip ? 'editor-actions editor-actions-skip' : 'editor-actions'}>
             <button type="submit" className="btn btn-primary editor-save">
               Save
             </button>
+            {/* Not needed this round (no laundry, ate out): it settles the round without counting as done.
+                Unsaved edits stay as a draft, so nothing typed is lost. */}
+            {onSkip ? (
+              <button type="button" className="btn editor-skip" onClick={onSkip}>
+                Skip this time
+              </button>
+            ) : onUnskip ? (
+              <button type="button" className="btn editor-skip" onClick={onUnskip}>
+                Undo skip
+              </button>
+            ) : null}
           </div>
 
           {onDelete && confirmingDelete && (

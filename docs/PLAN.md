@@ -210,6 +210,38 @@ Follow-up from review of PR #17:
 - [LEAD] Erase everything says when other homes in the account stay. **Done**
 - [LEAD] The clear's cutoff leans two minutes earlier, past Supabase's 100-second request limit, so request latency is never taken for clock error (migration 0009, from Codex review of PR #18). **Done**
 
+## Phase 12: Pre-submission gaps
+
+Product review before the Yard closes: the plan's phases were all met, so this looked past the plan at what a player would miss in week two.
+
+- [LEAD] Skip this time (`skipChore` in `src/data/actions.ts`, `scheduleDays` in `src/domain/schedule.ts`): a round that isn't needed can be skipped from the chore's editor instead of tapping Done for something not done. It settles the round but earns nothing; a day where everything owed was skipped pauses the streak. No migration: skips live on the schedule JSON. **Done**
+- [LEAD] The streak beside the health bar on the home screen, so the main game mechanic is in sight. **Done**
+- [LEAD] Build mode's scrolling tray grouped by room (this room first, then the others, then decor) behind upright labels, without growing the panel. **Done**
+- [HAIKU: test-writer] x4 in parallel: skip schedule rules, streaks with skips, actions and models, components. **Done** (about 140 tests; found and fixed: a schedule edit copied skips into its history, past days lost skips under an earlier rule, a malformed skips field could throw, impossible dates were accepted)
+- [HAIKU: reviewer] x2 in parallel: domain and sync correctness; UI, accessibility, copy and docs. **Done** (fixed: a re-added chore inherited old skips; the cap rose to 60, pinned under the 2 KB row limit; the "+N" covered the streak, which is now a compact flame and count; Skip kept unsaved edits as a draft instead of dropping them; focus lands on the pet's name after a skip; an "Undo skip" in the editor once the toast has gone; skipped rows get no check. Left as is: two devices editing one chore offline follow the app's last-write-wins rule)
+- [LEAD] Review: axe clean on home, editor, all chores and build at 320 and 390 wide, no page scroll; 1,345 unit and 29 browser tests pass.
+
+## Phase 13: Rewards that keep coming
+
+Product review: the 16 rewards ran out at 50 chores, one to two weeks in for a busy home, and then there was nothing left to earn.
+
+- [LEAD] A second tier of 10 rewards (`UNLOCKS` in `src/domain/unlocks.ts`), from 60 to 200 chores and 21- and 30-day streaks, themed around keeping house; the first 16 are unchanged. Sky walls and seaside tiles are new room styles (palette tokens in ART.md). **Done**
+- [SONNET: svg-artist] x4 in parallel: chef's hat and golden crown; heart glasses and bandana; the apron; bookshelf, wall clock and bean bag. **Done** (the apron went back once: its neck strap read as a band under the cheeks)
+- [LEAD] The style picker became an even grid and wardrobe crops leave room for tall hats; Rewards, Wardrobe and Walls and floor still fit 390 x 664 and 1280 x 800.
+- [HAIKU: test-writer] Reward catalogue integrity tests. [HAIKU: reviewer] Tier-two art against ART.md.
+- [LEAD] The home's undo toast stands in for the buttons under the list on phones, so it covers nothing. **Done**
+- [LEAD] The demo video re-recorded on the current app: a fake clock moves the days (completions are never stamped ahead of the real date), Chrome's screencast keeps it smooth.
+
+## Phase 14: Several rooms
+
+Product review: "a home you build to match your own" was one room, so the toilet stood next to the stove. The `rooms` table already existed; the UI only read the first one.
+
+- [LEAD] Rooms model (`src/screens/roomsModel.ts`), the room pill and "Your rooms" sheet (`src/screens/RoomsSheet.tsx`), `removeRoom` (`src/data/actions.ts`), chores tied to furniture in any room ("Sink, Kitchen"). **Done**
+- [HAIKU: test-writer] Rooms model, actions and navigation tests (55). **Done** (found and fixed: two unknown room kinds both named "Room"; an inherited property name read as a label)
+- [HAIKU: reviewer] Rooms review. **Done** (fixed: removing the room on show picks the next one; focus after Keep it and Remove; Start over empties every room and keeps them, since a plain room delete could take furniture another device added after the press (Codex review of PR #19); a guard so a home keeps one room; Build's selection cleared on removal. Left as is: two devices removing different rooms offline can leave none, and the app then makes a kitchen)
+- [LEAD] Browser tests: rooms keep their own furniture, the pill counts late chores elsewhere, removing asks first. **Done**
+- [HAIKU: QA] Fresh-eyes pass of both first-run journeys at 390 x 664 and 1280 x 800, plus keyboard only. **Done** (fixed: the undo toast followed the player onto other screens; "Another kitchen" when the home has one; the wardrobe's six tabs fit a phone; the welcome bubble cleared Bun's ears; Escape cancels the chore editor; the pill's late count has a tooltip)
+
 ## Stretch
 
 Photo proof, multiple rooms and templates, shared households, drawing your own floor plan.

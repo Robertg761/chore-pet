@@ -21,7 +21,8 @@
   overscroll-behavior-x: contain;
   scrollbar-width: thin;
 }
-.tray-row > li { flex: none; scroll-snap-align: start; }
+.tray-row > li,
+.tray-section-items > li { flex: none; scroll-snap-align: start; }
 
 .tray-tile {
   width: 104px;
@@ -71,3 +72,24 @@
 .tray-one-row .tray-tile { width: 92px; min-height: 112px; padding: 6px 4px; }
 .tray-one-row .tray-art { width: 52px; height: 52px; }
 .tray-one-row .tray-name { font-size: 0.8125rem; }
+
+/* The grouped row: sections side by side, each led by a sideways label that reads bottom to top. */
+.tray-one-row .tray-scroller { gap: 14px; }
+.tray-section { flex: none; display: flex; align-items: stretch; gap: 8px; scroll-snap-align: start; }
+.tray-section-items { list-style: none; margin: 0; padding: 0; display: flex; gap: 10px; }
+.tray-section-label {
+  flex: none;
+  margin: 0;
+  padding: 6px 0;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  /* Turned upside down, so this border draws on the left: a soft divider before each group. */
+  border-right: 2px dashed color-mix(in srgb, var(--ink) 30%, transparent);
+  padding-right: 4px;
+}

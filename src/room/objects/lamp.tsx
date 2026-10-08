@@ -47,7 +47,7 @@ export function cobweb(j: P, b: P, c: P, rings = 3, key?: string | number) {
 }
 
 /** A fluffy dust bunny with two dot eyes, sitting on (x, y). */
-function dustBunny(x: number, y: number, k = 1, key?: string | number) {
+export function dustBunny(x: number, y: number, k = 1, key?: string | number) {
   const puffs: [number, number, number][] = [
     [-4.2, -3, 3.6],
     [3.6, -3.4, 3.8],

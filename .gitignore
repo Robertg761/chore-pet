@@ -30,3 +30,6 @@ dist-ssr
 
 # Demo recordings
 demo/
+
+# Agent worktrees
+.claude/worktrees/

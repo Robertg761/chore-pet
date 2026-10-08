@@ -336,7 +336,7 @@ h1[tabindex='-1']:focus { outline: none; }
   gap: 8px;
 }
 .build .build-header h1 { font-size: 1.625rem; }
-.build-stage { flex: 1 1 0; min-height: 150px; display: flex; flex-direction: column; }
+.build-stage { position: relative; flex: 1 1 0; min-height: 150px; display: flex; flex-direction: column; }
 .build-stage .build-room { flex: 1 1 0; min-height: 0; gap: 6px; }
 .build-stage .build-room-svg { flex: 1 1 0; min-height: 0; height: 100%; }
 .build-panel { flex: none; max-height: 52%; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 10px; padding: 2px; }
@@ -369,7 +369,9 @@ h1[tabindex='-1']:focus { outline: none; }
   }
   .build .build-header { grid-area: head; }
   .build-stage { grid-area: stage; min-height: 0; }
-  .build-panel { grid-area: panel; max-height: none; min-height: 0; }
+  .build-panel { grid-area: panel; max-height: none; min-height: 0; padding-bottom: 28px; }
+  /* The column scrolls: its last row fades out rather than being sliced by the edge. */
+  .build-panel { mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent); }
 }
 @media (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
   .build { padding: 10px 16px; column-gap: 20px; row-gap: 6px; grid-template-columns: minmax(0, 1fr) minmax(260px, 40%); }
