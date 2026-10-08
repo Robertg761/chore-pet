@@ -83,11 +83,16 @@ export function RoomsSheet({ rooms, names, currentId, things, late, onPick, onAd
         </h3>
         {!full && (
           <div className="rooms-add-row">
-            {ROOM_CHOICES.map((type) => (
-              <button key={type} type="button" className="btn rooms-add-btn" aria-label={`Add a ${ROOM_LABEL[type].toLowerCase()}`} onClick={() => onAdd(type)}>
-                {ROOM_LABEL[type]}
-              </button>
-            ))}
+            {ROOM_CHOICES.map((type) => {
+              // A kind the home already has reads "Another bedroom", so it never looks like a duplicate by mistake.
+              const again = rooms.some((r) => r.type === type)
+              const label = again ? `Another ${ROOM_LABEL[type].toLowerCase()}` : ROOM_LABEL[type]
+              return (
+                <button key={type} type="button" className="btn rooms-add-btn" aria-label={`Add ${again ? 'another' : 'a'} ${ROOM_LABEL[type].toLowerCase()}`} onClick={() => onAdd(type)}>
+                  {label}
+                </button>
+              )
+            })}
           </div>
         )}
       </section>
@@ -101,6 +106,7 @@ export function RoomPill({ name, lateElsewhere, onOpen }: { name: string; lateEl
     <button
       type="button"
       className="room-pill"
+      title={lateElsewhere ? `${plural(lateElsewhere, 'chore', 'chores')} late in other rooms` : undefined}
       aria-label={`Rooms: ${name}${lateElsewhere ? `. ${plural(lateElsewhere, 'chore', 'chores')} late in other rooms` : ''}`}
       onClick={onOpen}
     >

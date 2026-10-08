@@ -240,6 +240,7 @@ Product review: "a home you build to match your own" was one room, so the toilet
 - [HAIKU: test-writer] Rooms model, actions and navigation tests (55). **Done** (found and fixed: two unknown room kinds both named "Room"; an inherited property name read as a label)
 - [HAIKU: reviewer] Rooms review. **Done** (fixed: removing the room on show picks the next one; focus after Keep it and Remove; Start over keeps the room on show and says the others go; a guard so a home keeps one room; Build's selection cleared on removal. Left as is: two devices removing different rooms offline can leave none, and the app then makes a kitchen)
 - [LEAD] Browser tests: rooms keep their own furniture, the pill counts late chores elsewhere, removing asks first. **Done**
+- [HAIKU: QA] Fresh-eyes pass of both first-run journeys at 390 x 664 and 1280 x 800, plus keyboard only. **Done** (fixed: the undo toast followed the player onto other screens; "Another kitchen" when the home has one; the wardrobe's six tabs fit a phone; the welcome bubble cleared Bun's ears; Escape cancels the chore editor; the pill's late count has a tooltip)
 
 ## Stretch
 

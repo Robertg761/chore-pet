@@ -23,6 +23,11 @@
 .wd-poses { align-self: stretch; }
 .wd-poses .seg-btn { padding: 0 2px; font-size: 0.875rem; }
 
+/* Six tabs fit a phone's width without scrolling a tab out of sight. */
+@media (max-width: 519px) {
+  .wd-tabs { gap: 2px; padding: 3px; }
+  .wd-tabs .seg-btn { min-width: 0; padding: 0 2px; font-size: 0.8125rem; }
+}
 .wd-tab-dot { position: absolute; top: 5px; right: 6px; width: 8px; height: 8px; background: var(--accent); border: 2px solid var(--ink); border-radius: 50%; }
 .wd-tab[aria-selected='true'] .wd-tab-dot { background: var(--card); }
 

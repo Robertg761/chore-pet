@@ -102,7 +102,19 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onSkip, onUn
   const where = resolveObjectId(form.objectId, places)
 
   return (
-    <form className="editor" onSubmit={submit} aria-labelledby={`${uid}-title`} noValidate>
+    <form
+      className="editor"
+      onSubmit={submit}
+      aria-labelledby={`${uid}-title`}
+      noValidate
+      // Escape backs out like Cancel (the delete question first, if it's open).
+      onKeyDown={(e) => {
+        if (e.key !== 'Escape' || e.defaultPrevented) return
+        e.preventDefault()
+        if (confirmingDelete) keep()
+        else { clear(); onCancel() }
+      }}
+    >
       <ScreenHeader
         id={`${uid}-title`}
         title={chore ? 'Edit chore' : 'New chore'}
