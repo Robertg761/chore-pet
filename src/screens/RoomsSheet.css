@@ -63,3 +63,5 @@
   border: 2px solid var(--late-ink);
   border-radius: 999px;
 }
+/* "Another living room" stays on one line in a phone's half-width button. */
+.rooms-add-btn { padding: 0 8px; font-size: 0.875rem; text-wrap: balance; }
