@@ -37,10 +37,12 @@ export function archiveEnd(chore: Chore, day: ISODate): ISODate {
  */
 export function resumeFrom(chore: Chore, completions: Completion[], today: ISODate, vacations: VacationWindow[] = []): Schedule['resume'] {
   const days = completionDays(chore, completions).filter((d) => d <= today)
-  if (days.length === 0) return undefined
+  // A chore that was itself added back mid-round carries on from there, done since or not.
+  const last = days.at(-1) ?? chore.schedule.resume?.last
+  if (!last) return undefined
   const replay = replayDays({ ...chore, archivedOn: undefined }, days)
   if (replay.statusOn(today, vacations).state !== 'upcoming') return undefined
-  return { due: replay.due, last: days[days.length - 1] }
+  return { due: replay.due, last }
 }
 
 export type ChoreState = 'upcoming' | 'due' | 'overdue'
@@ -140,13 +142,13 @@ function scheduleKey(schedule: Schedule): string {
     case 'monthly':
       return `monthly:${schedule.dayOfMonth}`
     default: {
-      const { since: _since, before: _before, ...rest } = schedule as Schedule
+      const { since: _since, before: _before, resume: _resume, ...rest } = schedule as Schedule
       return JSON.stringify(rest)
     }
   }
 }
 
-/** Whether two schedules ask for the same thing. `since` and `before` (its history) are ignored. */
+/** Whether two schedules ask for the same thing. `since`, `before` (its history) and `resume` are ignored. */
 export function sameSchedule(a: Schedule, b: Schedule): boolean {
   return scheduleKey(a) === scheduleKey(b)
 }

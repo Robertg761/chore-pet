@@ -185,7 +185,7 @@ describe('resumeFrom', () => {
   /** The chore added back on `today` from `old`, resuming where it stood. */
   const again = (old: Chore, completions: Completion[], today: string): Chore => {
     const resume = resumeFrom(old, completions, today)
-    const { since: _s, before: _b, ...rule } = old.schedule
+    const { since: _s, before: _b, resume: _r, ...rule } = old.schedule
     return { ...old, id: 'n', createdOn: today, archivedOn: undefined, schedule: resume ? { ...rule, resume } : rule }
   }
 
@@ -207,6 +207,17 @@ describe('resumeFrom', () => {
     expect(back.schedule.resume).toEqual({ due: '2026-10-05', last: '2026-10-01' })
     expect(nextDueDate(back, [])).toBe('2026-10-05')
     expect(choreStatus(back, [], '2026-10-04').state).toBe('upcoming')
+  })
+
+  it('a chore added back and removed again before being done carries on from the same place', () => {
+    // Weekly on Mondays, done Mon 28 Sep. Added back Tue 29 Sep, removed Wed 30 Sep without being done, added back Thu.
+    const weekly: Chore = { ...daily, createdOn: '2026-09-21', schedule: { kind: 'weekly', weekday: 1 }, archivedOn: '2026-09-29' }
+    const first = again(weekly, [done('2026-09-28')], '2026-09-29')
+    expect(first.schedule.resume).toEqual({ due: '2026-10-05', last: '2026-09-28' })
+    const second = again({ ...first, archivedOn: '2026-09-30' }, [], '2026-10-01')
+    expect(second.schedule.resume).toEqual({ due: '2026-10-05', last: '2026-09-28' })
+    // Its round passes without being done: then it is due again, fresh.
+    expect(resumeFrom({ ...first, archivedOn: '2026-10-06' }, [], '2026-10-07')).toBeUndefined()
   })
 
   it('ignores completions dated after today (a clock that was set ahead)', () => {
