@@ -49,6 +49,12 @@ function Sparkles() {
   )
 }
 
+/** "Run and empty the " and "dishwasher": a name split before its last word. */
+function lastWord(name: string): { head: string; last: string } {
+  const at = name.lastIndexOf(' ')
+  return at < 0 ? { head: '', last: name } : { head: name.slice(0, at + 1), last: name.slice(at + 1) }
+}
+
 /** A row has something to tap unless it's an upcoming chore that's already covered. */
 const hasAction = (row: ChoreRow) => !row.allSet
 
@@ -150,9 +156,22 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
       >
         <div className="cl-info">
           <button type="button" className="cl-name" aria-label={`Edit ${chore.name}`} title="Edit chore" onClick={() => onEdit(chore)}>
-            <span className="cl-name-text">{chore.name}</span>
             {/* A pencil after the name, so it reads as tappable: tap to change or remove the chore. */}
-            <PencilIcon className="cl-pencil" size={16} />
+            {short ? (
+              <>
+                <span className="cl-name-text">{chore.name}</span>
+                <PencilIcon className="cl-pencil" size={16} />
+              </>
+            ) : (
+              // On the full list a long name wraps, and the pencil stays with its last word.
+              <span className="cl-name-text">
+                {lastWord(chore.name).head}
+                <span className="cl-name-end">
+                  {lastWord(chore.name).last}
+                  <PencilIcon className="cl-pencil" size={16} />
+                </span>
+              </span>
+            )}
           </button>
           <span className={`tag tag-${status.state}${status.neglect ? ` tag-late${status.neglect}` : ''}`}>{label}</span>
         </div>

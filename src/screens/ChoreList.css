@@ -91,6 +91,7 @@
   overflow-wrap: anywhere;
 }
 .cl-name-text { min-width: 0; }
+.cl-name-end { white-space: nowrap; }
 .cl-pencil { flex: none; margin-left: 6px; vertical-align: -2px; color: var(--ink-soft); }
 .cl-name:hover .cl-pencil { color: var(--ink); }
 .cl-info .tag { margin: 0 0 2px; font-weight: 800; white-space: nowrap; }
