@@ -204,7 +204,7 @@ User feedback: "I don't see any way to manage my chores", and a way to start fro
 
 Follow-up from review of PR #17:
 
-- [LEAD] Clear reaches rows another device added that this one hadn't pulled: migration 0008's `clear_home` RPC, sent after the per-row changes and limited to rows stored before the clear (a late sync never takes newer ones). Skipped, not stuck, on a database without it. **Done**
+- [LEAD] Clear reaches rows another device added that this one hadn't pulled: migration 0008's `clear_home` RPC, sent after the per-row changes and limited to rows stored before the clear, corrected for the device clock's error (a late sync never takes newer ones, even on newer chores on cleared furniture). Kept queued without blocking until the migration is applied. **Done**
 - [LEAD] End dates settle on the earliest (device and server), so Clear also ends a chore a clock set ahead had ended later. **Done**
 - [LEAD] Adding a chore back resumes its round exactly (`Schedule.resume`): every-N-days chores keep their due date, early completions count as before, and future-dated completions are ignored. **Done**
 - [LEAD] Erase everything says when other homes in the account stay. **Done**

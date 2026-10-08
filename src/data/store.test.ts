@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { Chore, Progress } from '../domain/types'
-import { addChore, completeChore, completeChoreWithRewards, createHousehold, removeChore } from './actions'
+import { addChore, clearHome, completeChore, completeChoreWithRewards, createHousehold, removeChore } from './actions'
 import { memoryStore, volatileStore, type LocalStore } from './local'
 import type { Remote, RemoteResult } from './remote'
-import { HELD_FOR_NEXT, change, emptySnapshot, emptyTables, selectHome, type Snapshot, type Tables } from './state'
+import { HELD_FOR_NEXT, change, clearedHome, emptySnapshot, emptyTables, selectHome, type Snapshot, type Tables } from './state'
 import { MAX_ATTEMPTS, createStore, type Store, type StoreChannel, type StoreMessage } from './store'
 import { keyOf, type TableName } from './tables'
 
@@ -407,6 +407,37 @@ describe('changes the server refuses', () => {
     await store.sync()
     expect(store.getState()).toMatchObject({ sync: 'synced', rejectedCount: 0, pendingCount: 0 })
     expect(choreNames(server.tables)).toEqual(['Dishes'])
+  })
+
+  it('keeps a clear waiting for its migration queued without holding up the rest or the pull', async () => {
+    const { server, remote } = fakeServer()
+    let migrated = false
+    const cleared: string[] = []
+    const store = await onboarded({
+      ...remote,
+      remove: async (table, keys, removal) => {
+        if (!clearedHome(table, keys[0])) return remote.remove(table, keys, removal)
+        if (!migrated) return { ok: false, transient: true, kind: 'schema', message: 'Could not find the function public.clear_home' }
+        cleared.push(...keys)
+        return { ok: true }
+      },
+    })
+    store.apply(...dishes(store))
+    await store.sync()
+    const data = selectHome(store.getState().snapshot.tables)
+    store.apply(...clearHome({ ...data, home: data.home! }, '2026-10-08'))
+    // Meanwhile another device renamed the home: this device should still pull it.
+    const homeId = data.home!.id
+    server.tables.homes[homeId] = { ...server.tables.homes[homeId], name: 'Flat' }
+    await store.sync()
+    expect(store.getState()).toMatchObject({ rejectedCount: 0, pendingCount: 1 })
+    expect(Object.values(server.tables.chores).every((c) => c.archivedOn === '2026-10-08')).toBe(true)
+    expect(store.getState().snapshot.tables.homes[homeId].name).toBe('Flat')
+
+    migrated = true
+    await store.sync()
+    expect(store.getState()).toMatchObject({ sync: 'synced', rejectedCount: 0, pendingCount: 0 })
+    expect(cleared).toEqual([`clear:${homeId}`])
   })
 
   it('sets a row aside after it keeps getting stuck (a 413 with no code), so the queue moves again', async () => {

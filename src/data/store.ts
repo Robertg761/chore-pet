@@ -17,6 +17,7 @@ import {
   rebase,
   reject,
   selectHome,
+  clearedHome,
   repairOps,
   requeueRejected,
   savedHomeOf,
@@ -488,6 +489,9 @@ export function createStore({
               continue
             }
           }
+          // A clear waiting for its migration (0008) stays queued but holds nothing up: nothing
+          // depends on it, and the device's own copy is already cleared row by row.
+          if (kind === 'schema' && clearedHome(op.table, op.key)) continue
           // 'schema' (the database is behind this app) or a 'stuck' row with tries left: keep it queued.
           blocked = one.message
         }

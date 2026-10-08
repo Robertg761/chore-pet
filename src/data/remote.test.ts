@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { addChore, completeChoreWithRewards, createHousehold } from './actions'
 import { memoryStore } from './local'
 import { KEY_COLUMN, MAPPERS } from './mappers'
@@ -178,21 +178,23 @@ describe('atomic object removal', () => {
 
 describe('clear room and chores', () => {
   const clear = { archivedOn: '2026-10-08', clearBefore: '2026-10-08T18:00:00.000Z' }
-  it('asks the server to clear each home, with the clear moment', async () => {
+  it('asks the server to clear each home, with the clear moment and the device clock at sending', async () => {
+    vi.useFakeTimers({ now: new Date('2026-10-08T19:00:00.000Z') })
     const calls: unknown[] = []
     const client = { rpc: async (...args: unknown[]) => { calls.push(args); return { error: null, status: 200 } } } as unknown as SupabaseClient
     expect(await remoteOver(client).remove('homes', ['clear:h1', 'clear:h2'], clear)).toEqual({ ok: true })
-    expect(calls).toEqual([
-      ['clear_home', { target_home: 'h1', archive_on: '2026-10-08', cleared_before: '2026-10-08T18:00:00.000Z' }],
-      ['clear_home', { target_home: 'h2', archive_on: '2026-10-08', cleared_before: '2026-10-08T18:00:00.000Z' }],
-    ])
+    vi.useRealTimers()
+    const args = { archive_on: '2026-10-08', cleared_before: '2026-10-08T18:00:00.000Z', sent_at: '2026-10-08T19:00:00.000Z' }
+    expect(calls).toEqual([['clear_home', { target_home: 'h1', ...args }], ['clear_home', { target_home: 'h2', ...args }]])
   })
-  it('lets the queue move on when the database has no clear_home yet (the device already cleared its copy)', async () => {
+  it('reports a database without clear_home yet as a schema mismatch, so it waits rather than being dropped', async () => {
     const client = { rpc: async () => ({ error: { code: 'PGRST202', message: 'Could not find the function' }, status: 404 }) } as unknown as SupabaseClient
-    expect(await remoteOver(client).remove('homes', ['clear:h1'], clear)).toEqual({ ok: true })
+    expect(await remoteOver(client).remove('homes', ['clear:h1'], clear)).toMatchObject({ ok: false, kind: 'schema' })
   })
-  it('reports any other refusal as usual', async () => {
-    const client = { rpc: async () => ({ error: { code: '22023', message: 'archive_on and cleared_before are required' }, status: 400 }) } as unknown as SupabaseClient
-    expect(await remoteOver(client).remove('homes', ['clear:h1'], clear)).toMatchObject({ ok: false, kind: 'permanent' })
+  it('never sends a clear without its details as a delete', async () => {
+    const calls: unknown[] = []
+    const client = { rpc: async (...a: unknown[]) => (calls.push(a), { error: null }), from: (...a: unknown[]) => (calls.push(a), {}) } as unknown as SupabaseClient
+    expect(await remoteOver(client).remove('homes', ['clear:h1'], { archivedOn: '2026-10-08' })).toMatchObject({ ok: false, kind: 'permanent' })
+    expect(calls).toEqual([])
   })
 })

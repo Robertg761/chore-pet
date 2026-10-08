@@ -215,10 +215,12 @@ export function removeHome(homeId: string): NewOp[] {
  */
 export function clearHome(history: History & { home: Home; objects: PlacedObject[] }, today: ISODate, now: Date = new Date()): NewOp[] {
   const placed = new Set(history.objects.map((o) => o.id))
+  // Furniture goes keeping its chores (only detached), and each chore this device knows is
+  // retired by itself: a chore another device put on that furniture after the clear stays.
+  const detached = { ...history, chores: history.chores.map((c) => (c.objectId && placed.has(c.objectId) ? { ...c, objectId: null } : c)) }
   return [
-    ...history.objects.flatMap((o) => removeObject(o.id, history, today)),
-    // Chores on furniture are retired with it; the rest are retired here.
-    ...history.chores.filter((c) => !choreRetiredBy(c, today) && !(c.objectId && placed.has(c.objectId))).flatMap((c) => removeChore(c.id, history, today)),
+    ...history.objects.flatMap((o) => removeObject(o.id, history, today, true)),
+    ...detached.chores.filter((c) => !choreRetiredBy(c, today)).flatMap((c) => removeChore(c.id, detached, today)),
     clearOp(history.home.id, today, now.toISOString()),
   ]
 }

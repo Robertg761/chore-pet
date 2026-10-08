@@ -208,10 +208,6 @@ export function change(snapshot: Snapshot, op: NewOp): Snapshot {
     const chore = snapshot.tables.chores[op.key]
     return change(snapshot, upsertOp('chores', { ...chore, archivedOn: archiveEnd(chore, op.removal?.archivedOn ?? toISODate(new Date())) }))
   }
-  if (op.kind === 'delete' && clearedHome(op.table, op.key)) {
-    const seq = snapshot.seq + 1
-    return { ...snapshot, seq, outbox: { ...snapshot.outbox, [outboxKey(op.table, op.key)]: { ...op, seq, id: newOpId() } as Op } }
-  }
   const seq = snapshot.seq + 1
   const full = { ...op, seq, id: newOpId() } as Op
   const key = outboxKey(op.table, op.key)
