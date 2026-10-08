@@ -210,6 +210,16 @@ Follow-up from review of PR #17:
 - [LEAD] Erase everything says when other homes in the account stay. **Done**
 - [LEAD] The clear's cutoff leans two minutes earlier, past Supabase's 100-second request limit, so request latency is never taken for clock error (migration 0009, from Codex review of PR #18). **Done**
 
+## Phase 12: Pre-submission gaps
+
+Product review before the Yard closes: the plan's phases were all met, so this looked past the plan at what a player would miss in week two.
+
+- [LEAD] Skip this time (`skipChore` in `src/data/actions.ts`, `scheduleDays` in `src/domain/schedule.ts`): a round that isn't needed can be skipped from the chore's editor instead of tapping Done for something not done. It settles the round but earns nothing; a day where everything owed was skipped pauses the streak. No migration: skips live on the schedule JSON. **Done**
+- [LEAD] The streak beside the health bar on the home screen, so the main game mechanic is in sight. **Done**
+- [LEAD] Build mode's scrolling tray grouped by room (this room first, then the others, then decor) behind upright labels, without growing the panel. **Done**
+- [HAIKU: test-writer] x4 in parallel: skip schedule rules, streaks with skips, actions and models, components.
+- [HAIKU: reviewer] x2 in parallel: domain and sync correctness; UI, accessibility, copy and docs.
+
 ## Stretch
 
 Photo proof, multiple rooms and templates, shared households, drawing your own floor plan.
