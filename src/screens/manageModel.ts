@@ -42,6 +42,16 @@ export function choreGroups(chores: Chore[], objects: PlacedObject[], today: ISO
 
 const key = (name: string) => name.trim().toLocaleLowerCase()
 
+/**
+ * The later copy of a chore first, when two were removed the same day (removed,
+ * added back, changed, removed again): by start date, then by when the server
+ * stored it, where a copy not stored yet is the newest.
+ */
+function newerFirst(a: Chore & { createdAt?: string }, b: Chore & { createdAt?: string }): number {
+  return b.createdOn.localeCompare(a.createdOn)
+    || (a.createdAt === b.createdAt ? 0 : !a.createdAt ? -1 : !b.createdAt ? 1 : b.createdAt.localeCompare(a.createdAt))
+}
+
 /** How many past chores to offer; the list is for picking a few back, not an archive. */
 export const PAST_LIMIT = 30
 
@@ -55,7 +65,7 @@ export function pastChores(chores: Chore[], today: ISODate): Chore[] {
   const seen = new Set<string>()
   return chores
     .filter((c) => choreRetiredBy(c, today))
-    .sort((a, b) => b.archivedOn!.localeCompare(a.archivedOn!) || byName(a, b))
+    .sort((a, b) => b.archivedOn!.localeCompare(a.archivedOn!) || newerFirst(a, b) || byName(a, b))
     .filter((c) => {
       const k = key(c.name)
       if (current.has(k) || seen.has(k)) return false

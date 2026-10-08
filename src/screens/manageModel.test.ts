@@ -62,6 +62,21 @@ describe('pastChores', () => {
     expect(past).toEqual([])
   })
 
+  it('offers the latest copy when two with the same name were removed the same day', () => {
+    // Removed, added back, changed to weekly, removed again, all on the 8th.
+    const first = { ...chore('a', { name: 'Dishes', archivedOn: TODAY }), createdAt: '2026-10-01T09:00:00Z' }
+    const stored = { ...chore('b', { name: 'Dishes', createdOn: TODAY, archivedOn: TODAY, schedule: { kind: 'weekly', weekday: 1 } }), createdAt: '2026-10-08T09:00:00Z' }
+    const unsynced = chore('c', { name: 'Dishes', createdOn: TODAY, archivedOn: TODAY, schedule: { kind: 'monthly', dayOfMonth: 3 } })
+    expect(pastChores([first, stored], TODAY).map((c) => c.id)).toEqual(['b'])
+    expect(pastChores([stored, first], TODAY).map((c) => c.id)).toEqual(['b'])
+    // A copy the server hasn't stored yet is the newest of all.
+    expect(pastChores([first, unsynced, stored], TODAY).map((c) => c.id)).toEqual(['c'])
+    // Same start day, neither stored: still the other way round from the oldest start.
+    const { createdAt: _a, ...firstLocal } = first
+    const { createdAt: _b, ...storedLocal } = stored
+    expect(pastChores([firstLocal, storedLocal], TODAY).map((c) => c.id)).toEqual(['b'])
+  })
+
   it('offers at most PAST_LIMIT', () => {
     const many = Array.from({ length: PAST_LIMIT + 5 }, (_, i) => chore(`c${i}`, { archivedOn: '2026-10-02' }))
     expect(pastChores(many, TODAY)).toHaveLength(PAST_LIMIT)
