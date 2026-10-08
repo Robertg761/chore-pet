@@ -70,7 +70,7 @@ export function coachCopy(
   if (step === 2) {
     return {
       text: sheetOpen
-        ? 'Everything you place brings its own chores. Tap × to add one or two more.'
+        ? 'Everything you place brings its own chores. Tap Add a chore for one or two more.'
         : 'Everything you place brings its own chores. Add one or two more.',
       count,
     }

@@ -729,6 +729,7 @@ export default function App() {
               )}
               {(wide || panelTab === 'things') && (
                 <CatalogTray
+                  key={room.id}
                   roomType={room.type}
                   objects={roomObjects}
                   unlocked={progress?.unlockedItems}
