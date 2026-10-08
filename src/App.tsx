@@ -62,7 +62,7 @@ import { ObjectSheet } from './screens/ObjectSheet'
 import { PetPicker } from './screens/PetPicker'
 import { RewardsScreen } from './screens/RewardsScreen'
 import { rewardsHint, rewardsNote } from './screens/rewardsModel'
-import { SampleBanner } from './screens/SampleBanner'
+import { AdoptedNote, ADOPTED_NOTE_MS, SampleBanner } from './screens/SampleBanner'
 import { CoachCard, FirstDoneHint, Welcome } from './screens/Onboarding'
 import { coachStep, hasDueChore, hintKey, onboardedKey, readFlag, showFirstDoneHint, writeFlag } from './screens/onboardingModel'
 import { RoomStylePicker } from './screens/RoomStylePicker'
@@ -164,6 +164,21 @@ export default function App() {
   // First launch: the landing choice, or the picker once "Build my home" is tapped.
   const building = view.name === 'pick-pet'
   const setBuilding = (value: boolean) => setView({ name: value ? 'pick-pet' : 'home' })
+  // "Start fresh" on the sample: once its home is gone, go straight to the picker. Waiting for the removal
+  // matters because the navigation scope changes with the home and sends the route back to the landing.
+  const pickAfterRemoval = useRef(false)
+  useEffect(() => {
+    if (!pickAfterRemoval.current || data.home) return
+    pickAfterRemoval.current = false
+    navigation.go({ name: 'pick-pet' })
+  }, [data.home, navigation])
+  // "Make it mine": a short thank-you in the banner's place, then gone.
+  const [justAdopted, setJustAdopted] = useState(false)
+  useEffect(() => {
+    if (!justAdopted) return
+    const timer = window.setTimeout(() => setJustAdopted(false), ADOPTED_NOTE_MS)
+    return () => window.clearTimeout(timer)
+  }, [justAdopted])
   // First run: the welcome beat after "Move in", then the coach card while building the first room.
   const [welcome, setWelcome] = useState(false)
   const [coachHome, setCoachHome] = useState<string | null>(null)
@@ -826,11 +841,13 @@ export default function App() {
         <HealthBar health={condition.health} mood={condition.mood} away={away} streak={homeStreak} />
       </header>
 
-      {sample && (
+      {sample ? (
         <SampleBanner
-          onKeep={() => appStore.apply(...adoptSample(home))}
-          onStartFresh={() => (setBuilding(false), setView({ name: 'home' }), appStore.apply(...removeHome(home.id)))}
+          onKeep={() => (setJustAdopted(true), appStore.apply(...adoptSample(home)))}
+          onStartFresh={() => ((pickAfterRemoval.current = true), appStore.apply(...removeHome(home.id)))}
         />
+      ) : (
+        justAdopted && <AdoptedNote />
       )}
 
       <div className="home-stage" style={ROOM_ASPECT_VARS}>
