@@ -52,16 +52,7 @@
 .room-pill:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 /* A 44px target without a bigger pill. */
 .room-pill::after { content: ''; position: absolute; inset: -5px; }
-.room-pill-late {
-  min-width: 20px;
-  padding: 0 6px;
-  font-size: 0.75rem;
-  line-height: 20px;
-  text-align: center;
-  color: var(--late-ink);
-  background: var(--late-bg);
-  border: 2px solid var(--late-ink);
-  border-radius: 999px;
-}
+/* Same look as the "late" chip in the rooms list (.tag .tag-overdue); it just must not wrap or shrink. */
+.room-pill-late { flex: none; padding: 1px 8px; font-weight: 800; white-space: nowrap; }
 /* "Another living room" stays on one line in a phone's half-width button. */
 .rooms-add-btn { padding: 0 8px; font-size: 0.875rem; text-wrap: balance; }
