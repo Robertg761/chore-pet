@@ -12,6 +12,8 @@ export interface ChoreListProps {
   onComplete: (chore: Chore) => void
   onEdit: (chore: Chore) => void
   onAdd: () => void
+  /** Opens the chores screen (edit, remove several, add back removed ones). Shown on the full list. */
+  onManage?: () => void
   /**
    * Show only the first few rows (late, then today, then coming up) under one
    * "Up next" heading, with a button to see them all. Leave unset for the full list.
@@ -59,7 +61,7 @@ const hasAction = (row: ChoreRow) => !row.allSet
 /** How long after a completion to keep trying to put focus back where it was lost. */
 const REFOCUS_MS = 3000
 
-export function ChoreList({ chores, completions, vacations, today, onComplete, onEdit, onAdd, limit, onSeeAll }: ChoreListProps) {
+export function ChoreList({ chores, completions, vacations, today, onComplete, onEdit, onAdd, onManage, limit, onSeeAll }: ChoreListProps) {
   const sections = buildSections(chores, completions, vacations, today)
   const away = onVacation(today, vacations)
   const short = limit !== undefined
@@ -243,6 +245,11 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
           <button type="button" className="cl-add cl-all" onClick={onSeeAll}>
             All<span className="cl-all-extra"> chores</span>
             {rows.length > shown.length ? ` (${rows.length})` : ''}
+          </button>
+        )}
+        {onManage && (
+          <button type="button" className="cl-add" onClick={onManage}>
+            Manage
           </button>
         )}
         <button type="button" className="cl-add" onClick={onAdd}>

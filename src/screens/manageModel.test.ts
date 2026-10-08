@@ -1,0 +1,65 @@
+import { describe, expect, it } from 'vitest'
+import type { Chore, PlacedObject } from '../domain/types'
+import { againInput, choreGroups, PAST_LIMIT, pastChores, placeNames } from './manageModel'
+
+const TODAY = '2026-10-08'
+const object = (id: string, catalogId: string): PlacedObject => ({ id, roomId: 'r', catalogId, tileX: 0, tileY: 0, rotation: 0 })
+const chore = (id: string, patch: Partial<Chore> = {}): Chore => ({ id, homeId: 'h', objectId: null, name: id, createdOn: '2026-10-01', schedule: { kind: 'daily' }, photoProof: false, ...patch })
+
+describe('placeNames', () => {
+  it('names objects from the catalog and numbers duplicates', () => {
+    expect(placeNames([object('a', 'sink'), object('b', 'rug'), object('c', 'rug'), object('d', 'nope')]))
+      .toEqual([{ id: 'a', name: 'Sink' }, { id: 'b', name: 'Floor rug' }, { id: 'c', name: 'Floor rug 2' }])
+  })
+})
+
+describe('choreGroups', () => {
+  it('groups today’s chores by object in room order, then anywhere, sorted by name', () => {
+    const objects = [object('s', 'sink'), object('t', 'trash')]
+    const groups = choreGroups([
+      chore('Wipe', { objectId: 's' }),
+      chore('Dishes', { objectId: 's' }),
+      chore('Bins', { objectId: 't' }),
+      chore('Water plants'),
+      chore('Gone object', { objectId: 'removed' }),
+      chore('Retired', { objectId: 's', archivedOn: '2026-10-05' }),
+      chore('Not yet', { createdOn: '2026-10-09' }),
+    ], objects, TODAY)
+    expect(groups.map((g) => [g.title, g.chores.map((c) => c.name)])).toEqual([
+      ['Sink', ['Dishes', 'Wipe']],
+      ['Trash can', ['Bins']],
+      ['Anywhere', ['Gone object', 'Water plants']],
+    ])
+  })
+
+  it('leaves out empty groups', () => {
+    expect(choreGroups([], [object('s', 'sink')], TODAY)).toEqual([])
+  })
+})
+
+describe('pastChores', () => {
+  it('lists removed chores newest first, once per name, skipping names on today’s list', () => {
+    const past = pastChores([
+      chore('a', { name: 'Dishes', archivedOn: '2026-10-02' }),
+      chore('b', { name: 'dishes ', archivedOn: '2026-10-06' }),
+      chore('c', { name: 'Mop', archivedOn: '2026-10-04' }),
+      chore('d', { name: 'Bins', archivedOn: '2026-10-07' }),
+      chore('e', { name: 'Bins' }),
+      chore('f', { name: 'Later', archivedOn: '2026-10-20' }),
+    ], TODAY)
+    expect(past.map((c) => c.id)).toEqual(['b', 'c'])
+  })
+
+  it('offers at most PAST_LIMIT', () => {
+    const many = Array.from({ length: PAST_LIMIT + 5 }, (_, i) => chore(`c${i}`, { archivedOn: '2026-10-02' }))
+    expect(pastChores(many, TODAY)).toHaveLength(PAST_LIMIT)
+  })
+})
+
+describe('againInput', () => {
+  it('keeps the name and rule, drops schedule history, and keeps the object only if it is still placed', () => {
+    const old = chore('a', { name: 'Dishes', objectId: 's', schedule: { kind: 'everyNDays', n: 3, since: '2026-10-03', before: { kind: 'daily' } } })
+    expect(againInput(old, [object('s', 'sink')])).toEqual({ name: 'Dishes', schedule: { kind: 'everyNDays', n: 3 }, objectId: 's' })
+    expect(againInput(old, [])).toEqual({ name: 'Dishes', schedule: { kind: 'everyNDays', n: 3 }, objectId: null })
+  })
+})

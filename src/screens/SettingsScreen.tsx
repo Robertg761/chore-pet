@@ -25,16 +25,18 @@ const PRIVACY_URL = 'https://github.com/Robertg761/chore-pet/blob/main/docs/PRIV
 
 export function SettingsScreen({ petName, homeId, onClose, account, onStartOver, onClearRoom }: SettingsScreenProps) {
   const [sound, setSound] = useState(soundOn)
-  const [askingStartOver, setAskingStartOver] = useState(false)
+  // Start over asks twice: which kind of fresh start, then whether to go ahead.
+  const [startOver, setStartOver] = useState<null | 'choose' | 'clear' | 'erase'>(null)
   const startOverRef = useRef<HTMLButtonElement>(null)
   const cancelRef = useRef<HTMLButtonElement>(null)
   const asked = useRef(false)
   // Focus follows the question in and back out, so keyboard users stay in place.
+  // It lands on the safe choice, so a stray Enter never clears anything.
   useEffect(() => {
-    if (askingStartOver) cancelRef.current?.focus()
+    if (startOver) cancelRef.current?.focus()
     else if (asked.current) startOverRef.current?.focus()
-    asked.current = askingStartOver
-  }, [askingStartOver])
+    asked.current = Boolean(startOver)
+  }, [startOver])
   return (
     <section className="settings screen-fit" aria-labelledby="settings-title">
       <ScreenHeader id="settings-title" title="Settings" onBack={onClose} />
@@ -68,29 +70,45 @@ export function SettingsScreen({ petName, homeId, onClose, account, onStartOver,
           {onStartOver && onClearRoom && (
             <div className="settings-card">
               <h2>Start over</h2>
-              {askingStartOver ? (
+              {startOver === 'choose' ? (
                 <div className="settings-confirm" role="group" aria-label="Start over">
                   <p>How fresh a start?</p>
                   <div className="settings-choice">
-                    <button type="button" className="btn btn-danger" onClick={onClearRoom}>
+                    <button type="button" className="btn btn-danger" onClick={() => setStartOver('clear')}>
                       Clear room and chores
                     </button>
                     <span className="settings-choice-note">For a move or a new set of chores. {petName}, outfits and rewards stay.</span>
                   </div>
                   <div className="settings-choice">
-                    <button type="button" className="btn btn-danger" onClick={onStartOver}>
+                    <button type="button" className="btn btn-danger" onClick={() => setStartOver('erase')}>
                       Erase everything
                     </button>
-                    <span className="settings-choice-note">{petName}, the room, chores and rewards all go. Can’t be undone.</span>
+                    <span className="settings-choice-note">{petName}, the room, chores and rewards all go.</span>
                   </div>
-                  <button ref={cancelRef} type="button" className="btn" onClick={() => setAskingStartOver(false)}>
+                  <button ref={cancelRef} type="button" className="btn" onClick={() => setStartOver(null)}>
                     Keep my home
                   </button>
+                </div>
+              ) : startOver ? (
+                <div className="settings-confirm" role="group" aria-label={startOver === 'clear' ? 'Clear room and chores' : 'Erase everything'}>
+                  <p>
+                    {startOver === 'clear'
+                      ? 'Clear the room and every chore? Your past work stays, and removed chores can be added back from Chores.'
+                      : `Erase ${petName}’s home for good? This can’t be undone.`}
+                  </p>
+                  <div className="settings-confirm-actions">
+                    <button type="button" className="btn btn-danger" onClick={startOver === 'clear' ? onClearRoom : onStartOver}>
+                      {startOver === 'clear' ? 'Clear' : 'Erase'}
+                    </button>
+                    <button ref={cancelRef} type="button" className="btn" onClick={() => setStartOver('choose')}>
+                      Back
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <>
                   <p className="settings-note">Moved, or want all new chores? Clear the room and chores, or erase everything.</p>
-                  <button ref={startOverRef} type="button" className="btn btn-danger" onClick={() => setAskingStartOver(true)}>
+                  <button ref={startOverRef} type="button" className="btn btn-danger" onClick={() => setStartOver('choose')}>
                     Start over
                   </button>
                 </>

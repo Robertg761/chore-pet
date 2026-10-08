@@ -1,16 +1,16 @@
 import { authReturnMessage } from '../lib/authReturn'
 
 /** Query routes work on static hosts without rewriting paths or consuming auth hashes. */
-export type View = { name: 'home' | 'build' | 'vacation' | 'rewards' | 'week' | 'creator' | 'wardrobe' | 'share' | 'settings' | 'sign-in' | 'pick-pet' } | { name: 'edit'; choreId?: string }
+export type View = { name: 'home' | 'build' | 'chores' | 'vacation' | 'rewards' | 'week' | 'creator' | 'wardrobe' | 'share' | 'settings' | 'sign-in' | 'pick-pet' } | { name: 'edit'; choreId?: string; from?: 'chores' }
 export type Route = View & { sheet?: 'more' | 'all' }
-const names = new Set(['home', 'build', 'edit', 'vacation', 'rewards', 'week', 'creator', 'wardrobe', 'share', 'settings', 'sign-in', 'pick-pet'])
+const names = new Set(['home', 'build', 'chores', 'edit', 'vacation', 'rewards', 'week', 'creator', 'wardrobe', 'share', 'settings', 'sign-in', 'pick-pet'])
 
 export function readRoute(search: string, hash = ''): Route {
   const params = new URLSearchParams(search)
   const name = params.get('screen') ?? (authReturnMessage(search, hash) ? 'sign-in' : 'home')
   if (!names.has(name)) return { name: 'home' }
   const route: Route = name === 'edit'
-    ? { name, ...(params.get('chore') ? { choreId: params.get('chore')! } : {}) }
+    ? { name, ...(params.get('chore') ? { choreId: params.get('chore')! } : {}), ...(params.get('from') === 'chores' ? { from: 'chores' as const } : {}) }
     : { name: name as Exclude<View['name'], 'edit'> }
   const sheet = params.get('sheet')
   if (sheet === 'more' || (sheet === 'all' && name === 'home')) route.sheet = sheet
@@ -19,10 +19,11 @@ export function readRoute(search: string, hash = ''): Route {
 
 export function routeUrl(url: URL, route: Route): string {
   const next = new URL(url)
-  for (const key of ['screen', 'chore', 'sheet']) next.searchParams.delete(key)
+  for (const key of ['screen', 'chore', 'from', 'sheet']) next.searchParams.delete(key)
   // An explicit Home wins over a canceled auth callback when this URL reloads.
   if (route.name !== 'home' || authReturnMessage(next.search, next.hash)) next.searchParams.set('screen', route.name)
   if (route.name === 'edit' && route.choreId) next.searchParams.set('chore', route.choreId)
+  if (route.name === 'edit' && route.from) next.searchParams.set('from', route.from)
   if (route.sheet) next.searchParams.set('sheet', route.sheet)
   return next.pathname + next.search + next.hash
 }

@@ -44,6 +44,8 @@ import { CatalogTray } from './screens/CatalogTray'
 import { CharacterCreator } from './screens/CharacterCreator'
 import { ChoreEditor } from './screens/ChoreEditor'
 import { ChoreList } from './screens/ChoreList'
+import { ManageChores } from './screens/ManageChores'
+import { againInput, placeNames } from './screens/manageModel'
 import { sparkleSpot, type SparkleSpot } from './screens/doneMoment'
 import { HealthBar } from './screens/HealthBar'
 import { AccountCleanup } from './screens/AccountCleanup'
@@ -79,7 +81,7 @@ import { AccountSection } from './screens/AccountSection'
 import { ScreenHeader } from './shell/ScreenHeader'
 
 /** Where each screen sits, left to right: the tabs in their order, then the screens opened from them. */
-const VIEW_RANK: Record<View['name'], number> = { home: 0, build: 1, wardrobe: 2, rewards: 3, edit: 4, week: 5, creator: 5, share: 5, vacation: 5, settings: 5, 'sign-in': 5, 'pick-pet': 1 }
+const VIEW_RANK: Record<View['name'], number> = { home: 0, build: 1, wardrobe: 2, rewards: 3, edit: 6, chores: 5, week: 5, creator: 5, share: 5, vacation: 5, settings: 5, 'sign-in': 5, 'pick-pet': 1 }
 
 /** How long the gift waits after Done, so the cheer, sparkle and health float play first. */
 const GIFT_DELAY_MS = 1400
@@ -89,6 +91,7 @@ const VIEW_TITLE: Record<View['name'], string> = {
   home: 'Chore Pet',
   build: 'Build · Chore Pet',
   edit: 'Edit chore · Chore Pet',
+  chores: 'Chores · Chore Pet',
   vacation: 'Vacation mode · Chore Pet',
   rewards: 'Rewards · Chore Pet',
   week: 'Your week · Chore Pet',
@@ -287,6 +290,7 @@ export default function App() {
 
   const syncNote = savedLocally || sync === 'synced' ? SYNC_LABEL[sync] : null
   const more: MoreItem[] = [
+    { label: 'Chores', onSelect: () => setView({ name: 'chores' }) },
     { label: 'Your week', onSelect: () => setView({ name: 'week' }) },
     { label: 'Change look', onSelect: () => setView({ name: 'creator' }) },
     { label: 'Share your home', onSelect: () => setView({ name: 'share' }) },
@@ -361,16 +365,9 @@ export default function App() {
     // Looked up fresh each render: a chore deleted elsewhere (another device, a sync) is never written back.
     const chore = view.choreId ? activeChores.find((c) => c.id === view.choreId) : undefined
     // Places a chore can belong to, named like the catalog; duplicates are numbered ("Rug 2").
-    const seen = new Map<string, number>()
-    const places = objects
-      .filter((o) => o.roomId === rooms[0]?.id)
-      .flatMap((o) => {
-        const name = catalogEntry(o.catalogId)?.name
-        if (!name) return []
-        const n = (seen.get(name) ?? 0) + 1
-        seen.set(name, n)
-        return [{ id: o.id, name: n > 1 ? `${name} ${n}` : name }]
-      })
+    const places = placeNames(objects.filter((o) => o.roomId === rooms[0]?.id))
+    // Opened from the chores screen, the editor goes back there.
+    const done = () => (view.from === 'chores' ? setView({ name: 'chores' }) : back())
     return framed(
       'home',
       <main className="shell screen">
@@ -380,16 +377,34 @@ export default function App() {
           places={places}
           onSave={(value) => {
             appStore.apply(...(chore ? updateChore(chore, value, today) : addChore(home, value, today)))
-            back()
+            done()
           }}
           onDelete={
             chore &&
             (() => {
               appStore.apply(...removeChore(chore.id, data, today))
-              back()
+              done()
             })
           }
-          onCancel={back}
+          onCancel={done}
+        />
+      </main>,
+    )
+  }
+
+  if (view.name === 'chores') {
+    return framed(
+      'more',
+      <main className="shell screen">
+        <ManageChores
+          chores={chores}
+          objects={objects.filter((o) => o.roomId === rooms[0]?.id)}
+          today={today}
+          onEdit={(chore) => setView({ name: 'edit', choreId: chore.id, from: 'chores' })}
+          onAdd={() => setView({ name: 'edit', from: 'chores' })}
+          onRemove={(list) => appStore.apply(...list.flatMap((c) => removeChore(c.id, data, today)))}
+          onAddAgain={(chore) => appStore.apply(...addChore(home, againInput(chore, objects.filter((o) => o.roomId === rooms[0]?.id)), today))}
+          onClose={back}
         />
       </main>,
     )
@@ -412,7 +427,8 @@ export default function App() {
           petName={pet.name}
           homeId={home.id}
           onClose={back}
-          onStartOver={() => (navigation.go({ name: 'home' }, true), appStore.apply(...removeHome(home.id)))}
+          // The sample home has its own Start fresh, and nothing of the player's to clear.
+          onStartOver={home.name === SAMPLE_HOME_NAME ? undefined : () => (navigation.go({ name: 'home' }, true), appStore.apply(...removeHome(home.id)))}
           onClearRoom={() => (navigation.go({ name: 'home' }, true), appStore.apply(...clearHome(data, today)))}
         />
       </main>,
@@ -645,6 +661,7 @@ export default function App() {
       onComplete={completeChore}
       onEdit={(chore) => setView({ name: 'edit', choreId: chore.id })}
       onAdd={() => setView({ name: 'edit' })}
+      onManage={short ? undefined : () => setView({ name: 'chores' })}
       limit={short ? upNextRows(viewport.height, sample) : undefined}
       onSeeAll={short ? () => setAllChores(true) : undefined}
     />
