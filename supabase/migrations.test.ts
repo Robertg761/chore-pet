@@ -102,8 +102,9 @@ function upsertRows(db: PGlite, user: string, table: TableName, rows: Record<str
 }
 
 /** What src/data/remote.ts sends for queued clear ops: clear_home, one home at a time, with the device clock at sending. */
-async function clearHomes(db: PGlite, user: string, ops: Op[], clockError: number): Promise<Result> {
-  const sentAt = new Date(Date.now() + clockError).toISOString()
+async function clearHomes(db: PGlite, user: string, ops: Op[], clockError: number, latency: number): Promise<Result> {
+  // Stamped before the request travels, so the server sees it `latency` ms old.
+  const sentAt = new Date(Date.now() + clockError - latency).toISOString()
   for (const op of ops) {
     if (op.kind !== 'delete' || !op.removal?.clearBefore) continue
     const res = await as(db, user, `select public.clear_home($1::uuid, $2::date, $3::timestamptz, $4::timestamptz)`, [clearedHome(op.table, op.key), op.removal.archivedOn, op.removal.clearBefore, sentAt])
@@ -117,7 +118,7 @@ async function clearHomes(db: PGlite, user: string, ops: Op[], clockError: numbe
  * does (planFlush order, mapper rows, one request per table and kind).
  * Returns the server's refusals; a working client gets none.
  */
-function device(db: PGlite, user: string, clockError = 0) {
+function device(db: PGlite, user: string, clockError = 0, latency = 0) {
   let snap: Snapshot = emptySnapshot(user)
   return {
     get tables() {
@@ -136,7 +137,7 @@ function device(db: PGlite, user: string, clockError = 0) {
                 step.ops.map((o) => MAPPERS[step.table].toRow((o as { value: never }).value)),
               )
             : step.ops[0]?.kind === 'delete' && step.ops[0].removal?.clearBefore
-              ? await clearHomes(db, user, step.ops, clockError)
+              ? await clearHomes(db, user, step.ops, clockError, latency)
               : step.table === 'placed_objects' && step.ops[0]?.kind === 'delete' && step.ops[0].removal
                 ? await as(db, user, `select public.remove_objects($1::uuid[], $2::date, $3::boolean)`, [step.ops.map(o => o.key), step.ops[0].removal.archivedOn, step.ops[0].removal.keepChores ?? false])
                 : await as(db, user, `delete from ${step.table} where ${KEY_COLUMN[step.table]} = any($1::uuid[])`, [step.ops.map((o) => o.key)])
@@ -696,6 +697,11 @@ describe('object removal from the real offline queue', () => {
 })
 
 describe('starting over from Settings, synced', () => {
+  /** Make every row so far a few minutes old, clear of clear_home's one-minute margin (0009). */
+  const age = async (db: PGlite) => {
+    await db.exec('reset role')
+    for (const t of ['placed_objects', 'chores']) await db.exec(`update ${t} set created_at = created_at - interval '3 minutes'`)
+  }
   /** A device's home, as App hands it to clearHome. */
   const homeOf = (tables: Device['tables']) => {
     const h = selectHome(tables)
@@ -751,6 +757,7 @@ describe('starting over from Settings, synced', () => {
     expect(await laptop.apply(...addChore(home, { name: 'Water the herbs', schedule: { kind: 'daily' } }, TODAY))).toEqual([])
     const unseen = await serverCounts(db, A)
     expect(unseen.placed_objects).toBe(2)
+    await age(db)
 
     // The phone clears, offline for a while: it reaches the server after the laptop adds one more chore.
     const clearedAt = new Date()
@@ -795,12 +802,31 @@ describe('starting over from Settings, synced', () => {
     await db.close()
   }, 60_000)
 
+  it('never takes a row added just after the clear because the request was slow to arrive', async () => {
+    const db = await supabaseLike()
+    // The phone's clock is right, but its request takes 30 seconds to reach the server.
+    const phone = device(db, A, 0, 30_000)
+    expect(await phone.apply(...createHousehold({ species: 'mochi', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(phone, 'homes')[0]
+    const laptop = device(db, A)
+    expect(await laptop.apply(...addChore(home, { name: 'Before, unseen', schedule: { kind: 'daily' } }, TODAY))).toEqual([])
+    await age(db)
+    const ops = clearHome(homeOf(phone.tables), TODAY, new Date())
+    await new Promise((r) => setTimeout(r, 20))
+    expect(await laptop.apply(...addChore(home, { name: 'Just after', schedule: { kind: 'daily' } }, TODAY))).toEqual([])
+    expect(await phone.apply(...ops)).toEqual([])
+    const open = await as(db, A, `select name from chores where archived_on is null order by name`)
+    expect(open.ok && open.rows).toEqual([{ name: 'Just after' }])
+    await db.close()
+  }, 60_000)
+
   it('does nothing with a clear that arrives more than a day late', async () => {
     const db = await supabaseLike()
     const dev = device(db, A)
     expect(await dev.apply(...createHousehold({ species: 'bun', petName: 'Pip', userId: A }))).toEqual([])
     const home = rowsOf<Home>(dev, 'homes')[0]
     expect(await dev.apply(...addChore(home, { name: 'Dishes', schedule: { kind: 'daily' } }, TODAY))).toEqual([])
+    await age(db)
     const day = 24 * 60 * 60 * 1000
     const late = `select public.clear_home($1::uuid, $2::date, $3::timestamptz, now())`
     expect((await as(db, A, late, [home.id, TODAY, new Date(Date.now() - 2 * day).toISOString()])).ok).toBe(true)
