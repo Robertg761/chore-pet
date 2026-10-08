@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "demo:record": "node scripts/record-demo.mjs",
+    "showcase": "node scripts/showcase.mjs",
     "test:browser": "node --test scripts/browser/*.test.mjs"
   },
   "dependencies": {
