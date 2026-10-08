@@ -359,7 +359,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onSkip, onUn
           {onDelete && confirmingDelete && (
             <div className="editor-danger">
               <div className="editor-confirm" role="group" aria-label="Remove this chore">
-                <p>Remove this chore? Your past work and rewards stay.</p>
+                <p>{chore ? `Remove "${chore.name}"?` : 'Remove this chore?'} Your past work and rewards stay.</p>
                 <div className="editor-confirm-actions">
                   <button type="button" className="btn btn-danger" onClick={() => { clear(); onDelete?.() }}>
                     Remove

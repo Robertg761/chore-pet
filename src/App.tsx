@@ -97,6 +97,16 @@ const VIEW_RANK: Record<View['name'], number> = { home: 0, build: 1, wardrobe: 2
 /** How long the gift waits after Done, so the cheer, sparkle and health float play first. */
 const GIFT_DELAY_MS = 1400
 
+/** What a toast with an Undo can take back: a chore done, skipped, added or removed. */
+type UndoMoment = { choreName: string } & (
+  | { kind: 'done'; completionId: string }
+  | { kind: 'skip'; choreId: string; day: string }
+  | { kind: 'added'; choreId: string }
+  | { kind: 'removed'; chore: Chore }
+)
+type Undo = UndoMoment & { key: number }
+const UNDO_VERBS: Record<UndoMoment['kind'], string> = { done: 'Done', skip: 'Skipped', added: 'Added', removed: 'Removed' }
+
 /** The browser tab's title per screen. */
 const VIEW_TITLE: Record<View['name'], string> = {
   home: 'Chore Pet',
@@ -174,10 +184,8 @@ export default function App() {
     window.addEventListener('popstate', dismissGifts)
     return () => window.removeEventListener('popstate', dismissGifts)
   }, [])
-  // The last chore ticked off (or skipped), for a few seconds, so a slip can be undone.
-  const [undo, setUndo] = useState<
-    ({ key: number; choreName: string } & ({ kind: 'done'; completionId: string } | { kind: 'skip'; choreId: string; day: string })) | null
-  >(null)
+  // The last chore ticked off, skipped, added or removed, for a few seconds, so a slip can be undone.
+  const [undo, setUndo] = useState<Undo | null>(null)
   const currentScope = useRef(scope)
   useLayoutEffect(() => { currentScope.current = scope }, [scope])
   const [momentScope, setMomentScope] = useState(scope)
@@ -229,6 +237,7 @@ export default function App() {
       focusHomeHeading.current = false
       return
     }
+    focusHomeHeading.current = false
     focusHeading(document.querySelector<HTMLElement>('.app-view h1, .shell.screen h1'))
   }, [view.name])
   // Into the sample home from the landing: focus starts at the top of home rather than nowhere.
@@ -360,7 +369,7 @@ export default function App() {
     <UndoToast
       key={undo.key}
       choreName={undo.choreName}
-      verb={undo.kind === 'skip' ? 'Skipped' : 'Done'}
+      verb={UNDO_VERBS[undo.kind]}
       paused={gifts.length > 0}
       inline={gifts.length > 0 || (view.name === 'home' && allChores) || toastInHomeList}
       onUndo={() => {
@@ -368,6 +377,12 @@ export default function App() {
           // Looked up fresh: the chore may have changed (or gone) since.
           const chore = chores.find((c) => c.id === undo.choreId)
           if (chore) appStore.apply(...unskipChore(chore, undo.day))
+        } else if (undo.kind === 'added') {
+          appStore.apply(...removeChore(undo.choreId, data, today))
+        } else if (undo.kind === 'removed') {
+          // A removed chore stays removed (sync never reopens one), so it comes back the way
+          // "Removed chores" adds it: new, and resuming where it stood.
+          appStore.apply(...addChoreAgain(home, undo.chore, againInput(undo.chore, objects), completions, today))
         } else {
           // Any gift that tap earned stays: rewards are never taken back.
           appStore.apply(...uncompleteChore(undo.completionId, progress, completions))
@@ -432,7 +447,17 @@ export default function App() {
     const chore = view.choreId ? chores.find((c) => c.id === view.choreId && !choreRetiredBy(c, today)) : undefined
     // Places a chore can belong to, named like the catalog; duplicates are numbered ("Rug 2").
     // Opened from the chores screen, the editor goes back there.
-    const done = () => (view.from === 'chores' ? setView({ name: 'chores' }) : back())
+    // Going back, focus starts at the top of that screen rather than nowhere (the editor is gone).
+    const done = () => {
+      if (view.from === 'chores') return setView({ name: 'chores' })
+      focusHomeHeading.current = true
+      back()
+    }
+    // The toast belongs to the home screen: from the chores screen, that screen has its own say.
+    const tellOnHome = (moment: UndoMoment) => {
+      if (view.from === 'chores') return
+      setUndo({ key: ++momentKey.current, ...moment })
+    }
     return framed(
       'home',
       <main className="shell screen">
@@ -441,13 +466,17 @@ export default function App() {
           chore={chore}
           places={places}
           onSave={(value) => {
-            appStore.apply(...(chore ? updateChore(chore, value, today) : addChore(home, value, today)))
+            // Only an added chore says so: edits to one already on the list need no toast.
+            const ops = chore ? updateChore(chore, value, today) : addChore(home, value, today)
+            appStore.apply(...ops)
+            if (!chore) tellOnHome({ kind: 'added', choreId: ops[0].key, choreName: value.name.trim() })
             done()
           }}
           onDelete={
             chore &&
             (() => {
               appStore.apply(...removeChore(chore.id, data, today))
+              tellOnHome({ kind: 'removed', chore, choreName: chore.name })
               done()
             })
           }
