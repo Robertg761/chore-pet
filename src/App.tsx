@@ -144,8 +144,6 @@ export default function App() {
   const drafts = useChoreDrafts(scope, data.chores, data.objects)
   /** Change screen with a short slide: forward when going deeper (to the right), back when returning. */
   const setView = (next: View) => {
-    // The undo is for a slip on the home screen; it doesn't follow the player to another screen.
-    if (next.name !== 'home') setUndo(null)
     const step = VIEW_RANK[next.name] - VIEW_RANK[view.name]
     if (next.name === view.name) setViewNow(next)
     else withViewTransition(() => setViewNow(next), step > 0 ? 'forward' : step < 0 ? 'back' : 'fade')
@@ -190,6 +188,13 @@ export default function App() {
     setCelebrate(null)
     setSparkles([])
     setPlacing(null)
+  }
+  // The undo is for a slip on the home screen: leaving home, by any route, lets it go
+  // (only hiding it would hand back a fresh five seconds when the player returns).
+  const [undoView, setUndoView] = useState(view.name)
+  if (undoView !== view.name) {
+    setUndoView(view.name)
+    if (view.name !== 'home') setUndo(null)
   }
   const momentKey = useRef(0)
   // The screen on show right now, for a Done that lands after its short check animation:
