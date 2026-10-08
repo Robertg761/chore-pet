@@ -79,14 +79,14 @@ export const REMINDER_OVERDUE_LINES: string[] = [
 ]
 
 export const REMINDER_DUE_LINES: string[] = [
-  "Today's little job: {chore}.",
+  "Today's little chore: {chore}.",
   "On today's list: {chore}. Easy peasy!",
   'A gentle hello! Up today: {chore}.',
   'Ready when you are: {chore}.',
 ]
 
 /** Shown instead of a chore name when the player keeps reminders private. */
-export const PRIVATE_REMINDER_BODY = 'A few little jobs are ready.'
+export const PRIVATE_REMINDER_BODY = 'A few chores are ready.'
 
 export interface ReminderMessage {
   title: string
@@ -103,7 +103,7 @@ function seedFromDate(date: string): number {
 export interface ReminderOptions {
   /**
    * Keep chore names off the lock screen: the body is the generic
-   * "A few little jobs are ready." with no chore name and no count.
+   * "A few chores are ready." with no chore name and no count.
    */
   private?: boolean
 }
@@ -136,7 +136,7 @@ export function reminderMessage(
   const chore = nameOf.get(top.choreId)?.trim() ?? ''
   const lines = top.state === 'overdue' ? REMINDER_OVERDUE_LINES : REMINDER_DUE_LINES
   let body = chore ? pickLine(lines, seedFromDate(today), { chore }) : ''
-  if (!body) body = 'A few little jobs are ready when you are.'
+  if (!body) body = 'A few chores are ready when you are.'
 
   const more = waiting.length - 1
   if (more > 0) body += ` Plus ${more} more.`

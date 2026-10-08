@@ -25,13 +25,13 @@ describe('coach steps', () => {
     expect(coachCopy(1, 0)).toEqual({ text: 'Tap something to put it in your room.', count: null })
     expect(coachCopy(2, 1).count).toBe('1 chore so far')
     expect(coachCopy(2, 4).count).toBe('4 chores so far')
-    expect(coachCopy(2, 2, true).text).toContain('Tap the X')
+    expect(coachCopy(2, 2, true).text).toContain('Tap ×')
     expect(coachCopy(3, 7).text).toBe('Looks cosy! Tap Finish to meet your chores.')
   })
 
   it('says everything you place brings chores', () => {
     expect(coachCopy(2, 1).text).toBe('Everything you place brings its own chores. Add one or two more.')
-    expect(coachCopy(2, 1, true).text).toBe('Everything you place brings its own chores. Tap the X to add one or two more.')
+    expect(coachCopy(2, 1, true).text).toBe('Everything you place brings its own chores. Tap × to add one or two more.')
   })
 
   it('has a placing state that wins over the step text and keeps the count', () => {

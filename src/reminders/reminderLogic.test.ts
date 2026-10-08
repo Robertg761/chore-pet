@@ -120,8 +120,8 @@ describe('pickReminder', () => {
   it('keeps chore names out of a private reminder', () => {
     const statuses = [status('a', 'due'), status('c', 'overdue', 3, '2026-10-03')]
     const msg = reminderMessage('Mochi', chores, statuses, '2026-10-06', { private: true })
-    expect(msg).toEqual({ title: 'Mochi', body: 'A few little jobs are ready.' })
-    expect(PRIVATE_REMINDER_BODY).toBe('A few little jobs are ready.')
+    expect(msg).toEqual({ title: 'Mochi', body: 'A few chores are ready.' })
+    expect(PRIVATE_REMINDER_BODY).toBe('A few chores are ready.')
     expect(msg?.body.toLowerCase()).not.toContain('plants')
     expect(msg?.body).not.toContain('Plus')
     expect(reminderMessage('Mochi', chores, [], '2026-10-06', { private: true })).toBeNull()

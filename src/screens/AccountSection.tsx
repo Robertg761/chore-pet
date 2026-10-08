@@ -154,7 +154,7 @@ export function AccountSection({ entry = false }: { entry?: boolean }) {
   )
 
   if (entry && account.kind === 'local') {
-    return <><h2>Sign in</h2><p className="account-note">Sign-in isn't set up in this version. Your saved home will be waiting in the version where you made it.</p></>
+    return <><h2>Sign in</h2><p className="account-note">Sign-in isn't available yet. Your home is still saved on this device.</p></>
   }
 
   if (account.kind === 'local') {

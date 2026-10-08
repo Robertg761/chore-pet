@@ -127,7 +127,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onSkip, onUn
               <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
                 <path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="editor-trash-text">Delete chore</span>
+              <span className="editor-trash-text">Remove chore</span>
             </button>
           )
         }
@@ -358,11 +358,11 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onSkip, onUn
 
           {onDelete && confirmingDelete && (
             <div className="editor-danger">
-              <div className="editor-confirm" role="group" aria-label="Delete this chore">
+              <div className="editor-confirm" role="group" aria-label="Remove this chore">
                 <p>Remove this chore? Your past work and rewards stay.</p>
                 <div className="editor-confirm-actions">
                   <button type="button" className="btn btn-danger" onClick={() => { clear(); onDelete?.() }}>
-                    Delete
+                    Remove
                   </button>
                   <button ref={keepRef} type="button" className="btn" onClick={keep}>
                     Keep it

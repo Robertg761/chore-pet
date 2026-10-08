@@ -22,9 +22,9 @@ export function objectNames(objects: Pick<PlacedObject, 'id' | 'catalogId'>[]): 
   return out
 }
 
-export const MESS_WORDS: Record<1 | 2 | 3, string> = { 1: 'a bit messy', 2: 'messy', 3: 'very messy' }
+export const MESS_WORDS: Record<1 | 2 | 3, string> = { 1: 'needs a little tidy', 2: 'needs a tidy', 3: 'needs a big tidy' }
 
-/** "The sink is very messy, the trash can is a bit messy." Messiest first; empty when nothing is late. */
+/** "The sink needs a big tidy, the trash can needs a little tidy." Messiest first; empty when nothing is late. */
 export function neglectSummary(objects: Pick<PlacedObject, 'id' | 'catalogId'>[], neglect: Record<string, NeglectLevel>): string {
   const names = objectNames(objects)
   const late = objects
@@ -34,9 +34,10 @@ export function neglectSummary(objects: Pick<PlacedObject, 'id' | 'catalogId'>[]
   if (!late.length) return ''
   const parts = late.map(({ o, level }) => {
     const name = names[o.id].toLowerCase()
-    // "Fairy lights are", "the sink is".
-    const verb = /[^s]s$/.test(names[o.id].replace(/ \d+$/, '')) ? 'are' : 'is'
-    return `the ${name} ${verb} ${MESS_WORDS[level]}`
+    // "the sink needs a tidy", "the fairy lights need a tidy".
+    const plural = /[^s]s$/.test(names[o.id].replace(/ \d+$/, ''))
+    const words = plural ? MESS_WORDS[level].replace(/^needs/, 'need') : MESS_WORDS[level]
+    return `the ${name} ${words}`
   })
   const text = parts.join(', ')
   return `${text[0].toUpperCase()}${text.slice(1)}.`

@@ -167,8 +167,8 @@ test('the Chores screen edits, removes several at once and adds a removed chore 
   // Deleting from an editor opened here lands back here, with no home entry slipped in between.
   await page.getByRole('button', { name: 'Edit Wipe the table', exact: true }).click()
   await page.getByRole('heading', { name: 'Edit chore' }).waitFor()
-  await page.getByRole('button', { name: 'Delete chore' }).click()
-  await page.getByRole('button', { name: 'Delete', exact: true }).click()
+  await page.getByRole('button', { name: 'Remove chore' }).click()
+  await page.getByRole('button', { name: 'Remove', exact: true }).click()
   await page.getByRole('heading', { name: 'Chores', exact: true }).waitFor()
   await page.getByRole('button', { name: 'Add Wipe the table again', exact: true }).waitFor()
   assert.equal(new URL(page.url()).searchParams.get('screen'), 'chores')

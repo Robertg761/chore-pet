@@ -74,7 +74,7 @@ export const OBJECT_LINES: Record<string, string[]> = {
   ],
   fridge: [
     'The fridge has some mystery containers.',
-    'Something in the fridge wants a goodbye.',
+    'Something in the fridge needs a clear-out.',
     'I peeked in the fridge. What an adventure.',
   ],
   plant: [
@@ -247,7 +247,7 @@ export const KIND_LINES: Record<MessKind, Record<2 | 3, string[]>> = {
   },
   wilt: {
     2: ['The plant is drooping a little. Thirsty, maybe?', 'I heard a tiny leaf sigh.'],
-    3: ["The plant dropped a leaf. I think it's a hint.", 'A big drink would perk the plant right up.'],
+    3: ["The plant dropped a leaf. It could use some love.", 'A big drink would perk the plant right up.'],
   },
 }
 

@@ -36,8 +36,8 @@ export function shortDate(date: ISODate): string {
 export function statusLabel(status: ChoreStatus, today: ISODate): string {
   if (status.state === 'overdue') {
     // Long stretches read kindly rather than as a growing number.
-    if (status.overdueDays >= 14) return 'Over 2 weeks'
-    if (status.overdueDays >= 7) return 'Over a week'
+    if (status.overdueDays >= 14) return 'Over 2 weeks late'
+    if (status.overdueDays >= 7) return 'Over a week late'
     return status.overdueDays === 1 ? '1 day late' : `${status.overdueDays} days late`
   }
   if (status.state === 'due') return 'Today'

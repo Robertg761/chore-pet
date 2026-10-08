@@ -34,7 +34,7 @@ it('shows account loading and allows a connection retry without an anonymous ses
 it('explains when accounts are unavailable instead of claiming an absent home is saved', () => {
   auth.state = { kind: 'local' }
   const ui = render(<AccountSection entry />); cleanups.push(ui.unmount)
-  expect(ui.container.textContent).toContain("Sign-in isn't set up")
+  expect(ui.container.textContent).toContain("Sign-in isn't available yet")
   expect(ui.container.textContent).not.toContain('Your home is saved on this device')
 })
 it('keeps Settings defaulting to saving guest progress', () => {

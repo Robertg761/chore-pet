@@ -115,7 +115,7 @@ function Sheet({
             if (removingChore === chore.id) {
               return (
                 <li key={chore.id} className="sheet-chore sheet-confirm" role="group" aria-label={`Remove ${chore.name}`}>
-                  <p>Remove “{chore.name}”? Your past work and rewards stay.</p>
+                  <p>Remove "{chore.name}"? Your past work and rewards stay.</p>
                   <div className="sheet-pair">
                     <button
                       type="button"
@@ -252,7 +252,7 @@ function Sheet({
         )}
         {!canTurn && !removing && (
           <p className="sheet-hint" id={`${uid}-turn-hint`}>
-            There isn’t room to turn it here.
+            There isn't room to turn it here.
           </p>
         )}
       </div>
