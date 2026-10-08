@@ -13,7 +13,7 @@ Chore Pet is a tiny pet that lives in a home you build to look like yours.
 - **Your home sets up your chores.** Place a sink and you get "Wash the dishes". Place a bed and you get "Make the bed". You never fill in a form: the building is the setup.
 - **Late chores show as mess.** Mess appears on the object itself, so you can tell what's late just by looking at the room, and it gets worse at a pace that fits the chore: dishes get stinky within a couple of days, a weekly toilet after a few, a monthly oven clean over a fortnight. Stink clouds, flies, dust and dry leaves float over the worst offenders. The pet wanders over to the worst spot and says something kind about it.
 - **The pet feels it.** Health drops with each late chore, and its mood goes from happy to content, meh and scruffy, down to sick in bed. It never dies, and catching up always brings it back.
-- **Rewards only come from real chores.** Your first chore earns a gift on the spot. After that, chore milestones and streaks unlock 16 rewards: outfits, hats, glasses, decor, wall colours and floors. Every reward is purely cosmetic, so nothing you earn brings new chores. Your streak sits beside the health bar, and vacation mode pauses everything, so a holiday never costs you a streak.
+- **Rewards only come from real chores.** Your first chore earns a gift on the spot. After that, chore milestones and streaks unlock 26 rewards in two tiers, from the first week to 200 chores and month-long streaks: outfits, hats, glasses, decor, wall colours and floors, ending in a chef's hat, an apron and a golden crown. Every reward is purely cosmetic, so nothing you earn brings new chores. Your streak sits beside the health bar, and vacation mode pauses everything, so a holiday never costs you a streak.
 
 ## Why the real task gets done
 
@@ -36,11 +36,11 @@ The pet is a reason to come back, not a guilt trip. It never dies, and its lines
   - Mochi the dumpling, Bun the bunny and Sprout the seedling.
   - Each has six moods.
   - There are 4 eye styles and 4 cheek styles, and ten soft body colours.
-  - A wardrobe holds 11 items across head, face, neck, outfit and back, plus saved outfits.
+  - A wardrobe holds 16 items across head, face, neck, outfit and back, plus saved outfits.
 - **The room:**
   - A roomy 8x8 isometric room with drag-and-snap building and rotation.
   - Footprint checks: things can't overlap, and posters can't cover the window.
-  - 15 objects that bring chores, all available from the start, and 4 chore-free decor pieces to unlock.
+  - 15 objects that bring chores, all available from the start, and 7 chore-free decor pieces to unlock.
   - Every chore object is drawn clean, a little messy and very messy.
 - **Schedules:**
   - Daily, every N days, chosen weekdays, weekly and monthly.

@@ -221,6 +221,17 @@ Product review before the Yard closes: the plan's phases were all met, so this l
 - [HAIKU: reviewer] x2 in parallel: domain and sync correctness; UI, accessibility, copy and docs. **Done** (fixed: a re-added chore inherited old skips; the cap rose to 60, pinned under the 2 KB row limit; the "+N" covered the streak, which is now a compact flame and count; Skip kept unsaved edits as a draft instead of dropping them; focus lands on the pet's name after a skip; an "Undo skip" in the editor once the toast has gone; skipped rows get no check. Left as is: two devices editing one chore offline follow the app's last-write-wins rule)
 - [LEAD] Review: axe clean on home, editor, all chores and build at 320 and 390 wide, no page scroll; 1,345 unit and 29 browser tests pass.
 
+## Phase 13: Rewards that keep coming
+
+Product review: the 16 rewards ran out at 50 chores, one to two weeks in for a busy home, and then there was nothing left to earn.
+
+- [LEAD] A second tier of 10 rewards (`UNLOCKS` in `src/domain/unlocks.ts`), from 60 to 200 chores and 21- and 30-day streaks, themed around keeping house; the first 16 are unchanged. Sky walls and seaside tiles are new room styles (palette tokens in ART.md). **Done**
+- [SONNET: svg-artist] x4 in parallel: chef's hat and golden crown; heart glasses and bandana; the apron; bookshelf, wall clock and bean bag. **Done** (the apron went back once: its neck strap read as a band under the cheeks)
+- [LEAD] The style picker became an even grid and wardrobe crops leave room for tall hats; Rewards, Wardrobe and Walls and floor still fit 390 x 664 and 1280 x 800.
+- [HAIKU: test-writer] Reward catalogue integrity tests. [HAIKU: reviewer] Tier-two art against ART.md.
+- [LEAD] The home's undo toast stands in for the buttons under the list on phones, so it covers nothing. **Done**
+- [LEAD] The demo video re-recorded on the current app: a fake clock moves the days (completions are never stamped ahead of the real date), Chrome's screencast keeps it smooth.
+
 ## Stretch
 
 Photo proof, multiple rooms and templates, shared households, drawing your own floor plan.
