@@ -251,8 +251,12 @@ export function removeHome(homeId: string): NewOp[] {
  * them one by one (one already ending later ends today instead), so past work
  * and rewards stay. Then one clear for the server catches anything another
  * device added before `now` that this one hasn't pulled yet.
+ *
+ * Every room stays, emptied. Rooms are never deleted here: a plain room
+ * delete would also take furniture another device added after the press,
+ * which only the server's clear_home (with its cutoff) can tell apart.
  */
-export function clearHome(history: History & { home: Home; objects: PlacedObject[] }, today: ISODate, now: Date = new Date(), dropRooms: string[] = []): NewOp[] {
+export function clearHome(history: History & { home: Home; objects: PlacedObject[] }, today: ISODate, now: Date = new Date()): NewOp[] {
   const placed = new Set(history.objects.map((o) => o.id))
   // Furniture goes keeping its chores (only detached), and each chore this device knows is
   // retired by itself: a chore another device put on that furniture after the clear stays.
@@ -260,8 +264,6 @@ export function clearHome(history: History & { home: Home; objects: PlacedObject
   return [
     ...history.objects.flatMap((o) => removeObject(o.id, history, today, true)),
     ...detached.chores.filter((c) => !choreRetiredBy(c, today)).flatMap((c) => removeChore(c.id, detached, today)),
-    // A home starting over keeps one room; the others go, now empty.
-    ...dropRooms.map((id) => deleteOp('rooms', id)),
     clearOp(history.home.id, today, now.toISOString()),
   ]
 }

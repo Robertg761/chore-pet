@@ -21,13 +21,13 @@ export interface SettingsScreenProps {
   onClearRoom?: () => void
   /** Other homes in this account, which Erase everything leaves alone (it opens one of them next). */
   otherHomes?: number
-  /** Rooms besides the one on show, which Clear room and chores removes. */
-  otherRooms?: number
+  /** Rooms in the home; Clear room and chores empties every one of them. */
+  rooms?: number
 }
 
 const PRIVACY_URL = 'https://github.com/Robertg761/chore-pet/blob/main/docs/PRIVACY.md'
 
-export function SettingsScreen({ petName, homeId, onClose, account, onStartOver, onClearRoom, otherHomes = 0, otherRooms = 0 }: SettingsScreenProps) {
+export function SettingsScreen({ petName, homeId, onClose, account, onStartOver, onClearRoom, otherHomes = 0, rooms = 1 }: SettingsScreenProps) {
   const [sound, setSound] = useState(soundOn)
   // Start over asks twice: which kind of fresh start, then whether to go ahead.
   const [startOver, setStartOver] = useState<null | 'choose' | 'clear' | 'erase'>(null)
@@ -97,7 +97,7 @@ export function SettingsScreen({ petName, homeId, onClose, account, onStartOver,
                 <div className="confirm" role="group" aria-label={startOver === 'clear' ? 'Clear room and chores' : 'Erase everything'}>
                   <p>
                     {startOver === 'clear'
-                      ? `Clear the room and every chore?${otherRooms === 1 ? ' Your other room goes too.' : otherRooms > 1 ? ` Your ${otherRooms} other rooms go too.` : ''} Your past work stays, and removed chores can be added back from Chores.`
+                      ? `${rooms > 1 ? `Empty all ${rooms} rooms` : 'Clear the room'} and every chore? Your past work stays, and removed chores can be added back from Chores.`
                       : `Erase ${petName}’s home for good? This can’t be undone.${otherHomes === 1 ? ' Your other home stays.' : otherHomes > 1 ? ` Your ${otherHomes} other homes stay.` : ''}`}
                   </p>
                   <div className="confirm-actions">

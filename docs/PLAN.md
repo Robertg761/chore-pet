@@ -236,9 +236,9 @@ Product review: the 16 rewards ran out at 50 chores, one to two weeks in for a b
 
 Product review: "a home you build to match your own" was one room, so the toilet stood next to the stove. The `rooms` table already existed; the UI only read the first one.
 
-- [LEAD] Rooms model (`src/screens/roomsModel.ts`), the room pill and "Your rooms" sheet (`src/screens/RoomsSheet.tsx`), `removeRoom` and Start over keeping one room (`src/data/actions.ts`), chores tied to furniture in any room ("Sink, Kitchen"). **Done**
+- [LEAD] Rooms model (`src/screens/roomsModel.ts`), the room pill and "Your rooms" sheet (`src/screens/RoomsSheet.tsx`), `removeRoom` (`src/data/actions.ts`), chores tied to furniture in any room ("Sink, Kitchen"). **Done**
 - [HAIKU: test-writer] Rooms model, actions and navigation tests (55). **Done** (found and fixed: two unknown room kinds both named "Room"; an inherited property name read as a label)
-- [HAIKU: reviewer] Rooms review. **Done** (fixed: removing the room on show picks the next one; focus after Keep it and Remove; Start over keeps the room on show and says the others go; a guard so a home keeps one room; Build's selection cleared on removal. Left as is: two devices removing different rooms offline can leave none, and the app then makes a kitchen)
+- [HAIKU: reviewer] Rooms review. **Done** (fixed: removing the room on show picks the next one; focus after Keep it and Remove; Start over empties every room and keeps them, since a plain room delete could take furniture another device added after the press (Codex review of PR #19); a guard so a home keeps one room; Build's selection cleared on removal. Left as is: two devices removing different rooms offline can leave none, and the app then makes a kitchen)
 - [LEAD] Browser tests: rooms keep their own furniture, the pill counts late chores elsewhere, removing asks first. **Done**
 - [HAIKU: QA] Fresh-eyes pass of both first-run journeys at 390 x 664 and 1280 x 800, plus keyboard only. **Done** (fixed: the undo toast followed the player onto other screens; "Another kitchen" when the home has one; the wardrobe's six tabs fit a phone; the welcome bubble cleared Bun's ears; Escape cancels the chore editor; the pill's late count has a tooltip)
 

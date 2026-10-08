@@ -499,9 +499,8 @@ export default function App() {
           onClose={back}
           // The sample home has its own Start fresh, and nothing of the player's to clear.
           onStartOver={home.name === SAMPLE_HOME_NAME ? undefined : () => (navigation.go({ name: 'home' }, true), appStore.apply(...removeHome(home.id)))}
-          // The room on show stays (emptied); any others go.
-          otherRooms={Math.max(0, orderedRooms.length - 1)}
-          onClearRoom={() => (navigation.go({ name: 'home' }, true), appStore.apply(...clearHome({ ...data, home }, today, undefined, orderedRooms.filter((r) => r.id !== room?.id).map((r) => r.id))))}
+          rooms={orderedRooms.length}
+          onClearRoom={() => (navigation.go({ name: 'home' }, true), appStore.apply(...clearHome({ ...data, home }, today)))}
           otherHomes={Object.keys(snapshot.tables.homes).filter((id) => id !== home.id).length}
         />
       </main>,

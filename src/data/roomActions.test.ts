@@ -93,36 +93,23 @@ describe('removeRoom', () => {
   })
 })
 
-describe('clearHome with dropRooms', () => {
+describe('clearHome with several rooms', () => {
   const history = { home, objects, chores, completions: [completion], progress: null }
-  const roomDeletes = (ops: NewOp[]) => ops.map((o, i) => [o, i] as const).filter(([o]) => o.table === 'rooms')
 
-  it('deletes the dropped rooms after the furniture and chore ops and before the clear op', () => {
-    const ops = clearHome(history, TODAY, NOW, ['r2', 'r3'])
-    const deletes = roomDeletes(ops)
-    expect(deletes.map(([o]) => o.key)).toEqual(['r2', 'r3'])
-    const lastFurniture = Math.max(...ops.map((o, i) => (o.table === 'placed_objects' ? i : -1)))
-    const lastChore = Math.max(...ops.map((o, i) => (o.table === 'chores' ? i : -1)))
-    const clearAt = ops.findIndex((o) => o.table === 'homes' && o.key === 'clear:h1')
-    expect(lastFurniture).toBeGreaterThan(-1)
-    expect(lastChore).toBeGreaterThan(-1)
-    for (const [, i] of deletes) {
-      expect(i).toBeGreaterThan(lastFurniture)
-      expect(i).toBeGreaterThan(lastChore)
-      expect(i).toBeLessThan(clearAt)
-    }
-    expect(clearAt).toBe(ops.length - 1)
+  // A plain room delete would also take furniture another device added after the press;
+  // only the server's clear_home (with its cutoff) can tell those apart, so rooms stay.
+  it('never deletes a room', () => {
+    expect(clearHome(history, TODAY, NOW).filter((o) => o.table === 'rooms')).toEqual([])
+  })
+
+  it('ends with the clear op for the server', () => {
+    const ops = clearHome(history, TODAY, NOW)
     expect(ops.at(-1)).toEqual({ table: 'homes', kind: 'delete', key: 'clear:h1', removal: { archivedOn: TODAY, clearBefore: NOW.toISOString() } })
   })
 
-  it('leaves rooms alone by default', () => {
-    expect(roomDeletes(clearHome(history, TODAY, NOW))).toEqual([])
-    expect(roomDeletes(clearHome(history, TODAY, NOW, []))).toEqual([])
-  })
-
-  it('when applied, removes the dropped rooms and keeps the kept one, with every chore retired', () => {
-    const after = clearHome(history, TODAY, NOW, ['r2', 'r3']).reduce(change, seeded())
-    expect(Object.keys(after.tables.rooms)).toEqual(['r1'])
+  it('when applied, empties every room and retires every chore, keeping the rooms', () => {
+    const after = clearHome(history, TODAY, NOW).reduce(change, seeded())
+    expect(Object.keys(after.tables.rooms).sort()).toEqual(['r1', 'r2', 'r3'])
     expect(Object.keys(after.tables.placed_objects)).toEqual([])
     for (const c of chores) {
       expect(after.tables.chores[c.id]).toMatchObject({ objectId: null, archivedOn: TODAY })
@@ -130,11 +117,5 @@ describe('clearHome with dropRooms', () => {
     expect(after.tables.completions.d1).toEqual(completion)
     // The clear op itself changes nothing on the device; the home row stays.
     expect(after.tables.homes.h1).toEqual(home)
-  })
-
-  it('when applied without dropRooms, keeps every room', () => {
-    const after = clearHome(history, TODAY, NOW).reduce(change, seeded())
-    expect(Object.keys(after.tables.rooms).sort()).toEqual(['r1', 'r2', 'r3'])
-    expect(Object.keys(after.tables.placed_objects)).toEqual([])
   })
 })
