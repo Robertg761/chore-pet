@@ -1,8 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { ensureSession, getSupabase, supabaseConfigured } from '../lib/supabase'
 import { KEY_COLUMN, MAPPERS } from './mappers'
-import { classifyError, type ErrorKind } from './remoteErrors'
-import { emptyTables, type Tables, type Removal } from './state'
+import { classifyError, isSchemaMismatch, type ErrorKind } from './remoteErrors'
+import { clearedHome, emptyTables, type Tables, type Removal } from './state'
 import { TABLES, keyOf, type TableMap, type TableName } from './tables'
 
 /**
@@ -105,6 +105,21 @@ export function supabaseRemote(getClient: () => Promise<SupabaseClient>): Remote
     },
     async remove(table, keys, removal) {
       const client = await getClient()
+      // Clear room and chores (migration 0008), one home at a time.
+      const homes = keys.map((k) => clearedHome(table, k))
+      if (homes.every(Boolean) && removal?.clearBefore) {
+        for (const home of homes) {
+          const { error, status } = await client.rpc('clear_home', { target_home: home, archive_on: removal.archivedOn, cleared_before: removal.clearBefore })
+          // A database without 0008 yet: the device already cleared what it had, row by row, so
+          // don't hold up the queue (and every pull behind it) for the rest.
+          if (error && isSchemaMismatch(error.code)) {
+            console.warn('clear_home is not on the server yet; cleared what this device had', error)
+            continue
+          }
+          if (error) return result(error, status)
+        }
+        return { ok: true }
+      }
       if (table === 'placed_objects' && removal) {
         const { error, status } = await client.rpc('remove_objects', { object_ids: keys, archive_on: removal.archivedOn, keep_chores: removal.keepChores ?? false })
         return result(error, status)

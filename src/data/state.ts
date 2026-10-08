@@ -18,6 +18,30 @@ export type Tables = { [T in TableName]: Record<string, TableMap[T]> }
 export interface Removal {
   archivedOn?: string
   keepChores?: boolean
+  /**
+   * On a home's clear op (see clearOp): clear on the server everything in the
+   * home stored before this moment (an ISO time), including rows this device
+   * hasn't pulled yet. Rows added after it, on any device, stay.
+   */
+  clearBefore?: string
+}
+
+/** The outbox key of a home's clear op, kept apart from the home row's own key so neither replaces the other. */
+const CLEAR_PREFIX = 'clear:'
+
+/**
+ * "Clear room and chores" as one server instruction (the clear_home RPC,
+ * migration 0008), sent after the per-row changes that clear the device's own
+ * copy. Locally it changes nothing; it exists so rows another device added and
+ * this one hasn't pulled are cleared too.
+ */
+export function clearOp(homeId: string, archivedOn: string, clearBefore: string): NewOp {
+  return { table: 'homes', kind: 'delete', key: CLEAR_PREFIX + homeId, removal: { archivedOn, clearBefore } }
+}
+
+/** The home a queued clear op is for, or null for any other op key. */
+export function clearedHome(table: TableName, key: string): string | null {
+  return table === 'homes' && key.startsWith(CLEAR_PREFIX) ? key.slice(CLEAR_PREFIX.length) : null
 }
 
 /**
@@ -135,14 +159,13 @@ function outboxKey(table: TableName, key: string): string {
 /** Remove a row and, like the database, every row that cascades from it. */
 function removeCascading(tables: Tables, table: TableName, key: string, removal: Removal = {}, hard = false): Tables {
   const archivedOn = removal.archivedOn ?? toISODate(new Date())
-  const endOn = (chore: Chore) => archiveEnd(chore, archivedOn)
   if (table === 'chores' && !hard) {
     const chore = tables.chores[key]
-    return chore ? { ...tables, chores: { ...tables.chores, [key]: { ...chore, archivedOn: chore.archivedOn ?? endOn(chore) } } } : tables
+    return chore ? { ...tables, chores: { ...tables.chores, [key]: { ...chore, archivedOn: archiveEnd(chore, archivedOn) } } } : tables
   }
   if (table === 'placed_objects' && !hard) {
     tables = { ...tables, chores: Object.fromEntries(Object.entries(tables.chores).map(([id, chore]) => [id, chore.objectId === key
-      ? { ...chore, objectId: null, ...(!removal.keepChores && { archivedOn: chore.archivedOn ?? endOn(chore) }) }
+      ? { ...chore, objectId: null, ...(!removal.keepChores && { archivedOn: archiveEnd(chore, archivedOn) }) }
       : chore])) }
   }
   let next = { ...tables, [table]: { ...tables[table] } } as Tables
@@ -157,11 +180,15 @@ function removeCascading(tables: Tables, table: TableName, key: string, removal:
 }
 
 export function applyOp(tables: Tables, op: Op): Tables {
+  // A clear is a server instruction; the device's copy is cleared by the ops sent with it.
+  if (op.kind === 'delete' && clearedHome(op.table, op.key)) return tables
   if (op.kind === 'delete') return removeCascading(tables, op.table, op.key, op.removal)
   // A delayed edit cannot reopen an archived task or rewrite its old schedule.
+  // Only an earlier end date gets through, so removals settle on the earliest (as the server does).
   if (op.table === 'chores' && tables.chores[op.key]?.archivedOn) {
     const old = tables.chores[op.key]
-    return { ...tables, chores: { ...tables.chores, [op.key]: { ...old, objectId: op.value.objectId === null ? null : old.objectId } } }
+    const end = op.value.archivedOn ? archiveEnd(old, op.value.archivedOn) : old.archivedOn
+    return { ...tables, chores: { ...tables.chores, [op.key]: { ...old, archivedOn: end, objectId: op.value.objectId === null ? null : old.objectId } } }
   }
   return { ...tables, [op.table]: { ...tables[op.table], [op.key]: op.value } }
 }
@@ -173,13 +200,17 @@ export function change(snapshot: Snapshot, op: NewOp): Snapshot {
     for (const chore of Object.values(snapshot.tables.chores)) {
       if (chore.objectId !== op.key) continue
       snapshot = change(snapshot, upsertOp('chores', { ...chore, objectId: null,
-        ...(!op.removal?.keepChores && { archivedOn: chore.archivedOn ?? archiveEnd(chore, op.removal?.archivedOn ?? toISODate(new Date())) }),
+        ...(!op.removal?.keepChores && { archivedOn: archiveEnd(chore, op.removal?.archivedOn ?? toISODate(new Date())) }),
       }))
     }
   }
   if (op.kind === 'delete' && op.table === 'chores' && snapshot.tables.chores[op.key]) {
     const chore = snapshot.tables.chores[op.key]
-    return change(snapshot, upsertOp('chores', { ...chore, archivedOn: chore.archivedOn ?? archiveEnd(chore, op.removal?.archivedOn ?? toISODate(new Date())) }))
+    return change(snapshot, upsertOp('chores', { ...chore, archivedOn: archiveEnd(chore, op.removal?.archivedOn ?? toISODate(new Date())) }))
+  }
+  if (op.kind === 'delete' && clearedHome(op.table, op.key)) {
+    const seq = snapshot.seq + 1
+    return { ...snapshot, seq, outbox: { ...snapshot.outbox, [outboxKey(op.table, op.key)]: { ...op, seq, id: newOpId() } as Op } }
   }
   const seq = snapshot.seq + 1
   const full = { ...op, seq, id: newOpId() } as Op

@@ -434,7 +434,8 @@ export default function App() {
           onClose={back}
           // The sample home has its own Start fresh, and nothing of the player's to clear.
           onStartOver={home.name === SAMPLE_HOME_NAME ? undefined : () => (navigation.go({ name: 'home' }, true), appStore.apply(...removeHome(home.id)))}
-          onClearRoom={() => (navigation.go({ name: 'home' }, true), appStore.apply(...clearHome(data, today)))}
+          onClearRoom={() => (navigation.go({ name: 'home' }, true), appStore.apply(...clearHome({ ...data, home }, today)))}
+          otherHomes={Object.keys(snapshot.tables.homes).filter((id) => id !== home.id).length}
         />
       </main>,
     )
