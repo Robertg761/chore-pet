@@ -172,11 +172,22 @@ describe('adding a removed chore back', () => {
     const done = completeChoreWithRewards(fresh, after.progress, { chores: after.chores, completions: after.completions, vacations: [] }, new Date(2026, 9, 6, 18), new Date(2026, 9, 6, 18))
     expect(done.completion).toBeFalsy()
   })
-  it('starts due when the old one was not done today', () => {
+  it('starts due when the old one was due again (not done today)', () => {
     let s = fixture()
     s = removeChore('a', selectHome(s.tables), '2026-10-08').reduce(change, s)
     const before = selectHome(s.tables)
     const ops = addChoreAgain(home, before.chores.find((c) => c.id === 'a')!, input, before.completions, '2026-10-08')
     expect(ops.map((o) => o.table)).toEqual(['chores'])
+  })
+
+  it('starts done when a longer round was already done earlier, so it can’t be earned twice', () => {
+    // Every 3 days, done on the 6th: covered until the 9th. Removed and added back on the 7th.
+    const every3: Chore = { ...chore('e'), objectId: null, schedule: { kind: 'everyNDays', n: 3 } }
+    const done = [{ id: 'x', choreId: 'e', completedOn: '2026-10-06', completedAt: '2026-10-06T12:00:00Z' }]
+    const ops = addChoreAgain(home, { ...every3, archivedOn: '2026-10-07' }, { ...input, schedule: every3.schedule }, done, '2026-10-07')
+    expect(ops.map((o) => o.table)).toEqual(['chores', 'completions'])
+    expect(ops[1]).toMatchObject({ value: { choreId: ops[0].key, completedOn: '2026-10-07', counts: false } })
+    // Never done: nothing to carry, it starts fresh.
+    expect(addChoreAgain(home, { ...every3, archivedOn: '2026-10-07' }, input, [], '2026-10-07').map((o) => o.table)).toEqual(['chores'])
   })
 })

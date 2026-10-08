@@ -1,5 +1,5 @@
 import { catalogEntry } from '../catalog/objects'
-import { choreActiveOn } from '../domain/schedule'
+import { choreRetiredBy } from '../domain/schedule'
 import type { Chore, ISODate, PlacedObject, Schedule } from '../domain/types'
 
 // The chores screen: every chore grouped by where it lives, and chores that
@@ -26,9 +26,13 @@ export interface ChoreGroup {
 
 const byName = (a: Chore, b: Chore) => a.name.localeCompare(b.name)
 
-/** Today's chores by object, in the room's order, then those tied to nothing. Empty groups are left out. */
+/**
+ * The chores on the list (including any dated to start later, so a clock set
+ * ahead can't hide one) by object, in the room's order, then those tied to
+ * nothing. Empty groups are left out.
+ */
 export function choreGroups(chores: Chore[], objects: PlacedObject[], today: ISODate): ChoreGroup[] {
-  const active = chores.filter((c) => choreActiveOn(c, today))
+  const active = chores.filter((c) => !choreRetiredBy(c, today))
   const places = placeNames(objects)
   const placed = new Set(places.map((p) => p.id))
   const groups: ChoreGroup[] = places.map((p) => ({ id: p.id, title: p.name, chores: active.filter((c) => c.objectId === p.id).sort(byName) }))
@@ -47,10 +51,10 @@ export const PAST_LIMIT = 30
  */
 export function pastChores(chores: Chore[], today: ISODate): Chore[] {
   // On the list today, or starting later: either way adding the name back would make a twin.
-  const current = new Set(chores.filter((c) => !c.archivedOn || c.archivedOn > today).map((c) => key(c.name)))
+  const current = new Set(chores.filter((c) => !choreRetiredBy(c, today)).map((c) => key(c.name)))
   const seen = new Set<string>()
   return chores
-    .filter((c) => c.archivedOn && c.archivedOn <= today)
+    .filter((c) => choreRetiredBy(c, today))
     .sort((a, b) => b.archivedOn!.localeCompare(a.archivedOn!) || byName(a, b))
     .filter((c) => {
       const k = key(c.name)

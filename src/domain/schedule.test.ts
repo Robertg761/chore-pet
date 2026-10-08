@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { weekdayOf } from './dates'
-import { choreAsOf, choreStatus, completionCounts, nextDueDate } from './schedule'
+import { archiveEnd, choreAsOf, choreRetiredBy, choreStatus, completionCounts, nextDueDate } from './schedule'
 import type { Chore, Completion, Schedule } from './types'
 
 // Reference: 2026-10-06 is a Tuesday, 2026-10-10 is a Saturday.
@@ -161,3 +161,16 @@ describe('choreAsOf', () => {
   })
 })
 
+
+describe('removed chores', () => {
+  const base: Chore = { id: 'c', homeId: 'h', objectId: null, name: 'Dishes', createdOn: '2026-10-05', schedule: { kind: 'daily' }, photoProof: false }
+  it('a chore is retired once its archive date has come', () => {
+    expect(choreRetiredBy(base, '2026-10-08')).toBe(false)
+    expect(choreRetiredBy({ ...base, archivedOn: '2026-10-09' }, '2026-10-08')).toBe(false)
+    expect(choreRetiredBy({ ...base, archivedOn: '2026-10-08' }, '2026-10-08')).toBe(true)
+  })
+  it('a removal never ends before the chore starts', () => {
+    expect(archiveEnd(base, '2026-10-08')).toBe('2026-10-08')
+    expect(archiveEnd(base, '2026-10-01')).toBe('2026-10-05')
+  })
+})

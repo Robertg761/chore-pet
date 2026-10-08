@@ -1,6 +1,6 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
-import { completionCounts, sameSchedule, SCHEDULE_HISTORY, trimHistory } from '../domain/schedule'
+import { archiveEnd, choreStatus, completionCounts, sameSchedule, SCHEDULE_HISTORY, trimHistory } from '../domain/schedule'
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, choreCountOf, streakHistory, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
@@ -88,9 +88,8 @@ export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 's
 /** Stop future obligations, retaining dated work and the schedule that earned it. */
 export function removeChore(choreId: string, history?: History, today = toISODate(new Date())): NewOp[] {
   const chore = history?.chores.find((c) => c.id === choreId)
-  // Never before it starts (a chore dated ahead by a device clock), as the server requires.
   return chore
-    ? [upsertOp('chores', { ...chore, archivedOn: chore.archivedOn ?? (today < chore.createdOn ? chore.createdOn : today) })]
+    ? [upsertOp('chores', { ...chore, archivedOn: chore.archivedOn ?? archiveEnd(chore, today) })]
     : [{ ...deleteOp('chores', choreId), removal: { archivedOn: today } } as NewOp]
 }
 
@@ -222,8 +221,9 @@ export function clearHome(history: History & { objects: PlacedObject[] }, today:
 }
 
 /**
- * Add a removed chore back as a new one. If the old one was already done today,
- * the new one starts done too: a completion that satisfies today but doesn't
+ * Add a removed chore back as a new one, starting today. If the old one's
+ * current round was already done (today, or earlier in the round for a weekly
+ * chore), the new one starts done today too, with a completion that doesn't
  * count again toward rewards, so removing and adding back can't earn twice.
  */
 export function addChoreAgain(
@@ -234,8 +234,13 @@ export function addChoreAgain(
   today: ISODate,
 ): NewOp[] {
   const ops = addChore(home, input, today)
-  const doneToday = completions.find((c) => c.choreId === chore.id && c.completedOn === today)
-  if (doneToday) ops.push(upsertOp('completions', { id: id(), choreId: ops[0].key, completedOn: today, completedAt: doneToday.completedAt, counts: false }))
+  // Its round as if it had never been removed: done and not yet due again means covered.
+  const done = completions.filter((c) => c.choreId === chore.id)
+  const covered = done.length > 0 && choreStatus({ ...chore, archivedOn: undefined }, done, today, home.vacations).state === 'upcoming'
+  if (covered) {
+    const at = done.find((c) => c.completedOn === today)?.completedAt ?? new Date().toISOString()
+    ops.push(upsertOp('completions', { id: id(), choreId: ops[0].key, completedOn: today, completedAt: at, counts: false }))
+  }
   return ops
 }
 

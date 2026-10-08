@@ -1,4 +1,5 @@
 import { toISODate } from '../domain/dates'
+import { archiveEnd } from '../domain/schedule'
 import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room } from '../domain/types'
 import { applyUnlocks, choreCountOf } from '../domain/unlocks'
 import { CASCADES, TABLES, keyOf, type Created, type TableMap, type TableName } from './tables'
@@ -129,11 +130,6 @@ function sameOp(a: Op | undefined, b: Op | undefined): boolean {
 
 function outboxKey(table: TableName, key: string): string {
   return `${table}:${key}`
-}
-
-/** The day a removed chore ends: the removal day, never before the chore starts (a device clock set ahead), like the server's preserve_chore_archive. */
-function archiveEnd(chore: Chore, day: string): string {
-  return day < chore.createdOn ? chore.createdOn : day
 }
 
 /** Remove a row and, like the database, every row that cascades from it. */

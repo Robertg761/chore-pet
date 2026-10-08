@@ -25,10 +25,11 @@ describe('choreGroups', () => {
       chore('Retired', { objectId: 's', archivedOn: '2026-10-05' }),
       chore('Not yet', { createdOn: '2026-10-09' }),
     ], objects, TODAY)
+    // A chore dated to start later (a clock set ahead) is still listed, so it can be edited or removed.
     expect(groups.map((g) => [g.title, g.chores.map((c) => c.name)])).toEqual([
       ['Sink', ['Dishes', 'Wipe']],
       ['Trash can', ['Bins']],
-      ['Anywhere', ['Gone object', 'Water plants']],
+      ['Anywhere', ['Gone object', 'Not yet', 'Water plants']],
     ])
   })
 

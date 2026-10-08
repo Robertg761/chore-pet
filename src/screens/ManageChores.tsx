@@ -129,7 +129,7 @@ export function ManageChores({ chores, objects, today, onEdit, onAdd, onRemove, 
       <p className="sr-only" role="status">{notice}</p>
 
       <div className="manage-foot">
-        {confirming && selected.length > 0 ? (
+        {confirming ? (
           <div className="confirm manage-confirm" role="group" aria-label="Remove chores">
             <p>Remove {plural(selected.length)}? Your past work and rewards stay.</p>
             <div className="confirm-actions">
@@ -143,7 +143,7 @@ export function ManageChores({ chores, objects, today, onEdit, onAdd, onRemove, 
           </div>
         ) : selected.length > 0 ? (
           <div className="manage-actions">
-            <button type="button" className="btn" onClick={() => setPicked(new Set())}>
+            <button type="button" className="btn" onClick={() => (setPicked(new Set()), requestAnimationFrame(() => addRef.current?.focus()))}>
               Clear picks
             </button>
             <button ref={removeRef} type="button" className="btn btn-danger" onClick={() => setConfirming(true)}>
