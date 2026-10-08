@@ -217,14 +217,14 @@ ${phone({ img: 'rewards.png', x: 1255, y: 170, h: 600, label: 'Earn real rewards
     html: `
 <div class="blob" style="left:-140px;top:-190px;width:480px;height:480px"></div>
 <div class="blob" style="left:900px;top:380px;width:520px;height:520px"></div>
-${sparkle(470, 52, 36)}${sparkle(880, 30, 28, '#fff')}
+${sparkle(470, 52, 36)}${sparkle(868, 22, 28, '#fff')}
 <h1 style="position:absolute;left:64px;top:62px;font-size:112px">Chore Pet</h1>
 <p class="tag" style="position:absolute;left:68px;top:196px;width:470px;font-size:27px">${TAGLINE}</p>
 ${petTile({ species: 'mochi', name: 'Mochi', x: 68, y: 340, size: 130, fs: 19 })}
 ${petTile({ species: 'bun', name: 'Bun', x: 222, y: 340, size: 130, fs: 19 })}
 ${petTile({ species: 'sprout', name: 'Sprout', x: 376, y: 340, size: 130, fs: 19 })}
-${phone({ img: 'home.png', x: 650, y: 82, h: 470, label: 'Build a home', fs: 18 })}
-${phone({ img: 'wardrobe.png', x: 925, y: 40, h: 470, label: 'Dress up', fs: 18 })}`,
+${phone({ img: 'home.png', x: 650, y: 54, h: 470, label: 'Build a home', fs: 18 })}
+${phone({ img: 'wardrobe.png', x: 925, y: 26, h: 470, label: 'Dress up', fs: 18 })}`,
   },
 }
 

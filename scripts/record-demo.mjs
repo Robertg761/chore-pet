@@ -92,15 +92,34 @@ await stage.waitForTimeout(800)
 const frames = []
 const cdp = await ctx.newCDPSession(stage)
 let cut = 0 // seconds of recording left out so far
-// Playback speed over the recording (1 is real time, 2 a time-lapse), as changes on the recording's timeline.
-const ramps = [{ at: 0, speed: 1 }]
-const setSpeed = (speed) => ramps.push({ at: Date.now() / 1000 - cut, speed })
-const playTime = (a, b) => ramps.reduce((total, r, i) => {
-  const from = Math.max(a, r.at)
-  const to = Math.min(b, ramps[i + 1]?.at ?? Infinity)
-  return to > from ? total + (to - from) / r.speed : total
-}, 0)
+// Playback speed. Parts of the story are time-lapsed so the video keeps its length however slowly this
+// machine runs: `lapse(seconds, fn)` runs fn, then plays it back in about that many seconds (never slower than
+// real time). Gifts inside it keep their own, fixed pace. Times are on the recording's timeline.
 let pausedAt = 0
+const segments = [] // { from, to, speed, fixed }
+const now = () => Date.now() / 1000 - cut
+const speedAt = (t) => {
+  const covering = segments.filter((g) => t >= g.from && t < g.to)
+  return (covering.findLast((g) => g.fixed) ?? covering.at(-1))?.speed ?? 1
+}
+const playTime = (a, b) => {
+  const points = [...new Set([a, b, ...segments.flatMap((g) => [g.from, g.to]).filter((t) => t > a && t < b)])].sort((x, y) => x - y)
+  return points.slice(1).reduce((total, t, i) => total + (t - points[i]) / speedAt((t + points[i]) / 2), 0)
+}
+const lapse = async (seconds, fn) => {
+  const from = now()
+  const inner = segments.length
+  await fn()
+  const to = now()
+  let fixedReal = 0
+  let fixedPlay = 0
+  for (const g of segments.slice(inner).filter((g) => g.fixed)) {
+    const real = Math.min(g.to, to) - Math.max(g.from, from)
+    fixedReal += real
+    fixedPlay += real / g.speed
+  }
+  segments.push({ from, to, speed: Math.max(1, (to - from - fixedReal) / Math.max(0.5, seconds - fixedPlay)), fixed: false })
+}
 cdp.on('Page.screencastFrame', ({ data, metadata, sessionId }) => {
   const file = `${FRAMES}/${String(frames.length).padStart(5, '0')}.jpg`
   writeFileSync(file, Buffer.from(data, 'base64'))
@@ -170,13 +189,12 @@ const openGifts = async ({ quick = false } = {}) => {
   for (let i = 0; i < 5; i++) {
     const gift = phone.getByRole('button', { name: 'Open it', exact: true })
     if (!(await gift.count())) return
-    const before = ramps.at(-1).speed
-    setSpeed(quick ? 1.9 : 1)
+    const from = now()
     await press(gift)
     await wait(1400)
     await press(phone.getByRole('button', { name: /^(Put it on|Maybe later|Lovely!)$/ }))
     await wait(500)
-    setSpeed(before)
+    segments.push({ from, to: now(), speed: quick ? 2.3 : 1, fixed: true })
   }
 }
 const skipDays = async (days) => {
@@ -192,16 +210,16 @@ await wait(2200)
 await press(phone.getByRole('button', { name: 'Try a sample home' }))
 log('sample home')
 await caption('Late chores show up as mess')
-await wait(2600)
+await wait(2300)
 await press(phone.getByRole('button', { name: /^Mochi, feeling/ })).catch(() => {})
 await caption('The pet notices, kindly')
-await wait(1600)
+await wait(1400)
 
 // --- 2. Done, the first gift, the streak -----------------------------------------------
 await caption('Do the real chore, then tap Done')
 await wait(600)
 await tap('button', 'Done: Wash the dishes')
-await wait(1200)
+await wait(1000)
 await caption('Your first chore earns a gift')
 await tap('button', 'Open it')
 await wait(1200)
@@ -209,7 +227,7 @@ await tap('button', 'Put it on')
 await wait(700)
 await caption('Keep going and a streak starts')
 await tap('button', 'Done: Take out the trash')
-await wait(1700)
+await wait(1500)
 log('done + streak')
 
 // --- 3. Skip this time -------------------------------------------------------------------
@@ -222,33 +240,33 @@ await wait(400)
 await caption('A skip keeps things tidy and earns nothing')
 await wait(1800)
 // The note about it stays for five seconds, and would cover the next screen's tray.
-setSpeed(2.5)
-await phone.getByText(/^Skipped: /).waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {})
-setSpeed(1)
+await lapse(1, () => phone.getByText(/^Skipped: /).waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {}))
 log('skip')
 
 // --- 4. A bathroom from the room pill ----------------------------------------------------
 await caption('Add a room from the room pill')
 await tap('button', /^Rooms: Kitchen/)
 await wait(1300)
-await tap('button', 'Add a bathroom')
-await wait(700)
-await caption('Every object brings its own chores')
-await tap('button', /^Shower/)
-await wait(700)
-await tap('button', 'Place it')
-await wait(1400)
-await tap('button', 'Close')
-await wait(400)
-await tap('button', /^Toilet/)
-await wait(500)
-await tap('button', 'Place it')
-await wait(900)
-await tap('button', 'Close')
-await wait(300)
-await tap('button', 'Finish')
+await lapse(9, async () => {
+  await tap('button', 'Add a bathroom')
+  await wait(600)
+  await caption('Every object brings its own chores')
+  await tap('button', /^Shower/)
+  await wait(700)
+  await tap('button', 'Place it')
+  await wait(1400)
+  await tap('button', 'Close')
+  await wait(400)
+  await tap('button', /^Toilet/)
+  await wait(500)
+  await tap('button', 'Place it')
+  await wait(900)
+  await tap('button', 'Close')
+  await wait(300)
+  await tap('button', 'Finish')
+})
 await caption('A shower and a toilet: new chores')
-await wait(1900)
+await wait(1700)
 log('bathroom')
 
 // --- 5. Days pass -------------------------------------------------------------------------
@@ -259,34 +277,34 @@ await tap('button', /^Show the kitchen/)
 await wait(800)
 await skipDays(3)
 await caption('Mess builds up: stink, flies, dust')
-await wait(2200)
+await wait(2000)
 await caption('A week more, and Mochi is poorly')
 await skipDays(7)
 await wait(1000)
 await caption('Never gone: it always gets better')
-await wait(1800)
+await wait(1600)
 log('days pass')
 
 // --- 6. Catching up -----------------------------------------------------------------------
 await caption('Catch up, one chore at a time')
-setSpeed(2.8)
-let first = true
-for (let i = 0; i < 30; i++) {
-  const done = phone.getByRole('button', { name: /^Done: / })
-  await openGifts({ quick: !first })
-  if (!(await done.count())) break
-  await press(done)
-  // The gift for a milestone chore appears a moment after the tap.
-  await wait(900)
-  if (await phone.getByRole('button', { name: 'Open it', exact: true }).count()) {
-    await caption(first ? 'Gifts along the way' : 'Gifts along the way')
+await lapse(14, async () => {
+  let first = true
+  for (let i = 0; i < 30; i++) {
+    const done = phone.getByRole('button', { name: /^Done: / })
     await openGifts({ quick: !first })
-    first = false
+    if (!(await done.count())) break
+    await press(done)
+    // The gift for a milestone chore appears a moment after the tap.
+    await wait(900)
+    if (await phone.getByRole('button', { name: 'Open it', exact: true }).count()) {
+      await caption(first ? 'Gifts along the way' : 'Gifts along the way')
+      await openGifts({ quick: !first })
+      first = false
+    }
   }
-}
-await wait(900)
-await openGifts({ quick: true })
-setSpeed(1)
+  await wait(900)
+  await openGifts({ quick: true })
+})
 await caption('All caught up: Mochi is happy again')
 await wait(2000)
 log('caught up')
@@ -311,9 +329,7 @@ await caption('Chore 90 earns heart glasses')
 await wait(500)
 await openGifts()
 // The Undo note covers the bottom of the next screen for a few seconds; let it go first.
-setSpeed(2)
-await phone.getByText(/^Done: /).waitFor({ state: 'hidden', timeout: 9000 })
-setSpeed(1)
+await lapse(1.2, () => phone.getByText(/^Done: /).waitFor({ state: 'hidden', timeout: 9000 }))
 await caption('Two tiers of rewards, only from real chores')
 await tab('Rewards')
 await wait(1500)
