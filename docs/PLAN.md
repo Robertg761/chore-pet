@@ -208,7 +208,7 @@ Follow-up from review of PR #17:
 - [LEAD] End dates settle on the earliest (device and server), so Clear also ends a chore a clock set ahead had ended later. **Done**
 - [LEAD] Adding a chore back resumes its round exactly (`Schedule.resume`): every-N-days chores keep their due date, early completions count as before, and future-dated completions are ignored. **Done**
 - [LEAD] Erase everything says when other homes in the account stay. **Done**
-- [LEAD] The clear's cutoff leans a minute earlier so request latency is never taken for clock error (migration 0009, from Codex review of PR #18). **Done**
+- [LEAD] The clear's cutoff leans two minutes earlier, past Supabase's 100-second request limit, so request latency is never taken for clock error (migration 0009, from Codex review of PR #18). **Done**
 
 ## Stretch
 

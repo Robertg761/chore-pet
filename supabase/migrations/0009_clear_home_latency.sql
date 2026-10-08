@@ -2,10 +2,12 @@
 -- worked out as now() - sent_at. That difference also holds the request's
 -- travel time, which isn't clock error: counting it moved the cutoff later,
 -- so a row another device added just after the player pressed Clear could
--- be taken. The cutoff now leans a minute earlier instead. Erring that way
--- only leaves a row added just before the press, which the clearing device
--- already cleared if it had it, and which otherwise shows on the Chores
--- screen to remove by hand.
+-- be taken. One timestamp can't tell travel time from clock error, so the
+-- cutoff leans two minutes earlier instead: longer than any request that can
+-- reach the database at all (Supabase's edge drops a request after 100
+-- seconds). Erring that way only leaves a row added in the two minutes before
+-- the press, which the clearing device already cleared if it had it, and
+-- which otherwise shows on the Chores screen to remove by hand.
 create or replace function public.clear_home(target_home uuid, archive_on date, cleared_before timestamptz, sent_at timestamptz)
 returns void language plpgsql security invoker set search_path = '' as $$
 declare
@@ -15,7 +17,7 @@ begin
   if archive_on is null or cleared_before is null or sent_at is null then
     raise exception 'archive_on, cleared_before and sent_at are required' using errcode = '22023';
   end if;
-  cutoff := least(cleared_before + (now() - sent_at), now()) - interval '1 minute';
+  cutoff := least(cleared_before + (now() - sent_at), now()) - interval '2 minutes';
   if cutoff < now() - interval '1 day' then return; end if;
   select array_agg(o.id order by o.id) into objects
     from public.placed_objects o join public.rooms r on r.id = o.room_id

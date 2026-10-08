@@ -697,10 +697,10 @@ describe('object removal from the real offline queue', () => {
 })
 
 describe('starting over from Settings, synced', () => {
-  /** Make every row so far a few minutes old, clear of clear_home's one-minute margin (0009). */
+  /** Make every row so far a few minutes old, clear of clear_home's two-minute margin (0009). */
   const age = async (db: PGlite) => {
     await db.exec('reset role')
-    for (const t of ['placed_objects', 'chores']) await db.exec(`update ${t} set created_at = created_at - interval '3 minutes'`)
+    for (const t of ['placed_objects', 'chores']) await db.exec(`update ${t} set created_at = created_at - interval '5 minutes'`)
   }
   /** A device's home, as App hands it to clearHome. */
   const homeOf = (tables: Device['tables']) => {
@@ -804,8 +804,8 @@ describe('starting over from Settings, synced', () => {
 
   it('never takes a row added just after the clear because the request was slow to arrive', async () => {
     const db = await supabaseLike()
-    // The phone's clock is right, but its request takes 30 seconds to reach the server.
-    const phone = device(db, A, 0, 30_000)
+    // The phone's clock is right, but its request takes 90 seconds to reach the server (near the edge's 100-second limit).
+    const phone = device(db, A, 0, 90_000)
     expect(await phone.apply(...createHousehold({ species: 'mochi', petName: 'Pip', userId: A }))).toEqual([])
     const home = rowsOf<Home>(phone, 'homes')[0]
     const laptop = device(db, A)
