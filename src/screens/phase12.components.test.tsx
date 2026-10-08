@@ -40,20 +40,20 @@ describe('HealthBar streak chip', () => {
   it('shows the day count visibly and "Streak: 3 days in a row" to screen readers', () => {
     const ui = mount(<HealthBar health={80} mood="happy" away={false} streak={3} />)
     expect(streakChip(ui.container)).not.toBeNull()
-    expect(visibleStreak(ui.container)).toBe('3')
+    expect(visibleStreak(ui.container)).toBe('3 days')
     expect(srStreak(ui.container)).toBe('Streak: 3 days in a row')
   })
 
   it('uses the singular screen-reader text for one day', () => {
     const ui = mount(<HealthBar health={80} mood="happy" away={false} streak={1} />)
-    expect(visibleStreak(ui.container)).toBe('1')
+    expect(visibleStreak(ui.container)).toBe('1 day')
     expect(srStreak(ui.container)).toBe('Streak: 1 day')
   })
 
   it('keeps the chip while on vacation', () => {
     const ui = mount(<HealthBar health={100} mood="happy" away={true} streak={2} />)
     expect(ui.container.querySelector('.hb-away .hb-streak')).not.toBeNull()
-    expect(visibleStreak(ui.container)).toBe('2')
+    expect(visibleStreak(ui.container)).toBe('2 days')
     expect(srStreak(ui.container)).toBe('Streak: 2 days in a row')
     expect(ui.container.textContent).toContain('On vacation')
   })

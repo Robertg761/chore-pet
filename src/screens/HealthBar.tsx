@@ -50,7 +50,7 @@ function StreakChip({ days }: { days: number }) {
   return (
     <span className="hb-streak" title={`${days}-day streak`}>
       <Flame />
-      <span aria-hidden="true">{days}</span>
+      <span aria-hidden="true">{days === 1 ? '1 day' : `${days} days`}</span>
       <span className="sr-only">{days === 1 ? 'Streak: 1 day' : `Streak: ${days} days in a row`}</span>
     </span>
   )
