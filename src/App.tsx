@@ -144,8 +144,6 @@ export default function App() {
   const drafts = useChoreDrafts(scope, data.chores, data.objects)
   /** Change screen with a short slide: forward when going deeper (to the right), back when returning. */
   const setView = (next: View) => {
-    // The undo is for a slip on the home screen; it doesn't follow the player to another screen.
-    if (next.name !== 'home') setUndo(null)
     const step = VIEW_RANK[next.name] - VIEW_RANK[view.name]
     if (next.name === view.name) setViewNow(next)
     else withViewTransition(() => setViewNow(next), step > 0 ? 'forward' : step < 0 ? 'back' : 'fade')
@@ -191,7 +189,18 @@ export default function App() {
     setSparkles([])
     setPlacing(null)
   }
+  // The undo is for a slip on the home screen: leaving home, by any route, lets it go
+  // (only hiding it would hand back a fresh five seconds when the player returns).
+  const [undoView, setUndoView] = useState(view.name)
+  if (undoView !== view.name) {
+    setUndoView(view.name)
+    if (view.name !== 'home') setUndo(null)
+  }
   const momentKey = useRef(0)
+  // The screen on show right now, for a Done that lands after its short check animation:
+  // by then the player may have moved on, and the undo belongs to the home screen.
+  const viewNow = useRef(view.name)
+  useLayoutEffect(() => { viewNow.current = view.name })
   const doneRef = useRef<HTMLButtonElement>(null)
   const viewport = useViewport()
   const wide = useWide()
@@ -385,7 +394,7 @@ export default function App() {
         more={more}
         note={syncNote ?? undefined}
       />
-      {!gifts.length && !(view.name === 'home' && allChores) && !toastInHomeList && undoToast}
+      {view.name === 'home' && !gifts.length && !allChores && !toastInHomeList && undoToast}
       {gifts[0] && (
         <GiftBox
           key={gifts[0].id}
@@ -759,7 +768,7 @@ export default function App() {
     const big = condition.statuses.some((s) => s.choreId === chore.id && s.neglect === 3)
     const first = !completions.some((c) => c.completedOn === today)
     setCelebrate({ key, choreName: chore.name, big, first })
-    if (done.completion) setUndo({ key, kind: 'done', completionId: done.completion.id, choreName: chore.name })
+    if (done.completion && viewNow.current === 'home') setUndo({ key, kind: 'done', completionId: done.completion.id, choreName: chore.name })
     const placed = roomObjects.find((o) => o.id === chore.objectId)
     const entry = placed && catalogEntry(placed.catalogId)
     if (placed && entry) setSparkles((list) => [...list, { id: key, ...sparkleSpot(placed, entry) }])

@@ -19,5 +19,5 @@
 .rsp-option[aria-pressed='true'] { background: var(--card); }
 .rsp-option:disabled { cursor: default; background: var(--ground-soft); border-style: dashed; border-color: var(--ink-soft); color: var(--ink-soft); }
 .rsp-option:disabled svg:first-child { opacity: 0.6; }
-.rsp-need { display: inline-flex; align-items: center; gap: 3px; font-size: 0.6875rem; font-weight: 800; color: var(--ink-soft); white-space: nowrap; }
+.rsp-need { display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 0.6875rem; font-weight: 800; line-height: 1.15; text-align: center; white-space: nowrap; color: var(--ink-soft); }
 .rsp-lock { flex: none; }
