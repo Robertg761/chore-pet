@@ -14,7 +14,7 @@ export interface AppNavProps {
   onNavigate: (tab: Exclude<Tab, 'more'>) => void
   /** Short note under Rewards, e.g. "Gift in 2". */
   rewardsNote?: string
-  /** The note in full for screen readers and hover, e.g. "2 more chores to your next gift". */
+  /** The note in full for screen readers and hover, e.g. "2 more chores to the teddy bear". */
   rewardsHint?: string
   more: MoreItem[]
   /** A quiet line at the foot of the More menu, e.g. the sync status. */

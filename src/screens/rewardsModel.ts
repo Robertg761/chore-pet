@@ -60,12 +60,14 @@ export function rewardsNote(progress: Progress | null | undefined): string | und
   return next && next.remaining > 0 ? `Gift in ${next.remaining}` : undefined
 }
 
-/** The same note in full, for screen readers and hover: "2 more chores to your next gift". */
+/**
+ * The same note in full, for screen readers and hover: "2 more chores to the teddy bear".
+ * It names the reward, since a streak reward may come sooner than this one.
+ */
 export function rewardsHint(progress: Progress | null | undefined): string | undefined {
   if (!progress) return undefined
   const next = nextUnlocks(progress, progress.currentStreak).chores
-  if (!next || next.remaining <= 0) return undefined
-  return `${next.remaining} more ${next.remaining === 1 ? 'chore' : 'chores'} to your next gift`
+  return next && next.remaining > 0 ? describeNext(next).text : undefined
 }
 
 /** The single reward closest to being earned, for the "next up" highlight on the rewards screen. */

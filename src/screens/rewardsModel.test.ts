@@ -45,8 +45,10 @@ describe('rewardsModel', () => {
     expect(rewardsNote(null)).toBeUndefined()
     expect(rewardsNote(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }))).toBe('Gift in 2')
     expect(rewardsHint(null)).toBeUndefined()
-    expect(rewardsHint(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }))).toBe('2 more chores to your next gift')
-    expect(rewardsHint(progress({ choreCount: 2, unlockedItems: ['item:beanie-red'] }))).toBe('1 more chore to your next gift')
+    expect(rewardsHint(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }))).toBe('2 more chores to the teddy bear')
+    expect(rewardsHint(progress({ choreCount: 2, unlockedItems: ['item:beanie-red'] }))).toBe('1 more chore to the teddy bear')
+    // The mint walls are a streak day away, but the note counts chores, so it names the chore reward.
+    expect(rewardsHint(progress({ choreCount: 1, currentStreak: 1, bestStreak: 1, unlockedItems: ['item:beanie-red'] }))).toBe('2 more chores to the teddy bear')
   })
 
   it('picks the one reward that is closest', () => {
