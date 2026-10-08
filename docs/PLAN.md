@@ -217,8 +217,9 @@ Product review before the Yard closes: the plan's phases were all met, so this l
 - [LEAD] Skip this time (`skipChore` in `src/data/actions.ts`, `scheduleDays` in `src/domain/schedule.ts`): a round that isn't needed can be skipped from the chore's editor instead of tapping Done for something not done. It settles the round but earns nothing; a day where everything owed was skipped pauses the streak. No migration: skips live on the schedule JSON. **Done**
 - [LEAD] The streak beside the health bar on the home screen, so the main game mechanic is in sight. **Done**
 - [LEAD] Build mode's scrolling tray grouped by room (this room first, then the others, then decor) behind upright labels, without growing the panel. **Done**
-- [HAIKU: test-writer] x4 in parallel: skip schedule rules, streaks with skips, actions and models, components.
-- [HAIKU: reviewer] x2 in parallel: domain and sync correctness; UI, accessibility, copy and docs.
+- [HAIKU: test-writer] x4 in parallel: skip schedule rules, streaks with skips, actions and models, components. **Done** (about 140 tests; found and fixed: a schedule edit copied skips into its history, past days lost skips under an earlier rule, a malformed skips field could throw, impossible dates were accepted)
+- [HAIKU: reviewer] x2 in parallel: domain and sync correctness; UI, accessibility, copy and docs. **Done** (fixed: a re-added chore inherited old skips; the cap rose to 60, pinned under the 2 KB row limit; the "+N" covered the streak, which is now a compact flame and count; Skip kept unsaved edits as a draft instead of dropping them; focus lands on the pet's name after a skip; an "Undo skip" in the editor once the toast has gone; skipped rows get no check. Left as is: two devices editing one chore offline follow the app's last-write-wins rule)
+- [LEAD] Review: axe clean on home, editor, all chores and build at 320 and 390 wide, no page scroll; 1,345 unit and 29 browser tests pass.
 
 ## Stretch
 

@@ -13,7 +13,7 @@ Chore Pet is a tiny pet that lives in a home you build to look like yours.
 - **Your home sets up your chores.** Place a sink and you get "Wash the dishes". Place a bed and you get "Make the bed". You never fill in a form: the building is the setup.
 - **Late chores show as mess.** Mess appears on the object itself, so you can tell what's late just by looking at the room, and it gets worse at a pace that fits the chore: dishes get stinky within a couple of days, a weekly toilet after a few, a monthly oven clean over a fortnight. Stink clouds, flies, dust and dry leaves float over the worst offenders. The pet wanders over to the worst spot and says something kind about it.
 - **The pet feels it.** Health drops with each late chore, and its mood goes from happy to content, meh and scruffy, down to sick in bed. It never dies, and catching up always brings it back.
-- **Rewards only come from real chores.** Your first chore earns a gift on the spot. After that, chore milestones and streaks unlock 16 rewards: outfits, hats, glasses, decor, wall colours and floors. Every reward is purely cosmetic, so nothing you earn brings new chores. Vacation mode pauses everything, so a holiday never costs you a streak.
+- **Rewards only come from real chores.** Your first chore earns a gift on the spot. After that, chore milestones and streaks unlock 16 rewards: outfits, hats, glasses, decor, wall colours and floors. Every reward is purely cosmetic, so nothing you earn brings new chores. Your streak sits beside the health bar, and vacation mode pauses everything, so a holiday never costs you a streak.
 
 ## Why the real task gets done
 
@@ -44,12 +44,15 @@ The pet is a reason to come back, not a guilt trip. It never dies, and its lines
   - Every chore object is drawn clean, a little messy and very messy.
 - **Schedules:**
   - Daily, every N days, chosen weekdays, weekly and monthly.
-  - Each chore can be edited on its object.
+  - Every chore has a pencil to edit it. A Chores screen groups them by object, removes several at once and adds removed ones back.
+  - **Skip this time:** when a round isn't needed (no laundry this week, you ate out), skip it instead of tapping Done for something you didn't do. Nothing goes messy, but a skip earns nothing, so the honest tap is never the costly one.
   - A week view shows the last seven days.
+  - Moving house? Start over clears the room and chores but keeps the pet, its look and every reward.
 - **Progress is never lost:**
   - It works offline first, from IndexedDB, and syncs to Supabase.
   - Everyone starts as a guest with no sign-up.
   - In Settings, a guest saves their home to email or Google. That links the same account, so nothing moves, and the home then opens on any device.
+- **Motion:** screens slide in from where they live, finished chores fold away, sheets spring up and can be dragged down, and the pet breathes and blinks. Players who ask for less motion get none.
 - **One screen, phone or desktop:** every screen fits the window with no scrolling: tabs along the bottom on a phone, a side rail and two columns on a desktop browser.
 - **Phone-first PWA:**
   - Installable and works offline.
@@ -74,7 +77,7 @@ All code was written fresh during the Yard, solo, with Claude Code:
   - a test writer.
 - **Review:** each result was checked against the art contract (`docs/ART.md`) in a live gallery (`/?art`) and by tests before it landed.
 - **Plan:** `docs/PLAN.md` holds the phase-by-phase plan and who did what.
-- **Tests:** 811 unit tests cover schedules, health, mess, streaks, unlocks, sync, tile maths and placement.
+- **Tests:** 1,345 unit tests cover schedules, skips, health, mess, streaks, unlocks, sync, tile maths and placement, and 29 browser tests drive the production build. The last features were tested and reviewed by parallel Haiku subagents before the lead checked them.
 
 ## Honest limits
 

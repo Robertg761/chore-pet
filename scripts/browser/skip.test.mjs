@@ -55,5 +55,5 @@ test('the home shows the streak once a day counts', async (t) => {
   await page.getByRole('button', { name: 'Done: Wash the dishes' }).click()
   await page.getByRole('button', { name: 'Open it', exact: true }).click()
   await page.getByRole('button', { name: 'Put it on' }).click()
-  await page.getByText('1-day streak').waitFor()
+  await page.locator('.hb-streak', { hasText: '1' }).waitFor()
 })

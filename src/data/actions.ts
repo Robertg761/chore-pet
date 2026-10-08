@@ -101,6 +101,12 @@ export function skipChore(chore: Chore, today: ISODate): NewOp[] {
   return [upsertOp('chores', { ...chore, schedule: { ...chore.schedule, skips } })]
 }
 
+/** The day a skip is recorded on: `today`, but like a completion never later than the real date (the dev clock set ahead). */
+export function skipDayFor(today: ISODate, realNow: Date = new Date()): ISODate {
+  const real = toISODate(realNow)
+  return today < real ? today : real
+}
+
 /** Take back a skip (the undo after skipping). */
 export function unskipChore(chore: Chore, day: ISODate): NewOp[] {
   const days = skipDays(chore)

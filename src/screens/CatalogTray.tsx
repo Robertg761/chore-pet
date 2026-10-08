@@ -55,7 +55,7 @@ export function CatalogTray({ roomType, objects, onPick, unlocked = [], oneRow =
         Add to your room
       </h2>
       {oneRow ? (
-        // Each room's things behind a small upright label, so a long row still reads as Kitchen, Bathroom, ...
+        // Each room's things behind a small sideways label, so a long row still reads as Kitchen, Bathroom, ...
         <div className="tray-row tray-scroller">
           {groupCatalog([...suited, ...others], roomType).map((g) => (
             <div key={g.key} className="tray-section" role="group" aria-labelledby={`${uid}-g-${g.key}`}>

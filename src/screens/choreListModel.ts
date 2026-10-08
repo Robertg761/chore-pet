@@ -52,7 +52,7 @@ export function whenPhrase(label: string): string {
   return label === 'Tomorrow' ? 'tomorrow' : `on ${label}`
 }
 
-/** Group chores into "Running late", "Today", "Coming up" and "Done today". Empty sections are left out. */
+/** Group chores into "Running late", "Today", "Coming up" and "Done today" (or "Done or skipped today"). Empty sections are left out. */
 export function buildSections(
   chores: Chore[],
   completions: Completion[],
@@ -80,7 +80,7 @@ export function buildSections(
     { id: 'late', title: 'Running late', rows: late },
     { id: 'today', title: 'Today', rows: due },
     { id: 'soon', title: 'Coming up', rows: soon },
-    { id: 'done', title: 'Done today', rows: doneToday },
+    { id: 'done', title: doneToday.some((r) => r.skippedToday) ? 'Done or skipped today' : 'Done today', rows: doneToday },
   ]
   return sections.filter((s) => s.rows.length > 0)
 }

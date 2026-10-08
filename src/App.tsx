@@ -1,9 +1,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { catalogEntry } from './catalog/objects'
-import { canSkip, choreActiveOn, choreRetiredBy, choreStatus } from './domain/schedule'
+import { canSkip, choreActiveOn, choreRetiredBy, choreStatus, skippedOn } from './domain/schedule'
 import type { CatalogEntry } from './catalog/types'
 import { CharacterArt } from './character/Character'
-import { isInVacation, toISODate } from './domain/dates'
+import { isInVacation } from './domain/dates'
 import { petCondition } from './domain/health'
 import { messStageFor, objectNeglect } from './domain/mess'
 import type { Chore } from './domain/types'
@@ -16,6 +16,7 @@ import {
   clearHome,
   completeChoreWithRewards,
   skipChore,
+  skipDayFor,
   uncompleteChore,
   unskipChore,
   updatePet,
@@ -195,15 +196,22 @@ export default function App() {
     if (staleEdit) navigation.go(view.name === 'edit' && view.from === 'chores' ? { name: 'chores' } : { name: 'home' }, true)
     else if (data.home && (view.name === 'sign-in' || view.name === 'pick-pet')) navigation.go({ name: 'home' }, true)
   }, [staleEdit, data.home, view, navigation])
+  const focusHomeHeading = useRef(false)
+  const focusHeading = (heading: HTMLElement | null) => {
+    if (!heading) return
+    if (!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex', '-1')
+    heading.focus({ preventScroll: true })
+  }
   // Each screen names itself and takes focus at its heading, so keyboard and screen-reader users land on it.
   useEffect(() => {
     document.title = VIEW_TITLE[view.name]
-    if (view.name === 'home') return
-    const heading = document.querySelector<HTMLElement>('.app-view h1, .shell.screen h1')
-    if (heading) {
-      if (!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex', '-1')
-      heading.focus({ preventScroll: true })
+    if (view.name === 'home') {
+      // Back from a skip, the chore's row has moved on: start from the top of home rather than nowhere.
+      if (focusHomeHeading.current) focusHeading(document.querySelector<HTMLElement>('.app-view h1'))
+      focusHomeHeading.current = false
+      return
     }
+    focusHeading(document.querySelector<HTMLElement>('.app-view h1, .shell.screen h1'))
   }, [view.name])
   const allChores = route.sheet === 'all'
   const setAllChores = (open: boolean) => navigation.go({ ...view, sheet: open ? 'all' : undefined }, !open)
@@ -217,12 +225,12 @@ export default function App() {
       : null,
   )
 
-  // Homes made before rooms existed get their first room.
   // The streak shown beside the health bar, replayed only when the history or the day changes.
   const homeStreak = useMemo(
     () => (data.home ? currentStreak(data.chores, data.completions, today, data.home.vacations) : 0),
     [data.home, data.chores, data.completions, today],
   )
+  // Homes made before rooms existed get their first room.
   const needsRoom = Boolean(data.home && data.rooms.length === 0)
   useEffect(() => {
     if (needsRoom && data.home) appStore.apply(...createRoom(data.home))
@@ -410,14 +418,15 @@ export default function App() {
           onSkip={
             chore && canSkip(choreStatus(chore, completions, today, home.vacations))
               ? () => {
-                  // Like a completion, never on a day that hasn't really happened (the dev clock set ahead).
-                  const day = [today, toISODate(new Date())].sort()[0]
+                  const day = skipDayFor(today)
                   appStore.apply(...skipChore(chore, day))
                   setUndo({ key: ++momentKey.current, kind: 'skip', choreId: chore.id, day, choreName: chore.name })
+                  focusHomeHeading.current = view.from !== 'chores'
                   done()
                 }
               : undefined
           }
+          onUnskip={chore && skippedOn(chore, today) ? () => (appStore.apply(...unskipChore(chore, today)), done()) : undefined}
           onCancel={done}
         />
       </main>,

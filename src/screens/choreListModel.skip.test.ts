@@ -32,7 +32,7 @@ describe('buildSections with a skipped round', () => {
     const c = skipped(chore('a', 'Dishes', today), today)
     const sections = buildSections([c], [], [], today)
     expect(sections.map((s) => s.id)).toEqual(['done'])
-    expect(sections[0].title).toBe('Done today')
+    expect(sections[0].title).toBe('Done or skipped today')
     const row = sections[0].rows[0]
     expect(row.status).toMatchObject({ state: 'upcoming', dueDate: '2026-10-07' })
     expect(row).toMatchObject({ label: 'Tomorrow', doneToday: true, skippedToday: true, allSet: true })

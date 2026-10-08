@@ -63,7 +63,7 @@ export function UndoToast({ choreName, verb = 'Done', onUndo, onClose, paused = 
       onFocus={() => setFocused(true)}
       onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false) }}
     >
-      <span className="undo-toast-text">{verb}: {choreName}</span>
+      <span className="undo-toast-text" title={`${verb}: ${choreName}`}>{verb}: {choreName}</span>
       <button type="button" onClick={() => {
         const dialog = ref.current?.closest('dialog')
         onUndo()

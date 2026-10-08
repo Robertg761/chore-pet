@@ -4,7 +4,7 @@ Working name. Built for Hackyard Yard #4 (theme: Gamification). All code is writ
 
 ## The idea
 
-A cute virtual pet lives in an isometric home you build to match your own. Every object you place brings real chores: a sink brings dishes, a bed brings making the bed. Skip them and the mess appears on that object in the pet's room and the pet gets sick. Finish them and it thrives, and you unlock outfits and decor.
+A cute virtual pet lives in an isometric home you build to match your own. Every object you place brings real chores: a sink brings dishes, a bed brings making the bed. Leave them undone and the mess appears on that object in the pet's room and the pet gets sick. Finish them and it thrives, and you unlock outfits and decor.
 
 ## The rule it must pass
 

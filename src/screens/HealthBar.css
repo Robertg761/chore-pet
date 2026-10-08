@@ -20,14 +20,16 @@
 
 .hb-away .hb-fill { background: #d5cfe0; border-right: 0; }
 
-.hb-row { position: relative; min-height: 22px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.hb-row { position: relative; min-height: 22px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 8px; }
+.hb-mood { position: relative; min-width: 0; }
 
-/* The streak sits at the row's end; the "+N" floats up mid-row instead, so it never covers it. */
+/* The streak sits at the row's end (on its own line if a long name leaves no room). */
 .hb-streak {
   flex: none;
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  margin-left: auto;
   padding: 0 8px 0 6px;
   border: 2px solid var(--ink);
   border-radius: 999px;
@@ -39,14 +41,15 @@
   white-space: nowrap;
 }
 .hb-flame { flex: none; }
-.hb-row:has(.hb-streak) .hb-gain { right: auto; left: 50%; }
+
 .hb-text { margin: 0; font-weight: 700; color: var(--ink-soft); line-height: 22px; }
 
-/* Floats up from the bar; absolutely placed so nothing around it moves. */
+/* Floats up from the end of the mood; absolutely placed so nothing around it moves. */
 .hb-gain {
   position: absolute;
-  right: 4px;
+  left: calc(100% + 8px);
   top: 0;
+  white-space: nowrap;
   padding: 0 10px;
   border: 2px solid var(--ink);
   border-radius: 999px;

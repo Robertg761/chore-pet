@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react'
 import type { Mood } from '../domain/types'
+import { PALETTE } from '../art/palette'
 import { healthColour } from './doneMoment'
 import './HealthBar.css'
 
@@ -34,22 +35,22 @@ function Flame() {
     <svg className="hb-flame" viewBox="0 0 20 24" width="15" height="18" aria-hidden="true" focusable="false">
       <path
         d="M10 2c1 4 6 6.500 6 12a6 6 0 0 1-12 0c0-3 1.500-4.500 3-6 .3 2 1.300 3 2.500 3.300C9 9 8.500 5.500 10 2z"
-        fill="#FF9F5A"
-        stroke="#2b1e2f"
+        fill={PALETTE.warmRed}
+        stroke={PALETTE.ink}
         strokeWidth="2.200"
         strokeLinejoin="round"
       />
-      <path d="M10 13.500c1.300 1.200 2.300 2.300 2.300 3.800a2.300 2.300 0 0 1-4.600 0c0-1.300.9-2.300 2.300-3.800z" fill="#FFD65C" />
+      <path d="M10 13.500c1.300 1.200 2.300 2.300 2.300 3.800a2.300 2.300 0 0 1-4.600 0c0-1.300.9-2.300 2.300-3.800z" fill={PALETTE.petDefault} />
     </svg>
   )
 }
 
-/** "3-day streak" beside the mood: the run that rewards count, kept in sight. */
+/** A flame and the day count beside the mood: the run that rewards count, kept in sight. */
 function StreakChip({ days }: { days: number }) {
   return (
-    <span className="hb-streak">
+    <span className="hb-streak" title={`${days}-day streak`}>
       <Flame />
-      <span aria-hidden="true">{days}-day streak</span>
+      <span aria-hidden="true">{days}</span>
       <span className="sr-only">{days === 1 ? 'Streak: 1 day' : `Streak: ${days} days in a row`}</span>
     </span>
   )
@@ -93,13 +94,16 @@ export function HealthBar({ health, mood, away, streak = 0 }: HealthBarProps) {
         <div className="hb-fill" style={style} />
       </div>
       <div className="hb-row">
-        <p className="hb-text">Feeling {MOOD_FEELING[mood]}</p>
+        {/* The "+N" floats up from the end of the mood, clear of the streak. */}
+        <span className="hb-mood">
+          <p className="hb-text">Feeling {MOOD_FEELING[mood]}</p>
+          {gain && (
+            <span key={gain.key} className="hb-gain" aria-hidden="true">
+              +{gain.amount}
+            </span>
+          )}
+        </span>
         {streak > 0 && <StreakChip days={streak} />}
-        {gain && (
-          <span key={gain.key} className="hb-gain" aria-hidden="true">
-            +{gain.amount}
-          </span>
-        )}
       </div>
     </div>
   )

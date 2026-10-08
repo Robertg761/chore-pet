@@ -156,8 +156,9 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
         </div>
         {!hasAction(row) && !justDone ? (
           // Already done for this round: doing it again wouldn't count, so there's nothing to tap.
-          <span className="cl-action cl-done-mark cl-set">
-            <CheckIcon />
+          <span className={`cl-action cl-done-mark cl-set${row.skippedToday ? ' cl-skipped' : ''}`}>
+            {/* A skip isn't a completion, so it gets no check. */}
+            {!row.skippedToday && <CheckIcon />}
             <span>{row.skippedToday ? 'Skipped' : row.doneToday ? 'Done' : 'All set'}</span>
           </span>
         ) : (

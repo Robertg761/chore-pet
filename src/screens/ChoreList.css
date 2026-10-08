@@ -183,6 +183,7 @@
 /* The check that holds a tapped Done button's place (a real button, so focus stays): it looks settled, not tappable. */
 .cl-nice { background: none; border: 0; cursor: default; }
 .cl-set .cl-check { animation: none; }
+.cl-skipped { color: var(--ink-soft); }
 
 .cl-name:focus-visible,
 .cl-action:focus-visible,
