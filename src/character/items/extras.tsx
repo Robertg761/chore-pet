@@ -156,3 +156,12 @@ export function backpackStraps({ species }: Fit) {
 // outfits should not be drawn in the sick poses (anchor scale 0).
 
 /** Top edge of every garment: just under the cheeks and mouth. */
+/** Heart-shaped glasses. TODO(svg-artist): draw. */
+export function heartGlasses(_fit: Fit) {
+  return null
+}
+
+/** A knotted neck bandana. TODO(svg-artist): draw. */
+export function bandana(_fit: Fit) {
+  return null
+}

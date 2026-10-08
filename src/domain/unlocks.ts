@@ -45,6 +45,17 @@ export const UNLOCKS: Unlock[] = [
   // The autumn set: a seasonal outfit and a matching hat.
   u('item', 'knit-sweater', 'Cosy knit sweater', { type: 'streak', days: 10 }),
   u('item', 'leaf-crown', 'Autumn leaf crown', { type: 'chores', count: 50 }),
+  // The second tier, for players who keep going: a household set, then the crown.
+  u('item', 'chef-hat', "Chef's hat", { type: 'chores', count: 60 }),
+  u('wall', 'sky', 'Sky walls', { type: 'streak', days: 21 }),
+  u('decor', 'bookshelf', 'Bookshelf', { type: 'chores', count: 75 }),
+  u('item', 'heart-glasses', 'Heart glasses', { type: 'chores', count: 90 }),
+  u('floor', 'seaside', 'Seaside tiles', { type: 'streak', days: 30 }),
+  u('item', 'bandana', 'Bandana', { type: 'chores', count: 110 }),
+  u('decor', 'wall-clock', 'Wall clock', { type: 'chores', count: 130 }),
+  u('item', 'apron', 'Apron', { type: 'chores', count: 150 }),
+  u('decor', 'bean-bag', 'Bean bag', { type: 'chores', count: 175 }),
+  u('item', 'crown', 'Golden crown', { type: 'chores', count: 200 }),
 ]
 
 /** Styles every home has from the start. */

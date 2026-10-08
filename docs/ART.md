@@ -44,6 +44,9 @@ Every asset is hand-authored SVG, designed from scratch. No asset packs, no rast
 | wall-mint-right | #C4EAD3 | mint wall style, right wall |
 | wall-lavender-left | #BFAEE8 | lavender wall style, left wall |
 | wall-lavender-right | #D9CDF5 | lavender wall style, right wall |
+| wall-sky-left | #A3CFEA | sky wall style, left wall |
+| wall-sky-right | #C9E6F7 | sky wall style, right wall |
+| sky-dark | #6FAED6 | seaside floor slab edge, shaded blue faces |
 
 The tokens live in `src/art/palette.ts`; art code uses those names, never raw hex.
 
@@ -65,7 +68,7 @@ The tokens live in `src/art/palette.ts`; art code uses those names, never raw he
 
 ### Room shell styles
 
-`src/room/shell/` draws the room: back walls, floor and a window. Floor styles: `wood` (default, planks), `tile` (cream and steel checker), `carpet` (rose, with a rug border). Wall styles: `peach` (default), `mint` (faint stripes), `lavender`. Every wall style is a darker left wall plus a lighter right wall. Wall tops, baseboards and the window sill use `cream` / `cream-dark` in every style. Floor slab edges are drawn below the diamond so the room reads as a diorama.
+`src/room/shell/` draws the room: back walls, floor and a window. Floor styles: `wood` (default, planks), `tile` (cream and steel checker), `carpet` (rose, with a rug border), `seaside` (white and sky checker). Wall styles: `peach` (default), `mint` (faint stripes), `lavender`, `sky` (faint stripes). Every wall style is a darker left wall plus a lighter right wall. Wall tops, baseboards and the window sill use `cream` / `cream-dark` in every style. Floor slab edges are drawn below the diamond so the room reads as a diorama.
 
 ## Characters
 

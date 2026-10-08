@@ -40,7 +40,7 @@ describe('groupCatalog with the real catalog', () => {
       bathroom: ['shower', 'toilet'],
       bedroom: ['bed', 'rug'],
       living: ['couch', 'fish-tank'],
-      decor: ['teddy', 'lamp', 'poster', 'fairy-lights'],
+      decor: ['teddy', 'lamp', 'poster', 'fairy-lights', 'bookshelf', 'wall-clock', 'bean-bag'],
     })
   })
 
@@ -52,7 +52,7 @@ describe('groupCatalog with the real catalog', () => {
       kitchen: ['dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'table', 'trash', 'plant'],
       bedroom: ['bed', 'rug'],
       living: ['couch', 'fish-tank'],
-      decor: ['teddy', 'lamp', 'poster', 'fairy-lights'],
+      decor: ['teddy', 'lamp', 'poster', 'fairy-lights', 'bookshelf', 'wall-clock', 'bean-bag'],
     })
   })
 
@@ -64,7 +64,7 @@ describe('groupCatalog with the real catalog', () => {
       kitchen: ['washer', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'table', 'trash'],
       bathroom: ['shower', 'toilet'],
       living: ['couch', 'fish-tank'],
-      decor: ['teddy', 'lamp', 'poster', 'fairy-lights'],
+      decor: ['teddy', 'lamp', 'poster', 'fairy-lights', 'bookshelf', 'wall-clock', 'bean-bag'],
     })
   })
 
@@ -76,7 +76,7 @@ describe('groupCatalog with the real catalog', () => {
       kitchen: ['washer', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'trash'],
       bathroom: ['shower', 'toilet'],
       bedroom: ['bed'],
-      decor: ['teddy', 'lamp', 'poster', 'fairy-lights'],
+      decor: ['teddy', 'lamp', 'poster', 'fairy-lights', 'bookshelf', 'wall-clock', 'bean-bag'],
     })
   })
 

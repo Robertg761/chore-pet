@@ -7,6 +7,16 @@ import { pair, type Fit } from './shared'
 const { ink, warmRed, blush, leafDark, petDefault, woodDark, floorWood, cream, creamDark } = PALETTE
 
 
+/** A tall white chef's hat (toque): a puffy top over a band. TODO(svg-artist): draw. */
+export function chefHat(_fit: Fit) {
+  return null
+}
+
+/** A small golden crown with rounded points and a gem. TODO(svg-artist): draw. */
+export function crown(_fit: Fit) {
+  return null
+}
+
 /** A big bow sitting on one side of the head: two loops, two tails and a knot. */
 export function bow(fit: Fit) {
   // Sprout's crown is narrower and Bun's ears rise right behind, so each gets nudged onto the head

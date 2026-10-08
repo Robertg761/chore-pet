@@ -169,3 +169,8 @@ export function sweater({ species }: Fit) {
     </Garment>
   )
 }
+
+/** A bib apron with a pocket and neck strap. TODO(svg-artist): draw. */
+export function apron(_fit: Fit) {
+  return null
+}

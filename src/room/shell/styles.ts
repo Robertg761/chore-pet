@@ -5,8 +5,8 @@ import { PALETTE } from '../../art/palette'
 
 const P = PALETTE
 
-export type FloorStyleId = 'wood' | 'tile' | 'carpet'
-export type WallStyleId = 'peach' | 'mint' | 'lavender'
+export type FloorStyleId = 'wood' | 'tile' | 'carpet' | 'seaside'
+export type WallStyleId = 'peach' | 'mint' | 'lavender' | 'sky'
 
 export interface FloorStyle {
   id: FloorStyleId
@@ -36,12 +36,14 @@ export const FLOOR_STYLES: readonly FloorStyle[] = [
   { id: 'wood', label: 'Wood', pattern: 'planks', top: P.floorWood, alt: P.floorWood, edgeLeft: P.woodDark, edgeRight: P.floorWoodSide },
   { id: 'tile', label: 'Tile', pattern: 'checker', top: P.cream, alt: P.steel, edgeLeft: P.steelDark, edgeRight: P.creamDark },
   { id: 'carpet', label: 'Carpet', pattern: 'rug', top: P.floorCarpetLight, alt: P.floorCarpet, edgeLeft: P.floorCarpetDark, edgeRight: P.floorCarpet },
+  { id: 'seaside', label: 'Seaside', pattern: 'checker', top: P.white, alt: P.sky, edgeLeft: P.skyDark, edgeRight: P.sky },
 ]
 
 export const WALL_STYLES: readonly WallStyle[] = [
   { id: 'peach', label: 'Peach', left: P.wallLeft, right: P.wallRight, stripes: false },
   { id: 'mint', label: 'Mint', left: P.wallMintLeft, right: P.wallMintRight, stripes: true },
   { id: 'lavender', label: 'Lavender', left: P.wallLavenderLeft, right: P.wallLavenderRight, stripes: false },
+  { id: 'sky', label: 'Sky', left: P.wallSkyLeft, right: P.wallSkyRight, stripes: true },
 ]
 
 export const DEFAULT_FLOOR_STYLE: FloorStyleId = 'wood'

@@ -34,6 +34,9 @@ export const PALETTE = {
   wallMintRight: '#C4EAD3',
   wallLavenderLeft: '#BFAEE8',
   wallLavenderRight: '#D9CDF5',
+  wallSkyLeft: '#A3CFEA',
+  wallSkyRight: '#C9E6F7',
+  skyDark: '#6FAED6',
 } as const
 
 /** Outline weight in a 200x200 character viewBox. */
