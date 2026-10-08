@@ -28,14 +28,20 @@ describe('orderRooms', () => {
     expect(orderRooms(rooms).map((r) => r.id)).toEqual(['r1', 'r2', 'r3', 'r4', 'r5', 'r6'])
   })
 
-  it('breaks ties between rooms of one kind by id', () => {
-    const rooms = [room('bedroom-b', 'bedroom'), room('kitchen-2', 'kitchen'), room('bedroom-a', 'bedroom'), room('kitchen-1', 'kitchen')]
-    expect(orderRooms(rooms).map((r) => r.id)).toEqual(['kitchen-1', 'kitchen-2', 'bedroom-a', 'bedroom-b'])
+  it('keeps rooms of one kind in the order they come in (oldest first), whatever their ids', () => {
+    const rooms = [room('kitchen-z', 'kitchen'), room('bedroom-b', 'bedroom'), room('bedroom-a', 'bedroom'), room('kitchen-a', 'kitchen')]
+    expect(orderRooms(rooms).map((r) => r.id)).toEqual(['kitchen-z', 'kitchen-a', 'bedroom-b', 'bedroom-a'])
   })
 
-  it('sorts unknown kinds after everything else, by id among themselves', () => {
+  it('names a second kitchen "Kitchen 2" even when its id sorts first', () => {
+    const names = roomNames(orderRooms([room('f3a1', 'kitchen'), room('0b7e', 'kitchen')]))
+    expect(names.get('f3a1')).toBe('Kitchen')
+    expect(names.get('0b7e')).toBe('Kitchen 2')
+  })
+
+  it('sorts unknown kinds after everything else, in the order they come in', () => {
     const rooms = [room('x2', 'cellar'), room('x1', 'attic'), room('o1', 'other')]
-    expect(orderRooms(rooms).map((r) => r.id)).toEqual(['o1', 'x1', 'x2'])
+    expect(orderRooms(rooms).map((r) => r.id)).toEqual(['o1', 'x2', 'x1'])
   })
 
   it('does not mutate the input', () => {
