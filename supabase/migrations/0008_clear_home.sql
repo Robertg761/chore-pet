@@ -41,30 +41,6 @@ begin
 end;
 $$;
 
--- 0007's deletes from older clients, also settling on the earliest end: they
--- set this delete's date and the trigger above keeps whichever is earlier.
-create or replace function public.archive_deleted_chore() returns trigger
-language plpgsql security definer set search_path = '' as $$
-begin
-  if not exists (select 1 from public.homes where id = old.home_id and owner_id = old.owner_id)
-     or not exists (select 1 from auth.users where id = old.owner_id) then
-    return old; -- genuine home/account deletion erases all history
-  end if;
-  update public.chores set archived_on = greatest(current_date, created_on)
-    where id = old.id and owner_id = old.owner_id;
-  return null;
-end;
-$$;
-
-create or replace function public.archive_object_chores() returns trigger
-language plpgsql set search_path = '' as $$
-begin
-  update public.chores set archived_on = greatest(current_date, created_on), object_id = null
-    where object_id = old.id and owner_id = old.owner_id;
-  return old;
-end;
-$$;
-
 -- Clear room and chores: every object in the home goes and every chore ends on
 -- archive_on, including rows the clearing device hadn't pulled yet, but only
 -- rows stored before the player pressed Clear, so a clear that syncs late
@@ -72,6 +48,12 @@ $$;
 -- clock at the clear and sent_at its clock when sending, so the server moves
 -- the cutoff by the device clock's error (assumed steady in between). A chore
 -- added since to furniture that existed before stays on the list, detached.
+-- A clear more than a day old by then (a device offline that long, or waiting
+-- for this migration) does nothing: rows from before it may have been in use
+-- on other devices since, and the device that cleared already cleared what it
+-- had. Leftovers show up there and can be removed by hand.
+-- 0007's legacy delete triggers keep their coalesce: those old clients send no
+-- local date, so their server-date guess never overrides one already recorded.
 -- SECURITY INVOKER: row-level security limits it to the caller's own home.
 create function public.clear_home(target_home uuid, archive_on date, cleared_before timestamptz, sent_at timestamptz)
 returns void language plpgsql security invoker set search_path = '' as $$
@@ -83,6 +65,7 @@ begin
     raise exception 'archive_on, cleared_before and sent_at are required' using errcode = '22023';
   end if;
   cutoff := least(cleared_before + (now() - sent_at), now());
+  if cutoff < now() - interval '1 day' then return; end if;
   select array_agg(o.id order by o.id) into objects
     from public.placed_objects o join public.rooms r on r.id = o.room_id
     where r.home_id = target_home and o.created_at <= cutoff;

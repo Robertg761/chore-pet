@@ -220,6 +220,12 @@ describe('resumeFrom', () => {
     expect(resumeFrom({ ...first, archivedOn: '2026-10-06' }, [], '2026-10-07')).toBeUndefined()
   })
 
+  it('ignores completions from before its schedule last changed, as its replay does', () => {
+    // Done Oct 2 under the old rule; changed to every 7 days from Oct 4 (first due Oct 7), never done since.
+    const changed: Chore = { ...daily, schedule: { kind: 'everyNDays', n: 7, since: '2026-10-04', before: { kind: 'daily' } }, archivedOn: '2026-10-05' }
+    expect(resumeFrom(changed, [done('2026-10-02')], '2026-10-05')).toBeUndefined()
+  })
+
   it('ignores completions dated after today (a clock that was set ahead)', () => {
     // Done and removed on Oct 10 by a clock set ahead; added back on the real Oct 8: due today, not Oct 11.
     expect(resumeFrom({ ...daily, createdOn: '2026-10-10', archivedOn: '2026-10-10' }, [done('2026-10-10')], '2026-10-08')).toBeUndefined()

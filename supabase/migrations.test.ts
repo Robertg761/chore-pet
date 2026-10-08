@@ -795,6 +795,24 @@ describe('starting over from Settings, synced', () => {
     await db.close()
   }, 60_000)
 
+  it('does nothing with a clear that arrives more than a day late', async () => {
+    const db = await supabaseLike()
+    const dev = device(db, A)
+    expect(await dev.apply(...createHousehold({ species: 'bun', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(dev, 'homes')[0]
+    expect(await dev.apply(...addChore(home, { name: 'Dishes', schedule: { kind: 'daily' } }, TODAY))).toEqual([])
+    const day = 24 * 60 * 60 * 1000
+    const late = `select public.clear_home($1::uuid, $2::date, $3::timestamptz, now())`
+    expect((await as(db, A, late, [home.id, TODAY, new Date(Date.now() - 2 * day).toISOString()])).ok).toBe(true)
+    let open = await as(db, A, `select count(*)::int as n from chores where archived_on is null`)
+    expect(open.ok && open.rows[0].n).toBe(1)
+    // Within the day it still clears (rows stored before it, by the server's clock).
+    expect((await as(db, A, late, [home.id, TODAY, new Date(Date.now() + 1000).toISOString()])).ok).toBe(true)
+    open = await as(db, A, `select count(*)::int as n from chores where archived_on is null`)
+    expect(open.ok && open.rows[0].n).toBe(0)
+    await db.close()
+  }, 60_000)
+
   it('settles removals on the earliest end date, and still never reopens a chore', async () => {
     const db = await supabaseLike()
     const dev = device(db, A)
@@ -814,13 +832,13 @@ describe('starting over from Settings, synced', () => {
     // Never before it started.
     expect((await as(db, A, `update chores set archived_on = '2026-09-01' where id = $1`, [chore.id])).ok).toBe(true)
     expect(await end()).toBe('2026-10-01')
-    // An older app's plain DELETE also brings a later end forward (to the server's today).
+    // An older app's plain DELETE has no local date: the server's guess never overrides a recorded end.
     expect(await dev.apply(...addChore(home, { name: 'Mop', schedule: { kind: 'daily' } }, '2026-10-01'))).toEqual([])
     const mop = rowsOf<Chore>(dev, 'chores').find((c) => c.name === 'Mop')!
-    expect((await as(db, A, `update chores set archived_on = '2999-01-01' where id = $1`, [mop.id])).ok).toBe(true)
+    expect((await as(db, A, `update chores set archived_on = '2026-10-30' where id = $1`, [mop.id])).ok).toBe(true)
     expect((await as(db, A, `delete from chores where id = $1`, [mop.id])).ok).toBe(true)
-    const mopEnd = await as(db, A, `select archived_on < '2999-01-01' as earlier from chores where id = $1`, [mop.id])
-    expect(mopEnd.ok && mopEnd.rows[0].earlier).toBe(true)
+    const mopEnd = await as(db, A, `select archived_on::text as d from chores where id = $1`, [mop.id])
+    expect(mopEnd.ok && mopEnd.rows[0].d).toBe('2026-10-30')
     await db.close()
   }, 60_000)
 

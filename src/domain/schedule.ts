@@ -36,7 +36,9 @@ export function archiveEnd(chore: Chore, day: ISODate): ISODate {
  * set ahead) are ignored. Nothing to resume when it was due, late or never done.
  */
 export function resumeFrom(chore: Chore, completions: Completion[], today: ISODate, vacations: VacationWindow[] = []): Schedule['resume'] {
-  const days = completionDays(chore, completions).filter((d) => d <= today)
+  // As its replay sees them: none before the current rule began, none after today.
+  const start = scheduleStart(chore)
+  const days = completionDays(chore, completions).filter((d) => d >= start && d <= today)
   // A chore that was itself added back mid-round carries on from there, done since or not.
   const last = days.at(-1) ?? chore.schedule.resume?.last
   if (!last) return undefined
