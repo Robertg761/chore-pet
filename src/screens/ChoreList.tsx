@@ -31,6 +31,15 @@ function CheckIcon() {
   )
 }
 
+/** A small pencil after each chore's name, so it reads as tappable: tap to change or remove the chore. */
+function PencilIcon() {
+  return (
+    <svg className="cl-pencil" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+      <path d="M5 19l1-4.5L15.5 5a2.1 2.1 0 0 1 3 3L9 17.5zM13.5 7l3 3" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 /** A small hand-drawn flourish for the all-done card: two stars and a dot, in the same thick outline as the rest. */
 function Sparkles() {
   return (
@@ -144,8 +153,9 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
         data-unsaved={justDone || undefined}
       >
         <div className="cl-info">
-          <button type="button" className="cl-name" onClick={() => onEdit(chore)}>
-            {chore.name}
+          <button type="button" className="cl-name" aria-label={`Edit ${chore.name}`} title="Edit chore" onClick={() => onEdit(chore)}>
+            <span className="cl-name-text">{chore.name}</span>
+            <PencilIcon />
           </button>
           <span className={`tag tag-${status.state}${status.neglect ? ` tag-late${status.neglect}` : ''}`}>{label}</span>
         </div>
