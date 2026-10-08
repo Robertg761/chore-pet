@@ -221,6 +221,13 @@ export default function App() {
     }
     focusHeading(document.querySelector<HTMLElement>('.app-view h1, .shell.screen h1'))
   }, [view.name])
+  // Into the sample home from the landing: focus starts at the top of home rather than nowhere.
+  const homeId = data.home?.id
+  useEffect(() => {
+    if (!homeId || !focusHomeHeading.current) return
+    focusHomeHeading.current = false
+    requestAnimationFrame(() => focusHeading(document.querySelector<HTMLElement>('.app-view h1')))
+  }, [homeId])
   const allChores = route.sheet === 'all'
   const setAllChores = (open: boolean) => navigation.go({ ...view, sheet: open ? 'all' : undefined }, !open)
   const [buildPanel, setBuildPanel] = useState<'things' | 'style'>('things')
@@ -291,7 +298,7 @@ export default function App() {
           </>
         ) : (
           <Landing
-            onSample={(species) => appStore.apply(...sampleHome({ species, userId: snapshot.userId, today }))}
+            onSample={(species) => ((focusHomeHeading.current = true), appStore.apply(...sampleHome({ species, userId: snapshot.userId, today })))}
             onBuild={() => setBuilding(true)}
             onSignIn={() => setView({ name: 'sign-in' })}
           />
