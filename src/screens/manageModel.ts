@@ -77,7 +77,8 @@ export function pastChores(chores: Chore[], today: ISODate): Chore[] {
 
 /** A past chore as a new one: same name and rule, a fresh schedule history, and its object if it's still in the room. */
 export function againInput(chore: Chore, objects: PlacedObject[]): { name: string; schedule: Schedule; objectId: string | null } {
-  const { since: _since, before: _before, ...rule } = chore.schedule
+  // Only the rule: where the old one stood in its round is worked out afresh (resumeFrom).
+  const { since: _since, before: _before, resume: _resume, ...rule } = chore.schedule
   const objectId = chore.objectId && objects.some((o) => o.id === chore.objectId) ? chore.objectId : null
   return { name: chore.name, schedule: rule as Schedule, objectId }
 }

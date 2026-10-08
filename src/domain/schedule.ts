@@ -16,31 +16,38 @@ export function choreRetiredBy(chore: Chore, day: ISODate): boolean {
   return Boolean(chore.archivedOn && (chore.archivedOn <= day || chore.archivedOn <= chore.createdOn))
 }
 
-/** The day a removed chore ends: the removal day, never before it starts (a device clock set ahead), as the server requires. */
+/**
+ * The day a chore removed on `day` ends: never before it starts (a device clock
+ * set ahead), and never later than an end already recorded, so removals from
+ * several devices settle on the earliest, as the server does (migration 0008).
+ */
 export function archiveEnd(chore: Chore, day: ISODate): ISODate {
-  return day < chore.createdOn ? chore.createdOn : day
+  const end = day < chore.createdOn ? chore.createdOn : day
+  return chore.archivedOn && chore.archivedOn < end ? chore.archivedOn : end
 }
 
 /**
- * The day a removed chore, added back on `today`, should start. If its current
- * round was already done (it would be upcoming had it never been removed), it
- * starts so its first occurrence is that next due date: nothing is owed before
- * then, so the round can't be earned twice or missed. Otherwise it starts today.
- *
- * Never before today: a start in the past would make days already judged as
- * paused (nothing on the list) count toward the streak. So an every-N-days
- * chore added back late in its interval is first due a little later than it
- * would have been (at most half an interval), which earns nothing either way.
+ * Where a removed chore stood on `today`, for adding it back mid-round: its
+ * next due date and the last day it was done, if its current round was already
+ * done (it would be upcoming had it never been removed). The new chore resumes
+ * from there (Schedule.resume), so it is due exactly when the old one would
+ * have been and an early completion counts exactly as it would have: the round
+ * is neither earned twice nor missed. Completions dated after today (a clock
+ * set ahead) are ignored. Nothing to resume when it was due, late or never done.
  */
-export function restartOn(chore: Chore, completions: Completion[], today: ISODate, vacations: VacationWindow[] = []): ISODate {
-  const done = completions.filter((c) => c.choreId === chore.id)
-  if (done.length === 0) return today
-  const status = choreStatus({ ...chore, archivedOn: undefined }, done, today, vacations)
-  if (status.state !== 'upcoming') return today
-  // An every-N-days chore is first due halfway through its first interval (see startReplay).
-  const lead = chore.schedule.kind === 'everyNDays' ? Math.floor(intervalOf(chore.schedule) / 2) : 0
-  const start = addDays(status.dueDate, -lead)
-  return start > today ? start : today
+export function resumeFrom(chore: Chore, completions: Completion[], today: ISODate, vacations: VacationWindow[] = []): Schedule['resume'] {
+  // As its replay sees them: none before the current rule began, none after today.
+  const start = scheduleStart(chore)
+  const days = completionDays(chore, completions).filter((d) => d >= start && d <= today)
+  // A chore that was itself added back mid-round carries on from there, done since or not,
+  // unless that was on a clock set ahead (a last day after today), which is dropped like a future completion.
+  const { resume: carried, ...rule } = chore.schedule
+  const resume = carried && carried.last <= today ? carried : undefined
+  const last = days.at(-1) ?? resume?.last
+  if (!last) return undefined
+  const replay = replayDays({ ...chore, archivedOn: undefined, schedule: { ...rule, ...(resume && { resume }) } as Schedule }, days)
+  if (replay.statusOn(today, vacations).state !== 'upcoming') return undefined
+  return { due: replay.due, last }
 }
 
 export type ChoreState = 'upcoming' | 'due' | 'overdue'
@@ -140,13 +147,13 @@ function scheduleKey(schedule: Schedule): string {
     case 'monthly':
       return `monthly:${schedule.dayOfMonth}`
     default: {
-      const { since: _since, before: _before, ...rest } = schedule as Schedule
+      const { since: _since, before: _before, resume: _resume, ...rest } = schedule as Schedule
       return JSON.stringify(rest)
     }
   }
 }
 
-/** Whether two schedules ask for the same thing. `since` and `before` (its history) are ignored. */
+/** Whether two schedules ask for the same thing. `since`, `before` (its history) and `resume` are ignored. */
 export function sameSchedule(a: Schedule, b: Schedule): boolean {
   return scheduleKey(a) === scheduleKey(b)
 }
@@ -224,9 +231,11 @@ export function startReplay(chore: Chore): ChoreReplay {
   const since = schedule.since
   const everyN = schedule.kind === 'everyNDays' ? intervalOf(schedule) : 0
   const half = Math.floor(everyN / 2)
-  let due = everyN ? addDays(start, half) : firstOnOrAfter(schedule, start)
-  let counted = 0
-  let last: ISODate | null = null
+  // Added back mid-round: pick up where the removed chore stood, as if it had been fed its last completion.
+  const resume = schedule.resume && schedule.resume.due >= start ? schedule.resume : undefined
+  let due = resume ? resume.due : everyN ? addDays(start, half) : firstOnOrAfter(schedule, start)
+  let counted = resume ? 1 : 0
+  let last: ISODate | null = resume ? resume.last : null
 
   function add(day: ISODate): boolean {
     if (since && day < since) return false

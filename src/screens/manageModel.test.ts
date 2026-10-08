@@ -85,7 +85,7 @@ describe('pastChores', () => {
 
 describe('againInput', () => {
   it('keeps the name and rule, drops schedule history, and keeps the object only if it is still placed', () => {
-    const old = chore('a', { name: 'Dishes', objectId: 's', schedule: { kind: 'everyNDays', n: 3, since: '2026-10-03', before: { kind: 'daily' } } })
+    const old = chore('a', { name: 'Dishes', objectId: 's', schedule: { kind: 'everyNDays', n: 3, since: '2026-10-03', before: { kind: 'daily' }, resume: { due: '2026-10-08', last: '2026-10-05' } } })
     expect(againInput(old, [object('s', 'sink')])).toEqual({ name: 'Dishes', schedule: { kind: 'everyNDays', n: 3 }, objectId: 's' })
     expect(againInput(old, [])).toEqual({ name: 'Dishes', schedule: { kind: 'everyNDays', n: 3 }, objectId: null })
   })

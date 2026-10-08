@@ -24,7 +24,7 @@ import {
   type History,
 } from '../src/data/actions'
 import { KEY_COLUMN, MAPPERS } from '../src/data/mappers'
-import { change, emptySnapshot, planFlush, selectHome, type NewOp, type Snapshot } from '../src/data/state'
+import { change, clearedHome, emptySnapshot, planFlush, selectHome, type NewOp, type Op, type Snapshot } from '../src/data/state'
 import { TABLES, type TableName } from '../src/data/tables'
 import { CHARACTER_SLOTS, SPECIES, type Chore, type Home, type Pet, type PlacedObject, type Progress, type Room, type RoomType, type Schedule } from '../src/domain/types'
 import { UNLOCKS } from '../src/domain/unlocks'
@@ -101,12 +101,24 @@ function upsertRows(db: PGlite, user: string, table: TableName, rows: Record<str
   )
 }
 
+/** What src/data/remote.ts sends for queued clear ops: clear_home, one home at a time, with the device clock at sending. */
+async function clearHomes(db: PGlite, user: string, ops: Op[], clockError: number, latency: number): Promise<Result> {
+  // Stamped before the request travels, so the server sees it `latency` ms old.
+  const sentAt = new Date(Date.now() + clockError - latency).toISOString()
+  for (const op of ops) {
+    if (op.kind !== 'delete' || !op.removal?.clearBefore) continue
+    const res = await as(db, user, `select public.clear_home($1::uuid, $2::date, $3::timestamptz, $4::timestamptz)`, [clearedHome(op.table, op.key), op.removal.archivedOn, op.removal.clearBefore, sentAt])
+    if (!res.ok) return res
+  }
+  return { ok: true, rows: [] }
+}
+
 /**
  * One device: applies actions locally and syncs them the way src/data/store.ts
  * does (planFlush order, mapper rows, one request per table and kind).
  * Returns the server's refusals; a working client gets none.
  */
-function device(db: PGlite, user: string) {
+function device(db: PGlite, user: string, clockError = 0, latency = 0) {
   let snap: Snapshot = emptySnapshot(user)
   return {
     get tables() {
@@ -124,9 +136,11 @@ function device(db: PGlite, user: string) {
                 step.table,
                 step.ops.map((o) => MAPPERS[step.table].toRow((o as { value: never }).value)),
               )
-            : step.table === 'placed_objects' && step.ops[0]?.kind === 'delete' && step.ops[0].removal
-              ? await as(db, user, `select public.remove_objects($1::uuid[], $2::date, $3::boolean)`, [step.ops.map(o => o.key), step.ops[0].removal.archivedOn, step.ops[0].removal.keepChores ?? false])
-              : await as(db, user, `delete from ${step.table} where ${KEY_COLUMN[step.table]} = any($1::uuid[])`, [step.ops.map((o) => o.key)])
+            : step.ops[0]?.kind === 'delete' && step.ops[0].removal?.clearBefore
+              ? await clearHomes(db, user, step.ops, clockError, latency)
+              : step.table === 'placed_objects' && step.ops[0]?.kind === 'delete' && step.ops[0].removal
+                ? await as(db, user, `select public.remove_objects($1::uuid[], $2::date, $3::boolean)`, [step.ops.map(o => o.key), step.ops[0].removal.archivedOn, step.ops[0].removal.keepChores ?? false])
+                : await as(db, user, `delete from ${step.table} where ${KEY_COLUMN[step.table]} = any($1::uuid[])`, [step.ops.map((o) => o.key)])
         if (!res.ok) refused.push(`${step.kind} ${step.table}: ${res.code} ${res.message}`)
       }
       snap = { ...snap, outbox: {} }
@@ -683,6 +697,17 @@ describe('object removal from the real offline queue', () => {
 })
 
 describe('starting over from Settings, synced', () => {
+  /** Make every row so far a few minutes old, clear of clear_home's two-minute margin (0009). */
+  const age = async (db: PGlite) => {
+    await db.exec('reset role')
+    for (const t of ['placed_objects', 'chores']) await db.exec(`update ${t} set created_at = created_at - interval '5 minutes'`)
+  }
+  /** A device's home, as App hands it to clearHome. */
+  const homeOf = (tables: Device['tables']) => {
+    const h = selectHome(tables)
+    return { ...h, home: h.home! }
+  }
+
   it('clears the room and chores on the server, keeps the pet, rewards and past work, and adds a chore back', async () => {
     const db = await supabaseLike()
     const dev = device(db, A)
@@ -701,7 +726,7 @@ describe('starting over from Settings, synced', () => {
 
     // Cleared in the same sync it was made in, so it reaches the server as a new, already-ended row.
     const local = { ...dev.tables, chores: { ...dev.tables.chores, [ahead[0].key]: (ahead[0] as { value: Chore }).value } }
-    expect(await dev.apply(...ahead, ...clearHome(selectHome(local), TODAY))).toEqual([])
+    expect(await dev.apply(...ahead, ...clearHome(homeOf(local), TODAY))).toEqual([])
     expect(rowsOf<Chore>(dev, 'chores').find((c) => c.name === 'From the future')?.archivedOn).toBe('2026-10-09')
     const after = await serverCounts(db, A)
     expect(after).toEqual(localCounts(dev))
@@ -711,11 +736,135 @@ describe('starting over from Settings, synced', () => {
     expect(await as(db, A, `select * from pets`)).toEqual(pet)
     expect(await as(db, A, `select * from progress`)).toEqual(progress)
 
-    // Done today, so added back it starts tomorrow (a creation date ahead, which the server accepts).
+    // Done today, so added back it resumes the round: on the list today, next due tomorrow.
     const old = rowsOf<Chore>(dev, 'chores').find((c) => c.id === dishes.id)!
     expect(await dev.apply(...addChoreAgain(homeRow, old, againInput(old, []), rowsOf(dev, 'completions'), TODAY))).toEqual([])
-    const active = await as(db, A, `select name, created_on::text from chores where archived_on is null`)
-    expect(active.ok && active.rows).toEqual([{ name: 'Wash the dishes', created_on: '2026-10-08' }])
+    const active = await as(db, A, `select name, created_on::text, schedule from chores where archived_on is null`)
+    expect(active.ok && active.rows).toEqual([{ name: 'Wash the dishes', created_on: TODAY, schedule: { kind: 'daily', resume: { due: '2026-10-08', last: TODAY } } }])
+    await db.close()
+  }, 60_000)
+
+  it('also clears what another device added that this one never pulled, but not what came after', async () => {
+    const db = await supabaseLike()
+    const phone = device(db, A)
+    expect(await phone.apply(...createHousehold({ species: 'mochi', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(phone, 'homes')[0]
+    const room = rowsOf<Room>(phone, 'rooms')[0]
+    expect(await phone.apply(...placeObject(room, ALL_ENTRIES.find((e) => e.id === 'sink')!, { tileX: 0, tileY: 0, rotation: 0 }, TODAY))).toEqual([])
+    // A laptop on the same account adds a rug (with its chores) and a loose chore; the phone never pulls them.
+    const laptop = device(db, A)
+    expect(await laptop.apply(...placeObject(room, ALL_ENTRIES.find((e) => e.id === 'rug')!, { tileX: 4, tileY: 4, rotation: 0 }, TODAY))).toEqual([])
+    expect(await laptop.apply(...addChore(home, { name: 'Water the herbs', schedule: { kind: 'daily' } }, TODAY))).toEqual([])
+    const unseen = await serverCounts(db, A)
+    expect(unseen.placed_objects).toBe(2)
+    await age(db)
+
+    // The phone clears, offline for a while: it reaches the server after the laptop adds one more chore.
+    const clearedAt = new Date()
+    const ops = clearHome(homeOf(phone.tables), TODAY, clearedAt)
+    await new Promise((r) => setTimeout(r, 20))
+    expect(await laptop.apply(...addChore(home, { name: 'Added after the clear', schedule: { kind: 'daily' } }, TODAY))).toEqual([])
+    expect(await phone.apply(...ops)).toEqual([])
+
+    expect((await serverCounts(db, A)).placed_objects).toBe(0)
+    const chores = await as(db, A, `select name, archived_on::text, object_id from chores order by name`)
+    expect(chores.ok && chores.rows.filter((c) => c.archived_on === null).map((c) => c.name)).toEqual(['Added after the clear'])
+    expect(chores.ok && chores.rows.filter((c) => c.name !== 'Added after the clear').every((c) => c.archived_on === TODAY && c.object_id === null)).toBe(true)
+    // Only the caller's own home: B can't clear A's.
+    expect((await as(db, B, `select public.clear_home($1::uuid, $2::date, now(), now())`, [home.id, TODAY])).ok).toBe(true)
+    const open = await as(db, A, `select count(*)::int as n from chores where archived_on is null`)
+    expect(open.ok && open.rows[0].n).toBe(1)
+    await db.close()
+  }, 60_000)
+
+  it('corrects the clear moment for a device clock that is off, and leaves newer chores on cleared furniture', async () => {
+    const db = await supabaseLike()
+    const hour = 60 * 60 * 1000
+    // The phone's clock runs an hour fast.
+    const phone = device(db, A, hour)
+    expect(await phone.apply(...createHousehold({ species: 'mochi', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(phone, 'homes')[0]
+    const room = rowsOf<Room>(phone, 'rooms')[0]
+    expect(await phone.apply(...placeObject(room, ALL_ENTRIES.find((e) => e.id === 'sink')!, { tileX: 0, tileY: 0, rotation: 0 }, TODAY))).toEqual([])
+    const sink = rowsOf<PlacedObject>(phone, 'placed_objects')[0]
+    // Cleared offline: by its own clock, an hour ahead of the server.
+    const ops = clearHome(homeOf(phone.tables), TODAY, new Date(Date.now() + hour))
+    await new Promise((r) => setTimeout(r, 20))
+    // Meanwhile the laptop adds a loose chore and one on the sink, which the clear came before.
+    const laptop = device(db, A)
+    expect(await laptop.apply(...addChore(home, { name: 'Loose, after', schedule: { kind: 'daily' } }, TODAY))).toEqual([])
+    expect(await laptop.apply(...addChore(home, { name: 'On the sink, after', schedule: { kind: 'daily' }, objectId: sink.id }, TODAY))).toEqual([])
+    await new Promise((r) => setTimeout(r, 20))
+    expect(await phone.apply(...ops)).toEqual([])
+    expect((await serverCounts(db, A)).placed_objects).toBe(0)
+    const open = await as(db, A, `select name, object_id from chores where archived_on is null order by name`)
+    expect(open.ok && open.rows).toEqual([{ name: 'Loose, after', object_id: null }, { name: 'On the sink, after', object_id: null }])
+    await db.close()
+  }, 60_000)
+
+  it('never takes a row added just after the clear because the request was slow to arrive', async () => {
+    const db = await supabaseLike()
+    // The phone's clock is right, but its request takes 90 seconds to reach the server (near the edge's 100-second limit).
+    const phone = device(db, A, 0, 90_000)
+    expect(await phone.apply(...createHousehold({ species: 'mochi', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(phone, 'homes')[0]
+    const laptop = device(db, A)
+    expect(await laptop.apply(...addChore(home, { name: 'Before, unseen', schedule: { kind: 'daily' } }, TODAY))).toEqual([])
+    await age(db)
+    const ops = clearHome(homeOf(phone.tables), TODAY, new Date())
+    await new Promise((r) => setTimeout(r, 20))
+    expect(await laptop.apply(...addChore(home, { name: 'Just after', schedule: { kind: 'daily' } }, TODAY))).toEqual([])
+    expect(await phone.apply(...ops)).toEqual([])
+    const open = await as(db, A, `select name from chores where archived_on is null order by name`)
+    expect(open.ok && open.rows).toEqual([{ name: 'Just after' }])
+    await db.close()
+  }, 60_000)
+
+  it('does nothing with a clear that arrives more than a day late', async () => {
+    const db = await supabaseLike()
+    const dev = device(db, A)
+    expect(await dev.apply(...createHousehold({ species: 'bun', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(dev, 'homes')[0]
+    expect(await dev.apply(...addChore(home, { name: 'Dishes', schedule: { kind: 'daily' } }, TODAY))).toEqual([])
+    await age(db)
+    const day = 24 * 60 * 60 * 1000
+    const late = `select public.clear_home($1::uuid, $2::date, $3::timestamptz, now())`
+    expect((await as(db, A, late, [home.id, TODAY, new Date(Date.now() - 2 * day).toISOString()])).ok).toBe(true)
+    let open = await as(db, A, `select count(*)::int as n from chores where archived_on is null`)
+    expect(open.ok && open.rows[0].n).toBe(1)
+    // Within the day it still clears (rows stored before it, by the server's clock).
+    expect((await as(db, A, late, [home.id, TODAY, new Date(Date.now() + 1000).toISOString()])).ok).toBe(true)
+    open = await as(db, A, `select count(*)::int as n from chores where archived_on is null`)
+    expect(open.ok && open.rows[0].n).toBe(0)
+    await db.close()
+  }, 60_000)
+
+  it('settles removals on the earliest end date, and still never reopens a chore', async () => {
+    const db = await supabaseLike()
+    const dev = device(db, A)
+    expect(await dev.apply(...createHousehold({ species: 'bun', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(dev, 'homes')[0]
+    expect(await dev.apply(...addChore(home, { name: 'Dishes', schedule: { kind: 'daily' } }, '2026-10-01'))).toEqual([])
+    const chore = rowsOf<Chore>(dev, 'chores')[0]
+    const end = async () => (await as(db, A, `select archived_on::text as d from chores where id = $1`, [chore.id])).rows[0]?.d
+    // Removed on a device with its clock set ahead: it ends on the 20th.
+    expect((await as(db, A, `update chores set archived_on = '2026-10-20' where id = $1`, [chore.id])).ok).toBe(true)
+    // A later removal date or an open one changes nothing; an earlier one brings the end forward.
+    expect((await as(db, A, `update chores set archived_on = '2026-10-25' where id = $1`, [chore.id])).ok).toBe(true)
+    expect((await as(db, A, `update chores set archived_on = null where id = $1`, [chore.id])).ok).toBe(true)
+    expect(await end()).toBe('2026-10-20')
+    expect(await dev.apply(...clearHome(homeOf(dev.tables), TODAY))).toEqual([])
+    expect(await end()).toBe(TODAY)
+    // Never before it started.
+    expect((await as(db, A, `update chores set archived_on = '2026-09-01' where id = $1`, [chore.id])).ok).toBe(true)
+    expect(await end()).toBe('2026-10-01')
+    // An older app's plain DELETE has no local date: the server's guess never overrides a recorded end.
+    expect(await dev.apply(...addChore(home, { name: 'Mop', schedule: { kind: 'daily' } }, '2026-10-01'))).toEqual([])
+    const mop = rowsOf<Chore>(dev, 'chores').find((c) => c.name === 'Mop')!
+    expect((await as(db, A, `update chores set archived_on = '2026-10-30' where id = $1`, [mop.id])).ok).toBe(true)
+    expect((await as(db, A, `delete from chores where id = $1`, [mop.id])).ok).toBe(true)
+    const mopEnd = await as(db, A, `select archived_on::text as d from chores where id = $1`, [mop.id])
+    expect(mopEnd.ok && mopEnd.rows[0].d).toBe('2026-10-30')
     await db.close()
   }, 60_000)
 

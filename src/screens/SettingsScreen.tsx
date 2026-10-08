@@ -19,11 +19,13 @@ export interface SettingsScreenProps {
   onStartOver?: () => void
   /** Clears the room and chores, keeping the pet and rewards. Offered alongside onStartOver. */
   onClearRoom?: () => void
+  /** Other homes in this account, which Erase everything leaves alone (it opens one of them next). */
+  otherHomes?: number
 }
 
 const PRIVACY_URL = 'https://github.com/Robertg761/chore-pet/blob/main/docs/PRIVACY.md'
 
-export function SettingsScreen({ petName, homeId, onClose, account, onStartOver, onClearRoom }: SettingsScreenProps) {
+export function SettingsScreen({ petName, homeId, onClose, account, onStartOver, onClearRoom, otherHomes = 0 }: SettingsScreenProps) {
   const [sound, setSound] = useState(soundOn)
   // Start over asks twice: which kind of fresh start, then whether to go ahead.
   const [startOver, setStartOver] = useState<null | 'choose' | 'clear' | 'erase'>(null)
@@ -94,7 +96,7 @@ export function SettingsScreen({ petName, homeId, onClose, account, onStartOver,
                   <p>
                     {startOver === 'clear'
                       ? 'Clear the room and every chore? Your past work stays, and removed chores can be added back from Chores.'
-                      : `Erase ${petName}’s home for good? This can’t be undone.`}
+                      : `Erase ${petName}’s home for good? This can’t be undone.${otherHomes === 1 ? ' Your other home stays.' : otherHomes > 1 ? ` Your ${otherHomes} other homes stay.` : ''}`}
                   </p>
                   <div className="confirm-actions">
                     <button type="button" className="btn btn-danger" onClick={startOver === 'clear' ? onClearRoom : onStartOver}>

@@ -2,7 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { ensureSession, getSupabase, supabaseConfigured } from '../lib/supabase'
 import { KEY_COLUMN, MAPPERS } from './mappers'
 import { classifyError, type ErrorKind } from './remoteErrors'
-import { emptyTables, type Tables, type Removal } from './state'
+import { clearedHome, emptyTables, type Tables, type Removal } from './state'
 import { TABLES, keyOf, type TableMap, type TableName } from './tables'
 
 /**
@@ -105,6 +105,20 @@ export function supabaseRemote(getClient: () => Promise<SupabaseClient>): Remote
     },
     async remove(table, keys, removal) {
       const client = await getClient()
+      // Clear room and chores (migration 0008), one home at a time. A clear is never sent as a delete.
+      const homes = keys.map((k) => clearedHome(table, k))
+      if (homes.some((h) => h !== null)) {
+        if (!homes.every((h) => h !== null) || !removal?.clearBefore || !removal.archivedOn) {
+          return { ok: false, transient: false, kind: 'permanent', message: 'A clear was queued without its details' }
+        }
+        // The device's clock now, so the server can correct the clear moment for the clock's error.
+        const sentAt = new Date().toISOString()
+        for (const home of homes) {
+          const { error, status } = await client.rpc('clear_home', { target_home: home, archive_on: removal.archivedOn, cleared_before: removal.clearBefore, sent_at: sentAt })
+          if (error) return result(error, status)
+        }
+        return { ok: true }
+      }
       if (table === 'placed_objects' && removal) {
         const { error, status } = await client.rpc('remove_objects', { object_ids: keys, archive_on: removal.archivedOn, keep_chores: removal.keepChores ?? false })
         return result(error, status)

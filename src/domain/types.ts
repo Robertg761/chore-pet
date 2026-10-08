@@ -22,10 +22,16 @@ export type ScheduleRule =
  * SCHEDULE_HISTORY), so past days are judged by the rule that applied then.
  * Both are missing on a schedule that was never changed, and neither is part
  * of what the schedule asks for, so `sameSchedule` ignores them.
+ *
+ * `resume` is set on a removed chore added back mid-round: where the old one
+ * stood (its next due date and the last day it was done), so the new one picks
+ * up exactly there instead of starting a fresh round (see resumeFrom). Also
+ * ignored by `sameSchedule`.
  */
 export type Schedule = ScheduleRule & {
   since?: ISODate
   before?: Schedule
+  resume?: { due: ISODate; last: ISODate }
 }
 
 export interface VacationWindow {
