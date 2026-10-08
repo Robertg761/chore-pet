@@ -81,7 +81,7 @@ Parallel batch E:
 - [SONNET: ui-builder] Landing choice: "Try a sample home" or "Build my home"; turning the sample into your own. **Done**
 - [SONNET: ui-builder] Hidden time fast-forward dev panel (query param or long-press) for recording the demo. **Done** (open with `?dev` or a long-press on the top-left corner)
 
-- [LEAD] Review the first-minute experience end to end.
+- [LEAD] Review the first-minute experience end to end. **Done**
 
 **Done when:** a first-time visitor sees a messy room, cleans something and gets an unlock within a minute. **Met:** "Try a sample home" opens a kitchen with dirty dishes; washing them sparkles the sink clean and opens a gift with the red beanie.
 
@@ -132,8 +132,8 @@ Parallel batch H:
     - `supabase/migrations.test.ts` runs every migration on PGlite.
 - [LEAD] Submission: live link, repo, write-up, in-app demo video.
   - **Write-up drafted** (`docs/SUBMISSION.md`).
-  - **Demo video recorded** in the app (`npm run demo:record`; about 85 s, sample home and time skip).
-  - **Hosting: Live** at https://robertg761.github.io/chore-pet/ on GitHub Pages. `.github/workflows/pages.yml` lints, tests and builds every PR, and deploys every push to main. The video is served at `/chore-pet/chore-pet-demo.mp4`, and the links are in the write-up.
+  - **Demo video recorded** in the app (`npm run demo:record`; 77 s, sample home and time skip).
+  - **Hosting: Live** at https://robertg761.github.io/chore-pet/ on GitHub Pages. `.github/workflows/pages.yml` lints, tests, builds and runs the browser tests on every PR, and deploys every push to main. The video is served at `/chore-pet/chore-pet-demo.mp4`, and the links are in the write-up.
 
 **Done when:** a stranger can open the link on a phone, build a room, finish a chore and get an unlock with no help. **Met in phone emulation** (Pixel 7 profile, touch only, production build): landing to picking Sprout, building a kitchen, finishing a chore and putting on the red beanie, with no help and no errors. It also reloads offline from the service worker. Re-checked on the live URL after launch: the same flow passes with no errors, and the sample home's seeded history doesn't count. Not yet tried on a physical phone.
 
@@ -228,7 +228,7 @@ Product review: the 16 rewards ran out at 50 chores, one to two weeks in for a b
 - [LEAD] A second tier of 10 rewards (`UNLOCKS` in `src/domain/unlocks.ts`), from 60 to 200 chores and 21- and 30-day streaks, themed around keeping house; the first 16 are unchanged. Sky walls and seaside tiles are new room styles (palette tokens in ART.md). **Done**
 - [SONNET: svg-artist] x4 in parallel: chef's hat and golden crown; heart glasses and bandana; the apron; bookshelf, wall clock and bean bag. **Done** (the apron went back once: its neck strap read as a band under the cheeks)
 - [LEAD] The style picker became an even grid and wardrobe crops leave room for tall hats; Rewards, Wardrobe and Walls and floor still fit 390 x 664 and 1280 x 800.
-- [HAIKU: test-writer] Reward catalogue integrity tests. [HAIKU: reviewer] Tier-two art against ART.md.
+- [HAIKU: test-writer] Reward catalogue integrity tests. [HAIKU: reviewer] Tier-two art against ART.md. **Done** (`src/domain/rewardsCatalog.test.ts`; the apron was revised after the art review)
 - [LEAD] The home's undo toast stands in for the buttons under the list on phones, so it covers nothing. **Done**
 - [LEAD] The demo video re-recorded on the current app: a fake clock moves the days (completions are never stamped ahead of the real date), Chrome's screencast keeps it smooth.
 
@@ -244,4 +244,4 @@ Product review: "a home you build to match your own" was one room, so the toilet
 
 ## Stretch
 
-Photo proof, multiple rooms and templates, shared households, drawing your own floor plan.
+Photo proof, room templates, shared households, drawing your own floor plan.
