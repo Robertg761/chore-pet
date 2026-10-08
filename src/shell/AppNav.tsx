@@ -12,8 +12,10 @@ export interface MoreItem {
 export interface AppNavProps {
   active: Tab
   onNavigate: (tab: Exclude<Tab, 'more'>) => void
-  /** Short note under Rewards, e.g. "2 to go". */
+  /** Short note under Rewards, e.g. "Gift in 2". */
   rewardsNote?: string
+  /** The note in full for screen readers and hover, e.g. "2 more chores to the teddy bear". */
+  rewardsHint?: string
   more: MoreItem[]
   /** A quiet line at the foot of the More menu, e.g. the sync status. */
   note?: string
@@ -102,7 +104,7 @@ function useTabPill(active: Tab) {
   return { track, pill }
 }
 
-export function AppNav({ active, onNavigate, rewardsNote, more, note, menuOpen, onMenuChange }: AppNavProps) {
+export function AppNav({ active, onNavigate, rewardsNote, rewardsHint, more, note, menuOpen, onMenuChange }: AppNavProps) {
   const [localMenu, setLocalMenu] = useState(false)
   const menu = menuOpen ?? localMenu
   const setMenu = onMenuChange ?? setLocalMenu
@@ -113,26 +115,32 @@ export function AppNav({ active, onNavigate, rewardsNote, more, note, menuOpen, 
       <div ref={track} className="app-nav-track">
       <span ref={pill} className="app-nav-pill" aria-hidden="true" />
       <ul className="app-nav-list">
-        {TABS.map((tab) => (
-          <li key={tab}>
-            <button
-              type="button"
-              className="app-nav-tab"
-              title={LABELS[tab]}
-              aria-current={tab === active ? 'page' : undefined}
-              aria-haspopup={tab === 'more' ? 'dialog' : undefined}
-              onClick={() => (tab === 'more' ? setMenu(true) : onNavigate(tab))}
-            >
-              <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false">
-                <g fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  {ICONS[tab]}
-                </g>
-              </svg>
-              <span className="app-nav-label">{LABELS[tab]}</span>
-              {tab === 'rewards' && rewardsNote && <span className="app-nav-note">{rewardsNote}</span>}
-            </button>
-          </li>
-        ))}
+        {TABS.map((tab) => {
+          // The short "Gift in 2" under Rewards, said in full to screen readers and on hover. The visible
+          // words lead, so voice control can still pick the tab by what it shows.
+          const hint = tab === 'rewards' && rewardsNote && rewardsHint ? `${LABELS[tab]}, ${rewardsNote}: ${rewardsHint}` : undefined
+          return (
+            <li key={tab}>
+              <button
+                type="button"
+                className="app-nav-tab"
+                title={hint ?? LABELS[tab]}
+                aria-label={hint}
+                aria-current={tab === active ? 'page' : undefined}
+                aria-haspopup={tab === 'more' ? 'dialog' : undefined}
+                onClick={() => (tab === 'more' ? setMenu(true) : onNavigate(tab))}
+              >
+                <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false">
+                  <g fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    {ICONS[tab]}
+                  </g>
+                </svg>
+                <span className="app-nav-label">{LABELS[tab]}</span>
+                {tab === 'rewards' && rewardsNote && <span className="app-nav-note">{rewardsNote}</span>}
+              </button>
+            </li>
+          )
+        })}
       </ul>
       </div>
       {menu && (

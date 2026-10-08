@@ -1,7 +1,7 @@
 import { UNLOCKS } from '../domain/unlocks'
 import { describe, expect, it } from 'vitest'
 import type { Progress } from '../domain/types'
-import { giftTitle, nextLines, nextUpId, requirementLabel, rewardsButtonLabel, rewardsNote, withEquipped } from './rewardsModel'
+import { giftTitle, nextLines, nextUpId, requirementLabel, rewardsButtonLabel, rewardsHint, rewardsNote, withEquipped } from './rewardsModel'
 
 const progress = (over: Partial<Progress> = {}): Progress => ({ homeId: 'h', choreCount: 0, currentStreak: 0, bestStreak: 0, unlockedItems: [], ...over })
 
@@ -44,6 +44,11 @@ describe('rewardsModel', () => {
     expect(rewardsButtonLabel(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }))).toBe('Rewards · Gift in 2')
     expect(rewardsNote(null)).toBeUndefined()
     expect(rewardsNote(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }))).toBe('Gift in 2')
+    expect(rewardsHint(null)).toBeUndefined()
+    expect(rewardsHint(progress({ choreCount: 1, unlockedItems: ['item:beanie-red'] }))).toBe('2 more chores to the teddy bear')
+    expect(rewardsHint(progress({ choreCount: 2, unlockedItems: ['item:beanie-red'] }))).toBe('1 more chore to the teddy bear')
+    // The mint walls are a streak day away, but the note counts chores, so it names the chore reward.
+    expect(rewardsHint(progress({ choreCount: 1, currentStreak: 1, bestStreak: 1, unlockedItems: ['item:beanie-red'] }))).toBe('2 more chores to the teddy bear')
   })
 
   it('picks the one reward that is closest', () => {

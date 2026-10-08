@@ -61,7 +61,7 @@ import { GiftBox } from './screens/GiftBox'
 import { ObjectSheet } from './screens/ObjectSheet'
 import { PetPicker } from './screens/PetPicker'
 import { RewardsScreen } from './screens/RewardsScreen'
-import { rewardsNote } from './screens/rewardsModel'
+import { rewardsHint, rewardsNote } from './screens/rewardsModel'
 import { SampleBanner } from './screens/SampleBanner'
 import { CoachCard, FirstDoneHint, Welcome } from './screens/Onboarding'
 import { coachStep, hasDueChore, hintKey, onboardedKey, readFlag, showFirstDoneHint, writeFlag } from './screens/onboardingModel'
@@ -391,6 +391,7 @@ export default function App() {
         onMenuChange={(open) => open ? navigation.go({ ...view, sheet: 'more' }) : navigation.dismiss()}
         onNavigate={(tab) => (setSelectedId(null), setPlacing(null), tab === 'build' ? openBuild() : setView({ name: tab } as View))}
         rewardsNote={rewardsNote(progress)}
+        rewardsHint={rewardsHint(progress)}
         more={more}
         note={syncNote ?? undefined}
       />
