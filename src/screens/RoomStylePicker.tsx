@@ -62,10 +62,11 @@ export function RoomStylePicker({ wallStyle, floorStyle, progress, onChange }: R
         {kind === 'wall' ? <WallSwatch s={s as WallStyle} /> : <FloorSwatch s={s as FloorStyle} />}
         <span className="rsp-name">{s.label}</span>
         {!open && (
-          <span className="rsp-need">
+          <span className="rsp-need" title={need ?? undefined}>
             <Lock />
-            <span className="sr-only">Locked: </span>
-            {need ?? 'surprise'}
+            <span className="sr-only">Locked: {need ?? 'surprise'}</span>
+            {/* "21 days" fits a small tile; the full "21-day streak" is read out and shown on hover. */}
+            <span aria-hidden="true">{need ? need.replace(/^(\d+)-day streak$/, '$1 days') : 'surprise'}</span>
           </span>
         )}
       </button>

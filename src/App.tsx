@@ -192,6 +192,10 @@ export default function App() {
     setPlacing(null)
   }
   const momentKey = useRef(0)
+  // The screen on show right now, for a Done that lands after its short check animation:
+  // by then the player may have moved on, and the undo belongs to the home screen.
+  const viewNow = useRef(view.name)
+  useLayoutEffect(() => { viewNow.current = view.name })
   const doneRef = useRef<HTMLButtonElement>(null)
   const viewport = useViewport()
   const wide = useWide()
@@ -385,7 +389,7 @@ export default function App() {
         more={more}
         note={syncNote ?? undefined}
       />
-      {!gifts.length && !(view.name === 'home' && allChores) && !toastInHomeList && undoToast}
+      {view.name === 'home' && !gifts.length && !allChores && !toastInHomeList && undoToast}
       {gifts[0] && (
         <GiftBox
           key={gifts[0].id}
@@ -759,7 +763,7 @@ export default function App() {
     const big = condition.statuses.some((s) => s.choreId === chore.id && s.neglect === 3)
     const first = !completions.some((c) => c.completedOn === today)
     setCelebrate({ key, choreName: chore.name, big, first })
-    if (done.completion) setUndo({ key, kind: 'done', completionId: done.completion.id, choreName: chore.name })
+    if (done.completion && viewNow.current === 'home') setUndo({ key, kind: 'done', completionId: done.completion.id, choreName: chore.name })
     const placed = roomObjects.find((o) => o.id === chore.objectId)
     const entry = placed && catalogEntry(placed.catalogId)
     if (placed && entry) setSparkles((list) => [...list, { id: key, ...sparkleSpot(placed, entry) }])
