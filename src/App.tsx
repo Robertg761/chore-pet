@@ -690,7 +690,8 @@ export default function App() {
         if (obj) appStore.apply(...moveObject(obj, change.placement))
       }
     }
-    const step = coachStep(roomObjects.length)
+    // The first-build coach counts the whole home, so adding a second room mid-way doesn't send it back to step 1.
+    const step = coachStep(objects.length)
     const finishCoach = () => {
       setCoachHome(null)
       flag(onboardedKey(home.id))
@@ -733,7 +734,7 @@ export default function App() {
           {coaching && (
             <CoachCard
               step={step}
-              choreCount={activeChores.filter((c) => roomObjects.some((o) => o.id === c.objectId)).length}
+              choreCount={activeChores.filter((c) => objects.some((o) => o.id === c.objectId)).length}
               sheetOpen={Boolean(selected)}
               placing={Boolean(placing)}
               onSkip={() => (finishCoach(), doneRef.current?.focus())}
