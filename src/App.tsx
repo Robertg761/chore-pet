@@ -490,7 +490,9 @@ export default function App() {
           onClose={back}
           // The sample home has its own Start fresh, and nothing of the player's to clear.
           onStartOver={home.name === SAMPLE_HOME_NAME ? undefined : () => (navigation.go({ name: 'home' }, true), appStore.apply(...removeHome(home.id)))}
-          onClearRoom={() => (navigation.go({ name: 'home' }, true), appStore.apply(...clearHome({ ...data, home }, today, undefined, orderedRooms.slice(1).map((r) => r.id))))}
+          // The room on show stays (emptied); any others go.
+          otherRooms={Math.max(0, orderedRooms.length - 1)}
+          onClearRoom={() => (navigation.go({ name: 'home' }, true), appStore.apply(...clearHome({ ...data, home }, today, undefined, orderedRooms.filter((r) => r.id !== room?.id).map((r) => r.id))))}
           otherHomes={Object.keys(snapshot.tables.homes).filter((id) => id !== home.id).length}
         />
       </main>,
@@ -589,7 +591,10 @@ export default function App() {
         }}
         onRemove={(id) => {
           const gone = orderedRooms.find((r) => r.id === id)
-          if (!gone) return
+          // A home always keeps one room.
+          if (!gone || orderedRooms.length < 2) return
+          // Removing the room on show shows the first one left.
+          if (id === room.id) pickRoom(orderedRooms.find((r) => r.id !== id)!.id)
           // Nothing stays selected or mid-placement in a room that's gone.
           setSelectedId(null)
           setPlacing(null)

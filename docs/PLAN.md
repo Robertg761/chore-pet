@@ -232,6 +232,15 @@ Product review: the 16 rewards ran out at 50 chores, one to two weeks in for a b
 - [LEAD] The home's undo toast stands in for the buttons under the list on phones, so it covers nothing. **Done**
 - [LEAD] The demo video re-recorded on the current app: a fake clock moves the days (completions are never stamped ahead of the real date), Chrome's screencast keeps it smooth.
 
+## Phase 14: Several rooms
+
+Product review: "a home you build to match your own" was one room, so the toilet stood next to the stove. The `rooms` table already existed; the UI only read the first one.
+
+- [LEAD] Rooms model (`src/screens/roomsModel.ts`), the room pill and "Your rooms" sheet (`src/screens/RoomsSheet.tsx`), `removeRoom` and Start over keeping one room (`src/data/actions.ts`), chores tied to furniture in any room ("Sink, Kitchen"). **Done**
+- [HAIKU: test-writer] Rooms model, actions and navigation tests (55). **Done** (found and fixed: two unknown room kinds both named "Room"; an inherited property name read as a label)
+- [HAIKU: reviewer] Rooms review. **Done** (fixed: removing the room on show picks the next one; focus after Keep it and Remove; Start over keeps the room on show and says the others go; a guard so a home keeps one room; Build's selection cleared on removal. Left as is: two devices removing different rooms offline can leave none, and the app then makes a kitchen)
+- [LEAD] Browser tests: rooms keep their own furniture, the pill counts late chores elsewhere, removing asks first. **Done**
+
 ## Stretch
 
 Photo proof, multiple rooms and templates, shared households, drawing your own floor plan.

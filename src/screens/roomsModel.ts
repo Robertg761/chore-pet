@@ -24,12 +24,14 @@ export function orderRooms(rooms: readonly Room[]): Room[] {
 
 /** "Kitchen", "Bedroom", "Bedroom 2": each room's name by kind, numbered when a kind repeats. */
 export function roomNames(rooms: readonly Room[]): Map<string, string> {
-  const seen = new Map<RoomType, number>()
+  // Numbered by the name shown, so two kinds this version doesn't know aren't both just "Room".
+  const seen = new Map<string, number>()
   const names = new Map<string, string>()
   for (const r of rooms) {
-    const n = (seen.get(r.type) ?? 0) + 1
-    seen.set(r.type, n)
-    names.set(r.id, n > 1 ? `${ROOM_LABEL[r.type] ?? 'Room'} ${n}` : (ROOM_LABEL[r.type] ?? 'Room'))
+    const label = Object.hasOwn(ROOM_LABEL, r.type) ? ROOM_LABEL[r.type] : 'Room'
+    const n = (seen.get(label) ?? 0) + 1
+    seen.set(label, n)
+    names.set(r.id, n > 1 ? `${label} ${n}` : label)
   }
   return names
 }

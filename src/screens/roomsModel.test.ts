@@ -81,16 +81,14 @@ describe('roomNames', () => {
     expect(roomNames([]).size).toBe(0)
   })
 
-  // Suspected bug: an unknown kind and the 'other' kind both fall back to 'Room', and
-  // numbering is per raw type, so a home with both shows two rooms called "Room".
-  it.fails('gives two different unnamed rooms different names (suspected bug: both become "Room")', () => {
+  // An unknown kind and 'other' share the name "Room", so they're numbered by name.
+  it('gives two different unnamed rooms different names', () => {
     const names = roomNames([room('o', 'other'), room('a', 'attic')])
     expect(new Set(names.values()).size).toBe(2)
   })
 
-  // Suspected bug: ROOM_LABEL is a plain object, so an inherited property name such as
-  // 'constructor' is looked up as a label and the map holds a function, not 'Room'.
-  it.fails('gives a type named like an Object.prototype property the name Room (suspected bug)', () => {
+  // Only ROOM_LABEL's own names count, never an inherited property like 'constructor'.
+  it('gives a type named like an Object.prototype property the name Room', () => {
     expect(roomNames([room('a', 'constructor')]).get('a')).toBe('Room')
   })
 })

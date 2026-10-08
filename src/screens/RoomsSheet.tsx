@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { Room, RoomType } from '../domain/types'
 import { MAX_ROOMS, ROOM_CHOICES, ROOM_LABEL } from './roomsModel'
 import './RoomsSheet.css'
@@ -25,10 +25,13 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 export function RoomsSheet({ rooms, names, currentId, things, late, onPick, onAdd, onRemove }: RoomsSheetProps) {
   const [removing, setRemoving] = useState<string | null>(null)
   const full = rooms.length >= MAX_ROOMS
+  const listRef = useRef<HTMLUListElement>(null)
+  // After the question closes, focus goes back to the row it came from (Keep it) or the room on show (Remove).
+  const focusSoon = (selector: string) => requestAnimationFrame(() => listRef.current?.querySelector<HTMLElement>(selector)?.focus())
 
   return (
     <div className="rooms">
-      <ul className="rooms-list">
+      <ul ref={listRef} className="rooms-list">
         {rooms.map((r) => {
           const name = names.get(r.id) ?? 'Room'
           const n = things.get(r.id) ?? 0
@@ -40,11 +43,11 @@ export function RoomsSheet({ rooms, names, currentId, things, late, onPick, onAd
                 <div className="confirm" role="group" aria-label={`Remove the ${name.toLowerCase()}`}>
                   <p>Remove the {name.toLowerCase()}? Its things and their chores go; your past work and rewards stay.</p>
                   <div className="confirm-actions">
-                    <button type="button" className="btn btn-danger" onClick={() => (setRemoving(null), onRemove(r.id))}>
+                    <button type="button" className="btn btn-danger" onClick={() => (setRemoving(null), onRemove(r.id), focusSoon('.rooms-pick-current'))}>
                       Remove
                     </button>
                     {/* The safe choice takes focus. */}
-                    <button type="button" className="btn" autoFocus onClick={() => setRemoving(null)}>
+                    <button type="button" className="btn" autoFocus onClick={() => (setRemoving(null), focusSoon(`[data-remove="${r.id}"]`))}>
                       Keep it
                     </button>
                   </div>
@@ -63,7 +66,7 @@ export function RoomsSheet({ rooms, names, currentId, things, late, onPick, onAd
                     {behind > 0 && <span className="tag tag-overdue rooms-late">{behind} late</span>}
                   </button>
                   {rooms.length > 1 && (
-                    <button type="button" className="btn btn-quiet btn-danger rooms-remove" aria-label={`Remove the ${name.toLowerCase()}`} onClick={() => setRemoving(r.id)}>
+                    <button type="button" className="btn btn-quiet btn-danger rooms-remove" data-remove={r.id} aria-label={`Remove the ${name.toLowerCase()}`} onClick={() => setRemoving(r.id)}>
                       Remove
                     </button>
                   )}
