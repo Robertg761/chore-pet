@@ -21,12 +21,18 @@
 }
 .wd-preview { flex: 1 1 0; min-height: 0; width: 100%; display: block; }
 .wd-poses { align-self: stretch; }
+.wd-tabs .seg-btn { white-space: nowrap; }
 .wd-poses .seg-btn { padding: 0 2px; font-size: 0.875rem; }
 
 /* Six tabs fit a phone's width without scrolling a tab out of sight. */
 @media (max-width: 519px) {
   .wd-tabs { gap: 2px; padding: 3px; }
-  .wd-tabs .seg-btn { min-width: 0; padding: 0 2px; font-size: 0.8125rem; }
+  .wd-tabs .seg-btn { min-width: 0; padding: 0 2px; font-size: 0.8125rem; white-space: nowrap; }
+}
+/* "On back" is the longest: a touch less padding and type keeps all six on one line at 360. */
+@media (max-width: 379px) {
+  .wd-tabs { gap: 1px; padding: 2px; }
+  .wd-tabs .seg-btn { padding: 0 1px; font-size: 0.75rem; }
 }
 .wd-tab-dot { position: absolute; top: 5px; right: 6px; width: 8px; height: 8px; background: var(--accent); border: 2px solid var(--ink); border-radius: 50%; }
 .wd-tab[aria-selected='true'] .wd-tab-dot { background: var(--card); }
@@ -52,21 +58,39 @@
 
 .wd-saved { display: flex; flex-direction: column; gap: 8px; }
 .wd-outfits { list-style: none; padding: 5px; margin: -5px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.wd-outfit { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+/* One card per saved outfit: the look (a button that wears it) and its Remove action sit inside the same border. */
+.wd-outfit {
+  min-width: 0;
+  padding: 3px 3px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--card);
+  border: var(--outline);
+  border-radius: var(--radius);
+}
+/* The look being worn is marked on the card itself. */
+.wd-outfit:has(.wd-outfit-try[aria-pressed='true']) { border-color: var(--accent); box-shadow: var(--ring); }
 .wd-outfit-try {
   width: 100%;
   min-height: 44px;
   padding: 2px 2px 4px;
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   align-items: center;
   gap: 2px;
   font: inherit;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
+.wd-outfit-try:focus-visible { outline-offset: 0; }
 .wd-outfit-art { width: 100%; max-width: 54px; height: auto; display: block; }
 .wd-outfit-name { max-width: 100%; font-size: 0.8125rem; font-weight: 800; overflow-wrap: anywhere; line-height: 1.15; }
-.wd-confirm { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; }
-.wd-confirm .btn { padding: 0 2px; font-size: 0.75rem; }
+/* The question takes the Remove button's place inside the card; the buttons wrap to stack when the card is narrow. */
+.wd-confirm { display: flex; flex-wrap: wrap; gap: 4px; }
+.wd-confirm .btn { flex: 1 1 56px; padding: 0 2px; font-size: 0.8125rem; }
 .wd-outfit > .btn { width: 100%; }
 
 .wd-name-form { display: flex; flex-direction: column; gap: 2px; }

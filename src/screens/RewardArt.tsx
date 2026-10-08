@@ -2,10 +2,10 @@ import { PALETTE } from '../art/palette'
 import { catalogEntry } from '../catalog/objects'
 import { CharacterArt } from '../character/Character'
 import { ITEMS } from '../character/items'
-import { poseFor } from '../character/poses'
 import type { Pet } from '../domain/types'
 import type { Unlock } from '../domain/unlocks'
 import { floorStyleOf, wallStyleOf } from '../room/shell/styles'
+import { itemCropViewBox } from './itemCrop'
 import { ObjectThumb } from './ObjectThumb'
 import { hasRewardArt } from './rewardsModel'
 
@@ -36,14 +36,12 @@ export function GiftSilhouette({ className, lock = false }: { className?: string
   )
 }
 
-/** The item on the pet, cropped to the part of the body it goes on. */
+/** The item on the pet, framed so the whole head shows with it (see itemCrop). */
 function ItemOnPet({ unlock, pet, className }: { unlock: Unlock; pet: Pet; className?: string }) {
   const item = ITEMS.find((i) => i.id === unlock.ref)
   if (!item) return <GiftSilhouette className={className} />
-  const anchor = poseFor(pet.species, 'idle').anchors[item.slot]
-  const half = 58
   return (
-    <svg className={className} viewBox={`${anchor.x - half} ${anchor.y - half + 14} ${half * 2} ${half * 2}`} aria-hidden="true" focusable="false">
+    <svg className={className} viewBox={itemCropViewBox(pet.species, item.slot)} aria-hidden="true" focusable="false">
       <CharacterArt species={pet.species} mood="happy" bodyColour={pet.bodyColour} equipped={{ [item.slot]: item.id }} />
     </svg>
   )
