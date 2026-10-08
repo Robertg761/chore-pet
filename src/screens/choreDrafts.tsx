@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useLayoutEffect, useState } from 'react'
 import type { Chore, PlacedObject } from '../domain/types'
 import { formFromChore, type ChoreFormState } from './choreForm'
 
@@ -26,7 +26,9 @@ export function useChoreDrafts(scope: string, chores: Chore[], objects: PlacedOb
     setState({ scope, forms: Object.fromEntries(Object.entries(forms).filter(([key]) => valid(key))) })
   }
   const dirty = Object.keys(forms).length > 0
-  useEffect(() => {
+  // A layout effect, so the warning is in place within the keystroke that made the draft:
+  // a reload straight after typing (a person's, or a test's) can't slip in before it.
+  useLayoutEffect(() => {
     if (!dirty) return
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = '' }
     window.addEventListener('beforeunload', warn)
