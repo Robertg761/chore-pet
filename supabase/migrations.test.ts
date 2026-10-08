@@ -711,11 +711,11 @@ describe('starting over from Settings, synced', () => {
     expect(await as(db, A, `select * from pets`)).toEqual(pet)
     expect(await as(db, A, `select * from progress`)).toEqual(progress)
 
-    // Added back, it starts done today with a completion that doesn't count again.
+    // Done today, so added back it starts tomorrow (a creation date ahead, which the server accepts).
     const old = rowsOf<Chore>(dev, 'chores').find((c) => c.id === dishes.id)!
     expect(await dev.apply(...addChoreAgain(homeRow, old, againInput(old, []), rowsOf(dev, 'completions'), TODAY))).toEqual([])
-    const active = await as(db, A, `select c.name, x.completed_on::text, x.counts from chores c join completions x on x.chore_id = c.id where c.archived_on is null`)
-    expect(active.ok && active.rows).toEqual([{ name: 'Wash the dishes', completed_on: TODAY, counts: false }])
+    const active = await as(db, A, `select name, created_on::text from chores where archived_on is null`)
+    expect(active.ok && active.rows).toEqual([{ name: 'Wash the dishes', created_on: '2026-10-08' }])
     await db.close()
   }, 60_000)
 

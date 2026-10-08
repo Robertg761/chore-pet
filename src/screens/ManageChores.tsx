@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import type { Chore, ISODate, PlacedObject } from '../domain/types'
 import { PencilIcon } from '../shell/PencilIcon'
 import { ScreenHeader } from '../shell/ScreenHeader'
+import { shortDate } from './choreListModel'
 import { describeSchedule } from './choreForm'
 import { choreGroups, pastChores } from './manageModel'
 import './ManageChores.css'
@@ -84,7 +85,11 @@ export function ManageChores({ chores, objects, today, onEdit, onAdd, onRemove, 
                         <input type="checkbox" className="check" checked={picked.has(chore.id)} onChange={() => toggle(chore.id)} />
                         <span className="manage-text">
                           <span className="manage-name">{chore.name}</span>
-                          <span className="manage-when">{describeSchedule(chore.schedule)}</span>
+                          <span className="manage-when">
+                            {describeSchedule(chore.schedule)}
+                            {/* Added back with its round already done, or dated ahead: it joins the list on this day. */}
+                            {chore.createdOn > today && `, from ${shortDate(chore.createdOn)}`}
+                          </span>
                         </span>
                       </label>
                       <button type="button" className="btn btn-quiet manage-edit" aria-label={`Edit ${chore.name}`} title="Edit chore" onClick={() => onEdit(chore)}>
@@ -102,7 +107,7 @@ export function ManageChores({ chores, objects, today, onEdit, onAdd, onRemove, 
           <div className="manage-col">
             <section className="manage-group manage-past" aria-labelledby={`${uid}-past`}>
               <h2 id={`${uid}-past`} className="manage-heading">Removed chores</h2>
-              <p className="manage-hint">Add one back to start it fresh from today.</p>
+              <p className="manage-hint">Add one back to put it on the list again.</p>
               <ul className="manage-list">
                 {past.map((chore) => (
                   <li key={chore.id} className="manage-row manage-row-past">

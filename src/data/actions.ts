@@ -1,6 +1,6 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
-import { archiveEnd, choreStatus, completionCounts, sameSchedule, SCHEDULE_HISTORY, trimHistory } from '../domain/schedule'
+import { archiveEnd, completionCounts, restartOn, sameSchedule, SCHEDULE_HISTORY, trimHistory } from '../domain/schedule'
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, choreCountOf, streakHistory, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
@@ -221,10 +221,9 @@ export function clearHome(history: History & { objects: PlacedObject[] }, today:
 }
 
 /**
- * Add a removed chore back as a new one, starting today. If the old one's
- * current round was already done (today, or earlier in the round for a weekly
- * chore), the new one starts done today too, with a completion that doesn't
- * count again toward rewards, so removing and adding back can't earn twice.
+ * Add a removed chore back as a new one. If its current round was already
+ * done, it starts on its next due date (see restartOn), so removing and adding
+ * back can't earn the same round twice; otherwise it starts today.
  */
 export function addChoreAgain(
   home: Home,
@@ -233,15 +232,7 @@ export function addChoreAgain(
   completions: Completion[],
   today: ISODate,
 ): NewOp[] {
-  const ops = addChore(home, input, today)
-  // Its round as if it had never been removed: done and not yet due again means covered.
-  const done = completions.filter((c) => c.choreId === chore.id)
-  const covered = done.length > 0 && choreStatus({ ...chore, archivedOn: undefined }, done, today, home.vacations).state === 'upcoming'
-  if (covered) {
-    const at = done.find((c) => c.completedOn === today)?.completedAt ?? new Date().toISOString()
-    ops.push(upsertOp('completions', { id: id(), choreId: ops[0].key, completedOn: today, completedAt: at, counts: false }))
-  }
-  return ops
+  return addChore(home, input, restartOn(chore, completions, today, home.vacations))
 }
 
 /** A row as a new one: the server stamps its own creation time. */

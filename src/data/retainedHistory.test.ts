@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Chore, Completion } from '../domain/types'
 import { currentStreak } from '../domain/unlocks'
+import { nextDueDate } from '../domain/schedule'
 import { petCondition } from '../domain/health'
 import { buildSections } from '../screens/choreListModel'
 import { completedPerDay, healthPerDay, weekDays } from '../screens/weekModel'
@@ -159,35 +160,51 @@ describe('removing a chore dated ahead of today', () => {
 describe('adding a removed chore back', () => {
   const home = { id: 'h', ownerId: 'u', name: 'Home', vacations: [] }
   const input = { name: 'a', schedule: { kind: 'daily' as const }, objectId: null }
-  it('starts done when the old one was done today, without counting again', () => {
+  const added = (ops: ReturnType<typeof addChoreAgain>) => (ops[0] as { value: Chore }).value
+
+  it('comes back tomorrow when the old one was done today, so it can’t be done twice', () => {
     let s = fixture()
     s = clearHome(selectHome(s.tables), '2026-10-06').reduce(change, s)
     const before = selectHome(s.tables)
-    s = addChoreAgain(home, before.chores.find((c) => c.id === 'a')!, input, before.completions, '2026-10-06').reduce(change, s)
-    const after = selectHome(s.tables)
-    const fresh = after.chores.find((c) => !c.archivedOn)!
-    expect(after.completions.filter((c) => c.choreId === fresh.id)).toMatchObject([{ completedOn: '2026-10-06', counts: false }])
-    // Not due again today, nothing to tick, and the count is unchanged.
-    expect(buildSections(after.chores, after.completions, [], '2026-10-06').flatMap((x) => x.rows).map((r) => [r.chore.id, r.doneToday])).toEqual([[fresh.id, true]])
-    const done = completeChoreWithRewards(fresh, after.progress, { chores: after.chores, completions: after.completions, vacations: [] }, new Date(2026, 9, 6, 18), new Date(2026, 9, 6, 18))
-    expect(done.completion).toBeFalsy()
+    const ops = addChoreAgain(home, before.chores.find((c) => c.id === 'a')!, input, before.completions, '2026-10-06')
+    expect(ops.map((o) => o.table)).toEqual(['chores'])
+    expect(added(ops).createdOn).toBe('2026-10-07')
+    const after = selectHome(ops.reduce(change, s).tables)
+    // Nothing to tick today, and the streak isn't touched.
+    expect(buildSections(after.chores, after.completions, [], '2026-10-06')).toEqual([])
+    expect(currentStreak(after.chores, after.completions, '2026-10-07')).toBe(currentStreak(before.chores, before.completions, '2026-10-07'))
   })
-  it('starts due when the old one was due again (not done today)', () => {
+
+  it('starts today when the old one was due again', () => {
     let s = fixture()
     s = removeChore('a', selectHome(s.tables), '2026-10-08').reduce(change, s)
     const before = selectHome(s.tables)
-    const ops = addChoreAgain(home, before.chores.find((c) => c.id === 'a')!, input, before.completions, '2026-10-08')
-    expect(ops.map((o) => o.table)).toEqual(['chores'])
+    expect(added(addChoreAgain(home, before.chores.find((c) => c.id === 'a')!, input, before.completions, '2026-10-08')).createdOn).toBe('2026-10-08')
+    expect(added(addChoreAgain(home, { ...chore('n'), archivedOn: '2026-10-08' }, input, [], '2026-10-08')).createdOn).toBe('2026-10-08')
   })
 
-  it('starts done when a longer round was already done earlier, so it can’t be earned twice', () => {
-    // Every 3 days, done on the 6th: covered until the 9th. Removed and added back on the 7th.
-    const every3: Chore = { ...chore('e'), objectId: null, schedule: { kind: 'everyNDays', n: 3 } }
+  it('a weekly chore done early and added back on its due date comes back next week, keeping the streak', () => {
+    // Weekly on Mondays; done early on Sat 3 Oct, which covers Mon 5 Oct. Removed and added back on Mon 5 Oct.
+    const weekly: Chore = { ...chore('w', '2026-09-28'), objectId: null, schedule: { kind: 'weekly', weekday: 1 } }
+    const done: Completion[] = [
+      { id: 'w1', choreId: 'w', completedOn: '2026-09-28', completedAt: '2026-09-28T12:00:00Z' },
+      { id: 'w2', choreId: 'w', completedOn: '2026-10-03', completedAt: '2026-10-03T12:00:00Z' },
+    ]
+    const gone = { ...weekly, archivedOn: '2026-10-05' }
+    const ops = addChoreAgain(home, gone, { ...input, schedule: weekly.schedule }, done, '2026-10-05')
+    const back = added(ops)
+    expect(back.createdOn).toBe('2026-10-12')
+    // Mon 5 Oct isn't judged as missed, so Tuesday's streak is what it was without the re-add.
+    const chores = [gone, back]
+    expect(currentStreak(chores, done, '2026-10-06')).toBe(currentStreak([gone], done, '2026-10-06'))
+  })
+
+  it('an every-N-days chore comes back due on the day its round ends', () => {
+    // Every 4 days, done on the 6th: next due the 10th. Added back on the 7th.
+    const every4: Chore = { ...chore('e'), objectId: null, schedule: { kind: 'everyNDays', n: 4 } }
     const done = [{ id: 'x', choreId: 'e', completedOn: '2026-10-06', completedAt: '2026-10-06T12:00:00Z' }]
-    const ops = addChoreAgain(home, { ...every3, archivedOn: '2026-10-07' }, { ...input, schedule: every3.schedule }, done, '2026-10-07')
-    expect(ops.map((o) => o.table)).toEqual(['chores', 'completions'])
-    expect(ops[1]).toMatchObject({ value: { choreId: ops[0].key, completedOn: '2026-10-07', counts: false } })
-    // Never done: nothing to carry, it starts fresh.
-    expect(addChoreAgain(home, { ...every3, archivedOn: '2026-10-07' }, input, [], '2026-10-07').map((o) => o.table)).toEqual(['chores'])
+    const back = added(addChoreAgain(home, { ...every4, archivedOn: '2026-10-07' }, { ...input, schedule: every4.schedule }, done, '2026-10-07'))
+    expect(back.createdOn).toBe('2026-10-08')
+    expect(nextDueDate(back, [])).toBe('2026-10-10')
   })
 })
