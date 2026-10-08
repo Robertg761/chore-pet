@@ -407,7 +407,12 @@ export default function App() {
     return framed(
       'more',
       <main className="shell screen">
-        <SettingsScreen petName={pet.name} homeId={home.id} onClose={back} />
+        <SettingsScreen
+          petName={pet.name}
+          homeId={home.id}
+          onClose={back}
+          onStartOver={() => (navigation.go({ name: 'home' }, true), appStore.apply(...removeHome(home.id)))}
+        />
       </main>,
     )
   }

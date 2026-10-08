@@ -94,3 +94,23 @@ test('reload warns about a draft; stale edit deep links never become a new chore
   await page.getByRole('heading', { name: 'Mochi', exact: true }).waitFor()
   assert.equal(await page.getByRole('heading', { name: 'New chore' }).count(), 0)
 })
+
+test('Start over in Settings asks first, then clears the home back to the landing', async (t) => {
+  const page = await browserApp(t)
+  await page.getByRole('button', { name: 'Make it mine', exact: true }).click()
+  const settings = async () => {
+    await page.getByRole('button', { name: 'More', exact: true }).click()
+    await page.getByRole('button', { name: 'Settings', exact: true }).click()
+    await page.getByRole('heading', { name: 'Settings', exact: true }).waitFor()
+  }
+  await settings()
+  await page.getByRole('button', { name: 'Start over', exact: true }).click()
+  await page.getByRole('button', { name: 'Keep it', exact: true }).click()
+  assert.equal(Object.keys((await snapshot(page)).tables.homes).length, 1)
+  await page.getByRole('button', { name: 'Start over', exact: true }).click()
+  await page.getByRole('group', { name: 'Start over' }).getByRole('button', { name: 'Start over', exact: true }).click()
+  await page.getByRole('button', { name: 'Try a sample home' }).waitFor()
+  const { tables } = await snapshot(page)
+  for (const table of ['homes', 'rooms', 'placed_objects', 'chores', 'pets']) assert.deepEqual(tables[table], {}, table)
+  assert.equal(new URL(page.url()).searchParams.get('screen'), null)
+})
