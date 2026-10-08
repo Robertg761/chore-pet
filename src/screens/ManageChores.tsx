@@ -12,8 +12,10 @@ import './ManageChores.css'
 
 export interface ManageChoresProps {
   chores: Chore[]
-  /** The objects in the room, in the room's order. */
+  /** The objects in the home, in the rooms' order. */
   objects: PlacedObject[]
+  /** Each object's name ("Sink, Kitchen" once there are several rooms). */
+  places?: { id: string; name: string }[]
   today: ISODate
   onEdit: (chore: Chore) => void
   onAdd: () => void
@@ -25,9 +27,9 @@ export interface ManageChoresProps {
 
 const plural = (n: number) => (n === 1 ? '1 chore' : `${n} chores`)
 
-export function ManageChores({ chores, objects, today, onEdit, onAdd, onRemove, onAddAgain, onClose }: ManageChoresProps) {
+export function ManageChores({ chores, objects, places, today, onEdit, onAdd, onRemove, onAddAgain, onClose }: ManageChoresProps) {
   const uid = useId()
-  const groups = choreGroups(chores, objects, today)
+  const groups = choreGroups(chores, objects, today, places)
   const past = pastChores(chores, today)
   const listed = groups.flatMap((g) => g.chores)
   const [picked, setPicked] = useState<ReadonlySet<string>>(new Set())

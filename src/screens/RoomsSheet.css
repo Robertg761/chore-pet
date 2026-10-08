@@ -1,0 +1,65 @@
+.rooms { display: flex; flex-direction: column; gap: 14px; }
+.rooms-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.rooms-item { display: flex; align-items: center; gap: 6px; }
+.rooms-item > .confirm { flex: 1; }
+.rooms-pick {
+  flex: 1;
+  min-width: 0;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  font: inherit;
+  text-align: left;
+  color: var(--ink);
+  background: var(--card);
+  border: var(--outline);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.rooms-pick-current { background: var(--due-bg); border-color: var(--accent); box-shadow: var(--ring); }
+.rooms-pick:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.rooms-name { font-weight: 800; }
+.rooms-meta { font-size: 0.875rem; font-weight: 700; color: var(--ink-soft); }
+.rooms-late { margin-left: auto; flex: none; }
+.rooms-remove { flex: none; }
+.rooms-add { display: flex; flex-direction: column; gap: 8px; }
+.rooms-add-title { margin: 0; font-size: 0.9375rem; font-weight: 800; color: var(--ink-soft); }
+.rooms-add-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+
+/* Over the room picture's empty top-left corner, so it costs the screen no height. */
+.room-pill {
+  position: absolute;
+  z-index: 2;
+  top: 4px;
+  left: 0;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: 0 2px 0 var(--ink);
+  cursor: pointer;
+}
+.room-pill:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+/* A 44px target without a bigger pill. */
+.room-pill::after { content: ''; position: absolute; inset: -5px; }
+.room-pill-late {
+  min-width: 20px;
+  padding: 0 6px;
+  font-size: 0.75rem;
+  line-height: 20px;
+  text-align: center;
+  color: var(--late-ink);
+  background: var(--late-bg);
+  border: 2px solid var(--late-ink);
+  border-radius: 999px;
+}

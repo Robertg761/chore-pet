@@ -29,11 +29,11 @@ const byName = (a: Chore, b: Chore) => a.name.localeCompare(b.name)
 /**
  * The chores on the list (including any dated to start later, so a clock set
  * ahead can't hide one) by object, in the room's order, then those tied to
- * nothing. Empty groups are left out.
+ * nothing. Empty groups are left out. `places` names each object (across
+ * rooms, placesAcrossRooms); by default they're named within one room.
  */
-export function choreGroups(chores: Chore[], objects: PlacedObject[], today: ISODate): ChoreGroup[] {
+export function choreGroups(chores: Chore[], objects: PlacedObject[], today: ISODate, places = placeNames(objects)): ChoreGroup[] {
   const active = chores.filter((c) => !choreRetiredBy(c, today))
-  const places = placeNames(objects)
   const placed = new Set(places.map((p) => p.id))
   const groups: ChoreGroup[] = places.map((p) => ({ id: p.id, title: p.name, chores: active.filter((c) => c.objectId === p.id).sort(byName) }))
   groups.push({ id: 'anywhere', title: 'Anywhere', chores: active.filter((c) => !c.objectId || !placed.has(c.objectId)).sort(byName) })

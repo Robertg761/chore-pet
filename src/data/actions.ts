@@ -60,6 +60,14 @@ export function removeObject(objectId: string, _history?: History, today = toISO
   return [{ ...deleteOp('placed_objects', objectId), removal: { archivedOn: today, keepChores } } as NewOp]
 }
 
+/**
+ * Remove a room: its furniture goes the way removing each piece does (its
+ * chores are archived, their history kept), then the room itself.
+ */
+export function removeRoom(room: Room, objects: PlacedObject[], today: ISODate): NewOp[] {
+  return [...objects.filter((o) => o.roomId === room.id).flatMap((o) => removeObject(o.id, undefined, today)), deleteOp('rooms', room.id)]
+}
+
 export function updateRoom(room: Room, patch: Partial<Pick<Room, 'type' | 'floorStyle' | 'wallStyle'>>): NewOp[] {
   return [upsertOp('rooms', { ...room, ...patch })]
 }
@@ -244,7 +252,7 @@ export function removeHome(homeId: string): NewOp[] {
  * and rewards stay. Then one clear for the server catches anything another
  * device added before `now` that this one hasn't pulled yet.
  */
-export function clearHome(history: History & { home: Home; objects: PlacedObject[] }, today: ISODate, now: Date = new Date()): NewOp[] {
+export function clearHome(history: History & { home: Home; objects: PlacedObject[] }, today: ISODate, now: Date = new Date(), dropRooms: string[] = []): NewOp[] {
   const placed = new Set(history.objects.map((o) => o.id))
   // Furniture goes keeping its chores (only detached), and each chore this device knows is
   // retired by itself: a chore another device put on that furniture after the clear stays.
@@ -252,6 +260,8 @@ export function clearHome(history: History & { home: Home; objects: PlacedObject
   return [
     ...history.objects.flatMap((o) => removeObject(o.id, history, today, true)),
     ...detached.chores.filter((c) => !choreRetiredBy(c, today)).flatMap((c) => removeChore(c.id, detached, today)),
+    // A home starting over keeps one room; the others go, now empty.
+    ...dropRooms.map((id) => deleteOp('rooms', id)),
     clearOp(history.home.id, today, now.toISOString()),
   ]
 }
