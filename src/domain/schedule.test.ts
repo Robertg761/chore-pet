@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { weekdayOf } from './dates'
-import { choreAsOf, choreStatus, completionCounts, nextDueDate } from './schedule'
+import { archiveEnd, choreAsOf, choreRetiredBy, choreStatus, completionCounts, nextDueDate, restartOn } from './schedule'
 import type { Chore, Completion, Schedule } from './types'
 
 // Reference: 2026-10-06 is a Tuesday, 2026-10-10 is a Saturday.
@@ -161,3 +161,47 @@ describe('choreAsOf', () => {
   })
 })
 
+
+describe('removed chores', () => {
+  const base: Chore = { id: 'c', homeId: 'h', objectId: null, name: 'Dishes', createdOn: '2026-10-05', schedule: { kind: 'daily' }, photoProof: false }
+  it('a chore is retired once its archive date has come', () => {
+    expect(choreRetiredBy(base, '2026-10-08')).toBe(false)
+    expect(choreRetiredBy({ ...base, archivedOn: '2026-10-09' }, '2026-10-08')).toBe(false)
+    expect(choreRetiredBy({ ...base, archivedOn: '2026-10-08' }, '2026-10-08')).toBe(true)
+  })
+  it('a chore removed before it started is retired at once', () => {
+    // Dated ahead by a clock and removed today: it ends on its start date, active on no day.
+    expect(choreRetiredBy({ ...base, createdOn: '2026-10-10', archivedOn: '2026-10-10' }, '2026-10-08')).toBe(true)
+  })
+  it('a removal never ends before the chore starts', () => {
+    expect(archiveEnd(base, '2026-10-08')).toBe('2026-10-08')
+    expect(archiveEnd(base, '2026-10-01')).toBe('2026-10-05')
+  })
+})
+
+describe('restartOn', () => {
+  const daily: Chore = { id: 'c', homeId: 'h', objectId: null, name: 'Dishes', createdOn: '2026-10-01', schedule: { kind: 'daily' }, photoProof: false, archivedOn: '2026-10-08' }
+  const done = (day: string): Completion => ({ id: day, choreId: 'c', completedOn: day, completedAt: `${day}T12:00:00Z` })
+  it('starts today when never done or due again', () => {
+    expect(restartOn(daily, [], '2026-10-08')).toBe('2026-10-08')
+    expect(restartOn(daily, [done('2026-10-06')], '2026-10-08')).toBe('2026-10-08')
+  })
+  it('starts on the next due date when the round is already done', () => {
+    expect(restartOn(daily, [done('2026-10-08')], '2026-10-08')).toBe('2026-10-09')
+    const monthly = { ...daily, schedule: { kind: 'monthly' as const, dayOfMonth: 20 } }
+    expect(restartOn(monthly, [done('2026-10-08')], '2026-10-10')).toBe('2026-11-20')
+  })
+  it('a vacation pushing the due date doesn’t change the rule', () => {
+    // Done today, daily: tomorrow, whatever the vacation says about lateness.
+    expect(restartOn(daily, [done('2026-10-08')], '2026-10-08', [{ start: '2026-10-09', end: '2026-10-12' }])).toBe('2026-10-09')
+  })
+})
+
+describe('restartOn never starts in the past', () => {
+  it('an every-N-days chore added back late in its interval starts today and comes due a little later', () => {
+    // Every 4 days, done Oct 1 (due Oct 5), added back Oct 4: it can't start Oct 3, so it starts Oct 4, due Oct 6.
+    const every4: Chore = { id: 'c', homeId: 'h', objectId: null, name: 'Mop', createdOn: '2026-09-20', schedule: { kind: 'everyNDays', n: 4 }, photoProof: false, archivedOn: '2026-10-04' }
+    const done: Completion[] = [{ id: 'd', choreId: 'c', completedOn: '2026-10-01', completedAt: '2026-10-01T12:00:00Z' }]
+    expect(restartOn(every4, done, '2026-10-04')).toBe('2026-10-04')
+  })
+})

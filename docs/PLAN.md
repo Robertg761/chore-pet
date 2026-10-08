@@ -191,6 +191,17 @@ User feedback: "I want it to feel fluid. Nice animations, good design elements, 
 
 **Done when:** every interaction has motion that explains what changed, nothing jumps, and nothing moves for players who ask for less. **Met** in phone and desktop emulation (video frames reviewed for each); axe clean with motion on and off.
 
+## Phase 11: Managing chores and starting over
+
+User feedback: "I don't see any way to manage my chores", and a way to start from scratch, because "someone could move or come up with all new chores", and clearing is easier than removing everything by hand.
+
+- [LEAD] A pencil after each chore's name on the list, so tapping it to edit reads as possible; the button reads "Edit <chore>" aloud. **Done**
+- [LEAD] Start over in Settings: "Clear room and chores" (keeps the pet, its look, rewards and history; `clearHome` in `src/data/actions.ts`) or "Erase everything". Each asks twice, focus lands on the safe choice, and the sample home keeps its own Start fresh instead. **Done**
+- [LEAD] The Chores screen (`src/screens/ManageChores.tsx`, model in `manageModel.ts`): chores grouped by object, edit returns here, remove several at once with a confirm, and removed chores can be added back. Reached from More and from Manage on the full list. **Done**
+- [LEAD] Tests: model unit tests; clearing, adding back and erasing synced against the real migrations (`supabase/migrations.test.ts`); browser tests for every path. **Done**
+
+**Done when:** a player can find, edit and remove any chore, clear the room and chores after a move without losing the pet or rewards, and erase everything, with nothing lost by a stray tap. **Met** in phone and desktop emulation.
+
 ## Stretch
 
 Photo proof, multiple rooms and templates, shared households, drawing your own floor plan.

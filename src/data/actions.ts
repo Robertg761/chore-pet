@@ -1,6 +1,6 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
-import { completionCounts, sameSchedule, SCHEDULE_HISTORY, trimHistory } from '../domain/schedule'
+import { archiveEnd, completionCounts, restartOn, sameSchedule, SCHEDULE_HISTORY, trimHistory } from '../domain/schedule'
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, choreCountOf, streakHistory, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
@@ -89,7 +89,7 @@ export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 's
 export function removeChore(choreId: string, history?: History, today = toISODate(new Date())): NewOp[] {
   const chore = history?.chores.find((c) => c.id === choreId)
   return chore
-    ? [upsertOp('chores', { ...chore, archivedOn: chore.archivedOn ?? today })]
+    ? [upsertOp('chores', { ...chore, archivedOn: chore.archivedOn ?? archiveEnd(chore, today) })]
     : [{ ...deleteOp('chores', choreId), removal: { archivedOn: today } } as NewOp]
 }
 
@@ -203,6 +203,36 @@ export function updatePet(pet: Pet, patch: Partial<Omit<Pet, 'id' | 'homeId'>>):
 /** Remove a whole home. Rooms, objects, chores, history, pet and progress go with it (the database cascades the same way). */
 export function removeHome(homeId: string): NewOp[] {
   return [deleteOp('homes', homeId)]
+}
+
+/**
+ * Clear the room and the chore list for a fresh start (a move, or a whole new
+ * set of chores), keeping the pet, its looks and everything earned. Furniture
+ * goes and every chore is retired the same way as removing them one by one, so
+ * past work and rewards stay.
+ */
+export function clearHome(history: History & { objects: PlacedObject[] }, today: ISODate): NewOp[] {
+  const placed = new Set(history.objects.map((o) => o.id))
+  return [
+    ...history.objects.flatMap((o) => removeObject(o.id, history, today)),
+    // Chores on furniture are retired with it; the rest are retired here.
+    ...history.chores.filter((c) => !c.archivedOn && !(c.objectId && placed.has(c.objectId))).flatMap((c) => removeChore(c.id, history, today)),
+  ]
+}
+
+/**
+ * Add a removed chore back as a new one. If its current round was already
+ * done, it starts on its next due date (see restartOn), so removing and adding
+ * back can't earn the same round twice; otherwise it starts today.
+ */
+export function addChoreAgain(
+  home: Home,
+  chore: Chore,
+  input: { name: string; schedule: Schedule; objectId: string | null },
+  completions: Completion[],
+  today: ISODate,
+): NewOp[] {
+  return addChore(home, input, restartOn(chore, completions, today, home.vacations))
 }
 
 /** A row as a new one: the server stamps its own creation time. */

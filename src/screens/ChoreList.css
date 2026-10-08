@@ -90,11 +90,15 @@
   cursor: pointer;
   overflow-wrap: anywhere;
 }
+.cl-name-text { min-width: 0; }
+.cl-pencil { flex: none; margin-left: 6px; vertical-align: -2px; color: var(--ink-soft); }
+.cl-name:hover .cl-pencil { color: var(--ink); }
 .cl-info .tag { margin: 0 0 2px; font-weight: 800; white-space: nowrap; }
 
 /* The home screen's short list: one line per chore, until space (or text size) runs tight. */
 .cl-short .cl-info { flex-wrap: nowrap; }
-.cl-short .cl-name { flex: 0 1 auto; min-width: 6em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; overflow-wrap: normal; }
+.cl-short .cl-name { flex: 0 1 auto; min-width: 6em; display: inline-flex; align-items: center; white-space: nowrap; overflow-wrap: normal; }
+.cl-short .cl-name-text { overflow: hidden; text-overflow: ellipsis; }
 .cl-short .cl-info .tag { margin: 0; }
 @container cl (max-width: 22em) {
   /* The tag drops under the name rather than squeezing it. */
@@ -107,7 +111,8 @@
 @container cl (max-width: 13em) {
   .cl-row { grid-template-columns: minmax(0, 1fr); padding: 4px 12px 8px; gap: 4px; }
   .cl-action { justify-self: start; }
-  .cl-short .cl-name { white-space: normal; overflow: visible; text-overflow: clip; }
+  .cl-short .cl-name { white-space: normal; }
+  .cl-short .cl-name-text { overflow: visible; text-overflow: clip; }
 }
 
 /* The all-done card. */

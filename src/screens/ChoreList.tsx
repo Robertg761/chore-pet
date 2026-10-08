@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } f
 import { withViewTransition } from '../shell/viewTransition'
 import type { Chore, Completion, VacationWindow } from '../domain/types'
 import { allCaughtUp, buildSections, nextUpcoming, onVacation, shortRows, whenPhrase, type ChoreRow } from './choreListModel'
+import { PencilIcon } from '../shell/PencilIcon'
 import './ChoreList.css'
 
 export interface ChoreListProps {
@@ -12,6 +13,8 @@ export interface ChoreListProps {
   onComplete: (chore: Chore) => void
   onEdit: (chore: Chore) => void
   onAdd: () => void
+  /** Opens the chores screen (edit, remove several, add back removed ones). Shown on the full list. */
+  onManage?: () => void
   /**
    * Show only the first few rows (late, then today, then coming up) under one
    * "Up next" heading, with a button to see them all. Leave unset for the full list.
@@ -50,7 +53,7 @@ const hasAction = (row: ChoreRow) => !row.allSet
 /** How long after a completion to keep trying to put focus back where it was lost. */
 const REFOCUS_MS = 3000
 
-export function ChoreList({ chores, completions, vacations, today, onComplete, onEdit, onAdd, limit, onSeeAll }: ChoreListProps) {
+export function ChoreList({ chores, completions, vacations, today, onComplete, onEdit, onAdd, onManage, limit, onSeeAll }: ChoreListProps) {
   const sections = buildSections(chores, completions, vacations, today)
   const away = onVacation(today, vacations)
   const short = limit !== undefined
@@ -144,8 +147,10 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
         data-unsaved={justDone || undefined}
       >
         <div className="cl-info">
-          <button type="button" className="cl-name" onClick={() => onEdit(chore)}>
-            {chore.name}
+          <button type="button" className="cl-name" aria-label={`Edit ${chore.name}`} title="Edit chore" onClick={() => onEdit(chore)}>
+            <span className="cl-name-text">{chore.name}</span>
+            {/* A pencil after the name, so it reads as tappable: tap to change or remove the chore. */}
+            <PencilIcon className="cl-pencil" size={16} />
           </button>
           <span className={`tag tag-${status.state}${status.neglect ? ` tag-late${status.neglect}` : ''}`}>{label}</span>
         </div>
@@ -233,6 +238,11 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
           <button type="button" className="cl-add cl-all" onClick={onSeeAll}>
             All<span className="cl-all-extra"> chores</span>
             {rows.length > shown.length ? ` (${rows.length})` : ''}
+          </button>
+        )}
+        {onManage && (
+          <button type="button" className="cl-add" onClick={onManage}>
+            Manage
           </button>
         )}
         <button type="button" className="cl-add" onClick={onAdd}>

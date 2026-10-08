@@ -5,7 +5,9 @@ import { ALL_ENTRIES } from '../src/catalog/objects'
 import { sampleHome } from '../src/content/sampleHome'
 import {
   addChore,
+  addChoreAgain,
   adoptSample,
+  clearHome,
   completeChore,
   completeChoreWithRewards,
   createHousehold,
@@ -13,6 +15,7 @@ import {
   moveObject,
   placeObject,
   removeChore,
+  removeHome,
   removeObject,
   setVacations,
   updateChore,
@@ -21,12 +24,13 @@ import {
   type History,
 } from '../src/data/actions'
 import { KEY_COLUMN, MAPPERS } from '../src/data/mappers'
-import { change, emptySnapshot, planFlush, type NewOp, type Snapshot } from '../src/data/state'
+import { change, emptySnapshot, planFlush, selectHome, type NewOp, type Snapshot } from '../src/data/state'
 import { TABLES, type TableName } from '../src/data/tables'
 import { CHARACTER_SLOTS, SPECIES, type Chore, type Home, type Pet, type PlacedObject, type Progress, type Room, type RoomType, type Schedule } from '../src/domain/types'
 import { UNLOCKS } from '../src/domain/unlocks'
 import { FLOOR_STYLES, WALL_STYLES } from '../src/room/shell/styles'
 import { NAME_MAX } from '../src/screens/choreForm'
+import { againInput } from '../src/screens/manageModel'
 import { BODY_COLOURS, CHEEK_OPTIONS, EYE_OPTIONS } from '../src/screens/creatorModel'
 
 // Runs the migrations on a real Postgres (PGlite) set up like Supabase:
@@ -674,6 +678,55 @@ describe('object removal from the real offline queue', () => {
     const counts = await serverCounts(db, A)
     expect(counts.placed_objects).toBe(0)
     expect(counts.completions).toBe(2)
+    await db.close()
+  }, 60_000)
+})
+
+describe('starting over from Settings, synced', () => {
+  it('clears the room and chores on the server, keeps the pet, rewards and past work, and adds a chore back', async () => {
+    const db = await supabaseLike()
+    const dev = device(db, A)
+    expect(await dev.apply(...sampleHome({ species: 'sprout', userId: A, today: TODAY }))).toEqual([])
+    expect(await dev.apply(...adoptSample(rowsOf<Home>(dev, 'homes')[0]))).toEqual([])
+    const before = await serverCounts(db, A)
+    expect(before.placed_objects).toBeGreaterThan(3)
+    expect(before.chores).toBeGreaterThan(3)
+    const pet = await as(db, A, `select * from pets`)
+    const progress = await as(db, A, `select * from progress`)
+    // One done today (so adding it back carries that over) and one dated ahead by a device clock, not yet synced.
+    const dishes = rowsOf<Chore>(dev, 'chores').find((c) => c.name === 'Wash the dishes')!
+    expect(await dev.apply(...completeChore(dishes, null, new Date(`${TODAY}T12:00:00`), { realNow: null }))).toEqual([])
+    const homeRow = rowsOf<Home>(dev, 'homes')[0]
+    const ahead = addChore(homeRow, { name: 'From the future', schedule: { kind: 'daily' } }, '2026-10-09')
+
+    // Cleared in the same sync it was made in, so it reaches the server as a new, already-ended row.
+    const local = { ...dev.tables, chores: { ...dev.tables.chores, [ahead[0].key]: (ahead[0] as { value: Chore }).value } }
+    expect(await dev.apply(...ahead, ...clearHome(selectHome(local), TODAY))).toEqual([])
+    expect(rowsOf<Chore>(dev, 'chores').find((c) => c.name === 'From the future')?.archivedOn).toBe('2026-10-09')
+    const after = await serverCounts(db, A)
+    expect(after).toEqual(localCounts(dev))
+    expect(after).toEqual({ ...before, placed_objects: 0, chores: before.chores + 1, completions: before.completions + 1 })
+    const chores = await as(db, A, `select archived_on::text, object_id, name from chores`)
+    expect(chores.ok && chores.rows.every((c) => c.archived_on === (c.name === 'From the future' ? '2026-10-09' : TODAY) && c.object_id === null)).toBe(true)
+    expect(await as(db, A, `select * from pets`)).toEqual(pet)
+    expect(await as(db, A, `select * from progress`)).toEqual(progress)
+
+    // Done today, so added back it starts tomorrow (a creation date ahead, which the server accepts).
+    const old = rowsOf<Chore>(dev, 'chores').find((c) => c.id === dishes.id)!
+    expect(await dev.apply(...addChoreAgain(homeRow, old, againInput(old, []), rowsOf(dev, 'completions'), TODAY))).toEqual([])
+    const active = await as(db, A, `select name, created_on::text from chores where archived_on is null`)
+    expect(active.ok && active.rows).toEqual([{ name: 'Wash the dishes', created_on: '2026-10-08' }])
+    await db.close()
+  }, 60_000)
+
+  it('erases the whole home on the server, leaving nothing behind', async () => {
+    const db = await supabaseLike()
+    const dev = device(db, A)
+    expect(await dev.apply(...sampleHome({ species: 'bun', userId: A, today: TODAY }))).toEqual([])
+    expect(await dev.apply(...adoptSample(rowsOf<Home>(dev, 'homes')[0]))).toEqual([])
+    expect(await dev.apply(...removeHome(rowsOf<Home>(dev, 'homes')[0].id))).toEqual([])
+    expect(await serverCounts(db, A)).toEqual(Object.fromEntries(TABLES.map((t) => [t, 0])))
+    expect(localCounts(dev)).toEqual(Object.fromEntries(TABLES.map((t) => [t, 0])))
     await db.close()
   }, 60_000)
 })

@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { catalogEntry } from './catalog/objects'
-import { choreActiveOn } from './domain/schedule'
+import { choreActiveOn, choreRetiredBy } from './domain/schedule'
 import type { CatalogEntry } from './catalog/types'
 import { CharacterArt } from './character/Character'
 import { isInVacation } from './domain/dates'
@@ -11,7 +11,9 @@ import { currentStreak, type Unlock } from './domain/unlocks'
 import { ITEMS } from './character/items'
 import {
   addChore,
+  addChoreAgain,
   adoptSample,
+  clearHome,
   completeChoreWithRewards,
   uncompleteChore,
   updatePet,
@@ -43,6 +45,8 @@ import { CatalogTray } from './screens/CatalogTray'
 import { CharacterCreator } from './screens/CharacterCreator'
 import { ChoreEditor } from './screens/ChoreEditor'
 import { ChoreList } from './screens/ChoreList'
+import { ManageChores } from './screens/ManageChores'
+import { againInput, placeNames } from './screens/manageModel'
 import { sparkleSpot, type SparkleSpot } from './screens/doneMoment'
 import { HealthBar } from './screens/HealthBar'
 import { AccountCleanup } from './screens/AccountCleanup'
@@ -78,7 +82,7 @@ import { AccountSection } from './screens/AccountSection'
 import { ScreenHeader } from './shell/ScreenHeader'
 
 /** Where each screen sits, left to right: the tabs in their order, then the screens opened from them. */
-const VIEW_RANK: Record<View['name'], number> = { home: 0, build: 1, wardrobe: 2, rewards: 3, edit: 4, week: 5, creator: 5, share: 5, vacation: 5, settings: 5, 'sign-in': 5, 'pick-pet': 1 }
+const VIEW_RANK: Record<View['name'], number> = { home: 0, build: 1, wardrobe: 2, rewards: 3, edit: 6, chores: 5, week: 5, creator: 5, share: 5, vacation: 5, settings: 5, 'sign-in': 5, 'pick-pet': 1 }
 
 /** How long the gift waits after Done, so the cheer, sparkle and health float play first. */
 const GIFT_DELAY_MS = 1400
@@ -88,6 +92,7 @@ const VIEW_TITLE: Record<View['name'], string> = {
   home: 'Chore Pet',
   build: 'Build · Chore Pet',
   edit: 'Edit chore · Chore Pet',
+  chores: 'Chores · Chore Pet',
   vacation: 'Vacation mode · Chore Pet',
   rewards: 'Rewards · Chore Pet',
   week: 'Your week · Chore Pet',
@@ -178,11 +183,14 @@ export default function App() {
   const viewport = useViewport()
   const wide = useWide()
   // A chore being edited that no longer exists (deleted on another device) sends the editor home.
-  const missingEdit = view.name === 'edit' && view.choreId !== undefined && !data.chores.some((c) => c.id === view.choreId && choreActiveOn(c, today))
+  // Any chore still on the list can be edited, including one dated to start later (a clock set ahead).
+  const missingEdit = view.name === 'edit' && view.choreId !== undefined && !data.chores.some((c) => c.id === view.choreId && !choreRetiredBy(c, today))
   const staleEdit = ready && hydrated && missingEdit
   useEffect(() => {
-    if (staleEdit || (data.home && (view.name === 'sign-in' || view.name === 'pick-pet'))) navigation.go({ name: 'home' }, true)
-  }, [staleEdit, data.home, view.name, navigation])
+    // Back to where the editor was opened from: deleting from the chores screen lands there, not home.
+    if (staleEdit) navigation.go(view.name === 'edit' && view.from === 'chores' ? { name: 'chores' } : { name: 'home' }, true)
+    else if (data.home && (view.name === 'sign-in' || view.name === 'pick-pet')) navigation.go({ name: 'home' }, true)
+  }, [staleEdit, data.home, view, navigation])
   // Each screen names itself and takes focus at its heading, so keyboard and screen-reader users land on it.
   useEffect(() => {
     document.title = VIEW_TITLE[view.name]
@@ -262,6 +270,7 @@ export default function App() {
   const { home, pet, progress, rooms, objects, chores, completions } = data
   const activeChores = chores.filter((c) => choreActiveOn(c, today))
   const room = rooms[0]
+  const roomObjects = room ? objects.filter((o) => o.roomId === room.id) : []
   const back = () => setView({ name: 'home' })
   const flag = (key: string) => (writeFlag(key), setFlagTick((n) => n + 1))
   // Build mode for the first time shows the coach card; it stays for this visit once started.
@@ -286,6 +295,7 @@ export default function App() {
 
   const syncNote = savedLocally || sync === 'synced' ? SYNC_LABEL[sync] : null
   const more: MoreItem[] = [
+    { label: 'Chores', onSelect: () => setView({ name: 'chores' }) },
     { label: 'Your week', onSelect: () => setView({ name: 'week' }) },
     { label: 'Change look', onSelect: () => setView({ name: 'creator' }) },
     { label: 'Share your home', onSelect: () => setView({ name: 'share' }) },
@@ -358,18 +368,11 @@ export default function App() {
 
   if (view.name === 'edit') {
     // Looked up fresh each render: a chore deleted elsewhere (another device, a sync) is never written back.
-    const chore = view.choreId ? activeChores.find((c) => c.id === view.choreId) : undefined
+    const chore = view.choreId ? chores.find((c) => c.id === view.choreId && !choreRetiredBy(c, today)) : undefined
     // Places a chore can belong to, named like the catalog; duplicates are numbered ("Rug 2").
-    const seen = new Map<string, number>()
-    const places = objects
-      .filter((o) => o.roomId === rooms[0]?.id)
-      .flatMap((o) => {
-        const name = catalogEntry(o.catalogId)?.name
-        if (!name) return []
-        const n = (seen.get(name) ?? 0) + 1
-        seen.set(name, n)
-        return [{ id: o.id, name: n > 1 ? `${name} ${n}` : name }]
-      })
+    const places = placeNames(roomObjects)
+    // Opened from the chores screen, the editor goes back there.
+    const done = () => (view.from === 'chores' ? setView({ name: 'chores' }) : back())
     return framed(
       'home',
       <main className="shell screen">
@@ -379,16 +382,34 @@ export default function App() {
           places={places}
           onSave={(value) => {
             appStore.apply(...(chore ? updateChore(chore, value, today) : addChore(home, value, today)))
-            back()
+            done()
           }}
           onDelete={
             chore &&
             (() => {
               appStore.apply(...removeChore(chore.id, data, today))
-              back()
+              done()
             })
           }
-          onCancel={back}
+          onCancel={done}
+        />
+      </main>,
+    )
+  }
+
+  if (view.name === 'chores') {
+    return framed(
+      'more',
+      <main className="shell screen">
+        <ManageChores
+          chores={chores}
+          objects={roomObjects}
+          today={today}
+          onEdit={(chore) => setView({ name: 'edit', choreId: chore.id, from: 'chores' })}
+          onAdd={() => setView({ name: 'edit', from: 'chores' })}
+          onRemove={(list) => appStore.apply(...list.flatMap((c) => removeChore(c.id, data, today)))}
+          onAddAgain={(chore) => appStore.apply(...addChoreAgain(home, chore, againInput(chore, roomObjects), completions, today))}
+          onClose={back}
         />
       </main>,
     )
@@ -407,7 +428,14 @@ export default function App() {
     return framed(
       'more',
       <main className="shell screen">
-        <SettingsScreen petName={pet.name} homeId={home.id} onClose={back} />
+        <SettingsScreen
+          petName={pet.name}
+          homeId={home.id}
+          onClose={back}
+          // The sample home has its own Start fresh, and nothing of the player's to clear.
+          onStartOver={home.name === SAMPLE_HOME_NAME ? undefined : () => (navigation.go({ name: 'home' }, true), appStore.apply(...removeHome(home.id)))}
+          onClearRoom={() => (navigation.go({ name: 'home' }, true), appStore.apply(...clearHome(data, today)))}
+        />
       </main>,
     )
   }
@@ -419,7 +447,7 @@ export default function App() {
         <ShareCard
           pet={pet}
           room={rooms[0]}
-          objects={objects.filter((o) => o.roomId === rooms[0].id)}
+          objects={roomObjects}
           choreCount={progress?.choreCount ?? 0}
           // Worked out for the displayed day, like the rewards screen.
           streak={currentStreak(chores, completions, today, home.vacations)}
@@ -477,7 +505,6 @@ export default function App() {
   const away = isInVacation(today, home.vacations)
   const neglect = objectNeglect(chores, condition.statuses)
   const stages = Object.fromEntries(Object.entries(neglect).map(([id, level]) => [id, messStageFor(level)]))
-  const roomObjects = room ? objects.filter((o) => o.roomId === room.id) : []
   const solid = roomObjects.flatMap((o) => {
     const e = catalogEntry(o.catalogId)
     return e && e.layer === 'solid' ? [footprintOf(o, e)] : []
@@ -638,6 +665,7 @@ export default function App() {
       onComplete={completeChore}
       onEdit={(chore) => setView({ name: 'edit', choreId: chore.id })}
       onAdd={() => setView({ name: 'edit' })}
+      onManage={short ? undefined : () => setView({ name: 'chores' })}
       limit={short ? upNextRows(viewport.height, sample) : undefined}
       onSeeAll={short ? () => setAllChores(true) : undefined}
     />

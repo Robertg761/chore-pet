@@ -15,6 +15,12 @@ describe('app navigation', () => {
       .toBe('/chore-pet/?code=abc&dev=&screen=edit&chore=a%2Fb#auth')
     expect(readRoute('?screen=edit&chore=a%2Fb')).toEqual({ name: 'edit', choreId: 'a/b' })
     expect(readRoute('?screen=unknown&sheet=all')).toEqual({ name: 'home' })
+    // The chores screen, and an editor opened from it, which goes back there.
+    expect(routeUrl(new URL('https://example.org/'), { name: 'edit', choreId: 'c', from: 'chores' })).toBe('/?screen=edit&chore=c&from=chores')
+    expect(readRoute('?screen=edit&from=chores')).toEqual({ name: 'edit', from: 'chores' })
+    expect(readRoute('?screen=edit&from=elsewhere')).toEqual({ name: 'edit' })
+    expect(readRoute('?screen=chores&from=chores')).toEqual({ name: 'chores' })
+    expect(routeUrl(new URL('https://example.org/?screen=edit&from=chores'), { name: 'home' })).toBe('/')
     expect(readRoute('?error=access_denied')).toEqual({ name: 'sign-in' })
     expect(readRoute('', '#error=access_denied')).toEqual({ name: 'sign-in' })
     expect(readRoute('?screen=week&sheet=all')).toEqual({ name: 'week' })

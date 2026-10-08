@@ -7,6 +7,42 @@ export function choreActiveOn(chore: Chore, day: ISODate): boolean {
   return chore.createdOn <= day && (!chore.archivedOn || day < chore.archivedOn)
 }
 
+/**
+ * Removed as of `day`: its archive date has come, or it was removed before it
+ * started (ended on its own start date, so active on no day at all). A chore
+ * not retired is on the list now or will be.
+ */
+export function choreRetiredBy(chore: Chore, day: ISODate): boolean {
+  return Boolean(chore.archivedOn && (chore.archivedOn <= day || chore.archivedOn <= chore.createdOn))
+}
+
+/** The day a removed chore ends: the removal day, never before it starts (a device clock set ahead), as the server requires. */
+export function archiveEnd(chore: Chore, day: ISODate): ISODate {
+  return day < chore.createdOn ? chore.createdOn : day
+}
+
+/**
+ * The day a removed chore, added back on `today`, should start. If its current
+ * round was already done (it would be upcoming had it never been removed), it
+ * starts so its first occurrence is that next due date: nothing is owed before
+ * then, so the round can't be earned twice or missed. Otherwise it starts today.
+ *
+ * Never before today: a start in the past would make days already judged as
+ * paused (nothing on the list) count toward the streak. So an every-N-days
+ * chore added back late in its interval is first due a little later than it
+ * would have been (at most half an interval), which earns nothing either way.
+ */
+export function restartOn(chore: Chore, completions: Completion[], today: ISODate, vacations: VacationWindow[] = []): ISODate {
+  const done = completions.filter((c) => c.choreId === chore.id)
+  if (done.length === 0) return today
+  const status = choreStatus({ ...chore, archivedOn: undefined }, done, today, vacations)
+  if (status.state !== 'upcoming') return today
+  // An every-N-days chore is first due halfway through its first interval (see startReplay).
+  const lead = chore.schedule.kind === 'everyNDays' ? Math.floor(intervalOf(chore.schedule) / 2) : 0
+  const start = addDays(status.dueDate, -lead)
+  return start > today ? start : today
+}
+
 export type ChoreState = 'upcoming' | 'due' | 'overdue'
 
 export interface ChoreStatus {
