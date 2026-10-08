@@ -4,8 +4,10 @@ import './UndoToast.css'
 const SHOW_MS = 5000
 
 /** A correction stays available while focused, hovered, or blocked by a dialog. */
-export function UndoToast({ choreName, onUndo, onClose, paused = false, inline = false }: {
+export function UndoToast({ choreName, verb = 'Done', onUndo, onClose, paused = false, inline = false }: {
   choreName: string
+  /** What happened to the chore: "Done" or "Skipped". */
+  verb?: string
   onUndo: () => void
   onClose: () => void
   /** Gifts keep the correction available throughout the reveal and queue. */
@@ -61,7 +63,7 @@ export function UndoToast({ choreName, onUndo, onClose, paused = false, inline =
       onFocus={() => setFocused(true)}
       onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false) }}
     >
-      <span className="undo-toast-text">Done: {choreName}</span>
+      <span className="undo-toast-text">{verb}: {choreName}</span>
       <button type="button" onClick={() => {
         const dialog = ref.current?.closest('dialog')
         onUndo()

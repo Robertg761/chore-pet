@@ -134,6 +134,9 @@
 
 .editor-actions { display: grid; grid-template-columns: 1fr; gap: 10px; padding-bottom: 4px; }
 .editor-save { min-height: 48px; font-size: 1.0625rem; }
+/* Skip shares Save's row, so the editor stays one screen tall. */
+.editor-actions-skip { grid-template-columns: minmax(0, 1fr) auto; }
+.editor-skip { min-height: 48px; }
 
 .editor-danger { display: flex; justify-content: center; }
 .editor-trash { padding: 0 10px; }
@@ -186,7 +189,7 @@
   .editor-where > .editor-hint { position: static; width: auto; height: auto; margin: 0; clip-path: none; white-space: normal; overflow: visible; }
   .editor-col { gap: 6px; }
   .editor-summary { padding: 4px 12px; }
-  .editor-save { min-height: 44px; }
+  .editor-save, .editor-skip { min-height: 44px; }
 }
 @media (min-width: 900px) {
   .app-view > .screen:has(> .editor) { padding: 24px 28px; justify-content: center; }
@@ -209,4 +212,5 @@
   .editor-step { min-height: 48px; }
   .editor-summary { padding: 10px 14px; }
   .editor-save { min-height: 52px; font-size: 1.125rem; }
+  .editor-skip { min-height: 52px; }
 }

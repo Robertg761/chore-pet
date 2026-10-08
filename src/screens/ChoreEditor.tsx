@@ -34,6 +34,8 @@ export interface ChoreEditorProps {
   /** objectId is always set: an id, or null for "nowhere in particular". */
   onSave: (value: ChoreValue) => void
   onDelete?: () => void
+  /** "Skip this time": shown while the chore's round is owed (due or late). */
+  onSkip?: () => void
   onCancel: () => void
 }
 
@@ -41,7 +43,7 @@ type Field = 'name' | 'n' | 'days'
 
 const MONTH_DAYS = Array.from({ length: 31 }, (_, i) => i + 1)
 
-export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: ChoreEditorProps) {
+export function ChoreEditor({ chore, places = [], onSave, onDelete, onSkip, onCancel }: ChoreEditorProps) {
   const uid = useId()
   const { form, patch, clear } = useChoreDraft(chore)
   const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({})
@@ -323,10 +325,16 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
             </div>
           )}
 
-          <div className="editor-actions">
+          <div className={onSkip ? 'editor-actions editor-actions-skip' : 'editor-actions'}>
             <button type="submit" className="btn btn-primary editor-save">
               Save
             </button>
+            {onSkip && (
+              // Not needed this round (no laundry, ate out): it settles the round without counting as done.
+              <button type="button" className="btn editor-skip" onClick={() => { clear(); onSkip() }}>
+                Skip this time
+              </button>
+            )}
           </div>
 
           {onDelete && confirmingDelete && (

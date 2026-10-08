@@ -1,9 +1,9 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { catalogEntry } from './catalog/objects'
-import { choreActiveOn, choreRetiredBy } from './domain/schedule'
+import { canSkip, choreActiveOn, choreRetiredBy, choreStatus } from './domain/schedule'
 import type { CatalogEntry } from './catalog/types'
 import { CharacterArt } from './character/Character'
-import { isInVacation } from './domain/dates'
+import { isInVacation, toISODate } from './domain/dates'
 import { petCondition } from './domain/health'
 import { messStageFor, objectNeglect } from './domain/mess'
 import type { Chore } from './domain/types'
@@ -15,7 +15,9 @@ import {
   adoptSample,
   clearHome,
   completeChoreWithRewards,
+  skipChore,
   uncompleteChore,
+  unskipChore,
   updatePet,
   updateRoom,
   createHousehold,
@@ -164,8 +166,10 @@ export default function App() {
     window.addEventListener('popstate', dismissGifts)
     return () => window.removeEventListener('popstate', dismissGifts)
   }, [])
-  // The last chore ticked off, for a few seconds, so a slip can be undone.
-  const [undo, setUndo] = useState<{ key: number; completionId: string; choreName: string } | null>(null)
+  // The last chore ticked off (or skipped), for a few seconds, so a slip can be undone.
+  const [undo, setUndo] = useState<
+    ({ key: number; choreName: string } & ({ kind: 'done'; completionId: string } | { kind: 'skip'; choreId: string; day: string })) | null
+  >(null)
   const currentScope = useRef(scope)
   useLayoutEffect(() => { currentScope.current = scope }, [scope])
   const [momentScope, setMomentScope] = useState(scope)
@@ -214,6 +218,11 @@ export default function App() {
   )
 
   // Homes made before rooms existed get their first room.
+  // The streak shown beside the health bar, replayed only when the history or the day changes.
+  const homeStreak = useMemo(
+    () => (data.home ? currentStreak(data.chores, data.completions, today, data.home.vacations) : 0),
+    [data.home, data.chores, data.completions, today],
+  )
   const needsRoom = Boolean(data.home && data.rooms.length === 0)
   useEffect(() => {
     if (needsRoom && data.home) appStore.apply(...createRoom(data.home))
@@ -307,11 +316,18 @@ export default function App() {
     <UndoToast
       key={undo.key}
       choreName={undo.choreName}
+      verb={undo.kind === 'skip' ? 'Skipped' : 'Done'}
       paused={gifts.length > 0}
       inline={gifts.length > 0 || (view.name === 'home' && allChores)}
       onUndo={() => {
-        // Any gift that tap earned stays: rewards are never taken back.
-        appStore.apply(...uncompleteChore(undo.completionId, progress, completions))
+        if (undo.kind === 'skip') {
+          // Looked up fresh: the chore may have changed (or gone) since.
+          const chore = chores.find((c) => c.id === undo.choreId)
+          if (chore) appStore.apply(...unskipChore(chore, undo.day))
+        } else {
+          // Any gift that tap earned stays: rewards are never taken back.
+          appStore.apply(...uncompleteChore(undo.completionId, progress, completions))
+        }
         setUndo(null)
       }}
       onClose={() => setUndo(null)}
@@ -390,6 +406,17 @@ export default function App() {
               appStore.apply(...removeChore(chore.id, data, today))
               done()
             })
+          }
+          onSkip={
+            chore && canSkip(choreStatus(chore, completions, today, home.vacations))
+              ? () => {
+                  // Like a completion, never on a day that hasn't really happened (the dev clock set ahead).
+                  const day = [today, toISODate(new Date())].sort()[0]
+                  appStore.apply(...skipChore(chore, day))
+                  setUndo({ key: ++momentKey.current, kind: 'skip', choreId: chore.id, day, choreName: chore.name })
+                  done()
+                }
+              : undefined
           }
           onCancel={done}
         />
@@ -652,7 +679,7 @@ export default function App() {
     const big = condition.statuses.some((s) => s.choreId === chore.id && s.neglect === 3)
     const first = !completions.some((c) => c.completedOn === today)
     setCelebrate({ key, choreName: chore.name, big, first })
-    if (done.completion) setUndo({ key, completionId: done.completion.id, choreName: chore.name })
+    if (done.completion) setUndo({ key, kind: 'done', completionId: done.completion.id, choreName: chore.name })
     const placed = roomObjects.find((o) => o.id === chore.objectId)
     const entry = placed && catalogEntry(placed.catalogId)
     if (placed && entry) setSparkles((list) => [...list, { id: key, ...sparkleSpot(placed, entry) }])
@@ -677,7 +704,7 @@ export default function App() {
     <main className="home">
       <header className="home-top">
         <h1>{pet.name}</h1>
-        <HealthBar health={condition.health} mood={condition.mood} away={away} />
+        <HealthBar health={condition.health} mood={condition.mood} away={away} streak={homeStreak} />
       </header>
 
       {sample && (

@@ -13,6 +13,8 @@ export interface HealthBarProps {
   mood: Mood
   /** On vacation nothing is due, so the bar rests. */
   away: boolean
+  /** Days in a row (currentStreak). Shown beside the mood from one day up; a missing streak shows nothing. */
+  streak?: number
 }
 
 const FLOAT_MS = 1400
@@ -26,7 +28,34 @@ const MOOD_FEELING: Record<Mood, string> = {
   sick: 'poorly',
 }
 
-export function HealthBar({ health, mood, away }: HealthBarProps) {
+/** A small flame, in the same thick outline as the rest of the art. */
+function Flame() {
+  return (
+    <svg className="hb-flame" viewBox="0 0 20 24" width="15" height="18" aria-hidden="true" focusable="false">
+      <path
+        d="M10 2c1 4 6 6.500 6 12a6 6 0 0 1-12 0c0-3 1.500-4.500 3-6 .3 2 1.300 3 2.500 3.300C9 9 8.500 5.500 10 2z"
+        fill="#FF9F5A"
+        stroke="#2b1e2f"
+        strokeWidth="2.200"
+        strokeLinejoin="round"
+      />
+      <path d="M10 13.500c1.300 1.200 2.300 2.300 2.300 3.800a2.300 2.300 0 0 1-4.600 0c0-1.300.9-2.300 2.300-3.800z" fill="#FFD65C" />
+    </svg>
+  )
+}
+
+/** "3-day streak" beside the mood: the run that rewards count, kept in sight. */
+function StreakChip({ days }: { days: number }) {
+  return (
+    <span className="hb-streak">
+      <Flame />
+      <span aria-hidden="true">{days}-day streak</span>
+      <span className="sr-only">{days === 1 ? 'Streak: 1 day' : `Streak: ${days} days in a row`}</span>
+    </span>
+  )
+}
+
+export function HealthBar({ health, mood, away, streak = 0 }: HealthBarProps) {
   // Compare with the last value during render so a rise shows its "+N" at once.
   const [seen, setSeen] = useState(health)
   const [gain, setGain] = useState<{ key: number; amount: number } | null>(null)
@@ -48,7 +77,10 @@ export function HealthBar({ health, mood, away }: HealthBarProps) {
         <div className="hb-track" aria-hidden="true">
           <div className="hb-fill" style={{ width: '100%' }} />
         </div>
-        <p className="hb-text">On vacation</p>
+        <div className="hb-row">
+          <p className="hb-text">On vacation</p>
+          {streak > 0 && <StreakChip days={streak} />}
+        </div>
       </div>
     )
   }
@@ -62,6 +94,7 @@ export function HealthBar({ health, mood, away }: HealthBarProps) {
       </div>
       <div className="hb-row">
         <p className="hb-text">Feeling {MOOD_FEELING[mood]}</p>
+        {streak > 0 && <StreakChip days={streak} />}
         {gain && (
           <span key={gain.key} className="hb-gain" aria-hidden="true">
             +{gain.amount}

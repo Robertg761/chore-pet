@@ -1,5 +1,5 @@
 import { diffDays, isInVacation, weekdayOf } from '../domain/dates'
-import { choreActiveOn, choreStatus, completionCounts, completionDays, type ChoreStatus } from '../domain/schedule'
+import { choreActiveOn, choreStatus, completionCounts, completionDays, skippedOn, type ChoreStatus } from '../domain/schedule'
 import type { Chore, Completion, ISODate, VacationWindow } from '../domain/types'
 
 export type SectionId = 'late' | 'today' | 'soon' | 'done'
@@ -9,8 +9,10 @@ export interface ChoreRow {
   status: ChoreStatus
   /** Short friendly status, e.g. "2 days late", "Today", "Thu", "12 Oct". */
   label: string
-  /** Finished today, so it's waiting for its next round. */
+  /** Finished (or skipped) today, so it's waiting for its next round. */
   doneToday: boolean
+  /** Skipped today ("Skip this time") rather than done. */
+  skippedToday: boolean
   /** Not due yet and already covered: doing it again wouldn't count, so there's nothing to tap. */
   allSet: boolean
 }
@@ -60,9 +62,10 @@ export function buildSections(
   const rows: ChoreRow[] = chores.filter((c) => choreActiveOn(c, today)).map((chore) => {
     const status = choreStatus(chore, completions, today, vacations)
     const upcoming = status.state === 'upcoming'
-    const doneToday = upcoming && completionDays(chore, completions).includes(today)
+    const done = upcoming && completionDays(chore, completions).includes(today)
+    const skippedToday = upcoming && !done && skippedOn(chore, today)
     const allSet = upcoming && !completionCounts(chore, completions, today)
-    return { chore, status, label: statusLabel(status, today), doneToday, allSet }
+    return { chore, status, label: statusLabel(status, today), doneToday: done || skippedToday, skippedToday, allSet }
   })
   const byName = (a: ChoreRow, b: ChoreRow) => a.chore.name.localeCompare(b.chore.name)
   const pick = (state: ChoreStatus['state']) => rows.filter((r) => r.status.state === state)

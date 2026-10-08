@@ -158,7 +158,7 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
           // Already done for this round: doing it again wouldn't count, so there's nothing to tap.
           <span className="cl-action cl-done-mark cl-set">
             <CheckIcon />
-            <span>{row.doneToday ? 'Done' : 'All set'}</span>
+            <span>{row.skippedToday ? 'Skipped' : row.doneToday ? 'Done' : 'All set'}</span>
           </span>
         ) : (
           // One button for every state, so focus stays put while the check shows.

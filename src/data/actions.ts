@@ -1,6 +1,6 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
-import { archiveEnd, choreRetiredBy, completionCounts, resumeFrom, sameSchedule, SCHEDULE_HISTORY, trimHistory } from '../domain/schedule'
+import { archiveEnd, choreRetiredBy, completionCounts, resumeFrom, sameSchedule, SCHEDULE_HISTORY, SKIP_HISTORY, skipDays, trimHistory } from '../domain/schedule'
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, choreCountOf, streakHistory, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
@@ -80,9 +80,33 @@ export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 's
   if (schedule === undefined || sameSchedule(schedule, chore.schedule)) return [upsertOp('chores', { ...chore, ...rest })]
   // A second change on the same day replaces the first, which never got to apply.
   const previous = chore.schedule.since === today ? chore.schedule.before : chore.schedule
-  const { before: _ignored, ...next } = schedule
+  const { before: _ignored, skips: _skips, ...next } = schedule
   const before = previous && trimHistory(previous, SCHEDULE_HISTORY - 1)
-  return [upsertOp('chores', { ...chore, ...rest, schedule: { ...next, since: today, ...(before && { before }) } as Schedule })]
+  // Skips stay with the chore: they are history, like its completions.
+  const skips = chore.schedule.skips
+  return [upsertOp('chores', { ...chore, ...rest, schedule: { ...next, since: today, ...(before && { before }), ...(skips?.length && { skips }) } as Schedule })]
+}
+
+/**
+ * "Skip this time": the round owed on `today` isn't needed (no laundry this
+ * week, ate out). It settles the round like a completion, so nothing turns
+ * messy or late, but it is no completion: no reward, no streak day (see
+ * Schedule.skips). The UI offers it only while the round is owed (canSkip).
+ */
+export function skipChore(chore: Chore, today: ISODate): NewOp[] {
+  const days = skipDays(chore)
+  if (days.includes(today)) return []
+  const skips = [...days, today].sort().slice(-SKIP_HISTORY)
+  return [upsertOp('chores', { ...chore, schedule: { ...chore.schedule, skips } })]
+}
+
+/** Take back a skip (the undo after skipping). */
+export function unskipChore(chore: Chore, day: ISODate): NewOp[] {
+  const days = skipDays(chore)
+  if (!days.includes(day)) return []
+  const skips = days.filter((d) => d !== day)
+  const { skips: _old, ...schedule } = chore.schedule
+  return [upsertOp('chores', { ...chore, schedule: (skips.length ? { ...schedule, skips } : schedule) as Schedule })]
 }
 
 /** Stop future obligations, retaining dated work and the schedule that earned it. */
