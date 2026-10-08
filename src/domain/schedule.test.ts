@@ -226,6 +226,14 @@ describe('resumeFrom', () => {
     expect(resumeFrom(changed, [done('2026-10-02')], '2026-10-05')).toBeUndefined()
   })
 
+  it('drops a carried round from a clock that was set ahead', () => {
+    // Added back on a device whose clock read Oct 10 (done that day), removed again; added back on the real Oct 8.
+    const ahead: Chore = { ...daily, createdOn: '2026-10-08', schedule: { kind: 'daily', resume: { due: '2026-10-11', last: '2026-10-10' } }, archivedOn: '2026-10-08' }
+    expect(resumeFrom(ahead, [], '2026-10-08')).toBeUndefined()
+    // A carried round from today or before still counts.
+    expect(resumeFrom({ ...ahead, schedule: { kind: 'daily', resume: { due: '2026-10-09', last: '2026-10-08' } } }, [], '2026-10-08')).toEqual({ due: '2026-10-09', last: '2026-10-08' })
+  })
+
   it('ignores completions dated after today (a clock that was set ahead)', () => {
     // Done and removed on Oct 10 by a clock set ahead; added back on the real Oct 8: due today, not Oct 11.
     expect(resumeFrom({ ...daily, createdOn: '2026-10-10', archivedOn: '2026-10-10' }, [done('2026-10-10')], '2026-10-08')).toBeUndefined()

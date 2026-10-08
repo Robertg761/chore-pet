@@ -39,10 +39,13 @@ export function resumeFrom(chore: Chore, completions: Completion[], today: ISODa
   // As its replay sees them: none before the current rule began, none after today.
   const start = scheduleStart(chore)
   const days = completionDays(chore, completions).filter((d) => d >= start && d <= today)
-  // A chore that was itself added back mid-round carries on from there, done since or not.
-  const last = days.at(-1) ?? chore.schedule.resume?.last
+  // A chore that was itself added back mid-round carries on from there, done since or not,
+  // unless that was on a clock set ahead (a last day after today), which is dropped like a future completion.
+  const { resume: carried, ...rule } = chore.schedule
+  const resume = carried && carried.last <= today ? carried : undefined
+  const last = days.at(-1) ?? resume?.last
   if (!last) return undefined
-  const replay = replayDays({ ...chore, archivedOn: undefined }, days)
+  const replay = replayDays({ ...chore, archivedOn: undefined, schedule: { ...rule, ...(resume && { resume }) } as Schedule }, days)
   if (replay.statusOn(today, vacations).state !== 'upcoming') return undefined
   return { due: replay.due, last }
 }
