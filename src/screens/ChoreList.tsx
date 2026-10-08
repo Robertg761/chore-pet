@@ -173,7 +173,8 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
               </span>
             )}
           </button>
-          <span className={`tag tag-${status.state}${status.neglect ? ` tag-late${status.neglect}` : ''}`}>{label}</span>
+          {/* Once done (or skipped) today, the date is when it comes round next, so it says so. */}
+          <span className={`tag tag-${status.state}${status.neglect ? ` tag-late${status.neglect}` : ''}`}>{row.doneToday ? `Next: ${label}` : label}</span>
         </div>
         {!hasAction(row) && !justDone ? (
           // Already done for this round: doing it again wouldn't count, so there's nothing to tap.
