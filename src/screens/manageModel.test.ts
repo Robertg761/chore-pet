@@ -33,6 +33,12 @@ describe('choreGroups', () => {
     ])
   })
 
+  it('drops a future-dated chore once it is removed (ended on its own start date)', () => {
+    const groups = choreGroups([chore('Not yet', { createdOn: '2026-10-09', archivedOn: '2026-10-09' })], [], TODAY)
+    expect(groups).toEqual([])
+    expect(pastChores([chore('Not yet', { createdOn: '2026-10-09', archivedOn: '2026-10-09' })], TODAY).map((c) => c.name)).toEqual(['Not yet'])
+  })
+
   it('leaves out empty groups', () => {
     expect(choreGroups([], [object('s', 'sink')], TODAY)).toEqual([])
   })

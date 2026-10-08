@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { catalogEntry } from './catalog/objects'
-import { choreActiveOn } from './domain/schedule'
+import { choreActiveOn, choreRetiredBy } from './domain/schedule'
 import type { CatalogEntry } from './catalog/types'
 import { CharacterArt } from './character/Character'
 import { isInVacation } from './domain/dates'
@@ -183,7 +183,8 @@ export default function App() {
   const viewport = useViewport()
   const wide = useWide()
   // A chore being edited that no longer exists (deleted on another device) sends the editor home.
-  const missingEdit = view.name === 'edit' && view.choreId !== undefined && !data.chores.some((c) => c.id === view.choreId && choreActiveOn(c, today))
+  // Any chore still on the list can be edited, including one dated to start later (a clock set ahead).
+  const missingEdit = view.name === 'edit' && view.choreId !== undefined && !data.chores.some((c) => c.id === view.choreId && !choreRetiredBy(c, today))
   const staleEdit = ready && hydrated && missingEdit
   useEffect(() => {
     // Back to where the editor was opened from: deleting from the chores screen lands there, not home.
@@ -367,7 +368,7 @@ export default function App() {
 
   if (view.name === 'edit') {
     // Looked up fresh each render: a chore deleted elsewhere (another device, a sync) is never written back.
-    const chore = view.choreId ? activeChores.find((c) => c.id === view.choreId) : undefined
+    const chore = view.choreId ? chores.find((c) => c.id === view.choreId && !choreRetiredBy(c, today)) : undefined
     // Places a chore can belong to, named like the catalog; duplicates are numbered ("Rug 2").
     const places = placeNames(roomObjects)
     // Opened from the chores screen, the editor goes back there.

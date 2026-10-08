@@ -169,6 +169,10 @@ describe('removed chores', () => {
     expect(choreRetiredBy({ ...base, archivedOn: '2026-10-09' }, '2026-10-08')).toBe(false)
     expect(choreRetiredBy({ ...base, archivedOn: '2026-10-08' }, '2026-10-08')).toBe(true)
   })
+  it('a chore removed before it started is retired at once', () => {
+    // Dated ahead by a clock and removed today: it ends on its start date, active on no day.
+    expect(choreRetiredBy({ ...base, createdOn: '2026-10-10', archivedOn: '2026-10-10' }, '2026-10-08')).toBe(true)
+  })
   it('a removal never ends before the chore starts', () => {
     expect(archiveEnd(base, '2026-10-08')).toBe('2026-10-08')
     expect(archiveEnd(base, '2026-10-01')).toBe('2026-10-05')

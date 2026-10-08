@@ -7,9 +7,13 @@ export function choreActiveOn(chore: Chore, day: ISODate): boolean {
   return chore.createdOn <= day && (!chore.archivedOn || day < chore.archivedOn)
 }
 
-/** Removed as of `day` (its archive date has come). A chore not retired is on the list now or will be. */
+/**
+ * Removed as of `day`: its archive date has come, or it was removed before it
+ * started (ended on its own start date, so active on no day at all). A chore
+ * not retired is on the list now or will be.
+ */
 export function choreRetiredBy(chore: Chore, day: ISODate): boolean {
-  return Boolean(chore.archivedOn && chore.archivedOn <= day)
+  return Boolean(chore.archivedOn && (chore.archivedOn <= day || chore.archivedOn <= chore.createdOn))
 }
 
 /** The day a removed chore ends: the removal day, never before it starts (a device clock set ahead), as the server requires. */

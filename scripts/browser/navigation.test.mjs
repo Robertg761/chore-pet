@@ -217,3 +217,37 @@ test('the Chores screen edits, removes several at once and adds a removed chore 
   await page.getByRole('button', { name: 'Chores', exact: true }).click()
   await page.getByRole('heading', { name: 'Chores', exact: true }).waitFor()
 })
+
+test('a chore dated ahead by a clock can be edited and removed from the Chores screen', async (t) => {
+  const page = await browserApp(t)
+  await page.getByRole('button', { name: 'Make it mine', exact: true }).click()
+  // Date one chore well ahead, as a device clock set forward would.
+  await page.evaluate(() => new Promise((resolve, reject) => {
+    const request = indexedDB.open('chore-pet', 1)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result
+      const tx = db.transaction('kv', 'readwrite')
+      const store = tx.objectStore('kv')
+      const read = store.get('snapshot')
+      read.onsuccess = () => {
+        const saved = read.result
+        const chore = Object.values(saved.tables.chores).find((c) => c.name === 'Wipe the table')
+        chore.createdOn = '2999-01-01'
+        store.put(saved, 'snapshot')
+      }
+      tx.oncomplete = () => { db.close(); resolve() }
+      tx.onerror = () => { db.close(); reject(tx.error) }
+    }
+  }))
+  await page.goto(page.url().replace(/\?.*$/, '') + '?screen=chores')
+  await page.getByRole('button', { name: 'Edit Wipe the table', exact: true }).click()
+  await page.getByRole('heading', { name: 'Edit chore' }).waitFor()
+  assert.equal(new URL(page.url()).searchParams.get('screen'), 'edit')
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await page.getByRole('checkbox', { name: /Wipe the table/ }).check()
+  await page.getByRole('button', { name: 'Remove 1 chore', exact: true }).click()
+  await page.getByRole('group', { name: 'Remove chores' }).getByRole('button', { name: 'Remove', exact: true }).click()
+  await page.getByRole('button', { name: 'Add Wipe the table again', exact: true }).waitFor()
+  assert.equal(await page.getByRole('checkbox', { name: /Wipe the table/ }).count(), 0)
+})
