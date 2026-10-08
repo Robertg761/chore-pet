@@ -1,10 +1,12 @@
 # Chore Pet: Hackyard Yard #4 write-up
 
+![Chore Pet: a tiny pet that lives in a home you build. Mochi, Bun and Sprout in tier-two outfits, beside the home, the wardrobe and the rewards screens](media/chore-pet-showcase.png)
+
 **Theme:** Gamification. **Rule:** the real task has to get done.
 
 - **Live link:** https://robertg761.github.io/chore-pet/
 - **Repo:** https://github.com/Robertg761/chore-pet
-- **Demo video:** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (85 s, recorded in the app with `npm run demo:record`)
+- **Demo video:** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (77 s, recorded in the app with `npm run demo:record`)
 
 ## What it is
 

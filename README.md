@@ -1,5 +1,7 @@
 # Chore Pet
 
+![Chore Pet: a tiny pet that lives in a home you build. Mochi, Bun and Sprout in tier-two outfits, beside the home, the wardrobe and the rewards screens](docs/media/chore-pet-showcase.png)
+
 A tiny pet that lives in a home you build. Every object brings real chores; keep up and it thrives, fall behind and the mess shows up in its room. Working name, built for Hackyard Yard #4.
 
 ## Try it
@@ -59,7 +61,8 @@ The anon key is public by design: row-level security in the migrations protects 
 | `npm test` | Unit tests |
 | `npm run build` | Typecheck and build the PWA |
 | `npm run lint` | Lint |
-| `npm run demo:record` | Record the demo video against `vite preview` (see `scripts/record-demo.mjs`) |
+| `npm run demo:record` | Record the demo video from the production build in `dist/` (see `scripts/record-demo.mjs`) |
+| `npm run showcase` | Render the showcase image and social card in `docs/media/` (see `scripts/showcase.mjs`) |
 
 ## Docs
 
