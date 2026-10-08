@@ -147,6 +147,24 @@ test('the sample home has no Start over; Start fresh is its way out', async (t) 
   assert.equal(await page.getByRole('button', { name: 'Start over', exact: true }).count(), 0)
 })
 
+test('Start fresh goes straight to the pet picker, whose Back returns to the landing', async (t) => {
+  const page = await browserApp(t)
+  await page.getByRole('button', { name: 'Start fresh', exact: true }).click()
+  await page.getByRole('button', { name: 'Keep playing', exact: true }).waitFor()
+  await page.getByRole('button', { name: 'Start fresh', exact: true }).click()
+  await page.getByRole('heading', { name: "Who's moving in?" }).waitFor()
+  assert.equal(Object.keys((await snapshot(page)).tables.homes).length, 0)
+  await page.getByRole('button', { name: 'Back', exact: true }).click()
+  await page.getByRole('button', { name: 'Try a sample home' }).waitFor()
+})
+
+test('Make it mine shows a brief thank-you where the banner was', async (t) => {
+  const page = await browserApp(t)
+  await page.getByRole('button', { name: 'Make it mine', exact: true }).click()
+  await page.getByRole('status').filter({ hasText: "It's all yours now." }).waitFor()
+  await page.getByRole('status').filter({ hasText: "It's all yours now." }).waitFor({ state: 'hidden', timeout: 5000 })
+})
+
 test('the Chores screen edits, removes several at once and adds a removed chore back', async (t) => {
   const page = await browserApp(t, { reducedMotion: 'no-preference' })
   await page.getByRole('button', { name: 'Make it mine', exact: true }).click()
@@ -167,8 +185,8 @@ test('the Chores screen edits, removes several at once and adds a removed chore 
   // Deleting from an editor opened here lands back here, with no home entry slipped in between.
   await page.getByRole('button', { name: 'Edit Wipe the table', exact: true }).click()
   await page.getByRole('heading', { name: 'Edit chore' }).waitFor()
-  await page.getByRole('button', { name: 'Delete chore' }).click()
-  await page.getByRole('button', { name: 'Delete', exact: true }).click()
+  await page.getByRole('button', { name: 'Remove chore' }).click()
+  await page.getByRole('button', { name: 'Remove', exact: true }).click()
   await page.getByRole('heading', { name: 'Chores', exact: true }).waitFor()
   await page.getByRole('button', { name: 'Add Wipe the table again', exact: true }).waitFor()
   assert.equal(new URL(page.url()).searchParams.get('screen'), 'chores')

@@ -129,10 +129,10 @@ describe('statusLabel', () => {
   it('caps long stretches so they read kindly', () => {
     const late = (days: number) => statusLabel({ ...base, dueDate: '2026-09-01', state: 'overdue', overdueDays: days, neglect: 3 }, today)
     expect(late(6)).toBe('6 days late')
-    expect(late(7)).toBe('Over a week')
-    expect(late(13)).toBe('Over a week')
-    expect(late(14)).toBe('Over 2 weeks')
-    expect(late(40)).toBe('Over 2 weeks')
+    expect(late(7)).toBe('Over a week late')
+    expect(late(13)).toBe('Over a week late')
+    expect(late(14)).toBe('Over 2 weeks late')
+    expect(late(40)).toBe('Over 2 weeks late')
   })
 })
 

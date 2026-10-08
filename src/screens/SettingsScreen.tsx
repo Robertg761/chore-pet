@@ -76,7 +76,7 @@ export function SettingsScreen({ petName, homeId, onClose, account, onStartOver,
               <h2>Start over</h2>
               {startOver === 'choose' ? (
                 <div className="confirm" role="group" aria-label="Start over">
-                  <p>How fresh a start?</p>
+                  <p>How do you want to start over?</p>
                   <div className="settings-choice">
                     <button type="button" className="btn btn-danger" onClick={() => setStartOver('clear')}>
                       Clear room and chores
@@ -87,7 +87,7 @@ export function SettingsScreen({ petName, homeId, onClose, account, onStartOver,
                     <button type="button" className="btn btn-danger" onClick={() => setStartOver('erase')}>
                       Erase everything
                     </button>
-                    <span className="settings-choice-note">{petName}, the room, chores and rewards all go.</span>
+                    <span className="settings-choice-note">{petName}, your rooms, chores and rewards all go.</span>
                   </div>
                   <button ref={cancelRef} type="button" className="btn" onClick={() => setStartOver(null)}>
                     Keep my home
@@ -97,8 +97,8 @@ export function SettingsScreen({ petName, homeId, onClose, account, onStartOver,
                 <div className="confirm" role="group" aria-label={startOver === 'clear' ? 'Clear room and chores' : 'Erase everything'}>
                   <p>
                     {startOver === 'clear'
-                      ? `${rooms > 1 ? `Empty all ${rooms} rooms` : 'Clear the room'} and every chore? Your past work stays, and removed chores can be added back from Chores.`
-                      : `Erase ${petName}’s home for good? This can’t be undone.${otherHomes === 1 ? ' Your other home stays.' : otherHomes > 1 ? ` Your ${otherHomes} other homes stay.` : ''}`}
+                      ? `${rooms > 1 ? `Empty all ${rooms} rooms` : 'Empty the room'} and every chore? Your past work stays, and removed chores can be added back from Chores.`
+                      : `Erase ${petName}'s home for good? This can't be undone.${otherHomes === 1 ? ' Your other home stays.' : otherHomes > 1 ? ` Your ${otherHomes} other homes stay.` : ''}`}
                   </p>
                   <div className="confirm-actions">
                     <button type="button" className="btn btn-danger" onClick={startOver === 'clear' ? onClearRoom : onStartOver}>
@@ -111,7 +111,7 @@ export function SettingsScreen({ petName, homeId, onClose, account, onStartOver,
                 </div>
               ) : (
                 <>
-                  <p className="settings-note">Moved, or want all new chores? Clear the room and chores, or erase everything.</p>
+                  <p className="settings-note">Moved, or want all new chores? Clear all rooms and chores, or erase everything.</p>
                   <button ref={startOverRef} type="button" className="btn btn-danger" onClick={() => setStartOver('choose')}>
                     Start over
                   </button>

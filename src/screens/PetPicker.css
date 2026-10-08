@@ -34,7 +34,7 @@
 .picker-card[aria-checked='true'] .picker-art { animation: picker-bob 1.2s ease-in-out infinite; }
 
 .picker-name { font-size: 1.125rem; font-weight: 800; }
-.picker-blurb { font-size: 0.75rem; line-height: 1.25; font-weight: 700; color: var(--ink-soft); overflow-wrap: anywhere; }
+.picker-blurb { text-wrap: balance; font-size: 0.75rem; line-height: 1.25; font-weight: 700; color: var(--ink-soft); overflow-wrap: anywhere; }
 
 .picker-field { display: flex; flex-direction: column; gap: 6px; }
 .picker-field label { font-weight: 800; }

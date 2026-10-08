@@ -343,7 +343,7 @@ h1[tabindex='-1']:focus { outline: none; }
 .build-extras { display: flex; flex-direction: column; gap: 8px; }
 .build-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; background: var(--card); border: 2px solid var(--ink); border-radius: 14px; }
 .build-tabs button {
-  min-height: 40px;
+  min-height: 44px;
   font: inherit;
   font-size: 0.875rem;
   font-weight: 800;

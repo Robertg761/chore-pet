@@ -77,7 +77,7 @@ function result(error: { message: string } | null): AccountResult {
 /** Keep this guest's progress under an email address (a confirmation email is sent). */
 export async function saveWithEmail(email: string): Promise<AccountResult> {
   const supabase = await getSupabase()
-  if (!supabase) return { ok: false, message: 'Accounts are not set up here.' }
+  if (!supabase) return { ok: false, message: "Accounts aren't available on this device yet." }
   const { error } = await supabase.auth.updateUser({ email }, { emailRedirectTo: back() })
   return result(error)
 }
@@ -85,7 +85,7 @@ export async function saveWithEmail(email: string): Promise<AccountResult> {
 /** Keep this guest's progress under a Google account (redirects to Google and back). */
 export async function saveWithGoogle(): Promise<AccountResult> {
   const supabase = await getSupabase()
-  if (!supabase) return { ok: false, message: 'Accounts are not set up here.' }
+  if (!supabase) return { ok: false, message: "Accounts aren't available on this device yet." }
   const { error } = await supabase.auth.linkIdentity({ provider: 'google', options: { redirectTo: back() } })
   return result(error)
 }
@@ -93,7 +93,7 @@ export async function saveWithGoogle(): Promise<AccountResult> {
 /** Sign in to an existing account with a magic link (this device's guest home is replaced). */
 export async function signInWithEmail(email: string): Promise<AccountResult> {
   const supabase = await getSupabase()
-  if (!supabase) return { ok: false, message: 'Accounts are not set up here.' }
+  if (!supabase) return { ok: false, message: "Accounts aren't available on this device yet." }
   const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: back() } })
   return result(error)
 }
@@ -101,7 +101,7 @@ export async function signInWithEmail(email: string): Promise<AccountResult> {
 /** Sign in to an existing account with Google. */
 export async function signInWithGoogle(): Promise<AccountResult> {
   const supabase = await getSupabase()
-  if (!supabase) return { ok: false, message: 'Accounts are not set up here.' }
+  if (!supabase) return { ok: false, message: "Accounts aren't available on this device yet." }
   const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: back() } })
   return result(error)
 }
@@ -219,7 +219,7 @@ function missingFunction(error: { code?: string; message: string }, status?: num
  * server confirmed the delete.
  */
 async function performDelete(): Promise<DeleteAccountResult> {
-  if (!supabaseConfigured) return { ok: false, reason: 'not-set-up', message: 'Accounts are not set up here.' }
+  if (!supabaseConfigured) return { ok: false, reason: 'not-set-up', message: "Accounts aren't available on this device yet." }
   const supabase = await getSupabase().catch(() => null)
   if (!supabase) return { ok: false, reason: 'offline', message: "Couldn't reach the server. Try again when you're online." }
   const resume = appStore.pause()
@@ -329,7 +329,7 @@ export function clearDeviceAfterUnconfirmedDelete(): Promise<AccountResult> {
       await appStore.reset({ backup: false })
       clearLocalSettings()
       const supabase = await getSupabase()
-      if (!supabase) throw new Error('Accounts are not set up here.')
+      if (!supabase) throw new Error("Accounts aren't available on this device yet.")
       const { error } = await supabase.auth.signOut({ scope: 'local' })
       if (error) throw error
       await appStore.setCleanup(undefined)

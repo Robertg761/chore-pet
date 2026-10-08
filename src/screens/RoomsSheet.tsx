@@ -115,8 +115,8 @@ export function RoomPill({ name, lateElsewhere, onOpen }: { name: string; lateEl
         <path d="M1.5 1.5L6 6l4.5-4.5" fill="none" stroke="currentColor" strokeWidth="2.200" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
       {lateElsewhere > 0 && (
-        <span className="room-pill-late" aria-hidden="true">
-          {lateElsewhere}
+        <span className="tag tag-overdue room-pill-late" aria-hidden="true">
+          {lateElsewhere} late
         </span>
       )}
     </button>

@@ -62,7 +62,7 @@ import { ObjectSheet } from './screens/ObjectSheet'
 import { PetPicker } from './screens/PetPicker'
 import { RewardsScreen } from './screens/RewardsScreen'
 import { rewardsHint, rewardsNote } from './screens/rewardsModel'
-import { SampleBanner } from './screens/SampleBanner'
+import { AdoptedNote, ADOPTED_NOTE_MS, SampleBanner } from './screens/SampleBanner'
 import { CoachCard, FirstDoneHint, Welcome } from './screens/Onboarding'
 import { coachStep, hasDueChore, hintKey, onboardedKey, readFlag, showFirstDoneHint, writeFlag } from './screens/onboardingModel'
 import { RoomStylePicker } from './screens/RoomStylePicker'
@@ -76,6 +76,7 @@ import { useReminders } from './reminders/reminders'
 import { AppNav, type MoreItem, type Tab } from './shell/AppNav'
 import { objectOverdue } from './room/cuePlan'
 import { PET_STROKE_SCALE } from './room/shell/geometry'
+import { LoadingPet } from './shell/LoadingPet'
 import { Sheet } from './shell/Sheet'
 import { UndoToast } from './shell/UndoToast'
 import { withViewTransition } from './shell/viewTransition'
@@ -95,6 +96,16 @@ const VIEW_RANK: Record<View['name'], number> = { home: 0, build: 1, wardrobe: 2
 
 /** How long the gift waits after Done, so the cheer, sparkle and health float play first. */
 const GIFT_DELAY_MS = 1400
+
+/** What a toast with an Undo can take back: a chore done, skipped, added or removed. */
+type UndoMoment = { choreName: string } & (
+  | { kind: 'done'; completionId: string }
+  | { kind: 'skip'; choreId: string; day: string }
+  | { kind: 'added'; choreId: string }
+  | { kind: 'removed'; chore: Chore }
+)
+type Undo = UndoMoment & { key: number }
+const UNDO_VERBS: Record<UndoMoment['kind'], string> = { done: 'Done', skip: 'Skipped', added: 'Added', removed: 'Removed' }
 
 /** The browser tab's title per screen. */
 const VIEW_TITLE: Record<View['name'], string> = {
@@ -153,6 +164,21 @@ export default function App() {
   // First launch: the landing choice, or the picker once "Build my home" is tapped.
   const building = view.name === 'pick-pet'
   const setBuilding = (value: boolean) => setView({ name: value ? 'pick-pet' : 'home' })
+  // "Start fresh" on the sample: once its home is gone, go straight to the picker. Waiting for the removal
+  // matters because the navigation scope changes with the home and sends the route back to the landing.
+  const pickAfterRemoval = useRef(false)
+  useEffect(() => {
+    if (!pickAfterRemoval.current || data.home) return
+    pickAfterRemoval.current = false
+    navigation.go({ name: 'pick-pet' })
+  }, [data.home, navigation])
+  // "Make it mine": a short thank-you in the banner's place, then gone.
+  const [justAdopted, setJustAdopted] = useState(false)
+  useEffect(() => {
+    if (!justAdopted) return
+    const timer = window.setTimeout(() => setJustAdopted(false), ADOPTED_NOTE_MS)
+    return () => window.clearTimeout(timer)
+  }, [justAdopted])
   // First run: the welcome beat after "Move in", then the coach card while building the first room.
   const [welcome, setWelcome] = useState(false)
   const [coachHome, setCoachHome] = useState<string | null>(null)
@@ -173,10 +199,8 @@ export default function App() {
     window.addEventListener('popstate', dismissGifts)
     return () => window.removeEventListener('popstate', dismissGifts)
   }, [])
-  // The last chore ticked off (or skipped), for a few seconds, so a slip can be undone.
-  const [undo, setUndo] = useState<
-    ({ key: number; choreName: string } & ({ kind: 'done'; completionId: string } | { kind: 'skip'; choreId: string; day: string })) | null
-  >(null)
+  // The last chore ticked off, skipped, added or removed, for a few seconds, so a slip can be undone.
+  const [undo, setUndo] = useState<Undo | null>(null)
   const currentScope = useRef(scope)
   useLayoutEffect(() => { currentScope.current = scope }, [scope])
   const [momentScope, setMomentScope] = useState(scope)
@@ -228,6 +252,7 @@ export default function App() {
       focusHomeHeading.current = false
       return
     }
+    focusHomeHeading.current = false
     focusHeading(document.querySelector<HTMLElement>('.app-view h1, .shell.screen h1'))
   }, [view.name])
   // Into the sample home from the landing: focus starts at the top of home rather than nowhere.
@@ -268,21 +293,18 @@ export default function App() {
     if (needsRoom && data.home) appStore.apply(...createRoom(data.home))
   }, [needsRoom, data.home])
 
-  if (!ready) return <main className="shell" aria-busy="true" />
+  if (!ready) return <LoadingPet />
   if (snapshot.cleanup) return <AccountCleanup cleanup={snapshot.cleanup} />
   // Signed in on a new device: wait for the saved home rather than offering a fresh one.
   if (!data.home && !hydrated) {
     return (
-      <main className="shell" aria-busy={!lastError}>
-        <p className="dev-note" role="status">
-          {lastError ? "Couldn't reach your saved home yet." : 'Finding your home…'}
-        </p>
+      <LoadingPet message={lastError ? "Couldn't reach your saved home yet." : 'Finding your home…'} busy={!lastError} trouble={Boolean(lastError)}>
         {lastError && (
           <button type="button" className="link-button" onClick={() => void appStore.sync()}>
             Try again
           </button>
         )}
-      </main>
+      </LoadingPet>
     )
   }
 
@@ -362,7 +384,7 @@ export default function App() {
     <UndoToast
       key={undo.key}
       choreName={undo.choreName}
-      verb={undo.kind === 'skip' ? 'Skipped' : 'Done'}
+      verb={UNDO_VERBS[undo.kind]}
       paused={gifts.length > 0}
       inline={gifts.length > 0 || (view.name === 'home' && allChores) || toastInHomeList}
       onUndo={() => {
@@ -370,6 +392,12 @@ export default function App() {
           // Looked up fresh: the chore may have changed (or gone) since.
           const chore = chores.find((c) => c.id === undo.choreId)
           if (chore) appStore.apply(...unskipChore(chore, undo.day))
+        } else if (undo.kind === 'added') {
+          appStore.apply(...removeChore(undo.choreId, data, today))
+        } else if (undo.kind === 'removed') {
+          // A removed chore stays removed (sync never reopens one), so it comes back the way
+          // "Removed chores" adds it: new, and resuming where it stood.
+          appStore.apply(...addChoreAgain(home, undo.chore, againInput(undo.chore, objects), completions, today))
         } else {
           // Any gift that tap earned stays: rewards are never taken back.
           appStore.apply(...uncompleteChore(undo.completionId, progress, completions))
@@ -434,7 +462,17 @@ export default function App() {
     const chore = view.choreId ? chores.find((c) => c.id === view.choreId && !choreRetiredBy(c, today)) : undefined
     // Places a chore can belong to, named like the catalog; duplicates are numbered ("Rug 2").
     // Opened from the chores screen, the editor goes back there.
-    const done = () => (view.from === 'chores' ? setView({ name: 'chores' }) : back())
+    // Going back, focus starts at the top of that screen rather than nowhere (the editor is gone).
+    const done = () => {
+      if (view.from === 'chores') return setView({ name: 'chores' })
+      focusHomeHeading.current = true
+      back()
+    }
+    // The toast belongs to the home screen: from the chores screen, that screen has its own say.
+    const tellOnHome = (moment: UndoMoment) => {
+      if (view.from === 'chores') return
+      setUndo({ key: ++momentKey.current, ...moment })
+    }
     return framed(
       'home',
       <main className="shell screen">
@@ -443,13 +481,17 @@ export default function App() {
           chore={chore}
           places={places}
           onSave={(value) => {
-            appStore.apply(...(chore ? updateChore(chore, value, today) : addChore(home, value, today)))
+            // Only an added chore says so: edits to one already on the list need no toast.
+            const ops = chore ? updateChore(chore, value, today) : addChore(home, value, today)
+            appStore.apply(...ops)
+            if (!chore) tellOnHome({ kind: 'added', choreId: ops[0].key, choreName: value.name.trim() })
             done()
           }}
           onDelete={
             chore &&
             (() => {
               appStore.apply(...removeChore(chore.id, data, today))
+              tellOnHome({ kind: 'removed', chore, choreName: chore.name })
               done()
             })
           }
@@ -731,6 +773,7 @@ export default function App() {
               )}
               {(wide || panelTab === 'things') && (
                 <CatalogTray
+                  key={room.id}
                   roomType={room.type}
                   objects={roomObjects}
                   unlocked={progress?.unlockedItems}
@@ -798,11 +841,13 @@ export default function App() {
         <HealthBar health={condition.health} mood={condition.mood} away={away} streak={homeStreak} />
       </header>
 
-      {sample && (
+      {sample ? (
         <SampleBanner
-          onKeep={() => appStore.apply(...adoptSample(home))}
-          onStartFresh={() => (setBuilding(false), setView({ name: 'home' }), appStore.apply(...removeHome(home.id)))}
+          onKeep={() => (setJustAdopted(true), appStore.apply(...adoptSample(home)))}
+          onStartFresh={() => ((pickAfterRemoval.current = true), appStore.apply(...removeHome(home.id)))}
         />
+      ) : (
+        justAdopted && <AdoptedNote />
       )}
 
       <div className="home-stage" style={ROOM_ASPECT_VARS}>

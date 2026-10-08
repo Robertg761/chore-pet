@@ -55,7 +55,7 @@ export function AddToHomeHint({ className }: { className?: string }) {
   return (
     <div className={`home-hint${className ? ` ${className}` : ''}`} role="note">
       <ShareIcon />
-      <p>On iPhone, add Chore Pet to your home screen to get nudges: tap Share, then Add to Home Screen.</p>
+      <p>On iPhone, add Chore Pet to your home screen to get reminders: tap Share, then Add to Home Screen.</p>
     </div>
   )
 }
@@ -89,15 +89,15 @@ export function ReminderSettings({ petName }: ReminderSettingsProps) {
 
   let status: string
   if (permission === 'unsupported') {
-    status = needsHome ? '' : 'This browser can’t show notifications.'
+    status = needsHome ? '' : "This browser can't show notifications."
   } else if (permission === 'denied') {
     status = 'Notifications are blocked in your browser settings.'
   } else if (isOn) {
-    status = `Nudges are on. ${petName} will say hello after ${friendlyTime(prefs.time)} when something needs doing.`
+    status = `Reminders are on. ${petName} will say hello after ${friendlyTime(prefs.time)} when something needs doing.`
   } else if (asking) {
     status = 'Waiting for your browser to ask…'
   } else {
-    status = 'Nudges are off.'
+    status = 'Reminders are off.'
   }
 
   const unavailable = permission === 'unsupported' || permission === 'denied'
@@ -117,11 +117,11 @@ export function ReminderSettings({ petName }: ReminderSettingsProps) {
               aria-describedby={statusId}
               onChange={(e) => void onToggle(e.target.checked)}
             />
-            <span>Daily nudge from {petName}</span>
+            <span>Daily reminder from {petName}</span>
           </label>
 
           <div className="reminder-time">
-            <label htmlFor={timeId}>Nudge time</label>
+            <label htmlFor={timeId}>Reminder time</label>
             <input
               id={timeId}
               className="field"
@@ -142,7 +142,7 @@ export function ReminderSettings({ petName }: ReminderSettingsProps) {
               disabled={!isOn}
               onChange={(e) => update({ ...prefs, private: e.target.checked })}
             />
-            <span>Hide chore names in nudges</span>
+            <span>Hide chore names in reminders</span>
           </label>
         </>
       )}
@@ -152,7 +152,7 @@ export function ReminderSettings({ petName }: ReminderSettingsProps) {
           {status}
         </p>
       )}
-      <p className="reminder-note">Nudges arrive while Chore Pet is open or running in the background.</p>
+      <p className="reminder-note">Reminders arrive while Chore Pet is open or running in the background.</p>
     </div>
   )
 }

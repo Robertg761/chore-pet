@@ -62,16 +62,27 @@
   align-content: start;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
+  /* Tile measures, so every tile can be the same height whatever its name or button (see .rewards-tile). */
+  --art: 52px;
+  --name-size: 0.75rem;
+  --pad-top: 6px;
+  --pad-bottom: 9px; /* leaves room for the button's 3px press shadow inside the border */
+  --tile-gap: 2px;
+  --foot: 20px; /* the note at the foot of a tile with nothing to press */
 }
+.rewards-grid-dress { --foot: 44px; /* a Put on button */ }
+/* Top to bottom: the picture, the name (two lines are always kept for it), then the button or note at the foot.
+   The min-height adds those parts up (the border is 3px each side), so every tile in a grid matches. */
 .rewards-tile {
   min-width: 0;
-  aspect-ratio: 4 / 5;
-  padding: 6px 3px;
+  /* No aspect ratio: a min-height would stretch the width to keep it. */
+  min-height: calc(var(--pad-top) + var(--pad-bottom) + 6px + var(--art) + var(--name-size) * 2.4 + var(--foot) + var(--tile-gap) * 2);
+  padding: var(--pad-top) 3px var(--pad-bottom);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
+  justify-content: flex-start;
+  gap: var(--tile-gap);
   text-align: center;
   background: var(--card);
   border: var(--outline);
@@ -83,11 +94,11 @@
 /* Not earned yet: the gift box's colours, softened, with a lock. */
 .rewards-tile-locked { color: var(--ink-soft); background: var(--ground-soft); border-style: dashed; border-color: var(--ink-soft); }
 .rewards-tile-next { color: var(--ink); border-style: solid; border-color: var(--accent); box-shadow: var(--ring); }
-.rewards-tile-art { width: 52px; height: 52px; flex: none; display: block; }
-.rewards-tile-name { font-size: 0.75rem; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
-.rewards-tile-meta { font-size: 0.6875rem; font-weight: 700; line-height: 1.2; color: var(--ink-soft); }
+.rewards-tile-art { width: var(--art); height: var(--art); flex: none; display: block; }
+.rewards-tile-name { min-height: calc(var(--name-size) * 2.4); display: flex; align-items: center; justify-content: center; font-size: var(--name-size); font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
+.rewards-tile-meta { margin-top: auto; font-size: 0.6875rem; font-weight: 700; line-height: 1.2; color: var(--ink-soft); }
 
-.rewards-wear { margin-top: 2px; padding: 0 8px; font-size: 0.8125rem; }
+.rewards-wear { margin-top: auto; padding: 0 8px; font-size: 0.8125rem; }
 .rewards-tile:not(.rewards-tile-locked) .rewards-tile-art { padding: 2px; background: var(--ground-soft); border-radius: 18px; }
 
 @media (max-width: 359px) {
@@ -98,9 +109,7 @@
   .rewards-pet { width: 52px; height: 52px; }
   .rewards-stat { font-size: 0.9375rem; line-height: 1.2; }
   .rewards-best { font-size: 0.8125rem; }
-  .rewards-tile-art { width: 38px; height: 38px; }
-  .rewards-tile { padding: 4px 3px; }
-  .rewards-wear { margin-top: 0; }
+  .rewards-grid { --art: 38px; --pad-top: 4px; --pad-bottom: 8px; }
 }
 
 /* Wide screens, and phones on their side: the summary and what's next on the left, the rewards big on the right. */
@@ -109,14 +118,11 @@
   .rewards-side { flex: 0 0 min(300px, 38%); gap: 8px; overflow-y: auto; overscroll-behavior: contain; padding: 3px; margin: -3px; }
   .rewards-nexts { grid-template-columns: 1fr; gap: 6px; }
   .rewards-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
-  .rewards-tile { aspect-ratio: auto; min-height: 118px; }
 }
 @media (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
   .rewards-pet { width: 48px; height: 48px; }
   .rewards-next { padding: 6px 10px; gap: 4px; }
-  .rewards-tile-art { width: 40px; height: 40px; }
-  .rewards-grid { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
-  .rewards-tile { min-height: 104px; }
+  .rewards-grid { --art: 40px; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
 }
 @media (min-width: 900px) {
   .rewards { gap: 14px; }
@@ -133,11 +139,8 @@
   .rewards-next-text { font-size: 1rem; }
   .rewards-bar { height: 16px; }
   .rewards-tabs { max-width: 420px; }
-  .rewards-grid { gap: 12px; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
-  /* A set height rather than an aspect ratio: in the scrolling grid, ratio-sized rows got squeezed into each other. */
-  .rewards-tile { padding: 10px 8px; gap: 6px; aspect-ratio: auto; min-height: 176px; }
-  .rewards-tile-art { width: 88px; height: 88px; }
-  .rewards-tile-name { font-size: 0.9375rem; }
+  .rewards-grid { gap: 12px; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); --art: 88px; --name-size: 0.9375rem; --pad-top: 10px; --pad-bottom: 12px; --tile-gap: 6px; --foot: 24px; }
+  .rewards-grid-dress { --foot: 44px; }
   .rewards-tile-meta { font-size: 0.8125rem; }
   .rewards-wear { padding: 0 16px; font-size: 0.9375rem; }
 }

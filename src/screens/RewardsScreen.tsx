@@ -107,7 +107,7 @@ export function RewardsScreen({ pet, progress, chores, completions, vacations, t
         <h2 id={`${titleId}-${g}`} className="sr-only">
           {label}
         </h2>
-        <ul className="rewards-grid" tabIndex={0} aria-label={label}>
+        <ul className={`rewards-grid rewards-grid-${g}`} tabIndex={0} aria-label={label}>
           {list.map((u, i) => tile(u, i))}
         </ul>
       </section>

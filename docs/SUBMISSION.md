@@ -36,7 +36,7 @@ The pet is a reason to come back, not a guilt trip. It never dies, and its lines
 
 - **Three pets, every item fits every pet:**
   - Mochi the dumpling, Bun the bunny and Sprout the seedling.
-  - Each has six moods.
+  - Each has five moods, plus sleeping and cheering poses.
   - There are 4 eye styles and 4 cheek styles, and ten soft body colours.
   - A wardrobe holds 16 items across head, face, neck, outfit and back, plus saved outfits.
 - **The rooms:**

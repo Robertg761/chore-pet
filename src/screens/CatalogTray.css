@@ -47,7 +47,8 @@
 .tray-tile:disabled .tray-art { opacity: 0.45; }
 
 .tray-art { width: 64px; height: 64px; flex: none; display: block; }
-.tray-name { font-size: 0.875rem; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
+/* Two lines reserved, so a name that wraps (Washing machine) does not make its tile taller. */
+.tray-name { font-size: 0.875rem; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; min-height: 2lh; }
 .tray-meta { font-size: 0.75rem; font-weight: 700; color: var(--ink-soft); }
 
 /* Wider screens: a 3-column grid instead of a scrolling row. */

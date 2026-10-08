@@ -55,3 +55,23 @@
   .sample-banner-actions { flex: 1 1 auto; }
   .sample-btn { flex: 1 1 auto; }
 }
+
+/* The thank-you after "Make it mine": the same strip, held for a moment, then fading out. */
+.sample-adopted {
+  margin: 0;
+  min-height: 52px;
+  justify-content: center;
+  padding: 2px 12px;
+  font-size: 0.875rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+  animation: sample-adopted-fade 2.5s ease-in forwards;
+}
+@keyframes sample-adopted-fade {
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sample-adopted { animation: none; }
+}

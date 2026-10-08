@@ -20,7 +20,7 @@ function useSavedHomes(currentHomeId: string | null): [SavedHome[], () => void, 
   return [homes.filter((h) => h.homeId !== currentHomeId), refresh, error]
 }
 
-const possessive = (name: string) => `${name}’s`
+const possessive = (name: string) => `${name}'s`
 
 /**
  * A way back to a home saved on this device. On the landing screen (no home
@@ -103,7 +103,7 @@ export function SavedHomes({ current, className = '' }: { current?: { homeId: st
       {failure}
       {asking ? (
         <div className="saved-homes-confirm">
-          <p>Swap to {possessive(asking.petName)} saved home? It replaces this home everywhere you’re signed in. This home stays saved here, so you can swap back.</p>
+          <p>Swap to {possessive(asking.petName)} saved home? It replaces this home everywhere you're signed in. This home stays saved here, so you can swap back.</p>
           <div className="saved-homes-pair">
             <button ref={swapRef} type="button" className="btn btn-primary" disabled={busy} onClick={() => void bringBack(asking)}>
               {error ? 'Try again' : 'Swap homes'}

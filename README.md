@@ -41,7 +41,7 @@ What is stored and how players delete it is in `docs/PRIVACY.md`.
 
 ### Deploy
 
-Live at https://robertg761.github.io/chore-pet/. `.github/workflows/pages.yml` checks every pull request (lint, tests, build) and deploys `main` to GitHub Pages:
+Live at https://robertg761.github.io/chore-pet/. `.github/workflows/pages.yml` checks every pull request (lint, unit tests, build, browser tests) and deploys `main` to GitHub Pages:
 
 - One-time setup: Settings > Pages > Source: **GitHub Actions**.
 - For cloud sync, add the repository secrets `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (Settings > Secrets and variables > Actions), then re-run the workflow. Without them the live app keeps everything on the device.
@@ -51,7 +51,7 @@ The anon key is public by design: row-level security in the migrations protects 
 ### Dev tools
 
 - `/?art` opens the art gallery (every pet, pose, item, object and mess state, plus a sound audition row).
-- `/?dev`, or a long-press on the top-left corner, opens the time panel, which skips days to show mess, sickness and recovery.
+- `/?dev` opens the time panel, which skips days to show mess, sickness and recovery. In a dev build, a long-press on the top-left corner opens it too.
 
 ## Scripts
 
@@ -61,6 +61,8 @@ The anon key is public by design: row-level security in the migrations protects 
 | `npm test` | Unit tests |
 | `npm run build` | Typecheck and build the PWA |
 | `npm run lint` | Lint |
+| `npm run test:browser` | Browser tests against the production build in `dist/` (run `npm run build` first; set `CHROME` to use an existing Chrome, see `scripts/browser/README.md`) |
+| `npm run icons` | Regenerate the app icon PNGs |
 | `npm run demo:record` | Record the demo video from the production build in `dist/` (see `scripts/record-demo.mjs`) |
 | `npm run showcase` | Render the showcase image and social card in `docs/media/` (see `scripts/showcase.mjs`) |
 
@@ -70,3 +72,4 @@ The anon key is public by design: row-level security in the migrations protects 
 - `docs/PLAN.md`: phased build plan and task split for Claude Code subagents
 - `docs/ART.md`: art direction and character rules
 - `docs/SUBMISSION.md`: the Hackyard write-up
+- `docs/PRIVACY.md`: what is stored and how to delete it

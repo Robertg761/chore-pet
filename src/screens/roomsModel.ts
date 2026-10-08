@@ -17,9 +17,12 @@ const ORDER: RoomType[] = ['kitchen', 'living', 'bedroom', 'bathroom', 'other']
 /** A kind this version doesn't know sorts last. */
 const rank = (t: RoomType) => (ORDER.includes(t) ? ORDER.indexOf(t) : ORDER.length)
 
-/** Rooms in a stable order every device agrees on: by kind (kitchen first, as every home starts), then by id. */
+/**
+ * Rooms by kind (kitchen first, as every home starts), keeping the order they come in within a kind.
+ * selectHome hands them over oldest first, so the first kitchen stays "Kitchen" and a new one is "Kitchen 2".
+ */
 export function orderRooms(rooms: readonly Room[]): Room[] {
-  return [...rooms].sort((a, b) => rank(a.type) - rank(b.type) || a.id.localeCompare(b.id))
+  return [...rooms].sort((a, b) => rank(a.type) - rank(b.type))
 }
 
 /** "Kitchen", "Bedroom", "Bedroom 2": each room's name by kind, numbered when a kind repeats. */
