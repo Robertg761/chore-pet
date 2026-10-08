@@ -47,7 +47,6 @@ describe('skipChore', () => {
   })
 
   it('keeps at most SKIP_HISTORY skips, dropping the oldest', () => {
-    expect(SKIP_HISTORY).toBe(30)
     const full = Array.from({ length: SKIP_HISTORY }, (_, i) => day(i))
     const c = chore({ kind: 'daily', skips: full })
     const skips = savedChore(skipChore(c, '2026-10-06')).schedule.skips!
@@ -62,6 +61,17 @@ describe('skipChore', () => {
     expect(skips).toHaveLength(SKIP_HISTORY)
     expect(skips).not.toContain(day(0))
     expect(skips).toEqual(full)
+  })
+
+  it('fits the server\'s 2 KB schedule cap with a full skip list and a full schedule history', () => {
+    // The worst case: every past rule a seven-day weekday rule, a resume point, and SKIP_HISTORY skips.
+    let schedule: Schedule = { kind: 'weekdays', days: [0, 1, 2, 3, 4, 5, 6], since: '2026-01-01' }
+    for (let i = 0; i < 6; i++) schedule = { kind: 'weekdays', days: [0, 1, 2, 3, 4, 5, 6], since: '2026-01-01', before: schedule }
+    schedule = { ...schedule, resume: { due: '2026-10-10', last: '2026-10-03' }, skips: Array.from({ length: SKIP_HISTORY }, (_, i) => day(i)) }
+    // Postgres prints jsonb with a space after every comma and colon (octet_length(schedule::text), migration 0006).
+    const json = JSON.stringify(schedule)
+    const asJsonb = json.length + (json.match(/[,:]/g) ?? []).length
+    expect(asJsonb).toBeLessThanOrEqual(2048)
   })
 
   it('keeps every other schedule field (kind, since, before, resume)', () => {

@@ -203,8 +203,14 @@ export function completionDays(chore: Chore, completions: Completion[]): ISODate
   return [...new Set(completions.filter((c) => c.choreId === chore.id).map((c) => c.completedOn))].sort()
 }
 
-/** Skips kept on a chore, at most (each is a dozen bytes of the row's JSON, which the server caps at 2 KB). */
-export const SKIP_HISTORY = 30
+/**
+ * Skips kept on a chore, at most: each is 14 bytes of the row's JSON, which
+ * the server caps at 2 KB, so 60 with a full schedule history still fits
+ * (pinned in skipActions.test.ts). Older ones drop off; a day only they kept
+ * paused can then read as missed, which rest tokens and any other chore done
+ * that day usually cover.
+ */
+export const SKIP_HISTORY = 60
 
 const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/
 
