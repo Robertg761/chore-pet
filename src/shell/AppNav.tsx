@@ -116,8 +116,9 @@ export function AppNav({ active, onNavigate, rewardsNote, rewardsHint, more, not
       <span ref={pill} className="app-nav-pill" aria-hidden="true" />
       <ul className="app-nav-list">
         {TABS.map((tab) => {
-          // The short "Gift in 2" under Rewards, said in full to screen readers and on hover.
-          const hint = tab === 'rewards' && rewardsHint ? `${LABELS[tab]}: ${rewardsHint}` : undefined
+          // The short "Gift in 2" under Rewards, said in full to screen readers and on hover. The visible
+          // words lead, so voice control can still pick the tab by what it shows.
+          const hint = tab === 'rewards' && rewardsNote && rewardsHint ? `${LABELS[tab]}, ${rewardsNote}: ${rewardsHint}` : undefined
           return (
             <li key={tab}>
               <button
