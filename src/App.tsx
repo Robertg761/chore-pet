@@ -12,6 +12,7 @@ import { ITEMS } from './character/items'
 import {
   addChore,
   adoptSample,
+  clearHome,
   completeChoreWithRewards,
   uncompleteChore,
   updatePet,
@@ -412,6 +413,7 @@ export default function App() {
           homeId={home.id}
           onClose={back}
           onStartOver={() => (navigation.go({ name: 'home' }, true), appStore.apply(...removeHome(home.id)))}
+          onClearRoom={() => (navigation.go({ name: 'home' }, true), appStore.apply(...clearHome(data, today)))}
         />
       </main>,
     )

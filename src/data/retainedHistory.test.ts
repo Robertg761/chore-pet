@@ -4,7 +4,7 @@ import { currentStreak } from '../domain/unlocks'
 import { petCondition } from '../domain/health'
 import { buildSections } from '../screens/choreListModel'
 import { completedPerDay, healthPerDay, weekDays } from '../screens/weekModel'
-import { completeChoreWithRewards, removeChore, removeObject, restoreHome } from './actions'
+import { clearHome, completeChoreWithRewards, removeChore, removeObject, restoreHome } from './actions'
 import { change, emptySnapshot, planFlush, selectHome, upsertOp } from './state'
 
 const chore = (id: string, createdOn = '2026-10-01'): Chore => ({ id, homeId: 'h', objectId: 'o', name: id, createdOn, schedule: { kind: 'daily' }, photoProof: false })
@@ -119,5 +119,23 @@ describe('retained chore history', () => {
     s = change(s, upsertOp('progress', { ...data.progress!, retired: { a: 6, deletedBeforeMigration: 2 } }))
     const after = selectHome(removeChore('a', selectHome(s.tables), '2026-10-07').reduce(change, s).tables)
     expect(after.progress?.choreCount).toBe(11)
+  })
+})
+
+describe('clearing the home', () => {
+  it('removes furniture and retires every chore, keeping the pet, past work and rewards', () => {
+    let s = fixture()
+    s = change(s, upsertOp('pets', { id: 'p', homeId: 'h', species: 'mochi', name: 'Mochi', bodyColour: '#F7B5C6', equipped: { hat: 'beanie' } } as never))
+    s = change(s, upsertOp('chores', { ...chore('loose', '2026-10-07'), objectId: null }))
+    const before = selectHome(s.tables)
+    const after = selectHome(clearHome(before, '2026-10-07').reduce(change, s).tables)
+    expect(after.objects).toEqual([])
+    expect(after.chores.map((c) => [c.id, c.archivedOn]).sort()).toEqual([['a', '2026-10-07'], ['b', '2026-10-07'], ['loose', '2026-10-07']])
+    expect(buildSections(after.chores, after.completions, [], '2026-10-07')).toEqual([])
+    expect(after.completions).toHaveLength(before.completions.length)
+    expect(after.progress).toEqual(before.progress)
+    expect(after.pet).toEqual(before.pet)
+    expect(after.rooms).toEqual(before.rooms)
+    expect(currentStreak(after.chores, after.completions, '2026-10-06')).toBe(6)
   })
 })

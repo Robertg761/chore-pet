@@ -13,7 +13,8 @@
 .settings-note { margin: 0 0 8px; font-weight: 700; color: var(--ink-soft); line-height: 1.3; }
 .settings-confirm { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; background: var(--late-bg); border: var(--outline); border-radius: var(--radius); }
 .settings-confirm p { margin: 0; font-weight: 800; color: var(--late-ink); line-height: 1.3; }
-.settings-confirm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.settings-choice { display: flex; flex-direction: column; gap: 4px; }
+.settings-choice-note { font-size: 0.875rem; font-weight: 700; color: var(--late-ink); line-height: 1.3; }
 .settings-confirm .btn-danger { background: var(--card); }
 
 .settings-foot { margin: 0; text-align: center; font-size: 0.875rem; font-weight: 700; }

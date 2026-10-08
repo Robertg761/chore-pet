@@ -95,7 +95,7 @@ test('reload warns about a draft; stale edit deep links never become a new chore
   assert.equal(await page.getByRole('heading', { name: 'New chore' }).count(), 0)
 })
 
-test('Start over in Settings asks first, then clears the home back to the landing', async (t) => {
+test('Start over in Settings clears the room and chores, or erases everything', async (t) => {
   const page = await browserApp(t)
   await page.getByRole('button', { name: 'Make it mine', exact: true }).click()
   const settings = async () => {
@@ -103,14 +103,30 @@ test('Start over in Settings asks first, then clears the home back to the landin
     await page.getByRole('button', { name: 'Settings', exact: true }).click()
     await page.getByRole('heading', { name: 'Settings', exact: true }).waitFor()
   }
+  const choose = async (name) => {
+    await page.getByRole('button', { name: 'Start over', exact: true }).click()
+    await page.getByRole('group', { name: 'Start over' }).getByRole('button', { name, exact: true }).click()
+  }
   await settings()
-  await page.getByRole('button', { name: 'Start over', exact: true }).click()
-  await page.getByRole('button', { name: 'Keep it', exact: true }).click()
+  await choose('Keep my home')
   assert.equal(Object.keys((await snapshot(page)).tables.homes).length, 1)
-  await page.getByRole('button', { name: 'Start over', exact: true }).click()
-  await page.getByRole('group', { name: 'Start over' }).getByRole('button', { name: 'Start over', exact: true }).click()
+
+  // A move: the pet and rewards stay, the room and chore list are empty, past work is kept.
+  const before = (await snapshot(page)).tables
+  await choose('Clear room and chores')
+  await page.getByRole('button', { name: 'Build your room', exact: true }).waitFor()
+  await page.getByText('No chores yet', { exact: false }).waitFor()
+  let { tables } = await snapshot(page)
+  assert.deepEqual(tables.placed_objects, {})
+  assert.ok(Object.values(tables.chores).every((c) => c.archivedOn))
+  assert.equal(Object.keys(tables.completions).length, Object.keys(before.completions).length)
+  assert.deepEqual(tables.pets, before.pets)
+  assert.deepEqual(tables.progress, before.progress)
+
+  await settings()
+  await choose('Erase everything')
   await page.getByRole('button', { name: 'Try a sample home' }).waitFor()
-  const { tables } = await snapshot(page)
+  ;({ tables } = await snapshot(page))
   for (const table of ['homes', 'rooms', 'placed_objects', 'chores', 'pets']) assert.deepEqual(tables[table], {}, table)
   assert.equal(new URL(page.url()).searchParams.get('screen'), null)
 })

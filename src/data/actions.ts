@@ -205,6 +205,21 @@ export function removeHome(homeId: string): NewOp[] {
   return [deleteOp('homes', homeId)]
 }
 
+/**
+ * Clear the room and the chore list for a fresh start (a move, or a whole new
+ * set of chores), keeping the pet, its looks and everything earned. Furniture
+ * goes and every chore is retired the same way as removing them one by one, so
+ * past work and rewards stay.
+ */
+export function clearHome(history: History & { objects: PlacedObject[] }, today: ISODate): NewOp[] {
+  const placed = new Set(history.objects.map((o) => o.id))
+  return [
+    ...history.objects.flatMap((o) => removeObject(o.id, history, today)),
+    // Chores on furniture are retired with it; the rest are retired here.
+    ...history.chores.filter((c) => !c.archivedOn && !(c.objectId && placed.has(c.objectId))).flatMap((c) => removeChore(c.id, history, today)),
+  ]
+}
+
 /** A row as a new one: the server stamps its own creation time. */
 function fresh<T extends object>(row: T): T {
   const { createdAt: _createdAt, ...rest } = row as T & { createdAt?: string }
