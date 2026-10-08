@@ -79,11 +79,12 @@ export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 's
   const { schedule, ...rest } = patch
   if (schedule === undefined || sameSchedule(schedule, chore.schedule)) return [upsertOp('chores', { ...chore, ...rest })]
   // A second change on the same day replaces the first, which never got to apply.
-  const previous = chore.schedule.since === today ? chore.schedule.before : chore.schedule
-  const { before: _ignored, skips: _skips, ...next } = schedule
-  const before = previous && trimHistory(previous, SCHEDULE_HISTORY - 1)
-  // Skips stay with the chore: they are history, like its completions.
+  const replaced = chore.schedule.since === today ? chore.schedule.before : chore.schedule
+  // Skips live on the current schedule only (they stay with the chore, like its completions).
+  const { skips: _old, ...previous } = replaced ?? ({} as Schedule)
   const skips = chore.schedule.skips
+  const { before: _ignored, skips: _skips, ...next } = schedule
+  const before = replaced && trimHistory(previous as Schedule, SCHEDULE_HISTORY - 1)
   return [upsertOp('chores', { ...chore, ...rest, schedule: { ...next, since: today, ...(before && { before }), ...(skips?.length && { skips }) } as Schedule })]
 }
 

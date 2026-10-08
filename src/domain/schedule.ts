@@ -172,17 +172,21 @@ export function scheduleStart(chore: Chore): ISODate {
  * Used to judge past days (streaks, the week's health) by the rule of the time.
  */
 export function choreAsOf(chore: Chore, day: ISODate): Chore {
-  // Skips taken after `day` hadn't happened yet.
-  const skips = chore.schedule.skips
-  if (skips?.some((d) => d > day)) chore = { ...chore, schedule: { ...chore.schedule, skips: skips.filter((d) => d <= day) } }
-  if (day >= scheduleStart(chore)) return chore
+  // Skips live on the current schedule; the chore as of `day` keeps those taken by then, under whichever rule applied.
+  const raw = chore.schedule.skips
+  const skips = raw === undefined ? undefined : skipDays(chore).filter((d) => d <= day)
+  const withSkips = (rule: Schedule): Schedule => {
+    const { skips: _all, ...rest } = rule
+    return (skips?.length ? { ...rest, skips } : rest) as Schedule
+  }
+  if (day >= scheduleStart(chore)) return raw === undefined ? chore : { ...chore, schedule: withSkips(chore.schedule) }
   // Step back to the rule in force that day; the oldest one kept covers everything before it.
   let s: Schedule = chore.schedule
   while (s.before && s.since && day < s.since) s = s.before
   // A rule with an earlier one behind it began on its `since`, exactly as it ran then
   // (earlier completions don't count toward it); the oldest one kept reaches back to the start.
   const { before, since, ...rule } = s
-  return { ...chore, schedule: (before && since ? { ...rule, since } : rule) as Schedule }
+  return { ...chore, schedule: withSkips((before && since ? { ...rule, since } : rule) as Schedule) }
 }
 
 /** Past schedules kept on a chore, at most (each is a few dozen bytes of the row's JSON). */
@@ -208,7 +212,8 @@ const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/
 export function skipDays(chore: Chore): ISODate[] {
   const skips = chore.schedule.skips
   if (!Array.isArray(skips)) return []
-  return [...new Set(skips.filter((d): d is ISODate => typeof d === 'string' && ISO_DAY.test(d)))].sort()
+  // Real calendar days only: "2026-02-30" would replay as 2 March.
+  return [...new Set(skips.filter((d): d is ISODate => typeof d === 'string' && ISO_DAY.test(d) && addDays(d, 0) === d))].sort()
 }
 
 /**
