@@ -320,13 +320,15 @@ export default function App() {
     { label: 'Settings', onSelect: () => setView({ name: 'settings' }) },
     ...(canInstall ? [{ label: 'Add to home screen', onSelect: () => { navigation.go({ ...view, sheet: undefined }, true); void install() } }] : []),
   ]
+  // On a phone's home screen the toast takes the place of the buttons under the list, so it covers nothing.
+  const toastInHomeList = view.name === 'home' && !wide && !allChores && !gifts.length
   const undoToast = undo && (
     <UndoToast
       key={undo.key}
       choreName={undo.choreName}
       verb={undo.kind === 'skip' ? 'Skipped' : 'Done'}
       paused={gifts.length > 0}
-      inline={gifts.length > 0 || (view.name === 'home' && allChores)}
+      inline={gifts.length > 0 || (view.name === 'home' && allChores) || toastInHomeList}
       onUndo={() => {
         if (undo.kind === 'skip') {
           // Looked up fresh: the chore may have changed (or gone) since.
@@ -356,7 +358,7 @@ export default function App() {
         more={more}
         note={syncNote ?? undefined}
       />
-      {!gifts.length && !(view.name === 'home' && allChores) && undoToast}
+      {!gifts.length && !(view.name === 'home' && allChores) && !toastInHomeList && undoToast}
       {gifts[0] && (
         <GiftBox
           key={gifts[0].id}
@@ -705,6 +707,7 @@ export default function App() {
       onManage={short ? undefined : () => setView({ name: 'chores' })}
       limit={short ? upNextRows(viewport.height, sample) : undefined}
       onSeeAll={short ? () => setAllChores(true) : undefined}
+      footer={short && toastInHomeList ? undoToast : undefined}
     />
   )
 

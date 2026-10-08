@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { withViewTransition } from '../shell/viewTransition'
 import type { Chore, Completion, VacationWindow } from '../domain/types'
 import { allCaughtUp, buildSections, nextUpcoming, onVacation, shortRows, whenPhrase, type ChoreRow } from './choreListModel'
@@ -21,6 +21,8 @@ export interface ChoreListProps {
    */
   limit?: number
   onSeeAll?: () => void
+  /** Shown in place of the buttons under the list while set: the home screen's undo toast, so it covers nothing. */
+  footer?: ReactNode
 }
 
 /** How long the check shows before the chore is completed and the row moves. */
@@ -53,7 +55,7 @@ const hasAction = (row: ChoreRow) => !row.allSet
 /** How long after a completion to keep trying to put focus back where it was lost. */
 const REFOCUS_MS = 3000
 
-export function ChoreList({ chores, completions, vacations, today, onComplete, onEdit, onAdd, onManage, limit, onSeeAll }: ChoreListProps) {
+export function ChoreList({ chores, completions, vacations, today, onComplete, onEdit, onAdd, onManage, limit, onSeeAll, footer }: ChoreListProps) {
   const sections = buildSections(chores, completions, vacations, today)
   const away = onVacation(today, vacations)
   const short = limit !== undefined
@@ -234,7 +236,7 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
         ))
       )}
 
-      <div className="cl-foot">
+      {footer ? <div className="cl-foot cl-foot-toast">{footer}</div> : <div className="cl-foot">
         {onSeeAll && rows.length > 0 && (
           <button type="button" className="cl-add cl-all" onClick={onSeeAll}>
             All<span className="cl-all-extra"> chores</span>
@@ -249,7 +251,7 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
         <button type="button" className="cl-add" onClick={onAdd}>
           Add a chore
         </button>
-      </div>
+      </div>}
     </section>
   )
 }
