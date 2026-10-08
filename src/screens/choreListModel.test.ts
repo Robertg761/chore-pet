@@ -86,8 +86,8 @@ describe('all caught up', () => {
     const weekly = chore('w', 'Bins', '2026-10-01', { kind: 'weekly', weekday: 4 })
     const sections = buildSections([dishes, weekly], [done('a', today), done('w', '2026-10-01')], [], today)
     const next = nextUpcoming(sections)
-    expect(next?.chore.id).toBe('w')
-    expect(whenPhrase(next!.label)).toBe('on Thu')
+    expect(next?.chore.id).toBe('a')
+    expect(whenPhrase(next!.label)).toBe('tomorrow')
     expect(whenPhrase('Tomorrow')).toBe('tomorrow')
     expect(nextUpcoming(buildSections([], [], [], today))).toBeNull()
   })
@@ -133,5 +133,26 @@ describe('statusLabel', () => {
     expect(late(13)).toBe('Over a week')
     expect(late(14)).toBe('Over 2 weeks')
     expect(late(40)).toBe('Over 2 weeks')
+  })
+})
+
+describe('next recurrence after finishing chores', () => {
+  const today = '2026-10-07'
+  const dishes = chore('d', 'Wash the dishes', today)
+  it('chooses dishes tomorrow ahead of the sink on Monday', () => {
+    const sink = chore('s', 'Scrub the sink', today, { kind: 'weekly', weekday: 1 })
+    const next = nextUpcoming(buildSections([sink, dishes], [done('d', today)], [], today))
+    expect(next?.chore.id).toBe('d')
+    expect(next?.status.dueDate).toBe('2026-10-08')
+  })
+  it('includes the next occurrence in a done-only list', () => {
+    const next = nextUpcoming(buildSections([dishes], [done('d', today)], [], today))
+    expect(next?.chore.id).toBe('d')
+    expect(next?.label).toBe('Tomorrow')
+  })
+  it('compares dates even when done rows are sorted by name', () => {
+    const monthly = chore('a', 'A monthly chore', today, { kind: 'monthly', dayOfMonth: 7 })
+    const next = nextUpcoming(buildSections([monthly, dishes], [done('a', today), done('d', today)], [], today))
+    expect(next?.chore.id).toBe('d')
   })
 })

@@ -39,6 +39,5 @@ export const CASCADES: readonly { parent: TableName; child: TableName; fk: (row:
   { parent: 'homes', child: 'pets', fk: (r: Pet) => r.homeId },
   { parent: 'homes', child: 'progress', fk: (r: Progress) => r.homeId },
   { parent: 'rooms', child: 'placed_objects', fk: (r: PlacedObject) => r.roomId },
-  { parent: 'placed_objects', child: 'chores', fk: (r: Chore) => r.objectId },
   { parent: 'chores', child: 'completions', fk: (r: Completion) => r.choreId },
 ]

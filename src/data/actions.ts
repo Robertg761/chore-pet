@@ -2,7 +2,7 @@ import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
 import { completionCounts, sameSchedule, SCHEDULE_HISTORY, trimHistory } from '../domain/schedule'
 import type { CatalogEntry } from '../catalog/types'
-import { applyUnlocks, choreCountOf, currentStreak, type Unlock } from '../domain/unlocks'
+import { applyUnlocks, choreCountOf, streakHistory, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
 import { deleteOp, selectHome, upsertOp, type NewOp, type Snapshot } from './state'
 
@@ -48,29 +48,16 @@ export function moveObject(object: PlacedObject, to: Pick<PlacedObject, 'tileX' 
   return [upsertOp('placed_objects', { ...object, ...to })]
 }
 
-/** Also removes its chores and their history (the database cascades the same way). */
-/** What a removal needs to keep the player's progress: their completions, and the chores going away with an object. */
+/** The retained history available when removing a chore or object. */
 export interface History {
   progress: Progress | null
   chores: Chore[]
   completions: Completion[]
 }
 
-/** Bank the counted chores of chores about to be deleted (their completions go with them). */
-function retire(choreIds: string[], history?: History): NewOp[] {
-  if (!history?.progress) return []
-  const retired = { ...history.progress.retired }
-  for (const choreId of choreIds) {
-    const own = history.completions.filter((c) => c.choreId === choreId)
-    const counted = choreCountOf(own)
-    if (counted > 0) retired[choreId] = Math.max(retired[choreId] ?? 0, counted)
-  }
-  return [upsertOp('progress', { ...history.progress, retired })]
-}
-
-export function removeObject(objectId: string, history?: History): NewOp[] {
-  const going = history?.chores.filter((c) => c.objectId === objectId).map((c) => c.id) ?? []
-  return [...retire(going, history), deleteOp('placed_objects', objectId)]
+/** Remove furniture atomically, retaining its tasks as history or keeping them active. */
+export function removeObject(objectId: string, _history?: History, today = toISODate(new Date()), keepChores = false): NewOp[] {
+  return [{ ...deleteOp('placed_objects', objectId), removal: { archivedOn: today, keepChores } } as NewOp]
 }
 
 export function updateRoom(room: Room, patch: Partial<Pick<Room, 'type' | 'floorStyle' | 'wallStyle'>>): NewOp[] {
@@ -98,9 +85,12 @@ export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 's
   return [upsertOp('chores', { ...chore, ...rest, schedule: { ...next, since: today, ...(before && { before }) } as Schedule })]
 }
 
-/** Also removes its completions (the database cascades the same way). */
-export function removeChore(choreId: string, history?: History): NewOp[] {
-  return [...retire([choreId], history), deleteOp('chores', choreId)]
+/** Stop future obligations, retaining dated work and the schedule that earned it. */
+export function removeChore(choreId: string, history?: History, today = toISODate(new Date())): NewOp[] {
+  const chore = history?.chores.find((c) => c.id === choreId)
+  return chore
+    ? [upsertOp('chores', { ...chore, archivedOn: chore.archivedOn ?? today })]
+    : [{ ...deleteOp('chores', choreId), removal: { archivedOn: today } } as NewOp]
 }
 
 /**
@@ -143,6 +133,40 @@ export function uncompleteChore(completionId: string, progress: Progress | null,
   return ops
 }
 
+/** Full retained history, including archived chores, never just today's active list. */
+export interface ProgressContext {
+  chores: Chore[]
+  completions: Completion[]
+  vacations: VacationWindow[]
+}
+
+/**
+ * Recover earned progress after loading, merging, editing or a day rollover.
+ * The replay recovers missed milestones even when the current streak has broken.
+ * The dev clock may look ahead, but it must not persist future rewards.
+ * Passive callers save the ops without replaying gifts; completion callers may
+ * present `unlocked`. An unchanged replay returns no ops, so sync settles.
+ */
+export function reconcileProgress(
+  progress: Progress | null,
+  context: ProgressContext,
+  today: ISODate,
+  realToday: ISODate = toISODate(new Date()),
+): { ops: NewOp[]; unlocked: Unlock[] } {
+  if (!progress) return { ops: [], unlocked: [] }
+  const through = today < realToday ? today : realToday
+  const completions = context.completions.filter((c) => c.completedOn <= through)
+  const history = streakHistory(context.chores, completions, through, context.vacations)
+  const choreCount = choreCountOf(completions, progress.retired, context.chores.map((c) => c.id))
+  const result = applyUnlocks({ ...progress, choreCount, bestStreak: Math.max(progress.bestStreak, history.bestStreak) }, history.currentStreak)
+  // The server keeps its cached count with GREATEST, including after Undo.
+  // Screens derive the actual count from history; trying to lower the cache
+  // on every pull would cause an endless sync loop. Never award from the cache.
+  if (choreCount <= progress.choreCount && result.progress.currentStreak === progress.currentStreak &&
+    result.progress.bestStreak === progress.bestStreak && result.unlocked.length === 0) return { ops: [], unlocked: [] }
+  return { ops: [upsertOp('progress', result.progress)], unlocked: result.unlocked }
+}
+
 /**
  * Finish a chore and count it toward rewards: records the completion (at
  * `now`, never after the real clock `realNow`), bumps the chore count, works
@@ -152,7 +176,7 @@ export function uncompleteChore(completionId: string, progress: Progress | null,
 export function completeChoreWithRewards(
   chore: Chore,
   progress: Progress | null,
-  context: { chores: Chore[]; completions: Completion[]; vacations: VacationWindow[] },
+  context: ProgressContext,
   now: Date = new Date(),
   realNow: Date = new Date(),
 ): { ops: NewOp[]; unlocked: Unlock[]; completion?: Completion } {
@@ -162,10 +186,8 @@ export function completeChoreWithRewards(
   if (!completionCounts(chore, context.completions, completion.completedOn)) return { ops: [], unlocked: [] }
   const ops: NewOp[] = [upsertOp('completions', completion)]
   if (!progress) return { ops, unlocked: [], completion }
-  const streak = currentStreak(context.chores, [...context.completions, completion], completion.completedOn, context.vacations)
-  const choreCount = choreCountOf([...context.completions, completion], progress.retired)
-  const result = applyUnlocks({ ...progress, choreCount }, streak)
-  ops.push(upsertOp('progress', result.progress))
+  const result = reconcileProgress(progress, { ...context, completions: [...context.completions, completion] }, completion.completedOn, toISODate(realNow))
+  ops.push(...result.ops)
   return { ops, unlocked: result.unlocked, completion }
 }
 
@@ -196,7 +218,7 @@ function fresh<T extends object>(row: T): T {
  * home per account. Returns nothing when the backup holds no home.
  */
 export function restoreHome(saved: Snapshot, current: Snapshot): NewOp[] {
-  const { home, pet, rooms, objects, chores, completions } = selectHome(saved.tables)
+  const { home, pet, rooms, objects, chores, completions } = selectHome(saved.tables, saved.activeHomeId)
   if (!home) return []
   const progress = saved.tables.progress[home.id]
   const homeId = id()

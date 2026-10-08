@@ -2,6 +2,11 @@ import { activeDaysBetween, addDays, daysInMonth, diffDays, firstActiveOnOrAfter
 import { intervalOf, neglectLevel, type NeglectLevel } from './neglect'
 import type { Chore, Completion, ISODate, Schedule, VacationWindow, Weekday } from './types'
 
+/** Whether this chore had obligations on a local calendar day. */
+export function choreActiveOn(chore: Chore, day: ISODate): boolean {
+  return chore.createdOn <= day && (!chore.archivedOn || day < chore.archivedOn)
+}
+
 export type ChoreState = 'upcoming' | 'due' | 'overdue'
 
 export interface ChoreStatus {
@@ -255,6 +260,7 @@ export function nextDueDate(chore: Chore, completions: Completion[]): ISODate {
  * they must not count toward rewards either.
  */
 export function completionCounts(chore: Chore, completions: Completion[], day: ISODate): boolean {
+  if (!choreActiveOn(chore, day)) return false
   const days = completionDays(chore, completions)
   if (days.includes(day)) return false
   const replay = startReplay(chore)

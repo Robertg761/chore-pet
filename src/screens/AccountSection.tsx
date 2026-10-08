@@ -7,8 +7,10 @@ import {
   signInWithGoogle,
   signOutSafely,
   useAccount,
+  useAccountOperationError,
   type AccountResult,
 } from '../lib/account'
+import { authReturnMessage } from '../lib/authReturn'
 import { appStore, useDataState } from '../data/appStore'
 import '../shell/controls.css'
 import './AccountSection.css'
@@ -29,13 +31,14 @@ function hideUnknownEmail(r: AccountResult): AccountResult {
   return !r.ok && /signups? not allowed|user not found/i.test(r.message) ? { ok: true } : r
 }
 
-export function AccountSection() {
+export function AccountSection({ entry = false }: { entry?: boolean }) {
   const account = useAccount()
+  const operationError = useAccountOperationError()
   const { savedLocally, pendingCount, rejectedCount } = useDataState()
-  const [mode, setMode] = useState<Mode>('save')
+  const [mode, setMode] = useState<Mode>(entry ? 'sign-in' : 'save')
   const [email, setEmail] = useState('')
   const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(() => entry ? authReturnMessage(location.search, location.hash) : null)
   const [sent, setSent] = useState<Sent>(null)
   const [confirm, setConfirm] = useState<Confirm>(null)
   const stayRef = useRef<HTMLButtonElement>(null)
@@ -49,10 +52,15 @@ export function AccountSection() {
   async function run(action: () => Promise<AccountResult>, onOk?: () => void) {
     setBusy(true)
     setError(null)
-    const r = await action()
-    setBusy(false)
-    if (r.ok) onOk?.()
-    else setError(friendly(r.message))
+    try {
+      const r = await action()
+      if (r.ok) onOk?.()
+      else setError(friendly(r.message))
+    } catch (cause) {
+      setError(friendly(cause instanceof Error ? cause.message : String(cause)))
+    } finally {
+      setBusy(false)
+    }
   }
 
   function askSignOut() {
@@ -77,7 +85,7 @@ export function AccountSection() {
     setBusy(false)
     if (r.ok) return
     setConfirm(null)
-    setError(r.reason === 'offline' ? OFFLINE : "Couldn't delete right now. Try again later.")
+    setError(r.reason === 'offline' ? OFFLINE : r.message)
     requestAnimationFrame(() => askRef.current?.focus())
   }
 
@@ -102,9 +110,9 @@ export function AccountSection() {
     </div>
   )
 
-  const failure = error && (
+  const failure = (error || operationError) && (
     <p className="account-error" role="alert">
-      {error}
+      {error || operationError}
     </p>
   )
 
@@ -145,6 +153,10 @@ export function AccountSection() {
     </>
   )
 
+  if (entry && account.kind === 'local') {
+    return <><h2>Sign in</h2><p className="account-note">Sign-in isn't set up in this version. Your saved home will be waiting in the version where you made it.</p></>
+  }
+
   if (account.kind === 'local') {
     return (
       <>
@@ -164,7 +176,7 @@ export function AccountSection() {
     )
   }
 
-  if (account.kind === 'offline') {
+  if (account.kind === 'offline' && !entry) {
     return (
       <>
         <h2>Your progress</h2>
@@ -203,7 +215,7 @@ export function AccountSection() {
       <p className="account-note">
         {saving
           ? 'Your home lives on this device for now. Save it to an account to open it on any phone.'
-          : 'Open a home you saved before. It replaces the home on this device.'}
+          : entry ? 'Open a home you saved before.' : 'Open a home you saved before. It replaces the home on this device.'}
       </p>
       {rejected}
 
@@ -259,9 +271,10 @@ export function AccountSection() {
         Continue with Google
       </button>
 
+      {busy && <p className="account-note" role="status">Connecting…</p>}
       {failure}
 
-      <button
+      {!entry && <button
         type="button"
         className="btn btn-quiet account-switch"
         onClick={() => {
@@ -271,9 +284,9 @@ export function AccountSection() {
         }}
       >
         {saving ? 'Already saved a home? Sign in' : 'Back to saving this home'}
-      </button>
+      </button>}
 
-      {account.kind === 'guest' && manage}
+      {!entry && account.kind === 'guest' && manage}
     </>
   )
 }

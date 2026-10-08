@@ -86,6 +86,6 @@ export function useDataState(): DataState {
 }
 
 export function useHome(): HomeData {
-  const tables = useDataState().snapshot.tables
-  return useMemo(() => selectHome(tables), [tables])
+  const { tables, activeHomeId } = useDataState().snapshot
+  return useMemo(() => selectHome(tables, activeHomeId), [tables, activeHomeId])
 }

@@ -1,5 +1,5 @@
 import { diffDays, isInVacation, weekdayOf } from '../domain/dates'
-import { choreStatus, completionCounts, completionDays, type ChoreStatus } from '../domain/schedule'
+import { choreActiveOn, choreStatus, completionCounts, completionDays, type ChoreStatus } from '../domain/schedule'
 import type { Chore, Completion, ISODate, VacationWindow } from '../domain/types'
 
 export type SectionId = 'late' | 'today' | 'soon' | 'done'
@@ -57,7 +57,7 @@ export function buildSections(
   vacations: VacationWindow[],
   today: ISODate,
 ): ChoreSection[] {
-  const rows: ChoreRow[] = chores.map((chore) => {
+  const rows: ChoreRow[] = chores.filter((c) => choreActiveOn(c, today)).map((chore) => {
     const status = choreStatus(chore, completions, today, vacations)
     const upcoming = status.state === 'upcoming'
     const doneToday = upcoming && completionDays(chore, completions).includes(today)
@@ -93,7 +93,9 @@ export function allCaughtUp(sections: ChoreSection[]): boolean {
 
 /** The next chore coming up, for the "all done" card. Null when nothing is scheduled ahead. */
 export function nextUpcoming(sections: ChoreSection[]): ChoreRow | null {
-  return sections.find((s) => s.id === 'soon')?.rows[0] ?? null
+  return sections.flatMap((s) => s.rows)
+    .filter((r) => r.status.state === 'upcoming')
+    .sort((a, b) => a.status.dueDate.localeCompare(b.status.dueDate) || a.chore.name.localeCompare(b.chore.name))[0] ?? null
 }
 
 /**

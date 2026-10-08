@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { appStore } from '../data/appStore'
 import { getSupabase, supabaseConfigured } from './supabase'
@@ -121,7 +121,7 @@ function localStorageOrNull(): KeyedStorage | null {
 
 /** Forget this device's per-account settings (every `chore-pet:` key but the sound setting). */
 export function clearLocalSettings(storage: KeyedStorage | null = localStorageOrNull()): void {
-  if (!storage) return
+  if (!storage) throw new Error("Couldn't clear this device's settings. Try again with storage available.")
   try {
     const keys: string[] = []
     for (let i = 0; i < storage.length; i++) {
@@ -130,7 +130,7 @@ export function clearLocalSettings(storage: KeyedStorage | null = localStorageOr
     }
     keys.forEach((k) => storage.removeItem(k))
   } catch {
-    // Storage is blocked; there is nothing in it to clear.
+    throw new Error("Couldn't clear this device's settings. Try again.")
   }
 }
 
@@ -155,27 +155,32 @@ export interface SignOutResult {
  * and its per-account settings, then drop the session here. Other devices stay
  * signed in. The app then starts fresh as a new guest.
  */
-export async function signOutSafely(): Promise<SignOutResult> {
+async function performSignOut(): Promise<SignOutResult> {
   if (!supabaseConfigured) return { ok: true, unsynced: 0 }
   const supabase = await getSupabase().catch(() => null)
   if (!supabase) return { ok: false, unsynced: appStore.getState().pendingCount, message: "Couldn't reach the server. Try again when you're online." }
-  await Promise.race([appStore.sync(), new Promise((r) => setTimeout(r, LAST_SYNC_MS))])
-  const { pendingCount: unsynced, rejectedCount } = appStore.getState()
-  // A copy stays on this device only when the server can't give it back: unsynced or
-  // set-aside changes, or a guest's home (no way to sign back in to it). A fully saved
-  // account leaves nothing behind, so sign-out is a clean break on a shared browser.
-  const { data: current } = await supabase.auth.getSession()
-  const guest = current.session?.user.is_anonymous === true
-  const keep = unsynced > 0 || rejectedCount > 0 || guest
-  // No syncing in between: the old session must not pull its home back in, nor the new one claim it.
+  const pending = appStore.getState().snapshot.cleanup
+  if (pending?.kind === 'delete') return { ok: false, unsynced: 0, message: 'Finish the account deletion first.' }
+  if (!pending) await Promise.race([appStore.sync(), new Promise((r) => setTimeout(r, LAST_SYNC_MS))])
+  const { pendingCount: unsynced, rejectedCount, snapshot } = appStore.getState()
   const resume = appStore.pause()
   try {
-    // A guest's home is held for whoever uses this device next, who can bring it back.
-    await appStore.reset({ backup: keep, forNext: guest })
+    if (!pending) {
+      const { data: current, error } = await supabase.auth.getSession()
+      if (error) throw error
+      const guest = current.session?.user.is_anonymous === true && current.session.user.id === snapshot.userId
+      await appStore.setCleanup({ kind: 'sign-out', ownerId: snapshot.userId, stage: 'prepared',
+        backup: unsynced > 0 || rejectedCount > 0 || guest, forNext: guest })
+    }
+    const cleanup = appStore.getState().snapshot.cleanup!
+    if (cleanup.stage !== 'local-cleared') await appStore.reset({ backup: cleanup.backup, forNext: cleanup.forNext })
     clearLocalSettings()
-    // Removes the session from this device even if the server can't be told.
     const { error } = await supabase.auth.signOut({ scope: 'local' })
-    return error ? { ok: false, unsynced, message: error.message } : { ok: true, unsynced }
+    if (error) throw error
+    await appStore.setCleanup(undefined)
+    return { ok: true, unsynced }
+  } catch (e) {
+    return { ok: false, unsynced, message: e instanceof Error ? e.message : "Couldn't finish signing out. Try again." }
   } finally {
     resume()
   }
@@ -197,7 +202,8 @@ export type DeleteAccountResult =
        * - offline: the server couldn't be reached;
        * - failed: the server refused.
        */
-      reason: 'not-set-up' | 'unavailable' | 'offline' | 'failed'
+      reason: 'not-set-up' | 'unavailable' | 'offline' | 'failed' | 'cleanup'
+      serverDeleted?: boolean
       message: string
     }
 
@@ -212,24 +218,136 @@ function missingFunction(error: { code?: string; message: string }, status?: num
  * its backup and its settings, and sign out here. Nothing is wiped unless the
  * server confirmed the delete.
  */
-export async function deleteAccount(): Promise<DeleteAccountResult> {
+async function performDelete(): Promise<DeleteAccountResult> {
   if (!supabaseConfigured) return { ok: false, reason: 'not-set-up', message: 'Accounts are not set up here.' }
   const supabase = await getSupabase().catch(() => null)
   if (!supabase) return { ok: false, reason: 'offline', message: "Couldn't reach the server. Try again when you're online." }
-  // Hold syncing so nothing is re-sent for an account that is going away.
   const resume = appStore.pause()
+  let serverDeleted = false
   try {
-    const { error, status } = await supabase.rpc('delete_my_account')
-    if (error) {
-      if (missingFunction(error, status)) return { ok: false, reason: 'unavailable', message: "Deleting an account isn't available yet." }
-      if (!error.code && !status) return { ok: false, reason: 'offline', message: "Couldn't reach the server. Try again when you're online." }
-      return { ok: false, reason: 'failed', message: error.message }
+    let cleanup = appStore.getState().snapshot.cleanup
+    if (cleanup && cleanup.kind !== 'delete') return { ok: false, reason: 'cleanup', message: 'Finish signing out first.' }
+    if (!cleanup) {
+      cleanup = { kind: 'delete', ownerId: appStore.getState().snapshot.userId, stage: 'prepared' }
+      await appStore.setCleanup(cleanup)
     }
-    await appStore.reset({ backup: false })
+    serverDeleted = cleanup.serverDeleted === true
+    if (!serverDeleted) {
+      // Never repeat this RPC with a replacement account's token.
+      const { data, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError) throw sessionError
+      if (data.session?.user.id !== cleanup.ownerId) return { ok: false, reason: 'cleanup', message: 'Sign in to the original account to confirm its deletion. The device copy is still kept.' }
+      const { error, status } = await supabase.rpc('delete_my_account')
+      if (error) {
+        if (!error.code || status >= 500 || status === 401) return { ok: false, reason: 'offline', message: "Couldn't confirm the deletion. Retry, or clear only this device below." }
+        await appStore.setCleanup(undefined)
+        if (missingFunction(error, status)) return { ok: false, reason: 'unavailable', message: "Deleting an account isn't available yet." }
+        return { ok: false, reason: 'failed', message: error.message }
+      }
+      serverDeleted = true
+      await appStore.setCleanup({ ...cleanup, stage: 'server-deleted', serverDeleted: true })
+    }
+    if (appStore.getState().snapshot.cleanup?.stage !== 'local-cleared') await appStore.reset({ backup: false })
     clearLocalSettings()
-    await supabase.auth.signOut({ scope: 'local' })
+    const { error } = await supabase.auth.signOut({ scope: 'local' })
+    if (error) throw error
+    await appStore.setCleanup(undefined)
     return { ok: true }
+  } catch (e) {
+    return { ok: false, reason: 'cleanup', serverDeleted, message: serverDeleted
+      ? "Your account was deleted, but this device still needs cleanup. Try again."
+      : e instanceof Error ? e.message : "Couldn't finish deleting. Try again." }
   } finally {
     resume()
   }
+}
+
+
+let operationBusy = false
+let operationError: string | null = null
+const operationListeners = new Set<() => void>()
+export function useAccountOperationBusy(): boolean {
+  return useSyncExternalStore((listener) => {
+    operationListeners.add(listener)
+    return () => { operationListeners.delete(listener) }
+  }, () => operationBusy)
+}
+
+export function useAccountOperationError(): string | null {
+  return useSyncExternalStore((listener) => {
+    operationListeners.add(listener)
+    return () => { operationListeners.delete(listener) }
+  }, () => operationError)
+}
+
+async function exclusive<T extends { ok: boolean; message?: string }>(action: () => Promise<T>, unavailable: T): Promise<T> {
+  operationBusy = true
+  operationError = null
+  operationListeners.forEach((listener) => listener())
+  try {
+    // Web Locks serialize the whole account operation across same-origin tabs.
+    // The snapshot checkpoint also compares the stored journal before writing.
+    const locks = typeof navigator !== 'undefined' ? navigator.locks : undefined
+    if (typeof navigator !== 'undefined' && !locks) {
+      operationError = "This browser can't safely finish account changes. Try a current browser."
+      return { ...unavailable, message: operationError }
+    }
+    const result = locks
+      ? await locks.request('chore-pet-account-cleanup', { ifAvailable: true }, (lock) => lock ? action() : unavailable)
+      : await action()
+    if (!result.ok) operationError = result.message ?? "Couldn't finish. Try again."
+    return result
+  } catch (e) {
+    operationError = e instanceof Error ? e.message : "Couldn't finish. Try again."
+    return { ...unavailable, message: operationError }
+  } finally {
+    operationBusy = false
+    operationListeners.forEach((listener) => listener())
+  }
+}
+
+export function signOutSafely(): Promise<SignOutResult> {
+  if (operationBusy) return Promise.resolve({ ok: false, unsynced: appStore.getState().pendingCount, message: 'An account change is still running. Try again in a moment.' })
+  return exclusive(performSignOut, { ok: false, unsynced: appStore.getState().pendingCount, message: 'An account change is running in another tab. Try again in a moment.' })
+}
+
+export function deleteAccount(): Promise<DeleteAccountResult> {
+  if (operationBusy) return Promise.resolve({ ok: false, reason: 'cleanup', message: 'An account change is still running. Try again in a moment.' })
+  return exclusive(performDelete, { ok: false, reason: 'cleanup', message: 'An account change is running in another tab. Try again in a moment.' })
+}
+
+/** Explicit fallback when the server's reply was lost or the old session expired.
+ * Never claims the server account was deleted and never repeats its RPC. */
+export function clearDeviceAfterUnconfirmedDelete(): Promise<AccountResult> {
+  if (operationBusy) return Promise.resolve({ ok: false, message: 'An account change is still running.' })
+  return exclusive(async () => {
+    const cleanup = appStore.getState().snapshot.cleanup
+    if (cleanup?.kind !== 'delete') return { ok: false, message: 'There is no deletion to finish.' }
+    const resume = appStore.pause()
+    try {
+      await appStore.setCleanup({ ...cleanup, deviceOnly: true })
+      await appStore.reset({ backup: false })
+      clearLocalSettings()
+      const supabase = await getSupabase()
+      if (!supabase) throw new Error('Accounts are not set up here.')
+      const { error } = await supabase.auth.signOut({ scope: 'local' })
+      if (error) throw error
+      await appStore.setCleanup(undefined)
+      return { ok: true }
+    } catch (e) {
+      return { ok: false, message: e instanceof Error ? e.message : "Couldn't clear this device. Try again." }
+    } finally { resume() }
+  }, { ok: false, message: 'An account change is running in another tab. Try again in a moment.' })
+}
+
+
+/** Stop a failed sign-out before any device data was cleared. */
+export function cancelSignOut(): Promise<AccountResult> {
+  if (operationBusy) return Promise.resolve({ ok: false, message: 'An account change is still running.' })
+  return exclusive(async () => {
+    const cleanup = appStore.getState().snapshot.cleanup
+    if (cleanup?.kind !== 'sign-out' || cleanup.stage !== 'prepared') return { ok: false, message: 'The device copy was already cleared. Finish signing out instead.' }
+    await appStore.setCleanup(undefined)
+    return { ok: true }
+  }, { ok: false, message: 'An account change is running in another tab. Try again in a moment.' })
 }

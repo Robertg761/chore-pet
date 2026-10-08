@@ -9,9 +9,10 @@ import './Landing.css'
 export interface LandingProps {
   onSample: (species: Species) => void
   onBuild: () => void
+  onSignIn: () => void
 }
 
-export function Landing({ onSample, onBuild }: LandingProps) {
+export function Landing({ onSample, onBuild, onSignIn }: LandingProps) {
   const [species, setSpecies] = useState<Species>('mochi')
 
   return (
@@ -45,6 +46,9 @@ export function Landing({ onSample, onBuild }: LandingProps) {
         </button>
         <button type="button" className="landing-secondary" onClick={onBuild}>
           Build my home
+        </button>
+        <button type="button" className="link-button" onClick={onSignIn}>
+          I already have a home
         </button>
       </div>
     </section>

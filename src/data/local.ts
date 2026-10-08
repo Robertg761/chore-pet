@@ -1,7 +1,9 @@
-import type { Snapshot } from './state'
+import { heldFor, type Snapshot } from './state'
 
 /** Where the offline copy lives between visits. */
 export interface LocalStore {
+  /** Atomically preserve the latest copy, replace it, and remove an owner's backups. */
+  reset?(next: (stored: Snapshot | null) => { snapshot: Snapshot; backup?: Snapshot }, dropOwner?: string): Promise<void>
   load(): Promise<Snapshot | null>
   /** Replace the stored copy. */
   save(snapshot: Snapshot): Promise<void>
@@ -87,6 +89,7 @@ export function indexedDbStore(): LocalStore {
       req.onsuccess = () => (result = act(req.result as Lease | undefined, store))
       tx.oncomplete = () => resolve(result)
       tx.onerror = () => reject(tx.error)
+      tx.onabort = () => reject(tx.error ?? new Error('Storage transaction was cancelled'))
     })
   }
   async function put(key: string, value: Snapshot): Promise<void> {
@@ -109,6 +112,39 @@ export function indexedDbStore(): LocalStore {
       })
     },
     save: (snapshot) => put(KEY, snapshot),
+    async reset(next, dropOwner) {
+      const d = await getDb()
+      return new Promise((resolve, reject) => {
+        const tx = d.transaction(STORE, 'readwrite')
+        const store = tx.objectStore(STORE)
+        const req = store.get(KEY)
+        req.onsuccess = () => {
+          try {
+            const result = next((req.result as Snapshot | undefined) ?? null)
+            if (result.backup) store.put(result.backup, backupKey(result.backup.userId ?? 'unclaimed'))
+            store.put(result.snapshot, KEY)
+            if (dropOwner && !result.backup) {
+              const cursor = store.openCursor()
+              cursor.onsuccess = () => {
+                const row = cursor.result
+                if (!row) return
+                if (String(row.key).startsWith(BACKUP_PREFIX)) {
+                  const snapshot = row.value as Snapshot
+                  if (snapshot.userId === dropOwner || (snapshot.ownerKind === 'guest' && heldFor(snapshot) === dropOwner)) row.delete()
+                }
+                row.continue()
+              }
+            }
+          } catch (e) {
+            tx.abort()
+            reject(e)
+          }
+        }
+        tx.oncomplete = () => resolve()
+        tx.onerror = () => reject(tx.error)
+        tx.onabort = () => reject(tx.error ?? new Error('Clearing the offline copy was cancelled'))
+      })
+    },
     async update(fn, lease) {
       const d = await getDb()
       return new Promise((resolve, reject) => {
@@ -160,6 +196,7 @@ export function indexedDbStore(): LocalStore {
         }
         tx.oncomplete = () => resolve(claimed)
         tx.onerror = () => reject(tx.error)
+        tx.onabort = () => reject(tx.error ?? new Error('Storage transaction was cancelled'))
       })
     },
     holdLock: (lock, token, now) =>
@@ -203,6 +240,7 @@ export function indexedDbStore(): LocalStore {
         }
         tx.oncomplete = () => resolve()
         tx.onerror = () => reject(tx.error)
+        tx.onabort = () => reject(tx.error ?? new Error('Storage transaction was cancelled'))
       })
     },
   }
@@ -216,6 +254,16 @@ export function memoryStore(initial: Snapshot | null = null): LocalStore & { cur
     locks: {} as Record<string, Lease>,
     async load() {
       return store.current && structuredClone(store.current)
+    },
+    async reset(next: (stored: Snapshot | null) => { snapshot: Snapshot; backup?: Snapshot }, dropOwner?: string) {
+      const result = next(store.current && structuredClone(store.current))
+      const snapshot = structuredClone(result.snapshot)
+      const backup = result.backup && structuredClone(result.backup)
+      if (backup) store.backups[backupKey(backup.userId ?? 'unclaimed')] = backup
+      if (dropOwner && !backup) for (const [key, value] of Object.entries(store.backups)) {
+        if (value.userId === dropOwner || (value.ownerKind === 'guest' && heldFor(value) === dropOwner)) delete store.backups[key]
+      }
+      store.current = snapshot
     },
     async save(snapshot: Snapshot) {
       store.current = structuredClone(snapshot)

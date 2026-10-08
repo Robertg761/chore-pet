@@ -24,6 +24,7 @@ import {
   unapplied,
   withChanges,
   worthBackingUp,
+  type AccountCleanup,
   type FlushStep,
   type SavedHome,
   type NewOp,
@@ -62,6 +63,8 @@ export interface DataState {
 }
 
 export interface Store {
+  setCleanup(cleanup: AccountCleanup | undefined): Promise<void>
+  selectActiveHome(homeId: string): void
   getState(): DataState
   subscribe(listener: () => void): () => void
   /** Load the local copy, then sync in the background. */
@@ -148,6 +151,9 @@ function kindOf(res: Extract<RemoteResult, { ok: false }>): ErrorKind {
 
 /** Whether `account` may be offered (and restore) this backup. */
 function mayRestore(backup: Snapshot, account: string | null): boolean {
+  // Legacy heldFor was assigned without checking provenance. Only the original
+  // owner may recover those copies. Offline rendering remains unchanged.
+  if (backup.ownerKind !== 'guest') return backup.userId === account
   const holder = heldFor(backup)
   return holder === account || holder === HELD_FOR_NEXT
 }
@@ -203,6 +209,8 @@ export function createStore({
   function set(patch: Partial<DataState>) {
     const next = { ...state, ...patch }
     if (patch.snapshot) {
+      const chosen = selectHome(patch.snapshot.tables, patch.snapshot.activeHomeId).home?.id
+      next.snapshot = chosen === patch.snapshot.activeHomeId ? patch.snapshot : { ...patch.snapshot, activeHomeId: chosen }
       next.pendingCount = Object.keys(patch.snapshot.outbox).length
       next.rejectedCount = patch.snapshot.rejected?.length ?? 0
     }
@@ -229,7 +237,7 @@ export function createStore({
     let written: Snapshot | null = null
     if (local.update) {
       await local.update((stored) => {
-        if (stored && stored.generation !== generation) {
+        if (stored && (stored.generation !== generation || (stored.cleanup && JSON.stringify(stored.cleanup) !== JSON.stringify(state.snapshot.cleanup)))) {
           followReset(stored)
           return null
         }
@@ -288,7 +296,7 @@ export function createStore({
         if (resetting) return
         const stored = await local.load()
         if (!stored) return
-        if (message.type === 'reset' || stored.generation !== generation) {
+        if (message.type === 'reset' || stored.generation !== generation || (stored.cleanup && JSON.stringify(stored.cleanup) !== JSON.stringify(state.snapshot.cleanup))) {
           followReset(stored)
           return
         }
@@ -305,6 +313,9 @@ export function createStore({
    * fresh copy whole. A restore under way here is cancelled (see `resets`).
    */
   function followReset(stored: Snapshot) {
+    epoch++
+    inflight = null
+    clearRetry()
     resets++
     switching = false
     generation = stored.generation
@@ -315,10 +326,10 @@ export function createStore({
     set({ snapshot: stored, hydrated: !remote, lastError: null })
   }
 
-  function backUp(snapshot: Snapshot) {
-    if (memoryOnly || !local.backup || !worthBackingUp(snapshot)) return
-    const backup = local.backup.bind(local)
-    saving = saving.then(() => backup(snapshot.userId ?? 'unclaimed', snapshot)).catch(warn('Could not back up the offline copy'))
+  async function backUp(snapshot: Snapshot) {
+    if (!worthBackingUp(snapshot)) return
+    if (memoryOnly || !local.backup) throw new Error("Couldn't keep a recovery copy. Your home has not been cleared. Try again.")
+    await local.backup(snapshot.userId ?? 'unclaimed', snapshot)
   }
 
   /** Hold the homes kept for whoever uses this device next for `account`, now that it is here. */
@@ -328,7 +339,7 @@ export function createStore({
     const backup = local.backup.bind(local)
     saving = saving
       .then(async () => {
-        for (const b of await list()) if (heldFor(b.snapshot) === HELD_FOR_NEXT) await backup(b.ownerId, { ...b.snapshot, heldFor: account })
+        for (const b of await list()) if (b.snapshot.ownerKind === 'guest' && heldFor(b.snapshot) === HELD_FOR_NEXT) await backup(b.ownerId, { ...b.snapshot, heldFor: account })
       })
       .catch(warn('Could not hand the saved homes to this account'))
   }
@@ -337,7 +348,7 @@ export function createStore({
   async function dropBackupsFor(account: string) {
     if (!local.dropBackup) return
     const all = local.listBackups ? await local.listBackups() : [{ ownerId: account, snapshot: emptySnapshot(account) }]
-    for (const b of all) if (b.ownerId === account || heldFor(b.snapshot) === account) await local.dropBackup(b.ownerId)
+    for (const b of all) if (b.snapshot.userId === account || (b.snapshot.ownerKind === 'guest' && heldFor(b.snapshot) === account)) await local.dropBackup(b.ownerId)
   }
 
   let loading: Promise<void> | null = null
@@ -359,7 +370,7 @@ export function createStore({
       const pending = early
       early = []
       set({ ready: true, snapshot: pending.reduce(change, loaded ?? state.snapshot), savedLocally })
-      if (pending.length) persist()
+      if (pending.length || loaded?.activeHomeId !== state.snapshot.activeHomeId) persist()
       if (!remote) repair()
     })()
     return loading
@@ -367,7 +378,7 @@ export function createStore({
 
   /** Recreate a missing progress row (once per home), the way the app recreates a missing room. */
   function repair(): boolean {
-    const ops = repairOps(state.snapshot.tables)
+    const ops = repairOps(state.snapshot.tables, state.snapshot.activeHomeId)
     const fresh = ops.filter((op) => !repaired.has(op.key))
     if (!fresh.length) return false
     fresh.forEach((op) => repaired.add(op.key))
@@ -389,7 +400,7 @@ export function createStore({
   }
 
   async function send(r: Remote, step: FlushStep, ops: Op[]): Promise<RemoteResult> {
-    if (step.kind === 'delete') return r.remove(step.table, ops.map((o) => o.key))
+    if (step.kind === 'delete') return r.remove(step.table, ops.map((o) => o.key), ops[0]?.kind === 'delete' ? ops[0].removal : undefined)
     return r.upsert(step.table, ops.map((o) => (o as Extract<Op, { kind: 'upsert' }>).value) as never[])
   }
 
@@ -410,10 +421,16 @@ export function createStore({
       const userId = await r.session()
       current()
       // The home being dropped is held for the account taking over this device.
-      if (claimDrops(state.snapshot, userId)) backUp({ ...state.snapshot, heldFor: userId })
+      if (claimDrops(state.snapshot, userId)) {
+        await saving
+        await backUp({ ...state.snapshot, heldFor: state.snapshot.ownerKind === 'guest' ? userId : state.snapshot.userId })
+        current()
+      }
       // The first account on this device since a guest signed out takes over that guest's home.
       if (state.snapshot.userId === null) adoptBackups(userId)
-      commit(claim(state.snapshot, userId))
+      const ownerKind = r.ownerKind ? await r.ownerKind(userId) : undefined
+      current()
+      commit({ ...claim(state.snapshot, userId), ...(ownerKind && { ownerKind }) })
       // Signed in to another account: its home is on the way, so don't offer an empty one meanwhile.
       if (before !== null && before !== state.snapshot.userId) {
         switching = true
@@ -422,6 +439,13 @@ export function createStore({
 
       /** Stop if the account changed since the claim, so its rows never go out under another account's token. */
       const stillMe = async () => {
+        if (!memoryOnly) {
+          const stored = await local.load()
+          if (stored && (stored.generation !== generation || stored.cleanup)) {
+            followReset(stored)
+            throw new AccountChanged()
+          }
+        }
         const signedIn = r.currentUser ? await r.currentUser() : await r.session()
         current()
         if (signedIn !== userId || state.snapshot.userId !== userId) throw new AccountChanged()
@@ -516,7 +540,7 @@ export function createStore({
 
   function sync(): Promise<void> {
     if (!remote) return load()
-    if (paused > 0) {
+    if (paused > 0 || resetting || state.snapshot.cleanup) {
       wanted = true
       return Promise.resolve()
     }
@@ -533,7 +557,7 @@ export function createStore({
         // Left behind by a reset: the fresh home syncs on its own.
         if (epoch !== started) break
         again = false
-        if (paused > 0) {
+        if (paused > 0 || resetting || state.snapshot.cleanup) {
           wanted = true
           break
         }
@@ -565,6 +589,39 @@ export function createStore({
   }
 
   return {
+    async setCleanup(cleanup) {
+      await load()
+      epoch++
+      resets++
+      inflight = null
+      clearRetry()
+      if (memoryOnly || !durable) throw new Error("Couldn't keep the cleanup instructions on this device. Try again with storage available.")
+      await saving
+      let next = { ...state.snapshot, cleanup }
+      const before = state.snapshot
+      try {
+        if (local.update) await local.update((stored) => {
+          if (stored && (stored.generation !== generation || JSON.stringify(stored.cleanup) !== JSON.stringify(base?.cleanup))) {
+            throw new Error('This device changed in another tab. Reload and try again.')
+          }
+          next = { ...mergeSnapshots(before, base, stored ?? before, 'mine'), cleanup }
+          return stamped(next)
+        })
+        else await local.save(stamped(next))
+      } catch (e) {
+        // Keep a confirmed server result in memory if this checkpoint fails.
+        // Reload still sees the earlier journal and asks before clearing locally.
+        if (cleanup?.serverDeleted) set({ snapshot: { ...state.snapshot, cleanup }, savedLocally: false })
+        throw e
+      }
+      base = next
+      set({ snapshot: next })
+      channel?.post({ type: 'saved', from: tabId })
+    },
+    selectActiveHome(homeId) {
+      if (!state.snapshot.tables.homes[homeId] || state.snapshot.cleanup) return
+      commit({ ...state.snapshot, activeHomeId: homeId })
+    },
     getState: () => state,
     subscribe(listener) {
       listeners.add(listener)
@@ -575,6 +632,7 @@ export function createStore({
       void sync()
     },
     apply(...ops) {
+      if (resetting || state.snapshot.cleanup) return
       if (!state.ready) {
         early.push(...ops)
         void load()
@@ -587,41 +645,50 @@ export function createStore({
     async reset({ backup = true, forNext = false } = {}) {
       const resume = pause()
       try {
-        // A sync under way gets a moment to finish; one stuck on a hung request is left behind.
         if (inflight) await Promise.race([inflight, new Promise((r) => setTimeout(r, resetWaitMs))])
         epoch++
         resets++
         inflight = null
         await load()
         clearRetry()
+        if (memoryOnly) throw new Error("Couldn't open this device's storage. Nothing has been cleared. Reload once storage is available.")
+        resetting = true
+        await saving
+        const before = state.snapshot
+        const owner = before.cleanup?.ownerId ?? before.userId
+        const nextGeneration = crypto.randomUUID()
+        let fresh: Snapshot | undefined
+        const replacement = (stored: Snapshot | null) => {
+          if (stored && stored.generation !== generation) throw new Error('This device changed in another tab. Reload and try again.')
+          const merged = stored ? mergeSnapshots(before, base, stored, 'mine') : before
+          // forNext is supplied only after account.ts verifies the current guest session.
+          const kept = forNext ? { ...merged, ownerKind: 'guest' as const, heldFor: HELD_FOR_NEXT } : merged
+          fresh = { ...emptySnapshot(), generation: nextGeneration,
+            ...(before.cleanup && { cleanup: { ...before.cleanup, stage: 'local-cleared' as const } }) }
+          const preserve = backup || (before.cleanup?.kind === 'sign-out' &&
+            (Object.keys(merged.outbox).length > 0 || (merged.rejected?.length ?? 0) > 0 || merged.ownerKind === 'guest'))
+          return { snapshot: fresh, ...(preserve && worthBackingUp(kept) && { backup: kept }) }
+        }
+        if (local.reset) await local.reset(replacement, !backup && owner ? owner : undefined)
+        else {
+          const result = replacement(await local.load())
+          if (result.backup) await backUp(result.backup)
+          // Remove backups before replacing the snapshot so a failed removal retains retry context.
+          if (!result.backup && !backup && owner) await dropBackupsFor(owner)
+          await local.save(result.snapshot)
+        }
+        generation = nextGeneration
+        base = fresh!
         attempts.clear()
         failures = 0
         switching = false
-        const owner = state.snapshot.userId
-        if (backup) backUp(forNext ? { ...state.snapshot, heldFor: HELD_FOR_NEXT } : state.snapshot)
-        set({ snapshot: emptySnapshot(), sync: remote ? 'offline' : 'local-only', lastError: null, hydrated: !remote })
-        if (!memoryOnly) {
-          // Saves and reads queued before this one belong to the old account: skip them.
-          resetting = true
-          // Replace, don't merge: the old account's rows must not come back.
-          saving = saving
-            .then(async () => {
-              generation = crypto.randomUUID()
-              const fresh = state.snapshot // empty, plus anything done since
-              await local.save(stamped(fresh))
-              base = fresh
-              channel?.post({ type: 'reset', from: tabId })
-            })
-            .catch(warn('Could not clear the offline copy'))
-            // The account's backups go only now: from here on, a restore in another tab can no
-            // longer commit (its write sees this reset), and one that already did has written
-            // its swapped-out copy, so this catches it.
-            .then(() => (!backup && owner ? dropBackupsFor(owner) : undefined))
-            .catch(warn('Could not remove the backups'))
-            .finally(() => (resetting = false))
-          await saving
-        }
+        set({ snapshot: fresh!, sync: remote ? 'offline' : 'local-only', lastError: null, hydrated: !remote, savedLocally: durable })
+        channel?.post({ type: 'reset', from: tabId })
+      } catch (e) {
+        set({ savedLocally: false, lastError: "Couldn't finish clearing this device. Try again." })
+        throw e
       } finally {
+        resetting = false
         resume()
       }
     },
@@ -638,20 +705,20 @@ export function createStore({
     async savedHomes() {
       if (memoryOnly || !local.listBackups) return []
       await load()
-      const backups = await local.listBackups().catch(() => [])
+      const backups = await local.listBackups()
       const me = state.snapshot.userId
       // Only homes held for this account: never someone else's on a shared browser. A guest's
       // home kept at sign-out is offered to whoever comes next (until an account takes it over).
       return backups.flatMap(({ ownerId, snapshot }) => (mayRestore(snapshot, me) ? (savedHomeOf(ownerId, snapshot) ?? []) : []))
     },
     async restoreSaved(ownerId) {
-      if (memoryOnly || !local.claimBackup || !local.backup) return false
+      if (state.snapshot.cleanup || resetting || memoryOnly || !local.claimBackup || !local.backup) return false
       const backup = local.backup.bind(local)
       await load()
       // The account this restore is for: a sign-out, deletion or account switch meanwhile cancels it.
       const account = state.snapshot.userId
       const started = resets
-      const stillHere = () => resets === started && state.snapshot.userId === account
+      const stillHere = () => !state.snapshot.cleanup && resets === started && state.snapshot.userId === account
       // One restore at a time for the account, across tabs: two at once would leave two homes.
       const lock = `restore-lock-${account ?? 'unclaimed'}`
       const token = crypto.randomUUID()
@@ -666,7 +733,11 @@ export function createStore({
         // A sync under way gets a moment to finish, so the home doesn't change under the swap.
         if (inflight) await Promise.race([inflight, new Promise((r) => setTimeout(r, resetWaitMs))])
         if (!stillHere() || !mayRestore(saved, account)) return false
-        if (!selectHome(saved.tables).home) return false
+        if (remote && saved.ownerKind !== 'guest') {
+          const authenticated = remote.currentUser ? await remote.currentUser() : await remote.session()
+          if (authenticated !== saved.userId || !stillHere()) return false
+        }
+        if (!selectHome(saved.tables, saved.activeHomeId).home) return false
         // Keep the home being replaced on this device, so it can be swapped back. Its own key
         // (account and home), so it never overwrites the copy being brought back. Each round
         // also checks the lock is still ours (a tab paused past its lifetime may have lost it).
@@ -682,7 +753,7 @@ export function createStore({
         for (let tries = 0; tries < 3 && !done; tries++) {
           const before = state.snapshot
           const kept = theirs.reduce(withChanges, before.tables)
-          const replaced = selectHome(kept).home
+          const replaced = selectHome(kept, before.activeHomeId).home
           if (replaced) {
             keptKey = `${account ?? 'unclaimed'}:${replaced.id}`
             await backup(keptKey, { ...before, tables: kept, heldFor: account, restoreToken: token })
@@ -715,6 +786,7 @@ export function createStore({
               if (merged !== before || !stillHere()) return merged
               swapped = restoreHome(saved, before).reduce(change, before)
               set({ snapshot: swapped })
+              swapped = state.snapshot
               return swapped
             }, { lock, token }).catch((e: unknown) => {
               failed = true

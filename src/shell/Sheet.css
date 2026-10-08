@@ -15,13 +15,15 @@
   transition: translate var(--dur-base) var(--ease-spring);
   animation: sheet-up var(--dur-slow) var(--ease-spring) both;
 }
+.app-sheet[open] { display: flex; flex-direction: column; }
+.app-sheet-footer { flex: none; padding: 8px 12px calc(12px + env(safe-area-inset-bottom)); }
 .app-sheet.app-sheet-dragging { transition: none; }
 .app-sheet::backdrop { background: rgba(43, 30, 47, 0.35); animation: sheet-backdrop-in var(--dur-base) var(--ease-out) both; }
 /* Leaving: quicker than arriving, carried on from wherever a drag left it. */
 .app-sheet.app-sheet-closing { animation: sheet-down var(--dur-quick) var(--ease-in) both; }
 .app-sheet.app-sheet-closing::backdrop { animation: sheet-backdrop-out var(--dur-quick) var(--ease-in) both; }
 .app-sheet-body {
-  max-height: inherit;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;

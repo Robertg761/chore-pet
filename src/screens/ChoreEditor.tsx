@@ -10,7 +10,6 @@ import {
   WEEKDAY_SHORT,
   WEEK_ORDER,
   describeSchedule,
-  formFromChore,
   ordinal,
   resolveObjectId,
   scheduleFromForm,
@@ -18,11 +17,11 @@ import {
   toggleDay,
   validateForm,
   valueFromForm,
-  type ChoreFormState,
   type ChorePlace,
   type ChoreValue,
   type ScheduleKind,
 } from './choreForm'
+import { useChoreDraft } from './choreDrafts'
 import { ScreenHeader } from '../shell/ScreenHeader'
 import { CharCounter } from './CharCounter'
 import './ChoreEditor.css'
@@ -44,7 +43,7 @@ const MONTH_DAYS = Array.from({ length: 31 }, (_, i) => i + 1)
 
 export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: ChoreEditorProps) {
   const uid = useId()
-  const [form, setForm] = useState<ChoreFormState>(() => formFromChore(chore))
+  const { form, patch, clear } = useChoreDraft(chore)
   const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({})
   const [submitted, setSubmitted] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
@@ -58,7 +57,6 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
   const errors = validateForm(form)
   const shown = (f: Field) => (touched[f] || submitted ? errors[f] : undefined)
   const touch = (f: Field) => setTouched((t) => (t[f] ? t : { ...t, [f]: true }))
-  const patch = (p: Partial<ChoreFormState>) => setForm((f) => ({ ...f, ...p }))
 
   const schedule = scheduleFromForm(form)
   const summary = schedule ? describeSchedule(schedule) : null
@@ -68,6 +66,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
     setSubmitted(true)
     const value = valueFromForm(form, places)
     if (value) {
+      clear()
       onSave(value)
       return
     }
@@ -103,7 +102,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
       <ScreenHeader
         id={`${uid}-title`}
         title={chore ? 'Edit chore' : 'New chore'}
-        onBack={onCancel}
+        onBack={() => { clear(); onCancel() }}
         backLabel="Cancel"
         actions={
           onDelete &&
@@ -333,9 +332,9 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
           {onDelete && confirmingDelete && (
             <div className="editor-danger">
               <div className="editor-confirm" role="group" aria-label="Delete this chore">
-                <p>Delete this chore? Rewards you earned stay.</p>
+                <p>Remove this chore? Your past work and rewards stay.</p>
                 <div className="editor-confirm-actions">
-                  <button type="button" className="btn btn-danger" onClick={onDelete}>
+                  <button type="button" className="btn btn-danger" onClick={() => { clear(); onDelete?.() }}>
                     Delete
                   </button>
                   <button ref={keepRef} type="button" className="btn" onClick={keep}>

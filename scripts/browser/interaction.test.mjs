@@ -1,0 +1,173 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { browserApp, snapshot, seedCompletionMilestones } from './helpers.mjs'
+
+for (const key of ['Enter', 'Space']) {
+  test(`Cancel with ${key} adds no washer or chores`, async (t) => {
+    const page = await browserApp(t)
+    await page.getByRole('button', { name: 'Build', exact: true }).click()
+    const before = await snapshot(page)
+    await page.getByRole('button', { name: /^Washing machine/ }).click()
+    await page.keyboard.press('Tab')
+    await page.keyboard.press('Tab')
+    await page.keyboard.press('Tab')
+    assert.equal(await page.locator(':focus').textContent(), 'Cancel')
+    await page.keyboard.press(key)
+    await page.getByRole('button', { name: 'Cancel', exact: true }).waitFor({ state: 'hidden' })
+    const after = await snapshot(page)
+    assert.deepEqual(after.tables.placed_objects, before.tables.placed_objects)
+    assert.deepEqual(after.tables.chores, before.tables.chores)
+  })
+}
+
+test('All chores keeps Undo in the active dialog', async (t) => {
+  const page = await browserApp(t)
+  await page.getByRole('button', { name: /All chores/ }).click()
+  const sheet = page.getByRole('dialog', { name: 'All chores', exact: true })
+  await sheet.getByRole('button', { name: 'Done: Wash the dishes' }).click()
+  await sheet.getByRole('button', { name: 'Undo', exact: true }).click()
+  await sheet.getByRole('button', { name: 'Done: Wash the dishes' }).waitFor()
+  assert.equal(await sheet.getByRole('button', { name: 'Close', exact: true }).evaluate((b) => b.tabIndex), 0)
+})
+
+test('a sheet gift is interactive and preserves Undo past five seconds', async (t) => {
+  const page = await browserApp(t)
+  await page.getByRole('button', { name: /All chores/ }).click()
+  await page.getByRole('dialog', { name: 'All chores', exact: true }).getByRole('button', { name: 'Done: Wash the dishes' }).click()
+  const open = page.getByRole('button', { name: 'Open it', exact: true })
+  await open.click()
+  await page.getByRole('button', { name: 'Put it on' }).waitFor()
+  await page.waitForTimeout(5500) // deliberately outlive the old correction window
+  await page.getByRole('button', { name: 'Undo', exact: true }).click()
+  await page.getByRole('button', { name: 'Put it on' }).click()
+  await page.getByRole('dialog', { name: 'All chores', exact: true }).getByRole('button', { name: 'Done: Wash the dishes' }).waitFor()
+})
+
+for (const key of ['Enter', 'Space']) {
+  test(`Turn with ${key} rotates once without placing`, async (t) => {
+    const page = await browserApp(t)
+    await page.getByRole('button', { name: 'Build', exact: true }).click()
+    const before = await snapshot(page)
+    await page.getByRole('button', { name: /^Washing machine/ }).click()
+    await page.keyboard.press('Tab')
+    await page.keyboard.press('Tab')
+    assert.equal(await page.locator(':focus').textContent(), 'Turn')
+    await page.keyboard.press(key)
+    assert.equal(await page.getByRole('button', { name: 'Cancel', exact: true }).count(), 1)
+    assert.deepEqual((await snapshot(page)).tables.placed_objects, before.tables.placed_objects)
+    await page.getByRole('button', { name: 'Place it', exact: true }).click()
+    await page.waitForFunction(() => document.querySelectorAll('[data-object-id]').length > 7)
+    const after = await snapshot(page)
+    const washer = Object.values(after.tables.placed_objects).find((o) => o.catalogId === 'washer')
+    assert.equal(washer.rotation, 1)
+    assert.equal(Object.keys(after.tables.chores).length, Object.keys(before.tables.chores).length + 2)
+  })
+}
+
+test('room arrows, R, Enter still move, rotate and place the preview', async (t) => {
+  const page = await browserApp(t)
+  await page.getByRole('button', { name: 'Build', exact: true }).click()
+  await page.getByRole('button', { name: /^Washing machine/ }).click()
+  assert.equal(await page.locator(':focus').getAttribute('aria-roledescription'), 'room editor')
+  await page.keyboard.press('ArrowDown')
+  await page.keyboard.press('r')
+  await page.keyboard.press('Enter')
+  await page.getByRole('button', { name: 'Cancel', exact: true }).waitFor({ state: 'hidden' })
+  const washer = Object.values((await snapshot(page)).tables.placed_objects).find((o) => o.catalogId === 'washer')
+  assert.deepEqual({ x: washer.tileX, y: washer.tileY, r: washer.rotation }, { x: 4, y: 0, r: 1 })
+})
+
+test('keyboard gift dismissal restores the sheet, then its opener', async (t) => {
+  const page = await browserApp(t)
+  await page.getByRole('button', { name: /All chores/ }).click()
+  const sheet = page.getByRole('dialog', { name: 'All chores', exact: true })
+  await sheet.getByRole('button', { name: 'Done: Wash the dishes' }).focus()
+  await page.keyboard.press('Enter')
+  await page.getByRole('button', { name: 'Open it' }).waitFor()
+  assert.equal(await page.locator(':focus').textContent(), 'Open it')
+  await page.keyboard.press('Enter')
+  await page.getByRole('button', { name: 'Put it on' }).waitFor()
+  assert.equal(await page.locator(':focus').textContent(), 'Put it on')
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Tab')
+  assert.equal(await page.locator(':focus').textContent(), 'Undo')
+  await page.keyboard.press('Space')
+  await page.keyboard.press('Escape')
+  await page.locator('.gift-panel').waitFor({ state: 'hidden' })
+  assert.equal(await sheet.evaluate((d) => d.open && d.contains(document.activeElement)), true)
+  await sheet.getByRole('button', { name: 'Done: Wash the dishes' }).waitFor()
+  await page.keyboard.press('Escape')
+  await sheet.waitFor({ state: 'hidden' })
+  assert.match(await page.locator(':focus').textContent(), /All chores/)
+})
+
+test('More pauses a home correction until it can be reached again', async (t) => {
+  const page = await browserApp(t)
+  await page.getByRole('button', { name: 'Done: Wash the dishes' }).click()
+  await page.getByRole('button', { name: 'Open it' }).waitFor()
+  await page.keyboard.press('Escape')
+  await page.getByRole('button', { name: 'More', exact: true }).click()
+  await page.waitForTimeout(5500)
+  await page.keyboard.press('Escape')
+  await page.getByRole('button', { name: 'Undo', exact: true }).click()
+  await page.getByRole('button', { name: 'Done: Wash the dishes' }).waitFor()
+})
+
+for (const reducedMotion of ['reduce', 'no-preference']) {
+  test(`home gift preserves correction and wears its reward (${reducedMotion})`, async (t) => {
+    const page = await browserApp(t, { viewport: { width: 1280, height: 800 }, reducedMotion })
+    await page.getByRole('button', { name: 'Done: Wash the dishes' }).click()
+    await page.getByRole('button', { name: 'Open it' }).click()
+    await page.getByRole('button', { name: 'Put it on' }).waitFor()
+    await page.waitForTimeout(5500)
+    await page.getByRole('button', { name: 'Put it on' }).click()
+    await page.getByRole('button', { name: 'Undo', exact: true }).click()
+    await page.getByRole('button', { name: 'Done: Wash the dishes' }).waitFor()
+    const saved = await snapshot(page)
+    assert.equal(Object.values(saved.tables.pets)[0].equipped.head, 'beanie-red')
+    assert.ok(Object.values(saved.tables.progress)[0].unlockedItems.includes('item:beanie-red'))
+  })
+}
+
+test('queued decor and style gifts survive Place it and Try it navigation', async (t) => {
+  const page = await browserApp(t, { viewport: { width: 320, height: 568 }, reducedMotion: 'no-preference' })
+  // Today's completion earns both the third-chore decor and two-day style.
+  // Previously earned rewards reconcile silently on load, so use real history.
+  await seedCompletionMilestones(page)
+  await page.getByRole('button', { name: /All chores/ }).click()
+  await page.getByRole('dialog', { name: 'All chores', exact: true }).getByRole('button', { name: 'Done: Wash the dishes' }).click()
+  await page.getByRole('button', { name: 'Open it' }).click()
+  await page.getByRole('heading', { name: /teddy bear/i }).waitFor()
+  await page.getByRole('button', { name: 'Place it', exact: true }).click()
+  await page.getByRole('button', { name: 'Open it' }).click()
+  await page.getByRole('heading', { name: /mint walls/i }).waitFor()
+  await page.getByRole('button', { name: 'Try it', exact: true }).click()
+  await page.locator('.gift-panel').waitFor({ state: 'hidden' })
+  assert.equal(await page.locator('dialog[open]').count(), 0)
+  await page.waitForFunction(() => document.activeElement?.matches('.app-view h1, .build-room'))
+  const saved = await snapshot(page)
+  assert.equal(Object.values(saved.tables.rooms)[0].wallStyle, 'mint')
+  // The decor placement picked before the queued style gifts is still pending.
+  await page.getByRole('button', { name: 'Place it', exact: true }).click()
+  await page.waitForFunction(() => document.querySelectorAll('[data-object-id]').length > 7)
+  assert.ok(Object.values((await snapshot(page)).tables.placed_objects).some((o) => o.catalogId === 'teddy'))
+  await page.getByRole('button', { name: 'Home', exact: true }).click()
+  assert.equal(await page.getByRole('dialog', { name: 'All chores', exact: true }).count(), 0)
+})
+
+test('phone sheet still dismisses by touch drag after correction', async (t) => {
+  const page = await browserApp(t, { hasTouch: true })
+  await page.getByRole('button', { name: /All chores/ }).tap()
+  const sheet = page.getByRole('dialog', { name: 'All chores', exact: true })
+  await sheet.getByRole('button', { name: 'Done: Wash the dishes' }).tap()
+  await sheet.getByRole('button', { name: 'Undo', exact: true }).tap()
+  // Real Chromium touch input exercises pointer capture and the sheet's drag threshold.
+  const box = await page.locator('.app-sheet-grab').boundingBox()
+  const cdp = await page.context().newCDPSession(page)
+  const point = { x: box.x + box.width / 2, y: box.y + 8 }
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] })
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ ...point, y: point.y + 110 }] })
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+  await sheet.waitFor({ state: 'hidden' })
+  assert.match(await page.locator(':focus').textContent(), /All chores/)
+})

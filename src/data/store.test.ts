@@ -159,7 +159,7 @@ describe('sync engine', () => {
     expect(selectHome(store.getState().snapshot.tables).chores[0].name).toBe('Dishes (renamed on phone)')
   })
 
-  it('deletes cascade locally and on the server', async () => {
+  it('archives locally and syncs retained history to the server', async () => {
     const { server, remote } = fakeServer()
     const store = await onboarded(remote)
     store.apply(...dishes(store))
@@ -167,9 +167,11 @@ describe('sync engine', () => {
     store.apply(...completeChore(chores[0], progress))
     await store.sync()
     store.apply(...removeChore(chores[0].id))
-    expect(selectHome(store.getState().snapshot.tables).completions).toHaveLength(0)
+    expect(selectHome(store.getState().snapshot.tables).completions).toHaveLength(1)
     await store.sync()
-    expect(Object.values(server.tables.chores)).toHaveLength(0)
+    expect(Object.values(server.tables.chores)).toHaveLength(1)
+    expect(Object.values(server.tables.chores)[0].archivedOn).toBeTruthy()
+    expect(Object.values(server.tables.completions)).toHaveLength(1)
   })
 
   it('sets aside only the row the server refuses, not the whole batch', async () => {
@@ -833,7 +835,7 @@ describe('saved homes (backups kept on this device)', () => {
     const store = await onboarded(remote, local)
     // As a sign-in would leave it: the guest's home, held for the account that took over.
     const guest = createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest'))
-    await local.backup!('guest', { ...guest, heldFor: 'u1' })
+    await local.backup!('guest', { ...guest, ownerKind: 'guest' as const, heldFor: 'u1' })
 
     expect((await store.savedHomes()).map((h) => [h.ownerId, h.petName])).toEqual([['guest', 'Bun']])
     expect(await store.restoreSaved('guest')).toBe(true)
@@ -850,7 +852,7 @@ describe('saved homes (backups kept on this device)', () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()
     const store = await onboarded(remote, local)
-    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), ownerKind: 'guest' as const, heldFor: 'u1' })
     local.update = async () => {
       throw new Error('disk full')
     }
@@ -864,7 +866,7 @@ describe('saved homes (backups kept on this device)', () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()
     const store = await onboarded(remote, local)
-    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), ownerKind: 'guest' as const, heldFor: 'u1' })
     const update = local.update!.bind(local)
     local.update = async (fn) => {
       fn(await local.load()) // the transaction ran, then it was aborted (quota, say)
@@ -883,7 +885,7 @@ describe('saved homes (backups kept on this device)', () => {
     const store = await onboarded(remote, local)
     const pipHome = selectHome(store.getState().snapshot.tables).home!
     const key = `snapshot-backup-u1:${pipHome.id}`
-    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), ownerKind: 'guest' as const, heldFor: 'u1' })
     local.holdLock = async () => {
       // This restore was paused past its lock; another took over and wrote its own copy.
       local.backups[key] = { ...local.backups[key], restoreToken: 'the-other-restore' }
@@ -898,7 +900,7 @@ describe('saved homes (backups kept on this device)', () => {
     const local = memoryStore()
     const store = await onboarded(remote, local)
     const pipHome = selectHome(store.getState().snapshot.tables).home!
-    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), ownerKind: 'guest' as const, heldFor: 'u1' })
     const drop = local.dropBackup!.bind(local)
     local.dropBackup = async (owner, restoreToken) => {
       if (owner === 'guest') throw new Error('UnknownError')
@@ -934,7 +936,7 @@ describe('saved homes (backups kept on this device)', () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()
     const store = await onboarded(remote, local)
-    const home = (name: string) => ({ ...createHousehold({ species: 'mochi', petName: name, userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    const home = (name: string) => ({ ...createHousehold({ species: 'mochi', petName: name, userId: 'guest' }).reduce(change, emptySnapshot('guest')), ownerKind: 'guest' as const, heldFor: 'u1' })
     await local.backup!('guest', home('Bun'))
     const drop = local.dropBackup!.bind(local)
     local.dropBackup = async (owner, token) => {
@@ -950,7 +952,7 @@ describe('saved homes (backups kept on this device)', () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()
     const store = await onboarded(remote, local)
-    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), ownerKind: 'guest' as const, heldFor: 'u1' })
     const hold = local.holdLock!.bind(local)
     local.holdLock = async (lock, token, at) => {
       const ours = await hold(lock, token, at)
@@ -971,13 +973,13 @@ describe('saved homes (backups kept on this device)', () => {
     await tabB.start()
     await tabB.sync()
     // A guest's home kept at sign-out, which tab B brings back.
-    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: HELD_FOR_NEXT })
-    const save = local.save.bind(local)
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), ownerKind: 'guest' as const, heldFor: HELD_FOR_NEXT })
+    const reset = local.reset!.bind(local)
     let restored: boolean | null = null
-    local.save = async (snapshot) => {
+    local.reset = async (next, dropOwner) => {
       // Tab B's restore commits just before tab A's reset clears the stored copy.
       if (restored === null) restored = await tabB.restoreSaved('guest')
-      return save(snapshot)
+      return reset(next, dropOwner)
     }
     await tabA.reset({ backup: false }) // "Delete my account" in tab A
     expect(restored).toBe(true)
@@ -990,7 +992,7 @@ describe('saved homes (backups kept on this device)', () => {
     const store = await onboarded(remote, local)
     const home = (name: string, owner: string) => createHousehold({ species: 'mochi', petName: name, userId: owner }).reduce(change, emptySnapshot(owner))
     await local.backup!('someone', home('Theirs', 'someone')) // another person's sign-out copy
-    await local.backup!('guest', { ...home('Bun', 'guest'), heldFor: 'u1' })
+    await local.backup!('guest', { ...home('Bun', 'guest'), ownerKind: 'guest' as const, heldFor: 'u1' })
     expect((await store.savedHomes()).map((h) => h.petName)).toEqual(['Bun'])
     expect(await store.restoreSaved('someone')).toBe(false)
 
@@ -1006,7 +1008,7 @@ describe('saved homes (backups kept on this device)', () => {
     const tabB = createStore({ local, remote })
     await tabB.start()
     await tabB.sync()
-    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), ownerKind: 'guest' as const, heldFor: 'u1' })
     const results = await Promise.all([tabA.restoreSaved('guest'), tabB.restoreSaved('guest')])
     expect(results.filter(Boolean)).toHaveLength(1)
   })
@@ -1018,7 +1020,7 @@ describe('saved homes (backups kept on this device)', () => {
     const tabB = createStore({ local, remote })
     await tabB.start()
     await tabB.sync()
-    const home = (name: string, owner: string) => ({ ...createHousehold({ species: 'mochi', petName: name, userId: owner }).reduce(change, emptySnapshot(owner)), heldFor: 'u1' })
+    const home = (name: string, owner: string) => ({ ...createHousehold({ species: 'mochi', petName: name, userId: owner }).reduce(change, emptySnapshot(owner)), ownerKind: 'guest' as const, heldFor: 'u1' })
     await local.backup!('guest-1', home('Bun', 'guest-1'))
     await local.backup!('guest-2', home('Sprout', 'guest-2'))
     const results = await Promise.all([tabA.restoreSaved('guest-1'), tabB.restoreSaved('guest-2')])
@@ -1041,7 +1043,7 @@ describe('saved homes (backups kept on this device)', () => {
     const { remote } = fakeServer('u1')
     const local = memoryStore()
     const store = await onboarded(remote, local)
-    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), ownerKind: 'guest' as const, heldFor: 'u1' })
     let release = () => {}
     const gate = new Promise<void>((r) => (release = r))
     const backup = local.backup!.bind(local)
@@ -1061,7 +1063,7 @@ describe('saved homes (backups kept on this device)', () => {
     const local = memoryStore()
     const store = await onboarded(remote, local)
     const pipHome = selectHome(store.getState().snapshot.tables).home!
-    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), ownerKind: 'guest' as const, heldFor: 'u1' })
     let release = () => {}
     const gate = new Promise<void>((r) => (release = r))
     let entered = () => {}
@@ -1092,7 +1094,7 @@ describe('saved homes (backups kept on this device)', () => {
     const tabB = createStore({ local, remote })
     await tabB.start()
     await tabB.sync()
-    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), heldFor: 'u1' })
+    await local.backup!('guest', { ...createHousehold({ species: 'mochi', petName: 'Bun', userId: 'guest' }).reduce(change, emptySnapshot('guest')), ownerKind: 'guest' as const, heldFor: 'u1' })
     /** Run `meanwhile` once, while tab A's restore checks its lock. */
     const during = (meanwhile: () => Promise<void>) => {
       const hold = local.holdLock!.bind(local)

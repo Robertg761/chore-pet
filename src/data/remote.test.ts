@@ -75,7 +75,7 @@ function fakePostgrest(maxRows = 1000) {
 
 /** A real supabaseRemote over the fake client, signed in as u1. */
 function remoteOver(client: SupabaseClient): Remote {
-  return { ...supabaseRemote(async () => client), session: async () => 'u1', currentUser: async () => 'u1' }
+  return { ...supabaseRemote(async () => client), session: async () => 'u1', ownerKind: async () => 'saved', currentUser: async () => 'u1' }
 }
 
 const day = (i: number) => new Date(Date.UTC(2023, 0, 1 + i)).toISOString().slice(0, 10)
@@ -164,5 +164,14 @@ describe('failed writes', () => {
     expect(await failing({ code: '', message: 'TypeError: Failed to fetch' }, 0).remove(tables[0], ['x'])).toMatchObject({ ok: false, transient: true, kind: 'outage' })
     expect(await failing({ message: 'Payload Too Large' }, 413).upsert(tables[0], [])).toMatchObject({ ok: false, transient: true, kind: 'stuck' })
     expect(await failing(null, 201).upsert(tables[0], [])).toEqual({ ok: true })
+  })
+})
+
+describe('atomic object removal', () => {
+  it('sends keep-chore intent and the local end date to the database transaction', async () => {
+    const calls: unknown[] = []
+    const client = { rpc: async (...args: unknown[]) => { calls.push(args); return { error: null, status: 200 } } } as unknown as SupabaseClient
+    expect(await remoteOver(client).remove('placed_objects', ['object'], { archivedOn: '2026-10-06', keepChores: true })).toEqual({ ok: true })
+    expect(calls).toEqual([['remove_objects', { object_ids: ['object'], archive_on: '2026-10-06', keep_chores: true }]])
   })
 })
