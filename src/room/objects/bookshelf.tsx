@@ -51,7 +51,7 @@ function carcass() {
 function opening() {
   const quad = (a: number, b: number) => poly(front(a, CEIL), front(b, CEIL), front(b, FLOOR), front(a, FLOOR))
   return (
-    <g strokeWidth={2}>
+    <g>
       <polygon points={quad(OY0, OY1)} fill={INNER} />
       <polygon points={quad(OY0, OY0 + 0.2)} fill={INNER_SIDE} stroke="none" />
       <polygon points={quad(OY0, OY1)} fill="none" />
@@ -61,13 +61,13 @@ function opening() {
 
 /** A shelf's top surface, seen from above, running back from its front edge. */
 function shelfTop(z: number) {
-  return <polygon points={isoPoints([D, OY0, z], [D, OY1, z], [BX0 - 0.02, OY1, z], [BX0 - 0.02, OY0, z])} fill={lighter(floorWood)} strokeWidth={2} />
+  return <polygon points={isoPoints([D, OY0, z], [D, OY1, z], [BX0 - 0.02, OY1, z], [BX0 - 0.02, OY0, z])} fill={lighter(floorWood)} />
 }
 
 function midBoard() {
   const [z0, z1] = MID_BOARD
   return (
-    <g strokeWidth={2}>
+    <g>
       {shelfTop(z1)}
       <polygon points={poly(front(OY0, z1), front(OY1, z1), front(OY1, z0), front(OY0, z0))} fill={floorWood} />
     </g>
@@ -92,7 +92,7 @@ function book({ ty, w, h, colour, lean = 0 }: BookSpec, z0: number, key: number)
   const top = poly(at(BX0, 1, ty), at(BX1, 1, ty), at(BX1, 1, ty1), at(BX0, 1, ty1))
   const band = poly(at(BX1, 0.58, ty), at(BX1, 0.58, ty1), at(BX1, 0.72, ty1), at(BX1, 0.72, ty))
   return (
-    <g key={key} strokeWidth={2}>
+    <g key={key} strokeWidth={2.5}>
       <polygon points={side} fill={darker(colour)} />
       <polygon points={spine} fill={colour} />
       <polygon points={band} fill={cream} opacity={0.85} stroke="none" />
@@ -133,7 +133,7 @@ function plant() {
   const x = p.x
   const y = p.y + 1
   const leafAt = (dx: number, dy: number, rot: number, fill: string) => (
-    <ellipse cx={x + dx} cy={y + dy} rx={3.1} ry={5.6} fill={fill} strokeWidth={2} transform={`rotate(${rot} ${x + dx} ${y + dy})`} />
+    <ellipse cx={x + dx} cy={y + dy} rx={3.1} ry={5.6} fill={fill} transform={`rotate(${rot} ${x + dx} ${y + dy})`} />
   )
   return (
     <g>
@@ -141,7 +141,7 @@ function plant() {
       {leafAt(-4.5, -17, -28, leafDark)}
       {leafAt(4.5, -17, 28, leaf)}
       {leafAt(0, -21, 0, leaf)}
-      <g strokeWidth={2}>
+      <g>
         <path d={`M${x - 5} ${y - 8} H${x + 5} L${x + 4} ${y} Q${x} ${y + 2} ${x - 4} ${y} Z`} fill={warmRed} />
         <path d={`M${x} ${y - 8} H${x + 5} L${x + 4} ${y} Q${x + 2} ${y + 1.4} ${x} ${y + 1.6} Z`} fill={darker(warmRed)} stroke="none" />
         <path d={`M${x - 5} ${y - 8} H${x + 5} L${x + 4} ${y} Q${x} ${y + 2} ${x - 4} ${y} Z`} fill="none" />

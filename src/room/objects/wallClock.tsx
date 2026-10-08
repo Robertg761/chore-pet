@@ -6,9 +6,9 @@ import { cobweb } from './lamp'
 import type { ObjectArt } from './types'
 
 // A round wall clock with a warm red rim and a cream face: two simple hands
-// and four tick dots, no numbers. No floor footprint: it hangs flat on the
-// left-wall plane (tx = 0) at rotation 0 using `onRight`, exactly like
-// poster.tsx. Local coordinates: x 0..32 runs along the wall (0 is the front
+// and four tick dots, no numbers. The catalog gives it a 1x1 footprint like
+// poster.tsx; it hangs flat on the left-wall plane (tx = 0) at rotation 0 using
+// `onRight`, exactly like the poster. Local coordinates: x 0..32 runs along the wall (0 is the front
 // edge), y = -height above the floor. The room mirrors this for the right
 // wall. It has no chores, but if a player adds one the dust settles: messy1
 // hangs a little crooked with dust on the rim and a cobweb strand, messy2 is
@@ -35,7 +35,7 @@ function shadow() {
 }
 
 function rim() {
-  // the lower right half of the rim is the shaded side, clipped inside the outline by staying inside it
+  // the lower right half of the rim is the shaded side; it stays just inside the outline, so no clip is needed
   const a = polar(R - 1, 40)
   const b = polar(R - 1, 220)
   return (

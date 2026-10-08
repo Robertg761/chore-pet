@@ -139,7 +139,7 @@ export function crown(fit: Fit) {
     const dip = 2 * t * (1 - t) * sag * 2
     return [k * w, (bandTop + bandBottom) / 2 + dip] as const
   })
-  const gy = tops[2] + 5
+  const gy = tops[2] + 8.5 // the gem's top sits on the centre point's tip
   return (
     <g transform={`translate(0 ${dy}) rotate(${tilt})`}>
       <Ink>
@@ -174,9 +174,6 @@ export function bow(fit: Fit) {
     </g>
   )
 }
-
-/** Round glasses: the lenses sit on the eyes at (+/-20, 0), white shine on each. */
-
 
 /** One autumn leaf lying along +x from the origin, `len` long. */
 function autumnLeaf(len: number, fill: string) {

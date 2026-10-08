@@ -589,7 +589,11 @@ export default function App() {
         }}
         onRemove={(id) => {
           const gone = orderedRooms.find((r) => r.id === id)
-          if (gone) appStore.apply(...removeRoom(gone, objects, today))
+          if (!gone) return
+          // Nothing stays selected or mid-placement in a room that's gone.
+          setSelectedId(null)
+          setPlacing(null)
+          appStore.apply(...removeRoom(gone, objects, today))
         }}
       />
     </Sheet>

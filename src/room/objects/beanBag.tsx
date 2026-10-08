@@ -29,7 +29,7 @@ function shadow() {
   return <ellipse cx={0} cy={3} rx={31} ry={10} fill={ink} fillOpacity={0.15} stroke="none" />
 }
 
-/** The bag with its three shades clipped inside the silhouette. `squash` flattens it for messy2. */
+/** The bag with its three shades clipped inside the silhouette; `clipId` keeps each stage's clip path unique. */
 function bag(clipId: string) {
   return (
     <g>
@@ -78,7 +78,7 @@ function messy2() {
       {bean(23, 10, 20, 0)}
       {bean(31, 5, -25, 1)}
       {bean(14, 13, 60, 2)}
-      {dustBunny(-26, 15, 0.85)}
+      {dustBunny(-26, 12.5, 0.85)}
     </g>
   )
 }

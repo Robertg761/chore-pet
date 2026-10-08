@@ -6,10 +6,13 @@ import { pair, type Fit } from './shared'
 const { warmRed, blush, fabricBlue, sky, leaf, leafDark, cream, white, steel, steelDark } = PALETTE
 
 
+/** Outline weight factor shared by both glasses. */
+const GLASSES_K = 0.875
+
 /** Round glasses: the lenses sit on the eyes at (+/-20, 0), white shine on each. */
 export function glasses(_fit: Fit) {
   return (
-    <Ink k={0.875}>
+    <Ink k={GLASSES_K}>
       {pair(<>
         <circle cx={-20} cy={0} r={14.5} fill={sky} fillOpacity={0.3} />
         <path d="M-34 -3 L-39 -6" fill="none" />
@@ -149,33 +152,29 @@ export function backpackStraps({ species }: Fit) {
   )
 }
 
-// ---- Outfits. The pets are round blobs with no torso, so an outfit is a garment
-// over the lower body. Every outfit is drawn in the space of the outfit anchor
-// (about the lower middle of the body, tuned on Bun, the narrowest body) and its
-// hem follows the body's rounded bottom. Mochi is wider, so its outfit anchor may
-// carry a scale of about 1.1. The sick bed hides the body under a blanket, so
-// outfits should not be drawn in the sick poses (anchor scale 0).
-
-/** Top edge of every garment: just under the cheeks and mouth. */
 /**
- * One heart lens, centred on the eye (0,0): soft rounded lobes and a short point.
+ * One heart lens, centred on (0,0) in its own space (heartGlasses translates it onto
+ * the eye): soft rounded lobes and a short point.
  * Same width as the round glasses' lens, so the eyes sit in the middle of it.
  */
 const HEART = 'M0 12 C-4 9 -14 3 -14 -5 C-14 -11 -9.5 -13 -6.5 -13 C-3.5 -13 -1 -11 0 -8 C1 -11 3.5 -13 6.5 -13 C9.5 -13 14 -11 14 -5 C14 3 4 9 0 12 Z'
 
+/** The frame tube's outline (outer - inner = 4) at the same k as the round glasses. */
+const FRAME_OUTER = 3 + 4 * GLASSES_K
+
 /** Heart-shaped glasses: a pale blush lens, a warm red frame, white shine on each lens. */
 export function heartGlasses(_fit: Fit) {
   return (
-    <Ink k={0.875}>
+    <Ink k={GLASSES_K}>
       {pair(
         <g transform="translate(-20 1)">
           <path d={HEART} fill={mix(blush, white, 0.7)} fillOpacity={0.4} stroke="none" />
-          <Tube d={HEART} outer={7} inner={3} colour={warmRed} />
+          <Tube d={HEART} outer={FRAME_OUTER} inner={3} colour={warmRed} />
           <path d="M-34 -4 L-39 -7" fill="none" />
           <path d="M-9.5 -4.5 Q-9.5 -8.5 -6 -8.5" fill="none" stroke={white} strokeWidth={3.2} />
         </g>,
       )}
-      <Tube d="M-6 -3 Q0 -8 6 -3" outer={7} inner={3} colour={warmRed} />
+      <Tube d="M-6 -3 Q0 -8 6 -3" outer={FRAME_OUTER} inner={3} colour={warmRed} />
     </Ink>
   )
 }
