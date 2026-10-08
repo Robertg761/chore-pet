@@ -4,7 +4,7 @@ import { currentStreak } from '../domain/unlocks'
 import { petCondition } from '../domain/health'
 import { buildSections } from '../screens/choreListModel'
 import { completedPerDay, healthPerDay, weekDays } from '../screens/weekModel'
-import { clearHome, completeChoreWithRewards, removeChore, removeObject, restoreHome } from './actions'
+import { addChoreAgain, clearHome, completeChoreWithRewards, removeChore, removeObject, restoreHome } from './actions'
 import { change, emptySnapshot, planFlush, selectHome, upsertOp } from './state'
 
 const chore = (id: string, createdOn = '2026-10-01'): Chore => ({ id, homeId: 'h', objectId: 'o', name: id, createdOn, schedule: { kind: 'daily' }, photoProof: false })
@@ -137,5 +137,46 @@ describe('clearing the home', () => {
     expect(after.pet).toEqual(before.pet)
     expect(after.rooms).toEqual(before.rooms)
     expect(currentStreak(after.chores, after.completions, '2026-10-06')).toBe(6)
+  })
+})
+
+describe('removing a chore dated ahead of today', () => {
+  // A device clock set ahead can date a chore after today; the server refuses an end before the start.
+  const ahead = { ...chore('ahead', '2026-10-09'), objectId: null }
+  it('ends it on its start date, not before', () => {
+    const s = change(fixture(), upsertOp('chores', ahead))
+    const after = selectHome(removeChore('ahead', selectHome(s.tables), '2026-10-07').reduce(change, s).tables)
+    expect(after.chores.find((c) => c.id === 'ahead')?.archivedOn).toBe('2026-10-09')
+  })
+  it('does the same when its furniture goes', () => {
+    const s = change(fixture(), upsertOp('chores', { ...ahead, objectId: 'o' }))
+    const after = selectHome(removeObject('o', selectHome(s.tables), '2026-10-07').reduce(change, s).tables)
+    expect(after.chores.find((c) => c.id === 'ahead')?.archivedOn).toBe('2026-10-09')
+    expect(after.chores.find((c) => c.id === 'a')?.archivedOn).toBe('2026-10-07')
+  })
+})
+
+describe('adding a removed chore back', () => {
+  const home = { id: 'h', ownerId: 'u', name: 'Home', vacations: [] }
+  const input = { name: 'a', schedule: { kind: 'daily' as const }, objectId: null }
+  it('starts done when the old one was done today, without counting again', () => {
+    let s = fixture()
+    s = clearHome(selectHome(s.tables), '2026-10-06').reduce(change, s)
+    const before = selectHome(s.tables)
+    s = addChoreAgain(home, before.chores.find((c) => c.id === 'a')!, input, before.completions, '2026-10-06').reduce(change, s)
+    const after = selectHome(s.tables)
+    const fresh = after.chores.find((c) => !c.archivedOn)!
+    expect(after.completions.filter((c) => c.choreId === fresh.id)).toMatchObject([{ completedOn: '2026-10-06', counts: false }])
+    // Not due again today, nothing to tick, and the count is unchanged.
+    expect(buildSections(after.chores, after.completions, [], '2026-10-06').flatMap((x) => x.rows).map((r) => [r.chore.id, r.doneToday])).toEqual([[fresh.id, true]])
+    const done = completeChoreWithRewards(fresh, after.progress, { chores: after.chores, completions: after.completions, vacations: [] }, new Date(2026, 9, 6, 18), new Date(2026, 9, 6, 18))
+    expect(done.completion).toBeFalsy()
+  })
+  it('starts due when the old one was not done today', () => {
+    let s = fixture()
+    s = removeChore('a', selectHome(s.tables), '2026-10-08').reduce(change, s)
+    const before = selectHome(s.tables)
+    const ops = addChoreAgain(home, before.chores.find((c) => c.id === 'a')!, input, before.completions, '2026-10-08')
+    expect(ops.map((o) => o.table)).toEqual(['chores'])
   })
 })

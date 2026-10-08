@@ -148,7 +148,7 @@ test('the sample home has no Start over; Start fresh is its way out', async (t) 
 })
 
 test('the Chores screen edits, removes several at once and adds a removed chore back', async (t) => {
-  const page = await browserApp(t)
+  const page = await browserApp(t, { reducedMotion: 'no-preference' })
   await page.getByRole('button', { name: 'Make it mine', exact: true }).click()
   const active = async () => Object.values((await snapshot(page)).tables.chores).filter((c) => !c.archivedOn).map((c) => c.name).sort()
   const before = await active()
@@ -163,6 +163,28 @@ test('the Chores screen edits, removes several at once and adds a removed chore 
   await page.getByRole('heading', { name: 'Edit chore' }).waitFor()
   await page.getByRole('button', { name: 'Cancel', exact: true }).click()
   await page.getByRole('heading', { name: 'Chores', exact: true }).waitFor()
+
+  // Deleting from an editor opened here lands back here, with no home entry slipped in between.
+  await page.getByRole('button', { name: 'Edit Wipe the table', exact: true }).click()
+  await page.getByRole('heading', { name: 'Edit chore' }).waitFor()
+  await page.getByRole('button', { name: 'Delete chore' }).click()
+  await page.getByRole('button', { name: 'Delete', exact: true }).click()
+  await page.getByRole('heading', { name: 'Chores', exact: true }).waitFor()
+  await page.getByRole('button', { name: 'Add Wipe the table again', exact: true }).waitFor()
+  assert.equal(new URL(page.url()).searchParams.get('screen'), 'chores')
+  await page.goBack()
+  await page.getByRole('heading', { name: 'Chores', exact: true }).waitFor()
+  assert.equal(new URL(page.url()).searchParams.get('screen'), 'chores')
+  await page.getByRole('button', { name: 'Add Wipe the table again', exact: true }).click()
+  await page.getByRole('checkbox', { name: /Wipe the table/ }).waitFor()
+
+  // Unpicking while asked goes back a step: a new pick never lands on the Remove question.
+  await page.getByRole('checkbox', { name: /Wash the dishes/ }).check()
+  await page.getByRole('button', { name: 'Remove 1 chore', exact: true }).click()
+  await page.getByRole('checkbox', { name: /Wash the dishes/ }).uncheck()
+  await page.getByRole('checkbox', { name: /Wash the dishes/ }).check()
+  assert.equal(await page.getByRole('group', { name: 'Remove chores' }).count(), 0)
+  await page.getByRole('button', { name: 'Clear picks', exact: true }).click()
 
   // Pick two, think better of it, then remove them.
   await page.getByRole('checkbox', { name: /Wash the dishes/ }).check()

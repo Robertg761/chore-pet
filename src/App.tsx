@@ -11,6 +11,7 @@ import { currentStreak, type Unlock } from './domain/unlocks'
 import { ITEMS } from './character/items'
 import {
   addChore,
+  addChoreAgain,
   adoptSample,
   clearHome,
   completeChoreWithRewards,
@@ -185,8 +186,10 @@ export default function App() {
   const missingEdit = view.name === 'edit' && view.choreId !== undefined && !data.chores.some((c) => c.id === view.choreId && choreActiveOn(c, today))
   const staleEdit = ready && hydrated && missingEdit
   useEffect(() => {
-    if (staleEdit || (data.home && (view.name === 'sign-in' || view.name === 'pick-pet'))) navigation.go({ name: 'home' }, true)
-  }, [staleEdit, data.home, view.name, navigation])
+    // Back to where the editor was opened from: deleting from the chores screen lands there, not home.
+    if (staleEdit) navigation.go(view.name === 'edit' && view.from === 'chores' ? { name: 'chores' } : { name: 'home' }, true)
+    else if (data.home && (view.name === 'sign-in' || view.name === 'pick-pet')) navigation.go({ name: 'home' }, true)
+  }, [staleEdit, data.home, view, navigation])
   // Each screen names itself and takes focus at its heading, so keyboard and screen-reader users land on it.
   useEffect(() => {
     document.title = VIEW_TITLE[view.name]
@@ -266,6 +269,7 @@ export default function App() {
   const { home, pet, progress, rooms, objects, chores, completions } = data
   const activeChores = chores.filter((c) => choreActiveOn(c, today))
   const room = rooms[0]
+  const roomObjects = room ? objects.filter((o) => o.roomId === room.id) : []
   const back = () => setView({ name: 'home' })
   const flag = (key: string) => (writeFlag(key), setFlagTick((n) => n + 1))
   // Build mode for the first time shows the coach card; it stays for this visit once started.
@@ -365,7 +369,7 @@ export default function App() {
     // Looked up fresh each render: a chore deleted elsewhere (another device, a sync) is never written back.
     const chore = view.choreId ? activeChores.find((c) => c.id === view.choreId) : undefined
     // Places a chore can belong to, named like the catalog; duplicates are numbered ("Rug 2").
-    const places = placeNames(objects.filter((o) => o.roomId === rooms[0]?.id))
+    const places = placeNames(roomObjects)
     // Opened from the chores screen, the editor goes back there.
     const done = () => (view.from === 'chores' ? setView({ name: 'chores' }) : back())
     return framed(
@@ -398,12 +402,12 @@ export default function App() {
       <main className="shell screen">
         <ManageChores
           chores={chores}
-          objects={objects.filter((o) => o.roomId === rooms[0]?.id)}
+          objects={roomObjects}
           today={today}
           onEdit={(chore) => setView({ name: 'edit', choreId: chore.id, from: 'chores' })}
           onAdd={() => setView({ name: 'edit', from: 'chores' })}
           onRemove={(list) => appStore.apply(...list.flatMap((c) => removeChore(c.id, data, today)))}
-          onAddAgain={(chore) => appStore.apply(...addChore(home, againInput(chore, objects.filter((o) => o.roomId === rooms[0]?.id)), today))}
+          onAddAgain={(chore) => appStore.apply(...addChoreAgain(home, chore, againInput(chore, roomObjects), completions, today))}
           onClose={back}
         />
       </main>,
@@ -442,7 +446,7 @@ export default function App() {
         <ShareCard
           pet={pet}
           room={rooms[0]}
-          objects={objects.filter((o) => o.roomId === rooms[0].id)}
+          objects={roomObjects}
           choreCount={progress?.choreCount ?? 0}
           // Worked out for the displayed day, like the rewards screen.
           streak={currentStreak(chores, completions, today, home.vacations)}
@@ -500,7 +504,6 @@ export default function App() {
   const away = isInVacation(today, home.vacations)
   const neglect = objectNeglect(chores, condition.statuses)
   const stages = Object.fromEntries(Object.entries(neglect).map(([id, level]) => [id, messStageFor(level)]))
-  const roomObjects = room ? objects.filter((o) => o.roomId === room.id) : []
   const solid = roomObjects.flatMap((o) => {
     const e = catalogEntry(o.catalogId)
     return e && e.layer === 'solid' ? [footprintOf(o, e)] : []

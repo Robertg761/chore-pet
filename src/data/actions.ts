@@ -88,8 +88,9 @@ export function updateChore(chore: Chore, patch: Partial<Pick<Chore, 'name' | 's
 /** Stop future obligations, retaining dated work and the schedule that earned it. */
 export function removeChore(choreId: string, history?: History, today = toISODate(new Date())): NewOp[] {
   const chore = history?.chores.find((c) => c.id === choreId)
+  // Never before it starts (a chore dated ahead by a device clock), as the server requires.
   return chore
-    ? [upsertOp('chores', { ...chore, archivedOn: chore.archivedOn ?? today })]
+    ? [upsertOp('chores', { ...chore, archivedOn: chore.archivedOn ?? (today < chore.createdOn ? chore.createdOn : today) })]
     : [{ ...deleteOp('chores', choreId), removal: { archivedOn: today } } as NewOp]
 }
 
@@ -218,6 +219,24 @@ export function clearHome(history: History & { objects: PlacedObject[] }, today:
     // Chores on furniture are retired with it; the rest are retired here.
     ...history.chores.filter((c) => !c.archivedOn && !(c.objectId && placed.has(c.objectId))).flatMap((c) => removeChore(c.id, history, today)),
   ]
+}
+
+/**
+ * Add a removed chore back as a new one. If the old one was already done today,
+ * the new one starts done too: a completion that satisfies today but doesn't
+ * count again toward rewards, so removing and adding back can't earn twice.
+ */
+export function addChoreAgain(
+  home: Home,
+  chore: Chore,
+  input: { name: string; schedule: Schedule; objectId: string | null },
+  completions: Completion[],
+  today: ISODate,
+): NewOp[] {
+  const ops = addChore(home, input, today)
+  const doneToday = completions.find((c) => c.choreId === chore.id && c.completedOn === today)
+  if (doneToday) ops.push(upsertOp('completions', { id: id(), choreId: ops[0].key, completedOn: today, completedAt: doneToday.completedAt, counts: false }))
+  return ops
 }
 
 /** A row as a new one: the server stamps its own creation time. */

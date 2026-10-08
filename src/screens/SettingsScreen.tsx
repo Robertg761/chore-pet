@@ -71,7 +71,7 @@ export function SettingsScreen({ petName, homeId, onClose, account, onStartOver,
             <div className="settings-card">
               <h2>Start over</h2>
               {startOver === 'choose' ? (
-                <div className="settings-confirm" role="group" aria-label="Start over">
+                <div className="confirm" role="group" aria-label="Start over">
                   <p>How fresh a start?</p>
                   <div className="settings-choice">
                     <button type="button" className="btn btn-danger" onClick={() => setStartOver('clear')}>
@@ -90,13 +90,13 @@ export function SettingsScreen({ petName, homeId, onClose, account, onStartOver,
                   </button>
                 </div>
               ) : startOver ? (
-                <div className="settings-confirm" role="group" aria-label={startOver === 'clear' ? 'Clear room and chores' : 'Erase everything'}>
+                <div className="confirm" role="group" aria-label={startOver === 'clear' ? 'Clear room and chores' : 'Erase everything'}>
                   <p>
                     {startOver === 'clear'
                       ? 'Clear the room and every chore? Your past work stays, and removed chores can be added back from Chores.'
                       : `Erase ${petName}’s home for good? This can’t be undone.`}
                   </p>
-                  <div className="settings-confirm-actions">
+                  <div className="confirm-actions">
                     <button type="button" className="btn btn-danger" onClick={startOver === 'clear' ? onClearRoom : onStartOver}>
                       {startOver === 'clear' ? 'Clear' : 'Erase'}
                     </button>

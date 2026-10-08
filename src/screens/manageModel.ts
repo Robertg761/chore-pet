@@ -46,7 +46,8 @@ export const PAST_LIMIT = 30
  * names that are on the list today (adding those again would make a twin).
  */
 export function pastChores(chores: Chore[], today: ISODate): Chore[] {
-  const current = new Set(chores.filter((c) => choreActiveOn(c, today)).map((c) => key(c.name)))
+  // On the list today, or starting later: either way adding the name back would make a twin.
+  const current = new Set(chores.filter((c) => !c.archivedOn || c.archivedOn > today).map((c) => key(c.name)))
   const seen = new Set<string>()
   return chores
     .filter((c) => c.archivedOn && c.archivedOn <= today)

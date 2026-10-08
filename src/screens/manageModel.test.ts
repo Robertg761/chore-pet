@@ -50,6 +50,11 @@ describe('pastChores', () => {
     expect(past.map((c) => c.id)).toEqual(['b', 'c'])
   })
 
+  it('leaves out a name that is coming back later, so adding it would not make a twin', () => {
+    const past = pastChores([chore('a', { name: 'Mop', archivedOn: '2026-10-02' }), chore('b', { name: 'Mop', createdOn: '2026-10-09' })], TODAY)
+    expect(past).toEqual([])
+  })
+
   it('offers at most PAST_LIMIT', () => {
     const many = Array.from({ length: PAST_LIMIT + 5 }, (_, i) => chore(`c${i}`, { archivedOn: '2026-10-02' }))
     expect(pastChores(many, TODAY)).toHaveLength(PAST_LIMIT)

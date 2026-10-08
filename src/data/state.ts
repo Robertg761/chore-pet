@@ -131,16 +131,22 @@ function outboxKey(table: TableName, key: string): string {
   return `${table}:${key}`
 }
 
+/** The day a removed chore ends: the removal day, never before the chore starts (a device clock set ahead), like the server's preserve_chore_archive. */
+function archiveEnd(chore: Chore, day: string): string {
+  return day < chore.createdOn ? chore.createdOn : day
+}
+
 /** Remove a row and, like the database, every row that cascades from it. */
 function removeCascading(tables: Tables, table: TableName, key: string, removal: Removal = {}, hard = false): Tables {
   const archivedOn = removal.archivedOn ?? toISODate(new Date())
+  const endOn = (chore: Chore) => archiveEnd(chore, archivedOn)
   if (table === 'chores' && !hard) {
     const chore = tables.chores[key]
-    return chore ? { ...tables, chores: { ...tables.chores, [key]: { ...chore, archivedOn: chore.archivedOn ?? archivedOn } } } : tables
+    return chore ? { ...tables, chores: { ...tables.chores, [key]: { ...chore, archivedOn: chore.archivedOn ?? endOn(chore) } } } : tables
   }
   if (table === 'placed_objects' && !hard) {
     tables = { ...tables, chores: Object.fromEntries(Object.entries(tables.chores).map(([id, chore]) => [id, chore.objectId === key
-      ? { ...chore, objectId: null, ...(!removal.keepChores && { archivedOn: chore.archivedOn ?? archivedOn }) }
+      ? { ...chore, objectId: null, ...(!removal.keepChores && { archivedOn: chore.archivedOn ?? endOn(chore) }) }
       : chore])) }
   }
   let next = { ...tables, [table]: { ...tables[table] } } as Tables
@@ -171,13 +177,13 @@ export function change(snapshot: Snapshot, op: NewOp): Snapshot {
     for (const chore of Object.values(snapshot.tables.chores)) {
       if (chore.objectId !== op.key) continue
       snapshot = change(snapshot, upsertOp('chores', { ...chore, objectId: null,
-        ...(!op.removal?.keepChores && { archivedOn: chore.archivedOn ?? op.removal?.archivedOn ?? toISODate(new Date()) }),
+        ...(!op.removal?.keepChores && { archivedOn: chore.archivedOn ?? archiveEnd(chore, op.removal?.archivedOn ?? toISODate(new Date())) }),
       }))
     }
   }
   if (op.kind === 'delete' && op.table === 'chores' && snapshot.tables.chores[op.key]) {
     const chore = snapshot.tables.chores[op.key]
-    return change(snapshot, upsertOp('chores', { ...chore, archivedOn: chore.archivedOn ?? op.removal?.archivedOn ?? toISODate(new Date()) }))
+    return change(snapshot, upsertOp('chores', { ...chore, archivedOn: chore.archivedOn ?? archiveEnd(chore, op.removal?.archivedOn ?? toISODate(new Date())) }))
   }
   const seq = snapshot.seq + 1
   const full = { ...op, seq, id: newOpId() } as Op

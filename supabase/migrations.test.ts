@@ -5,6 +5,7 @@ import { ALL_ENTRIES } from '../src/catalog/objects'
 import { sampleHome } from '../src/content/sampleHome'
 import {
   addChore,
+  addChoreAgain,
   adoptSample,
   clearHome,
   completeChore,
@@ -692,20 +693,29 @@ describe('starting over from Settings, synced', () => {
     expect(before.chores).toBeGreaterThan(3)
     const pet = await as(db, A, `select * from pets`)
     const progress = await as(db, A, `select * from progress`)
+    // One done today (so adding it back carries that over) and one dated ahead by a device clock, not yet synced.
+    const dishes = rowsOf<Chore>(dev, 'chores').find((c) => c.name === 'Wash the dishes')!
+    expect(await dev.apply(...completeChore(dishes, null, new Date(`${TODAY}T12:00:00`), { realNow: null }))).toEqual([])
+    const homeRow = rowsOf<Home>(dev, 'homes')[0]
+    const ahead = addChore(homeRow, { name: 'From the future', schedule: { kind: 'daily' } }, '2026-10-09')
 
-    expect(await dev.apply(...clearHome(selectHome(dev.tables), TODAY))).toEqual([])
+    // Cleared in the same sync it was made in, so it reaches the server as a new, already-ended row.
+    const local = { ...dev.tables, chores: { ...dev.tables.chores, [ahead[0].key]: (ahead[0] as { value: Chore }).value } }
+    expect(await dev.apply(...ahead, ...clearHome(selectHome(local), TODAY))).toEqual([])
+    expect(rowsOf<Chore>(dev, 'chores').find((c) => c.name === 'From the future')?.archivedOn).toBe('2026-10-09')
     const after = await serverCounts(db, A)
     expect(after).toEqual(localCounts(dev))
-    expect(after).toEqual({ ...before, placed_objects: 0 })
-    const chores = await as(db, A, `select archived_on::text, object_id from chores`)
-    expect(chores.ok && chores.rows.every((c) => c.archived_on === TODAY && c.object_id === null)).toBe(true)
+    expect(after).toEqual({ ...before, placed_objects: 0, chores: before.chores + 1, completions: before.completions + 1 })
+    const chores = await as(db, A, `select archived_on::text, object_id, name from chores`)
+    expect(chores.ok && chores.rows.every((c) => c.archived_on === (c.name === 'From the future' ? '2026-10-09' : TODAY) && c.object_id === null)).toBe(true)
     expect(await as(db, A, `select * from pets`)).toEqual(pet)
     expect(await as(db, A, `select * from progress`)).toEqual(progress)
 
-    const old = rowsOf<Chore>(dev, 'chores')[0]
-    expect(await dev.apply(...addChore(rowsOf<Home>(dev, 'homes')[0], againInput(old, []), TODAY))).toEqual([])
-    const active = await as(db, A, `select name from chores where archived_on is null`)
-    expect(active.ok && active.rows).toEqual([{ name: old.name }])
+    // Added back, it starts done today with a completion that doesn't count again.
+    const old = rowsOf<Chore>(dev, 'chores').find((c) => c.id === dishes.id)!
+    expect(await dev.apply(...addChoreAgain(homeRow, old, againInput(old, []), rowsOf(dev, 'completions'), TODAY))).toEqual([])
+    const active = await as(db, A, `select c.name, x.completed_on::text, x.counts from chores c join completions x on x.chore_id = c.id where c.archived_on is null`)
+    expect(active.ok && active.rows).toEqual([{ name: 'Wash the dishes', completed_on: TODAY, counts: false }])
     await db.close()
   }, 60_000)
 

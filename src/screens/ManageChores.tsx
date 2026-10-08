@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { Chore, ISODate, PlacedObject } from '../domain/types'
+import { PencilIcon } from '../shell/PencilIcon'
 import { ScreenHeader } from '../shell/ScreenHeader'
 import { describeSchedule } from './choreForm'
 import { choreGroups, pastChores } from './manageModel'
@@ -21,14 +22,6 @@ export interface ManageChoresProps {
   onClose: () => void
 }
 
-function PencilIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-      <path d="M5 19l1-4.5L15.5 5a2.1 2.1 0 0 1 3 3L9 17.5zM13.5 7l3 3" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
-
 const plural = (n: number) => (n === 1 ? '1 chore' : `${n} chores`)
 
 export function ManageChores({ chores, objects, today, onEdit, onAdd, onRemove, onAddAgain, onClose }: ManageChoresProps) {
@@ -44,17 +37,20 @@ export function ManageChores({ chores, objects, today, onEdit, onAdd, onRemove, 
   const addRef = useRef<HTMLButtonElement>(null)
   // Only chores still on the list count (one may be removed on another device meanwhile).
   const selected = listed.filter((c) => picked.has(c.id))
+  // The question is about the picks it was asked with: nothing picked any more, nothing to ask.
+  if (confirming && selected.length === 0) setConfirming(false)
 
   useEffect(() => {
     if (confirming) keepRef.current?.focus()
   }, [confirming])
 
-  const toggle = (id: string) => setPicked((prev) => {
+  // Changing the picks while asking goes back a step, so Remove always follows "Remove N chores".
+  const toggle = (id: string) => (setConfirming(false), setPicked((prev) => {
     const next = new Set(prev)
     if (next.has(id)) next.delete(id)
     else next.add(id)
     return next
-  })
+  }))
   const remove = () => {
     onRemove(selected)
     setNotice(`Removed ${plural(selected.length)}.`)
@@ -134,9 +130,9 @@ export function ManageChores({ chores, objects, today, onEdit, onAdd, onRemove, 
 
       <div className="manage-foot">
         {confirming && selected.length > 0 ? (
-          <div className="manage-confirm" role="group" aria-label="Remove chores">
+          <div className="confirm manage-confirm" role="group" aria-label="Remove chores">
             <p>Remove {plural(selected.length)}? Your past work and rewards stay.</p>
-            <div className="manage-confirm-actions">
+            <div className="confirm-actions">
               <button type="button" className="btn btn-danger" onClick={remove}>
                 Remove
               </button>
