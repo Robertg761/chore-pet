@@ -76,6 +76,7 @@ import { useReminders } from './reminders/reminders'
 import { AppNav, type MoreItem, type Tab } from './shell/AppNav'
 import { objectOverdue } from './room/cuePlan'
 import { PET_STROKE_SCALE } from './room/shell/geometry'
+import { LoadingPet } from './shell/LoadingPet'
 import { Sheet } from './shell/Sheet'
 import { UndoToast } from './shell/UndoToast'
 import { withViewTransition } from './shell/viewTransition'
@@ -268,21 +269,18 @@ export default function App() {
     if (needsRoom && data.home) appStore.apply(...createRoom(data.home))
   }, [needsRoom, data.home])
 
-  if (!ready) return <main className="shell" aria-busy="true" />
+  if (!ready) return <LoadingPet />
   if (snapshot.cleanup) return <AccountCleanup cleanup={snapshot.cleanup} />
   // Signed in on a new device: wait for the saved home rather than offering a fresh one.
   if (!data.home && !hydrated) {
     return (
-      <main className="shell" aria-busy={!lastError}>
-        <p className="dev-note" role="status">
-          {lastError ? "Couldn't reach your saved home yet." : 'Finding your home…'}
-        </p>
+      <LoadingPet message={lastError ? "Couldn't reach your saved home yet." : 'Finding your home…'} busy={!lastError} trouble={Boolean(lastError)}>
         {lastError && (
           <button type="button" className="link-button" onClick={() => void appStore.sync()}>
             Try again
           </button>
         )}
-      </main>
+      </LoadingPet>
     )
   }
 

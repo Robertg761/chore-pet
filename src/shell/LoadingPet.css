@@ -1,0 +1,70 @@
+/* The wait before the first screen: the pet, centred, bobbing softly. */
+
+.loading-pet {
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  justify-content: center;
+  /* A little extra bottom padding lifts the pet just above the true middle. */
+  padding-bottom: 12vh;
+}
+
+/* In the art gallery the three states sit side by side instead of filling the screen. */
+.gallery-loading .loading-pet { min-height: 0; padding: 16px 20px; width: 260px; }
+
+.loading-pet-stage {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loading-pet-bob {
+  width: 120px;
+  height: 120px;
+  animation: loading-pet-bob 1.3s var(--ease-in-out) infinite alternate;
+}
+
+.loading-pet-bob svg { display: block; }
+
+/* Soft ground shadow: the outline colour at 15%, as the art rules ask. */
+.loading-pet-shadow {
+  position: absolute;
+  /* Sits exactly under the pet's own shadow when it lands, and stays behind as it hops. */
+  top: 107px;
+  left: 50%;
+  width: 74px;
+  height: 9px;
+  margin-left: -37px;
+  border-radius: 50%;
+  background: var(--ink);
+  opacity: 0.15;
+  animation: loading-pet-shadow 1.3s var(--ease-in-out) infinite alternate;
+}
+
+.loading-pet-text {
+  margin: 0;
+  max-width: 30ch;
+  text-align: center;
+  font-size: 1.125rem;
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+@keyframes loading-pet-bob {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
+}
+
+@keyframes loading-pet-shadow {
+  from { transform: scaleX(1); opacity: 0.15; }
+  to { transform: scaleX(0.82); opacity: 0.1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-pet-bob,
+  .loading-pet-shadow { animation: none; }
+}

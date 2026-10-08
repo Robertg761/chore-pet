@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { PALETTE, SPECIES_COLOUR } from '../art/palette'
 import { Character, CharacterArt } from '../character/Character'
+import { LoadingPet } from '../shell/LoadingPet'
 import { Cheer } from '../effects/Cheer'
 import { Sparkle } from '../effects/Sparkle'
 import { POSES, type PoseName } from '../character/poses'
@@ -56,6 +57,15 @@ export default function ArtGallery() {
         {SPECIES.map((s) => (
           <Character key={s} species={s} mood="happy" bodyColour={SPECIES_COLOUR[s]} size={300} />
         ))}
+      </section>
+
+      <h2>Loading pet</h2>
+      <section className="gallery-row gallery-loading">
+        <LoadingPet message="Finding your home…" />
+        <LoadingPet message="Couldn't reach your saved home yet." busy={false} trouble>
+          <button type="button" className="link-button">Try again</button>
+        </LoadingPet>
+        <LoadingPet />
       </section>
 
       <h2>Pets by mood</h2>
