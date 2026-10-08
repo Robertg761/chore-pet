@@ -172,7 +172,9 @@ body { background: var(--ground); color: var(--ink); font-family: 'Nunito', syst
 h1 { margin: 0; font-weight: 900; letter-spacing: -0.02em; line-height: 0.95; }
 .tag { margin: 0; font-weight: 700; color: var(--ink-soft); line-height: 1.3; text-wrap: balance; }
 .phone { position: absolute; background: var(--ink); border-radius: var(--r); padding: var(--b); box-shadow: 0 var(--lift) 0 rgba(43, 30, 47, .16); }
-.phone img { display: block; width: 100%; height: 100%; border-radius: calc(var(--r) - var(--b)); background: var(--ground); object-fit: cover; object-position: top; }
+/* A status-bar strip above the screenshot, so the screen's title doesn't sit against the bezel. */
+.phone .screen { height: 100%; box-sizing: border-box; padding-top: var(--s); border-radius: calc(var(--r) - var(--b)); background: var(--ground); overflow: hidden; }
+.phone img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
 .chip { position: absolute; padding: 7px 16px; background: var(--card); border: 3px solid var(--ink); border-radius: 999px; box-shadow: 0 3px 0 var(--ink);
   font-weight: 800; white-space: nowrap; transform: translateX(-50%); }
 .pet { position: absolute; display: flex; flex-direction: column; align-items: center; }
@@ -186,8 +188,9 @@ const phone = ({ img, x, y, h, label, fs }) => {
   const w = Math.round((h * 390) / 844)
   const b = Math.round(h / 70)
   const r = Math.round(h / 13)
-  const outer = { w: w + 2 * b, h: h + 2 * b }
-  return `<div class="phone" style="left:${x}px;top:${y}px;width:${outer.w}px;height:${outer.h}px;--b:${b}px;--r:${r}px;--lift:${Math.round(h / 60)}px"><img src="${img}" alt=""></div>
+  const inset = Math.round(h / 32)
+  const outer = { w: w + 2 * b, h: h + inset + 2 * b }
+  return `<div class="phone" style="left:${x}px;top:${y}px;width:${outer.w}px;height:${outer.h}px;--b:${b}px;--r:${r}px;--s:${inset}px;--lift:${Math.round(h / 60)}px"><div class="screen"><img src="${img}" alt=""></div></div>
   <div class="chip" style="left:${x + outer.w / 2}px;top:${y + outer.h + 20}px;font-size:${fs}px">${label}</div>`
 }
 const petTile = ({ species, name, x, y, size, fs }) =>
