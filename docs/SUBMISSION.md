@@ -6,7 +6,7 @@
 
 - **Live link:** https://robertg761.github.io/chore-pet/
 - **Repo:** https://github.com/Robertg761/chore-pet
-- **Demo video:** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (54 s at 60 fps, recorded in the app with `npm run demo:record`)
+- **Demo video:** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (54 s at 60 fps with sound, recorded in the app with `npm run demo:record`)
 
 ## Listing
 
@@ -90,7 +90,7 @@ All code was written fresh during the Yard, solo, with Claude Code:
   - a test writer.
 - **Review:** each result was checked against the art contract (`docs/ART.md`) in a live gallery (`/?art`) and by tests before it landed.
 - **Plan:** `docs/PLAN.md` holds the phase-by-phase plan and who did what.
-- **Tests:** 1,451 unit tests cover schedules, skips, health, mess, streaks, unlocks, rewards, rooms, sync, tile maths and placement, and 38 browser tests drive the production build. The last features were tested and reviewed by parallel Haiku subagents before the lead checked them.
+- **Tests:** 1,490 unit tests cover schedules, skips, health, mess, streaks, unlocks, rewards, rooms, sync, tile maths and placement, and 38 browser tests drive the production build. The last features were tested and reviewed by parallel Haiku subagents before the lead checked them.
 
 ## Honest limits
 
