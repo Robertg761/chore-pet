@@ -162,6 +162,41 @@ const wavFile = (samples) => {
 
 const TARGET_LUFS = -16
 const TARGET_PEAK_DB = -1.5 // leaves room for the AAC encoder's overshoot: the file stays under -1 dBFS
+const MAX_GAIN_DB = 24 // a near-silent track is not pumped up into hiss
+
+/**
+ * A gentle look-ahead peak limiter: the gain eases down just before a peak that would pass `ceiling` (linear)
+ * and recovers over `release` seconds, so the short click and sparkle transients are tucked under the ceiling
+ * while the soft body of each sound is left alone. Lets the track reach its loudness target without clipping.
+ */
+export function limit(samples, ceiling, { lookahead = 0.005, release = 0.12 } = {}) {
+  const n = samples.length
+  const ahead = Math.max(1, Math.round(lookahead * SAMPLE_RATE))
+  // The gain each sample needs, then the least of it over the next `ahead` samples (a sliding minimum).
+  const need = new Float32Array(n)
+  for (let i = 0; i < n; i++) {
+    const a = Math.abs(samples[i])
+    need[i] = a > ceiling ? ceiling / a : 1
+  }
+  const target = new Float32Array(n)
+  const window = [] // indices with increasing need, the front is the minimum
+  for (let i = n - 1; i >= 0; i--) {
+    while (window.length && need[window.at(-1)] >= need[i]) window.pop()
+    window.push(i)
+    while (window[0] > i + ahead) window.shift()
+    target[i] = need[window[0]]
+  }
+  const attack = Math.exp(-1 / (ahead / 4))
+  const recover = Math.exp(-1 / (release * SAMPLE_RATE))
+  const out = new Float32Array(n)
+  let gain = 1
+  for (let i = 0; i < n; i++) {
+    gain = target[i] < gain ? target[i] + (gain - target[i]) * attack : target[i] + (gain - target[i]) * recover
+    const y = samples[i] * gain
+    out[i] = Math.max(-ceiling, Math.min(ceiling, y)) // anything the ease didn't quite catch
+  }
+  return out
+}
 
 /** Integrated loudness of a wav in LUFS (EBU R128), measured by ffmpeg. */
 function measureLufs(file) {
@@ -195,18 +230,29 @@ export function buildTrack({ pcm, events, marks, videoSeconds, work }) {
   let peak = 0
   for (const v of track) peak = Math.max(peak, Math.abs(v))
   const peakDb = 20 * Math.log10(peak)
-  const wantLufs = lufs === null ? Infinity : TARGET_LUFS - lufs
-  const wantPeak = TARGET_PEAK_DB - peakDb
-  const gainDb = Math.min(wantLufs, wantPeak)
-  const gain = Math.pow(10, gainDb / 20)
-  for (let i = 0; i < track.length; i++) track[i] *= gain
+  // Gain to the loudness target, with the limiter keeping the peaks under the ceiling. Limiting takes a little
+  // loudness off, so the gain is topped up and the limiter run again (from the clean mix) until it lands.
+  // The track is mono and goes out as the same signal on both channels, which reads 3 LU louder: aim 3 lower.
+  const wantMono = TARGET_LUFS - 3
   const out = `${work}/track.wav`
-  writeFileSync(out, wavFile(track))
+  const ceiling = Math.pow(10, TARGET_PEAK_DB / 20)
+  let gainDb = Math.min(lufs === null ? 0 : wantMono - lufs, MAX_GAIN_DB)
+  let limited = track
+  for (let pass = 0; pass < 3; pass++) {
+    const gain = Math.pow(10, gainDb / 20)
+    limited = limit(track.map((v) => v * gain), ceiling)
+    writeFileSync(out, wavFile(limited))
+    const got = measureLufs(out)
+    if (got === null || Math.abs(wantMono - got) < 0.5) break
+    gainDb = Math.min(gainDb + (wantMono - got), MAX_GAIN_DB)
+  }
+  let finalPeak = 0
+  for (const v of limited) finalPeak = Math.max(finalPeak, Math.abs(v))
   return {
     wav: out,
     plan,
     whooshes,
-    levels: { rawLufs: lufs, rawPeakDb: peakDb, gainDb, finalLufs: measureLufs(out), finalPeakDb: peakDb + gainDb, limitedBy: wantPeak < wantLufs ? 'peak' : 'loudness' },
+    levels: { rawLufs: lufs, rawPeakDb: peakDb, gainDb, finalLufs: ((m) => (m === null ? null : +(m + 3).toFixed(1)))(measureLufs(out)), finalPeakDb: 20 * Math.log10(finalPeak), limitedBy: peakDb + gainDb > TARGET_PEAK_DB ? 'limiter' : 'loudness' },
   }
 }
 
@@ -227,7 +273,7 @@ export function writeReport({ result, base, video }) {
     ...result.whooshes.map((m) => `${stamp(m.t)}  whoosh   (${m.name})`),
   ].sort()
   const l = result.levels
-  lines.push('', `loudness before gain ${l.rawLufs} LUFS, peak ${l.rawPeakDb.toFixed(1)} dBFS; gain ${l.gainDb.toFixed(1)} dB (limited by ${l.limitedBy}); after: ${l.finalLufs} LUFS, peak ${l.finalPeakDb.toFixed(1)} dBFS`)
+  lines.push('', `loudness before gain ${l.rawLufs} LUFS, peak ${l.rawPeakDb.toFixed(1)} dBFS; gain ${l.gainDb.toFixed(1)} dB (peaks held by the ${l.limitedBy === 'limiter' ? 'limiter' : 'gain alone'}); after: ${l.finalLufs} LUFS as played (both channels), peak ${l.finalPeakDb.toFixed(1)} dBFS`)
   writeFileSync(`${base}.audio-timeline.txt`, `${lines.join('\n')}\n`)
   execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', video, '-filter_complex', 'aformat=channel_layouts=mono,showwavespic=s=1600x300:colors=#6f5cf0', '-frames:v', '1', `${base}.audio-waveform.png`])
   return lines

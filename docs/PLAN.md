@@ -133,7 +133,7 @@ Parallel batch H:
 - [LEAD] Submission: live link, repo, write-up, in-app demo video.
   - **Write-up drafted** (`docs/SUBMISSION.md`).
   - **Demo video recorded** in the app (`npm run demo:record`; 54 s at 60 fps, with a title card, captions and an end card).
-  - **Hosting: Live** at https://robertg761.github.io/chore-pet/ on GitHub Pages. `.github/workflows/pages.yml` lints, tests, builds and runs the browser tests on every PR, and deploys every push to main. The video is served at `/chore-pet/chore-pet-demo.mp4`, and the links are in the write-up.
+  - **Hosting: Live** at https://robertg761.github.io/chore-pet/ on GitHub Pages. `.github/workflows/pages.yml` lints, tests, builds and runs the browser tests on every PR, and deploys every push to main. The video is served at `/chore-pet/chore-pet-demo.mp4` (16:9) and `/chore-pet/chore-pet-demo-portrait.mp4`, and the links are in the write-up.
 
 **Done when:** a stranger can open the link on a phone, build a room, finish a chore and get an unlock with no help. **Met in phone emulation** (Pixel 7 profile, touch only, production build): landing to picking Sprout, building a kitchen, finishing a chore and putting on the red beanie, with no help and no errors. It also reloads offline from the service worker. Re-checked on the live URL after launch: the same flow passes with no errors, and the sample home's seeded history doesn't count. Not yet tried on a physical phone.
 
