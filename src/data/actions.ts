@@ -1,6 +1,6 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
-import { archiveEnd, choreRetiredBy, completionCounts, resumeFrom, sameSchedule, SCHEDULE_HISTORY, SKIP_HISTORY, skipDays, trimHistory } from '../domain/schedule'
+import { archiveEnd, choreRetiredBy, completionCounts, resumeFrom, sameSchedule, SCHEDULE_HISTORY, SKIP_HISTORY, skipDays, standingOf, trimHistory } from '../domain/schedule'
 import { startStylesOf } from '../room/shell/styles'
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, choreCountOf, streakHistory, type Unlock } from '../domain/unlocks'
@@ -288,6 +288,26 @@ export function addChoreAgain(
 ): NewOp[] {
   const resume = resumeFrom(chore, completions, today, home.vacations)
   return addChore(home, { ...input, schedule: resume ? { ...input.schedule, resume } : input.schedule }, today)
+}
+
+/**
+ * Undo after removing a chore: bring it back exactly as it stood, so a chore
+ * that was 3 days late is still 3 days late (its mess too), a due one is still
+ * due and an upcoming one keeps its date. `chore` is the chore as it was just
+ * before the removal, with `completions` as they were then. Removed chores are
+ * never reopened (sync refuses it), so this makes a new one that carries the
+ * old one's standing (standingOf) instead of its history: no completion is
+ * copied, so nothing is counted twice. The kinder "add back" from the Removed
+ * list stays addChoreAgain.
+ */
+export function undoRemove(
+  home: Home,
+  chore: Chore,
+  input: { name: string; schedule: Schedule; objectId: string | null },
+  completions: Completion[],
+  today: ISODate,
+): NewOp[] {
+  return addChore(home, { ...input, schedule: { ...input.schedule, resume: standingOf(chore, completions) } }, today)
 }
 
 /** A row as a new one: the server stamps its own creation time. */

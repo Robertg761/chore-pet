@@ -18,6 +18,7 @@ import {
   skipChore,
   skipDayFor,
   uncompleteChore,
+  undoRemove,
   unskipChore,
   updatePet,
   updateRoom,
@@ -399,9 +400,9 @@ export default function App() {
         } else if (undo.kind === 'added') {
           appStore.apply(...removeChore(undo.choreId, data, today))
         } else if (undo.kind === 'removed') {
-          // A removed chore stays removed (sync never reopens one), so it comes back the way
-          // "Removed chores" adds it: new, and resuming where it stood.
-          appStore.apply(...addChoreAgain(home, undo.chore, againInput(undo.chore, objects), completions, today))
+          // A removed chore stays removed (sync never reopens one), so it comes back as a new one
+          // standing exactly where this one did: late days, mess and all.
+          appStore.apply(...undoRemove(home, undo.chore, againInput(undo.chore, objects), completions, today))
         } else {
           // Any gift that tap earned stays: rewards are never taken back.
           appStore.apply(...uncompleteChore(undo.completionId, progress, completions))

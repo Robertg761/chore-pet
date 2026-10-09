@@ -42,12 +42,24 @@ export function resumeFrom(chore: Chore, completions: Completion[], today: ISODa
   // A chore that was itself added back mid-round carries on from there, done since or not,
   // unless that was on a clock set ahead (a last day after today), which is dropped like a future completion.
   const { resume: carried, ...rule } = chore.schedule
-  const resume = carried && carried.last <= today ? carried : undefined
+  const resume = carried && (!carried.last || carried.last <= today) ? carried : undefined
   const last = days.at(-1) ?? resume?.last
   if (!last) return undefined
   const replay = replayDays({ ...chore, archivedOn: undefined, schedule: { ...rule, ...(resume && { resume }) } as Schedule }, days)
   if (replay.statusOn(today, vacations).state !== 'upcoming') return undefined
   return { due: replay.due, last }
+}
+
+/**
+ * Where a chore stands right now, exactly: the occurrence still owed (due,
+ * late or upcoming) and the last day it was done or skipped, if ever. A new
+ * chore made with this as its `resume` has the same status the old one had,
+ * late days included, without copying a single completion. This is what Undo
+ * after removing a chore restores; adding one back from the Removed list is
+ * kinder (resumeFrom: late or never done starts fresh).
+ */
+export function standingOf(chore: Chore, completions: Completion[]): NonNullable<Schedule['resume']> {
+  return replayDays(chore, scheduleDays(chore, completions)).standing
 }
 
 export type ChoreState = 'upcoming' | 'due' | 'overdue'
@@ -271,19 +283,24 @@ export interface ChoreReplay {
   statusOn(today: ISODate, vacations?: VacationWindow[]): ChoreStatus
   /** The scheduled date of the occurrence still owed. */
   readonly due: ISODate
+  /** Where the replay stands, as a `resume` that carries on from here (see standingOf). */
+  readonly standing: NonNullable<Schedule['resume']>
 }
 
 export function startReplay(chore: Chore): ChoreReplay {
   const { schedule } = chore
-  const start = scheduleStart(chore)
+  const resumed = schedule.resume && (schedule.resume.start || schedule.resume.due >= scheduleStart(chore)) ? schedule.resume : undefined
+  // A resume made by Undo carries the day the removed chore's schedule began, which can be before this one's own.
+  const start = resumed?.start ?? scheduleStart(chore)
   const since = schedule.since
   const everyN = schedule.kind === 'everyNDays' ? intervalOf(schedule) : 0
   const half = Math.floor(everyN / 2)
   // Added back mid-round: pick up where the removed chore stood, as if it had been fed its last completion.
-  const resume = schedule.resume && schedule.resume.due >= start ? schedule.resume : undefined
+  const resume = resumed
   let due = resume ? resume.due : everyN ? addDays(start, half) : firstOnOrAfter(schedule, start)
-  let counted = resume ? 1 : 0
-  let last: ISODate | null = resume ? resume.last : null
+  // A resume with no last day is a chore nothing had counted for yet.
+  let counted = resume && resume.last ? 1 : 0
+  let last: ISODate | null = resume?.last ?? null
 
   function add(day: ISODate): boolean {
     if (since && day < since) return false
@@ -331,6 +348,9 @@ export function startReplay(chore: Chore): ChoreReplay {
     statusOn,
     get due() {
       return due
+    },
+    get standing() {
+      return { due, ...(last && { last }), start }
     },
   }
 }
