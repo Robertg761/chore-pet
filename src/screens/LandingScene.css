@@ -1,0 +1,23 @@
+/* The landing's room. On a phone its height is what is left after the words and buttons; wide, it fills its column. */
+.landing-scene {
+  position: relative;
+  width: min(100%, 460px, calc((100dvh - 420px) * 390 / 322));
+  min-width: min(100%, 140px);
+  margin: 0 auto;
+  pointer-events: none;
+  user-select: none;
+  /* A soft glow behind it so the room sits on the page like a toy on a shelf. */
+  filter: drop-shadow(0 10px 14px rgba(43, 30, 47, 0.14));
+}
+.landing-scene-room { width: 100%; height: auto; display: block; }
+
+@media (min-height: 780px) {
+  .landing-scene { width: min(100%, 560px, calc((100dvh - 490px) * 390 / 322)); }
+}
+
+@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+  .landing-scene { width: min(100%, 680px, calc((100dvh - 80px) * 390 / 322)); margin: 0; }
+}
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+  .landing-scene { width: min(100%, calc((100dvh - 24px) * 390 / 322)); }
+}

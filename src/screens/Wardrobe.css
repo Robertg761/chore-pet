@@ -54,6 +54,8 @@
 }
 .wd-tile-locked { cursor: default; background: var(--ground-soft); border-style: dashed; border-color: var(--ink-soft); color: var(--ink-soft); }
 .wd-tile-art { width: 52px; height: 52px; flex: none; display: block; }
+/* A locked tile's cost ("200 chores") stays on one line like its neighbours. */
+.wd-tile-locked .wd-tile-name { white-space: nowrap; font-size: 0.6875rem; }
 .wd-tile-name { font-size: 0.75rem; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
 
 .wd-saved { display: flex; flex-direction: column; gap: 8px; }

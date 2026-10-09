@@ -6,7 +6,17 @@
 
 - **Live link:** https://robertg761.github.io/chore-pet/
 - **Repo:** https://github.com/Robertg761/chore-pet
-- **Demo video:** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (79 s, recorded in the app with `npm run demo:record`)
+- **Demo video:** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (54 s at 60 fps, recorded in the app with `npm run demo:record`)
+
+## Listing
+
+What goes on the hackyard.tech build card. The card shows the description in full, and the share card uses its first sentence.
+
+- **Cover (16:9):** `docs/media/chore-pet-showcase.png` (1600 x 900)
+- **Demo:** the video above
+- **Description:**
+
+  > Chore Pet is a tiny pet that lives in a home you build, and the only way to keep it happy is to do your real chores. Place a sink, a bed, a plant: each brings its own chores. Leave one late and it shows as mess; do it, tap Done, and the room sparkles, your pet cheers and gifts unlock: outfits, decor, new rooms. Not needed today? Skip it honestly, for nothing. No guilt, and the pet never dies. Try a sample home in one tap: no sign-up, works offline.
 
 ## What it is
 
@@ -80,7 +90,7 @@ All code was written fresh during the Yard, solo, with Claude Code:
   - a test writer.
 - **Review:** each result was checked against the art contract (`docs/ART.md`) in a live gallery (`/?art`) and by tests before it landed.
 - **Plan:** `docs/PLAN.md` holds the phase-by-phase plan and who did what.
-- **Tests:** 1,444 unit tests cover schedules, skips, health, mess, streaks, unlocks, rewards, rooms, sync, tile maths and placement, and 38 browser tests drive the production build. The last features were tested and reviewed by parallel Haiku subagents before the lead checked them.
+- **Tests:** 1,451 unit tests cover schedules, skips, health, mess, streaks, unlocks, rewards, rooms, sync, tile maths and placement, and 38 browser tests drive the production build. The last features were tested and reviewed by parallel Haiku subagents before the lead checked them.
 
 ## Honest limits
 

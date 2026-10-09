@@ -9,18 +9,27 @@ export const CARD_HEIGHT = 1350
 const NAME_SIZE = 132
 const NAME_FULL_CHARS = 9
 const NAME_MIN_SIZE = 64
-const CAPTION_SIZE = 38
-const CAPTION_FULL_CHARS = 46
-const CAPTION_MIN_SIZE = 26
+const CAPTION_SIZE = 44
+const CAPTION_FULL_CHARS = 38
+const CAPTION_MIN_SIZE = 32
 
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
 
-/** "Home of Pip · 23 chores done · 4 days in a row"; parts with nothing to say are left out. */
+/**
+ * The caption as up to two lines: "Home of Pip", then "23 chores done · 4 days in a row".
+ * Counts sit on their own line so a long name never squeezes them small. Parts with
+ * nothing to say are left out.
+ */
+export function captionLines(name: string, choreCount: number, streak: number): string[] {
+  const counts: string[] = []
+  if (choreCount > 0) counts.push(`${plural(choreCount, 'chore', 'chores')} done`)
+  if (streak > 0) counts.push(`${plural(streak, 'day', 'days')} in a row`)
+  return [`Home of ${name.trim() || 'your pet'}`, ...(counts.length > 0 ? [counts.join(' · ')] : [])]
+}
+
+/** The same caption on one line, for screen readers: "Home of Pip · 23 chores done · 4 days in a row". */
 export function captionText(name: string, choreCount: number, streak: number): string {
-  const parts = [`Home of ${name.trim() || 'your pet'}`]
-  if (choreCount > 0) parts.push(`${plural(choreCount, 'chore', 'chores')} done`)
-  if (streak > 0) parts.push(`${plural(streak, 'day', 'days')} in a row`)
-  return parts.join(' · ')
+  return captionLines(name, choreCount, streak).join(' · ')
 }
 
 /** "pip-home.png"; letters and digits only, with a safe fallback for odd names. */
@@ -52,7 +61,7 @@ export function nameFontSize(name: string): number {
   return len <= NAME_FULL_CHARS ? NAME_SIZE : Math.max(NAME_MIN_SIZE, Math.floor((NAME_SIZE * NAME_FULL_CHARS) / len))
 }
 
-/** Font size for the caption line, shrunk when the line is long. */
+/** Font size for one caption line, shrunk when the line is long. */
 export function captionFontSize(caption: string): number {
   const len = [...caption].length
   return len <= CAPTION_FULL_CHARS ? CAPTION_SIZE : Math.max(CAPTION_MIN_SIZE, Math.floor((CAPTION_SIZE * CAPTION_FULL_CHARS) / len))
