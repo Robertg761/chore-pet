@@ -26,6 +26,15 @@
  */
 
 /* Design tokens from docs/ART.md (Style A: cozy outline). */
+/*
+ * Samsung Internet's dark mode ignores color-scheme and darkens any site without dark styles of its
+ * own, which washes the art out. A dark-scheme rule tells it the site handles dark mode itself; it
+ * keeps the same light design.
+ */
+@media (prefers-color-scheme: dark) {
+  :root { color-scheme: only light; background-color: #efe9ff; }
+}
+
 :root {
   /* Light only, so a browser's forced dark mode leaves the art and outlines alone (see index.html). */
   color-scheme: only light;
