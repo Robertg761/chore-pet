@@ -36,7 +36,7 @@ describe('groupCatalog with the real catalog', () => {
 
   it('kitchen: the kitchen first, with the washer and plant under their first kitchen-or-later room', () => {
     expect(idsByKey(groupCatalog(ALL, 'kitchen'))).toEqual({
-      kitchen: ['washer', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'table', 'trash', 'plant'],
+      kitchen: ['washer', 'counter', 'dining-table', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'table', 'trash', 'plant'],
       bathroom: ['shower', 'toilet'],
       bedroom: ['bed', 'rug'],
       living: ['couch', 'fish-tank'],
@@ -49,7 +49,7 @@ describe('groupCatalog with the real catalog', () => {
     expect(groups.map((g) => g.key)).toEqual(['bathroom', 'kitchen', 'bedroom', 'living', 'decor'])
     expect(idsByKey(groups)).toEqual({
       bathroom: ['shower', 'toilet', 'washer'],
-      kitchen: ['dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'table', 'trash', 'plant'],
+      kitchen: ['counter', 'dining-table', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'table', 'trash', 'plant'],
       bedroom: ['bed', 'rug'],
       living: ['couch', 'fish-tank'],
       decor: ['teddy', 'lamp', 'poster', 'fairy-lights', 'bookshelf', 'wall-clock', 'bean-bag'],
@@ -61,7 +61,7 @@ describe('groupCatalog with the real catalog', () => {
     expect(groups.map((g) => g.key)).toEqual(['bedroom', 'kitchen', 'bathroom', 'living', 'decor'])
     expect(idsByKey(groups)).toEqual({
       bedroom: ['bed', 'plant', 'rug'],
-      kitchen: ['washer', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'table', 'trash'],
+      kitchen: ['washer', 'counter', 'dining-table', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'table', 'trash'],
       bathroom: ['shower', 'toilet'],
       living: ['couch', 'fish-tank'],
       decor: ['teddy', 'lamp', 'poster', 'fairy-lights', 'bookshelf', 'wall-clock', 'bean-bag'],
@@ -73,7 +73,7 @@ describe('groupCatalog with the real catalog', () => {
     expect(groups.map((g) => g.key)).toEqual(['living', 'kitchen', 'bathroom', 'bedroom', 'decor'])
     expect(idsByKey(groups)).toEqual({
       living: ['table', 'couch', 'fish-tank', 'plant', 'rug'],
-      kitchen: ['washer', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'trash'],
+      kitchen: ['washer', 'counter', 'dining-table', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'trash'],
       bathroom: ['shower', 'toilet'],
       bedroom: ['bed'],
       decor: ['teddy', 'lamp', 'poster', 'fairy-lights', 'bookshelf', 'wall-clock', 'bean-bag'],

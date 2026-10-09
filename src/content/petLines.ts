@@ -62,6 +62,16 @@ export const OBJECT_LINES: Record<string, string[]> = {
     'The cushions look a bit flat.',
     'I think the couch wants a good fluff.',
   ],
+  counter: [
+    'The counters have a few crumbs.',
+    'A wiped counter would feel so fresh.',
+    'The counters are getting a bit sticky.',
+  ],
+  'dining-table': [
+    'The dining table is hiding some crumbs.',
+    'A wiped table is ready for a feast.',
+    'Those chairs are waiting for a clean table.',
+  ],
   dishwasher: [
     'The dishwasher is holding its breath.',
     'Clean dishes are waiting to come out!',

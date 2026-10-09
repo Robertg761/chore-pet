@@ -229,7 +229,7 @@ describe('room styles use palette colours only', () => {
 })
 
 describe('new objects render every stage', () => {
-  for (const id of ['bookshelf', 'wall-clock', 'bean-bag']) {
+  for (const id of ['bookshelf', 'wall-clock', 'bean-bag', 'counter', 'dining-table']) {
     it(`${id} renders clean, messy1 and messy2`, () => {
       const art = OBJECT_ART[id]
       expect(art, id).toBeDefined()

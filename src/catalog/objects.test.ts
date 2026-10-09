@@ -3,6 +3,7 @@ import { CATALOG, DECOR, catalogEntry } from './objects'
 import { UNLOCKS } from '../domain/unlocks'
 import type { Schedule } from '../domain/types'
 import { ROOM_SIZE } from '../room/grid'
+import { OBJECT_ART } from '../room/objects'
 
 function validSchedule(s: Schedule): boolean {
   switch (s.kind) {
@@ -55,6 +56,19 @@ describe('object catalog', () => {
     expect(every('stove', 'Clean the oven')).toEqual({ kind: 'everyNDays', n: 90 })
     expect(every('trash', 'Wash the trash can')).toEqual({ kind: 'everyNDays', n: 60 })
     expect(every('fish-tank', 'Clean the fish tank')).toEqual({ kind: 'everyNDays', n: 14 })
+  })
+
+  it('has the fitted-kitchen counter and the dining table, with art that matches', () => {
+    const counter = catalogEntry('counter')
+    expect(counter).toMatchObject({ footprint: { w: 1, d: 2 }, placement: 'wall', layer: 'solid', mess: 'stink', rooms: ['kitchen'] })
+    expect(counter?.chores).toEqual([{ name: 'Wipe the counters', schedule: { kind: 'everyNDays', n: 2 } }])
+    const dining = catalogEntry('dining-table')
+    expect(dining).toMatchObject({ footprint: { w: 2, d: 2 }, placement: 'floor', layer: 'solid', rooms: ['kitchen'] })
+    expect(dining?.chores).toEqual([{ name: 'Wipe the table', schedule: { kind: 'everyNDays', n: 2 } }])
+    expect(dining?.mess).toBe(catalogEntry('table')?.mess)
+    for (const id of ['counter', 'dining-table']) {
+      expect(OBJECT_ART[id]?.footprint, id).toEqual(catalogEntry(id)?.footprint)
+    }
   })
 
   it('uses only valid schedules', () => {
