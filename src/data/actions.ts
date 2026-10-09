@@ -307,7 +307,9 @@ export function undoRemove(
   completions: Completion[],
   today: ISODate,
 ): NewOp[] {
-  return addChore(home, { ...input, schedule: { ...input.schedule, resume: standingOf(chore, completions) } }, today)
+  // A chore that starts later (made on a device whose clock ran ahead) still starts then.
+  const start = chore.createdOn > today ? chore.createdOn : today
+  return addChore(home, { ...input, schedule: { ...input.schedule, resume: standingOf(chore, completions) } }, start)
 }
 
 /** A row as a new one: the server stamps its own creation time. */

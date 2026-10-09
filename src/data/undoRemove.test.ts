@@ -109,6 +109,12 @@ describe('Undo after removing a chore', () => {
     }
   })
 
+  it('a chore that starts later still starts then, so the days before it stay out of the streak', () => {
+    const chore = make({ kind: 'daily' }, '2026-10-08')
+    const back = (undoRemove(home(), chore, againInput(chore, []), [], '2026-10-06')[0] as { value: Chore }).value
+    expect(back.createdOn).toBe('2026-10-08')
+  })
+
   it('the Removed list still adds a late chore back fresh and kind', () => {
     const chore = make({ kind: 'daily' }, '2026-09-20')
     const [op] = addChoreAgain(home(), { ...chore, archivedOn: '2026-10-06' }, againInput(chore, []), done('2026-10-02'), '2026-10-06')
