@@ -14,7 +14,7 @@
 // ffmpeg (on the PATH) does the final scale down.
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
-import { ALL_REWARDS, isolate, launchBrowser, ROOT, seedMilestone, seedPet, seedRoom, serveApp } from './media-common.mjs'
+import { ALL_REWARDS, isolate, launchBrowser, ROOT, seedMilestone, seedPet, seedRoom, serveApp, LIVING_ROOM } from './media-common.mjs'
 
 const WORK = `${ROOT}demo/showcase`
 const OUT = `${ROOT}docs/media`
@@ -86,7 +86,7 @@ async function homeShot() {
   await page.waitForTimeout(500)
   await page.getByRole('button', { name: 'Add a living room', exact: true }).tap()
   await page.waitForTimeout(900)
-  for (const thing of ['Floor rug', 'Couch', 'Potted plant', 'Fish tank', 'Bookshelf', 'Wall clock', 'Bean bag', 'Lamp', 'Teddy bear', 'Poster']) {
+  for (const thing of LIVING_ROOM.items) {
     await page.getByRole('button', { name: new RegExp(`^${thing}`) }).first().tap()
     await page.waitForTimeout(350)
     await page.getByRole('button', { name: 'Place it', exact: true }).tap()
@@ -95,15 +95,7 @@ async function homeShot() {
     await page.waitForTimeout(250)
   }
   // The room's own layout, so nothing is bunched into the back corner.
-  await seedRoom(page, {
-    type: 'living',
-    wallStyle: 'sky',
-    floorStyle: 'seaside',
-    layout: [
-      ['plant', 0, 0, 0], ['wall-clock', 0, 1, 0], ['lamp', 0, 2, 0], ['couch', 0, 3, 0], ['fish-tank', 0, 5, 0], ['teddy', 1, 3, 0],
-      ['bookshelf', 2, 0, 1], ['poster', 4, 0, 1], ['rug', 3, 3, 0], ['bean-bag', 6, 2, 0],
-    ],
-  })
+  await seedRoom(page, LIVING_ROOM)
   await reload(page)
   const finish = page.getByRole('button', { name: 'Finish', exact: true })
   if (await finish.count()) await finish.tap()

@@ -122,6 +122,23 @@ export const seedMilestone = (target, milestone) => editSnapshot(target, 'milest
 export const seedPet = (target, pet) => editSnapshot(target, 'pet', pet)
 export const seedRoom = (target, room) => editSnapshot(target, 'room', room)
 
+/**
+ * The cosy living room the showcase and the story video furnish: placed through Build (`items`, by tray name),
+ * then moved to `layout` with seedRoom. Laid out for the 8x8 room: a plant and clock in the back corner, the
+ * couch under the window with a lamp and a teddy beside it, a coffee table on the rug, the fish tank to the
+ * front, and a reading nook along the right wall (bookshelf, poster, fairy lights, bean bag), leaving open floor.
+ */
+export const LIVING_ROOM = {
+  type: 'living',
+  wallStyle: 'sky',
+  floorStyle: 'seaside',
+  items: ['Floor rug', 'Couch', 'Potted plant', 'Fish tank', 'Bookshelf', 'Wall clock', 'Bean bag', 'Lamp', 'Teddy bear', 'Poster', 'Table', 'Fairy lights'],
+  layout: [
+    ['plant', 0, 0, 0], ['wall-clock', 0, 0, 0], ['couch', 0, 2, 0], ['lamp', 0, 4, 0], ['fish-tank', 0, 6, 0], ['teddy', 1, 5, 0],
+    ['rug', 2, 2, 0], ['table', 2, 2, 0], ['bookshelf', 2, 0, 1], ['poster', 4, 0, 1], ['fairy-lights', 5, 0, 1], ['bean-bag', 5, 1, 0],
+  ],
+}
+
 /** Every reward, in the order it is earned (src/domain/unlocks.ts), as saved in progress.unlockedItems. */
 export const ALL_REWARDS = [
   'item:beanie-red', 'decor:teddy', 'wall:mint', 'item:bow', 'decor:lamp', 'floor:tile', 'item:glasses', 'decor:poster',
