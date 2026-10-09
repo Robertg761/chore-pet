@@ -6,6 +6,11 @@ import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room } from 
  */
 export interface Created {
   createdAt?: string
+  /**
+   * When this device made the row, for ordering rows the server hasn't stamped yet among
+   * themselves. Never compared with createdAt (the clocks differ) and never sent.
+   */
+  madeAt?: string
 }
 
 /** Every synced table and the domain type its rows map to. */

@@ -496,11 +496,18 @@ function createdTime(row: Created): number {
   return Number.isNaN(t) ? Number.POSITIVE_INFINITY : t
 }
 
-/** Oldest first; rows not yet on the server last; ties by id so the order never flips. */
+/**
+ * Oldest first; rows not yet on the server last, in the order this device made them; ties by id so
+ * the order never flips.
+ */
 function byCreation(a: Created & { id: string }, b: Created & { id: string }): number {
   const ta = createdTime(a)
   const tb = createdTime(b)
   if (ta !== tb) return ta < tb ? -1 : 1
+  if (ta === Number.POSITIVE_INFINITY && (a.madeAt ?? '') !== (b.madeAt ?? '')) {
+    // Rows from before madeAt existed sort first: they were made earlier.
+    return (a.madeAt ?? '') < (b.madeAt ?? '') ? -1 : 1
+  }
   return a.id.localeCompare(b.id)
 }
 

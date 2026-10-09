@@ -21,9 +21,9 @@ export function createHousehold(input: { species: Species; petName: string; user
 }
 
 export function createRoom(home: Home, type: RoomType = 'kitchen'): NewOp[] {
-  // Stamped here so rooms made on this device keep their order (and names: "Kitchen", then "Kitchen 2")
-  // before the server's own creation time replaces it on the next pull. It is never sent up.
-  const room: Room & Created = { id: id(), homeId: home.id, type, floorStyle: 'wood', wallStyle: 'peach', createdAt: new Date().toISOString() }
+  // madeAt keeps rooms made on this device in order (and named "Kitchen", then "Kitchen 2") until the
+  // server's creation time arrives on the next pull. It is never sent up.
+  const room: Room & Created = { id: id(), homeId: home.id, type, floorStyle: 'wood', wallStyle: 'peach', madeAt: new Date().toISOString() }
   return [upsertOp('rooms', room)]
 }
 

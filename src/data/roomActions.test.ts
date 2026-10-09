@@ -145,4 +145,24 @@ describe('createRoom', () => {
       vi.useRealTimers()
     }
   })
+
+  it('puts a synced kitchen before one made here, even when this device clock is behind the server', async () => {
+    const { vi } = await import('vitest')
+    const { createRoom } = await import('./actions')
+    const { selectHome } = await import('./state')
+    const { orderRooms, roomNames } = await import('../screens/roomsModel')
+    vi.useFakeTimers()
+    try {
+      vi.setSystemTime(new Date('2026-10-08T09:00:00.000Z'))
+      const [local] = createRoom(home)
+      // The server stamped the original an hour "later" than this device's clock reads.
+      const synced = { ...room('zz-synced', 'kitchen'), createdAt: '2026-10-08T10:00:00.000Z' }
+      const tables = { ...emptySnapshot().tables, homes: { h1: home }, rooms: { [local.key]: (local as { value: Room }).value, [synced.id]: synced } } as Snapshot['tables']
+      const names = roomNames(orderRooms(selectHome(tables, 'h1').rooms))
+      expect(names.get(synced.id)).toBe('Kitchen')
+      expect(names.get(local.key)).toBe('Kitchen 2')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
 })
