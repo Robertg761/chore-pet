@@ -174,4 +174,12 @@ describe('buildSections while on vacation', () => {
     expect(home[0].paused).toBe(false)
     expect(home[0].label).toMatch(/late/)
   })
+
+  it('titles the late section as paused while away', () => {
+    const today = '2026-10-06'
+    const dishes = chore('a', 'Wash the dishes', '2026-09-01')
+    const title = (vacations: { start: string; end: string }[]) => buildSections([dishes], [], vacations, today).find((s) => s.id === 'late')?.title
+    expect(title([{ start: today, end: '2026-10-10' }])).toBe("Paused while you're away")
+    expect(title([])).toBe('Running late')
+  })
 })

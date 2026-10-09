@@ -82,7 +82,8 @@ export function buildSections(
   const doneToday = pick('upcoming').filter((r) => r.doneToday).sort(byName)
 
   const sections: ChoreSection[] = [
-    { id: 'late', title: 'Running late', rows: late },
+    // On vacation nothing is running late: the same rows wait, paused, until the trip ends.
+    { id: 'late', title: away ? "Paused while you're away" : 'Running late', rows: late },
     { id: 'today', title: 'Today', rows: due },
     // What was just finished sits right under today's, not past a long list of later chores.
     { id: 'done', title: doneToday.some((r) => r.skippedToday) ? 'Done or skipped today' : 'Done today', rows: doneToday },
