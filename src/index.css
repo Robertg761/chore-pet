@@ -27,6 +27,8 @@
 
 /* Design tokens from docs/ART.md (Style A: cozy outline). */
 :root {
+  /* Light only, so a browser's forced dark mode leaves the art and outlines alone (see index.html). */
+  color-scheme: only light;
   --ink: #2b1e2f;
   --ink-soft: #4a3e58;
   --ground: #efe9ff;
