@@ -78,7 +78,10 @@ rmSync(FRAMES, { recursive: true, force: true })
 mkdirSync(FRAMES, { recursive: true })
 
 // Mid-morning, so the day doesn't roll over while recording.
+// Always a Thursday (the latest one), so the sample home's weekly chores, and so the home list, play
+// out the same whichever day this runs: on a Friday "Clear out old food" would be due and crowd it.
 const start = new Date(); start.setHours(10, 0, 0, 0)
+start.setDate(start.getDate() - ((start.getDay() - 4 + 7) % 7))
 await stage.clock.install({ time: start })
 const errors = []
 stage.on('pageerror', (e) => errors.push(e.message))
