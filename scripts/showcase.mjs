@@ -50,7 +50,8 @@ const reload = async (page) => {
   await page.waitForTimeout(900)
 }
 const tab = async (page, name) => {
-  await page.getByRole('navigation').getByRole('button', { name }).first().tap()
+  // Anchored, as in record-demo.mjs: the Rewards tab's full name says "more chores".
+  await page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}\\b`) }).first().tap()
   await page.waitForTimeout(700)
 }
 /** Tap every Done that is showing, one at a time (each folds away). `keep` leaves that many for later. */

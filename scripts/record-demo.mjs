@@ -178,7 +178,8 @@ const press = async (locator) => {
   pressTime += Date.now() - began
 }
 const tap = (role, name) => press(phone.getByRole(role, { name }))
-const tab = (name) => press(phone.getByRole('navigation').getByRole('button', { name }))
+// Anchored: the Rewards tab's full name ("Rewards, Gift in 2: 2 more chores to ...") would otherwise match "More".
+const tab = (name) => press(phone.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}\\b`) }))
 const reloadPhone = async () => {
   await phone.evaluate(() => location.reload())
   await wait(600)
