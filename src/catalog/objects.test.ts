@@ -64,7 +64,7 @@ describe('object catalog', () => {
     expect(counter?.chores).toEqual([{ name: 'Wipe the counters', schedule: { kind: 'everyNDays', n: 2 } }])
     const dining = catalogEntry('dining-table')
     expect(dining).toMatchObject({ footprint: { w: 2, d: 2 }, placement: 'floor', layer: 'solid', rooms: ['kitchen'] })
-    expect(dining?.chores).toEqual([{ name: 'Wipe the table', schedule: { kind: 'everyNDays', n: 2 } }])
+    expect(dining?.chores).toEqual([{ name: 'Wipe the dining table', schedule: { kind: 'everyNDays', n: 2 } }])
     expect(dining?.mess).toBe(catalogEntry('table')?.mess)
     for (const id of ['counter', 'dining-table']) {
       expect(OBJECT_ART[id]?.footprint, id).toEqual(catalogEntry(id)?.footprint)

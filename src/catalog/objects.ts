@@ -81,7 +81,7 @@ export const CATALOG: CatalogEntry[] = [
     placement: 'floor',
     layer: 'solid',
     mess: 'dust',
-    chores: [{ name: 'Wipe the table', schedule: { kind: 'everyNDays', n: 2 } }],
+    chores: [{ name: 'Wipe the dining table', schedule: { kind: 'everyNDays', n: 2 } }],
   },
   {
     id: 'dishwasher',
