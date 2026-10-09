@@ -318,8 +318,9 @@ function stripQueue(op: Op): NewOp {
 
 /** Server state with everything still queued re-applied on top. */
 /**
- * The server's rooms, keeping the madeAt this device gave them: rooms sent up together get the same
- * server creation time, and madeAt is what still tells them apart.
+ * The server's rooms, keeping the madeAt this device gave them when the server has none (rooms
+ * from before made_at, or written by an older app): rooms sent up together get the same server
+ * creation time, and madeAt is what still tells them apart.
  */
 export function keepMadeAt(server: Tables, local: Tables): Tables {
   let rooms: Tables['rooms'] | null = null

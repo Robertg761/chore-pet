@@ -7,8 +7,9 @@ import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room } from 
 export interface Created {
   createdAt?: string
   /**
-   * When this device made the row, for ordering rows the server hasn't stamped yet among
-   * themselves. Never compared with createdAt (the clocks differ) and never sent.
+   * When the making device made the row, to order rows among themselves when the server's
+   * createdAt ties or is missing. Rooms send it up (made_at, migration 0010) so every device
+   * agrees; rooms from before that have none. Never compared with createdAt (the clocks differ).
    */
   madeAt?: string
 }
