@@ -6,7 +6,7 @@
 
 - **Live link:** https://robertg761.github.io/chore-pet/
 - **Repo:** https://github.com/Robertg761/chore-pet
-- **Demo video (16:9):** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (65 s, 1920 x 1080, 60 fps, with sound). A portrait cut for phones: https://robertg761.github.io/chore-pet/chore-pet-demo-portrait.mp4 (64 s, 1080 x 1920).
+- **Demo video (16:9):** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (56 s, 1920 x 1080, 60 fps, with sound). A portrait cut for phones: https://robertg761.github.io/chore-pet/chore-pet-demo-portrait.mp4 (56 s, 1080 x 1920).
   - It tells one small story about Mochi with the real app: a stinky kitchen, a placed toilet bringing "Clean the toilet", Done and a cheer, a red beanie, the mess creeping back, catching up, and a cosy home weeks later.
   - It is recorded in the app with `npm run demo:story` (`FORMAT=landscape` for 16:9). The first, faster feature tour is still `npm run demo:record`.
 
