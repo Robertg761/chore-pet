@@ -1,6 +1,7 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
-import { archiveEnd, choreRetiredBy, completionCounts, resumeFrom, sameSchedule, SCHEDULE_HISTORY, SKIP_HISTORY, skipDays, trimHistory } from '../domain/schedule'
+import { archiveEnd, choreRetiredBy, completionCounts, resumeFrom, sameSchedule, SCHEDULE_HISTORY, SKIP_HISTORY, skipDays, standingOf, trimHistory } from '../domain/schedule'
+import { startStylesOf } from '../room/shell/styles'
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, choreCountOf, streakHistory, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
@@ -20,10 +21,11 @@ export function createHousehold(input: { species: Species; petName: string; user
   return [upsertOp('homes', home), upsertOp('pets', pet), upsertOp('progress', progress), ...createRoom(home)]
 }
 
+/** A new room starts with the free look for its kind (a bathroom is not a kitchen); existing rooms keep theirs. */
 export function createRoom(home: Home, type: RoomType = 'kitchen'): NewOp[] {
-  // madeAt keeps rooms made on this device in order (and named "Kitchen", then "Kitchen 2") until the
-  // server's creation time arrives on the next pull. It is never sent up.
-  const room: Room & Created = { id: id(), homeId: home.id, type, floorStyle: 'wood', wallStyle: 'peach', madeAt: new Date().toISOString() }
+  // madeAt keeps rooms in the order they were made (and named "Kitchen", then "Kitchen 2"): it syncs as
+  // made_at, so every device agrees even when rooms sent up together share a server creation time.
+  const room: Room & Created = { id: id(), homeId: home.id, type, ...startStylesOf(type), madeAt: new Date().toISOString() }
   return [upsertOp('rooms', room)]
 }
 
@@ -286,6 +288,28 @@ export function addChoreAgain(
 ): NewOp[] {
   const resume = resumeFrom(chore, completions, today, home.vacations)
   return addChore(home, { ...input, schedule: resume ? { ...input.schedule, resume } : input.schedule }, today)
+}
+
+/**
+ * Undo after removing a chore: bring it back exactly as it stood, so a chore
+ * that was 3 days late is still 3 days late (its mess too), a due one is still
+ * due and an upcoming one keeps its date. `chore` is the chore as it was just
+ * before the removal, with `completions` as they were then. Removed chores are
+ * never reopened (sync refuses it), so this makes a new one that carries the
+ * old one's standing (standingOf) instead of its history: no completion is
+ * copied, so nothing is counted twice. The kinder "add back" from the Removed
+ * list stays addChoreAgain.
+ */
+export function undoRemove(
+  home: Home,
+  chore: Chore,
+  input: { name: string; schedule: Schedule; objectId: string | null },
+  completions: Completion[],
+  today: ISODate,
+): NewOp[] {
+  // A chore that starts later (made on a device whose clock ran ahead) still starts then.
+  const start = chore.createdOn > today ? chore.createdOn : today
+  return addChore(home, { ...input, schedule: { ...input.schedule, resume: standingOf(chore, completions) } }, start)
 }
 
 /** A row as a new one: the server stamps its own creation time. */

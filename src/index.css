@@ -253,6 +253,8 @@ h1[tabindex='-1']:focus { outline: none; }
 .home-top .hb-track { height: 16px; }
 .home-top .hb-text { font-size: 0.875rem; line-height: 1.3; }
 .home-top .hb-row { min-height: 1.3em; }
+/* A kind line under the title and bar after a streak ends: soft, never alarming. */
+.home-nudge { grid-column: 1 / -1; margin: 6px 0 0; font-size: 0.875rem; font-weight: 700; line-height: 1.3; color: var(--ink-soft); }
 
 .home-stage {
   flex: 1 1 0;

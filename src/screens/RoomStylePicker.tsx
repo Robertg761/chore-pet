@@ -25,10 +25,19 @@ function WallSwatch({ s }: { s: WallStyle }) {
   )
 }
 
+/** Alternate cells of a 4x4 grid on the swatch diamond. */
+const MOSAIC_CELLS = (() => {
+  const at = (i: number, j: number) => `${20 + (i - j) * 4.5} ${4 + (i + j) * 2.5}`
+  const cells: string[] = []
+  for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) if ((i + j) % 2 === 1) cells.push(`M${at(i, j)} L${at(i + 1, j)} L${at(i + 1, j + 1)} L${at(i, j + 1)} Z`)
+  return cells.join(' ')
+})()
+
 function FloorSwatch({ s }: { s: FloorStyle }) {
   return (
     <svg viewBox="0 0 40 28" width="40" height="28" aria-hidden="true">
       <path d="M20 4 L38 14 L20 24 L2 14 Z" fill={s.top} stroke={PALETTE.ink} strokeWidth="2" strokeLinejoin="round" />
+      {s.pattern === 'mosaic' && <path d={MOSAIC_CELLS} fill={s.alt} />}
       {s.pattern === 'checker' && <path d="M20 4 L29 9 L20 14 L11 9 Z M20 14 L29 19 L20 24 L11 19 Z" fill={s.alt} />}
       {s.pattern === 'rug' && <path d="M20 8 L31 14 L20 20 L9 14 Z" fill="none" stroke={s.alt} strokeWidth="2" />}
       {s.pattern === 'planks' && <path d="M11 9 L29 19 M15 7 L33 17" stroke={s.edgeLeft} strokeWidth="1" opacity="0.5" />}

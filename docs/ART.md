@@ -46,6 +46,23 @@ Every asset is hand-authored SVG, designed from scratch. No asset packs, no rast
 | wall-lavender-right | #D9CDF5 | lavender wall style, right wall |
 | wall-sky-left | #A3CFEA | sky wall style, left wall |
 | wall-sky-right | #C9E6F7 | sky wall style, right wall |
+| wall-cloud-left | #B4C8D6 | cloud wall style (bathroom start), left wall |
+| wall-cloud-right | #D3E2EC | cloud wall style, right wall |
+| wall-butter-left | #F2DA94 | butter wall style (bedroom start), left wall |
+| wall-butter-right | #F9EBC0 | butter wall style, right wall |
+| wall-sage-left | #B3C6A2 | sage wall style (living room start), left wall |
+| wall-sage-right | #D2E0C4 | sage wall style, right wall |
+| floor-mosaic | #D6ECE4 | mosaic floor top (bathroom start) |
+| floor-mosaic-alt | #BBDBD0 | mosaic floor, second small tile |
+| floor-mosaic-dark | #7DA698 | mosaic slab left-front edge |
+| floor-mosaic-side | #9CC3B6 | mosaic slab right-front edge |
+| floor-oat | #EAD8C4 | oat rug floor top (bedroom start) |
+| floor-oat-border | #CFAE93 | oat rug border |
+| floor-oat-dark | #A98468 | oat slab left-front edge |
+| floor-oat-side | #C29F84 | oat slab right-front edge |
+| floor-birch | #E7C99D | birch plank floor top (living room start) |
+| floor-birch-dark | #B9926A | birch slab left-front edge |
+| floor-birch-side | #D0AB81 | birch slab right-front edge |
 | sky-dark | #6FAED6 | seaside floor slab edge, shaded blue faces |
 
 The tokens live in `src/art/palette.ts`; art code uses those names, never raw hex.
@@ -69,6 +86,8 @@ The tokens live in `src/art/palette.ts`; art code uses those names, never raw he
 ### Room shell styles
 
 `src/room/shell/` draws the room: back walls, floor and a window. Floor styles: `wood` (default, planks), `tile` (cream and steel checker), `carpet` (rose, with a rug border), `seaside` (white and sky checker). Wall styles: `peach` (default), `mint` (faint stripes), `lavender`, `sky` (faint stripes). Every wall style is a darker left wall plus a lighter right wall. Wall tops, baseboards and the window sill use `cream` / `cream-dark` in every style. Floor slab edges are drawn below the diamond so the room reads as a diorama.
+
+Starting styles by room kind (free for everyone, never rewards, so a new room looks like a new room): kitchen and other `peach` + `wood`; bathroom `cloud` (pale blue-grey wall) + `mosaic` (soft seafoam floor of small checks, half-tile squares); bedroom `butter` (soft butter wall) + `oat` (oatmeal rug floor with a border); living room `sage` (grey-green wall) + `birch` (light blond planks). None of the new floors reuse the cream, steel or blue checker of the reward `tile` and `seaside`; the mosaic is greener and its squares are half the size.
 
 ## Characters
 

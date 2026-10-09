@@ -14,6 +14,15 @@ interface Mapper<T> {
 /** created_at is read, never written: the database sets it on insert. */
 const created = (r: Row): Created => (typeof r.created_at === 'string' ? { createdAt: r.created_at } : {})
 
+/**
+ * made_at is what the making device stamped on a room (see Created.madeAt). Read as the same ISO
+ * form a device writes, whichever form the database prints, so the two compare as text.
+ */
+const made = (r: Row): Pick<Created, 'madeAt'> => {
+  const t = typeof r.made_at === 'string' ? Date.parse(r.made_at) : Number.NaN
+  return Number.isNaN(t) ? {} : { madeAt: new Date(t).toISOString() }
+}
+
 const homes: Mapper<Home & Created> = {
   toRow: (h) => ({ id: h.id, name: h.name, vacations: h.vacations }),
   fromRow: (r) => ({
@@ -26,7 +35,8 @@ const homes: Mapper<Home & Created> = {
 }
 
 const rooms: Mapper<Room & Created> = {
-  toRow: (r) => ({ id: r.id, home_id: r.homeId, type: r.type, floor_style: r.floorStyle, wall_style: r.wallStyle }),
+  // made_at only when this device knows it: the database keeps the first one it was given (migration 0010).
+  toRow: (r) => ({ id: r.id, home_id: r.homeId, type: r.type, floor_style: r.floorStyle, wall_style: r.wallStyle, ...(r.madeAt && { made_at: r.madeAt }) }),
   fromRow: (r) => ({
     id: r.id as string,
     homeId: r.home_id as string,
@@ -34,6 +44,7 @@ const rooms: Mapper<Room & Created> = {
     floorStyle: r.floor_style as string,
     wallStyle: r.wall_style as string,
     ...created(r),
+    ...made(r),
   }),
 }
 

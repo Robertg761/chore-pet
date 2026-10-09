@@ -18,6 +18,7 @@ import {
   skipChore,
   skipDayFor,
   uncompleteChore,
+  undoRemove,
   unskipChore,
   updatePet,
   updateRoom,
@@ -62,6 +63,7 @@ import { ObjectSheet } from './screens/ObjectSheet'
 import { PetPicker } from './screens/PetPicker'
 import { RewardsScreen } from './screens/RewardsScreen'
 import { rewardsHint, rewardsNote } from './screens/rewardsModel'
+import { homeStreak as homeStreakOf } from './screens/streakNudge'
 import { AdoptedNote, ADOPTED_NOTE_MS, SampleBanner } from './screens/SampleBanner'
 import { CoachCard, FirstDoneHint, Welcome } from './screens/Onboarding'
 import { coachStep, hasDueChore, hintKey, onboardedKey, readFlag, showFirstDoneHint, writeFlag } from './screens/onboardingModel'
@@ -189,6 +191,11 @@ export default function App() {
   const [celebrate, setCelebrate] = useState<Celebration | null>(null)
   const [sparkles, setSparkles] = useState<(SparkleSpot & { id: number })[]>([])
   const [gifts, setGifts] = useState<Unlock[]>([])
+  // Gifts already opened in this run, so a run of several reads "Gift 2 of 3" and stays one celebration.
+  const [giftsDone, setGiftsDone] = useState(0)
+  if (!gifts.length && giftsDone) setGiftsDone(0)
+  // Gifts earned a moment ago that have not reached the box yet (they wait for the cheer to play).
+  const [giftsComing, setGiftsComing] = useState(0)
   // Back/Forward follows the URL and dismisses transient feedback. Gift
   // shortcuts use app navigation directly and preserve the remaining queue.
   const historyRevision = useRef(0)
@@ -209,6 +216,7 @@ export default function App() {
     setMomentScope(scope)
     setSelectedId(null)
     setGifts([])
+    setGiftsComing(0)
     setUndo(null)
     setCelebrate(null)
     setSparkles([])
@@ -284,8 +292,8 @@ export default function App() {
   )
 
   // The streak shown beside the health bar, replayed only when the history or the day changes.
-  const homeStreak = useMemo(
-    () => (data.home ? currentStreak(data.chores, data.completions, today, data.home.vacations) : 0),
+  const { streak: homeStreak, nudge: streakNudge } = useMemo(
+    () => (data.home ? homeStreakOf(data.chores, data.completions, today, data.home.vacations) : { streak: 0, nudge: null }),
     [data.home, data.chores, data.completions, today],
   )
   // Homes made before rooms existed get their first room.
@@ -399,9 +407,9 @@ export default function App() {
         } else if (undo.kind === 'added') {
           appStore.apply(...removeChore(undo.choreId, data, today))
         } else if (undo.kind === 'removed') {
-          // A removed chore stays removed (sync never reopens one), so it comes back the way
-          // "Removed chores" adds it: new, and resuming where it stood.
-          appStore.apply(...addChoreAgain(home, undo.chore, againInput(undo.chore, objects), completions, today))
+          // A removed chore stays removed (sync never reopens one), so it comes back as a new one
+          // standing exactly where this one did: late days, mess and all.
+          appStore.apply(...undoRemove(home, undo.chore, againInput(undo.chore, objects), completions, today))
         } else {
           // Any gift that tap earned stays: rewards are never taken back.
           appStore.apply(...uncompleteChore(undo.completionId, progress, completions))
@@ -411,6 +419,9 @@ export default function App() {
       onClose={() => setUndo(null)}
     />
   )
+
+  // "Gift in 1" on the Rewards tab would be wrong while gifts are still waiting to be opened.
+  const giftsWaiting = gifts.length > 0 || giftsComing > 0
 
   /** A screen inside the app frame: the tabs along the bottom (phones) or down the left (wide). */
   const framed = (active: Tab, content: ReactNode) => (
@@ -422,16 +433,16 @@ export default function App() {
         menuOpen={route.sheet === 'more'}
         onMenuChange={(open) => open ? navigation.go({ ...view, sheet: 'more' }) : navigation.dismiss()}
         onNavigate={(tab) => (setSelectedId(null), setPlacing(null), tab === 'build' ? openBuild() : setView({ name: tab } as View))}
-        rewardsNote={rewardsNote(progress)}
-        rewardsHint={rewardsHint(progress)}
+        rewardsNote={giftsWaiting ? undefined : rewardsNote(progress)}
+        rewardsHint={giftsWaiting ? undefined : rewardsHint(progress)}
         more={more}
         note={syncNote ?? undefined}
       />
       {view.name === 'home' && !gifts.length && !allChores && !toastInHomeList && undoToast}
       {gifts[0] && (
         <GiftBox
-          key={gifts[0].id}
           unlock={gifts[0]}
+          position={{ index: giftsDone + 1, total: giftsDone + gifts.length }}
           pet={pet}
           onPlace={() => {
             const entry = catalogEntry(gifts[0].ref)
@@ -450,6 +461,7 @@ export default function App() {
             const item = ITEMS.find((i) => i.id === gifts[0].ref)
             if (wear && gifts[0].kind === 'item' && item) appStore.apply(...updatePet(pet, { equipped: { ...pet.equipped, [item.slot]: item.id } }))
             setGifts((queue) => queue.slice(1))
+            setGiftsDone((n) => n + 1)
           }}
         >
           {undoToast}
@@ -813,7 +825,10 @@ export default function App() {
     play('sparkle')
     // The gift waits for the cheer and sparkle to play, so the done moment is seen first.
     const completedAtRevision = historyRevision.current
-    if (done.unlocked.length) window.setTimeout(() => {
+    const earned = done.unlocked.length
+    if (earned) setGiftsComing((n) => n + earned)
+    if (earned) window.setTimeout(() => {
+      setGiftsComing((n) => Math.max(0, n - earned))
       if (currentScope.current === scope && historyRevision.current === completedAtRevision) setGifts((queue) => [...queue, ...done.unlocked])
     }, GIFT_DELAY_MS)
     const key = ++momentKey.current
@@ -847,6 +862,7 @@ export default function App() {
       <header className="home-top">
         <h1>{pet.name}</h1>
         <HealthBar health={condition.health} mood={condition.mood} away={away} streak={homeStreak} />
+        {streakNudge && <p className="home-nudge">{streakNudge}</p>}
       </header>
 
       {sample ? (

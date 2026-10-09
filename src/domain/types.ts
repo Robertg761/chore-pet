@@ -28,6 +28,11 @@ export type ScheduleRule =
  * up exactly there instead of starting a fresh round (see resumeFrom). Also
  * ignored by `sameSchedule`.
  *
+ * `resume.last` is missing when nothing had counted yet, and `resume.start` is
+ * set only by Undo after removing a chore (see standingOf): the day the removed
+ * one's schedule began, which lets `due` lie before the new chore's own start
+ * (it was late) and keeps the first-occurrence grace as it was.
+ *
  * `skips` are the days the player said a round wasn't needed ("Skip this
  * time"). A skip settles the round it was taken on like a completion does, so
  * nothing is late, but it is not a completion: it never counts toward rewards
@@ -37,7 +42,7 @@ export type ScheduleRule =
 export type Schedule = ScheduleRule & {
   since?: ISODate
   before?: Schedule
-  resume?: { due: ISODate; last: ISODate }
+  resume?: { due: ISODate; last?: ISODate; start?: ISODate }
   skips?: ISODate[]
 }
 

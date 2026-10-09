@@ -24,13 +24,14 @@ import {
   type History,
 } from '../src/data/actions'
 import { KEY_COLUMN, MAPPERS } from '../src/data/mappers'
-import { change, clearedHome, emptySnapshot, planFlush, selectHome, type NewOp, type Op, type Snapshot } from '../src/data/state'
+import { change, clearedHome, emptySnapshot, planFlush, selectHome, upsertOp, type NewOp, type Op, type Snapshot } from '../src/data/state'
 import { TABLES, type TableName } from '../src/data/tables'
 import { CHARACTER_SLOTS, SPECIES, type Chore, type Home, type Pet, type PlacedObject, type Progress, type Room, type RoomType, type Schedule } from '../src/domain/types'
 import { UNLOCKS } from '../src/domain/unlocks'
 import { FLOOR_STYLES, WALL_STYLES } from '../src/room/shell/styles'
 import { NAME_MAX } from '../src/screens/choreForm'
 import { againInput } from '../src/screens/manageModel'
+import { orderRooms, roomNames } from '../src/screens/roomsModel'
 import { BODY_COLOURS, CHEEK_OPTIONS, EYE_OPTIONS } from '../src/screens/creatorModel'
 
 // Runs the migrations on a real Postgres (PGlite) set up like Supabase:
@@ -116,9 +117,10 @@ async function clearHomes(db: PGlite, user: string, ops: Op[], clockError: numbe
 /**
  * One device: applies actions locally and syncs them the way src/data/store.ts
  * does (planFlush order, mapper rows, one request per table and kind).
- * Returns the server's refusals; a working client gets none.
+ * Returns the server's refusals; a working client gets none. `madeAtColumn: false` is for databases
+ * from before 0010: the rows then leave out made_at, as an older client's did.
  */
-function device(db: PGlite, user: string, clockError = 0, latency = 0) {
+function device(db: PGlite, user: string, clockError = 0, latency = 0, madeAtColumn = true) {
   let snap: Snapshot = emptySnapshot(user)
   return {
     get tables() {
@@ -134,7 +136,12 @@ function device(db: PGlite, user: string, clockError = 0, latency = 0) {
                 db,
                 user,
                 step.table,
-                step.ops.map((o) => MAPPERS[step.table].toRow((o as { value: never }).value)),
+                step.ops.map((o) => {
+                  const row = MAPPERS[step.table].toRow((o as { value: never }).value)
+                  // A database still before 0010 has no made_at column (the new client must come after the migration).
+                  if (!madeAtColumn) delete row.made_at
+                  return row
+                }),
               )
             : step.ops[0]?.kind === 'delete' && step.ops[0].removal?.clearBefore
               ? await clearHomes(db, user, step.ops, clockError, latency)
@@ -476,9 +483,9 @@ describe('upgrading an existing database to 0006', () => {
   beforeAll(async () => {
     db = await supabaseLike(before0006)
     // Real homes, written by the app.
-    a = device(db, A)
+    a = device(db, A, 0, 0, false)
     expect(await a.apply(...sampleHome({ species: 'mochi', userId: A, today: TODAY }))).toEqual([])
-    b = device(db, B)
+    b = device(db, B, 0, 0, false)
     expect(await b.apply(...createHousehold({ species: 'bun', petName: 'Bun', userId: B }))).toEqual([])
     const bHome = rowsOf<Home>(b, 'homes')[0]
     expect(await b.apply(...placeObject(rowsOf<Room>(b, 'rooms')[0], ALL_ENTRIES[0], { tileX: 0, tileY: 0, rotation: 0 }, TODAY))).toEqual([])
@@ -652,7 +659,7 @@ describe('retained history lifecycle (0007)', () => {
 describe('upgrading retained history from 0006', () => {
   it('keeps existing facts and legacy banks, protects subsequent deletes, and erases the account', async () => {
     const db = await supabaseLike(MIGRATIONS.find(f => f.startsWith('0006'))!)
-    const a = device(db, A)
+    const a = device(db, A, 0, 0, false)
     expect(await a.apply(...createHousehold({ species: 'mochi', petName: 'Pip', userId: A }))).toEqual([])
     const home = rowsOf<Home>(a, 'homes')[0]
     expect(await a.apply(...addChore(home, { name: 'Dishes', schedule: { kind: 'daily' } }, '2026-10-01'))).toEqual([])
@@ -876,6 +883,115 @@ describe('starting over from Settings, synced', () => {
     expect(await dev.apply(...removeHome(rowsOf<Home>(dev, 'homes')[0].id))).toEqual([])
     expect(await serverCounts(db, A)).toEqual(Object.fromEntries(TABLES.map((t) => [t, 0])))
     expect(localCounts(dev)).toEqual(Object.fromEntries(TABLES.map((t) => [t, 0])))
+    await db.close()
+  }, 60_000)
+})
+
+describe('room made_at (0010)', () => {
+  // Fixed ids in the opposite order to the making, so only made_at (not the id) puts them right.
+  const FIRST = 'ffffffff-ffff-4fff-8fff-ffffffffffff'
+  const SECOND = '00000000-0000-4000-8000-000000000002'
+  const THIRD = '00000000-0000-4000-8000-000000000003'
+  const roomRow = (id: string, homeId: string, madeAt?: string): Room & { madeAt?: string } => ({ id, homeId, type: 'kitchen', floorStyle: 'wood', wallStyle: 'peach', ...(madeAt && { madeAt }) })
+  /** A room as PostgREST returns it: the row as JSON, timestamps as text. */
+  const serverRow = async (db: PGlite, user: string, id: string) => {
+    const r = await as(db, user, `select to_jsonb(r) as row from rooms r where id = $1`, [id])
+    return r.ok ? (r.rows[0]?.row as Record<string, unknown> | undefined) : undefined
+  }
+  const KITCHENS = [
+    [FIRST, '2026-10-08T09:00:00.000Z'],
+    [SECOND, '2026-10-08T09:05:00.000Z'],
+    [THIRD, '2026-10-08T09:10:00.123Z'],
+  ] as const
+
+  it('round-trips through the database, so another device orders rooms the way the first made them', async () => {
+    const db = await supabaseLike()
+    const phone = device(db, A)
+    expect(await phone.apply(...createHousehold({ species: 'mochi', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(phone, 'homes')[0]
+    // Three kitchens sent up in one batch, so the server gives them one created_at.
+    expect(await phone.apply(...KITCHENS.map(([id, madeAt]) => upsertOp('rooms', roomRow(id, home.id, madeAt))))).toEqual([])
+    const stored = await as(db, A, `select id, made_at is not null as has, count(*) over (partition by created_at) as ties from rooms where id = any($1::uuid[]) order by id`, [KITCHENS.map(([id]) => id)])
+    expect(stored.ok && stored.rows.map((r) => [r.has, Number(r.ties)])).toEqual([[true, 3], [true, 3], [true, 3]])
+
+    // A laptop pulls them (no madeAt of its own): the row's made_at comes back as the same instant.
+    let tables = emptySnapshot().tables
+    for (const [id, madeAt] of KITCHENS) {
+      const row = (await serverRow(db, A, id))!
+      const back = MAPPERS.rooms.fromRow(row)
+      expect(back.madeAt).toBe(madeAt)
+      tables = { ...tables, rooms: { ...tables.rooms, [id]: back } }
+    }
+    tables = { ...tables, homes: { [home.id]: { ...home } } }
+    const names = roomNames(orderRooms(selectHome(tables, home.id).rooms))
+    expect([FIRST, SECOND, THIRD].map((id) => names.get(id))).toEqual(['Kitchen', 'Kitchen 2', 'Kitchen 3'])
+    await db.close()
+  }, 60_000)
+
+  it('keeps the first made_at: a write that has none, or another one, changes nothing', async () => {
+    const db = await supabaseLike()
+    const dev = device(db, A)
+    expect(await dev.apply(...createHousehold({ species: 'mochi', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(dev, 'homes')[0]
+    const made = async () => (await serverRow(db, A, FIRST))?.made_at
+    expect(await dev.apply(upsertOp('rooms', roomRow(FIRST, home.id, KITCHENS[0][1])))).toEqual([])
+    const first = await made()
+    expect(first).toBeTruthy()
+    // An older app edits the room: its row has no made_at, which a batch sends as null.
+    expect(await dev.apply(upsertOp('rooms', { ...roomRow(FIRST, home.id), wallStyle: 'sky' }))).toEqual([])
+    expect(await made()).toBe(first)
+    expect((await serverRow(db, A, FIRST))?.wall_style).toBe('sky')
+    // The same in a batch where one row has made_at and the other has not (PostgREST fills the gap with null).
+    expect(await dev.apply(upsertOp('rooms', roomRow(FIRST, home.id)), upsertOp('rooms', roomRow(SECOND, home.id, KITCHENS[1][1])))).toEqual([])
+    expect(await made()).toBe(first)
+    // A device with another idea of when it was made doesn't reorder the rooms.
+    expect(await dev.apply(upsertOp('rooms', roomRow(FIRST, home.id, '2030-01-01T00:00:00.000Z')))).toEqual([])
+    expect(await made()).toBe(first)
+    await db.close()
+  }, 60_000)
+
+  it('stays owner-only: another user can neither read, move nor plant a room with made_at', async () => {
+    const db = await supabaseLike()
+    const dev = device(db, A)
+    expect(await dev.apply(...createHousehold({ species: 'mochi', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(dev, 'homes')[0]
+    expect(await dev.apply(upsertOp('rooms', roomRow(FIRST, home.id, KITCHENS[0][1])))).toEqual([])
+    const seen = await as(db, B, `select made_at from rooms where id = $1`, [FIRST])
+    expect(seen.ok && seen.rows.length).toBe(0)
+    const moved = await as(db, B, `update rooms set made_at = now() where id = $1 returning id`, [FIRST])
+    expect(moved.ok && moved.rows.length).toBe(0)
+    // An upsert over A's room id is refused outright (it would be an update of a row B cannot see).
+    expect((await upsertRows(db, B, 'rooms', [MAPPERS.rooms.toRow(roomRow(FIRST, home.id, '2030-01-01T00:00:00.000Z') as never)])).ok).toBe(false)
+    expectRefused(await as(db, B, `insert into rooms (home_id, type, made_at) values ($1, 'other', now())`, [home.id]), '23503')
+    expectRefused(await as(db, null, `insert into rooms (home_id, type, made_at) values ($1, 'other', now())`, [home.id]), '42501')
+    expect(await serverRow(db, A, FIRST).then((r) => r?.made_at)).toBeTruthy()
+    await db.close()
+  }, 60_000)
+
+  it('upgrades a database that has rooms already: they keep working with no made_at, in the old order', async () => {
+    const last = MIGRATIONS[MIGRATIONS.length - 1]
+    const before = MIGRATIONS[MIGRATIONS.indexOf(last) - 1]
+    expect(last).toMatch(/^0010_/)
+    const db = await supabaseLike(before)
+    const old = device(db, A, 0, 0, false)
+    expect(await old.apply(...createHousehold({ species: 'mochi', petName: 'Pip', userId: A }))).toEqual([])
+    const home = rowsOf<Home>(old, 'homes')[0]
+    // Before made_at existed the column was not sent at all.
+    expect(await as(db, A, `insert into rooms (id, home_id, type) values ($1, $2, 'kitchen'), ($3, $2, 'kitchen')`, [SECOND, home.id, FIRST])).toMatchObject({ ok: true })
+    await db.exec(sql(last))
+    const row = (await serverRow(db, A, SECOND))!
+    expect(row.made_at).toBeNull()
+    expect(MAPPERS.rooms.fromRow(row).madeAt).toBeUndefined()
+    // A new client's later edit of the old room gives it a made_at; and a row with none still orders by id.
+    const latest = device(db, A)
+    expect(await latest.apply(upsertOp('rooms', { ...MAPPERS.rooms.fromRow(row), wallStyle: 'sky' }))).toEqual([])
+    expect((await serverRow(db, A, SECOND))?.made_at).toBeNull()
+    const tables = {
+      ...emptySnapshot().tables,
+      homes: { [home.id]: { ...home } },
+      rooms: Object.fromEntries([SECOND, FIRST].map((id) => [id, MAPPERS.rooms.fromRow({ ...row, id, created_at: '2026-10-08T09:00:00+00:00' })])),
+    }
+    expect(selectHome(tables, home.id).rooms.map((r) => r.id)).toEqual([SECOND, FIRST])
     await db.close()
   }, 60_000)
 })

@@ -185,3 +185,35 @@ describe('createRoom', () => {
     expect(names.get('00-second')).toBe('Kitchen 2')
   })
 })
+
+describe('a room’s made_at', () => {
+  it('is written when the device knows it, left out when it does not, and read back as the same instant', async () => {
+    const { MAPPERS } = await import('./mappers')
+    const made = '2026-10-08T09:05:00.123Z'
+    expect(MAPPERS.rooms.toRow({ ...room('r', 'kitchen'), madeAt: made })).toMatchObject({ id: 'r', made_at: made })
+    expect('made_at' in MAPPERS.rooms.toRow(room('r', 'kitchen'))).toBe(false)
+    const row = { id: 'r', home_id: 'h1', type: 'kitchen', floor_style: 'wood', wall_style: 'peach', created_at: '2026-10-08T09:06:00+00:00' }
+    // The database prints its own form; the room carries the form devices write.
+    expect(MAPPERS.rooms.fromRow({ ...row, made_at: '2026-10-08T09:05:00.123+00:00' }).madeAt).toBe(made)
+    expect(MAPPERS.rooms.fromRow({ ...row, made_at: null }).madeAt).toBeUndefined()
+    expect('madeAt' in MAPPERS.rooms.fromRow(row)).toBe(false)
+  })
+
+  it('orders rooms the same on a device that never made them, and keeps rooms with none in id order', async () => {
+    const { MAPPERS } = await import('./mappers')
+    const { selectHome } = await import('./state')
+    const { orderRooms, roomNames } = await import('../screens/roomsModel')
+    const at = '2026-10-08T09:06:00+00:00'
+    const row = (id: string, made_at: string | null) => MAPPERS.rooms.fromRow({ id, home_id: 'h1', type: 'kitchen', floor_style: 'wood', wall_style: 'peach', created_at: at, made_at })
+    const tables = (rooms: Room[]) => ({ ...emptySnapshot().tables, homes: { h1: home }, rooms: Object.fromEntries(rooms.map((r) => [r.id, r])) }) as Snapshot['tables']
+    const names = (rooms: Room[]) => roomNames(orderRooms(selectHome(tables(rooms), 'h1').rooms))
+    // Same server time; ids against the making order: made_at decides.
+    const withMade = names([row('ff', '2026-10-08T09:00:00+00:00'), row('00', '2026-10-08T09:05:00+00:00')])
+    expect([withMade.get('ff'), withMade.get('00')]).toEqual(['Kitchen', 'Kitchen 2'])
+    // Rooms from before made_at have none: the old order (by id) stands, and they come before rooms that have one.
+    const without = names([row('ff', null), row('00', null)])
+    expect([without.get('00'), without.get('ff')]).toEqual(['Kitchen', 'Kitchen 2'])
+    const mixed = names([row('00', '2026-10-08T09:05:00+00:00'), row('ff', null)])
+    expect([mixed.get('ff'), mixed.get('00')]).toEqual(['Kitchen', 'Kitchen 2'])
+  })
+})

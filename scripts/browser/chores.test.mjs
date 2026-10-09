@@ -35,9 +35,21 @@ test('adding a chore says so, and Undo takes it back', async (t) => {
   assert.deepEqual(await onList(page), before)
 })
 
+// The status tag on the trash's row in the full list ("1 day late", "Today", ...), then back to the home.
+async function trashTag(page) {
+  await page.getByRole('button', { name: /All chores/ }).click()
+  const sheet = page.getByRole('dialog', { name: 'All chores', exact: true })
+  const tag = await sheet.locator('.cl-row', { has: page.getByRole('button', { name: 'Edit Take out the trash', exact: true }) }).locator('.tag').first().textContent()
+  await page.keyboard.press('Escape')
+  await sheet.waitFor({ state: 'hidden' })
+  return tag
+}
+
 test('removing a chore says so, and Undo brings it back', async (t) => {
   const page = await browserApp(t)
   const before = await onList(page)
+  // The sample home's trash is a day late: the mess is part of what Undo has to give back.
+  assert.equal(await trashTag(page), '1 day late')
   await removeTrash(page)
   await page.getByText('Removed: Take out the trash').waitFor()
   assert.deepEqual(await onList(page), before.filter((n) => n !== 'Take out the trash'))
@@ -45,6 +57,8 @@ test('removing a chore says so, and Undo brings it back', async (t) => {
   await page.getByRole('button', { name: 'Undo', exact: true }).click()
   await page.waitForFunction(() => !document.body.textContent.includes('Removed: Take out the trash'))
   assert.deepEqual(await onList(page), before)
+  // Back exactly as it stood: still late, not fresh.
+  assert.equal(await trashTag(page), '1 day late')
 })
 
 test('editing a chore gives no toast', async (t) => {
