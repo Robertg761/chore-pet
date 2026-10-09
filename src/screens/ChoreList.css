@@ -102,8 +102,8 @@
 .cl-short .cl-name { flex: 0 1 auto; min-width: 6em; display: inline-flex; align-items: center; white-space: nowrap; overflow-wrap: normal; }
 .cl-short .cl-name-text { overflow: hidden; text-overflow: ellipsis; }
 .cl-short .cl-info .tag { margin: 0; }
-@container cl (max-width: 22em) {
-  /* The tag drops under the name rather than squeezing it. */
+@container cl (max-width: 30em) {
+  /* On a phone the tag drops under the name rather than cutting it off; a name that fits keeps one line. */
   .cl-short .cl-info { flex-wrap: wrap; }
   .cl-short .cl-name { flex: 0 1 auto; min-width: 6em; }
   .cl-short .cl-info .tag { margin: 0 0 4px; }
