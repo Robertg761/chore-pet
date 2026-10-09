@@ -55,7 +55,7 @@ The pet is a reason to come back, not a guilt trip. It never dies, and its lines
   - Up to six rooms (kitchen, bathroom, bedroom, living room), each a roomy 8x8 isometric room with drag-and-snap building and rotation.
   - A pill over the room names the one on show and counts what's late in the others; its sheet switches, adds and removes rooms.
   - Footprint checks: things can't overlap, and posters can't cover the window.
-  - 15 objects that bring chores, all available from the start, and 7 chore-free decor pieces to unlock.
+  - 17 objects that bring chores, all available from the start (a sample kitchen shows a fitted counter run, the sink under the window and a dining table), and 7 chore-free decor pieces to unlock.
   - Every chore object is drawn clean, a little messy and very messy.
 - **Schedules:**
   - Daily, every N days, chosen weekdays, weekly and monthly.
@@ -92,7 +92,7 @@ All code was written fresh during the Yard, solo, with Claude Code:
   - a test writer.
 - **Review:** each result was checked against the art contract (`docs/ART.md`) in a live gallery (`/?art`) and by tests before it landed.
 - **Plan:** `docs/PLAN.md` holds the phase-by-phase plan and who did what.
-- **Tests:** 1,492 unit tests cover schedules, skips, health, mess, streaks, unlocks, rewards, rooms, sync, tile maths and placement, and 38 browser tests drive the production build. The last features were tested and reviewed by parallel Haiku subagents before the lead checked them.
+- **Tests:** 1,497 unit tests cover schedules, skips, health, mess, streaks, unlocks, rewards, rooms, sync, tile maths and placement, and 38 browser tests drive the production build. The last features were tested and reviewed by parallel Haiku subagents before the lead checked them.
 
 ## Honest limits
 

@@ -49,6 +49,9 @@ for (const key of ['Enter', 'Space']) {
     await page.getByRole('button', { name: 'Build', exact: true }).click()
     const before = await snapshot(page)
     await page.getByRole('button', { name: /^Washing machine/ }).click()
+    // The washer starts in the sample kitchen's first free wall spot (2,0) on the right wall. Slide it to (5,0),
+    // where turning it onto the left wall lands on a free spot too (0,5).
+    for (let i = 0; i < 3; i++) await page.keyboard.press('ArrowRight')
     await page.keyboard.press('Tab')
     await page.keyboard.press('Tab')
     assert.equal(await page.locator(':focus').textContent(), 'Turn')
@@ -56,10 +59,10 @@ for (const key of ['Enter', 'Space']) {
     assert.equal(await page.getByRole('button', { name: 'Cancel', exact: true }).count(), 1)
     assert.deepEqual((await snapshot(page)).tables.placed_objects, before.tables.placed_objects)
     await page.getByRole('button', { name: 'Place it', exact: true }).click()
-    await page.waitForFunction(() => document.querySelectorAll('[data-object-id]').length > 7)
+    await page.waitForFunction((n) => document.querySelectorAll('[data-object-id]').length > n, Object.keys(before.tables.placed_objects).length)
     const after = await snapshot(page)
     const washer = Object.values(after.tables.placed_objects).find((o) => o.catalogId === 'washer')
-    assert.equal(washer.rotation, 1)
+    assert.deepEqual({ x: washer.tileX, y: washer.tileY, r: washer.rotation }, { x: 0, y: 5, r: 0 })
     assert.equal(Object.keys(after.tables.chores).length, Object.keys(before.tables.chores).length + 2)
   })
 }
@@ -69,12 +72,13 @@ test('room arrows, R, Enter still move, rotate and place the preview', async (t)
   await page.getByRole('button', { name: 'Build', exact: true }).click()
   await page.getByRole('button', { name: /^Washing machine/ }).click()
   assert.equal(await page.locator(':focus').getAttribute('aria-roledescription'), 'room editor')
-  await page.keyboard.press('ArrowDown')
+  // From the first free wall spot (2,0) on the right wall: along it to (5,0), then turned onto the left wall at (0,5).
+  for (let i = 0; i < 3; i++) await page.keyboard.press('ArrowRight')
   await page.keyboard.press('r')
   await page.keyboard.press('Enter')
   await page.getByRole('button', { name: 'Cancel', exact: true }).waitFor({ state: 'hidden' })
   const washer = Object.values((await snapshot(page)).tables.placed_objects).find((o) => o.catalogId === 'washer')
-  assert.deepEqual({ x: washer.tileX, y: washer.tileY, r: washer.rotation }, { x: 4, y: 0, r: 1 })
+  assert.deepEqual({ x: washer.tileX, y: washer.tileY, r: washer.rotation }, { x: 0, y: 5, r: 0 })
 })
 
 test('keyboard gift dismissal restores the sheet, then its opener', async (t) => {
@@ -149,7 +153,7 @@ test('queued decor and style gifts survive Place it and Try it navigation', asyn
   assert.equal(Object.values(saved.tables.rooms)[0].wallStyle, 'mint')
   // The decor placement picked before the queued style gifts is still pending.
   await page.getByRole('button', { name: 'Place it', exact: true }).click()
-  await page.waitForFunction(() => document.querySelectorAll('[data-object-id]').length > 7)
+  await page.waitForFunction((n) => document.querySelectorAll('[data-object-id]').length > n, Object.keys(saved.tables.placed_objects).length)
   assert.ok(Object.values((await snapshot(page)).tables.placed_objects).some((o) => o.catalogId === 'teddy'))
   await page.getByRole('button', { name: 'Home', exact: true }).click()
   assert.equal(await page.getByRole('dialog', { name: 'All chores', exact: true }).count(), 0)

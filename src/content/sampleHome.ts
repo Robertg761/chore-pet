@@ -34,27 +34,29 @@ interface SampleSpot {
 }
 
 /**
- * The kitchen, seen from the front (back corner at 0,0; the room is 8x8, so the front stays open).
- * Left wall (tx = 0): fridge in the corner, then sink, then stove.
- * Right wall (ty = 0): dishwasher and trash can beside the fridge.
- * Table on a rug in the open floor, with a clear lane all the way round.
+ * The kitchen, seen from the front (back corner at 0,0; the room is 8x8). A fitted L along the two back
+ * walls, a dining table in the middle and open floor all round it for the pet.
+ * Left wall (tx = 0): a counter in the corner, the sink under the window, the dishwasher beside it, the
+ * fridge ending the run. Right wall (ty = 0): the stove by the corner, a gap, the bins, and a plant.
  *
- *      tx: 0 1 2 3 4 5
- *   ty 0:  F D T . . .
- *   ty 1:  S . . . . .
- *   ty 2:  O . . R R .      F fridge, S sink, O stove (oven),
- *   ty 3:  . . . R R .      D dishwasher, T trash can,
- *   ty 4:  . . . r r .      R table over rug, r rug only
- *   ty 5:  . . . . . .
+ *      tx: 0 1 2 3 4 5 6 7
+ *   ty 0:  C O . T Y . P .      C counter (2 long), O stove (oven), T trash can,
+ *   ty 1:  C . . . . . . .      Y recycling, P plant,
+ *   ty 2:  S . . . . . . .      S sink (under the window), D dishwasher, F fridge,
+ *   ty 3:  D . . R R . . .      R dining table
+ *   ty 4:  F . . R R . . .
  */
 export const SAMPLE_KITCHEN: readonly SampleSpot[] = [
-  { catalogId: 'rug', tileX: 3, tileY: 2, rotation: 0 },
-  { catalogId: 'fridge', tileX: 0, tileY: 0, rotation: 0 },
-  { catalogId: 'sink', tileX: 0, tileY: 1, rotation: 0 },
-  { catalogId: 'stove', tileX: 0, tileY: 2, rotation: 0 },
-  { catalogId: 'dishwasher', tileX: 1, tileY: 0, rotation: 1 },
-  { catalogId: 'trash', tileX: 2, tileY: 0, rotation: 1 },
-  { catalogId: 'table', tileX: 3, tileY: 2, rotation: 0 },
+  { catalogId: 'counter', tileX: 0, tileY: 0, rotation: 0 },
+  { catalogId: 'sink', tileX: 0, tileY: 2, rotation: 0 },
+  { catalogId: 'dishwasher', tileX: 0, tileY: 3, rotation: 0 },
+  { catalogId: 'fridge', tileX: 0, tileY: 4, rotation: 0 },
+  { catalogId: 'stove', tileX: 1, tileY: 0, rotation: 1 },
+  { catalogId: 'trash', tileX: 3, tileY: 0, rotation: 1 },
+  { catalogId: 'recycling', tileX: 4, tileY: 0, rotation: 1 },
+  { catalogId: 'plant', tileX: 6, tileY: 0, rotation: 0 },
+  { catalogId: 'rug', tileX: 3, tileY: 3, rotation: 0 },
+  { catalogId: 'dining-table', tileX: 3, tileY: 3, rotation: 0 },
 ]
 
 /** The two chores left running late on purpose. Everything else is up to date. */
