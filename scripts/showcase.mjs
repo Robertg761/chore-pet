@@ -1,6 +1,8 @@
-// Renders the showcase pictures for the write-up:
-//   docs/media/chore-pet-showcase.png   1600 x 900
-//   docs/media/chore-pet-card.png       1200 x 630 (a social card)
+// Renders the screenshot showcase (the earlier cover): three phones and the pets, into demo/showcase/
+// (OUT=docs/media to overwrite the published pictures). The published cover and card are now drawn by
+// scripts/cover.mjs (npm run cover): the before/after kitchen.
+//   chore-pet-showcase.png   1600 x 900
+//   chore-pet-card.png       1200 x 630 (a social card)
 //
 //   npm run build
 //   npm run showcase            (CHROME=/path/to/chrome if Playwright has no browser of its own)
@@ -17,7 +19,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { ALL_REWARDS, isolate, launchBrowser, ROOT, seedMilestone, seedPet, seedRoom, serveApp, LIVING_ROOM } from './media-common.mjs'
 
 const WORK = `${ROOT}demo/showcase`
-const OUT = `${ROOT}docs/media`
+const OUT = process.env.OUT ? new URL(process.env.OUT, `file://${ROOT}`).pathname : `${ROOT}demo/showcase`
 const PHONE = { width: 390, height: 844 }
 const DAY = 24 * 60 * 60 * 1000
 rmSync(WORK, { recursive: true, force: true })

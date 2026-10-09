@@ -1,6 +1,6 @@
 # Chore Pet: Hackyard Yard #4 write-up
 
-![Chore Pet: a tiny pet that lives in a home you build. Mochi, Bun and Sprout in tier-two outfits, beside the home, the wardrobe and the rewards screens](media/chore-pet-showcase.png)
+![Chore Pet: do real chores, keep it happy. The same kitchen twice: messy and stinky with a worried Mochi, then a big Done button, then sparkling clean with Mochi cheering in a red beanie while Bun and Sprout visit](media/chore-pet-showcase.png)
 
 **Theme:** Gamification. **Rule:** the real task has to get done.
 
@@ -14,7 +14,7 @@
 
 What goes on the hackyard.tech build card. The card shows the description in full, and the share card uses its first sentence.
 
-- **Cover (16:9):** `docs/media/chore-pet-showcase.png` (1600 x 900)
+- **Cover (16:9):** `docs/media/chore-pet-showcase.png` (1600 x 900), drawn by the app's own components with `npm run cover`
 - **Demo:** the 16:9 video above
 - **Description:**
 
