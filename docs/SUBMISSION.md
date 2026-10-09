@@ -6,7 +6,7 @@
 
 - **Live link:** https://robertg761.github.io/chore-pet/
 - **Repo:** https://github.com/Robertg761/chore-pet
-- **Demo video (16:9):** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (65 s, 1920 x 1080, 60 fps, with sound). A portrait cut for phones: https://robertg761.github.io/chore-pet/chore-pet-demo-portrait.mp4 (64 s, 1080 x 1920).
+- **Demo video (16:9):** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (56 s, 1920 x 1080, 60 fps, with sound). A portrait cut for phones: https://robertg761.github.io/chore-pet/chore-pet-demo-portrait.mp4 (56 s, 1080 x 1920).
   - It tells one small story about Mochi with the real app: a stinky kitchen, a placed toilet bringing "Clean the toilet", Done and a cheer, a red beanie, the mess creeping back, catching up, and a cosy home weeks later.
   - It is recorded in the app with `npm run demo:story` (`FORMAT=landscape` for 16:9). The first, faster feature tour is still `npm run demo:record`.
 
@@ -92,7 +92,7 @@ All code was written fresh during the Yard, solo, with Claude Code:
   - a test writer.
 - **Review:** each result was checked against the art contract (`docs/ART.md`) in a live gallery (`/?art`) and by tests before it landed.
 - **Plan:** `docs/PLAN.md` holds the phase-by-phase plan and who did what.
-- **Tests:** 1,490 unit tests cover schedules, skips, health, mess, streaks, unlocks, rewards, rooms, sync, tile maths and placement, and 38 browser tests drive the production build. The last features were tested and reviewed by parallel Haiku subagents before the lead checked them.
+- **Tests:** 1,492 unit tests cover schedules, skips, health, mess, streaks, unlocks, rewards, rooms, sync, tile maths and placement, and 38 browser tests drive the production build. The last features were tested and reviewed by parallel Haiku subagents before the lead checked them.
 
 ## Honest limits
 
