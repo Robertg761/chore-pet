@@ -29,11 +29,12 @@
 //   libx264) times them by their timestamps and encodes at 60 fps.
 // Set CAPTIONS=0 for no captions, URL=http://localhost:4173/ to use a server that is already running,
 // OUT=path.mp4 to write elsewhere, DEBUG_FRAMES=file.json to dump every frame's timestamp,
-// FPS=30 for a lighter file, PACE=1 for the unhurried waits (default 0.82), BGMODE=none|lite|full for
+// AUDIO=0 for a silent video (the sound track is the app's own sounds, scripts/demo-audio.mjs), FPS=30 for a lighter file, PACE=1 for the unhurried waits (default 0.82), BGMODE=none|lite|full for
 // the stage background (lite: 3 blobs; full: 5, which slows the screencast), SCENE_TEST=1 to record
 // only the title card and the first few seconds (for timing the capture).
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { addSound, interceptAudio } from './demo-audio.mjs'
 import { ALL_REWARDS, isolate, launchBrowser, ROOT, seedMilestone, serveApp } from './media-common.mjs'
 
 const CAPTIONS = process.env.CAPTIONS !== '0'
@@ -305,6 +306,13 @@ window.burst = (x, y, count, aim, force, spread = 1.4) => {
 
 const app = await serveApp()
 const browser = await launchBrowser()
+// Sound: the app plays nothing while recording, but says what it would play and when (scripts/demo-audio.mjs).
+// AUDIO=0 records a silent video. `cut` and `casting` are read when a sound arrives, so they live up here.
+const AUDIO = process.env.AUDIO !== '0'
+let cut = 0 // seconds of recording left out so far
+let casting = false
+const heard = [] // { name, t } sounds the app played, t on the recording's timeline
+const marks = [] // { name, t } stage transitions that get a whoosh
 const ctx = await browser.newContext({
   viewport: { width: STAGE.w * SCALE, height: STAGE.h * SCALE },
   hasTouch: true,
@@ -313,6 +321,11 @@ const ctx = await browser.newContext({
 await isolate(ctx)
 ctx.setDefaultTimeout(30000 * K)
 if (K !== 1) await ctx.addInitScript(slowAnimations, K)
+if (AUDIO) {
+  await ctx.addInitScript(interceptAudio)
+  // `at` is the real time the app played it (read in the page), so Node being busy can't shift it; `late` is how long it took to get here.
+  await ctx.exposeFunction('__sfx', (name, at) => { if (casting) heard.push({ name, t: at / 1000 - cut, late: Date.now() - at }) })
+}
 await ctx.route(`${app.url}__stage.html`, (route) => route.fulfill({ contentType: 'text/html', body: stageHtml(app.url) }))
 const stage = await ctx.newPage()
 rmSync(FRAMES, { recursive: true, force: true })
@@ -370,7 +383,6 @@ await freeze()
 // Screencast, with a pause that leaves no gap in the video.
 const frames = []
 const cdp = await ctx.newCDPSession(stage)
-let cut = 0 // seconds of recording left out so far
 // Playback speed. Parts of the story are time-lapsed so the video keeps its length however slowly this
 // machine runs: `lapse(seconds, fn)` runs fn, then plays it back in about that many seconds (never slower than
 // real time). Gifts inside it keep their own, fixed pace. Times are on the recording's timeline.
@@ -407,9 +419,10 @@ cdp.on('Page.screencastFrame', ({ data, metadata, sessionId }) => {
   // Timestamps can arrive slightly out of order; never let time run backwards.
   frames.push({ file, ts: metadata.timestamp, t: Math.max(metadata.timestamp - cut, frames.at(-1)?.t ?? 0) })
 })
-const startCast = () => cdp.send('Page.startScreencast', { format: 'jpeg', quality: 80, everyNthFrame: 1 })
-const pauseCast = async () => { await cdp.send('Page.stopScreencast'); pausedAt = Date.now() / 1000 }
+const startCast = async () => { await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 80, everyNthFrame: 1 }); casting = true }
+const pauseCast = async () => { casting = false; await cdp.send('Page.stopScreencast'); pausedAt = Date.now() / 1000 }
 const resumeCast = async () => { cut += Date.now() / 1000 - pausedAt; await startCast() }
+const mark = (name) => marks.push({ name, t: Date.now() / 1000 - cut })
 
 // Waits are the story's pacing; PACE trims them (a little under real time keeps the video brisk).
 const PACE = Number(process.env.PACE ?? 0.82)
@@ -525,6 +538,7 @@ await startCast()
 await stage.evaluate(() => window.card('intro', true))
 await wait(2450 / PACE)
 await stage.evaluate(() => { window.leave('intro'); window.burst(270, 480, 22, 0, 250, 3) })
+mark('intro-out')
 await wait(150)
 await stage.evaluate(() => window.phoneIn())
 await caption('Pick a pet, step *inside*')
@@ -694,8 +708,10 @@ await tap('button', 'Share your home')
 await wait(1700)
 await caption('')
 await stage.evaluate(() => { window.calm(false); window.phoneOut() })
+mark('phone-out')
 await wait(350)
 await stage.evaluate(() => { window.card('outro', true); window.burst(270, 330, 18, 0, 240, 3) })
+mark('outro-in')
 await wait(2600 / PACE)
 log('end')
 if (process.env.DEBUG_TIME) console.log('time spent finding and tapping', (pressTime / 1000).toFixed(1), 's')
@@ -708,13 +724,12 @@ if (process.env.DEBUG_TIME) console.log('time spent finding and tapping', (press
   }
 }
 
+casting = false
 await cdp.send('Page.stopScreencast')
 await halt()
 const end = Date.now() / 1000 - cut
 if (process.env.DEBUG_TIME) console.log('first', frames[0].t, 'last', frames.at(-1).t, 'end', end, 'cut', cut)
 if (process.env.DEBUG_FRAMES) writeFileSync(process.env.DEBUG_FRAMES, JSON.stringify(frames.map((f) => ({ ts: f.ts, t: f.t }))))
-await browser.close()
-await app.close()
 
 // Each frame lasts until the next one (the last one until the end), so pauses keep their length.
 const rel = (f) => f.slice(`${ROOT}demo/`.length)
@@ -723,6 +738,17 @@ writeFileSync(`${ROOT}demo/frames.txt`, `${list.join('\n')}\nfile '${rel(frames.
 mkdirSync(new URL('.', `file://${OUT}`).pathname, { recursive: true })
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', `${ROOT}demo/frames.txt`,
   '-vf', `fps=${FPS},format=yuv420p`, '-c:v', 'libx264', '-preset', 'medium', '-crf', '20', '-movflags', '+faststart', OUT])
+let soundLines = []
+if (AUDIO) {
+  // Sound events go from recording time to video time the way frames do: through the time-lapses, then 1/K.
+  const toVideo = (e) => ({ ...e, t: playTime(frames[0].t, Math.max(e.t, frames[0].t)) / K })
+  const base = OUT.replace(/\.mp4$/, '')
+  writeFileSync(`${base}.audio-events.json`, JSON.stringify({ events: heard.map(toVideo), marks: marks.map(toVideo) }, null, 1))
+  soundLines = await addSound({ browser, appUrl: app.url, events: heard.map(toVideo), marks: marks.map(toVideo), video: OUT, work: `${ROOT}demo/audio`, base })
+}
+await browser.close()
+await app.close()
 const seconds = Number(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', OUT]).toString())
 if (process.env.KEEP_FRAMES !== '1') rmSync(FRAMES, { recursive: true, force: true })
 console.log(`wrote ${OUT.startsWith(ROOT) ? OUT.slice(ROOT.length) : OUT} (${seconds.toFixed(1)} s, ${FPS} fps) from ${frames.length} frames`, errors.length ? `with page errors: ${errors.join('; ')}` : '')
+if (soundLines.length) console.log(`sound: ${soundLines.at(-1)}`)
