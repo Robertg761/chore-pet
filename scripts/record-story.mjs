@@ -11,8 +11,8 @@
 //     "So we gave them a pet." Then the whole kitchen: "Late chores show up as mess.";
 //   - a bathroom is added and a toilet placed: its sheet says the chore it brings ("Each thing you place brings
 //     a real chore.");
-//   - back in the kitchen: the dirty sink, Done on "Wash the dishes", Mochi cheers;
-//   - a gift drops in: the red beanie; then the same sink again, clean (Mochi's cheer line sits over it until then);
+//   - back in the kitchen: the dirty sink, Done on "Wash the dishes" and on the dishwasher below it, Mochi cheers;
+//   - a gift drops in: the red beanie; then the sink's corner again, all clean (Mochi's cheer line sits over it until then);
 //   - a few days pass on camera (a day counter, the health bar and mood falling): Mochi gets scruffy;
 //   - you catch up, a gift on the way ("Outfits and decor, only from real chores."), the room clean, Mochi happy;
 //   - "Weeks later": a cosy living room and a dressed-up Mochi; an end card with the three pets and the link.
@@ -57,7 +57,7 @@ const STOP = process.env.STOP ?? ''
 // The stage (CSS px, drawn at 2x), where the captions go, and the most the window onto the app can cover.
 const SCALE = 2
 const L = WIDE
-  ? { stage: { w: 960, h: 540 }, cap: { x: 26, y: 76, w: 300, h: 420 }, capSize: 46, win: { x: 344, y: 12, w: 604, h: 516 }, badge: { x: 26, y: 22 } }
+  ? { stage: { w: 960, h: 540 }, cap: { x: 26, y: 76, w: 300, h: 420 }, capSize: 46, win: { x: 344, y: 26, w: 590, h: 488 }, badge: { x: 26, y: 22 } }
   : { stage: { w: 540, h: 960 }, cap: { x: 18, y: 62, w: 504, h: 190 }, capSize: 47, win: { x: 14, y: 264, w: 512, h: 678 }, badge: { x: 0, y: 18 } }
 const STAGE = L.stage
 const WIN = L.win
@@ -174,7 +174,7 @@ iframe { display: block; width: ${APP.w}px; height: ${APP.h}px; border: 0; }
 .snap.go { opacity: 0; transition: opacity var(--fade, .35s) linear; }
 
 /* Confetti (record-demo.mjs's): x, then a ballistic y, then a spin, on three nested layers. */
-.fx { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
+.fx { position: absolute; inset: 0; z-index: 7; pointer-events: none; clip-path: inset(${WIDE ? `0 0 0 ${L.cap.x + L.cap.w + 8}px` : `${L.cap.y + L.cap.h}px 0 0 0`}); }
 .px { position: absolute; width: 0; height: 0; animation: px var(--dur) cubic-bezier(.1, .6, .3, 1) both, fade var(--dur) linear both; }
 @keyframes px { from { transform: translateX(0); } to { transform: translateX(var(--dx)); } }
 @keyframes fade { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
@@ -407,10 +407,22 @@ await readObjects()
   const near = () => phone.evaluate((id) => {
     const sink = document.querySelector(`[data-object-id="${id}"]`)?.getBoundingClientRect()
     const pet = [...document.querySelectorAll('[aria-label]')].find((e) => /^Mochi, feeling/.test(e.getAttribute('aria-label')))?.getBoundingClientRect()
-    if (!sink || !pet || !document.querySelector('.pet-bubble')) return false
-    return Math.hypot(sink.x + sink.width / 2 - (pet.x + pet.width / 2), sink.y + sink.height / 2 - (pet.y + pet.height / 2)) < 75
+    const b = document.querySelector('.pet-bubble')?.getBoundingClientRect()
+    if (!sink || !pet) return 0
+    if (Math.hypot(sink.x + sink.width / 2 - (pet.x + pet.width / 2), sink.y + sink.height / 2 - (pet.y + pet.height / 2)) >= 75) return 0
+    if (!b) return 1
+    // ...with its line clear of the sink, so the cold open is the sink close up (as sinkShot frames it), not the bubble.
+    const band = { x: sink.x - 20, y: sink.y - 40, w: sink.width + 40, h: sink.height + 56 }
+    if (b.x >= band.x + band.w || b.x + b.width <= band.x || b.y >= band.y + band.h || b.y + b.height <= band.y) return 2
+    return band.y + band.h - (b.y + b.height + 3) >= sink.height + 8 ? 2 : 0
   }, objectIds.sink)
-  for (let i = 0; i < 90 && !(await near()); i++) await stage.waitForTimeout(400)
+  // Best: beside the sink and talking, with the line clear of it. After a while, beside it and quiet will do (a line
+  // over the sink would take the cold open's close-up away).
+  for (let i = 0; i < 90; i++) {
+    const n = await near()
+    if (n === 2 || (n === 1 && i >= 40)) break
+    await stage.waitForTimeout(400)
+  }
 }
 await freeze()
 await halt() // the JS clock is held through the opening: Mochi stays by the sink with its line up
@@ -646,12 +658,15 @@ const sinkShot = async () => {
   }
   return { r, band }
 }
-/** The sink once it is clean: basin and counter only, so no neighbour's mess above it is in the shot. */
+/**
+ * The sink once it is clean, with the dishwasher (done too) below it: the corner from the fridge to the tap, under
+ * the window. On the right it stops short of the counter (its crumbs and mug are still late), and it ends above the
+ * dining table, so nothing in the shot is messy.
+ */
 const cleanSinkShot = async () => {
   const s = await objectRect('sink')
-  // The basin and tap sit in the upper middle of the sink's box; the stove (clean) overlaps its lower left and the
-  // fridge (whose old food may be late) its right, so the shot stops short of the fridge.
-  const r = { x: s.x - 12, y: s.y - 6, w: s.w + 9, h: s.h + 2 }
+  const k = s.w / 34.6 // measured on a sink 34.6 px wide
+  const r = { x: s.x - 25 * k, y: s.y - 23.5 * k, w: 58 * k, h: 76 * k }
   return { r, band: grow(r, 2, 2) }
 }
 /** Close on Mochi, with its speech bubble when it is talking. */
@@ -672,9 +687,14 @@ const press = async (locator) => {
   const v = shownRect()
   if (r && (r.x < v.x - 1 || r.y < v.y - 1 || r.x + r.w > v.x + v.w + 1 || r.y + r.h > v.y + v.h + 1)) {
     const room = await roomRect()
-    // A row in the list comes in at its full width, with the room above it.
-    const both = r.y > room.y ? union(room, { x: 16, y: r.y, w: APP.w - 32, h: r.h }) : grow(r, 20)
-    await frame(both, { pad: 6, band: grow(both, 6) })
+    const list = await rectOf(phone.locator('.cl-section').first())
+    // A row in the list brings in the whole list; anything else below the room comes in at full width, with the room.
+    const inList = list && r.y >= list.y && r.y + r.h <= list.y + list.h + 1
+    const both = inList ? list : r.y > room.y ? union(room, { x: 16, y: r.y, w: APP.w - 32, h: r.h }) : grow(r, 20)
+    const head = await rectOf(phone.locator('.cl-heading'))
+    const band = grow(both, 6)
+    if (inList && head && head.y - 3 > band.y) { band.h -= head.y - 3 - band.y; band.y = head.y - 3 }
+    await frame(both, { pad: 6, band })
   }
   await camSettled()
   let b = await target.boundingBox()
@@ -690,18 +710,6 @@ const press = async (locator) => {
   await stage.evaluate(([x, y]) => window.tapAt(x, y), [x / SCALE, y / SCALE])
   // Clicked in the page, where the marker shows: a tap through the zoomed, matted window can miss.
   await target.evaluate((el) => el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window })))
-}
-/** Frame an element, and follow it if the layout moves it while the camera travels (rows and sheets settle). */
-const frameEl = async (locator, opts) => {
-  let r = await settledRect(locator)
-  await frame(r, opts(r))
-  for (let i = 0; i < 3; i++) {
-    await camSettled()
-    const again = await rectOf(locator)
-    if (!again || (Math.abs(again.x - r.x) < 1 && Math.abs(again.y - r.y) < 1 && Math.abs(again.h - r.h) < 1)) return
-    r = again
-    await frame(r, opts(r))
-  }
 }
 const click = (locator) => locator.first().evaluate((b) => b.click())
 /** Tap the first Done in the list and wait for that row to fold away, so the next tap finds the next row. */
@@ -722,9 +730,9 @@ const celebrate = () => {
   const x1 = WIN.x + WIN.w - r
   const yMid = WIN.y + (t + WIN.h - b) / 2
   return stage.evaluate(([x0, x1, y, top]) => {
-    window.burst(x0 + 20, y + 60, 20, 1.2, 240)
-    window.burst(x1 - 20, y + 60, 20, -1.2, 240)
-    window.burst((x0 + x1) / 2, top + 30, 18, 0, 260, 3)
+    window.burst(x0 + 20, y + 60, 20, 1.2, 210)
+    window.burst(x1 - 20, y + 60, 20, -1.2, 210)
+    window.burst((x0 + x1) / 2, top + 60, 18, 0, 150, 3)
   }, [x0, x1, yMid, WIN.y + t])
 }
 const skipDay = async () => {
@@ -820,12 +828,21 @@ await hold(0.4)
 await click(phone.getByRole('button', { name: 'Place it', exact: true }))
 await hold(0.75) // it drops into the room
 const brings = phone.locator('.sheet-block').filter({ hasText: 'Chores it brings' })
+// Close on what it brings: the heading, the chore and its schedule, big. The matte ends before "Due Wed" and the bin.
+let choreText = null
 await transition(async () => {
   await brings.first().waitFor()
-  const r = await settledRect(brings)
-  await frame(r, { pad: 6, band: grow(r, 4), max: 2.2, cut: true })
+  await settledRect(brings)
+  const head = await rectOf(brings.locator('.sheet-subheading'))
+  const main = await rectOf(brings.locator('.sheet-chore-main'))
+  const text = union(await rectOf(brings.locator('.sheet-chore-name')), await rectOf(brings.locator('.sheet-chore-when')))
+  const due = await rectOf(brings.locator('.sheet-chore-due'))
+  const right = Math.min(text.x + text.w + 14, due.x - 3)
+  choreText = { x: main.x - 4, y: text.y - 5, w: right - 6 - (main.x - 4), h: text.h + 10 }
+  const r = { x: main.x - 6, y: head.y - 4, w: right - (main.x - 6), h: main.y + main.h + 6 - (head.y - 4) }
+  await frame(r, { pad: 4, band: r, max: 3.4, cut: true })
 }, { removeTime: true })
-await ring(await rectOf(phone.locator('.sheet-chores li')), 18, 4)
+await ring(choreText, 14, 2)
 await hold(1.5)
 await settleCaption()
 // Back to the kitchen unseen, straight onto the dirty sink.
@@ -848,16 +865,30 @@ stopAfter('build')
 // --- 3. Done on the dishes ------------------------------------------------------------------------
 await say('Do the real dishes,\nthen tap *Done.*')
 await hold(1.4)
-await frameEl(phone.locator('.cl-row').filter({ hasText: 'Wash the dishes' }), (r) => ({ pad: 4, band: grow(r, 5) }))
+// Both dish chores, the sink's and the dishwasher's, in one shot of the list (so the sink's corner is all clean after).
+const dishRows = async () => {
+  const a = await settledRect(phone.locator('.cl-row').filter({ hasText: 'Wash the dishes' }))
+  const b = await rectOf(phone.locator('.cl-row').filter({ hasText: 'Run and empty the dishwasher' }))
+  return union(a, b)
+}
+{
+  const r = await dishRows()
+  await frame(r, { pad: 4, band: grow(r, 5) })
+}
 await hold(0.6)
 const lineBefore = await bubbleText()
 await press(phone.getByRole('button', { name: 'Done: Wash the dishes' }))
-await hold(0.45) // the row ticks to "Nice"
-// The row folds away and the list moves up unseen; the shot fades to Mochi's cheer.
+// The JS clock is held: each row ticks to "Nice" and waits there (it folds away, and the gift comes, only once the
+// clock runs again, unseen under the cross-fade).
+await halt()
+await hold(0.4)
+await press(phone.getByRole('button', { name: 'Done: Run and empty the dishwasher' }))
+await hold(0.55)
 await transition(async () => {
+  drive() // both rows complete together, 0.45 s on
   await cheered(lineBefore)
   await settledRect(phone.locator('.pet-bubble')) // the bubble finds a spot clear of the furniture
-  await halt() // hold the cheer: the gift sheet waits
+  await halt() // hold the cheer: the beanie (1.4 s after the Done) waits
   await framePet(110, { cut: true })
 }, { removeTime: true })
 await say('Mochi *cheers!*')
@@ -907,9 +938,32 @@ for (; days < 4; days++) {
   if (days >= 2 && (m === 'scruffy' || m === 'poorly' || m === 'sick')) { days++; break }
 }
 const scruffy = await mood()
-await halt()
 await stage.evaluate(() => window.chip(''))
-await framePet(110)
+if (WIDE) {
+  // 16:9: the window is wide and short, so Mochi's line would sit over the mess. The shot waits for the line to go
+  // and takes in more of the room around it.
+  await transition(async () => {
+    for (let i = 0; i < 120 && (await phone.locator('.pet-bubble').count()); i++) await stage.waitForTimeout(80 * K)
+    await halt()
+    const p = await petRect()
+    const square = { x: p.x + p.w / 2 - 75, y: p.y + p.h / 2 - 80, w: 150, h: 150 }
+    const band = await roomBand()
+    // A line still up above Mochi is matted out whole: the shot starts below it. (The pet's box is its tap area,
+    // taller than the art, so "above" means above the middle of it.)
+    const b = await bubbleRect()
+    if (b && b.y + b.h + 3 <= p.y + p.h * 0.45) {
+      const top = b.y + b.h + 3
+      band.h -= top - band.y
+      band.y = top
+      square.h -= Math.max(0, top - square.y)
+      square.y = Math.max(square.y, top)
+    }
+    await frame(square, { pad: 6, max: 3.2, band, cut: true })
+  }, { removeTime: true })
+} else {
+  await halt()
+  await framePet(110)
+}
 await say(`Mochi feels\n*${scruffy}.*`)
 await hold(2.2)
 log(`lapse (${days} days, ${scruffy})`)
@@ -919,11 +973,17 @@ stopAfter('lapse')
 drive()
 // The whole "Up next" list, so rows folding away and moving up all stay inside the shot.
 const listRect = () => settledRect(phone.locator('.cl-section').first())
+/** The list's band: from its "Up next" heading down, so the tip of the room's floor above it stays out. */
+const listBand = async (r) => {
+  const head = await rectOf(phone.locator('.cl-heading'))
+  const band = grow(r, 4)
+  if (head && head.y - 3 > band.y) { band.h -= head.y - 3 - band.y; band.y = head.y - 3 }
+  return band
+}
 const list0 = await listRect()
-await frame(list0, { pad: 6, band: grow(list0, 4) })
+await frame(list0, { pad: 6, band: await listBand(list0) })
 await say('So you catch up,\none by *one.*')
 await hold(0.6)
-await doneFirst()
 await doneFirst()
 await halt() // chore 3 earns the teddy bear: it waits until the shot is ready for it
 await awaitGift(6000)
@@ -935,7 +995,7 @@ await hold(1.3)
 await settleCaption()
 await leaveGift('Maybe later', async () => {
   const r = await listRect()
-  await frame(r, { pad: 6, band: grow(r, 4), cut: true })
+  await frame(r, { pad: 6, band: await listBand(r), cut: true })
 })
 // The rest, time-lapsed. Their gifts (the bow, the lamp) would only flash by, so they are cut out.
 await lapse(0.9, async () => {
@@ -947,6 +1007,9 @@ await lapse(0.9, async () => {
     // A milestone's gift comes a moment after its tap: the wait for it is cut too.
     const from = now()
     await clearGifts()
+    // As the list gets shorter it slides down the page (the room above grows into the space): keep it framed.
+    const r = await listRect()
+    await frame(r, { pad: 6, band: await listBand(r), cut: true })
     segments.push({ from, to: now(), speed: 1e4, fixed: true })
   }
 })
