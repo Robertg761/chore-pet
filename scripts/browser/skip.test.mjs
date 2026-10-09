@@ -42,8 +42,9 @@ test('Skip is offered only while a round is owed', async (t) => {
   const page = await browserApp(t)
   await page.getByRole('button', { name: /All chores/ }).click()
   const sheet = page.getByRole('dialog', { name: 'All chores', exact: true })
-  // "Clear out old food" isn't due yet in the sample home.
-  await sheet.getByRole('button', { name: 'Edit Clear out old food' }).click()
+  // A weekly chore whose day isn't today, so nothing is owed yet: old food is Fridays, the sink Mondays.
+  const notDue = new Date().getDay() === 5 ? 'Scrub the sink' : 'Clear out old food'
+  await sheet.getByRole('button', { name: `Edit ${notDue}` }).click()
   await page.getByRole('button', { name: 'Save', exact: true }).waitFor()
   assert.equal(await page.getByRole('button', { name: 'Skip this time' }).count(), 0)
 })
