@@ -14,6 +14,7 @@ import {
   mergeSnapshots,
   opIdOf,
   planFlush,
+  keepMadeAt,
   rebase,
   reject,
   selectHome,
@@ -502,7 +503,7 @@ export function createStore({
       await stillMe()
       const server = await r.pull()
       await stillMe() // the pull went out under this account too
-      commit({ ...state.snapshot, tables: rebase(server, state.snapshot.outbox), pulledAt: now().toISOString() })
+      commit({ ...state.snapshot, tables: rebase(keepMadeAt(server, state.snapshot.tables), state.snapshot.outbox), pulledAt: now().toISOString() })
       switching = false
       failures = 0
       set({ sync: 'synced', lastError: null, hydrated: true })

@@ -351,7 +351,10 @@ export default function App() {
   const flag = (key: string) => (writeFlag(key), setFlagTick((n) => n + 1))
   // Build mode for the first time shows the coach card; it stays for this visit once started.
   const openBuild = () => {
-    if (!readFlag(onboardedKey(home.id)) && !objects.some((o) => o.roomId === room?.id)) setCoach({ homeId: home.id, before: objects.map((o) => o.id) })
+    // Started once per visit: reopening Build keeps what it counts from.
+    if (!readFlag(onboardedKey(home.id)) && coach?.homeId !== home.id && !objects.some((o) => o.roomId === room?.id)) {
+      setCoach({ homeId: home.id, before: objects.map((o) => o.id) })
+    }
     setView({ name: 'build' })
   }
 

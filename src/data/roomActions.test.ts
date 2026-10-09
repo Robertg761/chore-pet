@@ -165,4 +165,23 @@ describe('createRoom', () => {
       vi.useRealTimers()
     }
   })
+
+  it('keeps that order after a pull stamps both rooms with the same server time', async () => {
+    const { keepMadeAt, selectHome } = await import('./state')
+    const { orderRooms, roomNames } = await import('../screens/roomsModel')
+    const local = {
+      ...emptySnapshot().tables,
+      homes: { h1: home },
+      rooms: {
+        'ff-first': { ...room('ff-first', 'kitchen'), madeAt: '2026-10-08T09:00:00.000Z' },
+        '00-second': { ...room('00-second', 'kitchen'), madeAt: '2026-10-08T09:05:00.000Z' },
+      },
+    } as Snapshot['tables']
+    // Sent up in one batch, so the database gives both the same created_at, and its rows carry no madeAt.
+    const at = '2026-10-08T09:06:00.000Z'
+    const server = { ...local, rooms: { 'ff-first': { ...room('ff-first', 'kitchen'), createdAt: at }, '00-second': { ...room('00-second', 'kitchen'), createdAt: at } } } as Snapshot['tables']
+    const names = roomNames(orderRooms(selectHome(keepMadeAt(server, local), 'h1').rooms))
+    expect(names.get('ff-first')).toBe('Kitchen')
+    expect(names.get('00-second')).toBe('Kitchen 2')
+  })
 })
