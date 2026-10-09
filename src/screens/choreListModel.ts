@@ -44,7 +44,7 @@ export function statusLabel(status: ChoreStatus, today: ISODate, paused = false)
     if (status.overdueDays >= 7) return 'Over a week late'
     return status.overdueDays === 1 ? '1 day late' : `${status.overdueDays} days late`
   }
-  if (status.state === 'due') return 'Today'
+  if (status.state === 'due') return paused ? 'Paused' : 'Today'
   const away = diffDays(today, status.dueDate)
   if (away === 1) return 'Tomorrow'
   if (away <= 6) return WEEKDAYS[weekdayOf(status.dueDate)]
@@ -70,7 +70,7 @@ export function buildSections(
     const done = upcoming && completionDays(chore, completions).includes(today)
     const skippedToday = upcoming && !done && skippedOn(chore, today)
     const allSet = upcoming && !completionCounts(chore, completions, today)
-    return { chore, status, label: statusLabel(status, today, away), paused: away && status.state === 'overdue', doneToday: done || skippedToday, skippedToday, allSet }
+    return { chore, status, label: statusLabel(status, today, away), paused: away && (status.state === 'overdue' || status.state === 'due'), doneToday: done || skippedToday, skippedToday, allSet }
   })
   const byName = (a: ChoreRow, b: ChoreRow) => a.chore.name.localeCompare(b.chore.name)
   const pick = (state: ChoreStatus['state']) => rows.filter((r) => r.status.state === state)
@@ -82,9 +82,9 @@ export function buildSections(
   const doneToday = pick('upcoming').filter((r) => r.doneToday).sort(byName)
 
   const sections: ChoreSection[] = [
-    // On vacation nothing is running late: the same rows wait, paused, until the trip ends.
-    { id: 'late', title: away ? "Paused while you're away" : 'Running late', rows: late },
-    { id: 'today', title: 'Today', rows: due },
+    // On vacation nothing is running late or due: the same rows wait together, paused, until the trip ends.
+    { id: 'late', title: away ? "Paused while you're away" : 'Running late', rows: away ? [...late, ...due] : late },
+    { id: 'today', title: 'Today', rows: away ? [] : due },
     // What was just finished sits right under today's, not past a long list of later chores.
     { id: 'done', title: doneToday.some((r) => r.skippedToday) ? 'Done or skipped today' : 'Done today', rows: doneToday },
     { id: 'soon', title: 'Coming up', rows: soon },

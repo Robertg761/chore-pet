@@ -1,3 +1,4 @@
+import { choreStatus } from '../domain/schedule'
 import { describe, expect, it } from 'vitest'
 import { neglectLevel } from '../domain/neglect'
 import type { Chore, Completion } from '../domain/types'
@@ -181,5 +182,15 @@ describe('buildSections while on vacation', () => {
     const title = (vacations: { start: string; end: string }[]) => buildSections([dishes], [], vacations, today).find((s) => s.id === 'late')?.title
     expect(title([{ start: today, end: '2026-10-10' }])).toBe("Paused while you're away")
     expect(title([])).toBe('Running late')
+  })
+
+  it('pauses chores that fall due during the trip too, in the same section', () => {
+    const today = '2026-10-06'
+    const fish = chore('b', 'Feed the fish', today)
+    const trip = [{ start: '2026-10-05', end: '2026-10-10' }]
+    expect(choreStatus(fish, [], today, trip).state).toBe('due')
+    const sections = buildSections([fish], [], trip, today)
+    expect(sections.map((s) => s.id)).toEqual(['late'])
+    expect(sections[0].rows[0]).toMatchObject({ label: 'Paused', paused: true })
   })
 })
