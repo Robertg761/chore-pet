@@ -374,13 +374,13 @@ export default function App() {
 
   const syncNote = savedLocally || sync === 'synced' ? SYNC_LABEL[sync] : null
   const more: MoreItem[] = [
-    { label: 'Chores', onSelect: () => setView({ name: 'chores' }) },
-    { label: 'Your week', onSelect: () => setView({ name: 'week' }) },
-    { label: 'Change look', onSelect: () => setView({ name: 'creator' }) },
-    { label: 'Share your home', onSelect: () => setView({ name: 'share' }) },
-    { label: 'Vacation mode', onSelect: () => setView({ name: 'vacation' }) },
-    { label: 'Settings', onSelect: () => setView({ name: 'settings' }) },
-    ...(canInstall ? [{ label: 'Add to home screen', onSelect: () => { navigation.go({ ...view, sheet: undefined }, true); void install() } }] : []),
+    { label: 'Chores', icon: 'chores', onSelect: () => setView({ name: 'chores' }) },
+    { label: 'Your week', icon: 'week', onSelect: () => setView({ name: 'week' }) },
+    { label: 'Change look', icon: 'look', onSelect: () => setView({ name: 'creator' }) },
+    { label: 'Share your home', icon: 'share', onSelect: () => setView({ name: 'share' }) },
+    { label: 'Vacation mode', icon: 'vacation', onSelect: () => setView({ name: 'vacation' }) },
+    { label: 'Settings', icon: 'settings', onSelect: () => setView({ name: 'settings' }) },
+    ...(canInstall ? [{ label: 'Add to home screen', icon: 'install' as const, onSelect: () => { navigation.go({ ...view, sheet: undefined }, true); void install() } }] : []),
   ]
   // On a phone's home screen the toast takes the place of the buttons under the list, so it covers nothing.
   const toastInHomeList = view.name === 'home' && !wide && !allChores && !gifts.length

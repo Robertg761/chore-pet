@@ -4,8 +4,12 @@ import './AppNav.css'
 
 export type Tab = 'home' | 'build' | 'wardrobe' | 'rewards' | 'more'
 
+/** Which hand-drawn icon leads a More item. Items without one are just text. */
+export type MoreIcon = 'chores' | 'week' | 'look' | 'share' | 'vacation' | 'settings' | 'install'
+
 export interface MoreItem {
   label: string
+  icon?: MoreIcon
   onSelect: () => void
 }
 
@@ -49,6 +53,52 @@ const ICONS: Record<Tab, ReactNode> = {
       <circle cx="6" cy="12" r="1.4" />
       <circle cx="12" cy="12" r="1.4" />
       <circle cx="18" cy="12" r="1.4" />
+    </>
+  ),
+}
+
+// The More menu's icons: same 24px grid, round line and 2.2 weight as the tab bar's.
+const MORE_ICONS: Record<MoreIcon, ReactNode> = {
+  chores: (
+    <>
+      <path d="M3.5 6.2l1.8 1.8 3.2-3.6M3.5 12.7l1.8 1.8 3.2-3.6M4 19.5h4.5" />
+      <path d="M12.5 6.5h8M12.5 12.5h8M12.5 19.5h8" />
+    </>
+  ),
+  week: (
+    <>
+      <rect x="4" y="5.5" width="16" height="14.5" rx="2.5" />
+      <path d="M4 10.5h16M8.5 3.5v3.5M15.5 3.5v3.5M8.5 15h.01M12 15h.01M15.5 15h.01" />
+    </>
+  ),
+  look: (
+    <>
+      <path d="M20 4.5c-4.6 0-8 2.7-9.2 7l2.7 2.7c4.3-1.2 7-4.6 6.5-9.7z" />
+      <path d="M10.8 11.5L8.4 13.9M8.6 14.6c-2.2-.2-3.8 1.3-3.8 3.3 0 .8-.5 1.5-1.2 2 3.3.6 6.4-.4 6.6-3.1" />
+    </>
+  ),
+  share: (
+    <>
+      <path d="M12 15V4M8 7.5L12 4l4 3.5" />
+      <path d="M5 12v6.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V12" />
+    </>
+  ),
+  vacation: (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6" />
+    </>
+  ),
+  settings: (
+    <>
+      <path d="M10.2 5.7L10.4 3.2h3.2l.2 2.5 1.4.5 1.9-1.6 2.3 2.3-1.6 1.9.5 1.4 2.5.2v3.2l-2.5.2-.5 1.4 1.6 1.9-2.3 2.3-1.9-1.6-1.4.5-.2 2.5h-3.2l-.2-2.5-1.4-.5-1.9 1.6-2.3-2.3 1.6-1.9-.5-1.4-2.5-.2v-3.2l2.5-.2.5-1.4-1.6-1.9 2.3-2.3 1.9 1.6z" />
+      <circle cx="12" cy="12" r="2.6" />
+    </>
+  ),
+  install: (
+    <>
+      <path d="M4 11.5L12 4.5l8 7M6.5 9.5V19.5h11V9.5" />
+      <path d="M12 12.5V17M9.8 14.8h4.4" />
     </>
   ),
 }
@@ -149,7 +199,14 @@ export function AppNav({ active, onNavigate, rewardsNote, rewardsHint, more, not
             {more.map((item) => (
               <li key={item.label}>
                 <button type="button" className="app-more-item" onClick={() => { if (!onMenuChange) setLocalMenu(false); item.onSelect() }}>
-                  {item.label}
+                  {item.icon && (
+                    <svg className="app-more-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+                      <g fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        {MORE_ICONS[item.icon]}
+                      </g>
+                    </svg>
+                  )}
+                  <span>{item.label}</span>
                 </button>
               </li>
             ))}
