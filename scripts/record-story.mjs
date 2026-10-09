@@ -42,7 +42,7 @@ import { execFileSync } from 'node:child_process'
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { addSound, interceptAudio } from './demo-audio.mjs'
-import { ALL_REWARDS, isolate, launchBrowser, readSnapshot, ROOT, seedMilestone, seedPet, seedRoom, serveApp } from './media-common.mjs'
+import { ALL_REWARDS, isolate, launchBrowser, readSnapshot, ROOT, seedMilestone, seedPet, seedRoom, serveApp, LIVING_ROOM } from './media-common.mjs'
 
 const FORMAT = process.env.FORMAT === 'landscape' ? 'landscape' : 'portrait'
 const WIDE = FORMAT === 'landscape'
@@ -980,7 +980,7 @@ await transition(async () => {
   await stage.waitForTimeout(600)
   await click(phone.getByRole('button', { name: 'Add a living room', exact: true }))
   await stage.waitForTimeout(900)
-  for (const thing of ['Floor rug', 'Couch', 'Potted plant', 'Fish tank', 'Bookshelf', 'Wall clock', 'Bean bag', 'Lamp', 'Teddy bear', 'Poster']) {
+  for (const thing of LIVING_ROOM.items) {
     await click(phone.getByRole('button', { name: new RegExp(`^${thing}`) }))
     await stage.waitForTimeout(350)
     await click(phone.getByRole('button', { name: 'Place it', exact: true }))
@@ -988,15 +988,7 @@ await transition(async () => {
     await click(phone.getByRole('button', { name: 'Close', exact: true }))
     await stage.waitForTimeout(250)
   }
-  await seedRoom(phone, {
-    type: 'living',
-    wallStyle: 'sky',
-    floorStyle: 'seaside',
-    layout: [
-      ['plant', 0, 0, 0], ['wall-clock', 0, 1, 0], ['lamp', 0, 2, 0], ['couch', 0, 3, 0], ['fish-tank', 0, 5, 0], ['teddy', 1, 3, 0],
-      ['bookshelf', 2, 0, 1], ['poster', 4, 0, 1], ['rug', 3, 3, 0], ['bean-bag', 6, 2, 0],
-    ],
-  })
+  await seedRoom(phone, LIVING_ROOM)
   await reloadPhone()
   const finish = phone.getByRole('button', { name: 'Finish', exact: true })
   if (await finish.count()) await click(finish)

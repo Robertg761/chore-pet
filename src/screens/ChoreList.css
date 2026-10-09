@@ -102,8 +102,14 @@
 .cl-short .cl-name { flex: 0 1 auto; min-width: 6em; display: inline-flex; align-items: center; white-space: nowrap; overflow-wrap: normal; }
 .cl-short .cl-name-text { overflow: hidden; text-overflow: ellipsis; }
 .cl-short .cl-info .tag { margin: 0; }
+/* On a phone, a chore that is late or due today keeps its whole name and its tag drops underneath (a name
+   that fits keeps one line); chores coming up stay on one line, so the list stays short and the room big. */
+@container cl (max-width: 30em) {
+  .cl-short .cl-row:not(.cl-row-upcoming) .cl-info { flex-wrap: wrap; }
+  .cl-short .cl-row:not(.cl-row-upcoming) .cl-info .tag { margin: 0 0 4px; }
+}
 @container cl (max-width: 22em) {
-  /* The tag drops under the name rather than squeezing it. */
+  /* Narrower: the tag drops under the name rather than squeezing it. */
   .cl-short .cl-info { flex-wrap: wrap; }
   .cl-short .cl-name { flex: 0 1 auto; min-width: 6em; }
   .cl-short .cl-info .tag { margin: 0 0 4px; }

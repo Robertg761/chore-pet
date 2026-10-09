@@ -64,6 +64,26 @@ export const CATALOG: CatalogEntry[] = [
 
   // Kitchen
   {
+    id: 'counter',
+    name: 'Counter',
+    rooms: ['kitchen'],
+    footprint: { w: 1, d: 2 },
+    placement: 'wall',
+    layer: 'solid',
+    mess: 'stink',
+    chores: [{ name: 'Wipe the counters', schedule: { kind: 'everyNDays', n: 2 } }],
+  },
+  {
+    id: 'dining-table',
+    name: 'Dining table',
+    rooms: ['kitchen'],
+    footprint: { w: 2, d: 2 },
+    placement: 'floor',
+    layer: 'solid',
+    mess: 'dust',
+    chores: [{ name: 'Wipe the dining table', schedule: { kind: 'everyNDays', n: 2 } }],
+  },
+  {
     id: 'dishwasher',
     name: 'Dishwasher',
     rooms: ['kitchen'],

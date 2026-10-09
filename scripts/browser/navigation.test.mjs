@@ -183,18 +183,18 @@ test('the Chores screen edits, removes several at once and adds a removed chore 
   await page.getByRole('heading', { name: 'Chores', exact: true }).waitFor()
 
   // Deleting from an editor opened here lands back here, with no home entry slipped in between.
-  await page.getByRole('button', { name: 'Edit Wipe the table', exact: true }).click()
+  await page.getByRole('button', { name: 'Edit Wipe the dining table', exact: true }).click()
   await page.getByRole('heading', { name: 'Edit chore' }).waitFor()
   await page.getByRole('button', { name: 'Remove chore' }).click()
   await page.getByRole('button', { name: 'Remove', exact: true }).click()
   await page.getByRole('heading', { name: 'Chores', exact: true }).waitFor()
-  await page.getByRole('button', { name: 'Add Wipe the table again', exact: true }).waitFor()
+  await page.getByRole('button', { name: 'Add Wipe the dining table again', exact: true }).waitFor()
   assert.equal(new URL(page.url()).searchParams.get('screen'), 'chores')
   await page.goBack()
   await page.getByRole('heading', { name: 'Chores', exact: true }).waitFor()
   assert.equal(new URL(page.url()).searchParams.get('screen'), 'chores')
-  await page.getByRole('button', { name: 'Add Wipe the table again', exact: true }).click()
-  await page.getByRole('checkbox', { name: /Wipe the table/ }).waitFor()
+  await page.getByRole('button', { name: 'Add Wipe the dining table again', exact: true }).click()
+  await page.getByRole('checkbox', { name: /Wipe the dining table/ }).waitFor()
 
   // Unpicking while asked goes back a step: a new pick never lands on the Remove question.
   await page.getByRole('checkbox', { name: /Wash the dishes/ }).check()
@@ -250,7 +250,7 @@ test('a chore dated ahead by a clock can be edited and removed from the Chores s
       const read = store.get('snapshot')
       read.onsuccess = () => {
         const saved = read.result
-        const chore = Object.values(saved.tables.chores).find((c) => c.name === 'Wipe the table')
+        const chore = Object.values(saved.tables.chores).find((c) => c.name === 'Wipe the dining table')
         chore.createdOn = '2999-01-01'
         store.put(saved, 'snapshot')
       }
@@ -259,13 +259,13 @@ test('a chore dated ahead by a clock can be edited and removed from the Chores s
     }
   }))
   await page.goto(page.url().replace(/\?.*$/, '') + '?screen=chores')
-  await page.getByRole('button', { name: 'Edit Wipe the table', exact: true }).click()
+  await page.getByRole('button', { name: 'Edit Wipe the dining table', exact: true }).click()
   await page.getByRole('heading', { name: 'Edit chore' }).waitFor()
   assert.equal(new URL(page.url()).searchParams.get('screen'), 'edit')
   await page.getByRole('button', { name: 'Cancel', exact: true }).click()
-  await page.getByRole('checkbox', { name: /Wipe the table/ }).check()
+  await page.getByRole('checkbox', { name: /Wipe the dining table/ }).check()
   await page.getByRole('button', { name: 'Remove 1 chore', exact: true }).click()
   await page.getByRole('group', { name: 'Remove chores' }).getByRole('button', { name: 'Remove', exact: true }).click()
-  await page.getByRole('button', { name: 'Add Wipe the table again', exact: true }).waitFor()
-  assert.equal(await page.getByRole('checkbox', { name: /Wipe the table/ }).count(), 0)
+  await page.getByRole('button', { name: 'Add Wipe the dining table again', exact: true }).waitFor()
+  assert.equal(await page.getByRole('checkbox', { name: /Wipe the dining table/ }).count(), 0)
 })
