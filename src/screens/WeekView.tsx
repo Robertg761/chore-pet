@@ -42,7 +42,7 @@ const step = (i: number) => ({ '--i': i }) as CSSProperties
 
 // Plot heights: a sensible default, and the range the chart may stretch to when it has room.
 const PLOT_DEFAULT = { stacked: 100, wide: 230 }
-const PLOT_RANGE = { stacked: [64, 190], wide: [120, 400] } as const
+const PLOT_RANGE = { stacked: [64, 230], wide: [120, 400] } as const
 /** Everything in the viewBox that isn't plot area. */
 const FIXED_H = { stacked: 145, wide: 91 }
 

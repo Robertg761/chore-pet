@@ -58,7 +58,7 @@
 .wk-note { margin: 0; font-size: 13px; font-weight: 700; color: var(--ink-soft); }
 
 /* In the app frame the week fits the view: the chart takes whatever space is left. */
-.screen > .wk .wk-card { flex: 1 1 0; min-height: 0; }
+.screen > .wk .wk-card { flex: 1 1 0; min-height: 0; max-height: 700px; } /* tall tablets: the card stops growing rather than floating a small chart */
 .screen > .wk .wk-plot { position: relative; flex: 1 1 0; min-height: 0; }
 .screen > .wk .wk-chart { position: absolute; inset: 0; width: 100%; height: 100%; }
 

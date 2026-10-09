@@ -317,6 +317,19 @@ function stripQueue(op: Op): NewOp {
 }
 
 /** Server state with everything still queued re-applied on top. */
+/**
+ * The server's rooms, keeping the madeAt this device gave them: rooms sent up together get the same
+ * server creation time, and madeAt is what still tells them apart.
+ */
+export function keepMadeAt(server: Tables, local: Tables): Tables {
+  let rooms: Tables['rooms'] | null = null
+  for (const [key, room] of Object.entries(server.rooms)) {
+    const madeAt = local.rooms[key]?.madeAt
+    if (madeAt && !room.madeAt) (rooms ??= { ...server.rooms })[key] = { ...room, madeAt }
+  }
+  return rooms ? { ...server, rooms } : server
+}
+
 export function rebase(server: Tables, outbox: Outbox): Tables {
   return Object.values(outbox)
     .sort((a, b) => a.seq - b.seq)
@@ -496,11 +509,17 @@ function createdTime(row: Created): number {
   return Number.isNaN(t) ? Number.POSITIVE_INFINITY : t
 }
 
-/** Oldest first; rows not yet on the server last; ties by id so the order never flips. */
+/**
+ * Oldest first; rows not yet on the server last; rows with the same server time (or none) in the
+ * order this device made them; ties by id so the order never flips.
+ */
 function byCreation(a: Created & { id: string }, b: Created & { id: string }): number {
   const ta = createdTime(a)
   const tb = createdTime(b)
   if (ta !== tb) return ta < tb ? -1 : 1
+  // Same server time (sent up together) or none yet: the order this device made them in.
+  // Rows from before madeAt existed sort first: they were made earlier.
+  if ((a.madeAt ?? '') !== (b.madeAt ?? '')) return (a.madeAt ?? '') < (b.madeAt ?? '') ? -1 : 1
   return a.id.localeCompare(b.id)
 }
 

@@ -181,7 +181,8 @@ export default function App() {
   }, [justAdopted])
   // First run: the welcome beat after "Move in", then the coach card while building the first room.
   const [welcome, setWelcome] = useState(false)
-  const [coachHome, setCoachHome] = useState<string | null>(null)
+  // The first-build coach: which home, and what this visit has placed (in any room) since it started.
+  const [coach, setCoach] = useState<{ homeId: string; placed: string[] } | null>(null)
   const [, setFlagTick] = useState(0)
   const { canInstall, install } = useInstallPrompt()
   // The completion moment: the pet cheers and each cleaned object gets its own sparkle.
@@ -350,7 +351,10 @@ export default function App() {
   const flag = (key: string) => (writeFlag(key), setFlagTick((n) => n + 1))
   // Build mode for the first time shows the coach card; it stays for this visit once started.
   const openBuild = () => {
-    if (!readFlag(onboardedKey(home.id)) && !objects.some((o) => o.roomId === room?.id)) setCoachHome(home.id)
+    // Started once per visit: reopening Build keeps what it counts from.
+    if (!readFlag(onboardedKey(home.id)) && coach?.homeId !== home.id && !objects.some((o) => o.roomId === room?.id)) {
+      setCoach({ homeId: home.id, placed: [] })
+    }
     setView({ name: 'build' })
   }
 
@@ -676,23 +680,27 @@ export default function App() {
   if (view.name === 'build' && room) {
     const selected = roomObjects.find((o) => o.id === selectedId) ?? null
     const selectedEntry = selected ? catalogEntry(selected.catalogId) : undefined
-    const coaching = coachHome === home.id && !readFlag(onboardedKey(home.id))
+    const coaching = coach?.homeId === home.id && !readFlag(onboardedKey(home.id))
     const commit = (change: BuildChange) => {
       if (change.kind === 'add') {
         // Select what was just placed so its sheet shows the chores it brought.
         const ops = placeObject(room, change.entry, change.placement, today)
         appStore.apply(...ops)
         // While coaching, keep the tray open so the next pick is one tap away.
-        if (!coaching) setSelectedId(ops[0].key)
+        if (coaching) setCoach((c) => c && { ...c, placed: [...c.placed, ops[0].key] })
+        else setSelectedId(ops[0].key)
       }
       else {
         const obj = roomObjects.find((o) => o.id === change.id)
         if (obj) appStore.apply(...moveObject(obj, change.placement))
       }
     }
-    const step = coachStep(roomObjects.length)
+    // Counts what this visit placed, in any room, so adding a second room mid-way doesn't send it back to step 1,
+    // and furniture from before or from another device doesn't skip steps.
+    const coachPlaced = coaching ? objects.filter((o) => coach.placed.includes(o.id)) : []
+    const step = coachStep(coachPlaced.length)
     const finishCoach = () => {
-      setCoachHome(null)
+      setCoach(null)
       flag(onboardedKey(home.id))
     }
     const turnTo = selected && selectedEntry ? turned(selectedEntry, selected) : null
@@ -733,7 +741,7 @@ export default function App() {
           {coaching && (
             <CoachCard
               step={step}
-              choreCount={activeChores.filter((c) => roomObjects.some((o) => o.id === c.objectId)).length}
+              choreCount={activeChores.filter((c) => coachPlaced.some((o) => o.id === c.objectId)).length}
               sheetOpen={Boolean(selected)}
               placing={Boolean(placing)}
               onSkip={() => (finishCoach(), doneRef.current?.focus())}

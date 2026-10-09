@@ -31,6 +31,8 @@
 .vacation-now-text { margin: 0; font-size: 1.0625rem; font-weight: 800; }
 
 .vacation-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+/* Very narrow phones: one date per row so the year is never clipped. */
+@media (max-width: 359px) { .vacation-fields { grid-template-columns: minmax(0, 1fr); } }
 .vacation-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .vacation-field label { font-weight: 800; }
 .vacation-field .field { width: 100%; }

@@ -119,3 +119,69 @@ describe('clearHome with several rooms', () => {
     expect(after.tables.homes.h1).toEqual(home)
   })
 })
+
+describe('createRoom', () => {
+  it('keeps rooms made on this device in the order they were made, so a second kitchen is "Kitchen 2"', async () => {
+    const { vi } = await import('vitest')
+    const { createRoom } = await import('./actions')
+    const { selectHome } = await import('./state')
+    const { orderRooms, roomNames } = await import('../screens/roomsModel')
+    vi.useFakeTimers()
+    try {
+      vi.setSystemTime(new Date('2026-10-08T09:00:00.000Z'))
+      const [first] = createRoom(home)
+      vi.setSystemTime(new Date('2026-10-08T09:05:00.000Z'))
+      const [second] = createRoom(home)
+      const tables = { ...emptySnapshot().tables, homes: { h1: home } } as Snapshot['tables']
+      // Whatever the random ids, and in whichever order the rows come back from storage.
+      for (const ops of [[first, second], [second, first]]) {
+        const rooms = Object.fromEntries(ops.map((op) => [op.key, (op as { value: Room }).value]))
+        const ordered = orderRooms(selectHome({ ...tables, rooms } as Snapshot['tables'], 'h1').rooms)
+        const names = roomNames(ordered)
+        expect(names.get(first.key)).toBe('Kitchen')
+        expect(names.get(second.key)).toBe('Kitchen 2')
+      }
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('puts a synced kitchen before one made here, even when this device clock is behind the server', async () => {
+    const { vi } = await import('vitest')
+    const { createRoom } = await import('./actions')
+    const { selectHome } = await import('./state')
+    const { orderRooms, roomNames } = await import('../screens/roomsModel')
+    vi.useFakeTimers()
+    try {
+      vi.setSystemTime(new Date('2026-10-08T09:00:00.000Z'))
+      const [local] = createRoom(home)
+      // The server stamped the original an hour "later" than this device's clock reads.
+      const synced = { ...room('zz-synced', 'kitchen'), createdAt: '2026-10-08T10:00:00.000Z' }
+      const tables = { ...emptySnapshot().tables, homes: { h1: home }, rooms: { [local.key]: (local as { value: Room }).value, [synced.id]: synced } } as Snapshot['tables']
+      const names = roomNames(orderRooms(selectHome(tables, 'h1').rooms))
+      expect(names.get(synced.id)).toBe('Kitchen')
+      expect(names.get(local.key)).toBe('Kitchen 2')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('keeps that order after a pull stamps both rooms with the same server time', async () => {
+    const { keepMadeAt, selectHome } = await import('./state')
+    const { orderRooms, roomNames } = await import('../screens/roomsModel')
+    const local = {
+      ...emptySnapshot().tables,
+      homes: { h1: home },
+      rooms: {
+        'ff-first': { ...room('ff-first', 'kitchen'), madeAt: '2026-10-08T09:00:00.000Z' },
+        '00-second': { ...room('00-second', 'kitchen'), madeAt: '2026-10-08T09:05:00.000Z' },
+      },
+    } as Snapshot['tables']
+    // Sent up in one batch, so the database gives both the same created_at, and its rows carry no madeAt.
+    const at = '2026-10-08T09:06:00.000Z'
+    const server = { ...local, rooms: { 'ff-first': { ...room('ff-first', 'kitchen'), createdAt: at }, '00-second': { ...room('00-second', 'kitchen'), createdAt: at } } } as Snapshot['tables']
+    const names = roomNames(orderRooms(selectHome(keepMadeAt(server, local), 'h1').rooms))
+    expect(names.get('ff-first')).toBe('Kitchen')
+    expect(names.get('00-second')).toBe('Kitchen 2')
+  })
+})

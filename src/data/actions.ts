@@ -5,6 +5,7 @@ import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, choreCountOf, streakHistory, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
 import { clearOp, deleteOp, selectHome, upsertOp, type NewOp, type Snapshot } from './state'
+import type { Created } from './tables'
 
 // Every user action as a pure function returning the changes to apply.
 // The UI calls these and hands the result to store.apply(...ops).
@@ -20,7 +21,9 @@ export function createHousehold(input: { species: Species; petName: string; user
 }
 
 export function createRoom(home: Home, type: RoomType = 'kitchen'): NewOp[] {
-  const room: Room = { id: id(), homeId: home.id, type, floorStyle: 'wood', wallStyle: 'peach' }
+  // madeAt keeps rooms made on this device in order (and named "Kitchen", then "Kitchen 2") until the
+  // server's creation time arrives on the next pull. It is never sent up.
+  const room: Room & Created = { id: id(), homeId: home.id, type, floorStyle: 'wood', wallStyle: 'peach', madeAt: new Date().toISOString() }
   return [upsertOp('rooms', room)]
 }
 

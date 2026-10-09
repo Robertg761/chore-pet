@@ -32,7 +32,9 @@ async function samplePhone({ scale = 3, reducedMotion = 'reduce' } = {}) {
   const ctx = await browser.newContext({ viewport: PHONE, deviceScaleFactor: scale, hasTouch: true, reducedMotion, serviceWorkers: 'block' })
   await isolate(ctx)
   const page = await ctx.newPage()
+  // The latest Thursday, as in record-demo.mjs, so the sample home looks the same whichever day this runs.
   const start = new Date(); start.setHours(10, 0, 0, 0)
+  start.setDate(start.getDate() - ((start.getDay() - 4 + 7) % 7))
   await page.clock.install({ time: start })
   await page.goto(app.url, { waitUntil: 'networkidle' })
   await page.getByRole('button', { name: 'Try a sample home' }).tap()
@@ -48,7 +50,8 @@ const reload = async (page) => {
   await page.waitForTimeout(900)
 }
 const tab = async (page, name) => {
-  await page.getByRole('navigation').getByRole('button', { name }).first().tap()
+  // Anchored, as in record-demo.mjs: the Rewards tab's full name says "more chores".
+  await page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}\\b`) }).first().tap()
   await page.waitForTimeout(700)
 }
 /** Tap every Done that is showing, one at a time (each folds away). `keep` leaves that many for later. */
