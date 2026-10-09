@@ -17,7 +17,7 @@ Everything needed to submit Chore Pet on [hackyard.tech](https://hackyard.tech/y
    - If the form needs a file upload instead, open that link on a computer and save it, or take it from [`docs/media/chore-pet-demo.mp4`](../docs/media/chore-pet-demo.mp4) in the repo.
    - A portrait cut, for anywhere that wants phone-shaped video: https://robertg761.github.io/chore-pet/chore-pet-demo-portrait.mp4
 6. **Live link:** https://robertg761.github.io/chore-pet/
-7. **Source code:** https://github.com/Robertg761/chore-pet
+7. **Source code:** https://github.com/Robertg761/chore-pet (MIT licensed, see [`LICENSE`](../LICENSE))
 8. **Theme:** Gamification.
 9. **Before you press submit:** open the live link once and tap **Try a sample home**, so you know what judges will see first.
 
