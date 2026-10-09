@@ -6,15 +6,17 @@
 //   FORMAT=landscape npm run demo:story     landscape, 1920 x 1080 -> demo/chore-pet-story-16x9.mp4
 //   (CHROME=/path/to/chrome if Playwright has no browser of its own; OUT=path.mp4 to write elsewhere)
 //
-// The story, in order:
-//   - cold open on the stinky sink, flies and all: "Chores are boring." The camera finds Mochi beside it, sad:
-//     "So we gave them a pet." Then the whole kitchen: "Late chores show up as mess.";
-//   - a bathroom is added and a toilet placed: its sheet says the chore it brings ("Each thing you place brings
-//     a real chore.");
-//   - back in the kitchen: the dirty sink, Done on "Wash the dishes" and on the dishwasher below it, Mochi cheers;
-//   - a gift drops in: the red beanie; then the sink's corner again, all clean (Mochi's cheer line sits over it until then);
+// The story, in order (the captions read as one voice telling it):
+//   - cold open on the stinky sink, flies and all: "Chores are boring." The camera finds Mochi beside it:
+//     "So we gave them a pet. Meet Mochi.";
+//   - a bathroom is added and a toilet placed ("It lives in a home you build."): its sheet says the chore it brings
+//     ("Everything you place brings a real chore.");
+//   - back in the kitchen, all of it, behind on its chores: "Leave one too long, and it shows.";
+//   - the dirty sink, Done on "Wash the dishes" and on the dishwasher below it ("Do the dishes for real, then tap
+//     Done."); Mochi cheers ("Mochi loves it."); a gift: the red beanie; then the sink's corner, all clean;
 //   - a few days pass on camera (a day counter, the health bar and mood falling): Mochi gets scruffy;
-//   - you catch up, a gift on the way ("Outfits and decor, only from real chores."), the room clean, Mochi happy;
+//   - you catch up, a gift on the way ("No shop, no coins. Every gift comes from a real chore."), the room clean,
+//     Mochi happy;
 //   - "Weeks later": a cosy living room and a dressed-up Mochi; an end card with the three pets and the link.
 //
 // Why portrait first: the room is wider than tall, so in a square or portrait frame its size is set by the width
@@ -37,7 +39,8 @@
 // - Every caption stays up for at least (words / 2.5) + 1 seconds of video; the recorder waits if a scene is
 //   quicker. The captions and their times are written to <out>.captions.json.
 // Set AUDIO=0 for a silent video, FPS=30 for a lighter file, STOP=open|build|done|gift|lapse|catchup to stop
-// after that scene (for iterating), KEEP_FRAMES=1 to keep the frames, URL=... to use a running server.
+// after that scene (for iterating), KEEP_FRAMES=1 to keep the frames, URL=... to use a running server, DEBUG_CAM=1 to log
+// each framing decision.
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
@@ -57,7 +60,7 @@ const STOP = process.env.STOP ?? ''
 // The stage (CSS px, drawn at 2x), where the captions go, and the most the window onto the app can cover.
 const SCALE = 2
 const L = WIDE
-  ? { stage: { w: 960, h: 540 }, cap: { x: 26, y: 76, w: 300, h: 420 }, capSize: 46, win: { x: 344, y: 26, w: 590, h: 488 }, badge: { x: 26, y: 22 } }
+  ? { stage: { w: 960, h: 540 }, cap: { x: 26, y: 76, w: 306, h: 420 }, capSize: 42, win: { x: 344, y: 26, w: 590, h: 488 }, badge: { x: 26, y: 22 } }
   : { stage: { w: 540, h: 960 }, cap: { x: 18, y: 62, w: 504, h: 190 }, capSize: 47, win: { x: 14, y: 264, w: 512, h: 678 }, badge: { x: 0, y: 18 } }
 const STAGE = L.stage
 const WIN = L.win
@@ -133,13 +136,16 @@ html, body { margin: 0; width: ${STAGE.w * SCALE}px; height: ${STAGE.h * SCALE}p
 .logo.big { font-size: ${WIDE ? 74 : 104}px; }
 .logo.big b { -webkit-text-stroke: 13px var(--ink); text-shadow: 0 8px 0 rgba(43, 30, 47, .22); opacity: 0; }
 
-/* Kinetic captions: big words that pop in one after another. "*word*" is the accent. */
+/* Kinetic captions: big lines that pop in one after another, each line whole (by phrase). "*word*" is the accent. */
 .cap { position: absolute; left: ${L.cap.x}px; top: ${L.cap.y}px; width: ${L.cap.w}px; height: ${L.cap.h}px; z-index: 5; display: flex; align-items: center;
   justify-content: ${WIDE ? 'flex-start' : 'center'}; text-align: ${WIDE ? 'left' : 'center'}; pointer-events: none; }
 .cap .lines { font-weight: 900; font-size: ${L.capSize}px; line-height: 1.08; letter-spacing: -.5px; text-wrap: balance; }
 .w { display: inline-block; opacity: 0; transform-origin: 50% 80%; }
-.show .w { animation: wpop .6s var(--pop) calc(var(--i) * 95ms) both; }
+.show .w { animation: wpop .6s var(--pop) calc(var(--i) * 230ms) both; }
 .cap.set .w { animation: none; opacity: 1; }
+/* A caption that finishes later: its last words wait, unseen, in their place, then pop in. */
+.cap .w.later { animation: none; opacity: 0; }
+.cap .w.go { animation: wpop .6s var(--pop) calc(var(--j) * 230ms) both; }
 @keyframes wpop { from { opacity: 0; transform: translateY(28px) scale(.45) rotate(-7deg); } 30% { opacity: 1; } to { opacity: 1; transform: none; } }
 .a { color: var(--accent); }
 .cap.hide .lines { opacity: 0; transform: translateY(-14px) scale(.9); transition: opacity .2s ease, transform .2s ease; }
@@ -233,14 +239,11 @@ iframe { display: block; width: ${APP.w}px; height: ${APP.h}px; border: 0; }
 <script>
 const $ = (id) => document.getElementById(id)
 const reflow = (el) => void el.offsetWidth
-const words = (text) => {
-  let i = 0
-  return text.split('\\n').map((line) => line.split(' ').map((w) => {
+const words = (text) => text.split('\\n').map((line, n) => line.split(' ').map((w) => {
     const accent = /^\\*/.test(w)
     const clean = w.replace(/\\*/g, '').replace(/[&<]/g, (c) => ({ '&': '&amp;', '<': '&lt;' })[c])
-    return '<span class="w' + (accent ? ' a' : '') + '" style="--i:' + (i++) + '">' + clean + '</span>'
+    return '<span class="w' + (accent ? ' a' : '') + '" style="--i:' + n + '">' + clean + '</span>'
   }).join(' ')).join('<br>')
-}
 // "*word*" (or "*two words*") is the accent; a newline breaks the line.
 const accentRuns = (text) => text.replace(/\\*([^*]+)\\*/g, (m, run) => run.split(' ').map((w) => '*' + w + '*').join(' '))
 window.say = (text, set) => {
@@ -252,6 +255,12 @@ window.say = (text, set) => {
   reflow(el)
   el.classList.add('show')
 }
+// The caption's words from \`from\` on wait unseen; window.more() pops them in.
+window.sayPart = (text, from) => {
+  window.say(text)
+  document.querySelectorAll('#cap .w').forEach((w, i) => { if (i >= from) w.classList.add('later') })
+}
+window.more = () => document.querySelectorAll('#cap .w.later').forEach((w) => { w.style.setProperty('--j', 0); w.classList.remove('later'); reflow(w); w.classList.add('go') })
 window.unsay = () => { $('cap').classList.remove('show'); $('cap').classList.add('hide') }
 window.calm = (on) => document.body.classList.toggle('calm', on)
 // The camera: a transform on the app, a matte (insets, px) on the window, the outline around what shows.
@@ -393,7 +402,8 @@ const drive = () => {
 }
 const halt = async () => { driving = false; await driver }
 // The clock is driven by hand even at SLOW=1 (then in real time), so halt() can still hold a shot.
-const freeze = async () => { await stage.clock.pauseAt((await stage.evaluate(() => Date.now())) + 20); drive() }
+// (Paused a little ahead of now: under load, a running clock can pass a closer mark before the call lands.)
+const freeze = async () => { await stage.clock.pauseAt((await stage.evaluate(() => Date.now())) + 500); drive() }
 const thaw = async () => { await halt(); await stage.clock.resume() }
 
 // Wait (off camera) for Mochi to go over to the sink and say something about it, so the story opens on that.
@@ -478,10 +488,14 @@ const log = (what) => console.log(`${((Date.now() - t0) / 1000).toFixed(1).padSt
 // Captions: each one stays up for at least (words / 2.5) + 1 seconds; a new one waits until the last has had its time.
 const captions = []
 let shown = null
+/** A caption's line breaks for portrait, and for 16:9's narrow column (where each line is measured to fit, so none wraps). */
+const C = (portrait, wide) => (WIDE ? wide : portrait)
 const minFor = (text) => text.replace(/\*/g, '').split(/\s+/).filter(Boolean).length / 2.5 + 1
 const settleCaption = async () => {
   if (!shown) return
-  const left = minFor(shown.text) + 0.15 - (videoAt() - shown.start)
+  let left = minFor(shown.text) + 0.15 - (videoAt() - shown.start)
+  // The words that came in later get their own reading time (3 words: 2.2 s).
+  if (shown.rest !== undefined) left = Math.max(left, 2.2 - (videoAt() - shown.rest))
   if (left > 0) await hold(left)
 }
 const endCaption = () => { if (shown) { captions.push({ ...shown, end: videoAt() }); shown = null } }
@@ -490,6 +504,17 @@ const say = async (text, set = false) => {
   endCaption()
   await stage.evaluate(([t, st]) => window.say(t, st), [text, set])
   shown = { text, where: 'caption', start: videoAt() }
+}
+/** A caption said in two beats: the first `from` words now, the rest on `more()`. It counts as one caption. */
+const sayPart = async (text, from) => {
+  await settleCaption()
+  endCaption()
+  await stage.evaluate(([t, f]) => window.sayPart(t, f), [text, from])
+  shown = { text, where: 'caption', start: videoAt() }
+}
+const more = async () => {
+  await stage.evaluate(() => window.more())
+  shown.rest = videoAt()
 }
 const unsay = async () => {
   await settleCaption()
@@ -550,7 +575,7 @@ const transition = async (fn, { removeTime = false, whole = false, fade = FADE, 
   camMoved = Date.now()
   camSeconds = fade
 }
-const frame = async (r, { pad = 8, max = 4, cut: jump = false, band = { x: 0, y: 0, w: APP.w, h: APP.h }, seconds = CAM_S, widened = false, move = false } = {}) => {
+const frame = async (r, { pad = 8, max = 4, cut: jump = false, band = { x: 0, y: 0, w: APP.w, h: APP.h }, seconds = CAM_S, widened = false, move = false, keep = r, widen = true } = {}) => {
   const avoid = [await rectOf(phone.locator('.room-pill'))]
   const s = Math.min(VIEW.w / (r.w + 2 * pad), VIEW.h / (r.h + 2 * pad), max)
   const clamp = (v, lo, hi) => (lo > hi ? (lo + hi) / 2 : Math.min(hi, Math.max(lo, v)))
@@ -568,7 +593,8 @@ const frame = async (r, { pad = 8, max = 4, cut: jump = false, band = { x: 0, y:
   let il = Math.max(0, (bx0 - vx) * s)
   let ir = Math.max(0, (vx + VIEW.w / s - bx1) * s)
   // Bits of UI that would be cut by the edge of the shot (the room pill) are matted out whole instead: the
-  // edge moves in past them, on whichever side loses the least and leaves the subject in view.
+  // edge moves in past them, on whichever side loses the least and leaves the subject in view. `keep` is the part
+  // of the subject that must stay whole (Mochi and its line, in a looser square): the matte may trim the rest.
   for (const a of avoid) {
     if (!a) continue
     const v = { x0: vx + il / s, y0: vy + it / s, x1: vx + (VIEW.w - ir) / s, y1: vy + (VIEW.h - ib) / s }
@@ -579,20 +605,23 @@ const frame = async (r, { pad = 8, max = 4, cut: jump = false, band = { x: 0, y:
     if (!overlaps || inside) continue
     const w = v.x1 - v.x0
     const h = v.y1 - v.y0
+    const k = keep
     const options = [
-      ax1 <= r.x + 1 && { lost: (ax1 - v.x0) * h, apply: () => { il = (ax1 + 2 - vx) * s } },
-      ay1 <= r.y + 1 && { lost: (ay1 - v.y0) * w, apply: () => { it = (ay1 + 2 - vy) * s } },
-      a.x >= r.x + r.w - 1 && { lost: (v.x1 - a.x) * h, apply: () => { ir = (vx + VIEW.w / s - (a.x - 2)) * s } },
-      a.y >= r.y + r.h - 1 && { lost: (v.y1 - a.y) * w, apply: () => { ib = (vy + VIEW.h / s - (a.y - 2)) * s } },
+      ax1 <= k.x + 1 && { lost: (ax1 - v.x0) * h, apply: () => { il = Math.max(il, (ax1 + 2 - vx) * s) } },
+      ay1 <= k.y + 1 && { lost: (ay1 - v.y0) * w, apply: () => { it = Math.max(it, (ay1 + 2 - vy) * s) } },
+      a.x >= k.x + k.w - 1 && { lost: (v.x1 - a.x) * h, apply: () => { ir = Math.max(ir, (vx + VIEW.w / s - (a.x - 2)) * s) } },
+      a.y >= k.y + k.h - 1 && { lost: (v.y1 - a.y) * w, apply: () => { ib = Math.max(ib, (vy + VIEW.h / s - (a.y - 2)) * s) } },
     ].filter(Boolean).sort((p, q) => p.lost - q.lost)
     if (options.length) options[0].apply()
     // It can't be matted out without cutting into the subject: take it in, whole, instead.
-    else if (!widened) return frame(union(r, grow(a, 3)), { pad, max, cut: jump, band: union(band, grow(a, 3)), seconds, widened: true, move })
+    else if (!widen) return 'blocked'
+    else if (!widened) return frame(union(r, grow(a, 3)), { pad, max, cut: jump, band: union(band, grow(a, 3)), seconds, widened: true, move, keep })
   }
   // Centre what is left in the window.
   ty -= (it - ib) / 2; it = ib = (it + ib) / 2
   tx -= (il - ir) / 2; il = ir = (il + ir) / 2
   cam = { tx, ty, s, inset: [it, ir, ib, il] }
+  if (process.env.DEBUG_CAM) console.log('frame', JSON.stringify({ r, keep, avoid, s: +s.toFixed(2), inset: cam.inset.map((v) => Math.round(v)), widened }))
   const apply = () => stage.evaluate(([tx, ty, s, inset, sec, c]) => window.camTo(tx, ty, s, inset, sec, c), [tx, ty, s, cam.inset, seconds, !move])
   if (jump || move) {
     camMoved = Date.now()
@@ -611,6 +640,8 @@ const camSettled = async () => { const left = camMoved + camSeconds * 1000 * K -
 
 const pet = () => phone.getByRole('button', { name: /^Mochi, feeling/ })
 const petRect = () => rectOf(pet())
+/** Mochi's art itself (its button is a bigger, invisible tap area), as painted. */
+const artRect = async () => (await rectOf(pet().locator(':scope > g').last())) ?? petRect()
 const bubbleRect = async () => ((await phone.locator('.pet-bubble').count()) ? rectOf(phone.locator('.pet-bubble')) : null)
 const bubbleText = async () => ((await phone.locator('.pet-bubble').count()) ? phone.locator('.pet-bubble').first().innerText().catch(() => '') : '')
 /** Wait for Mochi's cheer: a new line in its bubble (the chore just done). */
@@ -622,12 +653,11 @@ const cheered = async (before) => {
   }
 }
 const roomRect = () => rectOf(phone.locator('.living-room'))
-const headerRect = () => rectOf(phone.locator('.home-top'))
 const giftRect = async () => union(await settledRect(phone.locator('.gift-title')), await rectOf(phone.locator('.gift-stage')), await rectOf(phone.locator('.gift-actions')))
 const mood = async () => (await phone.locator('.home-top').innerText()).match(/Feeling (\w+)/)?.[1] ?? 'meh'
 const objectRect = (catalogId) => rectOf(phone.locator(`[data-object-id="${objectIds[catalogId]}"]`))
 /** The band of the room: everything between the header and the list. */
-const roomBand = async () => {
+const roomBand = async (withBubble = true) => {
   const r = await roomRect()
   const head = await rectOf(phone.locator('.home-top'))
   const next = await rectOf(phone.locator('.cl-heading'))
@@ -635,7 +665,7 @@ const roomBand = async () => {
   const y1 = Math.min(r.y + r.h + 2, next ? next.y - 2 : APP.h)
   const band = { x: 0, y: y0, w: APP.w, h: y1 - y0 }
   // Mochi's speech bubble can reach above the room: it comes in whole.
-  const b = await bubbleRect()
+  const b = withBubble && (await bubbleRect())
   return b ? union(band, grow(b, 3)) : band
 }
 /** The sink, with the mess that floats over it, and a band that keeps the rest of the kitchen out. */
@@ -676,7 +706,83 @@ const petClose = async (size = 110) => {
   const b = await bubbleRect()
   return b ? union(square, grow(b, 4)) : square
 }
-const framePet = async (size, opts = {}) => frame(await petClose(size), { pad: 10, max: 3.6, band: await roomBand(), ...opts })
+/** Mochi itself and its line, which a matte must never cut (the square around them may be trimmed). */
+const petKeep = async () => {
+  const art = await artRect()
+  const b = await bubbleRect()
+  return b ? union(art, grow(b, 3)) : art
+}
+const framePet = async (size, opts = {}) => frame(await petClose(size), { pad: 10, max: 3.6, band: await roomBand(), keep: await petKeep(), ...opts })
+/**
+ * Mochi's face, big, for the captions that name its feeling. Its line, if it is talking, is matted out whole (the
+ * matte's edge moves past it, on the side that trims the least of the shot): the caption says the feeling. If the
+ * line can't be left out without cutting into Mochi, it is the usual close-up with the line.
+ */
+const petFace = async (size = 80, opts = {}) => {
+  const art = await artRect()
+  let r = { x: art.x + art.w / 2 - size / 2, y: art.y + art.h / 2 - size / 2 - 3, w: size, h: size }
+  const band = await roomBand(false)
+  const raw = await bubbleRect()
+  if (process.env.DEBUG_CAM) console.log('petFace', JSON.stringify({ p: await petRect(), art, raw }))
+  if (raw) {
+    // Mochi with its line, as tight as that goes, unless the room's pill would make the shot go wide.
+    const both = union(grow(art, 8), grow(raw, 4))
+    const withLine = { pad: 6, max: opts.max ?? 5, band: union(band, grow(raw, 3)), keep: union(art, grow(raw, 3)) }
+    const done = await frame(both, { ...withLine, widen: false, ...opts })
+    if (done !== 'blocked') return done
+    const b = grow(raw, 2)
+    // Otherwise the line is matted out, if that leaves Mochi whole: its tail hangs about 11 px below the box.
+    const tail = raw.y + raw.h + 12
+    const options = [
+      tail <= art.y && { lost: Math.max(0, tail - r.y) * r.w, apply: () => { const y1 = band.y + band.h; band.y = Math.max(band.y, tail); band.h = y1 - band.y } },
+      b.x + b.w <= art.x && { lost: Math.max(0, b.x + b.w - r.x) * r.h, apply: () => { const x1 = band.x + band.w; band.x = Math.max(band.x, b.x + b.w); band.w = x1 - band.x } },
+      b.x >= art.x + art.w && { lost: Math.max(0, r.x + r.w - b.x) * r.h, apply: () => { band.w = Math.min(band.x + band.w, b.x) - band.x } },
+    ].filter(Boolean).sort((a, c) => a.lost - c.lost)
+    // Neither: Mochi and its line, with the pill in whole.
+    if (!options.length) return frame(both, { ...withLine, ...opts })
+    options[0].apply()
+  }
+  // Fit what the band leaves of the square.
+  const x0 = Math.max(r.x, band.x)
+  const y0 = Math.max(r.y, band.y)
+  r = { x: x0, y: y0, w: Math.min(r.x + r.w, band.x + band.w) - x0, h: Math.min(r.y + r.h, band.y + band.h) - y0 }
+  return frame(r, { pad: 6, max: 5, band, keep: art, ...opts })
+}
+/**
+ * The shot for a caption that names Mochi's feeling: its face, big. In 16:9 the window is short, so a line would
+ * make Mochi small: the shot waits (unseen, cut from the video) for the line to end first.
+ */
+const furniture = () => phone.evaluate(() => [...document.querySelectorAll('.living-room [data-object-id]')].map((e) => e.getBoundingClientRect().toJSON()))
+/** Something is drawn over Mochi's face or body (it is behind the table, say): points on it are hit-tested. */
+const hidden = () => phone.evaluate(() => {
+  const pet = [...document.querySelectorAll('[aria-label]')].find((e) => /^Mochi, feeling/.test(e.getAttribute('aria-label')))
+  const art = pet && [...pet.children].filter((c) => c.tagName === 'g').at(-1)
+  if (!art) return true
+  const a = art.getBoundingClientRect()
+  const points = [[0.5, 0.4], [0.3, 0.5], [0.7, 0.5], [0.5, 0.75], [0.25, 0.8], [0.75, 0.8]]
+  return points.some(([fx, fy]) => !pet.contains(document.elementFromPoint(a.x + a.width * fx, a.y + a.height * fy)))
+})
+const feelingShot = async () => {
+  // Unseen (cut from the video): Mochi is let wander until it is in the clear, its face in view, not behind the
+  // table; in 16:9, quiet too.
+  await transition(async () => {
+    drive()
+    let i = 0
+    for (; i < 150; i++) {
+      if (!(await hidden()) && !(WIDE && (await bubbleRect()))) break
+      await stage.waitForTimeout(80 * K)
+    }
+    if (process.env.DEBUG_CAM) console.log('feelingShot waited', i, JSON.stringify({ art: await artRect(), furniture: await furniture() }))
+    await halt()
+    await petFace(72, { max: 6, cut: true })
+  }, { removeTime: true })
+}
+/** The kitchen, closer than the whole room: its furniture and Mochi (and its line), not the floor's far corners. */
+const kitchenClose = async () => {
+  const things = union(...(await furniture()).map(box))
+  const b = await bubbleRect()
+  return union(things, grow(await artRect(), 6), b && grow(b, 4))
+}
 
 // A tap, with a marker where the finger lands, once the camera is still and the target has stopped moving.
 const press = async (locator) => {
@@ -791,22 +897,22 @@ const stopAfter = (scene) => { if (STOP === scene) throw new Error('stop') }
 try {
 // --- 1. Cold open: the stinky sink, then Mochi beside it -----------------------------------------------
 const sink0 = await sinkShot()
-await frame(sink0.r, { pad: 4, max: 4.6, band: sink0.band, cut: true })
+{
+  // The sink, flies and stink cloud and all, with Mochi's glum face beside it, whole.
+  const a = await artRect()
+  const near = a && Math.hypot(a.x + a.w / 2 - (sink0.r.x + sink0.r.w / 2), a.y + a.h / 2 - (sink0.r.y + sink0.r.h / 2)) < 90
+  const r = near ? union(sink0.r, grow(a, 4)) : sink0.r
+  await frame(r, { pad: 4, max: 4.6, band: near ? union(sink0.band, grow(a, 8)) : sink0.band, cut: true })
+}
 await stage.evaluate(() => window.calm(true))
 await say('Chores are\n*boring.*', true) // fully set from the first frame
 await startCast()
 log('open')
 await hold(2.25)
-await framePet(110)
-await say('So we gave\nthem a *pet.*')
+await petFace(72, { max: 6 })
+await say('So we gave\nchores a pet.\nMeet *Mochi.*')
 setTimeout(() => cue('chirp'), 0.6 * 1000 * K)
-await hold(3.3)
-// The whole kitchen, with the header: the mess, and the health bar and mood ("Feeling meh").
-const room0 = await roomRect()
-const head0 = await headerRect()
-await frame(union(head0, room0), { pad: 4, band: grow(union(head0, room0), 2) })
-await say('Late chores show up\nas *mess*.')
-await hold(3.3)
+await hold(3.9)
 stopAfter('open')
 
 // --- 2. Each thing you place brings a chore: a toilet in a new bathroom ----------------------------------
@@ -820,13 +926,14 @@ await transition(async () => {
   await hold(0.4)
   await click(phone.getByRole('button', { name: /^Toilet/ }))
   await hold(0.3)
-  const br = await settledRect(phone.locator('.build-room'))
-  await frame(br, { pad: 4, band: grow(br, 2), cut: true })
+  const br = await settledRect(phone.locator('.build-room-svg'))
+  await frame(br, { pad: 2, band: grow(br, 1), cut: true })
 }, { removeTime: true })
-await say('Each thing you place\nbrings a *real chore.*')
-await hold(0.4)
+await say(C('Mochi lives in\na home you *build.*', 'Mochi lives\nin a home\nyou *build.*'))
+await hold(0.9)
 await click(phone.getByRole('button', { name: 'Place it', exact: true }))
 await hold(0.75) // it drops into the room
+await settleCaption()
 const brings = phone.locator('.sheet-block').filter({ hasText: 'Chores it brings' })
 // Close on what it brings: the heading, the chore and its schedule, big. The matte ends before "Due Wed" and the bin.
 let choreText = null
@@ -842,11 +949,12 @@ await transition(async () => {
   const r = { x: main.x - 6, y: head.y - 4, w: right - (main.x - 6), h: main.y + main.h + 6 - (head.y - 4) }
   await frame(r, { pad: 4, band: r, max: 3.4, cut: true })
 }, { removeTime: true })
+await say(C('Everything you place\nbrings its own *chore.*', 'Everything\nyou place\nbrings its\nown *chore.*'))
+await hold(0.3)
 await ring(choreText, 14, 2)
 await hold(1.5)
 await settleCaption()
-// Back to the kitchen unseen, straight onto the dirty sink.
-let sink1 = null
+// Back to the kitchen unseen: all of it, with the header (the mess, the health bar, "Feeling meh"), then the sink.
 await transition(async () => {
   await click(phone.getByRole('button', { name: 'Close', exact: true }))
   await hold(0.3)
@@ -856,15 +964,33 @@ await transition(async () => {
   await hold(0.4)
   await click(phone.getByRole('button', { name: /^Show the kitchen/ }))
   await hold(0.8)
-  sink1 = await sinkShot()
-  await frame(sink1.r, { pad: 4, max: 4.6, band: sink1.band, cut: true })
+  await halt() // Mochi holds still (still breathing): no line pops up at the edge of the shot
+  await frame(await kitchenClose(), { pad: 4, band: await roomBand(), cut: true })
 }, { removeTime: true })
+await say(C('Leave one too long,\nand the mess *shows.*', 'Leave one\ntoo long,\nand the\nmess *shows.*'))
+await hold(2)
+await settleCaption()
 log('build')
 stopAfter('build')
 
 // --- 3. Done on the dishes ------------------------------------------------------------------------
-await say('Do the real dishes,\nthen tap *Done.*')
-await hold(1.4)
+// The JS clock is held from here to the cheer, so no new line pops up over the sink mid-shot. First (unseen, cut
+// from the video) Mochi is let wander until it is quiet and clear of the room's pill, so its cheer line, which
+// sits above it, can be framed with it, big, without the pill in the shot.
+await transition(async () => {
+  drive()
+  const pill = await rectOf(phone.locator('.room-pill'))
+  for (let i = 0; i < 80; i++) {
+    const p = await petRect()
+    if (!(await bubbleRect()) && p && (!pill || p.x + p.w / 2 > pill.x + pill.w + 70) && !(await hidden())) break
+    await stage.waitForTimeout(100 * K)
+  }
+  await halt()
+  const sink1 = await sinkShot()
+  await frame(sink1.r, { pad: 4, max: 4.6, band: sink1.band, cut: true })
+}, { removeTime: true })
+await say('Do the dishes\nin real life,\nthen tap *Done.*')
+await hold(1.5)
 // Both dish chores, the sink's and the dishwasher's, in one shot of the list (so the sink's corner is all clean after).
 const dishRows = async () => {
   const a = await settledRect(phone.locator('.cl-row').filter({ hasText: 'Wash the dishes' }))
@@ -889,25 +1015,25 @@ await transition(async () => {
   await cheered(lineBefore)
   await settledRect(phone.locator('.pet-bubble')) // the bubble finds a spot clear of the furniture
   await halt() // hold the cheer: the beanie (1.4 s after the Done) waits
-  await framePet(110, { cut: true })
+  await petFace(72, { cut: true, max: 6 })
 }, { removeTime: true })
-await say('Mochi *cheers!*')
+await say('Mochi *loves* it.')
 await hold(1.9)
 log('done')
 stopAfter('done')
 
 // --- 4. A gift drops in: the red beanie; then the same sink, clean -------------------------------------
 await awaitGift()
-await say('And a *gift*\ndrops in!')
-await hold(1.1)
+await sayPart(C('There\'s a gift, too:\na red *beanie!*', 'There\'s a\ngift, too:\na red *beanie!*'), 4)
+await hold(0.6)
 await press(giftButton())
 await hold(0.35)
 if ((await giftButton().count()) && (await giftButton().isEnabled().catch(() => false))) await press(giftButton())
 await hold(0.5)
+await more()
 await celebrate()
-await hold(0.4)
-await say('A red *beanie!*')
 await hold(1.6)
+await settleCaption()
 // The sheet slides away unseen and Mochi's cheer line goes; then the sink, basin and counter only.
 await leaveGift('Put it on', async () => {
   for (let i = 0; i < 60 && (await phone.locator('.pet-bubble').count()); i++) await stage.waitForTimeout(80 * K)
@@ -924,14 +1050,24 @@ stopAfter('gift')
 drive()
 await transition(async () => {
   await phone.getByText(/^Done: /).waitFor({ state: 'hidden', timeout: 9000 * K }).catch(() => {})
-  const room1 = await roomRect()
-  const head1 = await headerRect()
-  await frame(union(head1, room1), { pad: 4, band: grow(union(head1, room1), 2), cut: true })
+  // The kitchen, close, with the clock held between the days (no line pops up at the edge of the shot). The first
+  // day has already turned when the shot fades in.
+  await halt()
+  await skipDay()
+  for (let i = 0; i < 60 && (await bubbleRect()); i++) await stage.clock.runFor(250)
+  await frame(await kitchenClose(), { pad: 4, band: await roomBand(), cut: true })
 }, { removeTime: true })
-await say('A few days\n*later…*')
+await say(C('A few days later,\nthe mess *creeps back.*', 'A few days\nlater, the mess\n*creeps back.*'))
 let days = 0
 for (; days < 4; days++) {
-  await skipDay()
+  // The day turns with the clock held; a line Mochi starts on it would sit at the edge of this close shot, so it
+  // is let run its course unseen (cut from the video).
+  if (days > 0) {
+    const from = now()
+    await skipDay()
+    for (let i = 0; i < 60 && (await bubbleRect()); i++) await stage.clock.runFor(250)
+    segments.push({ from, to: now(), speed: 1e4, fixed: true })
+  }
   await chip(days === 0 ? '1 day later' : `${days + 1} days later`)
   await hold(0.95)
   const m = await mood()
@@ -939,32 +1075,9 @@ for (; days < 4; days++) {
 }
 const scruffy = await mood()
 await stage.evaluate(() => window.chip(''))
-if (WIDE) {
-  // 16:9: the window is wide and short, so Mochi's line would sit over the mess. The shot waits for the line to go
-  // and takes in more of the room around it.
-  await transition(async () => {
-    for (let i = 0; i < 120 && (await phone.locator('.pet-bubble').count()); i++) await stage.waitForTimeout(80 * K)
-    await halt()
-    const p = await petRect()
-    const square = { x: p.x + p.w / 2 - 75, y: p.y + p.h / 2 - 80, w: 150, h: 150 }
-    const band = await roomBand()
-    // A line still up above Mochi is matted out whole: the shot starts below it. (The pet's box is its tap area,
-    // taller than the art, so "above" means above the middle of it.)
-    const b = await bubbleRect()
-    if (b && b.y + b.h + 3 <= p.y + p.h * 0.45) {
-      const top = b.y + b.h + 3
-      band.h -= top - band.y
-      band.y = top
-      square.h -= Math.max(0, top - square.y)
-      square.y = Math.max(square.y, top)
-    }
-    await frame(square, { pad: 6, max: 3.2, band, cut: true })
-  }, { removeTime: true })
-} else {
-  await halt()
-  await framePet(110)
-}
-await say(`Mochi feels\n*${scruffy}.*`)
+// Mochi's face, big, among the mess.
+await feelingShot()
+await say(`Mochi's feeling\na bit *${scruffy}.*`)
 await hold(2.2)
 log(`lapse (${days} days, ${scruffy})`)
 stopAfter('lapse')
@@ -982,17 +1095,18 @@ const listBand = async (r) => {
 }
 const list0 = await listRect()
 await frame(list0, { pad: 6, band: await listBand(list0) })
-await say('So you catch up,\none by *one.*')
-await hold(0.6)
+await say('No rush.\nJust one *chore*\nat a time.')
+await hold(1.5)
 await doneFirst()
 await halt() // chore 3 earns the teddy bear: it waits until the shot is ready for it
+await settleCaption() // so the gift card opens soon after it shows, under its own caption
 await awaitGift(6000)
-await say('Outfits and decor,\nonly from *real chores.*')
+await say(C('No shop, no coins.\nEvery gift comes from\na *real chore.*', 'No shop,\nno coins.\nEvery gift\ncomes from\na *real chore.*'))
+await hold(0.6)
 await press(giftButton())
 await hold(0.3)
 if ((await giftButton().count()) && (await giftButton().isEnabled().catch(() => false))) await press(giftButton())
-await hold(1.3)
-await settleCaption()
+await hold(1.3) // the caption carries on over the time-lapse
 await leaveGift('Maybe later', async () => {
   const r = await listRect()
   await frame(r, { pad: 6, band: await listBand(r), cut: true })
@@ -1022,11 +1136,10 @@ await transition(async () => {
   await frame(room2, { pad: 4, band: await roomBand(), cut: true })
 }, { removeTime: true })
 const happy = await mood()
-await say(`All clean. Mochi is\n*${happy}* again.`)
-await hold(1.5)
-await halt()
-await framePet(120)
-await hold(1.7)
+await say(C(`All clean, and\nMochi's *${happy}* again.`, `All clean,\nand Mochi's\n*${happy}* again.`))
+await hold(1.2)
+await feelingShot()
+await hold(1.9)
 log(`caught up (${happy})`)
 stopAfter('catchup')
 
@@ -1068,7 +1181,7 @@ await transition(async () => {
   await frame(room4, { pad: 4, band: await roomBand(), cut: true })
   mark('intro-out')
 }, { whole: true, fade: 0.45 })
-await say('Weeks later: more rooms,\nmore *gifts.*')
+await say('Weeks later:\nmore rooms,\nmore *gifts.*')
 await hold(0.9)
 await halt()
 // Tapped in the wide shot, so its hello lands inside the room; then close on it.
