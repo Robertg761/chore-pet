@@ -40,6 +40,7 @@
 // after that scene (for iterating), KEEP_FRAMES=1 to keep the frames, URL=... to use a running server.
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
 import { addSound, interceptAudio } from './demo-audio.mjs'
 import { ALL_REWARDS, isolate, launchBrowser, readSnapshot, ROOT, seedMilestone, seedPet, seedRoom, serveApp } from './media-common.mjs'
 
@@ -382,8 +383,9 @@ const drive = () => {
   })()
 }
 const halt = async () => { driving = false; await driver }
-const freeze = async () => { if (K === 1) return; await stage.clock.pauseAt((await stage.evaluate(() => Date.now())) + 20); drive() }
-const thaw = async () => { if (K === 1) return; await halt(); await stage.clock.resume() }
+// The clock is driven by hand even at SLOW=1 (then in real time), so halt() can still hold a shot.
+const freeze = async () => { await stage.clock.pauseAt((await stage.evaluate(() => Date.now())) + 20); drive() }
+const thaw = async () => { await halt(); await stage.clock.resume() }
 
 // Wait (off camera) for Mochi to go over to the sink and say something about it, so the story opens on that.
 let objectIds = {}
@@ -969,7 +971,7 @@ const end = now()
 const rel = (f) => f.slice(`${WORK}/`.length)
 const list = frames.map((f, i) => `file '${rel(f.file)}'\nduration ${(playTime(f.t, Math.max(f.t, frames[i + 1]?.t ?? end)) / K).toFixed(5)}`)
 writeFileSync(`${WORK}/frames.txt`, `${list.join('\n')}\nfile '${rel(frames.at(-1).file)}'\n`)
-mkdirSync(new URL('.', `file://${OUT}`).pathname, { recursive: true })
+mkdirSync(dirname(resolve(OUT)), { recursive: true })
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', `${WORK}/frames.txt`,
   '-vf', `fps=${FPS},format=yuv420p`, '-c:v', 'libx264', '-preset', 'medium', '-crf', '19', '-movflags', '+faststart', OUT])
 const base = OUT.replace(/\.mp4$/, '')
