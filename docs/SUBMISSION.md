@@ -6,14 +6,16 @@
 
 - **Live link:** https://robertg761.github.io/chore-pet/
 - **Repo:** https://github.com/Robertg761/chore-pet
-- **Demo video:** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (54 s at 60 fps with sound, recorded in the app with `npm run demo:record`)
+- **Demo video (16:9):** https://robertg761.github.io/chore-pet/chore-pet-demo.mp4 (65 s, 1920 x 1080, 60 fps, with sound). A portrait cut for phones: https://robertg761.github.io/chore-pet/chore-pet-demo-portrait.mp4 (64 s, 1080 x 1920).
+  - It tells one small story about Mochi with the real app: a stinky kitchen, a placed toilet bringing "Clean the toilet", Done and a cheer, a red beanie, the mess creeping back, catching up, and a cosy home weeks later.
+  - It is recorded in the app with `npm run demo:story` (`FORMAT=landscape` for 16:9). The first, faster feature tour is still `npm run demo:record`.
 
 ## Listing
 
 What goes on the hackyard.tech build card. The card shows the description in full, and the share card uses its first sentence.
 
 - **Cover (16:9):** `docs/media/chore-pet-showcase.png` (1600 x 900)
-- **Demo:** the video above
+- **Demo:** the 16:9 video above
 - **Description:**
 
   > Chore Pet is a tiny pet that lives in a home you build, and the only way to keep it happy is to do your real chores. Place a sink, a bed, a plant: each brings its own chores. Leave one late and it shows as mess; do it, tap Done, and the room sparkles, your pet cheers and gifts unlock: outfits, decor, new rooms. Not needed today? Skip it honestly, for nothing. No guilt, and the pet never dies. Try a sample home in one tap: no sign-up, works offline.

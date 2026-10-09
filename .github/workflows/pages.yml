@@ -41,7 +41,7 @@ jobs:
       - run: npm run test:browser
       # The demo video and showcase images are served next to the app (not precached by the
       # service worker); the social card is the link preview (og:image in index.html).
-      - run: cp docs/media/chore-pet-demo.mp4 docs/media/chore-pet-showcase.png docs/media/chore-pet-card.png dist/
+      - run: cp docs/media/chore-pet-demo.mp4 docs/media/chore-pet-demo-portrait.mp4 docs/media/chore-pet-showcase.png docs/media/chore-pet-card.png dist/
       - if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
