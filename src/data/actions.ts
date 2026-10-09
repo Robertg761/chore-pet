@@ -23,8 +23,8 @@ export function createHousehold(input: { species: Species; petName: string; user
 
 /** A new room starts with the free look for its kind (a bathroom is not a kitchen); existing rooms keep theirs. */
 export function createRoom(home: Home, type: RoomType = 'kitchen'): NewOp[] {
-  // madeAt keeps rooms made on this device in order (and named "Kitchen", then "Kitchen 2") until the
-  // server's creation time arrives on the next pull. It is never sent up.
+  // madeAt keeps rooms in the order they were made (and named "Kitchen", then "Kitchen 2"): it syncs as
+  // made_at, so every device agrees even when rooms sent up together share a server creation time.
   const room: Room & Created = { id: id(), homeId: home.id, type, ...startStylesOf(type), madeAt: new Date().toISOString() }
   return [upsertOp('rooms', room)]
 }
