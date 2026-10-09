@@ -36,6 +36,11 @@ describe('homeStreak nudge', () => {
     expect(homeStreak(chores, seeded, '2026-10-05').nudge).toBeNull()
   })
 
+  it('stays quiet when every owed round today was skipped, since no chore could count', () => {
+    const skipped = [{ ...daily('2026-10-01'), schedule: { kind: 'daily' as const, skips: ['2026-10-05'] } }]
+    expect(homeStreak(skipped, early, '2026-10-05').nudge).toBeNull()
+  })
+
   it('stays quiet on vacation', () => {
     expect(homeStreak(chores, early, '2026-10-05', [{ start: '2026-10-04', end: '2026-10-08' }]).nudge).toBeNull()
   })
