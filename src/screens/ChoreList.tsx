@@ -145,11 +145,11 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
   })
 
   const renderRow = (row: ChoreRow) => {
-    const { chore, status, label } = row
+    const { chore, status, label, paused } = row
     const early = status.state === 'upcoming'
     const justDone = finishing.has(chore.id)
     return (
-      <li key={chore.id} className={`cl-row cl-row-${status.state}${status.neglect ? ` cl-row-late${status.neglect}` : ''}${justDone ? ' cl-row-done' : ''}${row.doneToday ? ' cl-row-doneToday' : ''}`}
+      <li key={chore.id} className={`cl-row cl-row-${paused ? 'paused' : status.state}${status.neglect && !paused ? ` cl-row-late${status.neglect}` : ''}${justDone ? ' cl-row-done' : ''}${row.doneToday ? ' cl-row-doneToday' : ''}`}
         style={{ '--cl-vt': `cl-${chore.id.replace(/[^\w-]/g, '_')}` } as CSSProperties}
         // Ticked but not saved until the feedback ends: an app update must not reload over it.
         data-unsaved={justDone || undefined}
@@ -174,7 +174,7 @@ export function ChoreList({ chores, completions, vacations, today, onComplete, o
             )}
           </button>
           {/* Once done (or skipped) today, the date is when it comes round next, so it says so. */}
-          <span className={`tag tag-${status.state}${status.neglect ? ` tag-late${status.neglect}` : ''}`}>{row.doneToday ? `Next: ${label}` : label}</span>
+          <span className={`tag tag-${paused ? 'paused' : status.state}${status.neglect && !paused ? ` tag-late${status.neglect}` : ''}`}>{row.doneToday ? `Next: ${label}` : label}</span>
         </div>
         {!hasAction(row) && !justDone ? (
           // Already done for this round: doing it again wouldn't count, so there's nothing to tap.

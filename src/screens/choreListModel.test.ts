@@ -126,6 +126,13 @@ describe('statusLabel', () => {
     expect(statusLabel({ ...base, dueDate: '2026-10-13', state: 'upcoming' }, today)).toBe('13 Oct')
   })
 
+  it('says "Paused" instead of late while the home is away', () => {
+    const overdue = { ...base, dueDate: '2026-10-03', state: 'overdue' as const, overdueDays: 3, neglect: 2 as const }
+    expect(statusLabel(overdue, today, true)).toBe('Paused')
+    expect(statusLabel(overdue, today, false)).toBe('3 days late')
+    expect(statusLabel({ ...base, dueDate: '2026-10-07', state: 'upcoming' }, today, true)).toBe('Tomorrow')
+  })
+
   it('caps long stretches so they read kindly', () => {
     const late = (days: number) => statusLabel({ ...base, dueDate: '2026-09-01', state: 'overdue', overdueDays: days, neglect: 3 }, today)
     expect(late(6)).toBe('6 days late')
@@ -154,5 +161,17 @@ describe('next recurrence after finishing chores', () => {
     const monthly = chore('a', 'A monthly chore', today, { kind: 'monthly', dayOfMonth: 7 })
     const next = nextUpcoming(buildSections([monthly, dishes], [done('a', today), done('d', today)], [], today))
     expect(next?.chore.id).toBe('d')
+  })
+})
+
+describe('buildSections while on vacation', () => {
+  it('marks late rows as paused only inside a vacation window', () => {
+    const today = '2026-10-06'
+    const dishes = chore('a', 'Wash the dishes', '2026-09-01')
+    const away = buildSections([dishes], [], [{ start: today, end: '2026-10-10' }], today).flatMap((s) => s.rows)
+    const home = buildSections([dishes], [], [], today).flatMap((s) => s.rows)
+    expect(away[0]).toMatchObject({ label: 'Paused', paused: true })
+    expect(home[0].paused).toBe(false)
+    expect(home[0].label).toMatch(/late/)
   })
 })

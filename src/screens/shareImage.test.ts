@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CARD_HEIGHT, CARD_WIDTH, captionFontSize, captionText, exportSize, nameFontSize, previewSize, shareFileName } from './shareImage'
+import { CARD_HEIGHT, CARD_WIDTH, captionFontSize, captionLines, captionText, exportSize, nameFontSize, previewSize, shareFileName } from './shareImage'
 
 describe('captionText', () => {
   it('lists chores and the streak', () => {
@@ -16,6 +16,23 @@ describe('captionText', () => {
   })
   it('falls back when the name is blank', () => {
     expect(captionText('  ', 0, 0)).toBe('Home of your pet')
+  })
+})
+
+describe('captionLines', () => {
+  it('puts the counts on their own line under the name', () => {
+    expect(captionLines('Pip', 23, 4)).toEqual(['Home of Pip', '23 chores done · 4 days in a row'])
+    expect(captionLines('Pip', 1, 0)).toEqual(['Home of Pip', '1 chore done'])
+    expect(captionLines('Pip', 0, 1)).toEqual(['Home of Pip', '1 day in a row'])
+  })
+  it('is a single line when there is nothing to count', () => {
+    expect(captionLines('  ', 0, 0)).toEqual(['Home of your pet'])
+  })
+  it('keeps a long name readable instead of shrinking the counts', () => {
+    const [title, counts] = captionLines('Bartholomew Pumpkin Jr', 23, 4)
+    expect(title).toBe('Home of Bartholomew Pumpkin Jr')
+    expect(captionFontSize(title)).toBe(44)
+    expect(captionFontSize(counts)).toBe(44)
   })
 })
 
@@ -59,7 +76,7 @@ describe('text sizes', () => {
     expect(nameFontSize('A'.repeat(60))).toBe(64)
   })
   it('shrinks long captions, never below the minimum', () => {
-    expect(captionFontSize(captionText('Pip', 23, 4))).toBe(38)
-    expect(captionFontSize('x'.repeat(100))).toBe(26)
+    expect(captionFontSize('Home of Pip')).toBe(44)
+    expect(captionFontSize('x'.repeat(100))).toBe(32)
   })
 })
