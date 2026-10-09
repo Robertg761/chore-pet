@@ -38,6 +38,10 @@ import { ALL_REWARDS, isolate, launchBrowser, ROOT, seedMilestone, serveApp } fr
 
 const CAPTIONS = process.env.CAPTIONS !== '0'
 const FPS = Number(process.env.FPS ?? 60)
+// Slow motion: the page runs K times slower than real time while Chrome captures at its usual 30 to 40
+// frames per second, and ffmpeg divides every timestamp by K. So the 60 fps video has real motion in
+// every frame, instead of the capture rate repeated. SLOW=1 records at normal speed.
+const K = Number(process.env.SLOW ?? 4)
 const DAY = 24 * 60 * 60 * 1000
 const OUT = process.env.OUT ?? `${ROOT}docs/media/chore-pet-demo.mp4`
 const FRAMES = `${ROOT}demo/frames`
@@ -66,6 +70,23 @@ const SETTLE = 380
 const SPARK = '<svg class="sp" viewBox="-1.25 -1.25 2.5 2.5" aria-hidden="true"><use href="#spk"/></svg>'
 const sparkAt = (x, y, size, fill, delay, extra = '') =>
   `<svg class="sp tw" viewBox="-1.25 -1.25 2.5 2.5" style="left:${x}px;top:${y}px;width:${size}px;height:${size}px;--f:${fill};--dl:${delay}s;${extra}" aria-hidden="true"><use href="#spk"/></svg>`
+
+// Runs in every frame, before the page: all CSS animations and transitions (and Element.animate) play at 1/k.
+// New ones are caught when the DOM changes or when they start, before they have shown a frame.
+function slowAnimations(k) {
+  const rate = 1 / k
+  const apply = () => { for (const a of document.getAnimations()) if (a.playbackRate !== rate) a.updatePlaybackRate(rate) }
+  const animate = Element.prototype.animate
+  Element.prototype.animate = function (...args) { const a = animate.apply(this, args); a.updatePlaybackRate(rate); return a }
+  const watch = () => {
+    new MutationObserver(apply).observe(document, { subtree: true, childList: true, attributes: true })
+    addEventListener('animationstart', apply, true)
+    addEventListener('transitionrun', apply, true)
+    apply()
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch)
+  else watch()
+}
 
 const BGMODE = process.env.BGMODE ?? 'lite'
 const BLOBS = BGMODE === 'none' ? '' : [
@@ -175,7 +196,8 @@ iframe { display: block; width: ${PHONE.w}px; height: ${PHONE.h}px; border: 0; }
 .on .pet .nm { animation: rise .5s var(--pop) calc(1s + var(--i) * .2s) both; }
 .on .pet .shadow { animation: fadein .3s ease calc(.6s + var(--i) * .2s) both; }
 @keyframes drop {
-  0% { opacity: 1; transform: translateY(-460px) scale(.82, 1.25); animation-timing-function: cubic-bezier(.55, 0, 1, .65); }
+  0% { opacity: 0; transform: translateY(-460px) scale(.82, 1.25); }
+  .01% { opacity: 1; transform: translateY(-460px) scale(.82, 1.25); animation-timing-function: cubic-bezier(.55, 0, 1, .65); }
   38% { opacity: 1; transform: translateY(0) scale(.86, 1.2); animation-timing-function: ease-out; }
   48% { opacity: 1; transform: translateY(0) scale(1.28, .7); animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
   66% { opacity: 1; transform: translateY(-46px) scale(.93, 1.09); animation-timing-function: cubic-bezier(.55, 0, 1, .65); }
@@ -289,6 +311,8 @@ const ctx = await browser.newContext({
   serviceWorkers: 'block',
 })
 await isolate(ctx)
+ctx.setDefaultTimeout(30000 * K)
+if (K !== 1) await ctx.addInitScript(slowAnimations, K)
 await ctx.route(`${app.url}__stage.html`, (route) => route.fulfill({ contentType: 'text/html', body: stageHtml(app.url) }))
 const stage = await ctx.newPage()
 rmSync(FRAMES, { recursive: true, force: true })
@@ -317,6 +341,31 @@ const pets = await stage.evaluate(() => {
 await stage.evaluate(([svgs, names]) => window.fillPets(svgs, names), [pets.svgs, pets.names])
 await stage.evaluate(() => document.fonts.load("900 100px 'Nunito'").then(() => document.fonts.ready))
 await stage.waitForTimeout(600)
+
+// JS time (timers, Date, requestAnimationFrame) follows the same 1/K: the fake clock is paused and a loop
+// steps it by the real time that has passed divided by K.
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+let driving = false
+let driver = null
+const drive = () => {
+  driving = true
+  driver = (async () => {
+    let last = Date.now()
+    let owed = 0
+    while (driving) {
+      await sleep(10)
+      const at = Date.now()
+      owed += (at - last) / K
+      last = at
+      const whole = Math.floor(owed)
+      if (whole >= 1) { owed -= whole; await stage.clock.runFor(whole) }
+    }
+  })()
+}
+const halt = async () => { driving = false; await driver }
+const freeze = async () => { if (K === 1) return; await stage.clock.pauseAt((await stage.evaluate(() => Date.now())) + 20); drive() }
+const thaw = async () => { if (K === 1) return; await halt(); await stage.clock.resume() }
+await freeze()
 
 // Screencast, with a pause that leaves no gap in the video.
 const frames = []
@@ -348,7 +397,7 @@ const lapse = async (seconds, fn) => {
     fixedReal += real
     fixedPlay += real / g.speed
   }
-  segments.push({ from, to, speed: Math.max(1, (to - from - fixedReal) / Math.max(0.5, seconds - fixedPlay)), fixed: false })
+  segments.push({ from, to, speed: Math.max(1, (to - from - fixedReal) / Math.max(0.5 * K, seconds * K - fixedPlay)), fixed: false })
 }
 cdp.on('Page.screencastFrame', ({ data, metadata, sessionId }) => {
   // Ack first: the next frame is only sent once this one is acknowledged.
@@ -364,9 +413,9 @@ const resumeCast = async () => { cut += Date.now() / 1000 - pausedAt; await star
 
 // Waits are the story's pacing; PACE trims them (a little under real time keeps the video brisk).
 const PACE = Number(process.env.PACE ?? 0.82)
-const wait = (ms) => stage.waitForTimeout(Math.max(80, ms * PACE))
+const wait = (ms) => stage.waitForTimeout(Math.max(80, ms * PACE) * K)
 const t0 = Date.now()
-const log = (what) => console.log(`${((Date.now() - t0) / 1000).toFixed(1).padStart(5)}s  ${what}` + (process.env.DEBUG_TIME ? `  (video ${playTime(frames[0]?.t ?? 0, frames.at(-1)?.t ?? 0).toFixed(1)}s)` : ''))
+const log = (what) => console.log(`${((Date.now() - t0) / 1000).toFixed(1).padStart(5)}s  ${what}` + (process.env.DEBUG_TIME ? `  (video ${(playTime(frames[0]?.t ?? 0, frames.at(-1)?.t ?? 0) / K).toFixed(1)}s)` : ''))
 
 // Captions pop in over the old one ("*word*" is the accent keyword), so there is nothing to wait for.
 let current = ''
@@ -409,13 +458,13 @@ let pressTime = 0
 const press = async (locator) => {
   const began = Date.now()
   await rest()
-  const settle = camMoved + SETTLE - Date.now()
+  const settle = camMoved + SETTLE * K - Date.now()
   if (settle > 0) await wait(settle)
   const target = locator.first()
   await target.waitFor({ state: 'visible' })
   let box = await target.boundingBox()
   for (let i = 0; i < 12; i++) {
-    await stage.waitForTimeout(60)
+    await stage.waitForTimeout(60 * K)
     const again = await target.boundingBox()
     const still = Math.abs(again.x - box.x) < 0.5 && Math.abs(again.y - box.y) < 0.5
     box = again
@@ -463,7 +512,10 @@ const openGifts = async ({ quick = false, show = null } = {}) => {
   }
 }
 const skipDays = async (days) => {
+  const was = driving
+  await halt()
   await stage.clock.fastForward(days * DAY)
+  if (was) drive()
   await wait(900)
 }
 
@@ -524,7 +576,7 @@ await wait(300)
 await caption('A skip keeps things *tidy*')
 await wait(1200)
 // The note about it stays for five seconds, and would cover the next screen's tray.
-await lapse(0.8, () => phone.getByText(/^Skipped: /).waitFor({ state: 'hidden', timeout: 8000 }).catch(() => {}))
+await lapse(0.8, () => phone.getByText(/^Skipped: /).waitFor({ state: 'hidden', timeout: 8000 * K }).catch(() => {}))
 log('skip')
 
 // --- 4. A bathroom from the room pill ----------------------------------------------------
@@ -597,6 +649,7 @@ log('caught up')
 await caption('Fast forward: 89 chores *later*...')
 await wait(500)
 await pauseCast()
+await thaw()
 await skipDays(1)
 await seedMilestone(phone, {
   choreCount: 89,
@@ -607,13 +660,14 @@ await seedMilestone(phone, {
 await reloadPhone()
 // Chore 90 is done off camera; its gift is waiting when the recording picks up.
 await phone.getByRole('button', { name: /^Done: / }).first().tap()
-await phone.getByRole('button', { name: 'Open it', exact: true }).waitFor({ timeout: 8000 })
+await phone.getByRole('button', { name: 'Open it', exact: true }).waitFor({ timeout: 8000 * K })
+await freeze()
 await resumeCast()
 await caption('Chore 90 earns *heart glasses*')
 await wait(400)
 await openGifts({ show: 'big' })
 // The Undo note covers the bottom of the next screen for a few seconds; let it go first.
-await lapse(1, () => phone.getByText(/^Done: /).waitFor({ state: 'hidden', timeout: 9000 }))
+await lapse(1, () => phone.getByText(/^Done: /).waitFor({ state: 'hidden', timeout: 9000 * K }))
 await caption('Two reward tiers, earned by *real* chores')
 await tab('Rewards')
 await wait(1100)
@@ -655,6 +709,7 @@ if (process.env.DEBUG_TIME) console.log('time spent finding and tapping', (press
 }
 
 await cdp.send('Page.stopScreencast')
+await halt()
 const end = Date.now() / 1000 - cut
 if (process.env.DEBUG_TIME) console.log('first', frames[0].t, 'last', frames.at(-1).t, 'end', end, 'cut', cut)
 if (process.env.DEBUG_FRAMES) writeFileSync(process.env.DEBUG_FRAMES, JSON.stringify(frames.map((f) => ({ ts: f.ts, t: f.t }))))
@@ -663,7 +718,7 @@ await app.close()
 
 // Each frame lasts until the next one (the last one until the end), so pauses keep their length.
 const rel = (f) => f.slice(`${ROOT}demo/`.length)
-const list = frames.map((f, i) => `file '${rel(f.file)}'\nduration ${playTime(f.t, Math.max(f.t, frames[i + 1]?.t ?? end)).toFixed(4)}`)
+const list = frames.map((f, i) => `file '${rel(f.file)}'\nduration ${(playTime(f.t, Math.max(f.t, frames[i + 1]?.t ?? end)) / K).toFixed(5)}`)
 writeFileSync(`${ROOT}demo/frames.txt`, `${list.join('\n')}\nfile '${rel(frames.at(-1).file)}'\n`)
 mkdirSync(new URL('.', `file://${OUT}`).pathname, { recursive: true })
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', `${ROOT}demo/frames.txt`,
