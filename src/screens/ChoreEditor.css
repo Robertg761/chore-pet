@@ -53,6 +53,22 @@
   .editor-summary { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
 
+/* Tablet portrait: the radio list and the chips already show the schedule, so the summary is read out but not drawn
+   (it would repeat the chosen card). The form sits in a centred card instead of hugging the top of a tall screen. */
+@media (min-width: 640px) and (max-width: 899px) and (min-height: 701px) {
+  .editor-summary { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .app-view > .screen:has(> .editor) { max-width: 720px; padding: 24px 28px; justify-content: center; }
+  .editor {
+    align-self: center;
+    max-width: 640px;
+    gap: 14px;
+    padding: 20px 24px 24px;
+    background: var(--card);
+    border: var(--outline);
+    border-radius: 20px;
+  }
+}
+
 /* Short phones: the number range and the "where" note are still read out, just not drawn, to keep the editor on one screen. */
 @media (max-height: 700px) and (max-width: 899px) {
   .editor-hint-n,

@@ -41,6 +41,23 @@
 .share-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .share-actions .btn { flex: 1 1 120px; min-height: 48px; }
 
+/* Tall portrait screens (tablets): the picture, its note and the Save button stay together as one centred column,
+   instead of the button being pinned to the bottom, far from the card. */
+@media (min-width: 640px) and (max-width: 899px) and (min-height: 900px) {
+  .share.screen-fit {
+    grid-template-rows: auto minmax(0, 1fr) auto auto minmax(0, 1fr);
+    grid-template-areas: 'head' '.' 'preview' 'side' '.';
+    row-gap: 14px;
+  }
+  .share-preview,
+  .share-side {
+    container-type: normal;
+    justify-self: center;
+    width: min(100%, 460px, calc((100dvh - 340px) * 4 / 5));
+  }
+  .share-card { width: 100%; }
+}
+
 /* Wide screens, and phones on their side: the picture on the left, the actions in a card at the top right. */
 @media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
   .share.screen-fit {

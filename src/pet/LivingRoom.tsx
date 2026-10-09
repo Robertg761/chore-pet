@@ -11,6 +11,7 @@ import { footprintOf, freeTile, overlaps, tilesOf, type Footprint } from '../roo
 import { PET_SCALE, Room } from '../room/Room'
 import { PET_STROKE_SCALE, ROOM_VIEWBOX, petTransform, roomPoint } from '../room/shell/geometry'
 import { play } from '../audio/sfx'
+import '../effects/effects.css' // the hop's keyframes
 import { initialPet, needsRender, positionAt, poseFor, sortTile, step, tap, type PetState, type Tile, type World } from './behaviour'
 import './LivingRoom.css'
 
@@ -104,6 +105,8 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     return { state, pos: state.tile }
   })
   const [said, setSaid] = useState<Said | null>(null)
+  // Counts the taps that make the pet hop; it keys the art, so each tap starts the hop afresh.
+  const [hops, setHops] = useState(0)
 
   // The live state, ahead of `shown` while the pet walks.
   const live = useRef<Shown>(shown)
@@ -173,6 +176,8 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     const t = performance.now()
     const next = tap(live.current.state, t)
     advance(next, t)
+    // A sleeping or poorly pet only stirs; it doesn't bounce about.
+    if (next.activity.kind === 'react') setHops((n) => n + 1)
     const lines = away ? VACATION_LINES : mood === 'sick' || mood === 'scruffy' ? MOOD_LINES[mood] : TAP_LINES
     setSaid({ text: pickLine(lines, next.beat), heard: true })
   }
@@ -216,7 +221,11 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
           label: `${pet.name}, feeling ${mood}. Tap to say hi.`,
           onTap,
           nodeRef: petNode,
-          art,
+          art: (
+            <g key={hops} className={hops ? 'pet-hop' : undefined}>
+              {art}
+            </g>
+          ),
         }}
       />
       {line && (

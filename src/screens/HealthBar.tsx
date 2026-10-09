@@ -46,9 +46,9 @@ function Flame() {
 }
 
 /** A flame and the day count beside the mood: the run that rewards count, kept in sight. */
-function StreakChip({ days }: { days: number }) {
+function StreakChip({ days, pop }: { days: number; pop: boolean }) {
   return (
-    <span className="hb-streak" title={`${days}-day streak`}>
+    <span className={pop ? 'hb-streak hb-streak-pop' : 'hb-streak'} title={`${days}-day streak`}>
       <Flame />
       <span aria-hidden="true">{days === 1 ? '1 day' : `${days} days`}</span>
       <span className="sr-only">{days === 1 ? 'Streak: 1 day' : `Streak: ${days} days in a row`}</span>
@@ -66,6 +66,14 @@ export function HealthBar({ health, mood, away, streak = 0 }: HealthBarProps) {
     else setGain(null)
   }
 
+  // The streak chip gives a little pop when the count goes up, but not when it is simply shown.
+  const [seenStreak, setSeenStreak] = useState(streak)
+  const [popKey, setPopKey] = useState(0)
+  if (streak !== seenStreak) {
+    setSeenStreak(streak)
+    if (streak > seenStreak) setPopKey(popKey + 1)
+  }
+
   useEffect(() => {
     if (!gain) return
     const t = window.setTimeout(() => setGain(null), FLOAT_MS)
@@ -80,7 +88,7 @@ export function HealthBar({ health, mood, away, streak = 0 }: HealthBarProps) {
         </div>
         <div className="hb-row">
           <p className="hb-text">On vacation</p>
-          {streak > 0 && <StreakChip days={streak} />}
+          {streak > 0 && <StreakChip key={popKey} days={streak} pop={popKey > 0} />}
         </div>
       </div>
     )
@@ -103,7 +111,7 @@ export function HealthBar({ health, mood, away, streak = 0 }: HealthBarProps) {
             </span>
           )}
         </span>
-        {streak > 0 && <StreakChip days={streak} />}
+        {streak > 0 && <StreakChip key={popKey} days={streak} pop={popKey > 0} />}
       </div>
     </div>
   )

@@ -88,10 +88,13 @@
 .wd-outfit-try:focus-visible { outline-offset: 0; }
 .wd-outfit-art { width: 100%; max-width: 54px; height: auto; display: block; }
 .wd-outfit-name { max-width: 100%; font-size: 0.8125rem; font-weight: 800; overflow-wrap: anywhere; line-height: 1.15; }
-/* The question takes the Remove button's place inside the card; the buttons wrap to stack when the card is narrow. */
+/* The question takes the Remove button's place inside the card; the buttons wrap to stack when the card is narrow (Keep first, so Remove stays at the bottom, level with its neighbours). */
 .wd-confirm { display: flex; flex-wrap: wrap; gap: 4px; }
 .wd-confirm .btn { flex: 1 1 56px; padding: 0 2px; font-size: 0.8125rem; }
 .wd-outfit > .btn { width: 100%; }
+/* Cards stretch to the tallest in the row, so the action row (Remove, or Remove and Keep) is pinned to the bottom of each card. */
+.wd-outfit > .btn,
+.wd-outfit > .wd-confirm { margin-top: auto; }
 
 .wd-name-form { display: flex; flex-direction: column; gap: 2px; }
 .wd-label { font-size: 0.875rem; font-weight: 800; }

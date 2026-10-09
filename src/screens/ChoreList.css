@@ -182,7 +182,9 @@
 .cl-check { animation: cl-pop 0.3s ease-out; }
 .cl-set { font-size: 0.875rem; }
 /* The check that holds a tapped Done button's place (a real button, so focus stays): it looks settled, not tappable. */
-.cl-nice { background: none; border: 0; cursor: default; }
+/* Its side padding is dropped so it is no wider than the Done button it replaces: the name never reflows while the check shows. */
+.cl-nice { padding: 0; background: none; border: 0; cursor: default; }
+.cl-done, .cl-nice { min-width: 5rem; }
 .cl-set .cl-check { animation: none; }
 .cl-skipped { color: var(--ink-soft); }
 
@@ -235,8 +237,10 @@ html[data-vt='chores'] .cl-foot { view-transition-name: cl-foot; }
 html[data-vt='chores'] .cl-heading { view-transition-name: cl-heading; }
 
 html[data-vt='chores']::view-transition-group(*) { animation-duration: 340ms; animation-timing-function: var(--ease-out); }
-html[data-vt='chores']::view-transition-old(root),
-html[data-vt='chores']::view-transition-new(root) { animation-duration: 160ms; animation-delay: 0ms; }
+/* The page itself never cross-fades (a fade here blanks the whole screen for a frame): the
+   new page is simply there, and only the named rows and room below move. */
+html[data-vt='chores']::view-transition-old(root) { animation: none; opacity: 0; }
+html[data-vt='chores']::view-transition-new(root) { animation: none; opacity: 1; }
 ::view-transition-old(.cl-row):only-child { animation: cl-vt-out 220ms var(--ease-in) both; }
 ::view-transition-new(.cl-row):only-child { animation: cl-vt-in 300ms var(--ease-out) 120ms both; }
 ::view-transition-new(cl-caught):only-child { animation: cl-vt-in 360ms var(--ease-spring) 140ms both; }

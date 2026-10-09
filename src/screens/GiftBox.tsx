@@ -28,11 +28,11 @@ export interface GiftBoxProps {
 const { ink, warmRed, blush, white, sky, petDefault } = PALETTE
 const OPEN_MS = 650
 
-/** The wrapped box in a 200x200 box. The lid is its own group so it can pop. */
+/** The wrapped box, drawn in the same 200x224 frame as the pet reveal so the card is the same size before and after. The lid is its own group so it can pop. */
 function WrappedBox({ opening }: { opening: boolean }) {
   const stroke = { stroke: ink, strokeWidth: CHARACTER_STROKE, strokeLinejoin: 'round', strokeLinecap: 'round' } as const
   return (
-    <svg className="gift-art" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+    <svg className="gift-art" viewBox="0 -28 200 224" aria-hidden="true" focusable="false">
       <ellipse cx="100" cy="184" rx="68" ry="9" fill={ink} opacity="0.14" />
       <g className="gift-box">
         <rect x="38" y="92" width="124" height="86" rx="12" fill={warmRed} {...stroke} />
@@ -162,13 +162,14 @@ export function GiftBox({ unlock, pet, onClose, onPlace, onTry, children }: Gift
         )}
       </div>
 
-      {revealed && hint && (
-        <p id={hintId} className="gift-hint">
+      {/* Held in place (unseen) until the reveal, so the card never changes size when the gift appears. */}
+      {hint && (
+        <p id={hintId} className={revealed ? 'gift-hint' : 'gift-hint gift-hint-wait'} aria-hidden={revealed ? undefined : true}>
           {hint}
         </p>
       )}
 
-      <div className="gift-actions">
+      <div className={canWear || shortcut ? 'gift-actions gift-actions-two' : 'gift-actions'}>
         {!revealed && (
           <button ref={openButton} type="button" className="btn btn-primary gift-btn" onClick={open} disabled={phase === 'opening'}>
             Open it

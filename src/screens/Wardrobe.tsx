@@ -179,11 +179,11 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
               </button>
               {removing === o.id ? (
                 <div className="wd-confirm" role="group" aria-label={`Remove ${o.name}?`}>
-                  <button type="button" className="btn btn-sm btn-danger" onClick={() => confirmRemove(o)}>
-                    Remove
-                  </button>
                   <button type="button" className="btn btn-sm" onClick={() => setRemoving(null)}>
                     Keep
+                  </button>
+                  <button type="button" className="btn btn-sm btn-danger" onClick={() => confirmRemove(o)}>
+                    Remove
                   </button>
                 </div>
               ) : (
