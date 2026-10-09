@@ -15,22 +15,16 @@ import './LandingScene.css'
 
 const ROOM = { floorStyle: 'wood', wallStyle: 'peach' }
 
-// The sample kitchen, with the sink out from the corner so its dishes show, the table and rug
-// in the middle of the floor and a plant on the far wall, so the whole room is lived in rather than just its back corner.
-const MOVED: Record<string, { tileX: number; tileY: number }> = {
-  stove: { tileX: 0, tileY: 1 },
-  sink: { tileX: 0, tileY: 2 },
-  rug: { tileX: 4, tileY: 3 },
-  table: { tileX: 4, tileY: 3 },
-}
-const SPOTS = [...SAMPLE_KITCHEN.map((s) => ({ ...s, ...MOVED[s.catalogId] })), { catalogId: 'plant', tileX: 5, tileY: 0, rotation: 0 as const }]
+// The sample kitchen exactly as a visitor gets it (its own tests check every spot): a fitted run along
+// both walls, the sink under the window, a dining table on a rug and a plant, so the whole room is lived in.
+const SPOTS = SAMPLE_KITCHEN
 const OBJECTS: PlacedObject[] = SPOTS.map((spot, i) => ({ id: `hero-${i}`, roomId: 'hero', ...spot }))
 const sinkId = OBJECTS.find((o) => o.catalogId === 'sink')!.id
 const STAGES: Record<string, MessStage> = { [sinkId]: 'messy2' }
 const NEGLECT: Record<string, NeglectLevel> = { [sinkId]: 2 }
 
-/** In the open floor in front of the kitchen, clear of the sink so its dishes show. */
-const PET_TILE = { tx: 2.1, ty: 4.1 }
+/** On the open floor at the front right, in full view and clear of the table and the sink's dishes. */
+const PET_TILE = { tx: 5.6, ty: 5.3 }
 
 /** Decorative: the kitchen with the chosen pet gently idling in it. */
 export const LandingScene = memo(function LandingScene({ species }: { species: Species }) {
