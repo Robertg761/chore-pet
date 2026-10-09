@@ -2,7 +2,7 @@
 .landing-scene {
   position: relative;
   width: min(100%, 460px, calc((100dvh - 420px) * 390 / 322));
-  min-width: min(100%, 230px);
+  min-width: min(100%, 140px);
   margin: 0 auto;
   pointer-events: none;
   user-select: none;
