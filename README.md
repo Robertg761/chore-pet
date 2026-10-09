@@ -64,7 +64,9 @@ The anon key is public by design: row-level security in the migrations protects 
 | `npm run test:browser` | Browser tests against the production build in `dist/` (run `npm run build` first; set `CHROME` to use an existing Chrome, see `scripts/browser/README.md`) |
 | `npm run icons` | Regenerate the app icon PNGs |
 | `npm run demo:record` | Record the demo video from the production build in `dist/` (see `scripts/record-demo.mjs`) |
-| `npm run showcase` | Render the showcase image and social card in `docs/media/` (see `scripts/showcase.mjs`) |
+| `npm run cover` | Render the cover and social card into `docs/media/` (build first; see `scripts/cover.mjs`) |
+| `npm run demo:story` | Record the story demo video (`FORMAT=landscape` for 16:9; see `scripts/record-story.mjs`) |
+| `npm run showcase` | Render the earlier screenshot showcase into `demo/showcase/` (see `scripts/showcase.mjs`) |
 
 ## Docs
 
@@ -73,3 +75,7 @@ The anon key is public by design: row-level security in the migrations protects 
 - `docs/ART.md`: art direction and character rules
 - `docs/SUBMISSION.md`: the Hackyard write-up
 - `docs/PRIVACY.md`: what is stored and how to delete it
+
+## License
+
+[MIT](LICENSE)
