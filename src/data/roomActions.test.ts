@@ -119,3 +119,30 @@ describe('clearHome with several rooms', () => {
     expect(after.tables.homes.h1).toEqual(home)
   })
 })
+
+describe('createRoom', () => {
+  it('keeps rooms made on this device in the order they were made, so a second kitchen is "Kitchen 2"', async () => {
+    const { vi } = await import('vitest')
+    const { createRoom } = await import('./actions')
+    const { selectHome } = await import('./state')
+    const { orderRooms, roomNames } = await import('../screens/roomsModel')
+    vi.useFakeTimers()
+    try {
+      vi.setSystemTime(new Date('2026-10-08T09:00:00.000Z'))
+      const [first] = createRoom(home)
+      vi.setSystemTime(new Date('2026-10-08T09:05:00.000Z'))
+      const [second] = createRoom(home)
+      const tables = { ...emptySnapshot().tables, homes: { h1: home } } as Snapshot['tables']
+      // Whatever the random ids, and in whichever order the rows come back from storage.
+      for (const ops of [[first, second], [second, first]]) {
+        const rooms = Object.fromEntries(ops.map((op) => [op.key, (op as { value: Room }).value]))
+        const ordered = orderRooms(selectHome({ ...tables, rooms } as Snapshot['tables'], 'h1').rooms)
+        const names = roomNames(ordered)
+        expect(names.get(first.key)).toBe('Kitchen')
+        expect(names.get(second.key)).toBe('Kitchen 2')
+      }
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})
