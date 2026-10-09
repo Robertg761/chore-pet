@@ -181,8 +181,8 @@ export default function App() {
   }, [justAdopted])
   // First run: the welcome beat after "Move in", then the coach card while building the first room.
   const [welcome, setWelcome] = useState(false)
-  // The first-build coach: which home, and what was already placed when it started (it counts only what's new).
-  const [coach, setCoach] = useState<{ homeId: string; before: string[] } | null>(null)
+  // The first-build coach: which home, and what this visit has placed (in any room) since it started.
+  const [coach, setCoach] = useState<{ homeId: string; placed: string[] } | null>(null)
   const [, setFlagTick] = useState(0)
   const { canInstall, install } = useInstallPrompt()
   // The completion moment: the pet cheers and each cleaned object gets its own sparkle.
@@ -353,7 +353,7 @@ export default function App() {
   const openBuild = () => {
     // Started once per visit: reopening Build keeps what it counts from.
     if (!readFlag(onboardedKey(home.id)) && coach?.homeId !== home.id && !objects.some((o) => o.roomId === room?.id)) {
-      setCoach({ homeId: home.id, before: objects.map((o) => o.id) })
+      setCoach({ homeId: home.id, placed: [] })
     }
     setView({ name: 'build' })
   }
@@ -687,16 +687,17 @@ export default function App() {
         const ops = placeObject(room, change.entry, change.placement, today)
         appStore.apply(...ops)
         // While coaching, keep the tray open so the next pick is one tap away.
-        if (!coaching) setSelectedId(ops[0].key)
+        if (coaching) setCoach((c) => c && { ...c, placed: [...c.placed, ops[0].key] })
+        else setSelectedId(ops[0].key)
       }
       else {
         const obj = roomObjects.find((o) => o.id === change.id)
         if (obj) appStore.apply(...moveObject(obj, change.placement))
       }
     }
-    // Counts what this visit placed in any room, so adding a second room mid-way doesn't send it back to step 1,
-    // and furniture from before (another room, another device) doesn't skip steps.
-    const coachPlaced = coaching ? objects.filter((o) => !coach.before.includes(o.id)) : []
+    // Counts what this visit placed, in any room, so adding a second room mid-way doesn't send it back to step 1,
+    // and furniture from before or from another device doesn't skip steps.
+    const coachPlaced = coaching ? objects.filter((o) => coach.placed.includes(o.id)) : []
     const step = coachStep(coachPlaced.length)
     const finishCoach = () => {
       setCoach(null)
