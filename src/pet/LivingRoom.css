@@ -32,8 +32,11 @@
   from { opacity: 0; transform: translate(-50%, -90%) scale(0.9); }
   to { opacity: 1; transform: translate(-50%, -100%) scale(1); }
 }
+/* A tap makes the pet squash and hop once (the keyframes are the cheer's, src/effects/effects.css). */
+.pet-hop { transform-box: fill-box; transform-origin: 50% 100%; animation: fx-hop 640ms linear 1 both; }
 @media (prefers-reduced-motion: reduce) {
   .pet-bubble { animation: none; }
+  .pet-hop { animation: none; }
 }
 .visually-hidden {
   position: absolute;

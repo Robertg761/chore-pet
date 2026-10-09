@@ -24,11 +24,24 @@
 }
 .gift-panel:focus { outline: none; }
 
-.gift-title { margin: 0; font-size: 1.625rem; line-height: 1.15; text-wrap: balance; }
+/* Room for two lines (the reveal names the gift), so the card never grows when the words change. */
+.gift-title {
+  margin: 0;
+  min-height: 2.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.625rem;
+  line-height: 1.15;
+  text-wrap: balance;
+}
 
+/* As tall as the pet reveal (a 200x224 frame at the art's width), so box and gift trade places without a jump. */
 .gift-stage {
   width: 100%;
+  min-height: 257px;
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 .gift-art { width: min(100%, 230px); height: auto; display: block; overflow: visible; }
@@ -40,7 +53,13 @@
 .gift-puff circle:nth-child(2) { animation-delay: 0.06s; }
 .gift-puff circle:nth-child(3) { animation-delay: 0.12s; }
 
-.gift-reveal { width: 100%; display: flex; justify-content: center; animation: gift-pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
+/* The gift is solid within a beat of the title changing, so the card is never empty. */
+.gift-reveal {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  animation: gift-pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.3) both, gift-appear 90ms ease-out both;
+}
 .gift-thing {
   width: 168px;
   height: 168px;
@@ -55,8 +74,11 @@
 .gift-thing-art { width: 100%; height: 100%; display: block; }
 
 .gift-hint { margin: 0; font-weight: 800; color: var(--ink-soft); }
+.gift-hint-wait { visibility: hidden; }
 
 .gift-actions { align-self: stretch; display: flex; flex-direction: column; gap: 10px; }
+/* Two buttons come with the reveal: leave their room while "Open it" stands alone (48px each, 10px between). */
+.gift-actions-two { min-height: 106px; }
 .gift-btn { min-height: 48px; padding: 0 20px; font-size: 1.125rem; border-radius: var(--btn-radius); }
 .gift-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
@@ -83,7 +105,8 @@
   30% { opacity: 1; }
   100% { transform: translateY(-34px) scale(1.2); opacity: 0; }
 }
-@keyframes gift-pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes gift-pop { from { transform: scale(0.8); } to { transform: scale(1); } }
+@keyframes gift-appear { from { opacity: 0; } to { opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
   .gift-panel,
