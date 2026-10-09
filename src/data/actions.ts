@@ -1,6 +1,7 @@
 import { SPECIES_COLOUR } from '../art/palette'
 import { toISODate } from '../domain/dates'
 import { archiveEnd, choreRetiredBy, completionCounts, resumeFrom, sameSchedule, SCHEDULE_HISTORY, SKIP_HISTORY, skipDays, trimHistory } from '../domain/schedule'
+import { startStylesOf } from '../room/shell/styles'
 import type { CatalogEntry } from '../catalog/types'
 import { applyUnlocks, choreCountOf, streakHistory, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
@@ -20,10 +21,11 @@ export function createHousehold(input: { species: Species; petName: string; user
   return [upsertOp('homes', home), upsertOp('pets', pet), upsertOp('progress', progress), ...createRoom(home)]
 }
 
+/** A new room starts with the free look for its kind (a bathroom is not a kitchen); existing rooms keep theirs. */
 export function createRoom(home: Home, type: RoomType = 'kitchen'): NewOp[] {
   // madeAt keeps rooms made on this device in order (and named "Kitchen", then "Kitchen 2") until the
   // server's creation time arrives on the next pull. It is never sent up.
-  const room: Room & Created = { id: id(), homeId: home.id, type, floorStyle: 'wood', wallStyle: 'peach', madeAt: new Date().toISOString() }
+  const room: Room & Created = { id: id(), homeId: home.id, type, ...startStylesOf(type), madeAt: new Date().toISOString() }
   return [upsertOp('rooms', room)]
 }
 

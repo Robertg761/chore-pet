@@ -115,6 +115,32 @@ function checker(floor: FloorStyle) {
   )
 }
 
+/** Small half-tile squares in two close tones, like bathroom mosaic. */
+function mosaic(floor: FloorStyle) {
+  const n = N * 2
+  const h = 0.5
+  return (
+    <g>
+      {range(n).flatMap((i) =>
+        range(n).map((j) =>
+          (i + j) % 2 === 1 ? (
+            <polygon key={`${i}-${j}`} points={roomPoints([i * h, j * h], [(i + 1) * h, j * h], [(i + 1) * h, (j + 1) * h], [i * h, (j + 1) * h])} fill={floor.alt} stroke="none" />
+          ) : null,
+        ),
+      )}
+      <g strokeLinecap="round">
+        {range(n - 1).map((i) => (
+          <Line key={'a' + i} a={[(i + 1) * h, 0]} b={[(i + 1) * h, N]} opacity={0.08} width={0.8} />
+        ))}
+        {range(n - 1).map((i) => (
+          <Line key={'b' + i} a={[0, (i + 1) * h]} b={[N, (i + 1) * h]} opacity={0.08} width={0.8} />
+        ))}
+      </g>
+      {seams(0.12)}
+    </g>
+  )
+}
+
 function rug(floor: FloorStyle) {
   const ring = (inset: number) => roomPoints([inset, inset], [N - inset, inset], [N - inset, N - inset], [inset, N - inset])
   return (
@@ -128,7 +154,7 @@ function rug(floor: FloorStyle) {
 
 function floorLayer(floor: FloorStyle) {
   const diamond = roomPoints([0, 0], [N, 0], [N, N], [0, N])
-  const pattern = floor.pattern === 'planks' ? planks() : floor.pattern === 'checker' ? checker(floor) : rug(floor)
+  const pattern = floor.pattern === 'planks' ? planks() : floor.pattern === 'checker' ? checker(floor) : floor.pattern === 'mosaic' ? mosaic(floor) : rug(floor)
   const s = 0.38 // wall shadow width in tiles
   return (
     <g>

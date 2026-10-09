@@ -59,7 +59,17 @@ export const UNLOCKS: Unlock[] = [
 ]
 
 /** Styles every home has from the start. */
-export const FREE_STYLES = ['wall:peach', 'floor:wood']
+export const FREE_STYLES = [
+  'wall:peach',
+  'floor:wood',
+  // The starting looks of the other room kinds (see ROOM_START_STYLES in src/room/shell/styles.ts).
+  'wall:cloud',
+  'wall:butter',
+  'wall:sage',
+  'floor:mosaic',
+  'floor:oat',
+  'floor:birch',
+]
 
 /** Outfits every pet has from the start, so dressing up can begin on day one. */
 export const FREE_ITEMS = ['item:hoodie', 'item:overalls', 'item:dress']
