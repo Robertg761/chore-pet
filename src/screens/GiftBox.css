@@ -24,6 +24,21 @@
 }
 .gift-panel:focus { outline: none; }
 
+/* "Gift 2 of 3", with a dot for each gift in the run. */
+.gift-count {
+  margin: -4px 0 -4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--ink-soft);
+}
+.gift-dots { display: flex; gap: 5px; }
+.gift-dot { width: 9px; height: 9px; border: 2px solid var(--ink); border-radius: 50%; background: var(--card); }
+.gift-dot-past { background: var(--ink); }
+.gift-dot-on { background: var(--accent); transform: scale(1.25); }
+
 /* Room for two lines (the reveal names the gift), so the card never grows when the words change. */
 .gift-title {
   margin: 0;
@@ -82,6 +97,13 @@
 .gift-btn { min-height: 48px; padding: 0 20px; font-size: 1.125rem; border-radius: var(--btn-radius); }
 .gift-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
+/* The next gift of a run slides in as the last one leaves; the card itself stays put. */
+.gift-stage-next { animation: gift-next 260ms var(--ease-out) both; }
+@keyframes gift-next {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: none; }
+}
+
 @keyframes gift-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes gift-rise {
   from { opacity: 0; transform: translateY(24px) scale(0.86); }
@@ -112,6 +134,7 @@
   .gift-panel,
   .gift-reveal,
   .gift-panel::backdrop { animation: gift-fade 0.2s ease-out both; }
+  .gift-stage-next { animation: gift-fade 0.2s ease-out both; }
   .gift-box,
   .gift-lid-pop,
   .gift-puff circle { animation: none; }

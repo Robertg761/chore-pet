@@ -14,6 +14,8 @@ import { giftTitle } from './rewardsModel'
 export interface GiftBoxProps {
   /** The reward being given. Shown one at a time; the app queues the rest. */
   unlock: Unlock
+  /** Where this gift sits in a run of gifts ("Gift 1 of 3"): 1-based, with the run's total. A single gift shows no counter. */
+  position?: { index: number; total: number }
   pet: Pet
   /** Reachable correction for the chore that earned this gift. */
   children?: ReactNode
@@ -27,6 +29,8 @@ export interface GiftBoxProps {
 
 const { ink, warmRed, blush, white, sky, petDefault } = PALETTE
 const OPEN_MS = 650
+/** Later gifts in a run open a little quicker, so the run feels like one celebration. */
+const OPEN_QUICK_MS = 420
 
 /** The wrapped box, drawn in the same 200x224 frame as the pet reveal so the card is the same size before and after. The lid is its own group so it can pop. */
 function WrappedBox({ opening }: { opening: boolean }) {
@@ -58,9 +62,16 @@ function WrappedBox({ opening }: { opening: boolean }) {
   )
 }
 
-export function GiftBox({ unlock, pet, onClose, onPlace, onTry, children }: GiftBoxProps) {
+export function GiftBox({ unlock, position, pet, onClose, onPlace, onTry, children }: GiftBoxProps) {
   const uid = useId()
   const [phase, setPhase] = useState<'wrapped' | 'opening' | 'open'>('wrapped')
+  // The dialog stays up from one gift to the next in a run; only the gift inside it changes.
+  const [shownId, setShownId] = useState(unlock.id)
+  if (shownId !== unlock.id) {
+    setShownId(unlock.id)
+    setPhase('wrapped')
+  }
+  const later = Boolean(position && position.index > 1)
   const panel = useRef<HTMLDialogElement>(null)
   const primary = useRef<HTMLButtonElement>(null)
   const openButton = useRef<HTMLButtonElement>(null)
@@ -93,6 +104,16 @@ export function GiftBox({ unlock, pet, onClose, onPlace, onTry, children }: Gift
     }
   }, [])
 
+  // A new gift arrives wrapped: focus its Open button (the last gift's buttons just went away).
+  const firstGift = useRef(true)
+  useEffect(() => {
+    if (firstGift.current) {
+      firstGift.current = false
+      return
+    }
+    openButton.current?.focus({ preventScroll: true })
+  }, [unlock.id])
+
   // When the reward appears, focus its first action.
   useEffect(() => {
     if (phase === 'open') primary.current?.focus()
@@ -100,9 +121,9 @@ export function GiftBox({ unlock, pet, onClose, onPlace, onTry, children }: Gift
 
   useEffect(() => {
     if (phase !== 'opening') return
-    const t = setTimeout(() => setPhase('open'), prefersReducedMotion() ? 120 : OPEN_MS)
+    const t = setTimeout(() => setPhase('open'), prefersReducedMotion() ? 120 : later ? OPEN_QUICK_MS : OPEN_MS)
     return () => clearTimeout(t)
-  }, [phase])
+  }, [phase, later])
 
   function open() {
     panel.current?.focus() // the Open button is about to go away
@@ -138,11 +159,21 @@ export function GiftBox({ unlock, pet, onClose, onPlace, onTry, children }: Gift
         onClose({ wear: false })
       }}
     >
+      {position && position.total > 1 && (
+        <p className="gift-count" key={position.index}>
+          <span>{`Gift ${position.index} of ${position.total}`}</span>
+          <span className="gift-dots" aria-hidden="true">
+            {Array.from({ length: position.total }, (_, i) => (
+              <span key={i} className={i + 1 === position.index ? 'gift-dot gift-dot-on' : i + 1 < position.index ? 'gift-dot gift-dot-past' : 'gift-dot'} />
+            ))}
+          </span>
+        </p>
+      )}
       <h2 id={titleId} className="gift-title" aria-live="polite">
         {revealed ? giftTitle(unlock) : 'A gift for you!'}
       </h2>
 
-      <div className="gift-stage">
+      <div className={later ? 'gift-stage gift-stage-next' : 'gift-stage'} key={unlock.id}>
         {!revealed && <WrappedBox opening={phase === 'opening'} />}
         {revealed && (
           <div className="gift-reveal">

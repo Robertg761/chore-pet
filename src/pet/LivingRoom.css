@@ -1,4 +1,4 @@
-.living-room { position: relative; align-self: stretch; }
+.living-room { position: relative; align-self: stretch; container-type: inline-size; }
 .pet-bubble {
   position: absolute;
   transform: translate(-50%, -100%);
@@ -19,7 +19,8 @@
 .pet-bubble::after {
   content: '';
   position: absolute;
-  left: 50%;
+  /* Follows the pet when the bubble has been moved aside (--tail-x is a share of the room's width). */
+  left: calc(50% + var(--tail-x, 0) * 100cqw);
   bottom: -9px;
   width: 14px;
   height: 14px;
