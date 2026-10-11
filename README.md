@@ -16,6 +16,14 @@ Open the app and tap **Try a sample home**: a furnished kitchen with two late ch
 
 The app also runs without Supabase keys: everything is saved on the device (IndexedDB) and the account section says so. That's handy for UI work.
 
+### Multiple rooms
+
+In Build, choose **Add room** to add a kitchen, bedroom, bathroom, living room, or another room. Rooms join edge to edge with shared walls and open doorways. The selected room stays bright while the rest fade. Tap a room, enter a doorway, or use **Focused room** to switch; your pet runs there through the connected rooms, avoiding furniture. Changing your mind mid-run redirects it from its current position. With reduced motion enabled, it arrives immediately.
+
+Build mode keeps doorway approaches clear of furniture (rugs are allowed). Existing layouts are preserved; if furniture blocks a route, the pet stays where it is and asks you to clear the path. Moving the obstruction lets it continue. Switching rooms cancels an unfinished furniture placement. Zoom in to arrange furniture, scroll around the home, or choose **Fit home** to see it all.
+
+Furniture and styles are saved per room through the existing local and cloud storage. Room order and focus are remembered on this device. Chores cover the whole home, and completing one focuses its room. Sharing uses the focused room.
+
 ### Accounts (saving progress across devices)
 
 Everyone starts as a guest (an anonymous Supabase user). In Settings a guest can save their home with email or Google. This links the same user, so no data moves. On another device, "Sign in" replaces that device's guest home with the saved one. To enable it, in Supabase:
@@ -57,6 +65,7 @@ The anon key is public by design: row-level security in the migrations protects 
 | --- | --- |
 | `npm run dev` | Dev server |
 | `npm test` | Unit tests |
+| `npm run test:multiroom` | Browser checks against an offline local dev server; see `scripts/test-multiroom.mjs` for setup |
 | `npm run build` | Typecheck and build the PWA |
 | `npm run lint` | Lint |
 | `npm run demo:record` | Record the demo video against `vite preview` (see `scripts/record-demo.mjs`) |

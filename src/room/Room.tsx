@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode, type Ref, type SVGProps } from 'react'
+import { memo, useContext, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode, type Ref, type SVGProps } from 'react'
 import { PALETTE, ROOM_STROKE } from '../art/palette'
 import { catalogEntry } from '../catalog/objects'
 import type { CatalogEntry } from '../catalog/types'
@@ -9,6 +9,7 @@ import { depthOrder, footprintOf, type Footprint, type Placement, type Sortable 
 import { NeglectCue } from './neglect'
 import { OBJECT_ART, cleanTop } from './objects'
 import { neglectSummary } from './roomSummary'
+import { SceneContext } from './sceneContext'
 import { RoomShell } from './shell/RoomShell'
 import './Room.css'
 import { OBJECT_SCALE, PET_SCALE, ROOM_INK, TILE_SCALE, petTransform, roomPoint, roomPoints } from './shell/geometry'
@@ -176,6 +177,7 @@ const NO_STAGES: Record<string, MessStage> = {}
 const NO_NEGLECT: Record<string, NeglectLevel> = {}
 
 export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, overdue, selectedId, ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
+  const scene = useContext(SceneContext)
   const items: Item[] = []
   const justPlaced = useJustPlaced(objects)
 
@@ -208,7 +210,8 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, 
   }
 
   if (pet) {
-    const hit = PET_HIT / PET_SCALE
+    const sceneScale = scene && scene.scale > 0 ? scene.scale : 1
+    const hit = Math.max(PET_HIT, 44 / sceneScale) / PET_SCALE
     items.push({
       id: '__pet',
       // Sorted as the tile it is mostly on, so it slips behind and in front of things as it walks.
@@ -267,6 +270,11 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, 
 
   return (
     <RoomShell
+      doors={scene?.doors}
+      interactionScale={scene?.scale}
+      focused={scene?.focused}
+      onDoor={scene?.onDoor}
+      doorLabel={scene?.doorLabel}
       floorStyle={room.floorStyle}
       wallStyle={room.wallStyle}
       width={width}

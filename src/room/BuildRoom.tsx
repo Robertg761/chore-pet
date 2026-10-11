@@ -3,7 +3,7 @@ import { catalogEntry } from '../catalog/objects'
 import type { CatalogEntry } from '../catalog/types'
 import type { NeglectLevel } from '../domain/neglect'
 import type { MessStage, PlacedObject, Room as RoomRow } from '../domain/types'
-import { checkPlacement, findFreeSpot, screenToTile, snapDrag, turned, type Placement, type PlacementProblem } from './grid'
+import { checkPlacement, findFreeSpot, screenToTile, snapDrag, turned, type Footprint, type Placement, type PlacementProblem } from './grid'
 import { lookup } from './placement'
 import { Room } from './Room'
 import { objectNames, objectsBackToFront } from './roomSummary'
@@ -22,8 +22,12 @@ import './BuildRoom.css'
 export type BuildChange = { kind: 'add'; entry: CatalogEntry; placement: Placement } | { kind: 'move'; id: string; placement: Placement }
 
 export interface BuildRoomProps {
-  room: Pick<RoomRow, 'floorStyle' | 'wallStyle'>
+  room: Pick<RoomRow, 'id' | 'floorStyle' | 'wallStyle'>
   objects: PlacedObject[]
+  /** Doorway approaches that furniture must leave clear. */
+  reserved?: Footprint[]
+  /** Interior west partitions have no window. */
+  hasWestWindow?: boolean
   stages?: Record<string, MessStage>
   /** Neglect level per object, so the cues show while arranging the room too. */
   neglect?: Record<string, NeglectLevel>
@@ -42,6 +46,8 @@ export interface BuildRoomProps {
    * to the first control in the open `.sheet`.
    */
   onOpen?: (id: string) => void
+  /** Places the active SVG in the shared home while keeping editing controls full size. */
+  renderScene?: (room: ReactNode) => ReactNode
 }
 
 interface Drag {
@@ -57,6 +63,7 @@ const PROBLEM_TEXT: Record<PlacementProblem, string> = {
   outside: "That's outside the room.",
   needsWall: 'This one goes against a wall.',
   window: "That's where the window is.",
+  doorway: 'Keep the doorway clear.',
   overlap: "Something's in the way.",
 }
 
@@ -69,7 +76,7 @@ function focusSheet() {
   target?.focus()
 }
 
-export function BuildRoom({ room, objects, stages, neglect, overdue, pet, selectedId, onSelect, placing, onCommit, onPlacingDone, onOpen }: BuildRoomProps) {
+export function BuildRoom({ room, objects, reserved, hasWestWindow = true, stages, neglect, overdue, pet, selectedId, onSelect, placing, onCommit, onPlacingDone, onOpen, renderScene }: BuildRoomProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const roomRef = useRef<HTMLDivElement>(null)
   const helpId = useId()
@@ -83,18 +90,26 @@ export function BuildRoom({ room, objects, stages, neglect, overdue, pet, select
   // A new pick from the tray appears at the first spot it fits. (The tray
   // only offers things that fit somewhere: see `fitsSomewhere` in ./placement.)
   const [picked, setPicked] = useState<CatalogEntry | null>(null)
-  if (placing !== picked) {
+  const [editingRoomId, setEditingRoomId] = useState(room.id)
+  if (editingRoomId !== room.id) {
+    setEditingRoomId(room.id)
+    setPending(null)
+    setMoving(null)
+    setPicked(null)
+    setKeyed(false)
+  } else if (placing !== picked) {
     setPicked(placing)
-    const spot = placing && findFreeSpot(placing, objects, lookup)
+    const spot = placing && findFreeSpot(placing, objects, lookup, reserved, hasWestWindow)
     setPending(placing && spot ? { entry: placing, placement: spot } : null)
   }
+  useEffect(() => { drag.current = null }, [room.id])
 
   // Picking from the tray moves focus to the room, so the arrows move the new thing.
   useEffect(() => {
     if (picked) roomRef.current?.focus()
   }, [picked])
 
-  const check = (entry: CatalogEntry, placement: Placement, movingId?: string) => checkPlacement(entry, placement, objects, lookup, movingId)
+  const check = (entry: CatalogEntry, placement: Placement, movingId?: string) => checkPlacement(entry, placement, objects, lookup, movingId, reserved, hasWestWindow)
 
   function toTile(e: PointerEvent): { tx: number; ty: number } | null {
     const svg = svgRef.current
@@ -105,6 +120,7 @@ export function BuildRoom({ room, objects, stages, neglect, overdue, pet, select
   }
 
   function onPointerDown(e: PointerEvent<SVGSVGElement>) {
+    if ((e.target as Element).closest('[data-door-to]')) return
     const target = (e.target as Element).closest('[data-object-id]')
     const id = target?.getAttribute('data-object-id') ?? null
     if (pending) {
@@ -169,6 +185,8 @@ export function BuildRoom({ room, objects, stages, neglect, overdue, pet, select
   }
 
   function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    // Room selection and zoom buttons have their own native keyboard behaviour.
+    if (e.target !== e.currentTarget) return
     const steps: Record<string, [number, number]> = { ArrowRight: [1, 0], ArrowLeft: [-1, 0], ArrowDown: [0, 1], ArrowUp: [0, -1] }
     const step = steps[e.key]
     const selected = objects.find((o) => o.id === selectedId)
@@ -210,6 +228,22 @@ export function BuildRoom({ room, objects, stages, neglect, overdue, pet, select
   const problem = ghostCheck && !ghostCheck.ok && ghostCheck.problem ? PROBLEM_TEXT[ghostCheck.problem] : ''
   const selectedName = selectedId && !ghost ? names[selectedId] : undefined
   const hint = !problem && keyed && selectedName ? `${selectedName} selected. ${KEYS_HINT}` : ''
+  const picture = (
+    <Room
+      room={room}
+      objects={objects}
+      stages={stages}
+      neglect={neglect}
+      overdue={overdue}
+      pet={pet}
+      selectedId={selectedId}
+      ghost={ghost}
+      hiddenId={moving?.id}
+      svgRef={svgRef}
+      className="build-room-svg"
+      svgProps={{ onPointerDown, onPointerMove, onPointerUp, onPointerCancel: () => ((drag.current = null), setMoving(null)) }}
+    />
+  )
 
   return (
     <div
@@ -226,20 +260,7 @@ export function BuildRoom({ room, objects, stages, neglect, overdue, pet, select
         Tap a thing to select it and drag to move it. With the keyboard, Left and Right arrows pick a thing; then arrows move it, R turns it, Enter opens it
         and Escape lets go.
       </p>
-      <Room
-        room={room}
-        objects={objects}
-        stages={stages}
-        neglect={neglect}
-        overdue={overdue}
-        pet={pet}
-        selectedId={selectedId}
-        ghost={ghost}
-        hiddenId={moving?.id}
-        svgRef={svgRef}
-        className="build-room-svg"
-        svgProps={{ onPointerDown, onPointerMove, onPointerUp, onPointerCancel: () => ((drag.current = null), setMoving(null)) }}
-      />
+      {renderScene ? renderScene(picture) : picture}
       <p className="build-room-status" role="status">
         {problem}
         {/* What the keyboard just picked: read out, not shown (the chevron and its card show it). */}

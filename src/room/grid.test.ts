@@ -278,6 +278,33 @@ describe('againstWall', () => {
 describe('checkPlacement', () => {
   const none: PlacedObject[] = []
 
+  describe('doorways', () => {
+    const reserved = [fp(0, 4, 1, 2)]
+
+    it('rejects solid furniture in the doorway approach', () => {
+      expect(checkPlacement(sink, { tileX: 0, tileY: 4, rotation: 0 }, none, lookup, undefined, reserved))
+        .toEqual({ ok: false, problem: 'doorway', blockers: [] })
+    })
+
+    it('rejects hung decor in the doorway', () => {
+      expect(checkPlacement(entry('poster'), { tileX: 0, tileY: 4, rotation: 0 }, none, lookup, undefined, reserved))
+        .toEqual({ ok: false, problem: 'doorway', blockers: [] })
+    })
+
+    it('allows a rug across the doorway approach', () => {
+      expect(checkPlacement(rug, { tileX: 0, tileY: 4, rotation: 0 }, none, lookup, undefined, reserved))
+        .toEqual({ ok: true, problem: null, blockers: [] })
+    })
+
+    it('lets an existing blocker move off the doorway, ignoring its old footprint', () => {
+      const blocker = placed('table', 0, 4, 0, 'blocker')
+      expect(checkPlacement(table, { tileX: 1, tileY: 4, rotation: 0 }, [blocker], lookup, 'blocker', reserved))
+        .toEqual({ ok: true, problem: null, blockers: [] })
+      expect(checkPlacement(table, { tileX: 0, tileY: 5, rotation: 0 }, [blocker], lookup, 'blocker', reserved))
+        .toEqual({ ok: false, problem: 'doorway', blockers: [] })
+    })
+  })
+
   it('accepts a wall object against the left wall at rotation 0', () => {
     expect(checkPlacement(sink, { tileX: 0, tileY: 3, rotation: 0 }, none, lookup)).toEqual({ ok: true, problem: null, blockers: [] })
   })
@@ -471,6 +498,18 @@ describe('rotationsFor', () => {
 
 describe('findFreeSpot', () => {
   const none: PlacedObject[] = []
+
+  it('skips a reserved approach when choosing the first free spot', () => {
+    expect(findFreeSpot(trash, none, lookup, [fp(0, 0, 1, 2)]))
+      .toEqual({ tileX: 1, tileY: 0, rotation: 0 })
+  })
+
+  it('returns null when only doorway tiles remain free', () => {
+    const objects = AXIS.flatMap((x) => AXIS
+      .filter((y) => x !== 0 || (y !== 4 && y !== 5))
+      .map((y) => placed('trash', x, y)))
+    expect(findFreeSpot(trash, objects, lookup, [fp(0, 4, 1, 2)])).toBeNull()
+  })
 
   it('puts a floor object in the back corner of an empty room', () => {
     expect(findFreeSpot(table, none, lookup)).toEqual({ tileX: 0, tileY: 0, rotation: 0 })
@@ -1193,6 +1232,23 @@ describe('the window', () => {
   /** Clear space kept around the window (sill included) before a hung thing may sit beside it. */
   const SILL = 0.15
   const onLeftWall = (tileY: number) => checkPlacement(poster, { tileX: 0, tileY, rotation: 0 }, [], none)
+
+  it('allows wall art where an interior partition has no window, while keeping its door clear', () => {
+    const doorway = [{ tx: 0, ty: 4, w: 1, d: 2 }]
+    expect(checkPlacement(poster, { tileX: 0, tileY: 2, rotation: 0 }, [], none, undefined, doorway, false).ok).toBe(true)
+    expect(checkPlacement(poster, { tileX: 0, tileY: 4, rotation: 0 }, [], none, undefined, doorway, false).problem).toBe('doorway')
+    expect(checkPlacement(poster, { tileX: 0, tileY: 2, rotation: 0 }, [], none).problem).toBe('window')
+  })
+
+  it('offers the newly available interior wall space when finding a place for wall art', () => {
+    const occupied = [
+      ...AXIS.map((tileX) => ({ id: `north-${tileX}`, roomId: 'room', catalogId: 'poster', tileX, tileY: 0, rotation: 1 as const })),
+      ...AXIS.filter((tileY) => tileY !== 2).map((tileY) => ({ id: `west-${tileY}`, roomId: 'room', catalogId: 'poster', tileX: 0, tileY, rotation: 0 as const })),
+    ]
+    const doors = [{ tx: 0, ty: 4, w: 1, d: 2 }]
+    expect(findFreeSpot(poster, occupied, () => poster, doors, true)).toBeNull()
+    expect(findFreeSpot(poster, occupied, () => poster, doors, false)).toEqual({ tileX: 0, tileY: 2, rotation: 0 })
+  })
 
   it('keeps hung things off the window on the left wall', () => {
     const covering = AXIS.filter((y) => y < WINDOW.u1 && y + 1 > WINDOW.u0)

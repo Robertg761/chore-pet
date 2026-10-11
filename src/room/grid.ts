@@ -61,7 +61,7 @@ export function againstWall(p: Placement): boolean {
   return false
 }
 
-export type PlacementProblem = 'outside' | 'needsWall' | 'window' | 'overlap'
+export type PlacementProblem = 'outside' | 'needsWall' | 'window' | 'doorway' | 'overlap'
 
 export interface PlacementCheck {
   ok: boolean
@@ -76,7 +76,7 @@ type Lookup = (catalogId: string) => Pick<CatalogEntry, 'footprint' | 'placement
  * Can `entry` go at `p`? `others` are the room's placed objects; the object
  * being moved (`movingId`) is ignored. Solid things can't overlap solid
  * things, flat things (rugs) can't overlap flat things, and a solid thing may
- * stand on a rug.
+ * stand on a rug. Doorway approaches stay clear of solid and hung objects.
  */
 export function checkPlacement(
   entry: Pick<CatalogEntry, 'footprint' | 'placement' | 'layer'>,
@@ -84,11 +84,14 @@ export function checkPlacement(
   others: PlacedObject[],
   lookup: Lookup,
   movingId?: string,
+  reserved: readonly Footprint[] = [],
+  hasWestWindow = true,
 ): PlacementCheck {
   const fp = footprintOf(p, entry)
   if (!insideRoom(fp)) return { ok: false, problem: 'outside', blockers: [] }
   if (entry.placement === 'wall' && !againstWall(p)) return { ok: false, problem: 'needsWall', blockers: [] }
-  if (entry.layer === 'hung' && coversWindow(fp, p.rotation)) return { ok: false, problem: 'window', blockers: [] }
+  if (hasWestWindow && entry.layer === 'hung' && coversWindow(fp, p.rotation)) return { ok: false, problem: 'window', blockers: [] }
+  if (entry.layer !== 'flat' && reserved.some((approach) => overlaps(fp, approach))) return { ok: false, problem: 'doorway', blockers: [] }
   const blockers = others
     .filter((o) => o.id !== movingId)
     .filter((o) => {
@@ -112,6 +115,8 @@ export function findFreeSpot(
   entry: Pick<CatalogEntry, 'footprint' | 'placement' | 'layer'>,
   others: PlacedObject[],
   lookup: Lookup,
+  reserved: readonly Footprint[] = [],
+  hasWestWindow = true,
 ): Placement | null {
   const spots: Placement[] = []
   for (let sum = 0; sum <= 2 * (ROOM_SIZE - 1); sum++) {
@@ -121,7 +126,7 @@ export function findFreeSpot(
       for (const rotation of rotationsFor(entry)) spots.push({ tileX, tileY, rotation })
     }
   }
-  return spots.find((p) => checkPlacement(entry, p, others, lookup).ok) ?? null
+  return spots.find((p) => checkPlacement(entry, p, others, lookup, undefined, reserved, hasWestWindow).ok) ?? null
 }
 
 /**

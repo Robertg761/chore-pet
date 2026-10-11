@@ -22,11 +22,3 @@ describe('upNextRows', () => {
     expect(upNextRows(700, true)).toBeGreaterThanOrEqual(2)
   })
 })
-
-describe('ROOM_ASPECT_VARS', () => {
-  it('carries the room viewBox size for the home stage', async () => {
-    const { ROOM_ASPECT_VARS } = await import('./layout')
-    const { ROOM_VIEWBOX } = await import('../room/shell/geometry')
-    expect(ROOM_ASPECT_VARS).toEqual({ '--room-w': ROOM_VIEWBOX.width, '--room-h': ROOM_VIEWBOX.height })
-  })
-})

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { catalogEntry } from '../catalog/objects'
 import { CharacterArt } from '../character/Character'
 import { CAUGHT_UP_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
@@ -9,6 +10,7 @@ import type { Chore, MessStage, Mood, Pet, PlacedObject, Room as RoomRow } from 
 import { objectOverdue } from '../room/cuePlan'
 import { footprintOf, freeTile, overlaps, tilesOf, type Footprint } from '../room/grid'
 import { PET_SCALE, Room } from '../room/Room'
+import { SceneContext } from '../room/sceneContext'
 import { PET_STROKE_SCALE, ROOM_VIEWBOX, petTransform, roomPoint } from '../room/shell/geometry'
 import { play } from '../audio/sfx'
 import { initialPet, needsRender, positionAt, poseFor, sortTile, step, tap, type PetState, type Tile, type World } from './behaviour'
@@ -46,6 +48,10 @@ export interface LivingRoomProps {
   statuses: ChoreStatus[]
   /** Set when a chore was just completed: the pet cheers and says so. */
   celebrate?: Celebration | null
+  /** Consume a cheer so revisiting the home cannot replay it. */
+  onCelebrated?: (key: number) => void
+  initialTile?: Tile
+  onPosition?: (tile: Tile) => void
   /** Effects in room coordinates, drawn over everything (e.g. a sparkle on the object just cleaned). */
   overlay?: ReactNode
 }
@@ -80,7 +86,8 @@ interface Said {
   heard: boolean
 }
 
-export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, chores, statuses, celebrate, overlay }: LivingRoomProps) {
+export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, chores, statuses, celebrate, onCelebrated, initialTile, onPosition, overlay }: LivingRoomProps) {
+  const scene = useContext(SceneContext)
   const solid = useMemo<Footprint[]>(
     () =>
       objects.flatMap((o) => {
@@ -100,7 +107,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
   )
 
   const [shown, setShown] = useState<Shown>(() => {
-    const state = initialPet(freeTile(solid) ?? { tx: 3, ty: 3 }, performance.now())
+    const state = initialPet(initialTile ?? freeTile(solid) ?? { tx: 3, ty: 3 }, performance.now())
     return { state, pos: state.tile }
   })
   const [said, setSaid] = useState<Said | null>(null)
@@ -109,6 +116,8 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
   const live = useRef<Shown>(shown)
   const petNode = useRef<SVGGElement>(null)
   const bubbleNode = useRef<HTMLParagraphElement>(null)
+  const reportPosition = useRef(onPosition)
+  useEffect(() => { reportPosition.current = onPosition }, [onPosition])
 
   // The loop reads the latest world through a ref, synced after each render.
   const world = useRef<World>({ free: () => true, mood, away, mess: null })
@@ -121,6 +130,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     const prev = live.current
     const pos = positionAt(next, t)
     live.current = { state: next, pos }
+    reportPosition.current?.(pos)
     petNode.current?.setAttribute('transform', petTransform(pos))
     const bubble = bubbleNode.current
     if (bubble) Object.assign(bubble.style, bubbleSpot(pos))
@@ -160,13 +170,14 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
   }, [said])
 
   // Cheer for a finished chore.
-  const celebrated = useRef(celebrate?.key)
+  const celebrated = useRef<number | undefined>(undefined)
   useEffect(() => {
     if (!celebrate || celebrate.key === celebrated.current) return
     celebrated.current = celebrate.key
     advance(tap(live.current.state, performance.now()), performance.now())
     setSaid({ text: doneLine(celebrate.key, celebrate.choreName, celebrate), heard: true })
-  }, [celebrate, advance])
+    onCelebrated?.(celebrate.key)
+  }, [celebrate, advance, onCelebrated])
 
   function onTap() {
     play('chirp')
@@ -219,11 +230,14 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
           art,
         }}
       />
-      {line && (
+      {line && (scene?.bubbleContainer ? createPortal(
+        <p className="home-scene-bubble">{line}</p>,
+        scene.bubbleContainer,
+      ) : (
         <p className="pet-bubble" ref={bubbleNode} style={bubbleSpot(pos)}>
           {line}
         </p>
-      )}
+      ))}
       {/* Only what the player caused is announced; ambient chatter and mess-gazing stay visual. */}
       <p className="visually-hidden" aria-live="polite">
         {said?.heard ? said.text : ''}

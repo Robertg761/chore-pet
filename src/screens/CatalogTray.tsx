@@ -2,6 +2,7 @@ import { useId } from 'react'
 import type { CatalogEntry } from '../catalog/types'
 import { CATALOG, DECOR } from '../catalog/objects'
 import type { PlacedObject, RoomType } from '../domain/types'
+import type { Footprint } from '../room/grid'
 import { fitsSomewhere } from '../room/placement'
 import { choreCountLabel, splitCatalog } from './buildModel'
 import { ObjectThumb } from './ObjectThumb'
@@ -11,6 +12,9 @@ export interface CatalogTrayProps {
   roomType: RoomType
   /** The room's placed objects, to tell what still fits. */
   objects: PlacedObject[]
+  /** Doorway approaches that furniture must leave clear. */
+  reserved?: Footprint[]
+  hasWestWindow?: boolean
   onPick: (entry: CatalogEntry) => void
   /** Unlock ids earned so far (progress.unlockedItems): decor shows up once earned. */
   unlocked?: string[]
@@ -18,7 +22,7 @@ export interface CatalogTrayProps {
   oneRow?: boolean
 }
 
-export function CatalogTray({ roomType, objects, onPick, unlocked = [], oneRow = false }: CatalogTrayProps) {
+export function CatalogTray({ roomType, objects, reserved, hasWestWindow = true, onPick, unlocked = [], oneRow = false }: CatalogTrayProps) {
   const uid = useId()
   const earnedDecor = DECOR.filter((e) => e.unlock && unlocked.includes(e.unlock))
   const { suited, others } = splitCatalog([...CATALOG, ...earnedDecor], roomType)
@@ -26,7 +30,7 @@ export function CatalogTray({ roomType, objects, onPick, unlocked = [], oneRow =
   const row = (entries: CatalogEntry[]) => (
     <ul className="tray-row">
       {entries.map((e) => {
-        const fits = fitsSomewhere(e, objects)
+        const fits = fitsSomewhere(e, objects, reserved, hasWestWindow)
         return (
           <li key={e.id}>
             <button type="button" className="tray-tile" disabled={!fits} onClick={() => onPick(e)}>

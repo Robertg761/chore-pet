@@ -5,7 +5,7 @@ import { CharacterArt } from './character/Character'
 import { isInVacation } from './domain/dates'
 import { petCondition } from './domain/health'
 import { messStageFor, objectNeglect } from './domain/mess'
-import type { Chore } from './domain/types'
+import type { Chore, RoomType } from './domain/types'
 import { currentStreak, type Unlock } from './domain/unlocks'
 import { ITEMS } from './character/items'
 import {
@@ -32,8 +32,16 @@ import { useToday } from './lib/useToday'
 import { SAMPLE_HOME_NAME, sampleHome } from './content/sampleHome'
 import { useInstallPrompt } from './pwa/useInstallPrompt'
 import { BuildRoom, type BuildChange } from './room/BuildRoom'
+import { HomeScene } from './room/HomeScene'
+import { Room } from './room/Room'
+import { doorwayFootprint, doorsForRoom, roomConnections } from './room/connections'
+import { homeLayout } from './room/homeLayout'
+import { HomeTraveler } from './pet/HomeTraveler'
+import { useHomePet } from './pet/useHomePet'
+import { RoomControls } from './room/RoomControls'
+import { orderRooms, readRoomOrder, writeRoomOrder, readFocusedRoomId, resolveFocusedRoomId, roomNames, writeFocusedRoomId } from './room/roomFocus'
 import { Sparkle } from './effects'
-import { checkPlacement, footprintOf, freeTile, turned } from './room/grid'
+import { checkPlacement, turned } from './room/grid'
 import { lookup } from './room/placement'
 import { LivingRoom, type Celebration } from './pet/LivingRoom'
 import { CatalogTray } from './screens/CatalogTray'
@@ -65,7 +73,7 @@ import { PET_STROKE_SCALE } from './room/shell/geometry'
 import { Sheet } from './shell/Sheet'
 import { UndoToast } from './shell/UndoToast'
 import { withViewTransition } from './shell/viewTransition'
-import { ROOM_ASPECT_VARS, upNextRows } from './shell/layout'
+import { upNextRows } from './shell/layout'
 import { useViewport, useWide } from './shell/useViewport'
 
 type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; choreId?: string } | { name: 'vacation' } | { name: 'rewards' } | { name: 'week' } | { name: 'creator' } | { name: 'wardrobe' } | { name: 'share' } | { name: 'settings' }
@@ -102,16 +110,33 @@ export default function App() {
   useEffect(startAppStore, [])
   const { ready, hydrated, sync, snapshot, savedLocally, lastError } = useDataState()
   const data = useHome()
+  const [roomOrder, setRoomOrder] = useState<{ homeId: string; ids: string[] } | null>(null)
+  const rooms = orderRooms(data.rooms, roomOrder?.homeId === data.home?.id
+    ? roomOrder?.ids ?? [] : data.home ? readRoomOrder(data.home.id) : [])
+  const roomIds = rooms.map((room) => room.id)
+  if (data.home && rooms.length && (roomOrder?.homeId !== data.home.id || roomIds.join() !== roomOrder.ids.join())) {
+    setRoomOrder({ homeId: data.home.id, ids: roomIds })
+  }
+  useEffect(() => {
+    if (roomOrder) writeRoomOrder(roomOrder.homeId, roomOrder.ids)
+  }, [roomOrder])
   const today = useToday()
   const [view, setViewNow] = useState<View>({ name: 'home' })
-  /** Change screen with a short slide: forward when going deeper (to the right), back when returning. */
-  const setView = (next: View) => {
-    const step = VIEW_RANK[next.name] - VIEW_RANK[view.name]
-    if (next.name === view.name) setViewNow(next)
-    else withViewTransition(() => setViewNow(next), step > 0 ? 'forward' : step < 0 ? 'back' : 'fade')
-  }
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [placing, setPlacing] = useState<CatalogEntry | null>(null)
+  const [roomFocus, setRoomFocus] = useState<{ homeId: string; roomId: string } | null>(null)
+  const focusedRoomId = resolveFocusedRoomId(rooms,
+    roomFocus?.homeId === data.home?.id ? roomFocus?.roomId : data.home ? readFocusedRoomId(data.home.id) : null)
+  const layout = homeLayout(roomIds)
+  const connections = roomConnections(layout, data.objects)
+  const travel = useHomePet(data.home?.id, focusedRoomId, layout, connections, data.objects, roomNames(rooms), data.pet?.name ?? 'Your pet', view.name)
+  /** Change screen with a short slide: forward when going deeper, back when returning. */
+  const setView = (next: View) => {
+    if (next.name === view.name) { setViewNow(next); return }
+    travel.pause()
+    const step = VIEW_RANK[next.name] - VIEW_RANK[view.name]
+    withViewTransition(() => setViewNow(next), step > 0 ? 'forward' : step < 0 ? 'back' : 'fade')
+  }
   // First launch: the landing choice, or the picker once "Build my home" is tapped.
   const [building, setBuilding] = useState(false)
   // First run: the welcome beat after "Move in", then the coach card while building the first room.
@@ -120,8 +145,9 @@ export default function App() {
   const [, setFlagTick] = useState(0)
   const { canInstall, install } = useInstallPrompt()
   // The completion moment: the pet cheers and each cleaned object gets its own sparkle.
-  const [celebrate, setCelebrate] = useState<Celebration | null>(null)
-  const [sparkles, setSparkles] = useState<(SparkleSpot & { id: number })[]>([])
+  const [celebrate, setCelebrate] = useState<(Celebration & { homeId: string }) | null>(null)
+  if (celebrate && celebrate.homeId !== data.home?.id) setCelebrate(null)
+  const [sparkles, setSparkles] = useState<(SparkleSpot & { id: number; roomId: string })[]>([])
   const [gifts, setGifts] = useState<Unlock[]>([])
   // The last chore ticked off, for a few seconds, so a slip can be undone.
   const [undo, setUndo] = useState<{ key: number; completionId: string; choreName: string } | null>(null)
@@ -144,6 +170,14 @@ export default function App() {
   }, [view.name])
   const [allChores, setAllChores] = useState(false)
   const [buildPanel, setBuildPanel] = useState<'things' | 'style'>('things')
+  // Reset before rendering a new room, including a room removed by a sync.
+  const editScope = `${data.home?.id ?? ''}:${focusedRoomId ?? ''}`
+  const [previousEditScope, setPreviousEditScope] = useState(editScope)
+  if (previousEditScope !== editScope) {
+    setPreviousEditScope(editScope)
+    setSelectedId(null)
+    setPlacing(null)
+  }
 
   // The pet's daily nudge (while the app is open); needs the same view of the day as the screen.
   const reminderStatuses = data.home ? petCondition(data.chores, data.completions, today, data.home.vacations).statuses : []
@@ -199,13 +233,29 @@ export default function App() {
     )
   }
 
-  const { home, pet, progress, rooms, objects, chores, completions } = data
-  const room = rooms[0]
+  const { home, pet, progress, objects, chores, completions } = data
+  const room = rooms.find((candidate) => candidate.id === focusedRoomId)
+  const names = roomNames(rooms)
+  const focusRoom = (roomId: string) => {
+    if (roomId === focusedRoomId) { travel.go(roomId); return }
+    travel.pause()
+    setSelectedId(null)
+    setPlacing(null)
+    setSparkles([])
+    setCelebrate(null)
+    setRoomFocus({ homeId: home.id, roomId })
+    writeFocusedRoomId(home.id, roomId)
+  }
+  const addRoom = (type: RoomType) => {
+    const ops = createRoom(home, type)
+    appStore.apply(...ops)
+    focusRoom(ops[0].key)
+  }
   const back = () => setView({ name: 'home' })
   const flag = (key: string) => (writeFlag(key), setFlagTick((n) => n + 1))
   // Build mode for the first time shows the coach card; it stays for this visit once started.
   const openBuild = () => {
-    if (!readFlag(onboardedKey(home.id)) && !objects.some((o) => o.roomId === room?.id)) setCoachHome(home.id)
+    if (!readFlag(onboardedKey(home.id)) && objects.length === 0) setCoachHome(home.id)
     setView({ name: 'build' })
   }
 
@@ -252,13 +302,14 @@ export default function App() {
     // Places a chore can belong to, named like the catalog; duplicates are numbered ("Rug 2").
     const seen = new Map<string, number>()
     const places = objects
-      .filter((o) => o.roomId === rooms[0]?.id)
       .flatMap((o) => {
         const name = catalogEntry(o.catalogId)?.name
         if (!name) return []
-        const n = (seen.get(name) ?? 0) + 1
-        seen.set(name, n)
-        return [{ id: o.id, name: n > 1 ? `${name} ${n}` : name }]
+        const key = `${o.roomId}:${name}`
+        const n = (seen.get(key) ?? 0) + 1
+        seen.set(key, n)
+        const objectName = n > 1 ? `${name} ${n}` : name
+        return [{ id: o.id, name: rooms.length > 1 ? `${names[o.roomId]} · ${objectName}` : objectName }]
       })
     return framed(
       'home',
@@ -301,14 +352,14 @@ export default function App() {
     )
   }
 
-  if (view.name === 'share' && rooms[0]) {
+  if (view.name === 'share' && room) {
     return framed(
       'more',
       <main className="shell screen">
         <ShareCard
           pet={pet}
-          room={rooms[0]}
-          objects={objects.filter((o) => o.roomId === rooms[0].id)}
+          room={room}
+          objects={objects.filter((o) => o.roomId === room.id)}
           choreCount={progress?.choreCount ?? 0}
           // Worked out for today, like the rewards screen: the stored streak is from the last chore done.
           streak={currentStreak(chores, completions, today, home.vacations)}
@@ -366,16 +417,56 @@ export default function App() {
   const away = isInVacation(today, home.vacations)
   const neglect = objectNeglect(chores, condition.statuses)
   const stages = Object.fromEntries(Object.entries(neglect).map(([id, level]) => [id, messStageFor(level)]))
+  const overdue = objectOverdue(chores, condition.statuses)
   const roomObjects = room ? objects.filter((o) => o.roomId === room.id) : []
-  const solid = roomObjects.flatMap((o) => {
-    const e = catalogEntry(o.catalogId)
-    return e && e.layer === 'solid' ? [footprintOf(o, e)] : []
-  })
-  const petTile = freeTile(solid)
-  const petInRoom = petTile && {
-    tile: petTile,
+  const roomDoors = room ? doorsForRoom(connections, room.id) : []
+  const reserved = roomDoors.map(doorwayFootprint)
+  const hasWestWindow = !roomDoors.some((door) => door.side === 'west')
+  const resident = travel.position && rooms.find((candidate) => candidate.id === travel.position?.roomId)
+  const residentObjects = resident ? objects.filter((object) => object.roomId === resident.id) : []
+  const stationaryPet = !travel.journey && travel.position ? {
+    tile: travel.position,
     art: <CharacterArt species={pet.species} mood={condition.mood} pose={away ? 'sleeping' : undefined} bodyColour={pet.bodyColour} equipped={pet.equipped} look={{ eyes: pet.eyes, cheeks: pet.cheeks }} strokeScale={PET_STROKE_SCALE} />,
-  }
+  } : null
+  const petInRoom = resident?.id === room?.id ? stationaryPet : null
+  const livingRoom = resident && travel.position && !travel.journey ? (
+    <LivingRoom
+      key={`${home.id}:${resident.id}`}
+      room={resident}
+      objects={residentObjects}
+      stages={stages}
+      neglect={neglect}
+      pet={pet}
+      mood={condition.mood}
+      away={away}
+      initialTile={travel.position}
+      onPosition={(tile) => travel.onPosition({ roomId: resident.id, ...tile })}
+      chores={chores.filter((chore) => residentObjects.some((object) => object.id === chore.objectId))}
+      statuses={condition.statuses}
+      celebrate={resident.id === room?.id ? celebrate : null}
+      onCelebrated={(key) => setCelebrate((current) => current?.key === key ? null : current)}
+      overlay={sparkles.filter((sparkle) => sparkle.roomId === resident.id).map((sparkle) => (
+        <Sparkle key={sparkle.id} x={sparkle.x} y={sparkle.y} size={sparkle.size} onDone={() => setSparkles((list) => list.filter((other) => other.id !== sparkle.id))} />
+      ))}
+    />
+  ) : null
+  const scene = (focusedRoom: ReactNode) => room && (
+    <HomeScene
+      rooms={rooms}
+      objects={objects}
+      focusedRoomId={room.id}
+      onFocus={focusRoom}
+      focusedRoom={focusedRoom}
+      residentRoomId={resident?.id}
+      residentRoom={view.name === 'home' ? livingRoom : resident && resident.id !== room.id && stationaryPet ? <Room room={resident} objects={residentObjects} stages={stages} neglect={neglect} pet={stationaryPet} /> : null}
+      connections={connections}
+      travelNotice={travel.notice}
+      overlay={travel.journey && <HomeTraveler key={travel.journey.id} path={travel.journey.path} layout={layout} pet={pet} mood={condition.mood} away={away} onPosition={travel.onPosition} onDone={(at) => travel.arrive(travel.journey!.id, at)} />}
+      stages={stages}
+      neglect={neglect}
+      overdue={overdue}
+    />
+  )
 
   if (view.name === 'build' && room) {
     const selected = roomObjects.find((o) => o.id === selectedId) ?? null
@@ -383,6 +474,7 @@ export default function App() {
     const coaching = coachHome === home.id && !readFlag(onboardedKey(home.id))
     const commit = (change: BuildChange) => {
       if (change.kind === 'add') {
+        if (!checkPlacement(change.entry, change.placement, roomObjects, lookup, undefined, reserved, hasWestWindow).ok) return
         // Select what was just placed so its sheet shows the chores it brought.
         const ops = placeObject(room, change.entry, change.placement, today)
         appStore.apply(...ops)
@@ -391,7 +483,8 @@ export default function App() {
       }
       else {
         const obj = roomObjects.find((o) => o.id === change.id)
-        if (obj) appStore.apply(...moveObject(obj, change.placement))
+        const entry = obj && catalogEntry(obj.catalogId)
+        if (obj && entry && checkPlacement(entry, change.placement, roomObjects, lookup, obj.id, reserved, hasWestWindow).ok) appStore.apply(...moveObject(obj, change.placement))
       }
     }
     const step = coachStep(roomObjects.length)
@@ -400,7 +493,7 @@ export default function App() {
       flag(onboardedKey(home.id))
     }
     const turnTo = selected && selectedEntry ? turned(selectedEntry, selected) : null
-    const canTurn = Boolean(selected && selectedEntry && turnTo && checkPlacement(selectedEntry, turnTo, roomObjects, lookup, selected.id).ok)
+    const canTurn = Boolean(selected && selectedEntry && turnTo && checkPlacement(selectedEntry, turnTo, roomObjects, lookup, selected.id, reserved, hasWestWindow).ok)
 
     const panelTab = coaching ? 'things' : buildPanel
     return framed(
@@ -418,18 +511,22 @@ export default function App() {
           </button>
         </header>
         <div className="build-stage">
+          <RoomControls rooms={rooms} focusedRoomId={room.id} onFocus={focusRoom} onAdd={addRoom} />
           <BuildRoom
             room={room}
             objects={roomObjects}
             stages={stages}
             neglect={neglect}
-            overdue={objectOverdue(chores, condition.statuses)}
+            overdue={overdue}
             pet={petInRoom}
+            reserved={reserved}
+            hasWestWindow={hasWestWindow}
             selectedId={selectedId}
             onSelect={(id) => (setSelectedId(id), setPlacing(null))}
             placing={placing}
             onCommit={commit}
             onPlacingDone={() => setPlacing(null)}
+            renderScene={scene}
           />
         </div>
         <div className="build-panel">
@@ -479,6 +576,8 @@ export default function App() {
               )}
               {(wide || panelTab === 'things') && (
                 <CatalogTray
+                  reserved={reserved}
+                  hasWestWindow={hasWestWindow}
                   roomType={room.type}
                   objects={roomObjects}
                   unlocked={progress?.unlockedItems}
@@ -503,6 +602,8 @@ export default function App() {
 
   const sample = home.name === SAMPLE_HOME_NAME
   const completeChore = (chore: Chore) => {
+    const placed = objects.find((object) => object.id === chore.objectId)
+    if (placed) focusRoom(placed.roomId)
     const done = completeChoreWithRewards(chore, progress, { chores, completions, vacations: home.vacations }, devNow())
     appStore.apply(...done.ops)
     flag(hintKey(home.id))
@@ -512,11 +613,10 @@ export default function App() {
     const key = ++momentKey.current
     const big = condition.statuses.some((s) => s.choreId === chore.id && s.neglect === 3)
     const first = !completions.some((c) => c.completedOn === today)
-    setCelebrate({ key, choreName: chore.name, big, first })
+    setCelebrate({ key, homeId: home.id, choreName: chore.name, big, first })
     if (done.completion) setUndo({ key, completionId: done.completion.id, choreName: chore.name })
-    const placed = roomObjects.find((o) => o.id === chore.objectId)
     const entry = placed && catalogEntry(placed.catalogId)
-    if (placed && entry) setSparkles((list) => [...list, { id: key, ...sparkleSpot(placed, entry) }])
+    if (placed && entry) setSparkles((list) => [...list, { id: key, roomId: placed.roomId, ...sparkleSpot(placed, entry) }])
   }
   const choreList = (short: boolean) => (
     <ChoreList
@@ -527,7 +627,7 @@ export default function App() {
       onComplete={completeChore}
       onEdit={(chore) => (setAllChores(false), setView({ name: 'edit', choreId: chore.id }))}
       onAdd={() => (setAllChores(false), setView({ name: 'edit' }))}
-      limit={short ? upNextRows(viewport.height, sample) : undefined}
+      limit={short ? Math.min(rooms.length > 1 ? 2 : 3, upNextRows(viewport.height - 120, sample)) : undefined}
       onSeeAll={short ? () => setAllChores(true) : undefined}
     />
   )
@@ -547,23 +647,14 @@ export default function App() {
         />
       )}
 
-      <div className="home-stage" style={ROOM_ASPECT_VARS}>
+      <div className="home-stage">
         {room && (
-          <LivingRoom
-            room={room}
-            objects={roomObjects}
-            stages={stages}
-            neglect={neglect}
-            pet={pet}
-            mood={condition.mood}
-            away={away}
-            chores={chores}
-            statuses={condition.statuses}
-            celebrate={celebrate}
-            overlay={sparkles.map((s) => (
-              <Sparkle key={s.id} x={s.x} y={s.y} size={s.size} onDone={() => setSparkles((list) => list.filter((o) => o.id !== s.id))} />
-            ))}
-          />
+          <>
+            <RoomControls rooms={rooms} focusedRoomId={room.id} onFocus={focusRoom} />
+            {scene(
+              <Room room={room} objects={roomObjects} stages={stages} neglect={neglect} overdue={overdue} />,
+            )}
+          </>
         )}
         {roomObjects.length === 0 && (
           <button type="button" className="home-build" onClick={openBuild}>

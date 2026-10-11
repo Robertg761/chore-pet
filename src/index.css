@@ -256,23 +256,16 @@ h1[tabindex='-1']:focus { outline: none; }
 
 .home-stage {
   flex: 1 1 0;
-  min-height: 150px;
+  min-height: 420px;
   position: relative;
-  display: grid;
-  place-items: center;
-  container-type: size;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
-/*
- * The room keeps its shape and fills whichever side runs out first.
- * --room-w and --room-h are ROOM_VIEWBOX's width and height (src/room/shell/geometry.ts);
- * the fallbacks are the trimmed room, 390 x 322. App can set both from geometry (ROOM_ASPECT_VARS in src/shell/layout.ts).
- */
-.home-stage .living-room { width: min(100cqw, 100cqh * var(--room-w, 390) / var(--room-h, 322)); align-self: center; }
 .home-build {
-  position: absolute;
-  left: 50%;
-  bottom: 12%;
-  transform: translateX(-50%);
+  flex: none;
+  align-self: center;
+  margin-top: 6px;
   min-height: 48px;
   padding: 0 22px;
   font: inherit;
@@ -336,7 +329,7 @@ h1[tabindex='-1']:focus { outline: none; }
   gap: 8px;
 }
 .build .build-header h1 { font-size: 1.625rem; }
-.build-stage { flex: 1 1 0; min-height: 150px; display: flex; flex-direction: column; }
+.build-stage { flex: 1 1 0; min-width: 0; min-height: 380px; display: flex; flex-direction: column; gap: 6px; }
 .build-stage .build-room { flex: 1 1 0; min-height: 0; gap: 6px; }
 .build-stage .build-room-svg { flex: 1 1 0; min-height: 0; height: 100%; }
 .build-panel { flex: none; max-height: 52%; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 10px; padding: 2px; }
