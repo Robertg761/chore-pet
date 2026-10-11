@@ -169,3 +169,57 @@ export function sweater({ species }: Fit) {
     </Garment>
   )
 }
+
+// ----------------------------------------------------------------- apron
+
+const { creamDark, blush } = PALETTE
+
+/** How far each pet's apron skirt flares at the hem (Mochi's wide dumpling takes a wider one). */
+const APRON_FLARE: Record<Fit['species'], number> = { mochi: 74, bun: 64, sprout: 66 }
+
+/** A small heart, centred on (0,0), about 9 wide. */
+const HEART = 'M0 4 C-7 -1 -5 -6 -2.2 -5 C-1 -4.8 0 -3.6 0 -3 C0 -3.6 1 -4.8 2.2 -5 C5 -6 7 -1 0 4 Z'
+
+/** Half-width of the bib's top edge (Bun and Sprout about 42 wide, Mochi's wider chest a little more). */
+const BIB: Record<Fit['species'], number> = { mochi: 24, bun: 21, sprout: 22 }
+
+/** A cream bib apron: a wide rounded bib with short neck straps, a waistband with a bow, a stitched pocket with a heart, and a red hem. */
+export function apron({ species }: Fit) {
+  const f = APRON_FLARE[species]
+  const b = BIB[species]
+  // A rounded bib that eases out into the waist, then the skirt flares (the body outline cuts it).
+  const bib = `M${5 - b} -9 H${b - 5} Q${b} -9 ${b} -5 Q${b + 1} -1 ${b + 9} 3`
+  const shape = `${bib} L${f} 44 H${-f} L${-b - 9} 3 Q${-b - 1} -1 ${-b} -5 Q${-b} -9 ${5 - b} -9 Z`
+  // Each strap rises from a bib corner and slips under the chin, clear of the cheeks.
+  const strap = `M${-(b - 3)} -7.5 Q${-(b - 1)} -10.5 ${-(b + 0.5)} -13.5`
+  return (
+    <Ink>
+      {pair(
+        <>
+          <Tube d={strap} outer={7} inner={3.6} colour={cream} />
+          <circle cx={-(b + 0.5)} cy={-13.5} r={2.4} fill={creamDark} stroke={ink} strokeWidth={2.2} />
+        </>,
+      )}
+      <Garment d={shape} fill={cream}>
+        {/* the hem trim: a warm-red band along the belly's round bottom (the body outline cuts it) */}
+        <path d={hemBand(14, 44, 90)} fill={warmRed} stroke="none" />
+        <path d={hemCurve(14, 90)} {...line} strokeWidth={2.6} />
+        {/* the waistband: a thin shaded strip */}
+        <path d="M-40 -3 Q0 3.5 40 -3 L40 1.5 Q0 8 -40 1.5 Z" fill={creamDark} stroke="none" />
+        <path d="M-40 -3 Q0 3.5 40 -3 M-40 1.5 Q0 8 40 1.5" {...line} strokeWidth={2.4} />
+        {/* the pocket: a shaded top hem with a stitched line, then a blush heart */}
+        <path d="M-12 5 H12 V15 Q12 18.5 8.5 18.5 H-8.5 Q-12 18.5 -12 15 Z" fill={cream} stroke="none" />
+        <path d="M-12 5 H12 V9 H-12 Z" fill={creamDark} stroke="none" />
+        <path d="M-8.5 7 H8.5" {...line} strokeWidth={1.4} strokeDasharray="2.2 2.4" />
+        <path d={HEART} transform="translate(0 13.6) scale(0.62)" fill={blush} stroke={ink} strokeWidth={2.6} />
+        <path d="M-12 5 H12 V15 Q12 18.5 8.5 18.5 H-8.5 Q-12 18.5 -12 15 Z" {...line} strokeWidth={2.8} />
+      </Garment>
+      {/* the waist ties, tied in a small bow at one side */}
+      <g transform="translate(32 2)">
+        <path d="M0 0 Q3 7 -1 12 M0 0 Q9 5 11 11" {...line} stroke={ink} strokeWidth={6} />
+        <path d="M0 0 Q3 7 -1 12 M0 0 Q9 5 11 11" {...line} stroke={warmRed} strokeWidth={3} />
+        {bow(0, 0, warmRed, 1.25)}
+      </g>
+    </Ink>
+  )
+}

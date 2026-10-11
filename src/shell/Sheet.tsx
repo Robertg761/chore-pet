@@ -5,6 +5,8 @@ export interface SheetProps {
   title: string
   onClose: () => void
   children: ReactNode
+  /** Completion feedback stays visible outside the scrolling chore list. */
+  footer?: ReactNode
   /** 'bottom' slides up from the bottom on phones; 'menu' is a small list. */
   variant?: 'bottom' | 'menu'
 }
@@ -21,7 +23,7 @@ const reducedMotion = () => typeof matchMedia === 'function' && matchMedia('(pre
  * outside close it, and the page behind can't be reached. On a phone it can
  * also be dragged down by its handle. Closing plays a short exit first.
  */
-export function Sheet({ title, onClose, children, variant = 'bottom' }: SheetProps) {
+export function Sheet({ title, onClose, children, footer, variant = 'bottom' }: SheetProps) {
   const ref = useRef<HTMLDialogElement>(null)
   const closeButton = useRef<HTMLButtonElement>(null)
   const openerRef = useRef<HTMLElement | null>(null)
@@ -70,6 +72,7 @@ export function Sheet({ title, onClose, children, variant = 'bottom' }: SheetPro
     dialog.addEventListener('cancel', cancel)
     return () => {
       dialog.removeEventListener('cancel', cancel)
+      dialog.close()
       const opener = openerRef.current
       if (opener?.isConnected) opener.focus({ preventScroll: true })
     }
@@ -129,6 +132,7 @@ export function Sheet({ title, onClose, children, variant = 'bottom' }: SheetPro
         </div>
         {children}
       </div>
+      {footer && <div className="app-sheet-footer">{footer}</div>}
     </dialog>
   )
 }

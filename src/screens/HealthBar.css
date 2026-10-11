@@ -20,14 +20,44 @@
 
 .hb-away .hb-fill { background: #d5cfe0; border-right: 0; }
 
-.hb-row { position: relative; min-height: 22px; }
+.hb-row { position: relative; min-height: 22px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 8px; }
+.hb-mood { position: relative; min-width: 0; }
+
+/* The streak sits at the row's end (on its own line if a long name leaves no room). */
+.hb-streak {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 0 8px 0 6px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #fff3e2;
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 0.8125rem;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.hb-flame { flex: none; }
+
+/* One springy pop when the day count goes up (HealthBar.tsx remounts the chip for each rise). */
+.hb-streak-pop { animation: hb-streak-pop var(--dur-slow) var(--ease-spring) both; }
+@keyframes hb-streak-pop {
+  from { opacity: 0; transform: scale(0.6); }
+  25% { opacity: 1; }
+  to { opacity: 1; transform: scale(1); }
+}
+
 .hb-text { margin: 0; font-weight: 700; color: var(--ink-soft); line-height: 22px; }
 
-/* Floats up from the bar; absolutely placed so nothing around it moves. */
+/* Floats up from the end of the mood; absolutely placed so nothing around it moves. */
 .hb-gain {
   position: absolute;
-  right: 4px;
+  left: calc(100% + 8px);
   top: 0;
+  white-space: nowrap;
   padding: 0 10px;
   border: 2px solid var(--ink);
   border-radius: 999px;
@@ -50,4 +80,5 @@
 @media (prefers-reduced-motion: reduce) {
   .hb-fill { transition: none; }
   .hb-gain { display: none; }
+  .hb-streak-pop { animation: none; }
 }

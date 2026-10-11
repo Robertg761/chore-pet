@@ -32,6 +32,12 @@ const scene = () => page.locator('.home-scene')
 const rooms = () => scene().locator('[data-room-id]')
 const room = (id) => scene().locator(`[data-room-id="${id}"]`)
 const objects = (snapshot, roomId) => Object.values(snapshot.tables.placed_objects).filter((object) => object.roomId === roomId)
+const sampleKitchenCatalogIds = ['counter', 'sink', 'dishwasher', 'fridge', 'stove', 'trash', 'recycling', 'plant', 'rug', 'dining-table']
+const maxRooms = 6
+
+function assertSampleKitchen(data, roomId) {
+  assert.deepEqual(objects(data, roomId).map((object) => object.catalogId).sort(), [...sampleKitchenCatalogIds].sort())
+}
 
 async function eventually(check, description, timeout = 8000) {
   const end = Date.now() + timeout
@@ -251,7 +257,7 @@ async function blockedDoorRecovery() {
     const kitchen = await select().inputValue()
     const initial = await eventually(async () => {
       const data = await snapshot(blockedPage)
-      assert.equal(objects(data, kitchen).length, 7)
+      assertSampleKitchen(data, kitchen)
       return data
     }, 'The isolated sample kitchen must be saved before arranging it')
     const trash = objects(initial, kitchen).find((object) => object.catalogId === 'trash')
@@ -260,8 +266,10 @@ async function blockedDoorRecovery() {
     await r(kitchen).locator(`[data-object-id="${trash.id}"]`).click()
     const editor = blockedPage.locator('.build-room')
     await editor.focus()
+    // Step into the open aisle before crossing; the back wall has recycling and a plant.
+    await editor.press('ArrowDown')
     for (let tile = trash.tileX; tile < 7; tile++) await editor.press('ArrowRight')
-    for (let tile = trash.tileY; tile < 4; tile++) await editor.press('ArrowDown')
+    for (let tile = trash.tileY + 1; tile < 4; tile++) await editor.press('ArrowDown')
     await eventually(async () => {
       const object = (await snapshot(blockedPage)).tables.placed_objects[trash.id]
       assert.equal(object.tileX, 7)
@@ -287,7 +295,7 @@ async function blockedDoorRecovery() {
     await select().selectOption(kitchen)
     await editor.focus()
     let found = false
-    for (let pick = 0; pick < 7; pick++) {
+    for (let pick = 0; pick < objects(initial, kitchen).length; pick++) {
       await editor.press(']')
       if ((await blockedPage.locator('.build-room-status').textContent()).includes('Trash can selected.')) { found = true; break }
     }
@@ -333,7 +341,7 @@ try {
       assert.equal(await focusSelect().locator('option:checked').textContent(), 'Kitchen')
       await assertFocus(kitchenId, 1)
       assert.equal(await scene().locator('.room-pet').count(), 1)
-      const data = await saved((data) => assert.equal(Object.keys(data.tables.placed_objects).length, 7), 'Sample kitchen must be persisted')
+      const data = await saved((data) => assertSampleKitchen(data, kitchenId), 'The complete sample kitchen must be persisted')
       kitchenObjects = objects(data, kitchenId)
     })
 
@@ -347,9 +355,10 @@ try {
       bedroomId = await addRoom('Bedroom')
       assert.notEqual(bedroomId, kitchenId)
       await assertFocus(bedroomId, 2)
+      assert.match(await room(bedroomId).locator('svg[aria-label^="Room with"]').getAttribute('aria-label'), /oat rug floor and butter walls/)
       assert.equal(await page.locator('.build-room').count(), 1)
       assert.equal(await room(bedroomId).locator('.build-room-svg').count(), 1)
-      assert.equal(await room(kitchenId).locator('[data-object-id]').count(), 7)
+      assert.equal(await room(kitchenId).locator('[data-object-id]').count(), kitchenObjects.length)
       assert.equal(await room(bedroomId).locator('[data-object-id]').count(), 0)
       await eventually(assertFadedInactive, 'Inactive kitchen must remain visible and faded')
       await page.screenshot({ path: join(output, 'desktop-two-rooms.png'), fullPage: true })
@@ -513,7 +522,7 @@ try {
       const before = await snapshot()
       const bedChore = Object.values(before.tables.chores).find((chore) => chore.objectId === bedId && chore.name === 'Make the bed')
       assert.ok(bedChore, 'The bedroom bed must have its default chore')
-      await page.locator('.home-chores').getByRole('button', { name: bedChore.name, exact: true }).click()
+      await page.locator('.home-chores').getByRole('button', { name: `Edit ${bedChore.name}`, exact: true }).click()
       assert.equal(await page.getByRole('combobox', { name: 'Where is it?', exact: true }).inputValue(), bedId)
       await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Make the bed before breakfast')
       await button('Save').click()
@@ -557,14 +566,17 @@ try {
       await button('Focus Bedroom').click()
     })
 
-    await step('Focus, room objects, and styles survive reload', async () => {
+    await step('Build navigation, focus, room objects, and styles survive reload', async () => {
       await page.reload({ waitUntil: 'networkidle' })
       await button('Collapse time panel').click()
+      assert.equal(new URL(page.url()).searchParams.get('screen'), 'build', 'Reload must preserve the current Build screen')
       await assertFocus(bedroomId, 2)
-      assert.equal(await scene().locator('.room-pet').count(), 1)
+      assert.equal(await scene().locator('.ch-breathe').count(), 1, 'The Build preview must draw exactly one pet')
       assert.equal(await room(bedroomId).locator(`[data-object-id="${bedId}"]`).count(), 1)
-      assert.equal(await room(kitchenId).locator('[data-object-id]').count(), 7)
+      assert.equal(await room(kitchenId).locator('[data-object-id]').count(), kitchenObjects.length)
       assert.match(await room(bedroomId).locator('svg[aria-label^="Room with"]').getAttribute('aria-label'), /tile floor and mint walls/)
+      await navigate('Home')
+      await assertPetAt(bedroomId)
       await keyboardFocusRoom(kitchenId)
       await assertFocus(kitchenId, 2)
       assert.equal(await scene().locator('.room-pet').count(), 1)
@@ -587,7 +599,7 @@ try {
       await button('Back').click()
     })
 
-    await step('Duplicate room names are numbered and all room types can be created', async () => {
+    await step('Duplicate room names are numbered, all room types fit, and the six-room limit is respected', async () => {
       await navigate('Build')
       await addRoom('Bathroom')
       await page.setViewportSize({ width: 390, height: 844 })
@@ -610,11 +622,12 @@ try {
       const duplicate = await addRoom('Bedroom')
       assert.notEqual(duplicate, bedroomId)
       assert.equal(await focusSelect().locator('option:checked').textContent(), 'Bedroom 2')
-      for (const type of ['Living room', 'Room', 'Kitchen']) await addRoom(type)
-      assert.equal(await focusSelect().locator('option:checked').textContent(), 'Kitchen 2')
-      await assertFocus(await focusSelect().inputValue(), 7)
-      await saved((data) => assert.equal(Object.keys(data.tables.rooms).length, 7), 'All created rooms must be saved')
-      assert.equal(new Set(await focusSelect().locator('option').allTextContents()).size, 7)
+      for (const type of ['Living room', 'Room']) await addRoom(type)
+      assert.equal(await focusSelect().locator('option:checked').textContent(), 'Room')
+      await assertFocus(await focusSelect().inputValue(), maxRooms)
+      await saved((data) => assert.equal(Object.keys(data.tables.rooms).length, maxRooms), 'All six rooms must be saved')
+      assert.equal(new Set(await focusSelect().locator('option').allTextContents()).size, maxRooms)
+      assert.equal(await button('Add room').count(), 0, 'The home must not offer a seventh room')
     })
 
     await step('Desktop and phone layouts keep rooms visible without page overflow', async () => {
@@ -623,7 +636,7 @@ try {
         for (const view of ['Build', 'Home']) {
           await navigate(view)
           await button('Fit home').click()
-          await assertFocus(await focusSelect().inputValue(), 7)
+          await assertFocus(await focusSelect().inputValue(), maxRooms)
           await eventually(assertNoOverflow, `${view} must fit a ${viewport.width}px viewport`)
           await eventually(assertLabelsFit, `Room labels must fit ${viewport.width}x${viewport.height}`)
           await eventually(assertFadedInactive, 'Inactive rooms must be faded')

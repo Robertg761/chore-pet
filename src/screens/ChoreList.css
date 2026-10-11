@@ -63,6 +63,7 @@
   transition: opacity 0.4s ease, transform 0.4s ease, background-color 0.2s ease;
 }
 .cl-row-overdue { background: #fff6f0; border-color: var(--late-ink); }
+.cl-row-paused { border-color: var(--ink-soft); }
 .cl-row-upcoming { border-color: var(--ink-soft); }
 .cl-row-doneToday { background: #f6f2fd; border-color: var(--ink-soft); }
 .cl-row-done { opacity: 0.55; transform: scale(0.98); background: var(--due-bg); }
@@ -90,14 +91,25 @@
   cursor: pointer;
   overflow-wrap: anywhere;
 }
+.cl-name-text { min-width: 0; }
+.cl-name-end { white-space: nowrap; }
+.cl-pencil { flex: none; margin-left: 6px; vertical-align: -2px; color: var(--ink-soft); }
+.cl-name:hover .cl-pencil { color: var(--ink); }
 .cl-info .tag { margin: 0 0 2px; font-weight: 800; white-space: nowrap; }
 
 /* The home screen's short list: one line per chore, until space (or text size) runs tight. */
 .cl-short .cl-info { flex-wrap: nowrap; }
-.cl-short .cl-name { flex: 0 1 auto; min-width: 6em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; overflow-wrap: normal; }
+.cl-short .cl-name { flex: 0 1 auto; min-width: 6em; display: inline-flex; align-items: center; white-space: nowrap; overflow-wrap: normal; }
+.cl-short .cl-name-text { overflow: hidden; text-overflow: ellipsis; }
 .cl-short .cl-info .tag { margin: 0; }
+/* On a phone, a chore that is late or due today keeps its whole name and its tag drops underneath (a name
+   that fits keeps one line); chores coming up stay on one line, so the list stays short and the room big. */
+@container cl (max-width: 30em) {
+  .cl-short .cl-row:not(.cl-row-upcoming) .cl-info { flex-wrap: wrap; }
+  .cl-short .cl-row:not(.cl-row-upcoming) .cl-info .tag { margin: 0 0 4px; }
+}
 @container cl (max-width: 22em) {
-  /* The tag drops under the name rather than squeezing it. */
+  /* Narrower: the tag drops under the name rather than squeezing it. */
   .cl-short .cl-info { flex-wrap: wrap; }
   .cl-short .cl-name { flex: 0 1 auto; min-width: 6em; }
   .cl-short .cl-info .tag { margin: 0 0 4px; }
@@ -107,7 +119,8 @@
 @container cl (max-width: 13em) {
   .cl-row { grid-template-columns: minmax(0, 1fr); padding: 4px 12px 8px; gap: 4px; }
   .cl-action { justify-self: start; }
-  .cl-short .cl-name { white-space: normal; overflow: visible; text-overflow: clip; }
+  .cl-short .cl-name { white-space: normal; }
+  .cl-short .cl-name-text { overflow: visible; text-overflow: clip; }
 }
 
 /* The all-done card. */
@@ -176,8 +189,11 @@
 .cl-check { animation: cl-pop 0.3s ease-out; }
 .cl-set { font-size: 0.875rem; }
 /* The check that holds a tapped Done button's place (a real button, so focus stays): it looks settled, not tappable. */
-.cl-nice { background: none; border: 0; cursor: default; }
+/* Its side padding is dropped so it is no wider than the Done button it replaces: the name never reflows while the check shows. */
+.cl-nice { padding: 0; background: none; border: 0; cursor: default; }
+.cl-done, .cl-nice { min-width: 5rem; }
 .cl-set .cl-check { animation: none; }
+.cl-skipped { color: var(--ink-soft); }
 
 .cl-name:focus-visible,
 .cl-action:focus-visible,
@@ -209,6 +225,9 @@
   .cl-check { animation: none; }
 }
 
+/* On vacation a late chore is just paused: calm, not orange. */
+.tag-paused { background: var(--due-bg); color: var(--due-ink); }
+
 /* Late chores get louder as they're neglected (src/domain/neglect.ts). */
 .tag-late2 { background: #ffb98f; color: #6e2508; }
 .tag-late3 { background: #b8401a; color: #fff; }
@@ -228,8 +247,10 @@ html[data-vt='chores'] .cl-foot { view-transition-name: cl-foot; }
 html[data-vt='chores'] .cl-heading { view-transition-name: cl-heading; }
 
 html[data-vt='chores']::view-transition-group(*) { animation-duration: 340ms; animation-timing-function: var(--ease-out); }
-html[data-vt='chores']::view-transition-old(root),
-html[data-vt='chores']::view-transition-new(root) { animation-duration: 160ms; animation-delay: 0ms; }
+/* The page itself never cross-fades (a fade here blanks the whole screen for a frame): the
+   new page is simply there, and only the named rows and room below move. */
+html[data-vt='chores']::view-transition-old(root) { animation: none; opacity: 0; }
+html[data-vt='chores']::view-transition-new(root) { animation: none; opacity: 1; }
 ::view-transition-old(.cl-row):only-child { animation: cl-vt-out 220ms var(--ease-in) both; }
 ::view-transition-new(.cl-row):only-child { animation: cl-vt-in 300ms var(--ease-out) 120ms both; }
 ::view-transition-new(cl-caught):only-child { animation: cl-vt-in 360ms var(--ease-spring) 140ms both; }
@@ -242,3 +263,10 @@ html[data-vt='chores']::view-transition-new(root) { animation-duration: 160ms; a
 }
 /* The room moves the furthest, so it eases in and out rather than lurching off. */
 html[data-vt='chores']::view-transition-group(home-room) { animation-duration: 420ms; animation-timing-function: var(--ease-in-out); }
+
+/* The home screen's undo toast stands in for the buttons under the list for a few seconds. */
+.cl-foot-toast > .undo-toast-inline { animation: cl-foot-toast-in var(--dur-slow) var(--ease-spring); }
+@keyframes cl-foot-toast-in { from { opacity: 0; transform: translateY(8px) scale(0.96); } }
+@media (prefers-reduced-motion: reduce) {
+  .cl-foot-toast > .undo-toast-inline { animation: none; }
+}

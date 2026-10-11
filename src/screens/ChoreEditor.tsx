@@ -10,7 +10,6 @@ import {
   WEEKDAY_SHORT,
   WEEK_ORDER,
   describeSchedule,
-  formFromChore,
   ordinal,
   resolveObjectId,
   scheduleFromForm,
@@ -18,11 +17,11 @@ import {
   toggleDay,
   validateForm,
   valueFromForm,
-  type ChoreFormState,
   type ChorePlace,
   type ChoreValue,
   type ScheduleKind,
 } from './choreForm'
+import { useChoreDraft } from './choreDrafts'
 import { ScreenHeader } from '../shell/ScreenHeader'
 import { CharCounter } from './CharCounter'
 import './ChoreEditor.css'
@@ -35,6 +34,10 @@ export interface ChoreEditorProps {
   /** objectId is always set: an id, or null for "nowhere in particular". */
   onSave: (value: ChoreValue) => void
   onDelete?: () => void
+  /** "Skip this time": shown while the chore's round is owed (due or late). */
+  onSkip?: () => void
+  /** Take back today's skip: shown once the chore was skipped today. */
+  onUnskip?: () => void
   onCancel: () => void
 }
 
@@ -42,9 +45,9 @@ type Field = 'name' | 'n' | 'days'
 
 const MONTH_DAYS = Array.from({ length: 31 }, (_, i) => i + 1)
 
-export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: ChoreEditorProps) {
+export function ChoreEditor({ chore, places = [], onSave, onDelete, onSkip, onUnskip, onCancel }: ChoreEditorProps) {
   const uid = useId()
-  const [form, setForm] = useState<ChoreFormState>(() => formFromChore(chore))
+  const { form, patch, clear } = useChoreDraft(chore)
   const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({})
   const [submitted, setSubmitted] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
@@ -58,7 +61,6 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
   const errors = validateForm(form)
   const shown = (f: Field) => (touched[f] || submitted ? errors[f] : undefined)
   const touch = (f: Field) => setTouched((t) => (t[f] ? t : { ...t, [f]: true }))
-  const patch = (p: Partial<ChoreFormState>) => setForm((f) => ({ ...f, ...p }))
 
   const schedule = scheduleFromForm(form)
   const summary = schedule ? describeSchedule(schedule) : null
@@ -68,6 +70,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
     setSubmitted(true)
     const value = valueFromForm(form, places)
     if (value) {
+      clear()
       onSave(value)
       return
     }
@@ -99,11 +102,23 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
   const where = resolveObjectId(form.objectId, places)
 
   return (
-    <form className="editor" onSubmit={submit} aria-labelledby={`${uid}-title`} noValidate>
+    <form
+      className="editor"
+      onSubmit={submit}
+      aria-labelledby={`${uid}-title`}
+      noValidate
+      // Escape backs out like Cancel (the delete question first, if it's open).
+      onKeyDown={(e) => {
+        if (e.key !== 'Escape' || e.defaultPrevented) return
+        e.preventDefault()
+        if (confirmingDelete) keep()
+        else { clear(); onCancel() }
+      }}
+    >
       <ScreenHeader
         id={`${uid}-title`}
         title={chore ? 'Edit chore' : 'New chore'}
-        onBack={onCancel}
+        onBack={() => { clear(); onCancel() }}
         backLabel="Cancel"
         actions={
           onDelete &&
@@ -112,7 +127,7 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
               <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
                 <path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="editor-trash-text">Delete chore</span>
+              <span className="editor-trash-text">Remove chore</span>
             </button>
           )
         }
@@ -324,19 +339,30 @@ export function ChoreEditor({ chore, places = [], onSave, onDelete, onCancel }: 
             </div>
           )}
 
-          <div className="editor-actions">
+          <div className={onSkip || onUnskip ? 'editor-actions editor-actions-skip' : 'editor-actions'}>
             <button type="submit" className="btn btn-primary editor-save">
               Save
             </button>
+            {/* Not needed this round (no laundry, ate out): it settles the round without counting as done.
+                Unsaved edits stay as a draft, so nothing typed is lost. */}
+            {onSkip ? (
+              <button type="button" className="btn editor-skip" onClick={onSkip}>
+                Skip this time
+              </button>
+            ) : onUnskip ? (
+              <button type="button" className="btn editor-skip" onClick={onUnskip}>
+                Undo skip
+              </button>
+            ) : null}
           </div>
 
           {onDelete && confirmingDelete && (
             <div className="editor-danger">
-              <div className="editor-confirm" role="group" aria-label="Delete this chore">
-                <p>Delete this chore? Rewards you earned stay.</p>
+              <div className="editor-confirm" role="group" aria-label="Remove this chore">
+                <p>{chore ? `Remove "${chore.name}"?` : 'Remove this chore?'} Your past work and rewards stay.</p>
                 <div className="editor-confirm-actions">
-                  <button type="button" className="btn btn-danger" onClick={onDelete}>
-                    Delete
+                  <button type="button" className="btn btn-danger" onClick={() => { clear(); onDelete?.() }}>
+                    Remove
                   </button>
                   <button ref={keepRef} type="button" className="btn" onClick={keep}>
                     Keep it

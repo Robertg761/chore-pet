@@ -151,3 +151,22 @@ describe('weekSummary', () => {
     expect(s.line).toBe('A week away. Your pet was resting.')
   })
 })
+
+describe('sample history and personal work', () => {
+  it('excludes seed work before deduplication and still counts legacy genuine completions', () => {
+    const completions = [
+      { ...done('a', '2026-10-01'), counts: false },
+      { ...done('b', TODAY), counts: false },
+      { ...done('b', TODAY), id: 'real-b', counts: true },
+      done('c', TODAY),
+    ]
+    expect(completedPerDay(completions, weekDays(TODAY))).toEqual([0, 0, 0, 0, 0, 0, 2])
+  })
+  it('retains seeded completions for the sample health replay', () => {
+    const days = weekDays(TODAY)
+    const chores = [chore('a', '2026-10-01')]
+    const completions = days.map(d => ({ ...done('a', d.date), counts: false }))
+    expect(completedPerDay(completions, days)).toEqual([0, 0, 0, 0, 0, 0, 0])
+    expect(healthPerDay(chores, completions, [], days).map(d => d.health)).toEqual([100, 100, 100, 100, 100, 100, 100])
+  })
+})

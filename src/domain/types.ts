@@ -22,10 +22,28 @@ export type ScheduleRule =
  * SCHEDULE_HISTORY), so past days are judged by the rule that applied then.
  * Both are missing on a schedule that was never changed, and neither is part
  * of what the schedule asks for, so `sameSchedule` ignores them.
+ *
+ * `resume` is set on a removed chore added back mid-round: where the old one
+ * stood (its next due date and the last day it was done), so the new one picks
+ * up exactly there instead of starting a fresh round (see resumeFrom). Also
+ * ignored by `sameSchedule`.
+ *
+ * `resume.last` is missing when nothing had counted yet, and `resume.start` is
+ * set only by Undo after removing a chore (see standingOf): the day the removed
+ * one's schedule began, which lets `due` lie before the new chore's own start
+ * (it was late) and keeps the first-occurrence grace as it was.
+ *
+ * `skips` are the days the player said a round wasn't needed ("Skip this
+ * time"). A skip settles the round it was taken on like a completion does, so
+ * nothing is late, but it is not a completion: it never counts toward rewards
+ * or makes a streak day (see skipDays). Kept on the current schedule only
+ * (updateChore carries them over), oldest first, at most SKIP_HISTORY.
  */
 export type Schedule = ScheduleRule & {
   since?: ISODate
   before?: Schedule
+  resume?: { due: ISODate; last?: ISODate; start?: ISODate }
+  skips?: ISODate[]
 }
 
 export interface VacationWindow {
@@ -66,6 +84,8 @@ export interface Chore {
   name: string
   schedule: Schedule
   createdOn: ISODate
+  /** Exclusive end date: earlier history stays, obligations stop on this day. */
+  archivedOn?: ISODate
   photoProof: boolean // reserved; photo proof is on hold
 }
 
@@ -124,7 +144,7 @@ export interface Progress {
   homeId: string
   /** Chores done that count toward rewards. Worked out by choreCountOf; the stored value is only a cache. */
   choreCount: number
-  /** Counted chores of chores since deleted, by chore id, so removing a chore never takes progress away. */
+  /** Legacy counts for chores deleted before history retention, by chore id. */
   retired?: Record<string, number>
   currentStreak: number
   bestStreak: number

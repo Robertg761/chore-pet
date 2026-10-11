@@ -32,7 +32,8 @@ export function Welcome({ pet, onContinue }: WelcomeProps) {
         <p className="welcome-bubble" role="status">
           {line}
         </p>
-        <svg className="welcome-pet" viewBox="0 0 200 200" role="img" aria-label={`${pet.name} is cheering`}>
+        {/* The view starts above the head so Bun's ears, raised to cheer, never reach the bubble. */}
+        <svg className="welcome-pet" viewBox="0 -24 200 224" role="img" aria-label={`${pet.name} is cheering`}>
           <Cheer>
             <CharacterArt
               species={pet.species}

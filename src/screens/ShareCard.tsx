@@ -9,7 +9,7 @@ import { ROOM_VIEWBOX } from '../room/shell/geometry'
 import type { Pet, PlacedObject, Room as RoomRow } from '../domain/types'
 import { ScreenHeader } from '../shell/ScreenHeader'
 import './ShareCard.css'
-import { CARD_HEIGHT, CARD_WIDTH, captionFontSize, captionText, cardToPng, downloadPng, nameFontSize, shareFileName } from './shareImage'
+import { CARD_HEIGHT, CARD_WIDTH, captionFontSize, captionLines, captionText, cardToPng, downloadPng, nameFontSize, shareFileName } from './shareImage'
 
 export interface ShareCardProps {
   pet: Pet
@@ -36,7 +36,8 @@ const PANEL = { x: 60, y: 60, width: 960, height: PANEL_PAD * 2 + ROOM_H, radius
 const ROOM_Y = PANEL.y + PANEL_PAD
 const NAME_Y = PANEL.y + PANEL.height + 150
 const CAPTION_Y = NAME_Y + 72
-const BADGE = { width: 260, height: 64, y: CAPTION_Y + 38 }
+const CAPTION_GAP = 56
+const BADGE = { width: 260, height: 64 }
 
 type Status = 'making' | 'ready' | 'error'
 
@@ -48,6 +49,8 @@ export function ShareCard({ pet, room, objects, choreCount, streak, onClose }: S
   const [notice, setNotice] = useState('')
 
   const caption = captionText(pet.name, choreCount, streak)
+  const lines = captionLines(pet.name, choreCount, streak)
+  const badgeY = CAPTION_Y + (lines.length - 1) * CAPTION_GAP + 38
   const fileName = shareFileName(pet.name)
 
   // The pet stands on a free tile at the front; rugs and wall things don't block it.
@@ -151,11 +154,13 @@ export function ShareCard({ pet, room, objects, choreCount, streak, onClose }: S
           <text x={CARD_WIDTH / 2} y={NAME_Y} textAnchor="middle" fontSize={nameSize} fontWeight={900} fill={ink}>
             {pet.name}
           </text>
-          <text x={CARD_WIDTH / 2} y={CAPTION_Y} textAnchor="middle" fontSize={captionFontSize(caption)} fontWeight={700} fill={ink} fillOpacity={0.78}>
-            {caption}
-          </text>
-          <rect x={CARD_WIDTH / 2 - BADGE.width / 2} y={BADGE.y} width={BADGE.width} height={BADGE.height} rx={BADGE.height / 2} fill={accent} stroke={ink} strokeWidth={5} />
-          <text x={CARD_WIDTH / 2} y={BADGE.y + 43} textAnchor="middle" fontSize={36} fontWeight={900} fill={white} letterSpacing={1}>
+          {lines.map((line, i) => (
+            <text key={i} x={CARD_WIDTH / 2} y={CAPTION_Y + i * CAPTION_GAP} textAnchor="middle" fontSize={captionFontSize(line)} fontWeight={700} fill={ink} fillOpacity={0.78}>
+              {line}
+            </text>
+          ))}
+          <rect x={CARD_WIDTH / 2 - BADGE.width / 2} y={badgeY} width={BADGE.width} height={BADGE.height} rx={BADGE.height / 2} fill={accent} stroke={ink} strokeWidth={5} />
+          <text x={CARD_WIDTH / 2} y={badgeY + 43} textAnchor="middle" fontSize={36} fontWeight={900} fill={white} letterSpacing={1}>
             Chore Pet
           </text>
         </svg>

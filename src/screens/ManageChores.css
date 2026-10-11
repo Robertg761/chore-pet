@@ -1,0 +1,64 @@
+/* The chores screen: chores by place (and removed ones beside them on wide screens), with the
+   actions pinned at the foot. Only the list scrolls, never the page. Header and frame: shell/ScreenHeader.css. */
+.manage-body {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+  margin: -4px;
+}
+.manage-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+.manage-group { display: flex; flex-direction: column; gap: 6px; }
+.manage-heading { margin: 0; font-size: 0.9375rem; font-weight: 900; letter-spacing: 0.02em; color: var(--ink-soft); }
+.manage-hint { margin: -2px 0 2px; font-size: 0.875rem; font-weight: 700; color: var(--ink-soft); }
+.manage-empty {
+  margin: 0;
+  padding: 18px 16px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-align: center;
+  background: var(--card);
+  border: 2px dashed var(--ink-soft);
+  border-radius: var(--radius);
+}
+
+.manage-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.manage-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 2px 4px 2px 10px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  transition: background-color var(--dur-fast, 0.15s) ease;
+}
+.manage-row-picked { background: var(--late-wash); border-color: var(--late-ink); }
+.manage-row-past { padding: 6px 8px 6px 12px; gap: 10px; border-color: var(--ink-soft); border-style: dashed; }
+.manage-row-past .btn { flex: none; white-space: nowrap; }
+
+.manage-pick { flex: 1 1 auto; min-width: 0; min-height: 52px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.manage-pick .check { flex: none; }
+.manage-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.manage-name { font-weight: 800; overflow-wrap: anywhere; }
+.manage-when { font-size: 0.8125rem; font-weight: 700; color: var(--ink-soft); }
+.manage-edit { flex: none; padding: 0; color: var(--ink-soft); }
+.manage-edit:hover { color: var(--ink); }
+
+.manage-foot { flex: none; display: flex; flex-direction: column; }
+.manage-add { width: 100%; min-height: 48px; }
+.manage-actions { display: grid; grid-template-columns: auto 1fr; gap: 10px; }
+
+@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+  /* Side by side, each column scrolls on its own so the removed list stays in view. */
+  .manage-body { flex-direction: row; gap: 24px; overflow: visible; padding: 0; margin: 0; }
+  .manage-col { flex: 1 1 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 4px; margin: -4px; }
+  .manage-foot { align-items: flex-end; }
+  .manage-add, .manage-actions, .manage-confirm { width: min(100%, 420px); }
+}

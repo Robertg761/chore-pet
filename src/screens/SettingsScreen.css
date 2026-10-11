@@ -10,6 +10,11 @@
 .settings-card:has(> .settings-toggle:only-child) { padding-block: 2px; }
 .settings-toggle { min-height: 44px; display: flex; align-items: center; gap: 12px; font-weight: 800; cursor: pointer; }
 
+.settings-note { margin: 0 0 8px; font-weight: 700; color: var(--ink-soft); line-height: 1.3; }
+.settings-choice { display: flex; flex-direction: column; gap: 4px; }
+.settings-choice-note { font-size: 0.875rem; font-weight: 700; color: var(--late-ink); line-height: 1.3; }
+
+
 .settings-foot { margin: 0; text-align: center; font-size: 0.875rem; font-weight: 700; }
 .settings-foot a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 12px; color: var(--ink-soft); }
 .settings-foot a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 8px; }

@@ -1,5 +1,5 @@
 import { diffDays, isInVacation, weekdayOf } from '../domain/dates'
-import { choreStatus, completionCounts, completionDays, type ChoreStatus } from '../domain/schedule'
+import { choreActiveOn, choreStatus, completionCounts, completionDays, skippedOn, type ChoreStatus } from '../domain/schedule'
 import type { Chore, Completion, ISODate, VacationWindow } from '../domain/types'
 
 export type SectionId = 'late' | 'today' | 'soon' | 'done'
@@ -7,10 +7,14 @@ export type SectionId = 'late' | 'today' | 'soon' | 'done'
 export interface ChoreRow {
   chore: Chore
   status: ChoreStatus
-  /** Short friendly status, e.g. "2 days late", "Today", "Thu", "12 Oct". */
+  /** Short friendly status, e.g. "2 days late", "Today", "Thu", "12 Oct", or "Paused" while the home is away. */
   label: string
-  /** Finished today, so it's waiting for its next round. */
+  /** Late, but the home is on vacation right now: shown as a neutral "Paused", not as mess. */
+  paused: boolean
+  /** Finished (or skipped) today, so it's waiting for its next round. */
   doneToday: boolean
+  /** Skipped today ("Skip this time") rather than done. */
+  skippedToday: boolean
   /** Not due yet and already covered: doing it again wouldn't count, so there's nothing to tap. */
   allSet: boolean
 }
@@ -31,14 +35,16 @@ export function shortDate(date: ISODate): string {
 }
 
 /** Friendly label for when a chore is due, based only on the domain's status. */
-export function statusLabel(status: ChoreStatus, today: ISODate): string {
+export function statusLabel(status: ChoreStatus, today: ISODate, paused = false): string {
   if (status.state === 'overdue') {
+    // On vacation nothing is running late: the banner says chores are paused, so the row does too.
+    if (paused) return 'Paused'
     // Long stretches read kindly rather than as a growing number.
-    if (status.overdueDays >= 14) return 'Over 2 weeks'
-    if (status.overdueDays >= 7) return 'Over a week'
+    if (status.overdueDays >= 14) return 'Over 2 weeks late'
+    if (status.overdueDays >= 7) return 'Over a week late'
     return status.overdueDays === 1 ? '1 day late' : `${status.overdueDays} days late`
   }
-  if (status.state === 'due') return 'Today'
+  if (status.state === 'due') return paused ? 'Paused' : 'Today'
   const away = diffDays(today, status.dueDate)
   if (away === 1) return 'Tomorrow'
   if (away <= 6) return WEEKDAYS[weekdayOf(status.dueDate)]
@@ -50,19 +56,21 @@ export function whenPhrase(label: string): string {
   return label === 'Tomorrow' ? 'tomorrow' : `on ${label}`
 }
 
-/** Group chores into "Running late", "Today", "Coming up" and "Done today". Empty sections are left out. */
+/** Group chores into "Running late", "Today", "Done today" (or "Done or skipped today") and "Coming up". Empty sections are left out. */
 export function buildSections(
   chores: Chore[],
   completions: Completion[],
   vacations: VacationWindow[],
   today: ISODate,
 ): ChoreSection[] {
-  const rows: ChoreRow[] = chores.map((chore) => {
+  const away = onVacation(today, vacations)
+  const rows: ChoreRow[] = chores.filter((c) => choreActiveOn(c, today)).map((chore) => {
     const status = choreStatus(chore, completions, today, vacations)
     const upcoming = status.state === 'upcoming'
-    const doneToday = upcoming && completionDays(chore, completions).includes(today)
+    const done = upcoming && completionDays(chore, completions).includes(today)
+    const skippedToday = upcoming && !done && skippedOn(chore, today)
     const allSet = upcoming && !completionCounts(chore, completions, today)
-    return { chore, status, label: statusLabel(status, today), doneToday, allSet }
+    return { chore, status, label: statusLabel(status, today, away), paused: away && (status.state === 'overdue' || status.state === 'due'), doneToday: done || skippedToday, skippedToday, allSet }
   })
   const byName = (a: ChoreRow, b: ChoreRow) => a.chore.name.localeCompare(b.chore.name)
   const pick = (state: ChoreStatus['state']) => rows.filter((r) => r.status.state === state)
@@ -74,10 +82,12 @@ export function buildSections(
   const doneToday = pick('upcoming').filter((r) => r.doneToday).sort(byName)
 
   const sections: ChoreSection[] = [
-    { id: 'late', title: 'Running late', rows: late },
-    { id: 'today', title: 'Today', rows: due },
+    // On vacation nothing is running late or due: the same rows wait together, paused, until the trip ends.
+    { id: 'late', title: away ? "Paused while you're away" : 'Running late', rows: away ? [...late, ...due] : late },
+    { id: 'today', title: 'Today', rows: away ? [] : due },
+    // What was just finished sits right under today's, not past a long list of later chores.
+    { id: 'done', title: doneToday.some((r) => r.skippedToday) ? 'Done or skipped today' : 'Done today', rows: doneToday },
     { id: 'soon', title: 'Coming up', rows: soon },
-    { id: 'done', title: 'Done today', rows: doneToday },
   ]
   return sections.filter((s) => s.rows.length > 0)
 }
@@ -93,7 +103,9 @@ export function allCaughtUp(sections: ChoreSection[]): boolean {
 
 /** The next chore coming up, for the "all done" card. Null when nothing is scheduled ahead. */
 export function nextUpcoming(sections: ChoreSection[]): ChoreRow | null {
-  return sections.find((s) => s.id === 'soon')?.rows[0] ?? null
+  return sections.flatMap((s) => s.rows)
+    .filter((r) => r.status.state === 'upcoming')
+    .sort((a, b) => a.status.dueDate.localeCompare(b.status.dueDate) || a.chore.name.localeCompare(b.chore.name))[0] ?? null
 }
 
 /**

@@ -1,3 +1,5 @@
+> Historical characterization evidence for baseline commit `9617aaa`. These probes intentionally assert the original bugs and are not post-fix regression tests. See ../INTEGRATION.md for remediation verification.
+
 # Chore Pet data audit probes
 
 These probes use the real application functions with memory storage/fake remote dependencies. They reproduce current defects; a passing test confirms the faulty behavior, not a fix. No live Supabase requests are made. No tracked application files are edited.

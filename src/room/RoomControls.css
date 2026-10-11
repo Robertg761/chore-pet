@@ -25,6 +25,8 @@
 .room-controls .field { width: 100%; font-size: 0.875rem; }
 .room-controls-add { flex: none; white-space: nowrap; }
 .room-controls-add > span { font-size: 1.25rem; line-height: 1; }
+.room-controls .room-pill { position: relative; top: auto; left: auto; flex: none; align-self: flex-end; min-height: 44px; padding: 0 8px; }
+.room-controls .room-pill::after { inset: 0; }
 .room-controls-create {
   display: flex;
   flex-wrap: wrap;
@@ -38,6 +40,8 @@
 .room-controls-type { flex: 1 1 130px; }
 .room-controls-create .btn { flex: 0 0 auto; }
 @media (max-width: 380px) {
+  .room-controls-row { gap: 5px; }
+  .room-controls-add { padding-left: 8px; padding-right: 8px; }
   .room-controls-type { flex-basis: 100%; }
   .room-controls-create { gap: 6px; }
 }

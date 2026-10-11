@@ -1,9 +1,9 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { CharacterArt } from '../character/Character'
 import type { PoseName } from '../character/poses'
-import { poseFor } from '../character/poses'
 import type { Item } from '../character/slots'
 import type { Mood, Pet, Progress, SavedOutfit } from '../domain/types'
+import { itemCropViewBox } from './itemCrop'
 import { GiftSilhouette } from './RewardArt'
 import { ScreenHeader } from '../shell/ScreenHeader'
 import { SegThumb } from '../shell/SegThumb'
@@ -49,13 +49,9 @@ function PetArt({ pet, equipped, pose, viewBox = '0 0 200 200', className, label
   )
 }
 
-/** One item on the pet, cropped to the part of the body it goes on. */
+/** One item on the pet, framed so the whole head shows with it (see itemCrop). */
 function ItemCrop({ pet, item }: { pet: Pet; item: Item }) {
-  const anchor = poseFor(pet.species, 'idle').anchors[item.slot]
-  // Clothes sit low on the body, so look a little higher and wider to see the whole thing.
-  const half = item.slot === 'outfit' ? 62 : 58
-  const centre = item.slot === 'outfit' ? anchor.y - 22 : anchor.y + 14
-  return <PetArt className="wd-tile-art" pet={pet} equipped={{ [item.slot]: item.id }} pose="idle" viewBox={`${anchor.x - half} ${centre - half} ${half * 2} ${half * 2}`} />
+  return <PetArt className="wd-tile-art" pet={pet} equipped={{ [item.slot]: item.id }} pose="idle" viewBox={itemCropViewBox(pet.species, item.slot)} />
 }
 
 /** A soft circle with a slash, for taking the slot's item off. */
@@ -183,11 +179,11 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
               </button>
               {removing === o.id ? (
                 <div className="wd-confirm" role="group" aria-label={`Remove ${o.name}?`}>
-                  <button type="button" className="btn btn-sm btn-danger" onClick={() => confirmRemove(o)}>
-                    Remove
-                  </button>
                   <button type="button" className="btn btn-sm" onClick={() => setRemoving(null)}>
                     Keep
+                  </button>
+                  <button type="button" className="btn btn-sm btn-danger" onClick={() => confirmRemove(o)}>
+                    Remove
                   </button>
                 </div>
               ) : (

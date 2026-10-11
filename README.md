@@ -1,5 +1,7 @@
 # Chore Pet
 
+![Chore Pet: a tiny pet that lives in a home you build. Mochi, Bun and Sprout in tier-two outfits, beside the home, the wardrobe and the rewards screens](docs/media/chore-pet-showcase.png)
+
 A tiny pet that lives in a home you build. Every object brings real chores; keep up and it thrives, fall behind and the mess shows up in its room. Working name, built for Hackyard Yard #4.
 
 ## Try it
@@ -10,7 +12,7 @@ Open the app and tap **Try a sample home**: a furnished kitchen with two late ch
 
 1. `npm install`
 2. Create a Supabase project, then in Authentication settings turn on **Allow anonymous sign-ins**.
-3. Run the files in `supabase/migrations/` in order (`0001` to `0006`) in the Supabase SQL editor (or with the Supabase CLI).
+3. Run the files in `supabase/migrations/` in order (`0001` to `0009`) in the Supabase SQL editor (or with the Supabase CLI).
 4. Copy `.env.example` to `.env` and fill in your project URL and anon key.
 5. `npm run dev`
 
@@ -47,7 +49,7 @@ What is stored and how players delete it is in `docs/PRIVACY.md`.
 
 ### Deploy
 
-Live at https://robertg761.github.io/chore-pet/. `.github/workflows/pages.yml` checks every pull request (lint, tests, build) and deploys `main` to GitHub Pages:
+Live at https://robertg761.github.io/chore-pet/. `.github/workflows/pages.yml` checks every pull request (lint, unit tests, build, browser tests) and deploys `main` to GitHub Pages:
 
 - One-time setup: Settings > Pages > Source: **GitHub Actions**.
 - For cloud sync, add the repository secrets `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (Settings > Secrets and variables > Actions), then re-run the workflow. Without them the live app keeps everything on the device.
@@ -57,7 +59,7 @@ The anon key is public by design: row-level security in the migrations protects 
 ### Dev tools
 
 - `/?art` opens the art gallery (every pet, pose, item, object and mess state, plus a sound audition row).
-- `/?dev`, or a long-press on the top-left corner, opens the time panel, which skips days to show mess, sickness and recovery.
+- `/?dev` opens the time panel, which skips days to show mess, sickness and recovery. In a dev build, a long-press on the top-left corner opens it too.
 
 ## Scripts
 
@@ -68,7 +70,12 @@ The anon key is public by design: row-level security in the migrations protects 
 | `npm run test:multiroom` | Browser checks against an offline local dev server; see `scripts/test-multiroom.mjs` for setup |
 | `npm run build` | Typecheck and build the PWA |
 | `npm run lint` | Lint |
-| `npm run demo:record` | Record the demo video against `vite preview` (see `scripts/record-demo.mjs`) |
+| `npm run test:browser` | Browser tests against the production build in `dist/` (run `npm run build` first; set `CHROME` to use an existing Chrome, see `scripts/browser/README.md`) |
+| `npm run icons` | Regenerate the app icon PNGs |
+| `npm run demo:record` | Record the demo video from the production build in `dist/` (see `scripts/record-demo.mjs`) |
+| `npm run cover` | Render the cover and social card into `docs/media/` (build first; see `scripts/cover.mjs`) |
+| `npm run demo:story` | Record the story demo video (`FORMAT=landscape` for 16:9; see `scripts/record-story.mjs`) |
+| `npm run showcase` | Render the earlier screenshot showcase into `demo/showcase/` (see `scripts/showcase.mjs`) |
 
 ## Docs
 
@@ -76,3 +83,8 @@ The anon key is public by design: row-level security in the migrations protects 
 - `docs/PLAN.md`: phased build plan and task split for Claude Code subagents
 - `docs/ART.md`: art direction and character rules
 - `docs/SUBMISSION.md`: the Hackyard write-up
+- `docs/PRIVACY.md`: what is stored and how to delete it
+
+## License
+
+[MIT](LICENSE)

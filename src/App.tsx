@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { catalogEntry } from './catalog/objects'
+import { canSkip, choreActiveOn, choreRetiredBy, choreStatus, skippedOn } from './domain/schedule'
 import type { CatalogEntry } from './catalog/types'
 import { CharacterArt } from './character/Character'
 import { isInVacation } from './domain/dates'
@@ -10,22 +11,31 @@ import { currentStreak, type Unlock } from './domain/unlocks'
 import { ITEMS } from './character/items'
 import {
   addChore,
+  addChoreAgain,
   adoptSample,
+  clearHome,
   completeChoreWithRewards,
+  skipChore,
+  skipDayFor,
   uncompleteChore,
+  undoRemove,
+  unskipChore,
   updatePet,
   updateRoom,
   createHousehold,
   createRoom,
   moveObject,
   placeObject,
+  reconcileProgress,
   removeChore,
   removeHome,
   removeObject,
+  removeRoom,
   setVacations,
   updateChore,
 } from './data/actions'
 import { appStore, startAppStore, useDataState, useHome } from './data/appStore'
+import { selectHome } from './data/state'
 import type { SyncStatus } from './data/store'
 import { devNow } from './lib/devClock'
 import { useToday } from './lib/useToday'
@@ -48,15 +58,21 @@ import { CatalogTray } from './screens/CatalogTray'
 import { CharacterCreator } from './screens/CharacterCreator'
 import { ChoreEditor } from './screens/ChoreEditor'
 import { ChoreList } from './screens/ChoreList'
+import { ManageChores } from './screens/ManageChores'
+import { againInput } from './screens/manageModel'
+import { RoomPill, RoomsSheet } from './screens/RoomsSheet'
+import { lateByRoom, MAX_ROOMS, orderRooms as orderRoomsForList, placesAcrossRooms } from './screens/roomsModel'
 import { sparkleSpot, type SparkleSpot } from './screens/doneMoment'
 import { HealthBar } from './screens/HealthBar'
+import { AccountCleanup } from './screens/AccountCleanup'
 import { Landing } from './screens/Landing'
 import { GiftBox } from './screens/GiftBox'
 import { ObjectSheet } from './screens/ObjectSheet'
 import { PetPicker } from './screens/PetPicker'
 import { RewardsScreen } from './screens/RewardsScreen'
-import { rewardsNote } from './screens/rewardsModel'
-import { SampleBanner } from './screens/SampleBanner'
+import { rewardsHint, rewardsNote } from './screens/rewardsModel'
+import { homeStreak as homeStreakOf } from './screens/streakNudge'
+import { AdoptedNote, ADOPTED_NOTE_MS, SampleBanner } from './screens/SampleBanner'
 import { CoachCard, FirstDoneHint, Welcome } from './screens/Onboarding'
 import { coachStep, hasDueChore, hintKey, onboardedKey, readFlag, showFirstDoneHint, writeFlag } from './screens/onboardingModel'
 import { RoomStylePicker } from './screens/RoomStylePicker'
@@ -70,25 +86,41 @@ import { useReminders } from './reminders/reminders'
 import { AppNav, type MoreItem, type Tab } from './shell/AppNav'
 import { objectOverdue } from './room/cuePlan'
 import { PET_STROKE_SCALE } from './room/shell/geometry'
+import { LoadingPet } from './shell/LoadingPet'
 import { Sheet } from './shell/Sheet'
 import { UndoToast } from './shell/UndoToast'
 import { withViewTransition } from './shell/viewTransition'
 import { upNextRows } from './shell/layout'
 import { useViewport, useWide } from './shell/useViewport'
-
-type View = { name: 'home' } | { name: 'build' } | { name: 'edit'; choreId?: string } | { name: 'vacation' } | { name: 'rewards' } | { name: 'week' } | { name: 'creator' } | { name: 'wardrobe' } | { name: 'share' } | { name: 'settings' }
+import { useNavigation } from './shell/useNavigation'
+import type { View } from './shell/navigation'
+import { ChoreDraftContext, useChoreDrafts } from './screens/choreDrafts'
+import { AccountSection } from './screens/AccountSection'
+import { ScreenHeader } from './shell/ScreenHeader'
 
 /** Where each screen sits, left to right: the tabs in their order, then the screens opened from them. */
-const VIEW_RANK: Record<View['name'], number> = { home: 0, build: 1, wardrobe: 2, rewards: 3, edit: 4, week: 5, creator: 5, share: 5, vacation: 5, settings: 5 }
+
+const VIEW_RANK: Record<View['name'], number> = { home: 0, build: 1, wardrobe: 2, rewards: 3, edit: 6, chores: 5, week: 5, creator: 5, share: 5, vacation: 5, settings: 5, 'sign-in': 5, 'pick-pet': 1 }
 
 /** How long the gift waits after Done, so the cheer, sparkle and health float play first. */
 const GIFT_DELAY_MS = 1400
+
+/** What a toast with an Undo can take back: a chore done, skipped, added or removed. */
+type UndoMoment = { choreName: string } & (
+  | { kind: 'done'; completionId: string }
+  | { kind: 'skip'; choreId: string; day: string }
+  | { kind: 'added'; choreId: string }
+  | { kind: 'removed'; chore: Chore }
+)
+type Undo = UndoMoment & { key: number }
+const UNDO_VERBS: Record<UndoMoment['kind'], string> = { done: 'Done', skip: 'Skipped', added: 'Added', removed: 'Removed' }
 
 /** The browser tab's title per screen. */
 const VIEW_TITLE: Record<View['name'], string> = {
   home: 'Chore Pet',
   build: 'Build · Chore Pet',
   edit: 'Edit chore · Chore Pet',
+  chores: 'Chores · Chore Pet',
   vacation: 'Vacation mode · Chore Pet',
   rewards: 'Rewards · Chore Pet',
   week: 'Your week · Chore Pet',
@@ -96,6 +128,8 @@ const VIEW_TITLE: Record<View['name'], string> = {
   wardrobe: 'Wardrobe · Chore Pet',
   share: 'Share your home · Chore Pet',
   settings: 'Settings · Chore Pet',
+  'sign-in': 'Sign in · Chore Pet',
+  'pick-pet': 'Choose your pet · Chore Pet',
 }
 
 const SYNC_LABEL: Record<SyncStatus, string> = {
@@ -121,7 +155,22 @@ export default function App() {
     if (roomOrder) writeRoomOrder(roomOrder.homeId, roomOrder.ids)
   }, [roomOrder])
   const today = useToday()
-  const [view, setViewNow] = useState<View>({ name: 'home' })
+  // Hydration, sync, edits and midnight can earn rewards without another tap.
+  // Read fresh state so StrictMode's repeated effect cannot queue the same write.
+  useEffect(() => {
+    const state = appStore.getState()
+    if (!state.ready || !state.hydrated) return
+    const history = selectHome(state.snapshot.tables, state.snapshot.activeHomeId)
+    if (!history.home) return
+    const { ops } = reconcileProgress(state.snapshot.tables.progress[history.home.id] ?? null,
+      { chores: history.chores, completions: history.completions, vacations: history.home.vacations }, today)
+    if (ops.length) appStore.apply(...ops)
+  }, [ready, hydrated, snapshot.tables, snapshot.activeHomeId, today])
+  const scope = JSON.stringify([snapshot.userId, data.home?.id ?? null])
+  const { route, navigation } = useNavigation(ready && hydrated ? scope : null)
+  const view = route
+  const setViewNow = (next: View) => navigation.go(next)
+  const drafts = useChoreDrafts(scope, data.chores, data.objects)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [placing, setPlacing] = useState<CatalogEntry | null>(null)
   const [roomFocus, setRoomFocus] = useState<{ homeId: string; roomId: string } | null>(null)
@@ -138,10 +187,27 @@ export default function App() {
     withViewTransition(() => setViewNow(next), step > 0 ? 'forward' : step < 0 ? 'back' : 'fade')
   }
   // First launch: the landing choice, or the picker once "Build my home" is tapped.
-  const [building, setBuilding] = useState(false)
+  const building = view.name === 'pick-pet'
+  const setBuilding = (value: boolean) => setView({ name: value ? 'pick-pet' : 'home' })
+  // "Start fresh" on the sample: once its home is gone, go straight to the picker. Waiting for the removal
+  // matters because the navigation scope changes with the home and sends the route back to the landing.
+  const pickAfterRemoval = useRef(false)
+  useEffect(() => {
+    if (!pickAfterRemoval.current || data.home) return
+    pickAfterRemoval.current = false
+    navigation.go({ name: 'pick-pet' })
+  }, [data.home, navigation])
+  // "Make it mine": a short thank-you in the banner's place, then gone.
+  const [justAdopted, setJustAdopted] = useState(false)
+  useEffect(() => {
+    if (!justAdopted) return
+    const timer = window.setTimeout(() => setJustAdopted(false), ADOPTED_NOTE_MS)
+    return () => window.clearTimeout(timer)
+  }, [justAdopted])
   // First run: the welcome beat after "Move in", then the coach card while building the first room.
   const [welcome, setWelcome] = useState(false)
-  const [coachHome, setCoachHome] = useState<string | null>(null)
+  // The first-build coach: which home, and what this visit has placed (in any room) since it started.
+  const [coach, setCoach] = useState<{ homeId: string; placed: string[] } | null>(null)
   const [, setFlagTick] = useState(0)
   const { canInstall, install } = useInstallPrompt()
   // The completion moment: the pet cheers and each cleaned object gets its own sparkle.
@@ -149,26 +215,88 @@ export default function App() {
   if (celebrate && celebrate.homeId !== data.home?.id) setCelebrate(null)
   const [sparkles, setSparkles] = useState<(SparkleSpot & { id: number; roomId: string })[]>([])
   const [gifts, setGifts] = useState<Unlock[]>([])
-  // The last chore ticked off, for a few seconds, so a slip can be undone.
-  const [undo, setUndo] = useState<{ key: number; completionId: string; choreName: string } | null>(null)
+  // Gifts already opened in this run, so a run of several reads "Gift 2 of 3" and stays one celebration.
+  const [giftsDone, setGiftsDone] = useState(0)
+  if (!gifts.length && giftsDone) setGiftsDone(0)
+  // Gifts earned a moment ago that have not reached the box yet (they wait for the cheer to play).
+  const [giftsComing, setGiftsComing] = useState(0)
+  // Back/Forward follows the URL and dismisses transient feedback. Gift
+  // shortcuts use app navigation directly and preserve the remaining queue.
+  const historyRevision = useRef(0)
+  useEffect(() => {
+    const dismissGifts = () => {
+      historyRevision.current++
+      setGifts([])
+    }
+    window.addEventListener('popstate', dismissGifts)
+    return () => window.removeEventListener('popstate', dismissGifts)
+  }, [])
+  // The last chore ticked off, skipped, added or removed, for a few seconds, so a slip can be undone.
+  const [undo, setUndo] = useState<Undo | null>(null)
+  const currentScope = useRef(scope)
+  useLayoutEffect(() => { currentScope.current = scope }, [scope])
+  const [momentScope, setMomentScope] = useState(scope)
+  if (momentScope !== scope) {
+    setMomentScope(scope)
+    setSelectedId(null)
+    setGifts([])
+    setGiftsComing(0)
+    setUndo(null)
+    setCelebrate(null)
+    setSparkles([])
+    setPlacing(null)
+  }
+  // The undo is for a slip on the home screen: leaving home, by any route, lets it go
+  // (only hiding it would hand back a fresh five seconds when the player returns).
+  const [undoView, setUndoView] = useState(view.name)
+  if (undoView !== view.name) {
+    setUndoView(view.name)
+    if (view.name !== 'home') setUndo(null)
+  }
   const momentKey = useRef(0)
+  // The screen on show right now, for a Done that lands after its short check animation:
+  // by then the player may have moved on, and the undo belongs to the home screen.
+  const viewNow = useRef(view.name)
+  useLayoutEffect(() => { viewNow.current = view.name })
   const doneRef = useRef<HTMLButtonElement>(null)
   const viewport = useViewport()
   const wide = useWide()
   // A chore being edited that no longer exists (deleted on another device) sends the editor home.
-  const staleEdit = view.name === 'edit' && view.choreId !== undefined && !data.chores.some((c) => c.id === view.choreId)
-  if (staleEdit) setViewNow({ name: 'home' })
+  // Any chore still on the list can be edited, including one dated to start later (a clock set ahead).
+  const missingEdit = view.name === 'edit' && view.choreId !== undefined && !data.chores.some((c) => c.id === view.choreId && !choreRetiredBy(c, today))
+  const staleEdit = ready && hydrated && missingEdit
+  useEffect(() => {
+    // Back to where the editor was opened from: deleting from the chores screen lands there, not home.
+    if (staleEdit) navigation.go(view.name === 'edit' && view.from === 'chores' ? { name: 'chores' } : { name: 'home' }, true)
+    else if (data.home && (view.name === 'sign-in' || view.name === 'pick-pet')) navigation.go({ name: 'home' }, true)
+  }, [staleEdit, data.home, view, navigation])
+  const focusHomeHeading = useRef(false)
+  const focusHeading = (heading: HTMLElement | null) => {
+    if (!heading) return
+    if (!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex', '-1')
+    heading.focus({ preventScroll: true })
+  }
   // Each screen names itself and takes focus at its heading, so keyboard and screen-reader users land on it.
   useEffect(() => {
     document.title = VIEW_TITLE[view.name]
-    if (view.name === 'home') return
-    const heading = document.querySelector<HTMLElement>('.app-view h1')
-    if (heading) {
-      if (!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex', '-1')
-      heading.focus({ preventScroll: true })
+    if (view.name === 'home') {
+      // Back from a skip, the chore's row has moved on: start from the top of home rather than nowhere.
+      if (focusHomeHeading.current) focusHeading(document.querySelector<HTMLElement>('.app-view h1'))
+      focusHomeHeading.current = false
+      return
     }
+    focusHomeHeading.current = false
+    focusHeading(document.querySelector<HTMLElement>('.app-view h1, .shell.screen h1'))
   }, [view.name])
-  const [allChores, setAllChores] = useState(false)
+  // Into the sample home from the landing: focus starts at the top of home rather than nowhere.
+  const homeId = data.home?.id
+  useEffect(() => {
+    if (!homeId || !focusHomeHeading.current) return
+    focusHomeHeading.current = false
+    requestAnimationFrame(() => focusHeading(document.querySelector<HTMLElement>('.app-view h1')))
+  }, [homeId])
+  const allChores = route.sheet === 'all'
+  const setAllChores = (open: boolean) => navigation.go({ ...view, sheet: open ? 'all' : undefined }, !open)
   const [buildPanel, setBuildPanel] = useState<'things' | 'style'>('things')
   // Reset before rendering a new room, including a room removed by a sync.
   const editScope = `${data.home?.id ?? ''}:${focusedRoomId ?? ''}`
@@ -187,30 +315,39 @@ export default function App() {
       : null,
   )
 
+  // The streak shown beside the health bar, replayed only when the history or the day changes.
+  const { streak: homeStreak, nudge: streakNudge } = useMemo(
+    () => (data.home ? homeStreakOf(data.chores, data.completions, today, data.home.vacations) : { streak: 0, nudge: null }),
+    [data.home, data.chores, data.completions, today],
+  )
   // Homes made before rooms existed get their first room.
   const needsRoom = Boolean(data.home && data.rooms.length === 0)
   useEffect(() => {
     if (needsRoom && data.home) appStore.apply(...createRoom(data.home))
   }, [needsRoom, data.home])
 
-  if (!ready) return <main className="shell" aria-busy="true" />
+  if (!ready) return <LoadingPet />
+  if (snapshot.cleanup) return <AccountCleanup cleanup={snapshot.cleanup} />
   // Signed in on a new device: wait for the saved home rather than offering a fresh one.
   if (!data.home && !hydrated) {
     return (
-      <main className="shell" aria-busy={!lastError}>
-        <p className="dev-note" role="status">
-          {lastError ? "Couldn't reach your saved home yet." : 'Finding your home…'}
-        </p>
+      <LoadingPet message={lastError ? "Couldn't reach your saved home yet." : 'Finding your home…'} busy={!lastError} trouble={Boolean(lastError)}>
         {lastError && (
           <button type="button" className="link-button" onClick={() => void appStore.sync()}>
             Try again
           </button>
         )}
-      </main>
+      </LoadingPet>
     )
   }
 
   if (!data.home || !data.pet) {
+    if (view.name === 'sign-in') return (
+      <main className="shell screen">
+        <ScreenHeader title="Welcome back" onBack={() => navigation.go({ name: 'home' })} backLabel="Cancel" />
+        <AccountSection entry />
+      </main>
+    )
     return (
       <main className="shell">
         {building ? (
@@ -225,8 +362,9 @@ export default function App() {
           </>
         ) : (
           <Landing
-            onSample={(species) => appStore.apply(...sampleHome({ species, userId: snapshot.userId, today }))}
+            onSample={(species) => ((focusHomeHeading.current = true), appStore.apply(...sampleHome({ species, userId: snapshot.userId, today })))}
             onBuild={() => setBuilding(true)}
+            onSignIn={() => setView({ name: 'sign-in' })}
           />
         )}
       </main>
@@ -247,15 +385,23 @@ export default function App() {
     writeFocusedRoomId(home.id, roomId)
   }
   const addRoom = (type: RoomType) => {
+    if (rooms.length >= MAX_ROOMS) return
     const ops = createRoom(home, type)
     appStore.apply(...ops)
     focusRoom(ops[0].key)
   }
+  const activeChores = chores.filter((c) => choreActiveOn(c, today))
+  const orderedRooms = orderRoomsForList(rooms)
+  const roomObjects = room ? objects.filter((o) => o.roomId === room.id) : []
+  const places = placesAcrossRooms(orderedRooms, objects)
   const back = () => setView({ name: 'home' })
   const flag = (key: string) => (writeFlag(key), setFlagTick((n) => n + 1))
   // Build mode for the first time shows the coach card; it stays for this visit once started.
   const openBuild = () => {
-    if (!readFlag(onboardedKey(home.id)) && objects.length === 0) setCoachHome(home.id)
+    // Started once per visit: reopening Build keeps what it counts from.
+    if (!readFlag(onboardedKey(home.id)) && coach?.homeId !== home.id && !objects.some((o) => o.roomId === room?.id)) {
+      setCoach({ homeId: home.id, placed: [] })
+    }
     setView({ name: 'build' })
   }
 
@@ -275,60 +421,167 @@ export default function App() {
 
   const syncNote = savedLocally || sync === 'synced' ? SYNC_LABEL[sync] : null
   const more: MoreItem[] = [
-    { label: 'Your week', onSelect: () => setView({ name: 'week' }) },
-    { label: 'Change look', onSelect: () => setView({ name: 'creator' }) },
-    { label: 'Share your home', onSelect: () => setView({ name: 'share' }) },
-    { label: 'Vacation mode', onSelect: () => setView({ name: 'vacation' }) },
-    { label: 'Settings', onSelect: () => setView({ name: 'settings' }) },
-    ...(canInstall ? [{ label: 'Add to home screen', onSelect: () => void install() }] : []),
+    { label: 'Chores', icon: 'chores', onSelect: () => setView({ name: 'chores' }) },
+    { label: 'Your week', icon: 'week', onSelect: () => setView({ name: 'week' }) },
+    { label: 'Change look', icon: 'look', onSelect: () => setView({ name: 'creator' }) },
+    { label: 'Share your home', icon: 'share', onSelect: () => setView({ name: 'share' }) },
+    { label: 'Vacation mode', icon: 'vacation', onSelect: () => setView({ name: 'vacation' }) },
+    { label: 'Settings', icon: 'settings', onSelect: () => setView({ name: 'settings' }) },
+    ...(canInstall ? [{ label: 'Add to home screen', icon: 'install' as const, onSelect: () => { navigation.go({ ...view, sheet: undefined }, true); void install() } }] : []),
   ]
+  // On a phone's home screen the toast takes the place of the buttons under the list, so it covers nothing.
+  const toastInHomeList = view.name === 'home' && !wide && !allChores && !gifts.length
+  const undoToast = undo && (
+    <UndoToast
+      key={undo.key}
+      choreName={undo.choreName}
+      verb={UNDO_VERBS[undo.kind]}
+      paused={gifts.length > 0}
+      inline={gifts.length > 0 || (view.name === 'home' && allChores) || toastInHomeList}
+      onUndo={() => {
+        if (undo.kind === 'skip') {
+          // Looked up fresh: the chore may have changed (or gone) since.
+          const chore = chores.find((c) => c.id === undo.choreId)
+          if (chore) appStore.apply(...unskipChore(chore, undo.day))
+        } else if (undo.kind === 'added') {
+          appStore.apply(...removeChore(undo.choreId, data, today))
+        } else if (undo.kind === 'removed') {
+          // A removed chore stays removed (sync never reopens one), so it comes back as a new one
+          // standing exactly where this one did: late days, mess and all.
+          appStore.apply(...undoRemove(home, undo.chore, againInput(undo.chore, objects), completions, today))
+        } else {
+          // Any gift that tap earned stays: rewards are never taken back.
+          appStore.apply(...uncompleteChore(undo.completionId, progress, completions))
+        }
+        setUndo(null)
+      }}
+      onClose={() => setUndo(null)}
+    />
+  )
+
+  // "Gift in 1" on the Rewards tab would be wrong while gifts are still waiting to be opened.
+  const giftsWaiting = gifts.length > 0 || giftsComing > 0
+
   /** A screen inside the app frame: the tabs along the bottom (phones) or down the left (wide). */
   const framed = (active: Tab, content: ReactNode) => (
+    <ChoreDraftContext value={drafts}>
     <div className="app">
       <div className="app-view">{content}</div>
       <AppNav
         active={active}
+        menuOpen={route.sheet === 'more'}
+        onMenuChange={(open) => open ? navigation.go({ ...view, sheet: 'more' }) : navigation.dismiss()}
         onNavigate={(tab) => (setSelectedId(null), setPlacing(null), tab === 'build' ? openBuild() : setView({ name: tab } as View))}
-        rewardsNote={rewardsNote(progress)}
+        rewardsNote={giftsWaiting ? undefined : rewardsNote(progress)}
+        rewardsHint={giftsWaiting ? undefined : rewardsHint(progress)}
         more={more}
         note={syncNote ?? undefined}
       />
+      {view.name === 'home' && !gifts.length && !allChores && !toastInHomeList && undoToast}
+      {gifts[0] && (
+        <GiftBox
+          unlock={gifts[0]}
+          position={{ index: giftsDone + 1, total: giftsDone + gifts.length }}
+          pet={pet}
+          onPlace={() => {
+            const entry = catalogEntry(gifts[0].ref)
+            setSelectedId(null)
+            setBuildPanel('things')
+            openBuild()
+            if (entry) setPlacing(entry)
+          }}
+          onTry={() => {
+            const unlock = gifts[0]
+            if (room) appStore.apply(...updateRoom(room, unlock.kind === 'wall' ? { wallStyle: unlock.ref } : { floorStyle: unlock.ref }))
+            setBuildPanel('style')
+            openBuild()
+          }}
+          onClose={({ wear }) => {
+            const item = ITEMS.find((i) => i.id === gifts[0].ref)
+            if (wear && gifts[0].kind === 'item' && item) appStore.apply(...updatePet(pet, { equipped: { ...pet.equipped, [item.slot]: item.id } }))
+            setGifts((queue) => queue.slice(1))
+            setGiftsDone((n) => n + 1)
+          }}
+        >
+          {undoToast}
+        </GiftBox>
+      )}
     </div>
+    </ChoreDraftContext>
   )
+
+  if (missingEdit) return framed('home', <main className="shell"><p role="status">{hydrated ? 'That chore is no longer here.' : 'Finding your chore…'}</p></main>)
 
   if (view.name === 'edit') {
     // Looked up fresh each render: a chore deleted elsewhere (another device, a sync) is never written back.
-    const chore = view.choreId ? chores.find((c) => c.id === view.choreId) : undefined
+    const chore = view.choreId ? chores.find((c) => c.id === view.choreId && !choreRetiredBy(c, today)) : undefined
     // Places a chore can belong to, named like the catalog; duplicates are numbered ("Rug 2").
-    const seen = new Map<string, number>()
-    const places = objects
-      .flatMap((o) => {
-        const name = catalogEntry(o.catalogId)?.name
-        if (!name) return []
-        const key = `${o.roomId}:${name}`
-        const n = (seen.get(key) ?? 0) + 1
-        seen.set(key, n)
-        const objectName = n > 1 ? `${name} ${n}` : name
-        return [{ id: o.id, name: rooms.length > 1 ? `${names[o.roomId]} · ${objectName}` : objectName }]
-      })
+    // Opened from the chores screen, the editor goes back there.
+    // Going back, focus starts at the top of that screen rather than nowhere (the editor is gone).
+    const done = () => {
+      if (view.from === 'chores') return setView({ name: 'chores' })
+      focusHomeHeading.current = true
+      back()
+    }
+    // The toast belongs to the home screen: from the chores screen, that screen has its own say.
+    const tellOnHome = (moment: UndoMoment) => {
+      if (view.from === 'chores') return
+      setUndo({ key: ++momentKey.current, ...moment })
+    }
     return framed(
       'home',
       <main className="shell screen">
         <ChoreEditor
+          key={view.choreId ?? 'new'}
           chore={chore}
           places={places}
           onSave={(value) => {
-            appStore.apply(...(chore ? updateChore(chore, value, today) : addChore(home, value, today)))
-            back()
+            // Only an added chore says so: edits to one already on the list need no toast.
+            const ops = chore ? updateChore(chore, value, today) : addChore(home, value, today)
+            appStore.apply(...ops)
+            if (!chore) tellOnHome({ kind: 'added', choreId: ops[0].key, choreName: value.name.trim() })
+            done()
           }}
           onDelete={
             chore &&
             (() => {
-              appStore.apply(...removeChore(chore.id, data))
-              back()
+              appStore.apply(...removeChore(chore.id, data, today))
+              tellOnHome({ kind: 'removed', chore, choreName: chore.name })
+              done()
             })
           }
-          onCancel={back}
+          onSkip={
+            chore && canSkip(choreStatus(chore, completions, today, home.vacations))
+              ? () => {
+                  const day = skipDayFor(today)
+                  appStore.apply(...skipChore(chore, day))
+                  setUndo({ key: ++momentKey.current, kind: 'skip', choreId: chore.id, day, choreName: chore.name })
+                  focusHomeHeading.current = view.from !== 'chores'
+                  done()
+                }
+              : undefined
+          }
+          onUnskip={chore && skippedOn(chore, today) ? () => (appStore.apply(...unskipChore(chore, today)), done()) : undefined}
+          onCancel={done}
+        />
+      </main>,
+    )
+  }
+
+  if (view.name === 'chores') {
+    return framed(
+      'more',
+      <main className="shell screen">
+        <ManageChores
+          chores={chores}
+          objects={objects}
+          places={places}
+          today={today}
+          onEdit={(chore) => setView({ name: 'edit', choreId: chore.id, from: 'chores' })}
+          onAdd={() => setView({ name: 'edit', from: 'chores' })}
+          onRemove={(list) => appStore.apply(...list.flatMap((c) => removeChore(c.id, data, today)))}
+          onAddAgain={(chore) => appStore.apply(...addChoreAgain(home, chore, againInput(chore, objects), completions, today))}
+          onClose={back}
         />
       </main>,
     )
@@ -347,7 +600,16 @@ export default function App() {
     return framed(
       'more',
       <main className="shell screen">
-        <SettingsScreen petName={pet.name} homeId={home.id} onClose={back} />
+        <SettingsScreen
+          petName={pet.name}
+          homeId={home.id}
+          onClose={back}
+          // The sample home has its own Start fresh, and nothing of the player's to clear.
+          onStartOver={home.name === SAMPLE_HOME_NAME ? undefined : () => (navigation.go({ name: 'home' }, true), appStore.apply(...removeHome(home.id)))}
+          rooms={orderedRooms.length}
+          onClearRoom={() => (navigation.go({ name: 'home' }, true), appStore.apply(...clearHome({ ...data, home }, today)))}
+          otherHomes={Object.keys(snapshot.tables.homes).filter((id) => id !== home.id).length}
+        />
       </main>,
     )
   }
@@ -359,9 +621,9 @@ export default function App() {
         <ShareCard
           pet={pet}
           room={room}
-          objects={objects.filter((o) => o.roomId === room.id)}
+          objects={roomObjects}
           choreCount={progress?.choreCount ?? 0}
-          // Worked out for today, like the rewards screen: the stored streak is from the last chore done.
+          // Worked out for the displayed day, like the rewards screen.
           streak={currentStreak(chores, completions, today, home.vacations)}
           onClose={back}
         />
@@ -417,8 +679,42 @@ export default function App() {
   const away = isInVacation(today, home.vacations)
   const neglect = objectNeglect(chores, condition.statuses)
   const stages = Object.fromEntries(Object.entries(neglect).map(([id, level]) => [id, messStageFor(level)]))
+  // Rooms: a pill over the room picture names the one on show (and counts what's late in the others);
+  // it opens a sheet to switch, add or remove rooms.
+  const late = lateByRoom(objects, chores, condition.statuses)
+  const lateElsewhere = [...late].reduce((n, [id, count]) => (id === room?.id ? n : n + count), 0)
+  const roomPill = room && (
+    <RoomPill compact name={names[room.id] ?? 'Room'} lateElsewhere={lateElsewhere} onOpen={() => navigation.go({ ...view, sheet: 'rooms' })} />
+  )
+  const roomsSheet = route.sheet === 'rooms' && room && (
+    <Sheet title="Your rooms" onClose={() => navigation.dismiss()}>
+      <RoomsSheet
+        rooms={orderedRooms}
+        names={new Map(Object.entries(names))}
+        currentId={room.id}
+        things={new Map(orderedRooms.map((r) => [r.id, objects.filter((o) => o.roomId === r.id).length]))}
+        late={late}
+        onPick={(id) => (focusRoom(id), setSelectedId(null), setPlacing(null), navigation.dismiss())}
+        onAdd={(type) => {
+          addRoom(type)
+          // A new room is empty: straight into building it.
+          navigation.go({ name: 'build' }, true)
+        }}
+        onRemove={(id) => {
+          const gone = orderedRooms.find((r) => r.id === id)
+          // A home always keeps one room.
+          if (!gone || orderedRooms.length < 2) return
+          // Removing the room on show shows the first one left.
+          if (id === room.id) focusRoom(orderedRooms.find((r) => r.id !== id)!.id)
+          // Nothing stays selected or mid-placement in a room that's gone.
+          setSelectedId(null)
+          setPlacing(null)
+          appStore.apply(...removeRoom(gone, objects, today))
+        }}
+      />
+    </Sheet>
+  )
   const overdue = objectOverdue(chores, condition.statuses)
-  const roomObjects = room ? objects.filter((o) => o.roomId === room.id) : []
   const roomDoors = room ? doorsForRoom(connections, room.id) : []
   const reserved = roomDoors.map(doorwayFootprint)
   const hasWestWindow = !roomDoors.some((door) => door.side === 'west')
@@ -471,7 +767,7 @@ export default function App() {
   if (view.name === 'build' && room) {
     const selected = roomObjects.find((o) => o.id === selectedId) ?? null
     const selectedEntry = selected ? catalogEntry(selected.catalogId) : undefined
-    const coaching = coachHome === home.id && !readFlag(onboardedKey(home.id))
+    const coaching = coach?.homeId === home.id && !readFlag(onboardedKey(home.id))
     const commit = (change: BuildChange) => {
       if (change.kind === 'add') {
         if (!checkPlacement(change.entry, change.placement, roomObjects, lookup, undefined, reserved, hasWestWindow).ok) return
@@ -479,7 +775,8 @@ export default function App() {
         const ops = placeObject(room, change.entry, change.placement, today)
         appStore.apply(...ops)
         // While coaching, keep the tray open so the next pick is one tap away.
-        if (!coaching) setSelectedId(ops[0].key)
+        if (coaching) setCoach((c) => c && { ...c, placed: [...c.placed, ops[0].key] })
+        else setSelectedId(ops[0].key)
       }
       else {
         const obj = roomObjects.find((o) => o.id === change.id)
@@ -487,9 +784,12 @@ export default function App() {
         if (obj && entry && checkPlacement(entry, change.placement, roomObjects, lookup, obj.id, reserved, hasWestWindow).ok) appStore.apply(...moveObject(obj, change.placement))
       }
     }
-    const step = coachStep(roomObjects.length)
+    // Counts what this visit placed, in any room, so adding a second room mid-way doesn't send it back to step 1,
+    // and furniture from before or from another device doesn't skip steps.
+    const coachPlaced = coaching ? objects.filter((o) => coach.placed.includes(o.id)) : []
+    const step = coachStep(coachPlaced.length)
     const finishCoach = () => {
-      setCoachHome(null)
+      setCoach(null)
       flag(onboardedKey(home.id))
     }
     const turnTo = selected && selectedEntry ? turned(selectedEntry, selected) : null
@@ -511,7 +811,7 @@ export default function App() {
           </button>
         </header>
         <div className="build-stage">
-          <RoomControls rooms={rooms} focusedRoomId={room.id} onFocus={focusRoom} onAdd={addRoom} />
+          <RoomControls rooms={rooms} focusedRoomId={room.id} onFocus={focusRoom} onAdd={rooms.length < MAX_ROOMS ? addRoom : undefined} management={roomPill} />
           <BuildRoom
             room={room}
             objects={roomObjects}
@@ -533,7 +833,7 @@ export default function App() {
           {coaching && (
             <CoachCard
               step={step}
-              choreCount={chores.filter((c) => roomObjects.some((o) => o.id === c.objectId)).length}
+              choreCount={activeChores.filter((c) => coachPlaced.some((o) => o.id === c.objectId)).length}
               sheetOpen={Boolean(selected)}
               placing={Boolean(placing)}
               onSkip={() => (finishCoach(), doneRef.current?.focus())}
@@ -543,7 +843,7 @@ export default function App() {
             <ObjectSheet
               object={selected}
               entry={selectedEntry}
-              chores={chores.filter((c) => c.objectId === selected.id)}
+              chores={activeChores.filter((c) => c.objectId === selected.id)}
               completions={completions}
               vacations={home.vacations}
               today={today}
@@ -551,13 +851,10 @@ export default function App() {
               onSaveChore={(chore, value) =>
                 appStore.apply(...(chore ? updateChore(chore, value, today) : addChore(home, { ...value, objectId: selected.id }, today)))
               }
-              onRemoveChore={(chore) => appStore.apply(...removeChore(chore.id, data))}
+              onRemoveChore={(chore) => appStore.apply(...removeChore(chore.id, data, today))}
               onTurn={() => turnTo && canTurn && appStore.apply(...moveObject(selected, turnTo))}
               onRemove={(keepChores) => {
-                // Kept chores stay on the list without a home object; otherwise they go and their counts are retired.
-                const own = chores.filter((c) => c.objectId === selected.id)
-                if (keepChores) appStore.apply(...own.flatMap((c) => updateChore(c, { objectId: null }, today)), ...removeObject(selected.id))
-                else appStore.apply(...removeObject(selected.id, data))
+                appStore.apply(...removeObject(selected.id, data, today, keepChores))
                 setSelectedId(null)
               }}
               onClose={() => setSelectedId(null)}
@@ -578,6 +875,7 @@ export default function App() {
                 <CatalogTray
                   reserved={reserved}
                   hasWestWindow={hasWestWindow}
+                  key={room.id}
                   roomType={room.type}
                   objects={roomObjects}
                   unlocked={progress?.unlockedItems}
@@ -596,6 +894,7 @@ export default function App() {
             </div>
           )}
         </div>
+        {roomsSheet}
       </main>,
     )
   }
@@ -609,26 +908,34 @@ export default function App() {
     flag(hintKey(home.id))
     play('sparkle')
     // The gift waits for the cheer and sparkle to play, so the done moment is seen first.
-    if (done.unlocked.length) window.setTimeout(() => setGifts((queue) => [...queue, ...done.unlocked]), GIFT_DELAY_MS)
+    const completedAtRevision = historyRevision.current
+    const earned = done.unlocked.length
+    if (earned) setGiftsComing((n) => n + earned)
+    if (earned) window.setTimeout(() => {
+      setGiftsComing((n) => Math.max(0, n - earned))
+      if (currentScope.current === scope && historyRevision.current === completedAtRevision) setGifts((queue) => [...queue, ...done.unlocked])
+    }, GIFT_DELAY_MS)
     const key = ++momentKey.current
     const big = condition.statuses.some((s) => s.choreId === chore.id && s.neglect === 3)
     const first = !completions.some((c) => c.completedOn === today)
     setCelebrate({ key, homeId: home.id, choreName: chore.name, big, first })
-    if (done.completion) setUndo({ key, completionId: done.completion.id, choreName: chore.name })
+    if (done.completion && viewNow.current === 'home') setUndo({ key, kind: 'done', completionId: done.completion.id, choreName: chore.name })
     const entry = placed && catalogEntry(placed.catalogId)
     if (placed && entry) setSparkles((list) => [...list, { id: key, roomId: placed.roomId, ...sparkleSpot(placed, entry) }])
   }
   const choreList = (short: boolean) => (
     <ChoreList
-      chores={chores}
+      chores={activeChores}
       completions={completions}
       vacations={home.vacations}
       today={today}
       onComplete={completeChore}
-      onEdit={(chore) => (setAllChores(false), setView({ name: 'edit', choreId: chore.id }))}
-      onAdd={() => (setAllChores(false), setView({ name: 'edit' }))}
+      onEdit={(chore) => setView({ name: 'edit', choreId: chore.id })}
+      onAdd={() => setView({ name: 'edit' })}
+      onManage={short ? undefined : () => setView({ name: 'chores' })}
       limit={short ? Math.min(rooms.length > 1 ? 2 : 3, upNextRows(viewport.height - 120, sample)) : undefined}
       onSeeAll={short ? () => setAllChores(true) : undefined}
+      footer={short && toastInHomeList ? undoToast : undefined}
     />
   )
 
@@ -637,20 +944,23 @@ export default function App() {
     <main className="home">
       <header className="home-top">
         <h1>{pet.name}</h1>
-        <HealthBar health={condition.health} mood={condition.mood} away={away} />
+        <HealthBar health={condition.health} mood={condition.mood} away={away} streak={homeStreak} />
+        {streakNudge && <p className="home-nudge">{streakNudge}</p>}
       </header>
 
-      {sample && (
+      {sample ? (
         <SampleBanner
-          onKeep={() => appStore.apply(...adoptSample(home))}
-          onStartFresh={() => (setBuilding(false), setView({ name: 'home' }), appStore.apply(...removeHome(home.id)))}
+          onKeep={() => (setJustAdopted(true), appStore.apply(...adoptSample(home)))}
+          onStartFresh={() => ((pickAfterRemoval.current = true), appStore.apply(...removeHome(home.id)))}
         />
+      ) : (
+        justAdopted && <AdoptedNote />
       )}
 
       <div className="home-stage">
         {room && (
           <>
-            <RoomControls rooms={rooms} focusedRoomId={room.id} onFocus={focusRoom} />
+            <RoomControls rooms={rooms} focusedRoomId={room.id} onFocus={focusRoom} management={roomPill} />
             {scene(
               <Room room={room} objects={roomObjects} stages={stages} neglect={neglect} overdue={overdue} />,
             )}
@@ -679,49 +989,11 @@ export default function App() {
         </p>
       )}
 
-      {allChores && !wide && (
-        <Sheet title="All chores" onClose={() => setAllChores(false)}>
+      {roomsSheet}
+      {allChores && (
+        <Sheet title="All chores" onClose={() => navigation.dismiss()} footer={!gifts.length && undoToast}>
           {choreList(false)}
         </Sheet>
-      )}
-
-      {undo && (
-        <UndoToast
-          key={undo.key}
-          choreName={undo.choreName}
-          onUndo={() => {
-            // Any gift that tap earned stays: rewards are never taken back.
-            appStore.apply(...uncompleteChore(undo.completionId, progress, completions))
-            setUndo(null)
-          }}
-          onClose={() => setUndo(null)}
-        />
-      )}
-
-      {gifts[0] && (
-        <GiftBox
-          key={gifts[0].id}
-          unlock={gifts[0]}
-          pet={pet}
-          onPlace={() => {
-            const entry = catalogEntry(gifts[0].ref)
-            setSelectedId(null)
-            setBuildPanel('things')
-            openBuild()
-            if (entry) setPlacing(entry)
-          }}
-          onTry={() => {
-            const unlock = gifts[0]
-            if (room) appStore.apply(...updateRoom(room, unlock.kind === 'wall' ? { wallStyle: unlock.ref } : { floorStyle: unlock.ref }))
-            setBuildPanel('style')
-            openBuild()
-          }}
-          onClose={({ wear }) => {
-            const item = ITEMS.find((i) => i.id === gifts[0].ref)
-            if (wear && gifts[0].kind === 'item' && item) appStore.apply(...updatePet(pet, { equipped: { ...pet.equipped, [item.slot]: item.id } }))
-            setGifts((queue) => queue.slice(1))
-          }}
-        />
       )}
     </main>,
   )

@@ -106,10 +106,10 @@ describe('completeChoreWithRewards basics', () => {
   })
 
   it('includes this completion in the streak', () => {
-    // Done through 10-04, missed 10-05, completed today: only today counts.
+    // Done through 10-04, missed 10-05, completed today: current is one; historical best is four.
     const c = dailyChore('A', '2026-10-01')
     const result = completeChoreWithRewards(c, progress({ choreCount: 4 }), ctx([c], daysOf('A', '2026-10-01', '2026-10-04')), at(9))
-    expect(upsertOf(result.ops, 'progress')[0].value).toMatchObject({ choreCount: 5, currentStreak: 1, bestStreak: 1 })
+    expect(upsertOf(result.ops, 'progress')[0].value).toMatchObject({ choreCount: 5, currentStreak: 1, bestStreak: 4 })
   })
 
   it('builds on the existing streak and keeps a higher best streak', () => {

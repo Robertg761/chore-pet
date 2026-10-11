@@ -14,8 +14,8 @@ describe('neglectSummary', () => {
   const objects = [placed('t', 'trash'), placed('s', 'sink'), placed('f', 'fairy-lights'), placed('b', 'bed')]
 
   it('says what is messy, messiest first', () => {
-    expect(neglectSummary(objects, { t: 1, s: 3 })).toBe('The sink is very messy, the trash can is a bit messy.')
-    expect(neglectSummary(objects, { f: 2 })).toBe('The fairy lights are messy.')
+    expect(neglectSummary(objects, { t: 1, s: 3 })).toBe('The sink needs a big tidy, the trash can needs a little tidy.')
+    expect(neglectSummary(objects, { f: 2 })).toBe('The fairy lights need a tidy.')
   })
 
   it('is empty when nothing is late', () => {

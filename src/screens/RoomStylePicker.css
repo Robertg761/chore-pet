@@ -1,5 +1,5 @@
 .rsp { align-self: stretch; display: flex; flex-wrap: wrap; gap: 12px; }
-.rsp-group { flex: 1 1 160px; min-width: 0; margin: 0; padding: 10px 12px 12px; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--card); display: flex; gap: 8px; flex-wrap: wrap; }
+.rsp-group { flex: 1 1 160px; min-width: 0; margin: 0; padding: 10px 12px 12px; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--card); display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); align-content: start; gap: 8px; }
 .rsp-group legend { padding: 0 6px; font-weight: 800; }
 .rsp-option {
   min-width: 64px;
@@ -19,5 +19,5 @@
 .rsp-option[aria-pressed='true'] { background: var(--card); }
 .rsp-option:disabled { cursor: default; background: var(--ground-soft); border-style: dashed; border-color: var(--ink-soft); color: var(--ink-soft); }
 .rsp-option:disabled svg:first-child { opacity: 0.6; }
-.rsp-need { display: inline-flex; align-items: center; gap: 3px; font-size: 0.6875rem; font-weight: 800; color: var(--ink-soft); white-space: nowrap; }
+.rsp-need { display: inline-flex; align-items: center; justify-content: center; gap: 3px; font-size: 0.6875rem; font-weight: 800; line-height: 1.15; text-align: center; white-space: nowrap; color: var(--ink-soft); }
 .rsp-lock { flex: none; }

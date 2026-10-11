@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { PALETTE, SPECIES_COLOUR } from '../art/palette'
 import { Character, CharacterArt } from '../character/Character'
+import { LoadingPet } from '../shell/LoadingPet'
 import { Cheer } from '../effects/Cheer'
 import { Sparkle } from '../effects/Sparkle'
 import { POSES, type PoseName } from '../character/poses'
@@ -56,6 +57,15 @@ export default function ArtGallery() {
         {SPECIES.map((s) => (
           <Character key={s} species={s} mood="happy" bodyColour={SPECIES_COLOUR[s]} size={300} />
         ))}
+      </section>
+
+      <h2>Loading pet</h2>
+      <section className="gallery-row gallery-loading">
+        <LoadingPet message="Finding your home…" />
+        <LoadingPet message="Couldn't reach your saved home yet." busy={false} trouble>
+          <button type="button" className="link-button">Try again</button>
+        </LoadingPet>
+        <LoadingPet />
       </section>
 
       <h2>Pets by mood</h2>
@@ -328,6 +338,12 @@ const WARDROBE_ROWS: { label: string; equipped: Partial<Record<CharacterSlot, st
   { label: 'bow', equipped: { head: 'bow' } },
   { label: 'glasses', equipped: { face: 'glasses' } },
   { label: 'scarf', equipped: { neck: 'scarf' } },
+  { label: 'heart glasses', equipped: { face: 'heart-glasses' } },
+  { label: 'bandana', equipped: { neck: 'bandana' } },
+  { label: 'bandana + hoodie', equipped: { outfit: 'hoodie', neck: 'bandana', face: 'heart-glasses', head: 'beanie-red' } },
+  { label: 'bandana + overalls', equipped: { outfit: 'overalls', neck: 'bandana', face: 'heart-glasses', head: 'bow' } },
+  { label: 'bandana + dress', equipped: { outfit: 'dress', neck: 'bandana', face: 'heart-glasses', head: 'chef-hat' } },
+  { label: 'bandana + sweater', equipped: { outfit: 'knit-sweater', neck: 'bandana', face: 'heart-glasses', head: 'leaf-crown' } },
   { label: 'bow tie', equipped: { neck: 'bow-tie' } },
   { label: 'backpack', equipped: { back: 'backpack' } },
   { label: 'hoodie', equipped: { outfit: 'hoodie' } },
@@ -335,6 +351,9 @@ const WARDROBE_ROWS: { label: string; equipped: Partial<Record<CharacterSlot, st
   { label: 'dress', equipped: { outfit: 'dress' } },
   { label: 'knit sweater', equipped: { outfit: 'knit-sweater' } },
   { label: 'leaf crown', equipped: { head: 'leaf-crown' } },
+  { label: 'apron', equipped: { outfit: 'apron' } },
+  { label: 'apron + scarf + beanie', equipped: { outfit: 'apron', neck: 'scarf', head: 'beanie-red' } },
+  { label: 'apron + bow tie + pack', equipped: { outfit: 'apron', neck: 'bow-tie', head: 'bow', back: 'backpack' } },
   { label: 'hoodie + scarf + beanie', equipped: { outfit: 'hoodie', neck: 'scarf', head: 'beanie-red' } },
   { label: 'overalls + bow tie + bow', equipped: { outfit: 'overalls', neck: 'bow-tie', head: 'bow', face: 'glasses' } },
   { label: 'dress + bow', equipped: { outfit: 'dress', head: 'bow' } },

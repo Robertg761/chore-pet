@@ -1,4 +1,4 @@
-.living-room { position: relative; align-self: stretch; }
+.living-room { position: relative; align-self: stretch; container-type: inline-size; }
 .pet-bubble {
   position: absolute;
   transform: translate(-50%, -100%);
@@ -19,7 +19,8 @@
 .pet-bubble::after {
   content: '';
   position: absolute;
-  left: 50%;
+  /* Follows the pet when the bubble has been moved aside (--tail-x is a share of the room's width). */
+  left: calc(50% + var(--tail-x, 0) * 100cqw);
   bottom: -9px;
   width: 14px;
   height: 14px;
@@ -32,8 +33,11 @@
   from { opacity: 0; transform: translate(-50%, -90%) scale(0.9); }
   to { opacity: 1; transform: translate(-50%, -100%) scale(1); }
 }
+/* A tap makes the pet squash and hop once (the keyframes are the cheer's, src/effects/effects.css). */
+.pet-hop { transform-box: fill-box; transform-origin: 50% 100%; animation: fx-hop 640ms linear 1 both; }
 @media (prefers-reduced-motion: reduce) {
   .pet-bubble { animation: none; }
+  .pet-hop { animation: none; }
 }
 .visually-hidden {
   position: absolute;

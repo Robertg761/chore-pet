@@ -10,10 +10,12 @@ Each thread must reproduce, implement, add regressions, run lint/tests/build, re
 
 - Findings: 1, 4, 8, 12
 - Branch: audit/account-recovery
+- Draft PR: [#14](https://github.com/Robertg761/chore-pet/pull/14)
+- Reviewed handoff commit: `6e097b5`; CI fixture fix `87a92f6` (linked to coordinator)
 - Thread: [Chore Pet: account recovery and home selection](t3-thread://v1/a7d1672f-f5c1-4d7b-bd6d-85ab1799f767/mcp%3Ae70d64fe-3e1f-4447-a852-5ea900b5fe8d)
 - ID: `mcp:e70d64fe-3e1f-4447-a852-5ea900b5fe8d`
 - Worktree: `/home/robert/.t3/worktrees/chore-pet/audit-account-recovery`
-- Launch verified: running
+- Status: draft PR ready; individual review and checks passed
 
 Fix findings 1,4,8,12 as one recovery/data-ownership PR.
 #1 store.reset catches failed local clear/backup and resolves, so account deletion reports success and reload resurrects cached data; failed preservation can lose unsynced work. Make cleanup/preservation results honest, atomic where feasible, retryable and visible. Cover local snapshot clear, backup creation/removal and signout vs server-account-delete partial success.
@@ -27,11 +29,11 @@ Primary files src/data/store.ts,state.ts,local.ts,appStore.ts; src/lib/account.t
 - Findings: 2, 9
 - Branch: audit/retained-history
 - Draft PR: [#12](https://github.com/Robertg761/chore-pet/pull/12)
-- Reviewed handoff commit: `9836adecf2eb169abfe863315a3bb0615fd73ac9` (linked to coordinator)
+- Reviewed handoff commit: `9836adecf2eb169abfe863315a3bb0615fd73ac9`; review fix `ac205cec3f61eb18c5863713ee8aa9d991353960` (linked to coordinator)
 - Thread: [Chore Pet: retain chore history and safe deletion](t3-thread://v1/a7d1672f-f5c1-4d7b-bd6d-85ab1799f767/mcp%3A5ace7b02-569e-488f-b794-76597fec7f4a)
 - ID: `mcp:5ace7b02-569e-488f-b794-76597fec7f4a`
 - Worktree: `/home/robert/.t3/worktrees/chore-pet/audit-retained-history`
-- Launch verified: running
+- Status: draft PR ready; individual review and checks passed
 
 Fix findings 2 and 9 together using retained/archived chore history, with compatible migration and accurate aggregates.
 #2 stale device B banks one cached completion then deletes a chore; database cascade destroys A's newer second completion, dropping derived total 2 to 1. Pull-before-delete alone is insufficient.
@@ -48,7 +50,7 @@ Primary src/domain/types.ts,schedule.ts,unlocks.ts; src/data/actions.ts,tables.t
 - Thread: [Chore Pet: accurate rewards and next chores](t3-thread://v1/a7d1672f-f5c1-4d7b-bd6d-85ab1799f767/mcp%3A4de376e4-e274-48a0-a165-10e0a6e77329)
 - ID: `mcp:4de376e4-e274-48a0-a165-10e0a6e77329`
 - Worktree: `/home/robert/.t3/worktrees/chore-pet/audit-progress-accuracy`
-- Launch verified: running
+- Status: draft PR ready; individual review and checks passed
 
 Fix findings 3,7,13 in a progress/reporting PR.
 #3 applyUnlocks only runs after completion. Weekly Monday chore completed Sep28 reaches streak2 Sep29,7 Oct4, then0 Oct7; earned streak rewards never persisted, best remains1. Reconcile on hydration/day rollover/sync/relevant edits; recover historical maximum and milestones when reopening after a missed period. Also award combined completion thresholds after cross-device merge. Ensure reconciliation is idempotent, doesn't create sync/render loops or replay gifts repeatedly, and respects sample history, vacation, schedule history and future timestamp rules.
@@ -60,10 +62,12 @@ Primary src/domain/unlocks.ts; data/actions.ts and a minimal integration point; 
 
 - Findings: 5, 6
 - Branch: audit/interaction-fixes
+- Draft PR: [#13](https://github.com/Robertg761/chore-pet/pull/13)
+- Reviewed handoff commit: `75a6a4c` (linked to coordinator)
 - Thread: [Chore Pet: accessible gifts, undo and build controls](t3-thread://v1/a7d1672f-f5c1-4d7b-bd6d-85ab1799f767/mcp%3A3ad69afc-ed4d-4e3c-b0a3-94767d98a677)
 - ID: `mcp:3ad69afc-ed4d-4e3c-b0a3-94767d98a677`
 - Worktree: `/home/robert/.t3/worktrees/chore-pet/audit-interaction-fixes`
-- Launch verified: running
+- Status: draft PR ready; individual review and checks passed
 
 Fix findings 5 and 6 as a focused UI correctness PR with real browser regression coverage.
 #5 All chores uses native dialog.showModal, but UndoToast and GiftBox render as outside siblings. Their controls are inert/behind the top-layer dialog; gift inaccessible until sheet closes and undo expires after five seconds. Normal home gifts can also obscure undo. Coordinate modal ownership/focus; make undo reachable in active context and prevent timeout while another dialog blocks it. Keep gift queue, wear/place/try shortcuts, reduced motion, keyboard focus restoration and mobile sheet dismissal working. Don't replace this with simply ignoring rewards in the sheet. A durable history UI is separate future work; solve the immediate reachable correction behavior.
@@ -74,10 +78,12 @@ Primary App.tsx, shell/Sheet.tsx,UndoToast.tsx, screens/GiftBox.tsx,room/BuildRo
 
 - Findings: 10, 11
 - Branch: audit/navigation-signin
+- Draft PR: [#15](https://github.com/Robertg761/chore-pet/pull/15)
+- Reviewed handoff commit: `bc4bd14` (linked to coordinator)
 - Thread: [Chore Pet: returning-user sign-in and safe navigation](t3-thread://v1/a7d1672f-f5c1-4d7b-bd6d-85ab1799f767/mcp%3Afc8d501f-886c-4ac6-9b95-7a270453b1ab)
 - ID: `mcp:fc8d501f-886c-4ac6-9b95-7a270453b1ab`
 - Worktree: `/home/robert/.t3/worktrees/chore-pet/audit-navigation-signin`
-- Launch verified: running
+- Status: draft PR ready; individual review and checks passed
 
 Fix findings 10 and 11 as one navigation/account-entry PR.
 #10 Landing only offers sample/build and local SavedHomes. Existing user on new device must create disposable home to get Settings > Sign in. Add an accessible 'I already have a home' entry using existing auth flow without requiring a home. Handle loading, auth error/retry, successful recovery and canceled sign-in. Do not silently replace local guest work beyond existing explicit sign-in semantics.
@@ -99,16 +105,19 @@ Primary App.tsx, Landing.tsx, AccountSection.tsx reuse, ChoreEditor.tsx/shell an
 - Modal/navigation merge rule: remove the interaction branch's two standalone `setAllChores(false)` calls in gift onPlace/onTry before openBuild. Navigation's `setView({name:'build'})` atomically replaces the sheet route; never dismiss asynchronously with history.back then push. Preserve framed() and sheet-footer feedback ownership together with navigation's scope reset/delayed gift guard. Transient gifts stay outside URL history; native gift cancel stops propagation without dismissing the underlying sheet.
 - Browser tests: `scripts/browser/*.test.mjs`, built-in node:test plus existing playwright-core, `npm run test:browser` against production dist through isolated ephemeral-port preview server. Optional CHROME; CI installs Chromium through playwright-core CLI. Interactive validation uses T3 preview.
 
-### Cross-bundle checks
+### Combined verification
 
-- Navigation implementation is in place. Owner reports focused coverage for auth rejection/retry/unavailable states, new/existing full-editor draft Save/Cancel/account-home scope/archive invalidation, subpath/deep-link/popstate/StrictMode routing, and account history hydration. First production browser pass covers draft navigation, Back/Forward, Save/Cancel, reload discard warning, and stale deep links. Two fixture assumptions are being corrected; inline-editor isolation/recovery coverage remains underway. AccountCleanup gate and selected-home API remain compatible; final validation/review/PR pending.
-- History draft PR #12 ready: owner reports 1,083 tests, lint/build, and independent review passed. Coverage includes PGlite migration 0007 upgrade, actual legacy DELETE and cascades, both completion/delete arrival orders, stale upserts, object RPC tenant isolation and keeping unseen tasks, account erasure, archive-date credit, prearchive schedule/health, all-archived freeze, resume on new chore, and stored best/unlocks preservation. T3 browser removal/reload kept lifetime9/week9/streak6 while hiding the archived chore. Coordinator has not independently rerun these checks. Apply migration before client; hosted Auth/PostgREST and truly parallel network transactions remain untested, and legacy clients use server sync date for removal.
-- Progress owner reports implementation validated: 1,079 tests, lint/build, independent read-only review with no actionable issues. T3 browser checks cover next dishes tomorrow/done-only, stale-cache best7 recovery with one StrictMode write, zero writes after reload, day-rollover reward without passive gift replay, and sample Week zero counts with seeded health. Draft PR #11 is ready; coordinator inspected its interfaces/diff but has not independently rerun these checks. Live cloud sync remains untested.
-- Account/progress integration: PR #11's fresh-state App effect must call `selectHome(state.snapshot.tables, state.snapshot.activeHomeId)` and include `snapshot.activeHomeId` alongside `[ready, hydrated, snapshot.tables, today]`. Recovery confirms this final field and its useHome already passes it. This ensures rewards reconcile the selected home even without a table mutation.
-- Recovery restore selects saved.activeHomeId and copies all chores/completions, preserving spread fields such as archivedOn. Independent recovery review found cross-tab cleanup races; owner is adding Web Locks, journal fences, and regression coverage before opening the PR. No server schema changes.
-- Combined history/progress regressions must cover completion and archive on the same day, prearchive replay, frozen current streak after all chores archived, resuming with a new chore, and preserved best/unlocks.
-- Recheck retained-history behavior with historical reward reconciliation, archived tasks, schedule edits, and server merge/cascade paths.
-- Recheck account/home changes with routing, draft isolation, sign-in before home creation, and saved-home restoration.
-- Recheck navigation history with the modal stack, Undo timing, gift queue, and keyboard focus.
-- Resolve shared App.tsx/state/actions changes deliberately; do not auto-merge independently green PRs.
-- Confirm all 13 findings have regression evidence in the final PR set.
+The coordinator combined all five bundles in `audit/integration-verification`, leaving main and the source PR branches unchanged. See [INTEGRATION.md](INTEGRATION.md) for the final integration record.
+
+- Preserved full retained chores for streak/reward replay and active-day filtering for visible/editable chores.
+- Reward effect uses `selectHome(state.snapshot.tables, state.snapshot.activeHomeId)` and depends on selection as well as tables/day.
+- Retained recovery's AccountCleanup gate and operation-error interface, account/home draft scoping, delayed gift guard, and framed feedback.
+- Removed standalone gift shortcut sheet-dismiss calls; direct Build navigation replaces the sheet route.
+- Browser Back/Forward follows URL history and clears visible/pending transient gifts; Undo stays reachable on the destination. Escape closes only the top gift. Forward never replays dismissed gifts.
+- Replaced the old multi-gift fixture with real prior completions so its next completion earns decor and style; earlier earned rewards correctly reconcile without passive gift replay.
+- Four combined domain tests cover archive-date credit, schedule history/broken historical maximum, pause/token/resume behavior, completion-path gifts, sample archives, and retained-ID legacy-count fallback. Mutation checks confirmed failures when either the archive pause or historical-best tracking was removed.
+- Independent data review passed 79 focused tests and found one extreme-clock date-range mismatch. History PR fixed it with eight actual SQL regressions, aligning archive dates with migration 0006's accepted creation-date range.
+- Independent UI integration review found no actionable issues and passed 25 focused tests.
+- Final full suite: 1,160 tests across 53 files on actual Node 22.23.3; lint passed. Production build passed with the existing chunk-size advisory. All 21 production browser regressions passed at both root and Pages base with cloud configuration and verified external-request blocking; the PR #16 CI follow-up is recorded in INTEGRATION.md.
+
+No PR has been merged and no migration or client deployed. Hosted Auth/PostgREST, truly simultaneous network transactions, physical phones, and non-Chromium engines remain unverified. Migration 0007 must precede the client. Legacy clients retain rows but lack archive-aware UI; previously destroyed history cannot be reconstructed.

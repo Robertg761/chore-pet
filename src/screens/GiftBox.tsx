@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { CHARACTER_STROKE, PALETTE } from '../art/palette'
 import { CharacterArt } from '../character/Character'
 import { ITEMS } from '../character/items'
@@ -14,7 +14,11 @@ import { giftTitle } from './rewardsModel'
 export interface GiftBoxProps {
   /** The reward being given. Shown one at a time; the app queues the rest. */
   unlock: Unlock
+  /** Where this gift sits in a run of gifts ("Gift 1 of 3"): 1-based, with the run's total. A single gift shows no counter. */
+  position?: { index: number; total: number }
   pet: Pet
+  /** Reachable correction for the chore that earned this gift. */
+  children?: ReactNode
   /** Wear it now (items only) or put it away; either closes the gift. */
   onClose: (choice: { wear: boolean }) => void
   /** Decor: "Place it". Called, then the gift closes itself, so this only needs to take the player to Build. */
@@ -25,12 +29,14 @@ export interface GiftBoxProps {
 
 const { ink, warmRed, blush, white, sky, petDefault } = PALETTE
 const OPEN_MS = 650
+/** Later gifts in a run open a little quicker, so the run feels like one celebration. */
+const OPEN_QUICK_MS = 420
 
-/** The wrapped box in a 200x200 box. The lid is its own group so it can pop. */
+/** The wrapped box, drawn in the same 200x224 frame as the pet reveal so the card is the same size before and after. The lid is its own group so it can pop. */
 function WrappedBox({ opening }: { opening: boolean }) {
   const stroke = { stroke: ink, strokeWidth: CHARACTER_STROKE, strokeLinejoin: 'round', strokeLinecap: 'round' } as const
   return (
-    <svg className="gift-art" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+    <svg className="gift-art" viewBox="0 -28 200 224" aria-hidden="true" focusable="false">
       <ellipse cx="100" cy="184" rx="68" ry="9" fill={ink} opacity="0.14" />
       <g className="gift-box">
         <rect x="38" y="92" width="124" height="86" rx="12" fill={warmRed} {...stroke} />
@@ -56,26 +62,57 @@ function WrappedBox({ opening }: { opening: boolean }) {
   )
 }
 
-export function GiftBox({ unlock, pet, onClose, onPlace, onTry }: GiftBoxProps) {
+export function GiftBox({ unlock, position, pet, onClose, onPlace, onTry, children }: GiftBoxProps) {
   const uid = useId()
   const [phase, setPhase] = useState<'wrapped' | 'opening' | 'open'>('wrapped')
-  const panel = useRef<HTMLDivElement>(null)
+  // The dialog stays up from one gift to the next in a run; only the gift inside it changes.
+  const [shownId, setShownId] = useState(unlock.id)
+  if (shownId !== unlock.id) {
+    setShownId(unlock.id)
+    setPhase('wrapped')
+  }
+  const later = Boolean(position && position.index > 1)
+  const panel = useRef<HTMLDialogElement>(null)
   const primary = useRef<HTMLButtonElement>(null)
   const openButton = useRef<HTMLButtonElement>(null)
 
   const item = unlock.kind === 'item' ? ITEMS.find((i) => i.id === unlock.ref) : undefined
   const canWear = Boolean(item)
 
-  // Focus moves in, and goes back to where it was when the gift closes. If that has gone
-  // (the list re-drew, or the view changed), the next best place is the main heading.
+  // Native modality puts gifts above sheets and keeps background controls inert.
   useEffect(() => {
-    const before = document.activeElement instanceof HTMLElement ? document.activeElement : null
-    openButton.current?.focus()
+    const dialog = panel.current
+    if (!dialog) return
+    const before = document.activeElement instanceof HTMLElement && document.activeElement !== document.body ? document.activeElement : null
+    dialog.showModal()
+    openButton.current?.focus({ preventScroll: true })
     return () => {
-      const target = before?.isConnected ? before : document.querySelector<HTMLElement>('#cl-h-next, h1')
-      target?.focus?.()
+      dialog.close()
+      // Wait for removal, queued gifts, and screen changes before restoring focus.
+      queueMicrotask(() => {
+        const modal = document.querySelector<HTMLDialogElement>('dialog:modal')
+        if (modal?.contains(document.activeElement) && document.activeElement !== document.body) return
+        const target = before?.isConnected && (!modal || modal.contains(before))
+          ? before
+          : modal?.querySelector<HTMLElement>('button:not(:disabled), [tabindex]')
+            ?? document.querySelector<HTMLElement>('.app-view h1, #cl-h-next')
+        if (target) {
+          if (target.matches('h1, h2')) target.setAttribute('tabindex', '-1')
+          target.focus({ preventScroll: true })
+        }
+      })
     }
   }, [])
+
+  // A new gift arrives wrapped: focus its Open button (the last gift's buttons just went away).
+  const firstGift = useRef(true)
+  useEffect(() => {
+    if (firstGift.current) {
+      firstGift.current = false
+      return
+    }
+    openButton.current?.focus({ preventScroll: true })
+  }, [unlock.id])
 
   // When the reward appears, focus its first action.
   useEffect(() => {
@@ -84,41 +121,14 @@ export function GiftBox({ unlock, pet, onClose, onPlace, onTry }: GiftBoxProps) 
 
   useEffect(() => {
     if (phase !== 'opening') return
-    const t = setTimeout(() => setPhase('open'), prefersReducedMotion() ? 120 : OPEN_MS)
+    const t = setTimeout(() => setPhase('open'), prefersReducedMotion() ? 120 : later ? OPEN_QUICK_MS : OPEN_MS)
     return () => clearTimeout(t)
-  }, [phase])
+  }, [phase, later])
 
   function open() {
     panel.current?.focus() // the Open button is about to go away
     navigator.vibrate?.([8, 60, 18]) // a little rattle and pop, where the phone can
     setPhase('opening')
-  }
-
-  function keys(e: KeyboardEvent) {
-    if (e.key === 'Escape') {
-      e.stopPropagation()
-      onClose({ wear: false })
-      return
-    }
-    if (e.key !== 'Tab' || !panel.current) return
-    const stops = Array.from(panel.current.querySelectorAll<HTMLElement>('button:not(:disabled)'))
-    if (stops.length === 0) {
-      e.preventDefault()
-      return
-    }
-    const first = stops[0]
-    const last = stops[stops.length - 1]
-    const at = document.activeElement
-    if (e.shiftKey && (at === first || at === panel.current)) {
-      e.preventDefault()
-      last.focus()
-    } else if (!e.shiftKey && at === last) {
-      e.preventDefault()
-      first.focus()
-    } else if (!panel.current.contains(at)) {
-      e.preventDefault()
-      first.focus()
-    }
   }
 
   const revealed = phase === 'open'
@@ -136,88 +146,101 @@ export function GiftBox({ unlock, pet, onClose, onPlace, onTry }: GiftBoxProps) 
           : 'Find it in Rewards.'
 
   return (
-    <div className="gift-backdrop">
-      <div
-        ref={panel}
-        className="gift-panel"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        aria-describedby={revealed && hint ? hintId : undefined}
-        tabIndex={-1}
-        onKeyDown={keys}
-      >
-        <h2 id={titleId} className="gift-title" aria-live="polite">
-          {revealed ? giftTitle(unlock) : 'A gift for you!'}
-        </h2>
+    <dialog
+      ref={panel}
+      className="gift-panel"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      aria-describedby={revealed && hint ? hintId : undefined}
+      tabIndex={-1}
+      onCancel={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        onClose({ wear: false })
+      }}
+    >
+      {position && position.total > 1 && (
+        <p className="gift-count" key={position.index}>
+          <span>{`Gift ${position.index} of ${position.total}`}</span>
+          <span className="gift-dots" aria-hidden="true">
+            {Array.from({ length: position.total }, (_, i) => (
+              <span key={i} className={i + 1 === position.index ? 'gift-dot gift-dot-on' : i + 1 < position.index ? 'gift-dot gift-dot-past' : 'gift-dot'} />
+            ))}
+          </span>
+        </p>
+      )}
+      <h2 id={titleId} className="gift-title" aria-live="polite">
+        {revealed ? giftTitle(unlock) : 'A gift for you!'}
+      </h2>
 
-        <div className="gift-stage">
-          {!revealed && <WrappedBox opening={phase === 'opening'} />}
-          {revealed && (
-            <div className="gift-reveal">
-              {unlock.kind === 'item' && item ? (
-                // Taller than the pet's 200 box so ears, hats and the cheer's hearts stay clear of the title.
-                <svg className="gift-art" viewBox="0 -28 200 224" aria-hidden="true" focusable="false">
-                  <Cheer>
-                    <CharacterArt species={pet.species} mood="happy" pose="cheering" bodyColour={pet.bodyColour} equipped={{ ...pet.equipped, [item.slot]: item.id }} />
-                  </Cheer>
-                </svg>
-              ) : (
-                <div className="gift-thing">
-                  <RewardArt unlock={unlock} pet={pet} className="gift-thing-art" />
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {revealed && hint && (
-          <p id={hintId} className="gift-hint">
-            {hint}
-          </p>
+      <div className={later ? 'gift-stage gift-stage-next' : 'gift-stage'} key={unlock.id}>
+        {!revealed && <WrappedBox opening={phase === 'opening'} />}
+        {revealed && (
+          <div className="gift-reveal">
+            {unlock.kind === 'item' && item ? (
+              // Taller than the pet's 200 box so ears, hats and the cheer's hearts stay clear of the title.
+              <svg className="gift-art" viewBox="0 -28 200 224" aria-hidden="true" focusable="false">
+                <Cheer>
+                  <CharacterArt species={pet.species} mood="happy" pose="cheering" bodyColour={pet.bodyColour} equipped={{ ...pet.equipped, [item.slot]: item.id }} />
+                </Cheer>
+              </svg>
+            ) : (
+              <div className="gift-thing">
+                <RewardArt unlock={unlock} pet={pet} className="gift-thing-art" />
+              </div>
+            )}
+          </div>
         )}
-
-        <div className="gift-actions">
-          {!revealed && (
-            <button ref={openButton} type="button" className="btn btn-primary gift-btn" onClick={open} disabled={phase === 'opening'}>
-              Open it
-            </button>
-          )}
-          {revealed && canWear && (
-            <>
-              <button ref={primary} type="button" className="btn btn-primary gift-btn" onClick={() => onClose({ wear: true })}>
-                Put it on
-              </button>
-              <button type="button" className="btn gift-btn" onClick={() => onClose({ wear: false })}>
-                Maybe later
-              </button>
-            </>
-          )}
-          {revealed && !canWear && shortcut && (
-            <>
-              <button
-                ref={primary}
-                type="button"
-                className="btn btn-primary gift-btn"
-                onClick={() => {
-                  shortcut.run()
-                  onClose({ wear: false })
-                }}
-              >
-                {shortcut.label}
-              </button>
-              <button type="button" className="btn gift-btn" onClick={() => onClose({ wear: false })}>
-                Maybe later
-              </button>
-            </>
-          )}
-          {revealed && !canWear && !shortcut && (
-            <button ref={primary} type="button" className="btn btn-primary gift-btn" onClick={() => onClose({ wear: false })}>
-              Lovely!
-            </button>
-          )}
-        </div>
       </div>
-    </div>
+
+      {/* Held in place (unseen) until the reveal, so the card never changes size when the gift appears. */}
+      {hint && (
+        <p id={hintId} className={revealed ? 'gift-hint' : 'gift-hint gift-hint-wait'} aria-hidden={revealed ? undefined : true}>
+          {hint}
+        </p>
+      )}
+
+      <div className={canWear || shortcut ? 'gift-actions gift-actions-two' : 'gift-actions'}>
+        {!revealed && (
+          <button ref={openButton} type="button" className="btn btn-primary gift-btn" onClick={open} disabled={phase === 'opening'}>
+            Open it
+          </button>
+        )}
+        {revealed && canWear && (
+          <>
+            <button ref={primary} type="button" className="btn btn-primary gift-btn" onClick={() => onClose({ wear: true })}>
+              Put it on
+            </button>
+            <button type="button" className="btn gift-btn" onClick={() => onClose({ wear: false })}>
+              Maybe later
+            </button>
+          </>
+        )}
+        {revealed && !canWear && shortcut && (
+          <>
+            <button
+              ref={primary}
+              type="button"
+              className="btn btn-primary gift-btn"
+              onClick={() => {
+                shortcut.run()
+                onClose({ wear: false })
+              }}
+            >
+              {shortcut.label}
+            </button>
+            <button type="button" className="btn gift-btn" onClick={() => onClose({ wear: false })}>
+              Maybe later
+            </button>
+          </>
+        )}
+        {revealed && !canWear && !shortcut && (
+          <button ref={primary} type="button" className="btn btn-primary gift-btn" onClick={() => onClose({ wear: false })}>
+            Lovely!
+          </button>
+        )}
+      </div>
+      {children}
+    </dialog>
   )
 }

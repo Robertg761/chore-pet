@@ -4,6 +4,8 @@ import './UpdateBanner.css'
 
 /** How often an open app checks for a new deploy. */
 const CHECK_MS = 60 * 60 * 1000
+/** An update found this soon after opening, before the player has done anything, applies at once. */
+const FRESH_MS = 15 * 1000
 
 /**
  * A reload would lose nothing on screen: no form being filled in, no dialog (a
@@ -28,6 +30,13 @@ export function UpdateBanner() {
 
   useEffect(() => {
     if (!('serviceWorker' in navigator)) return
+    // Just opened (a refresh, say) and not yet touched: a waiting update swaps in straight away, so a
+    // refresh shows the latest version instead of the copy the app kept for offline.
+    const opened = performance.now()
+    let touched = false
+    const onTouch = () => { touched = true }
+    window.addEventListener('pointerdown', onTouch, { once: true, capture: true })
+    window.addEventListener('keydown', onTouch, { once: true, capture: true })
     let timer = 0
     let registration: ServiceWorkerRegistration | undefined
     const check = () => void registration?.update().catch(() => undefined)
@@ -41,7 +50,8 @@ export function UpdateBanner() {
       immediate: true,
       onNeedRefresh: () => {
         waiting.current = true
-        setReady(true)
+        if (!touched && performance.now() - opened < FRESH_MS && quietToReload()) void update.current?.(true)
+        else setReady(true)
       },
       onRegisteredSW: (_url, r) => {
         registration = r
@@ -52,6 +62,8 @@ export function UpdateBanner() {
     return () => {
       window.clearInterval(timer)
       document.removeEventListener('visibilitychange', onVisibility)
+      window.removeEventListener('pointerdown', onTouch, { capture: true })
+      window.removeEventListener('keydown', onTouch, { capture: true })
     }
   }, [])
 

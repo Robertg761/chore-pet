@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
+import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react'
 import type { Room, RoomType } from '../domain/types'
 import { ROOM_TYPE_NAMES, resolveFocusedRoomId, roomNames } from './roomFocus'
 import './RoomControls.css'
@@ -8,11 +8,12 @@ export interface RoomControlsProps {
   focusedRoomId: string
   onFocus: (id: string) => void
   onAdd?: (type: RoomType) => void
+  management?: ReactNode
 }
 
 const ROOM_TYPES: RoomType[] = ['kitchen', 'bedroom', 'bathroom', 'living', 'other']
 
-export function RoomControls({ rooms, focusedRoomId, onFocus, onAdd }: RoomControlsProps) {
+export function RoomControls({ rooms, focusedRoomId, onFocus, onAdd, management }: RoomControlsProps) {
   const uid = useId()
   const names = roomNames(rooms)
   const [adding, setAdding] = useState(false)
@@ -81,6 +82,7 @@ export function RoomControls({ rooms, focusedRoomId, onFocus, onAdd }: RoomContr
             <span aria-hidden="true">+</span> Add room
           </button>
         )}
+        {management}
       </div>
       {onAdd && adding && (
         <form id={`${uid}-create`} className="room-controls-create" aria-label="Add a room" onSubmit={create} onKeyDown={cancelOnEscape}>

@@ -54,11 +54,13 @@ export function weekDays(today: ISODate): WeekDay[] {
 /**
  * Chores completed on each day, in the same order as `days`. A chore counts
  * once per day, like choreCountOf: ticking it off on two devices is one chore.
+ * Seeded sample history is kept for health replay, but isn't personal work.
  */
 export function completedPerDay(completions: Completion[], days: WeekDay[]): number[] {
   const counts = new Map<ISODate, number>(days.map((d) => [d.date, 0]))
   const seen = new Set<string>()
   for (const c of completions) {
+    if (c.counts === false) continue
     const once = `${c.choreId}:${c.completedOn}`
     if (seen.has(once)) continue
     seen.add(once)

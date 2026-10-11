@@ -5,6 +5,8 @@ import './Root.css'
 
 // Dev art gallery at /?art, loaded only when asked for.
 const ArtGallery = lazy(() => import('./dev/ArtGallery.tsx'))
+// Cover picture B (before / after) at /?cover=b, for scripts/cover.mjs.
+const CoverB = lazy(() => import('./dev/CoverB.tsx'))
 // Demo time panel: dev builds, or a tab opened with ?dev or ?demo.
 const TimePanel = lazy(() => import('./dev/TimePanel.tsx'))
 
@@ -38,6 +40,13 @@ class RootErrorBoundary extends Component<{ children: ReactNode }, { failed: boo
 }
 
 export default function Root() {
+  if (new URLSearchParams(location.search).get('cover') === 'b') {
+    return (
+      <Suspense>
+        <CoverB />
+      </Suspense>
+    )
+  }
   if (!new URLSearchParams(location.search).has('art')) {
     return (
       <RootErrorBoundary>

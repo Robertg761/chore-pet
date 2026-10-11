@@ -185,7 +185,7 @@ export function BuildRoom({ room, objects, reserved, hasWestWindow = true, stage
   }
 
   function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
-    // Room selection and zoom buttons have their own native keyboard behaviour.
+    // Room controls, including selection and zoom, keep their native keyboard behaviour.
     if (e.target !== e.currentTarget) return
     const steps: Record<string, [number, number]> = { ArrowRight: [1, 0], ArrowLeft: [-1, 0], ArrowDown: [0, 1], ArrowUp: [0, -1] }
     const step = steps[e.key]

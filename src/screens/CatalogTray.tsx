@@ -4,7 +4,7 @@ import { CATALOG, DECOR } from '../catalog/objects'
 import type { PlacedObject, RoomType } from '../domain/types'
 import type { Footprint } from '../room/grid'
 import { fitsSomewhere } from '../room/placement'
-import { choreCountLabel, splitCatalog } from './buildModel'
+import { choreCountLabel, groupCatalog, splitCatalog } from './buildModel'
 import { ObjectThumb } from './ObjectThumb'
 import './CatalogTray.css'
 
@@ -18,7 +18,7 @@ export interface CatalogTrayProps {
   onPick: (entry: CatalogEntry) => void
   /** Unlock ids earned so far (progress.unlockedItems): decor shows up once earned. */
   unlocked?: string[]
-  /** One scrolling row (things for this room first) instead of a group per kind. */
+  /** One scrolling row, grouped by room (this room's things first), instead of a block per kind. */
   oneRow?: boolean
 }
 
@@ -27,8 +27,8 @@ export function CatalogTray({ roomType, objects, reserved, hasWestWindow = true,
   const earnedDecor = DECOR.filter((e) => e.unlock && unlocked.includes(e.unlock))
   const { suited, others } = splitCatalog([...CATALOG, ...earnedDecor], roomType)
 
-  const row = (entries: CatalogEntry[]) => (
-    <ul className="tray-row">
+  const row = (entries: CatalogEntry[], className = 'tray-row') => (
+    <ul className={className}>
       {entries.map((e) => {
         const fits = fitsSomewhere(e, objects, reserved, hasWestWindow)
         return (
@@ -59,7 +59,17 @@ export function CatalogTray({ roomType, objects, reserved, hasWestWindow = true,
         Add to your room
       </h2>
       {oneRow ? (
-        row([...suited, ...others])
+        // Each room's things behind a small sideways label, so a long row still reads as Kitchen, Bathroom, ...
+        <div className="tray-row tray-scroller">
+          {groupCatalog([...suited, ...others], roomType).map((g) => (
+            <div key={g.key} className="tray-section" role="group" aria-labelledby={`${uid}-g-${g.key}`}>
+              <h3 className="tray-section-label" id={`${uid}-g-${g.key}`}>
+                {g.label}
+              </h3>
+              {row(g.entries, 'tray-section-items')}
+            </div>
+          ))}
+        </div>
       ) : (
         <>
           {group('For this room', suited, 'suited')}

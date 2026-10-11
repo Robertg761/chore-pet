@@ -6,6 +6,12 @@ import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room } from 
  */
 export interface Created {
   createdAt?: string
+  /**
+   * When the making device made the row, to order rows among themselves when the server's
+   * createdAt ties or is missing. Rooms send it up (made_at, migration 0010) so every device
+   * agrees; rooms from before that have none. Never compared with createdAt (the clocks differ).
+   */
+  madeAt?: string
 }
 
 /** Every synced table and the domain type its rows map to. */
@@ -39,6 +45,5 @@ export const CASCADES: readonly { parent: TableName; child: TableName; fk: (row:
   { parent: 'homes', child: 'pets', fk: (r: Pet) => r.homeId },
   { parent: 'homes', child: 'progress', fk: (r: Progress) => r.homeId },
   { parent: 'rooms', child: 'placed_objects', fk: (r: PlacedObject) => r.roomId },
-  { parent: 'placed_objects', child: 'chores', fk: (r: Chore) => r.objectId },
   { parent: 'chores', child: 'completions', fk: (r: Completion) => r.choreId },
 ]

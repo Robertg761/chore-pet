@@ -30,3 +30,12 @@ dist-ssr
 
 # Demo recordings
 demo/
+
+# Agent worktrees
+.claude/worktrees/
+
+# Demo sound sidecars (events, timeline, waveform) written next to the video
+docs/media/*.audio-*
+
+# Demo video candidates under review
+video-candidates/

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { catalogEntry } from '../catalog/objects'
 import { CharacterArt } from '../character/Character'
@@ -9,11 +9,13 @@ import type { ChoreStatus } from '../domain/schedule'
 import type { Chore, MessStage, Mood, Pet, PlacedObject, Room as RoomRow } from '../domain/types'
 import { objectOverdue } from '../room/cuePlan'
 import { footprintOf, freeTile, overlaps, tilesOf, type Footprint } from '../room/grid'
-import { PET_SCALE, Room } from '../room/Room'
+import { Room } from '../room/Room'
 import { SceneContext } from '../room/sceneContext'
-import { PET_STROKE_SCALE, ROOM_VIEWBOX, petTransform, roomPoint } from '../room/shell/geometry'
+import { PET_STROKE_SCALE, ROOM_WIDTH, petTransform } from '../room/shell/geometry'
 import { play } from '../audio/sfx'
+import '../effects/effects.css' // the hop's keyframes
 import { initialPet, needsRender, positionAt, poseFor, sortTile, step, tap, type PetState, type Tile, type World } from './behaviour'
+import { bubbleSpot, bubbleStyle, objectBoxes, type Box, type BubbleSize } from './bubble'
 import './LivingRoom.css'
 
 // The home screen's room with the pet living in it: it wanders, goes and looks
@@ -62,16 +64,12 @@ function prefersReducedMotion(): boolean {
   return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 }
 
-/** Where the speech bubble goes over the pet, as percentages of the room picture. */
-function bubbleSpot(pos: Tile) {
-  const head = roomPoint(pos.tx + 0.5, pos.ty + 0.5)
-  const vb = ROOM_VIEWBOX
-  return {
-    // Kept away from the edges so the bubble never slides off the room.
-    left: `${Math.min(72, Math.max(28, ((head.x - vb.x) / vb.width) * 100))}%`,
-    // Clear of the top of the pet's head, so the tail points at it without covering it.
-    top: `${((head.y - 190 * PET_SCALE - vb.y) / vb.height) * 100}%`,
-  }
+/** Write the bubble's spot straight to its element (custom properties need setProperty). */
+function placeBubble(node: HTMLElement | null, style: ReturnType<typeof bubbleStyle>) {
+  if (!node) return
+  node.style.left = style.left
+  node.style.top = style.top
+  node.style.setProperty('--tail-x', style['--tail-x'])
 }
 
 /** What the room last drew: the pet's state and where it stood then. */
@@ -111,6 +109,8 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     return { state, pos: state.tile }
   })
   const [said, setSaid] = useState<Said | null>(null)
+  // Counts the taps that make the pet hop; it keys the art, so each tap starts the hop afresh.
+  const [hops, setHops] = useState(0)
 
   // The live state, ahead of `shown` while the pet walks.
   const live = useRef<Shown>(shown)
@@ -118,6 +118,15 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
   const bubbleNode = useRef<HTMLParagraphElement>(null)
   const reportPosition = useRef(onPosition)
   useEffect(() => { reportPosition.current = onPosition }, [onPosition])
+  const roomNode = useRef<HTMLDivElement>(null)
+  // What the bubble steers clear of, and how big it is (room px), so it can sit off the furniture.
+  const boxes = useMemo<Box[]>(() => objectBoxes(objects), [objects])
+  const bubbleBoxes = useRef(boxes)
+  const bubbleSize = useRef<BubbleSize>({ w: 120, h: 34 })
+  useEffect(() => {
+    bubbleBoxes.current = boxes
+  }, [boxes])
+  const bubbleAt = useCallback((pos: Tile) => bubbleStyle(bubbleSpot(pos, bubbleSize.current, bubbleBoxes.current)), [])
 
   // The loop reads the latest world through a ref, synced after each render.
   const world = useRef<World>({ free: () => true, mood, away, mess: null })
@@ -132,12 +141,11 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     live.current = { state: next, pos }
     reportPosition.current?.(pos)
     petNode.current?.setAttribute('transform', petTransform(pos))
-    const bubble = bubbleNode.current
-    if (bubble) Object.assign(bubble.style, bubbleSpot(pos))
+    placeBubble(bubbleNode.current, bubbleAt(pos))
     const tile = sortTile(pos)
     const drawn = sortTile(prev.pos)
     if (needsRender(prev.state, next) || tile.tx !== drawn.tx || tile.ty !== drawn.ty) setShown(live.current)
-  }, [])
+  }, [bubbleAt])
 
   // The behaviour loop: every animation frame while walking, otherwise a few times a second.
   useEffect(() => {
@@ -184,6 +192,8 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     const t = performance.now()
     const next = tap(live.current.state, t)
     advance(next, t)
+    // A sleeping or poorly pet only stirs; it doesn't bounce about.
+    if (next.activity.kind === 'react') setHops((n) => n + 1)
     const lines = away ? VACATION_LINES : mood === 'sick' || mood === 'scruffy' ? MOOD_LINES[mood] : TAP_LINES
     setSaid({ text: pickLine(lines, next.beat), heard: true })
   }
@@ -203,6 +213,17 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     line = pickLine(caughtUp && state.beat % 8 === 0 ? CAUGHT_UP_LINES : MOOD_LINES[mood], state.beat)
   }
 
+  // Measure the bubble once its words are in, so it can find a spot clear of the furniture before it is seen.
+  useLayoutEffect(() => {
+    const node = bubbleNode.current
+    const frame = roomNode.current
+    if (!node || !frame || !frame.clientWidth) return
+    const scale = ROOM_WIDTH / frame.clientWidth
+    bubbleSize.current = { w: node.offsetWidth * scale, h: node.offsetHeight * scale }
+    bubbleBoxes.current = boxes
+    placeBubble(node, bubbleAt(live.current.pos))
+  })
+
   // The same element while nothing about the pet's look changes, so React skips redrawing it.
   const pose = poseFor(state)
   const { species, bodyColour, equipped, eyes, cheeks } = pet
@@ -212,7 +233,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
   )
 
   return (
-    <div className="living-room">
+    <div className="living-room" ref={roomNode}>
       <Room
         room={room}
         objects={objects}
@@ -227,14 +248,18 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
           label: `${pet.name}, feeling ${mood}. Tap to say hi.`,
           onTap,
           nodeRef: petNode,
-          art,
+          art: (
+            <g key={hops} className={hops ? 'pet-hop' : undefined}>
+              {art}
+            </g>
+          ),
         }}
       />
       {line && (scene?.bubbleContainer ? createPortal(
         <p className="home-scene-bubble">{line}</p>,
         scene.bubbleContainer,
       ) : (
-        <p className="pet-bubble" ref={bubbleNode} style={bubbleSpot(pos)}>
+        <p className="pet-bubble" ref={bubbleNode}>
           {line}
         </p>
       ))}

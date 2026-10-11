@@ -1,14 +1,18 @@
 import { PALETTE } from '../../art/palette'
+import { mix } from '../../art/color'
 import { Ink, Tube } from '../ink'
 import { pair, type Fit } from './shared'
 
 const { warmRed, blush, fabricBlue, sky, leaf, leafDark, cream, white, steel, steelDark } = PALETTE
 
 
+/** Outline weight factor shared by both glasses. */
+const GLASSES_K = 0.875
+
 /** Round glasses: the lenses sit on the eyes at (+/-20, 0), white shine on each. */
 export function glasses(_fit: Fit) {
   return (
-    <Ink k={0.875}>
+    <Ink k={GLASSES_K}>
       {pair(<>
         <circle cx={-20} cy={0} r={14.5} fill={sky} fillOpacity={0.3} />
         <path d="M-34 -3 L-39 -6" fill="none" />
@@ -148,11 +152,80 @@ export function backpackStraps({ species }: Fit) {
   )
 }
 
-// ---- Outfits. The pets are round blobs with no torso, so an outfit is a garment
-// over the lower body. Every outfit is drawn in the space of the outfit anchor
-// (about the lower middle of the body, tuned on Bun, the narrowest body) and its
-// hem follows the body's rounded bottom. Mochi is wider, so its outfit anchor may
-// carry a scale of about 1.1. The sick bed hides the body under a blanket, so
-// outfits should not be drawn in the sick poses (anchor scale 0).
+/**
+ * One heart lens, centred on (0,0) in its own space (heartGlasses translates it onto
+ * the eye): soft rounded lobes and a short point.
+ * Same width as the round glasses' lens, so the eyes sit in the middle of it.
+ */
+const HEART = 'M0 12 C-4 9 -14 3 -14 -5 C-14 -11 -9.5 -13 -6.5 -13 C-3.5 -13 -1 -11 0 -8 C1 -11 3.5 -13 6.5 -13 C9.5 -13 14 -11 14 -5 C14 3 4 9 0 12 Z'
 
-/** Top edge of every garment: just under the cheeks and mouth. */
+/** The frame tube's outline (outer - inner = 4) at the same k as the round glasses. */
+const FRAME_OUTER = 3 + 4 * GLASSES_K
+
+/** Heart-shaped glasses: a pale blush lens, a warm red frame, white shine on each lens. */
+export function heartGlasses(_fit: Fit) {
+  return (
+    <Ink k={GLASSES_K}>
+      {pair(
+        <g transform="translate(-20 1)">
+          <path d={HEART} fill={mix(blush, white, 0.7)} fillOpacity={0.4} stroke="none" />
+          <Tube d={HEART} outer={FRAME_OUTER} inner={3} colour={warmRed} />
+          <path d="M-34 -4 L-39 -7" fill="none" />
+          <path d="M-9.5 -4.5 Q-9.5 -8.5 -6 -8.5" fill="none" stroke={white} strokeWidth={3.2} />
+        </g>,
+      )}
+      <Tube d="M-6 -3 Q0 -8 6 -3" outer={FRAME_OUTER} inner={3} colour={warmRed} />
+    </Ink>
+  )
+}
+
+/**
+ * Bandana cut per pet: `w` is the half-width (about the body's width at the belly, like
+ * the scarf), `dy` how far it sits below the neck anchor (Bun's low, worried mouth needs
+ * more room) and `tip` the depth of the point.
+ */
+const BANDANA = { mochi: { w: 66, dy: 3, tip: 35 }, bun: { w: 56, dy: 8, tip: 27 }, sprout: { w: 57, dy: 5, tip: 31 } } as const
+
+/**
+ * A triangular cleaning bandana worn over the belly: a folded band across the top
+ * (the one darker shade), a polka-dot triangle hanging to a rounded point, and a small
+ * knot with two short tails on the viewer's right.
+ */
+export function bandana({ species }: Fit) {
+  const { w, dy, tip } = BANDANA[species]
+  const k = w / 66
+  const f = (tip + 16) / 51
+  const dark = mix(fabricBlue, PALETTE.ink, 0.22)
+  const top = `M${-w} -16 Q0 12 ${w} -16`
+  const cloth = `${top} Q${w * 0.6} ${tip * 0.4} 5 ${tip} Q0 ${tip + 6} -5 ${tip} Q${-w * 0.6} ${tip * 0.4} ${-w} -16 Z`
+  const seam = `M${-w + 2} -9 Q0 17 ${w - 2} -9`
+  const band = `${top} L${w - 2} -9 Q0 17 ${-w + 2} -9 Z`
+  const dots: [number, number][] = [[-30, 4], [-8, 7], [14, 4], [-16, 18], [6, 20], [0, 30]]
+  const kx = w - 9
+  const ky = -9
+  return (
+    <g transform={`translate(0 ${dy})`}>
+      <Ink>
+        {/* tails first, so the knot sits over them */}
+        <g transform={`translate(${kx} ${ky})`}>
+          <path d="M0 0 Q-3 9 -6 19 Q1 22 6 16 Q6 8 5 0 Z" fill={fabricBlue} transform="rotate(6)" />
+          <path d="M0 0 Q4 8 9 17 Q16 15 17 8 Q12 1 6 -2 Z" fill={dark} transform="rotate(18)" />
+        </g>
+        <clipPath id={`bandana-${species}`}>
+          <path d={cloth} />
+        </clipPath>
+        <path d={cloth} fill={fabricBlue} stroke="none" />
+        <g clipPath={`url(#bandana-${species})`}>
+          {dots.map(([x, y]) => (
+            <circle key={`${x},${y}`} cx={x * k} cy={(y + 16) * f - 16} r={2.8} fill={white} stroke="none" />
+          ))}
+        </g>
+        <path d={band} fill={dark} stroke="none" />
+        <path d={cloth} fill="none" />
+        <path d={seam} fill="none" strokeWidth={2.5} />
+        <circle cx={kx} cy={ky} r={7.5} fill={dark} />
+        <path d={`M${kx - 3} ${ky - 2.5} Q${kx - 1} ${ky - 4.5} ${kx + 2} ${ky - 3.5}`} fill="none" stroke={white} strokeWidth={2} />
+      </Ink>
+    </g>
+  )
+}

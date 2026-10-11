@@ -1,6 +1,7 @@
 {
   "name": "chore-pet",
   "private": true,
+  "license": "MIT",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -12,7 +13,11 @@
     "test": "vitest run",
     "test:multiroom": "node scripts/test-multiroom.mjs",
     "test:watch": "vitest",
-    "demo:record": "node scripts/record-demo.mjs"
+    "demo:record": "node scripts/record-demo.mjs",
+    "demo:story": "node scripts/record-story.mjs",
+    "showcase": "node scripts/showcase.mjs",
+    "cover": "node scripts/cover.mjs docs/media",
+    "test:browser": "node --test scripts/browser/*.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",
@@ -26,6 +31,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "jsdom": "^26.1.0",
     "oxlint": "^1.81.0",
     "playwright-core": "^1.63.0",
     "typescript": "~6.0.2",

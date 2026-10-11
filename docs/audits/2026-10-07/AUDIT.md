@@ -1,6 +1,6 @@
 # Chore Pet app audit
 
-Audited 2026-10-07 against commit `9617aaa`. This report covers product usefulness, UI, accessibility risks, domain behavior, persistence, account recovery, and release readiness. Application code was not changed.
+Audited 2026-10-07 against commit `9617aaa`. This report covers product usefulness, UI, accessibility risks, domain behavior, persistence, account recovery, and release readiness. Application code was not changed during the audit. This is the frozen baseline report; implementation and verification are tracked in [REMEDIATION.md](REMEDIATION.md) and [INTEGRATION.md](INTEGRATION.md).
 
 ## Assessment
 

@@ -26,7 +26,18 @@
  */
 
 /* Design tokens from docs/ART.md (Style A: cozy outline). */
+/*
+ * Samsung Internet's dark mode ignores color-scheme and darkens any site without dark styles of its
+ * own, which washes the art out. A dark-scheme rule tells it the site handles dark mode itself; it
+ * keeps the same light design.
+ */
+@media (prefers-color-scheme: dark) {
+  :root { color-scheme: only light; background-color: #efe9ff; }
+}
+
 :root {
+  /* Light only, so a browser's forced dark mode leaves the art and outlines alone (see index.html). */
+  color-scheme: only light;
   --ink: #2b1e2f;
   --ink-soft: #4a3e58;
   --ground: #efe9ff;
@@ -253,6 +264,8 @@ h1[tabindex='-1']:focus { outline: none; }
 .home-top .hb-track { height: 16px; }
 .home-top .hb-text { font-size: 0.875rem; line-height: 1.3; }
 .home-top .hb-row { min-height: 1.3em; }
+/* A kind line under the title and bar after a streak ends: soft, never alarming. */
+.home-nudge { grid-column: 1 / -1; margin: 6px 0 0; font-size: 0.875rem; font-weight: 700; line-height: 1.3; color: var(--ink-soft); }
 
 .home-stage {
   flex: 1 1 0;
@@ -329,14 +342,14 @@ h1[tabindex='-1']:focus { outline: none; }
   gap: 8px;
 }
 .build .build-header h1 { font-size: 1.625rem; }
-.build-stage { flex: 1 1 0; min-width: 0; min-height: 380px; display: flex; flex-direction: column; gap: 6px; }
+.build-stage { position: relative; flex: 1 1 0; min-width: 0; min-height: 380px; display: flex; flex-direction: column; gap: 6px; }
 .build-stage .build-room { flex: 1 1 0; min-height: 0; gap: 6px; }
 .build-stage .build-room-svg { flex: 1 1 0; min-height: 0; height: 100%; }
 .build-panel { flex: none; max-height: 52%; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 10px; padding: 2px; }
 .build-extras { display: flex; flex-direction: column; gap: 8px; }
 .build-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; background: var(--card); border: 2px solid var(--ink); border-radius: 14px; }
 .build-tabs button {
-  min-height: 40px;
+  min-height: 44px;
   font: inherit;
   font-size: 0.875rem;
   font-weight: 800;
@@ -362,7 +375,9 @@ h1[tabindex='-1']:focus { outline: none; }
   }
   .build .build-header { grid-area: head; }
   .build-stage { grid-area: stage; min-height: 0; }
-  .build-panel { grid-area: panel; max-height: none; min-height: 0; }
+  .build-panel { grid-area: panel; max-height: none; min-height: 0; padding-bottom: 28px; }
+  /* The column scrolls: its last row fades out rather than being sliced by the edge. */
+  .build-panel { mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent); }
 }
 @media (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
   .build { padding: 10px 16px; column-gap: 20px; row-gap: 6px; grid-template-columns: minmax(0, 1fr) minmax(260px, 40%); }

@@ -1,5 +1,5 @@
 import { neglectThresholds, type NeglectLevel } from './neglect'
-import { choreStatus, type ChoreStatus } from './schedule'
+import { choreActiveOn, choreStatus, type ChoreStatus } from './schedule'
 import type { Chore, Completion, ISODate, Mood, VacationWindow } from './types'
 
 // Tuning lives here so it can be adjusted in one place. A late chore costs
@@ -70,6 +70,7 @@ export function petCondition(
   today: ISODate,
   vacations: VacationWindow[] = [],
 ): PetCondition {
+  chores = chores.filter((c) => choreActiveOn(c, today))
   const statuses = chores.map((c) => choreStatus(c, completions, today, vacations))
   const health = healthFromStatuses(
     statuses.map((s, i) => ({ neglect: s.neglect, daysAtWorst: s.neglect === 3 ? s.overdueDays - neglectThresholds(chores[i].schedule).level3 : 0 })),
