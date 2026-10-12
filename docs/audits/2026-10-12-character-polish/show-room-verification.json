@@ -1,0 +1,224 @@
+{
+  "freeze": {
+    "baseCommit": "8a33328d3ac0c36083b5caceb95bf0080339bc15",
+    "sources": {
+      "src/App.tsx": "3f2a51fd8d31819309f38faa596f095bd8d0780adde2564c953f582ad6569cd9",
+      "src/pet/PetPlay.tsx": "19655f1dbd40146376e3b4414d6d85db101507dd539d4c3be042eb82b56a8db0",
+      "src/pet/PetPlay.css": "289256fca02db78254647ece79c174da228b6b6a2c6183caa0f3cb3b9eece6fb",
+      "src/App.navigation.test.tsx": "151bf29dfb8811bb324348071218943029bb21d5f82579b7ad24cd056f7393dc",
+      "src/pet/PetPlay.test.tsx": "2dd3d9f265c46c89e2e9cd892e57e93f693beab3ba475bc132c776422744cd09",
+      "scripts/browser/pet-play.test.mjs": "139bf745ef6105996076d5d167fa2f5d76b897db51f2b7b8733456c72f6e39c1",
+      "scripts/browser/pet-show-room.test.mjs": "5a880b452ecb02ec5fa4ac0756e92e9e29c19ce9f78bd8bd9b60850002fc0743",
+      "docs/ART.md": "e4dcd67fa5056dd607fb4797024493d84e9c4addaabdef73ef619c77358a1808"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/show-room-source-final.diff",
+      "sha256": "e64bf32dc397667d4325516baf595cd46531785ea215ac7214726c833a0e29c4"
+    },
+    "scope": "Three runtime files add optional native Show room control using scoped existing scene and resident nodes; travel guarded/rest allowed. Existing gesture, camera, position, speech, saved data and single clock preserved. Two unit and two browser files plus ART. Viewing availability is independent of gesture rest reasons; blocked residency/travel explains disabled viewing; callback failure stays announced even while resting."
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/show-room-artifacts-final.json",
+    "sha256": "24f52e12418648399318ffc2858758006d2608b735231ffc5c9f5347b1c297bb"
+  },
+  "checks": [
+    {
+      "name": "browser-final",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-browser-final.log",
+      "logSha256": "6e6249f80756c3f22145c1146b4a6d16f5d0846e396614a79adb253993749534",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-browser-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-browser-red.log",
+      "logSha256": "fd800a7566771a961f3c66b88f3ba7fce43f4cd070b0e69d86c9f173a8cb3a09",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-browser-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-browser.log",
+      "logSha256": "3c33fadafff75d443c7fd192a94e67ae330a12e2a463ab704aa262848c08cfb3",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-browser.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-build.log",
+      "logSha256": "4c225936bee4197f3744e07217201f4bfd51ecfd6bff4d5553b743bd02234361",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-focused.log",
+      "logSha256": "04eba6e68362bf7d5e9109108653b9c36d68aced52a3c2bfc02c1030f83cfe5b",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-full.log",
+      "logSha256": "5a824d373fb734f79599784c29433b81886b2db81227a132f29861cb2cc4b85c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint-final",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-lint-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "offscreen-final",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-offscreen-final.log",
+      "logSha256": "b654a4f6d55c6eabafdd71187baafacf8ee7e593aade3a120383871d635e4cf3",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-offscreen-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "offscreen",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-offscreen.log",
+      "logSha256": "901a70d18ef8b3daa6633625e2a9fe3ef1d767d221bfc60710d6adebb68b226a",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-offscreen.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-red.log",
+      "logSha256": "f8381d7f9608226fcd78ffaaa9e46e22609cd272731dbb1ea9b3af6d5e9bf936",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "rest-browser-focused",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-rest-browser-focused.log",
+      "logSha256": "52551a27b9c2c92ef3ce0a0fd2aa02a00a60445b6fd3e30f0e27d4fc89ec9425",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-rest-browser-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "rest-browser",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-rest-browser.log",
+      "logSha256": "1efb7c164088af6ad7f5594a9f088e100e1e68cbabd3bfa802eeb482d3f1fd73",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-rest-browser.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "rest-build",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-rest-build.log",
+      "logSha256": "e76644c51105033ac7e153bae6ccd65db64ea95b0cddeec8e48f2c57c0c8af85",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-rest-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "rest-focused",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-rest-focused.log",
+      "logSha256": "00d45002bdd7a0ea8e7934c981610684e94cbb83acf5e71271b09359ed86b7c9",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-rest-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "rest-full",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-rest-full.log",
+      "logSha256": "6f632a54ae4609938febf3e2f05ad5b1621c2212d1ef86b2b1774f1aea4e4fbf",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-rest-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "rest-lint",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-rest-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-rest-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "rest-red",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-rest-red.log",
+      "logSha256": "21917e0a036d73ea1f84a005e9936eef13b28ea2624e6cfb984c9d8b3d29e185",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-rest-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "reviewed-browser",
+      "log": "docs/audits/2026-10-12-character-polish/show-room-reviewed-browser.log",
+      "logSha256": "1c89cdd940cdb0fc8fa91c0be41956551303baf02d913b320a2157a6775a9766",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/show-room-reviewed-browser.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    }
+  ],
+  "status": "Verified; independent review approved with no actionable findings. Root rechecked all eight sources/patch/eight final+six historical capture hashes and every raw exit/log binding.",
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/show-room-review.md",
+    "sha256": "be037c7f4b6dc036f47bd4194a0da195bb4d062a783083a1d1aac48a866ca5a8",
+    "scope": "Independent static source/hash and eight final stills review, including resolution of initial P2; root owns final native/full verification."
+  },
+  "result": "2196 unit tests/103 files in63.45s; final19 native cases;27 focused; production type/build and final zero-warning lint, all exit0. Native whole focused room and pet >=95% visible after Show room; keyboard focus; same gesture/camera/position/node/announcement/saved tables. Native reduced offscreen0/live1/offscreen0/expired-visible0. Actual App/native away+sick blocked-route mismatch explains disabled viewing; returning to own room remains viewable at0frames. Initial missing-control/rest regressions, incorrect expression name and stale native selector failures preserved.",
+  "limits": "Isolated Chromium152 and bounded stills; no human playback, assistive-technology, physical-device CPU/battery acceptance. Existing844 three-plus-one gesture layout remains queued for Batch31."
+}

@@ -189,6 +189,7 @@ export default function App() {
   }, [data.chores, data.completions, today, data.home?.vacations])
   const travel = useHomePet(data.home?.id, focusedRoomId, layout, connections, data.objects, roomNames(rooms), data.pet?.name ?? 'Your pet', view.name, stages)
   const residentControl = useRef<LivingRoomControl | null>(null)
+  const homeStage = useRef<HTMLDivElement>(null)
   const previewExplore = useCallback((objectId: string | null) => residentControl.current?.preview(objectId), [])
   /** Change screen with a short slide: forward when going deeper, back when returning. */
   const setView = (next: View) => {
@@ -966,7 +967,7 @@ export default function App() {
         justAdopted && <AdoptedNote />
       )}
 
-      <div className="home-stage">
+      <div className="home-stage" ref={homeStage}>
         {room && (
           <>
             <RoomControls rooms={rooms} focusedRoomId={room.id} onFocus={focusRoom} management={roomPill} />
@@ -998,7 +999,18 @@ export default function App() {
         {room && <PetPlay key={`play:${home.id}:${room.id}`} petName={pet.name}
           blocked={away ? 'away' : condition.mood === 'sick' ? 'sick' : travel.journey || resident?.id !== room.id ? 'travel' : undefined}
           onReact={action => !travel.journey && resident?.id === room.id
-            ? residentControl.current?.respond(action) ?? 'unavailable' : 'unavailable'} />}
+            ? residentControl.current?.respond(action) ?? 'unavailable' : 'unavailable'}
+          showRoomUnavailable={travel.journey ? `${pet.name} is on the way.`
+            : resident?.id !== room.id ? `Choose ${pet.name}'s room to see them.` : undefined}
+          onShowRoom={() => {
+            if (travel.journey || resident?.id !== room.id) return false
+            const scene = homeStage.current?.querySelector<HTMLElement>('.home-scene')
+            const drawnPet = homeStage.current?.querySelector<SVGElement>('.room-pet[role="button"]')
+            if (!scene || !drawnPet) return false
+            scene.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' })
+            drawnPet.focus({ preventScroll: true })
+            return true
+          }} />}
       </div>
 
       {!syncNote && (

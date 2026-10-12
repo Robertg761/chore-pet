@@ -23,6 +23,7 @@ beforeEach(() => {
   vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
   // jsdom does not implement element scrolling used by the connected home view.
   Object.defineProperty(HTMLElement.prototype, 'scrollTo', { configurable: true, value: vi.fn() })
+  Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', { configurable: true, value: vi.fn() })
   fixture.state = { ready: true, hydrated: true, savedLocally: true, snapshot: emptySnapshot(), sync: 'local-only', lastError: null, pendingCount: 0, rejectedCount: 0 }
   vi.clearAllMocks()
 })
@@ -30,6 +31,68 @@ afterEach(() => { cleanups.splice(0).forEach((fn) => fn()); vi.restoreAllMocks()
 function recovered() {
   fixture.state = { ...fixture.state, hydrated: true, lastError: null, snapshot: sampleHome({ species: 'mochi', userId: 'returning', today: '2026-10-07' }).reduce((state, op) => change(state, op), emptySnapshot('returning')) }
 }
+
+it.each(['away', 'sick'] as const)('keeps unavailable viewing explained when a %s resident has a blocked route', resting => {
+  localStorage.clear()
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date('2026-10-07T12:00:00'))
+  vi.stubGlobal('requestAnimationFrame', () => 1)
+  vi.stubGlobal('cancelAnimationFrame', () => {})
+  recovered()
+  const tables = fixture.state.snapshot.tables, first = Object.values(tables.rooms)[0]
+  tables.rooms['second-room'] = { ...first, id: 'second-room', type: 'bedroom' }
+  const fridge = Object.values(tables.placed_objects).find(object => object.catalogId === 'fridge')!
+  tables.placed_objects['blocked-door'] = { ...fridge, id: 'blocked-door', tileX: 7, tileY: 4, rotation: 0 }
+  if (resting === 'away') Object.values(tables.homes)[0].vacations = [{ start: '2026-10-07', end: '2026-10-08' }]
+  else {
+    tables.completions = {}
+    for (const chore of Object.values(tables.chores)) { chore.createdOn = '2026-09-01'; chore.schedule = { kind: 'daily' } }
+  }
+  const saved = JSON.stringify(fixture.state.snapshot)
+  const ui = render(<App />); cleanups.push(ui.unmount)
+  const select = ui.container.querySelector<HTMLSelectElement>('.room-controls-focus select')!
+  act(() => { select.value = 'second-room'; select.dispatchEvent(new Event('change', { bubbles: true })) })
+  expect(ui.container.textContent).toContain("Mochi's path to Bedroom is blocked")
+  expect(ui.container.querySelector('.room-pet')).not.toBeNull()
+  expect(ui.container.querySelector('.home-scene-room[data-focused="true"] .room-pet')).toBeNull()
+  click(ui.container.querySelector('.pet-play-toggle')!)
+  const show = ui.container.querySelector<HTMLButtonElement>('.pet-play-show')!
+  expect(show.disabled).toBe(true)
+  expect(ui.container.textContent).toContain("Choose Mochi's room to see them.")
+  expect(ui.container.textContent).toContain('resting')
+  act(() => { select.value = first.id; select.dispatchEvent(new Event('change', { bubbles: true })) })
+  click(ui.container.querySelector('.pet-play-toggle')!)
+  const available = ui.container.querySelector<HTMLButtonElement>('.pet-play-show')!
+  expect(available.disabled).toBe(false)
+  click(available)
+  expect(document.activeElement).toBe(ui.container.querySelector('.room-pet'))
+  expect(JSON.stringify(fixture.state.snapshot)).toBe(saved)
+  expect(fixture.apply).not.toHaveBeenCalled()
+})
+
+it('shows the current room and focuses its resident without changing the home or starting a reaction', () => {
+  localStorage.clear()
+  recovered()
+  const request = vi.fn(() => 1)
+  vi.stubGlobal('requestAnimationFrame', request)
+  vi.stubGlobal('cancelAnimationFrame', vi.fn())
+  const ui = render(<App />); cleanups.push(ui.unmount)
+  const node = ui.container.querySelector('.room-pet')!, dialogue = ui.container.querySelector('.living-room [aria-live]')!.textContent
+  const position = node.getAttribute('transform'), saved = JSON.stringify(fixture.state.snapshot), operations = fixture.apply.mock.calls.length
+  click([...ui.container.querySelectorAll('button')].find(node => node.textContent === 'Spend time together')!)
+  const show = [...ui.container.querySelectorAll('button')].find(node => node.textContent === 'Show room')
+  expect(show).toBeDefined()
+  const requests = request.mock.calls.length
+  click(show!)
+  expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledExactlyOnceWith({ block: 'center', inline: 'nearest', behavior: 'instant' })
+  expect(vi.mocked(HTMLElement.prototype.scrollIntoView).mock.contexts[0]).toBe(ui.container.querySelector('.home-stage .home-scene'))
+  expect(document.activeElement).toBe(node)
+  expect(node.getAttribute('transform')).toBe(position)
+  expect(ui.container.querySelector('.living-room [aria-live]')!.textContent).toBe(dialogue)
+  expect(request.mock.calls.length).toBe(requests)
+  expect(fixture.apply.mock.calls.length).toBe(operations)
+  expect(JSON.stringify(fixture.state.snapshot)).toBe(saved)
+})
 it('keeps recovery loading/retry reachable and opens the recovered home without creating one', () => {
   const ui = render(<App />); cleanups.push(ui.unmount)
   click([...ui.container.querySelectorAll('button')].find((b) => b.textContent?.includes('I already have'))!)

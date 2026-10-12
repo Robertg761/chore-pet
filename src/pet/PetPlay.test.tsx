@@ -12,6 +12,66 @@ function mount(patch: Partial<PetPlayProps> = {}) {
 }
 function button(container: Element, label: string) { return [...container.querySelectorAll('button')].find(node => node.textContent === label)! }
 
+it.each(['away', 'sick'] as const)('explains unavailable viewing independently of %s', blocked => {
+  const show = vi.fn(() => true)
+  const ui = mount({ blocked, onShowRoom: show, showRoomUnavailable: "Choose Bun's room to see them." })
+  click(button(ui.container, 'Spend time together'))
+  const control = button(ui.container, 'Show room')
+  expect(control.disabled).toBe(true)
+  expect(document.getElementById(control.getAttribute('aria-describedby')!)!.textContent).toBe("Choose Bun's room to see them.")
+  click(control)
+  expect(show).not.toHaveBeenCalled()
+  expect(ui.container.textContent).toContain('resting')
+})
+
+it.each(['away', 'sick'] as const)('announces a failed viewing callback even while %s', blocked => {
+  const ui = mount({ blocked, onShowRoom: () => false })
+  click(button(ui.container, 'Spend time together'))
+  click(button(ui.container, 'Show room'))
+  expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('arrives')
+})
+
+it('offers Show room only while open and delegates without choosing a reaction', () => {
+  const show = vi.fn(() => true)
+  const ui = mount({ onShowRoom: show })
+  expect(button(ui.container, 'Show room')).toBeUndefined()
+  click(button(ui.container, 'Spend time together'))
+  const control = button(ui.container, 'Show room')
+  expect(control).toBeDefined()
+  expect(control.getAttribute('aria-label')).toBe('Show room with Bun')
+  click(control)
+  expect(show).toHaveBeenCalledOnce()
+  expect(ui.props.onReact).not.toHaveBeenCalled()
+  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
+  click(button(ui.container, 'Spend time together'))
+  expect(button(ui.container, 'Show room')).toBeUndefined()
+})
+
+it('explains an unavailable room and clears the feedback after successful viewing', () => {
+  const show = vi.fn().mockReturnValueOnce(false).mockReturnValue(true)
+  const ui = mount({ onShowRoom: show })
+  click(button(ui.container, 'Spend time together'))
+  const control = button(ui.container, 'Show room')
+  expect(control).toBeDefined()
+  click(control)
+  expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('arrives')
+  click(control)
+  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
+  expect(ui.props.onReact).not.toHaveBeenCalled()
+})
+
+it.each(['travel', 'away', 'sick'] as const)('allows room viewing while resting, but waits during %s', blocked => {
+  const show = vi.fn(() => true)
+  const ui = mount({ blocked, onShowRoom: show })
+  click(button(ui.container, 'Spend time together'))
+  const control = button(ui.container, 'Show room') as HTMLButtonElement
+  expect(control).toBeDefined()
+  expect(control.disabled).toBe(blocked === 'travel')
+  click(control)
+  expect(show).toHaveBeenCalledTimes(blocked === 'travel' ? 0 : 1)
+  expect(ui.props.onReact).not.toHaveBeenCalled()
+})
+
 it('offers an explicit stretch without scheduling or duplicating a successful announcement', () => {
   vi.stubGlobal('requestAnimationFrame', vi.fn())
   const ui = mount()

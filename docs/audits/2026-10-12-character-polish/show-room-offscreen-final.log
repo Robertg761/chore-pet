@@ -1,0 +1,10 @@
+✔ Show room resumes an offscreen reaction only while its deadline remains active (3597.495384ms)
+ℹ Native offscreen 0 → live visible 1 → offscreen 0 → expired visible 0; no replay or saved changes.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4000.891661

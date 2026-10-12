@@ -1,0 +1,41 @@
+✔ native player choices stay still and fit 320px (2872.511528ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 361px (2669.41967ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 375px (2673.833388ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2732.433267ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2686.810688ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2689.423375ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2655.359573ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (978.224982ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2331.5147ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1718.380467ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ Show room resumes an offscreen reaction only while its deadline remains active (3592.59416ms)
+ℹ Native offscreen 0 → live visible 1 → offscreen 0 → expired visible 0; no replay or saved changes.
+✔ Show room preserves a live stretch and restores context at320x640 (1573.12683ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.218;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at361x664 (1498.402318ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.381;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at390x664 (1494.55196ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.772;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at640x360 (1833.61327ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at844x390 (1817.788181ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at1280x800 (1844.757376ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38442.036076

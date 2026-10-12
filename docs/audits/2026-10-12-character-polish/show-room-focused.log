@@ -1,0 +1,14 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetPlay.test.tsx src/App.navigation.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+
+ Test Files  2 passed (2)
+      Tests  21 passed (21)
+   Start at  20:08:50
+   Duration  2.93s (tests 39%, transform 34%, environment 19%, import 7%)
+
+    Isolate  2 workers spawned · ~339ms startup each (spawn + environment, per file)
+             at least ~339ms faster with isolate: false — reuses workers across files instead of one per file
+

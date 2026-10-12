@@ -1,0 +1,45 @@
+✔ native player choices stay still and fit 320px (2807.834903ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 361px (2680.793434ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 375px (2650.477875ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2592.083381ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2629.935265ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2636.113233ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2646.289007ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (971.90901ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2317.501435ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1735.933915ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ Show room resumes an offscreen reaction only while its deadline remains active (3618.375154ms)
+ℹ Native offscreen 0 → live visible 1 → offscreen 0 → expired visible 0; no replay or saved changes.
+✔ Show room explains a blocked route while away and still views the resting resident's own room (991.857952ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room explains a blocked route while sick and still views the resting resident's own room (1063.120984ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room preserves a live stretch and restores context at320x640 (1536.713102ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.218;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at361x664 (1530.151941ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.381;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at390x664 (1515.08303ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.772;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at640x360 (1797.904411ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at844x390 (1813.675676ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at1280x800 (1839.454577ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 40146.310613

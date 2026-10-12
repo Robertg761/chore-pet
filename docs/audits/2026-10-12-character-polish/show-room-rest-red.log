@@ -1,0 +1,84 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetPlay.test.tsx src/App.navigation.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/App.navigation.test.tsx (12 tests | 2 failed) 1472ms
+   × keeps unavailable viewing explained when a away resident has a blocked route 286ms
+   × keeps unavailable viewing explained when a sick resident has a blocked route 187ms
+ ❯ src/pet/PetPlay.test.tsx (15 tests | 4 failed) 95ms
+   × explains unavailable viewing independently of away 34ms
+   × explains unavailable viewing independently of sick 5ms
+   × announces a failed viewing callback even while away 6ms
+   × announces a failed viewing callback even while sick 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.navigation.test.tsx > keeps unavailable viewing explained when a away resident has a blocked route
+ FAIL  src/App.navigation.test.tsx > keeps unavailable viewing explained when a sick resident has a blocked route
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/App.navigation.test.tsx:60:25
+     58|   click(ui.container.querySelector('.pet-play-toggle')!)
+     59|   const show = ui.container.querySelector<HTMLButtonElement>('.pet-pla…
+     60|   expect(show.disabled).toBe(true)
+       |                         ^
+     61|   expect(ui.container.textContent).toContain("Choose Mochi's room to s…
+     62|   expect(ui.container.textContent).toContain('resting')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > explains unavailable viewing independently of away
+ FAIL  src/pet/PetPlay.test.tsx > explains unavailable viewing independently of sick
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/pet/PetPlay.test.tsx:20:28
+     18|   click(button(ui.container, 'Spend time together'))
+     19|   const control = button(ui.container, 'Show room')
+     20|   expect(control.disabled).toBe(true)
+       |                            ^
+     21|   expect(ui.container.querySelector(`#${CSS.escape(control.getAttribut…
+     22|   click(control)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > announces a failed viewing callback even while away
+ FAIL  src/pet/PetPlay.test.tsx > announces a failed viewing callback even while sick
+AssertionError: expected '' to contain 'arrives'
+
+- Expected
++ Received
+
+- arrives
+
+ ❯ src/pet/PetPlay.test.tsx:31:70
+     29|   click(button(ui.container, 'Spend time together'))
+     30|   click(button(ui.container, 'Show room'))
+     31|   expect(ui.container.querySelector('[role="status"]')!.textContent).t…
+       |                                                                      ^
+     32| })
+     33|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  6 failed | 21 passed (27)
+   Start at  20:16:29
+   Duration  3.66s (tests 45%, transform 32%, environment 16%, import 7%)
+
+    Isolate  2 workers spawned · ~368ms startup each (spawn + environment, per file)
+             at least ~368ms faster with isolate: false — reuses workers across files instead of one per file
+

@@ -1,0 +1,12 @@
+✔ Show room explains a blocked route while away and still views the resting resident's own room (1060.203908ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room explains a blocked route while sick and still views the resting resident's own room (1023.519035ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2481.390959

@@ -1,0 +1,11 @@
+{
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/show-room-layout/show-room-1280.png": "6cc24191af32676e3a973219e97866a5ba3c33c160b03ccc41fc46cf16d51ecd",
+    "docs/audits/2026-10-12-character-polish/show-room-layout/show-room-320.png": "bb20a4cdf2fd3f3f20375afd0a89f66e93650f410d758f6a829e793a0ec5c381",
+    "docs/audits/2026-10-12-character-polish/show-room-layout/show-room-361.png": "75af4fb2147cfa8a87a7f44b86d496cc38c7667926d6b69cf5d4318539998adc",
+    "docs/audits/2026-10-12-character-polish/show-room-layout/show-room-390.png": "d8baf1a85871f6a493f6f7eb69c4a3aa2b2bce0d05add53a8c9f4585e9b2c323",
+    "docs/audits/2026-10-12-character-polish/show-room-layout/show-room-640.png": "08de06f7e82ddf587dbe160808fba7129c2033f831e121924e0eff593335b511",
+    "docs/audits/2026-10-12-character-polish/show-room-layout/show-room-844.png": "df9494ec0282fb12af3f1944113792ff4a2806e16a1ccf17c5d2bb9349a943a1"
+  },
+  "scope": "Six native Show room captures at320/361/390/640/844/1280; room/pet visibility checked through viewport and ancestor clipping. Portrait reduced stills, landscape/desktop active stretch; focus and preserved camera/gesture/store checked by native tests. No human playback or physical-device performance claim."
+}

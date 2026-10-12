@@ -1,0 +1,75 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetPlay.test.tsx src/App.navigation.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/App.navigation.test.tsx (10 tests | 1 failed) 1012ms
+   × shows the current room and focuses its resident without changing the home or starting a reaction 221ms
+ ❯ src/pet/PetPlay.test.tsx (11 tests | 5 failed) 73ms
+   × offers Show room only while open and delegates without choosing a reaction 37ms
+   × explains an unavailable room and clears the feedback after successful viewing 4ms
+   × allows room viewing while resting, but waits during travel 3ms
+   × allows room viewing while resting, but waits during away 3ms
+   × allows room viewing while resting, but waits during sick 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.navigation.test.tsx > shows the current room and focuses its resident without changing the home or starting a reaction
+AssertionError: expected undefined to be defined
+ ❯ src/App.navigation.test.tsx:46:16
+     44|   click([...ui.container.querySelectorAll('button')].find(node => node…
+     45|   const show = [...ui.container.querySelectorAll('button')].find(node …
+     46|   expect(show).toBeDefined()
+       |                ^
+     47|   const requests = request.mock.calls.length
+     48|   click(show!)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > offers Show room only while open and delegates without choosing a reaction
+AssertionError: expected undefined to be defined
+ ❯ src/pet/PetPlay.test.tsx:21:19
+     19|   click(button(ui.container, 'Spend time together'))
+     20|   const control = button(ui.container, 'Show room')
+     21|   expect(control).toBeDefined()
+       |                   ^
+     22|   expect(control.getAttribute('aria-label')).toBe('Show room with Bun')
+     23|   click(control)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > explains an unavailable room and clears the feedback after successful viewing
+AssertionError: expected undefined to be defined
+ ❯ src/pet/PetPlay.test.tsx:36:19
+     34|   click(button(ui.container, 'Spend time together'))
+     35|   const control = button(ui.container, 'Show room')
+     36|   expect(control).toBeDefined()
+       |                   ^
+     37|   click(control)
+     38|   expect(ui.container.querySelector('[role="status"]')!.textContent).t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > allows room viewing while resting, but waits during travel
+ FAIL  src/pet/PetPlay.test.tsx > allows room viewing while resting, but waits during away
+ FAIL  src/pet/PetPlay.test.tsx > allows room viewing while resting, but waits during sick
+AssertionError: expected undefined to be defined
+ ❯ src/pet/PetPlay.test.tsx:49:19
+     47|   click(button(ui.container, 'Spend time together'))
+     48|   const control = button(ui.container, 'Show room') as HTMLButtonEleme…
+     49|   expect(control).toBeDefined()
+       |                   ^
+     50|   expect(control.disabled).toBe(blocked === 'travel')
+     51|   click(control)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  6 failed | 15 passed (21)
+   Start at  20:07:08
+   Duration  2.95s (tests 39%, transform 35%, environment 18%, import 7%)
+
+    Isolate  2 workers spawned · ~335ms startup each (spawn + environment, per file)
+             at least ~335ms faster with isolate: false — reuses workers across files instead of one per file
+

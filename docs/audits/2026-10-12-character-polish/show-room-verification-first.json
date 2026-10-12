@@ -1,0 +1,26 @@
+{
+  "freeze": {
+    "baseCommit": "8a33328d3ac0c36083b5caceb95bf0080339bc15",
+    "sources": {
+      "src/App.tsx": "39cf5296e3cd677e25a4ec77bd611fd8bc3b89b2f81fce6c14ee5ae44b41be19",
+      "src/pet/PetPlay.tsx": "5375312c4d3de51d9c51abc6bf5e710fb80bccb3e6383d99237d0190fc545b22",
+      "src/pet/PetPlay.css": "289256fca02db78254647ece79c174da228b6b6a2c6183caa0f3cb3b9eece6fb",
+      "src/App.navigation.test.tsx": "93377d74e161900d473ece18c568382bd54792357fbbfc698def0fd98154aedc",
+      "src/pet/PetPlay.test.tsx": "9b40dc2155a47ffedc341976f544d5e19f4943380cdaf952c8426e7ed93c6396",
+      "scripts/browser/pet-play.test.mjs": "139bf745ef6105996076d5d167fa2f5d76b897db51f2b7b8733456c72f6e39c1",
+      "scripts/browser/pet-show-room.test.mjs": "4116c71435aa1e9529a6f22463d41a242c1cb78b65afab7f926540f3c8b3abc6",
+      "docs/ART.md": "3b7288bf8adafbbcf36e46ce2ddb53e5b12533fe1acc5de0fad6c73feb60de19"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/show-room-source.diff",
+      "sha256": "ca5e09fc2f310689df4431137309da7cc6baff94a728e30d4e2f833512b92e3a"
+    },
+    "scope": "Three runtime files add optional native Show room control using scoped existing scene and resident nodes; travel guarded/rest allowed. Existing gesture, camera, position, speech, saved data and single clock preserved. Two unit and two browser files plus ART."
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/show-room-artifacts.json",
+    "sha256": "8cb253980e9b6374ed57b3bfff1998eadaeb018e1f6ab8c0cf022bb35fbdd5ed"
+  },
+  "checks": [],
+  "status": "Frozen source and captures; final full/native verification and independent static review pending."
+}

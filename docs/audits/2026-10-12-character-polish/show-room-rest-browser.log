@@ -1,0 +1,67 @@
+✔ native player choices stay still and fit 320px (2845.852639ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 361px (2653.755193ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 375px (2651.247853ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2637.558381ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2635.829872ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2645.645041ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2851.174683ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (961.298253ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2533.302136ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1822.904753ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ Show room resumes an offscreen reaction only while its deadline remains active (3573.80077ms)
+ℹ Native offscreen 0 → live visible 1 → offscreen 0 → expired visible 0; no replay or saved changes.
+✖ Show room explains a blocked route while away and still views the resting resident's own room (4806.161973ms)
+✖ Show room explains a blocked route while sick and still views the resting resident's own room (4884.02225ms)
+✔ Show room preserves a live stretch and restores context at320x640 (1555.811554ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.218;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at361x664 (1522.19085ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.381;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at390x664 (1527.822572ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.772;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at640x360 (1894.381334ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at844x390 (1906.669705ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at1280x800 (2011.113694ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+ℹ tests 19
+ℹ suites 0
+ℹ pass 17
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 48722.690541
+
+✖ failing tests:
+
+test at scripts/browser/pet-show-room.test.mjs:78:41
+✖ Show room explains a blocked route while away and still views the resting resident's own room (4806.161973ms)
+  locator.textContent: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.home-travel-status')[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-show-room.test.mjs:110:58) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.home-travel-status')" ]
+  }
+
+test at scripts/browser/pet-show-room.test.mjs:78:41
+✖ Show room explains a blocked route while sick and still views the resting resident's own room (4884.02225ms)
+  locator.textContent: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.home-travel-status')[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-show-room.test.mjs:110:58) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.home-travel-status')" ]
+  }

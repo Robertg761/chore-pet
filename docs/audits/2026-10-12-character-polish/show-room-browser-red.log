@@ -1,0 +1,118 @@
+✖ Show room preserves a live stretch and restores context at320x640 (904.231431ms)
+✖ Show room preserves a live stretch and restores context at361x664 (752.096462ms)
+✖ Show room preserves a live stretch and restores context at390x664 (718.215038ms)
+✖ Show room preserves a live stretch and restores context at640x360 (787.421923ms)
+✖ Show room preserves a live stretch and restores context at844x390 (781.113344ms)
+✖ Show room preserves a live stretch and restores context at1280x800 (779.314626ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 0
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5131.288855
+
+✖ failing tests:
+
+test at scripts/browser/pet-show-room.test.mjs:35:3
+✖ Show room preserves a live stretch and restores context at320x640 (904.231431ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-show-room.test.mjs:43:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-show-room.test.mjs:35:3
+✖ Show room preserves a live stretch and restores context at361x664 (752.096462ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-show-room.test.mjs:43:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-show-room.test.mjs:35:3
+✖ Show room preserves a live stretch and restores context at390x664 (718.215038ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-show-room.test.mjs:43:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-show-room.test.mjs:35:3
+✖ Show room preserves a live stretch and restores context at640x360 (787.421923ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-show-room.test.mjs:43:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-show-room.test.mjs:35:3
+✖ Show room preserves a live stretch and restores context at844x390 (781.113344ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-show-room.test.mjs:43:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-show-room.test.mjs:35:3
+✖ Show room preserves a live stretch and restores context at1280x800 (779.314626ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-show-room.test.mjs:43:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

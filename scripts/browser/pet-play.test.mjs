@@ -63,6 +63,10 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 361, height: 664 }
     const position = await resident.getAttribute('transform')
     await toggle.focus()
     await page.keyboard.press('Enter')
+    const show = page.getByRole('button', { name: 'Show room with Mochi', exact: true })
+    assert.equal(await show.count(), 1)
+    await page.keyboard.press('Tab')
+    assert.equal(await show.evaluate(node => node === document.activeElement), true)
     await page.keyboard.press('Tab')
     const wave = page.getByRole('button', { name: 'Wave', exact: true })
     const pats = page.getByRole('button', { name: 'Gentle pats', exact: true })
@@ -87,7 +91,7 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 361, height: 664 }
     assert.notEqual((await live.textContent()).trim(), hello)
     await page.clock.runFor(800)
     assert.equal(await resident.getAttribute('transform'), position)
-    for (const control of [toggle, wave, pats, hop, stretch]) {
+    for (const control of [toggle, show, wave, pats, hop, stretch]) {
       const bounds = await control.boundingBox()
       assert.ok(bounds.height >= 44 && bounds.width >= 44)
       assert.ok(bounds.x >= -1 && bounds.x + bounds.width <= viewport.width + 1)
