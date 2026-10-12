@@ -1,0 +1,163 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/screens/CharacterCreator.test.tsx src/pet/usePetMotion.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/usePetMotion.test.tsx (17 tests | 2 failed) 47ms
+   × delivers real preference changes to the latest handler while inactive, and cleans up 24ms
+   × delivers a preference changed between initial read and subscription without an animation frame 3ms
+ ❯ src/screens/CharacterCreator.test.tsx (7 tests | 7 failed) 440ms
+   × reacts with the sampled character while its card and choice grid stay still, then settles exactly 79ms
+   × ends an active reaction immediately when choosing Sparkly so the face choice is visible 66ms
+   × ends an active reaction immediately when choosing Hearts so the face choice is visible 55ms
+   × coalesces rapid species and colour changes without extending the reaction deadline 122ms
+   × settles immediately on live reduction and does not replay after restoration 36ms
+   × honors initial reduced motion while still applying look choices 39ms
+   × suspends hidden motion, settles after the deadline, and cleans up pending frames 40ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/usePetMotion.test.tsx > delivers real preference changes to the latest handler while inactive, and cleans up
+AssertionError: expected [] to deeply equal [ [ true ] ]
+
+- Expected
++ Received
+
+- [
+-   [
+-     true,
+-   ],
+- ]
++ []
+
+ ❯ src/pet/usePetMotion.test.tsx:59:28
+     57|   expect(first).not.toHaveBeenCalled()
+     58|   act(() => preference(true))
+     59|   expect(first.mock.calls).toEqual([[true]])
+       |                            ^
+     60|   expect(ui.container.textContent).toBe('true')
+     61|   act(() => preference(true))
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  src/pet/usePetMotion.test.tsx > delivers a preference changed between initial read and subscription without an animation frame
+AssertionError: expected [] to deeply equal [ [ true ] ]
+
+- Expected
++ Received
+
+- [
+-   [
+-     true,
+-   ],
+- ]
++ []
+
+ ❯ src/pet/usePetMotion.test.tsx:85:30
+     83|   const ui = render(<Preference />)
+     84|   mounted.add(ui)
+     85|   expect(changed.mock.calls).toEqual([[true]])
+       |                              ^
+     86|   expect(ui.container.textContent).toBe('true')
+     87|   expect(frames.size).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  src/screens/CharacterCreator.test.tsx > reacts with the sampled character while its card and choice grid stay still, then settles exactly
+AssertionError: expected null not to be null
+ ❯ src/screens/CharacterCreator.test.tsx:46:55
+     44|
+     45| it('reacts with the sampled character while its card and choice grid s…
+     46|   expect(preview().querySelector('.ch-animated')).not.toBeNull()
+       |                                                       ^
+     47|   expect(frames.size).toBe(0)
+     48|   click(radio('Bun'))
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  src/screens/CharacterCreator.test.tsx > ends an active reaction immediately when choosing Sparkly so the face choice is visible
+ FAIL  src/screens/CharacterCreator.test.tsx > ends an active reaction immediately when choosing Hearts so the face choice is visible
+AssertionError: expected null not to be null
+ ❯ src/screens/CharacterCreator.test.tsx:70:71
+     68| it.each(['Sparkly', 'Hearts'])('ends an active reaction immediately wh…
+     69|   click(radio('Bun')); frame(756)
+     70|   expect(preview().querySelector('[data-expression="cheering"]')).not.…
+       |                                                                       ^
+     71|   click(button('Face'))
+     72|   const choice = radio(name)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  src/screens/CharacterCreator.test.tsx > coalesces rapid species and colour changes without extending the reaction deadline
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/screens/CharacterCreator.test.tsx:90:23
+     88|   click(button('Colour'))
+     89|   click(radio('Sky'))
+     90|   expect(frames.size).toBe(1)
+       |                       ^
+     91|   frame(1800)
+     92|   expect(frames.size).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  src/screens/CharacterCreator.test.tsx > settles immediately on live reduction and does not replay after restoration
+TypeError: Cannot read properties of null (reading 'getAttribute')
+ ❯ body src/screens/CharacterCreator.test.tsx:43:74
+     41| function visibility(value: boolean) { act(() => { hidden = value; docu…
+     42| function preview() { return ui.container.querySelector('.cc-preview')!…
+     43| function body() { return preview().querySelector('[data-character-body…
+       |                                                                          ^
+     44|
+     45| it('reacts with the sampled character while its card and choice grid s…
+ ❯ src/screens/CharacterCreator.test.tsx:101:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  src/screens/CharacterCreator.test.tsx > honors initial reduced motion while still applying look choices
+TypeError: Cannot read properties of null (reading 'getAttribute')
+ ❯ body src/screens/CharacterCreator.test.tsx:43:74
+     41| function visibility(value: boolean) { act(() => { hidden = value; docu…
+     42| function preview() { return ui.container.querySelector('.cc-preview')!…
+     43| function body() { return preview().querySelector('[data-character-body…
+       |                                                                          ^
+     44|
+     45| it('reacts with the sampled character while its card and choice grid s…
+ ❯ src/screens/CharacterCreator.test.tsx:116:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  src/screens/CharacterCreator.test.tsx > suspends hidden motion, settles after the deadline, and cleans up pending frames
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/screens/CharacterCreator.test.tsx:129:23
+    127|   expect(frames.size).toBe(0)
+    128|   click(radio('Sprout'))
+    129|   expect(frames.size).toBe(1)
+       |                       ^
+    130|   ui.unmount()
+    131|   expect(frames.size).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  9 failed | 15 passed (24)
+   Start at  15:34:47
+   Duration  1.70s (environment 39%, tests 33%, transform 23%, import 6%)
+
+    Isolate  2 workers spawned · ~373ms startup each (spawn + environment, per file)
+             at least ~373ms faster with isolate: false — reuses workers across files instead of one per file
+

@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict'
 import { preview } from 'vite'
 import { chromium } from 'playwright-core'
 import { readFile } from 'node:fs/promises'
@@ -102,4 +103,21 @@ export async function seedCompletionMilestones(page) {
     }
   }))
   await page.reload()
+}
+
+export async function changeReducedMotion(page, value) {
+  await page.evaluate(() => {
+    window.__preferenceDelivered = new Promise((resolve) => {
+      matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (event) => resolve(event.matches), { once: true })
+    })
+  })
+  await page.emulateMedia({ reducedMotion: value })
+  // CDP updates matchMedia.matches before dispatching the native change event.
+  // Fake rAF must run after that event, which is the hook's actual input.
+  let timeout
+  const delivered = await Promise.race([
+    page.evaluate(() => window.__preferenceDelivered),
+    new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('native motion preference event was not delivered within 4s')), 4000) }),
+  ]).finally(() => clearTimeout(timeout))
+  assert.equal(delivered, value === 'reduce')
 }

@@ -1,0 +1,90 @@
+{
+  "baseCommit": "7698bd71d0c3e12e1d95404ae6068e4649ab5052",
+  "checks": [
+    {
+      "name": "focused-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/screens/CharacterCreator.test.tsx src/screens/creatorModel.test.ts src/screens/Wardrobe.test.tsx src/pet/usePetMotion.test.tsx",
+      "log": "creator-green.log",
+      "exitCode": 0,
+      "result": "38 pass"
+    },
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "creator-unit.log",
+      "exitCode": 0,
+      "result": "1908 pass in85 files,57.25s; includes corrected kitchen target"
+    },
+    {
+      "name": "build",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "creator-build.log",
+      "exitCode": 0,
+      "result": "TypeScript and production build pass; existing chunk-size advisory"
+    },
+    {
+      "name": "lint",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "creator-lint.log",
+      "exitCode": 0,
+      "result": "pass, zero warnings"
+    },
+    {
+      "name": "production-motion-browser",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium CHORE_PET_CAPTURE_DIR=docs/audits/2026-10-12-character-polish/creator-captures nice -n 10 node --test --test-concurrency=1 scripts/browser/creator-motion.test.mjs scripts/browser/wardrobe-motion.test.mjs scripts/browser/pet-motion.test.mjs",
+      "log": "creator-browser.log",
+      "exitCode": 0,
+      "result": "17 pass; sequential isolated Chromium, includes corrected kitchen target"
+    }
+  ],
+  "sourceSha256": {
+    "src/pet/usePetMotion.ts": "b0d46259f21a5b961eeb44747fb7929799c434a276fb18cddd9b5ba9e62a7ffa",
+    "src/pet/usePetMotion.test.tsx": "99845beb099c968a64e595964fbc78a539dd7a86b1de397bd22497d0caf40e46",
+    "src/screens/WardrobePreview.tsx": "aea70ba2348fd46661358b0182a617ae8f11c490c70b2731ef010eb007a36b8c",
+    "src/screens/CharacterCreator.tsx": "4de4082c6d8d9cdfc0d7bf1cdc7adac89bfa6a341e28b414f93ab1bcff345a59",
+    "src/screens/CharacterCreator.css": "c0ee7c473ef957a193fc478f1265c69ae726336820db27495c3d7d9db490511c",
+    "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+    "scripts/browser/pet-motion.test.mjs": "63526fd581ecc6ac5e219d1f8f5998ae229bc7891262789ae547662663fde884",
+    "scripts/browser/wardrobe-motion.test.mjs": "aa64d724a6cd1a4f8293aa27701c4280e3d2c260b1ddb999ab5b0a4e676f70b0",
+    "src/screens/CreatorPreview.tsx": "37757eca1606d67d72f87ab327ffb47f2ca87145415c7f6ae03eaa9d75ad5cf6",
+    "src/screens/CharacterCreator.test.tsx": "26f82b2fa3c8eb31945af149684fa1ce9f32018cbf93925651b31575aaa20832",
+    "scripts/browser/creator-motion.test.mjs": "564d3d001515720921a0f507b4e157523171370ed474b1c3825b712b06a37987",
+    "src/pet/interactions.ts": "da4417bf00df0d7d34358ee474067ae075435c13a03f600787defecd1f3ebaaa",
+    "src/character/motion.ts": "5e1f316efcb2612a6b0a2d53009785892ee3ad999580bf910fea5c39a67e4e8b",
+    "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+    "src/character/species/animatedBody.tsx": "e338788eeb57e5c7f651d198f8ecfd85925ce33c9e0cd7528f45575cf8b79212"
+  },
+  "captures": [
+    {
+      "file": "creator-captures/creator-1280x800.png",
+      "sha256": "2778b8523217e10c4ff2e4c5d1d331b538487e0af911a839039309759f3ff0a5"
+    },
+    {
+      "file": "creator-captures/creator-320x568.png",
+      "sha256": "f84645a9cde4f5326241534d4881805eb3f78c0c862c3bf5fe7fc5e69c67bb57"
+    },
+    {
+      "file": "creator-captures/creator-844x390.png",
+      "sha256": "3e144c26fa357ca6bb2b02816e1700776671b6e0ac2b48b3511e74dd686f4a9a"
+    },
+    {
+      "file": "creator-captures/wardrobe-1280x800.png",
+      "sha256": "9e06628bde57b028364c367e91c06c64ff01d5ab3385432a177ce9bc21611819"
+    },
+    {
+      "file": "creator-captures/wardrobe-320x568.png",
+      "sha256": "6a9132ccd7fabfd8ed2eba33197ee868fc6aa9ff314319b7291fee73cc95c859"
+    },
+    {
+      "file": "creator-captures/wardrobe-390x664.png",
+      "sha256": "20bb33998ed2a0fa9372e6cf03e7839435e666671ad2329a6ec42a0aea36e009"
+    },
+    {
+      "file": "creator-captures/wardrobe-844x390.png",
+      "sha256": "bddddddfda6c66e0298be18d634d33b73ac90dba9684a577fbb9e99c79fa7a2c"
+    }
+  ],
+  "limitations": [
+    "Production layout stills inspected, separate from human temporal playback acceptance. Captures are opt-in and preserve earlier checkpoint files."
+  ]
+}

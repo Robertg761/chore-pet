@@ -55,5 +55,13 @@
   "limitations": [
     "Room stills use real behavior step and production SVG, separate from live LivingRoom timing and human temporal playback.",
     "Full-unit/build/browser pass preceded the one-unit plate correction; focused169 and regenerated24+24 stills verify the correction. The next creator batch will recheck the production build and motion integration with this correction included."
-  ]
+  ],
+  "subsequentIntegration": {
+    "verification": "creator-verification.json",
+    "unitTests": 1908,
+    "browserCases": 17,
+    "buildExitCode": 0,
+    "lintExitCode": 0,
+    "result": "Corrected kitchen profile included in the subsequent full unit, production build and resident/creator/wardrobe motion pass."
+  }
 }

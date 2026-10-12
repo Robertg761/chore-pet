@@ -2,20 +2,9 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { browserApp, seedProgress, snapshot } from './helpers.mjs'
+import { browserApp, changeReducedMotion, seedProgress, snapshot } from './helpers.mjs'
 
 const out = process.env.CHORE_PET_CAPTURE_DIR
-async function reducedMotion(page, value) {
-  await page.evaluate(() => {
-    window.__wardrobeReduction = new Promise(resolve => matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', () => resolve(), { once: true }))
-  })
-  await page.emulateMedia({ reducedMotion: value })
-  let timeout
-  await Promise.race([
-    page.evaluate(() => window.__wardrobeReduction),
-    new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('motion preference event not delivered within 4s')), 4000) }),
-  ]).finally(() => clearTimeout(timeout))
-}
 async function wardrobeApp(t, options = {}) {
   const page = await browserApp(t, { reducedMotion: 'no-preference', ...options })
   await seedProgress(page, { unlockedItems: ['item:beanie-red', 'item:glasses', 'item:scarf', 'item:backpack'] })
@@ -81,14 +70,14 @@ test('wardrobe live reduced motion settles the preview and does not restart when
   const preview = page.locator('.wd-preview')
   await page.getByRole('button', { name: 'Hop', exact: true }).click()
   await page.clock.runFor(756)
-  await reducedMotion(page, 'reduce')
+  await changeReducedMotion(page, 'reduce')
   assert.equal(await page.getByRole('button', { name: 'Hop', exact: true }).isDisabled(), true)
   assert.ok((await preview.boundingBox()).height >= 60, 'short-phone reduced-motion preview retains the character art\'s 60px reading size')
   assert.match(await preview.locator('[data-character-body]').getAttribute('transform'), /^translate\(0 0\)/)
   const still = await preview.innerHTML()
   await page.clock.runFor(2000)
   assert.equal(await preview.innerHTML(), still)
-  await reducedMotion(page, 'no-preference')
+  await changeReducedMotion(page, 'no-preference')
   await page.getByRole('button', { name: 'Wave', exact: true }).waitFor()
   assert.equal(await page.getByRole('button', { name: 'Wave', exact: true }).isEnabled(), true)
   await page.clock.runFor(500)

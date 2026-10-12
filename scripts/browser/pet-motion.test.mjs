@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { browserApp, snapshot } from './helpers.mjs'
+import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
 
 // These are production regressions in disposable contexts, with no gallery or
 // user browser session. A paused browser clock controls action deadlines.
@@ -178,23 +178,6 @@ test('ambient routes and adjacent gestures stay outside sample furniture in both
   assert.ok(positions.size > 10, 'must actually exercise an ambient route')
   assert.ok(adjacentFrames.length > 8 && new Set(adjacentFrames.map((state) => state.body)).size > 3, 'must exercise articulated gestures beside furniture')
 })
-
-async function changeReducedMotion(page, value) {
-  await page.evaluate(() => {
-    window.__preferenceDelivered = new Promise((resolve) => {
-      matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (event) => resolve(event.matches), { once: true })
-    })
-  })
-  await page.emulateMedia({ reducedMotion: value })
-  // CDP updates matchMedia.matches before dispatching the native change event.
-  // Fake rAF must run after that event, which is the hook's actual input.
-  let timeout
-  const delivered = await Promise.race([
-    page.evaluate(() => window.__preferenceDelivered),
-    new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('native motion preference event was not delivered within 4s')), 4000) }),
-  ]).finally(() => clearTimeout(timeout))
-  assert.equal(delivered, value === 'reduce')
-}
 
 async function assertReducedStill(page) {
   await changeReducedMotion(page, 'reduce')

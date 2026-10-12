@@ -44,3 +44,8 @@ The wardrobe motion bundle checks finite wave/hop previews, real outfit changes,
 focus, saved-data stability, live reduced motion, and phone/desktop layout. It
 writes no artifacts by default. Set `CHORE_PET_CAPTURE_DIR` to an existing output
 directory to save its four production screenshots and layout measurements.
+
+The creator motion bundle checks the finite, coalesced character celebration,
+stationary card, immediate face choices, actual clothing, draft/Save behavior,
+keyboard focus, reduced motion, and narrow phone/landscape/desktop layout. The
+same capture option saves three creator screenshots and layout measurements.

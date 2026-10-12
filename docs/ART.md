@@ -148,3 +148,5 @@ The deterministic motion panel uses the production sampler and renderer. Compare
 Use playback and real-room checks to judge grounding, clipping, interrupted motion, and gaze. Numeric continuity and SVG attachment tests support that review but do not establish visual quality by themselves.
 
 The wardrobe main preview uses the sampled renderer at rest and offers finite Wave and Hop controls. The active control becomes its Stop button; other movements wait. Pose selection stops playback. Live reduced motion settles before paint and does not replay when restored. Item grids and outfit thumbnails retain their static renderers, and frame updates stay inside the preview. Previewing never saves pet changes.
+
+The creator preview uses a finite 1800ms sampled celebration for species and colour choices. Rapid choices share the original deadline; eye and cheek choices settle immediately so the selected face stays visible. The card stays still, clothing stays equipped, and frame updates stay inside the preview. Live reduced motion cancels the reaction without replaying it when restored. Choices remain a draft until Save.

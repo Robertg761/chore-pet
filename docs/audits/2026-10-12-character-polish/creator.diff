@@ -1,0 +1,620 @@
+diff --git i/scripts/browser/helpers.mjs w/scripts/browser/helpers.mjs
+index 1ed45f2..47a0f1f 100644
+--- i/scripts/browser/helpers.mjs
++++ w/scripts/browser/helpers.mjs
+@@ -1,3 +1,4 @@
++import assert from 'node:assert/strict'
+ import { preview } from 'vite'
+ import { chromium } from 'playwright-core'
+ import { readFile } from 'node:fs/promises'
+@@ -103,3 +104,20 @@ export async function seedCompletionMilestones(page) {
+   }))
+   await page.reload()
+ }
++
++export async function changeReducedMotion(page, value) {
++  await page.evaluate(() => {
++    window.__preferenceDelivered = new Promise((resolve) => {
++      matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (event) => resolve(event.matches), { once: true })
++    })
++  })
++  await page.emulateMedia({ reducedMotion: value })
++  // CDP updates matchMedia.matches before dispatching the native change event.
++  // Fake rAF must run after that event, which is the hook's actual input.
++  let timeout
++  const delivered = await Promise.race([
++    page.evaluate(() => window.__preferenceDelivered),
++    new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('native motion preference event was not delivered within 4s')), 4000) }),
++  ]).finally(() => clearTimeout(timeout))
++  assert.equal(delivered, value === 'reduce')
++}
+diff --git i/scripts/browser/pet-motion.test.mjs w/scripts/browser/pet-motion.test.mjs
+index 0f6a520..68c6cf6 100644
+--- i/scripts/browser/pet-motion.test.mjs
++++ w/scripts/browser/pet-motion.test.mjs
+@@ -1,6 +1,6 @@
+ import assert from 'node:assert/strict'
+ import { test } from 'node:test'
+-import { browserApp, snapshot } from './helpers.mjs'
++import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
+ 
+ // These are production regressions in disposable contexts, with no gallery or
+ // user browser session. A paused browser clock controls action deadlines.
+@@ -179,23 +179,6 @@ test('ambient routes and adjacent gestures stay outside sample furniture in both
+   assert.ok(adjacentFrames.length > 8 && new Set(adjacentFrames.map((state) => state.body)).size > 3, 'must exercise articulated gestures beside furniture')
+ })
+ 
+-async function changeReducedMotion(page, value) {
+-  await page.evaluate(() => {
+-    window.__preferenceDelivered = new Promise((resolve) => {
+-      matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (event) => resolve(event.matches), { once: true })
+-    })
+-  })
+-  await page.emulateMedia({ reducedMotion: value })
+-  // CDP updates matchMedia.matches before dispatching the native change event.
+-  // Fake rAF must run after that event, which is the hook's actual input.
+-  let timeout
+-  const delivered = await Promise.race([
+-    page.evaluate(() => window.__preferenceDelivered),
+-    new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('native motion preference event was not delivered within 4s')), 4000) }),
+-  ]).finally(() => clearTimeout(timeout))
+-  assert.equal(delivered, value === 'reduce')
+-}
+-
+ async function assertReducedStill(page) {
+   await changeReducedMotion(page, 'reduce')
+   await page.clock.runFor(32)
+diff --git i/scripts/browser/wardrobe-motion.test.mjs w/scripts/browser/wardrobe-motion.test.mjs
+index 6dae94d..81f0de5 100644
+--- i/scripts/browser/wardrobe-motion.test.mjs
++++ w/scripts/browser/wardrobe-motion.test.mjs
+@@ -2,20 +2,9 @@ import assert from 'node:assert/strict'
+ import { test } from 'node:test'
+ import { writeFile } from 'node:fs/promises'
+ import { join } from 'node:path'
+-import { browserApp, seedProgress, snapshot } from './helpers.mjs'
++import { browserApp, changeReducedMotion, seedProgress, snapshot } from './helpers.mjs'
+ 
+ const out = process.env.CHORE_PET_CAPTURE_DIR
+-async function reducedMotion(page, value) {
+-  await page.evaluate(() => {
+-    window.__wardrobeReduction = new Promise(resolve => matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', () => resolve(), { once: true }))
+-  })
+-  await page.emulateMedia({ reducedMotion: value })
+-  let timeout
+-  await Promise.race([
+-    page.evaluate(() => window.__wardrobeReduction),
+-    new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('motion preference event not delivered within 4s')), 4000) }),
+-  ]).finally(() => clearTimeout(timeout))
+-}
+ async function wardrobeApp(t, options = {}) {
+   const page = await browserApp(t, { reducedMotion: 'no-preference', ...options })
+   await seedProgress(page, { unlockedItems: ['item:beanie-red', 'item:glasses', 'item:scarf', 'item:backpack'] })
+@@ -81,14 +70,14 @@ test('wardrobe live reduced motion settles the preview and does not restart when
+   const preview = page.locator('.wd-preview')
+   await page.getByRole('button', { name: 'Hop', exact: true }).click()
+   await page.clock.runFor(756)
+-  await reducedMotion(page, 'reduce')
++  await changeReducedMotion(page, 'reduce')
+   assert.equal(await page.getByRole('button', { name: 'Hop', exact: true }).isDisabled(), true)
+   assert.ok((await preview.boundingBox()).height >= 60, 'short-phone reduced-motion preview retains the character art\'s 60px reading size')
+   assert.match(await preview.locator('[data-character-body]').getAttribute('transform'), /^translate\(0 0\)/)
+   const still = await preview.innerHTML()
+   await page.clock.runFor(2000)
+   assert.equal(await preview.innerHTML(), still)
+-  await reducedMotion(page, 'no-preference')
++  await changeReducedMotion(page, 'no-preference')
+   await page.getByRole('button', { name: 'Wave', exact: true }).waitFor()
+   assert.equal(await page.getByRole('button', { name: 'Wave', exact: true }).isEnabled(), true)
+   await page.clock.runFor(500)
+diff --git i/src/pet/usePetMotion.test.tsx w/src/pet/usePetMotion.test.tsx
+index b55da95..741cd52 100644
+--- i/src/pet/usePetMotion.test.tsx
++++ w/src/pet/usePetMotion.test.tsx
+@@ -46,6 +46,47 @@ function Clock({ tick, active = true }: {
+   return <output>{String(reducedMotion)}</output>
+ }
+ 
++it('delivers real preference changes to the latest handler while inactive, and cleans up', () => {
++  const first = vi.fn(), latest = vi.fn()
++  function Preference({ changed }: { changed: (reduced: boolean) => void }) {
++    const { reducedMotion } = usePetMotion(() => {}, false, changed)
++    return <output>{String(reducedMotion)}</output>
++  }
++  const ui = render(<StrictMode><Preference changed={first} /></StrictMode>)
++  mounted.add(ui)
++  expect(first).not.toHaveBeenCalled()
++  act(() => preference(true))
++  expect(first.mock.calls).toEqual([[true]])
++  expect(ui.container.textContent).toBe('true')
++  act(() => preference(true))
++  expect(first).toHaveBeenCalledTimes(1)
++  ui.rerender(<StrictMode><Preference changed={latest} /></StrictMode>)
++  act(() => preference(false))
++  expect(latest.mock.calls).toEqual([[false]])
++  expect(first).toHaveBeenCalledTimes(1)
++  expect(frames.size).toBe(0)
++  ui.unmount(); mounted.delete(ui)
++  act(() => preference(true))
++  expect(latest).toHaveBeenCalledTimes(1)
++})
++
++it('delivers a preference changed between initial read and subscription without an animation frame', () => {
++  const firstRead = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  let reads = 0
++  vi.stubGlobal('matchMedia', () => reads++ === 0 ? firstRead : media)
++  const changed = vi.fn()
++  function Preference() {
++    const { reducedMotion } = usePetMotion(() => {}, false, changed)
++    return <output>{String(reducedMotion)}</output>
++  }
++  const ui = render(<Preference />)
++  mounted.add(ui)
++  expect(changed.mock.calls).toEqual([[true]])
++  expect(ui.container.textContent).toBe('true')
++  expect(frames.size).toBe(0)
++})
++
+ function mount(tick = vi.fn(), active = true, strict = false) {
+   const clock = <Clock tick={tick} active={active} />
+   const ui = render(strict ? <StrictMode>{clock}</StrictMode> : clock)
+diff --git i/src/pet/usePetMotion.ts w/src/pet/usePetMotion.ts
+index 7b90ff6..1e37d02 100644
+--- i/src/pet/usePetMotion.ts
++++ w/src/pet/usePetMotion.ts
+@@ -4,13 +4,18 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+  * Supplies browser rAF timestamps in the same monotonic time domain as
+  * performance.now(). Hidden tabs receive no ticks; the first visible frame
+  * includes elapsed hidden time, so existing activity deadlines remain valid.
++ * Preference handlers share the query subscription and run only on changes,
++ * even while inactive, so finite previews can cancel in the same event batch.
+  */
+ export function usePetMotion(
+   tick: (now: number, reducedMotion: boolean) => void,
+   active: boolean,
++  onPreferenceChange?: (reducedMotion: boolean) => void,
+ ): { reducedMotion: boolean } {
+   const latestTick = useRef(tick)
+   useLayoutEffect(() => { latestTick.current = tick }, [tick])
++  const latestPreferenceChange = useRef(onPreferenceChange)
++  useLayoutEffect(() => { latestPreferenceChange.current = onPreferenceChange }, [onPreferenceChange])
+ 
+   const [reducedMotion, setReducedMotion] = useState(() =>
+     typeof window !== 'undefined' &&
+@@ -22,8 +27,10 @@ export function usePetMotion(
+     const query = window.matchMedia?.('(prefers-reduced-motion: reduce)')
+     if (!query) return
+     const update = () => {
++      const changed = preference.current !== query.matches
+       preference.current = query.matches
+       setReducedMotion(query.matches)
++      if (changed) latestPreferenceChange.current?.(query.matches)
+     }
+     query.addEventListener('change', update)
+     update()
+diff --git i/src/screens/CharacterCreator.css w/src/screens/CharacterCreator.css
+index db75689..ec14617 100644
+--- i/src/screens/CharacterCreator.css
++++ w/src/screens/CharacterCreator.css
+@@ -17,7 +17,6 @@
+   padding: 4px;
+ }
+ .cc-preview svg { display: block; width: 100%; height: 100%; }
+-.cc-cheer { animation: cc-hop 0.5s ease-in-out 2; }
+ 
+ .cc-field { flex: none; display: flex; flex-direction: column; gap: 4px; }
+ .cc-field-row { display: flex; align-items: center; gap: 10px; }
+@@ -84,11 +83,6 @@
+ .cc-face { display: block; width: 100%; height: auto; border-radius: 9px; background: var(--ground); }
+ .cc-face-label { font-size: 0.75rem; font-weight: 800; line-height: 1.3; }
+ 
+-@keyframes cc-hop {
+-  0%, 100% { transform: translateY(0); }
+-  50% { transform: translateY(-8px); }
+-}
+-
+ @media (max-height: 640px) {
+   .cc-panel { height: 190px; }
+   .cc-species-art svg { max-width: 64px; }
+@@ -123,5 +117,4 @@
+ @media (prefers-reduced-motion: reduce) {
+   .cc-choice { transition: none; }
+   .cc-choice:hover { transform: none; }
+-  .cc-cheer { animation: none; }
+ }
+diff --git i/src/screens/CharacterCreator.tsx w/src/screens/CharacterCreator.tsx
+index ad83232..aa09571 100644
+--- i/src/screens/CharacterCreator.tsx
++++ w/src/screens/CharacterCreator.tsx
+@@ -1,4 +1,4 @@
+-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react'
++import { useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react'
+ import { Character, CharacterArt } from '../character/Character'
+ import { SPECIES, type CheekStyle, type EyeStyle, type Pet, type Species } from '../domain/types'
+ import {
+@@ -14,6 +14,7 @@ import {
+ import { ScreenHeader } from '../shell/ScreenHeader'
+ import { SegThumb } from '../shell/SegThumb'
+ import { useWide } from '../shell/useViewport'
++import { CreatorPreview, type CreatorPreviewControl } from './CreatorPreview'
+ import './CharacterCreator.css'
+ 
+ export type PetLookPatch = Partial<Pick<Pet, 'name' | 'species' | 'bodyColour' | 'eyes' | 'cheeks'>>
+@@ -25,7 +26,6 @@ export interface CharacterCreatorProps {
+ }
+ 
+ const MAX_NAME = 20
+-const CHEER_MS = 1000
+ 
+ type Part = 'who' | 'colour' | 'face'
+ const PARTS: { part: Part; label: string }[] = [
+@@ -36,10 +36,6 @@ const PARTS: { part: Part; label: string }[] = [
+ 
+ const SPECIES_LABEL: Record<Species, string> = { mochi: 'Mochi', bun: 'Bun', sprout: 'Sprout' }
+ 
+-function prefersReducedMotion() {
+-  return typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+-}
+-
+ interface ChoiceGroupProps<T extends string> {
+   label: string
+   value: T | undefined
+@@ -98,27 +94,18 @@ function FaceCrop({ species, bodyColour, eyes, cheeks }: { species: Species; bod
+ 
+ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps) {
+   const [draft, setDraft] = useState(() => draftFromPet(pet))
+-  const [cheering, setCheering] = useState(false)
+   const [nameError, setNameError] = useState(false)
+   const wide = useWide()
+   const [part, setPart] = useState<Part>('who')
+   const tabsRef = useRef<HTMLDivElement>(null)
+-  const timer = useRef<number | undefined>(undefined)
++  const preview = useRef<CreatorPreviewControl | null>(null)
+   const nameRef = useRef<HTMLInputElement>(null)
+ 
+-  useEffect(() => () => window.clearTimeout(timer.current), [])
+-
+-  const cheer = () => {
+-    if (prefersReducedMotion()) return
+-    window.clearTimeout(timer.current)
+-    setCheering(true)
+-    timer.current = window.setTimeout(() => setCheering(false), CHEER_MS)
+-  }
+-
+   const change = (patch: Partial<typeof draft>) => {
+     setDraft((d) => ({ ...d, ...patch }))
+     // The cheer squeezes the eyes shut, so face choices show the face instead.
+-    if (!('eyes' in patch) && !('cheeks' in patch)) cheer()
++    if ('eyes' in patch || 'cheeks' in patch) preview.current?.settle()
++    else preview.current?.cheer()
+   }
+ 
+   const chooseSpecies = (species: Species) => {
+@@ -139,7 +126,6 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
+   }
+ 
+   const { species, bodyColour, eyes, cheeks } = draft
+-  const look = { eyes, cheeks }
+   const swatches = swatchesFor(bodyColour)
+   const selectedColour = swatches.find((c) => sameColour(c.hex, bodyColour))?.hex
+ 
+@@ -266,18 +252,8 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
+ 
+       <div className="cc-body">
+         <div className="cc-stage">
+-          <div className={`cc-preview${cheering ? ' cc-cheer' : ''}`}>
+-            <Character
+-              species={species}
+-              mood="happy"
+-              pose={cheering ? 'cheering' : undefined}
+-              bodyColour={bodyColour}
+-              equipped={pet.equipped}
+-              look={look}
+-              size={170}
+-              title={`${draft.name.trim() || 'Your pet'}, ${SPECIES_LABEL[species]}`}
+-            />
+-          </div>
++          <CreatorPreview draft={draft} equipped={pet.equipped} control={preview}
++            label={`${draft.name.trim() || 'Your pet'}, ${SPECIES_LABEL[species]}`} />
+ 
+           <div className="cc-field">
+             <div className="cc-field-row">
+diff --git i/src/screens/WardrobePreview.tsx w/src/screens/WardrobePreview.tsx
+index fe91f28..02fb2de 100644
+--- i/src/screens/WardrobePreview.tsx
++++ w/src/screens/WardrobePreview.tsx
+@@ -1,4 +1,4 @@
+-import { useLayoutEffect, useState } from 'react'
++import { useState } from 'react'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+ import { ACTION_MS, sampleMotion } from '../character/motion'
+ import type { PoseName } from '../character/poses'
+@@ -20,10 +20,7 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
+     const time = Math.max(0, now - run.start)
+     if (reduced || time >= ACTION_MS[run.action]) setRun(null)
+     else setElapsed(time)
+-  }, run !== null)
+-  useLayoutEffect(() => {
+-    if (reducedMotion) setRun(null)
+-  }, [reducedMotion])
++  }, run !== null, reduced => { if (reduced) setRun(null) })
+   const active = reducedMotion ? null : run
+   const frame = sampleMotion({ species: pet.species, mood: pose === 'sick' ? 'sick' : 'happy',
+     action: active?.action ?? 'idle', elapsedMs: active ? elapsed : 0, distance: 0,
+--- /dev/null
++++ b/src/screens/CreatorPreview.tsx
+@@ -0,0 +1,41 @@
++import { useImperativeHandle, useState, type RefObject } from 'react'
++import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
++import { ACTION_MS, sampleMotion } from '../character/motion'
++import type { Pet } from '../domain/types'
++import { usePetMotion } from '../pet/usePetMotion'
++import type { CreatorDraft } from './creatorModel'
++
++export interface CreatorPreviewControl { cheer: () => void; settle: () => void }
++
++/** Keep finite character frames out of the creator's choice grids and form. */
++export function CreatorPreview({ draft, equipped, label, control }: {
++  draft: CreatorDraft; equipped: Pet['equipped']; label: string
++  control: RefObject<CreatorPreviewControl | null>
++}) {
++  const [start, setStart] = useState<number | null>(null)
++  const [elapsed, setElapsed] = useState(0)
++  const { reducedMotion } = usePetMotion((now, reduced) => {
++    if (start === null) return
++    const time = Math.max(0, now - start)
++    if (reduced || time >= ACTION_MS.celebrate) setStart(null)
++    else setElapsed(time)
++  }, start !== null, reduced => { if (reduced) setStart(null) })
++  useImperativeHandle(control, () => ({
++    cheer: () => {
++      if (reducedMotion || start !== null) return
++      setElapsed(0)
++      setStart(performance.now())
++    },
++    settle: () => setStart(null),
++  }), [reducedMotion, start])
++  const active = start !== null && !reducedMotion
++  const frame = sampleMotion({ species: draft.species, mood: 'happy', action: active ? 'celebrate' : 'idle',
++    elapsedMs: active ? elapsed : 0, durationMs: active ? ACTION_MS.celebrate : ACTION_MS.idle,
++    distance: 0, reducedMotion: reducedMotion || !active })
++  return <div className="cc-preview">
++    <svg width={170} height={170} viewBox="0 0 200 200" role="img" aria-label={label}>
++      <AnimatedCharacterArt species={draft.species} mood="happy" bodyColour={draft.bodyColour} equipped={equipped}
++        look={{ eyes: draft.eyes, cheeks: draft.cheeks }} frame={frame} />
++    </svg>
++  </div>
++}
+--- /dev/null
++++ b/src/screens/CharacterCreator.test.tsx
+@@ -0,0 +1,134 @@
++// @vitest-environment jsdom
++import { act, StrictMode } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import type { Pet } from '../domain/types'
++import { click, render } from '../test/react'
++import * as model from './creatorModel'
++import { CharacterCreator, type PetLookPatch } from './CharacterCreator'
++
++const pet: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#FFCFDA', eyes: 'classic', cheeks: 'round', equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } }
++let ui: ReturnType<typeof render>
++let now: number, serial: number, hidden: boolean
++let frames: Map<number, FrameRequestCallback>
++let media: MediaQueryList
++let saved: ReturnType<typeof vi.fn<(patch: PetLookPatch) => void>>
++let closed: ReturnType<typeof vi.fn<() => void>>
++const content = () => <StrictMode><CharacterCreator pet={pet} onSave={saved} onClose={closed} /></StrictMode>
++
++beforeEach(() => {
++  now = 0; serial = 0; hidden = false; frames = new Map(); saved = vi.fn(); closed = vi.fn()
++  vi.spyOn(performance, 'now').mockImplementation(() => now)
++  vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden)
++  media = Object.assign(new EventTarget(), { matches: false, media: '(prefers-reduced-motion: reduce)' }) as MediaQueryList
++  const narrow = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  vi.stubGlobal('matchMedia', (query: string) => query.includes('prefers-reduced-motion') ? media : narrow)
++  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
++  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
++  vi.spyOn(model, 'swatchesFor')
++  ui = render(content())
++})
++afterEach(() => { ui.unmount(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++function button(name: string) {
++  const node = [...ui.container.querySelectorAll('button')].find(node => node.textContent === name)
++  expect(node, `button ${name}`).toBeTruthy(); return node!
++}
++function radio(name: string) {
++  const node = ui.container.querySelector(`[role="radio"][aria-label="${name}"]`)
++  expect(node, `radio ${name}`).not.toBeNull(); return node!
++}
++function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
++function preference(matches: boolean) { act(() => { Object.defineProperty(media, 'matches', { value: matches, configurable: true }); media.dispatchEvent(new Event('change')) }) }
++function visibility(value: boolean) { act(() => { hidden = value; document.dispatchEvent(new Event('visibilitychange')) }) }
++function preview() { return ui.container.querySelector('.cc-preview')! }
++function body() { return preview().querySelector('[data-character-body]')!.getAttribute('transform') }
++
++it('reacts with the sampled character while its card and choice grid stay still, then settles exactly', () => {
++  expect(preview().querySelector('.ch-animated')).not.toBeNull()
++  expect(frames.size).toBe(0)
++  click(radio('Bun'))
++  const art = preview().querySelector('.ch-animated')
++  const gridRenders = vi.mocked(model.swatchesFor).mock.calls.length
++  const neutral = body()
++  expect(frames.size).toBe(1)
++  expect(preview().classList.contains('cc-cheer')).toBe(false)
++  frame(756)
++  expect(body()).toMatch(/^translate\(0 -/)
++  for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) expect(preview().querySelector(`[data-slot="${slot}"]`)).not.toBeNull()
++  expect(model.swatchesFor).toHaveBeenCalledTimes(gridRenders)
++  expect(saved).not.toHaveBeenCalled()
++  frame(1800)
++  expect(body()).toBe(neutral)
++  expect(preview().querySelector('.ch-animated')).toBe(art)
++  expect(frames.size).toBe(0)
++  click(button('Save'))
++  expect(saved).toHaveBeenCalledWith({ species: 'bun', bodyColour: '#FFFFFF' })
++  expect(closed).toHaveBeenCalledOnce()
++})
++
++it.each(['Sparkly', 'Hearts'])('ends an active reaction immediately when choosing %s so the face choice is visible', name => {
++  click(radio('Bun')); frame(756)
++  expect(preview().querySelector('[data-expression="cheering"]')).not.toBeNull()
++  click(button('Face'))
++  const choice = radio(name)
++  act(() => (choice as HTMLElement).focus())
++  click(choice)
++  expect(frames.size).toBe(0)
++  expect(preview().querySelector('[data-expression="happy"]')).not.toBeNull()
++  expect(body()).toMatch(/^translate\(0 0\)/)
++  expect(document.activeElement).toBe(choice)
++  expect(choice.getAttribute('aria-checked')).toBe('true')
++  frame(2000)
++  expect(preview().querySelector('[data-expression="happy"]')).not.toBeNull()
++  expect(saved).not.toHaveBeenCalled()
++})
++
++it('coalesces rapid species and colour changes without extending the reaction deadline', () => {
++  click(radio('Bun')); frame(756)
++  click(radio('Sprout'))
++  click(button('Colour'))
++  click(radio('Sky'))
++  expect(frames.size).toBe(1)
++  frame(1800)
++  expect(frames.size).toBe(0)
++  expect(body()).toMatch(/^translate\(0 0\)/)
++  click(button('Save'))
++  expect(saved).toHaveBeenCalledWith({ species: 'sprout', bodyColour: '#9ED8F5' })
++})
++
++it('settles immediately on live reduction and does not replay after restoration', () => {
++  click(radio('Bun')); frame(756)
++  preference(true)
++  expect(body()).toMatch(/^translate\(0 0\)/)
++  expect(preview().querySelector('[data-expression="happy"]')).not.toBeNull()
++  expect(frames.size).toBe(0)
++  preference(false)
++  expect(frames.size).toBe(0)
++  click(button('Colour')); click(radio('Sky'))
++  expect(frames.size).toBe(1)
++})
++
++it('honors initial reduced motion while still applying look choices', () => {
++  ui.unmount()
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  ui = render(content())
++  click(radio('Bun'))
++  expect(frames.size).toBe(0)
++  expect(body()).toMatch(/^translate\(0 0\)/)
++  click(button('Save'))
++  expect(saved).toHaveBeenCalledWith({ species: 'bun', bodyColour: '#FFFFFF' })
++})
++
++it('suspends hidden motion, settles after the deadline, and cleans up pending frames', () => {
++  click(radio('Bun')); frame(300)
++  const stale = [...frames.values()][0]
++  visibility(true)
++  expect(frames.size).toBe(0)
++  now = 2000; visibility(false); frame(now)
++  expect(frames.size).toBe(0)
++  click(radio('Sprout'))
++  expect(frames.size).toBe(1)
++  ui.unmount()
++  expect(frames.size).toBe(0)
++  act(() => stale(5000))
++  expect(frames.size).toBe(0)
++})
+--- /dev/null
++++ b/scripts/browser/creator-motion.test.mjs
+@@ -0,0 +1,92 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, changeReducedMotion, seedProgress, snapshot } from './helpers.mjs'
++
++const out = process.env.CHORE_PET_CAPTURE_DIR
++async function creatorApp(t, options = {}) {
++  const page = await browserApp(t, { reducedMotion: 'no-preference', ...options })
++  await seedProgress(page, { unlockedItems: ['item:beanie-red', 'item:glasses', 'item:scarf', 'item:backpack'] })
++  await page.getByRole('button', { name: 'Wardrobe', exact: true }).click()
++  for (const [slot, name] of [['Head', 'Red beanie'], ['Face', 'Round glasses'], ['Neck', 'Scarf'], ['Outfit', 'Overalls'], ['On back', 'Backpack']]) {
++    await page.getByRole('tab', { name: slot, exact: true }).click()
++    await page.getByRole('button', { name, exact: true }).click()
++  }
++  await page.getByRole('button', { name: 'More', exact: true }).click()
++  await page.getByRole('button', { name: 'Change look', exact: true }).click()
++  await page.getByRole('heading', { name: 'Change look', exact: true }).waitFor()
++  await page.clock.install()
++  await page.clock.pauseAt(Date.now() + 1000)
++  return page
++}
++
++for (const [width, height] of [[320, 568], [844, 390], [1280, 800]]) {
++  test(`creator previews the actual character while keeping face choices visible at ${width}x${height}`, { timeout: 20000 }, async t => {
++    const page = await creatorApp(t, { viewport: { width, height } })
++    const before = (await snapshot(page)).tables.pets
++    const preview = page.locator('.cc-preview'), art = preview.locator('.ch-animated')
++    assert.equal(await art.count(), 1)
++    const card = await preview.boundingBox()
++    await page.getByRole('radio', { name: 'Bun', exact: true }).click()
++    await page.clock.runFor(756)
++    assert.match(await art.locator('[data-character-body]').getAttribute('transform'), /^translate\(0 -/)
++    assert.deepEqual(await preview.boundingBox(), card, 'only the character should hop; its card stays still')
++    assert.equal(await preview.evaluate(node => getComputedStyle(node).animationName), 'none')
++    for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) assert.equal(await art.locator(`[data-slot="${slot}"]`).count(), 1)
++    const geometry = await page.evaluate(() => {
++      const box = node => { const r = node.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height, right: r.right, bottom: r.bottom } }
++      return { scroll: document.documentElement.scrollWidth, svg: box(document.querySelector('.cc-preview svg')),
++        controls: [...document.querySelectorAll('.cc button, .cc input')].filter(node => node.getClientRects().length).map(box) }
++    })
++    assert.ok(geometry.scroll <= width, 'creator must not overflow horizontally')
++    assert.ok(geometry.svg.h >= 60, `character must remain readable: ${JSON.stringify(geometry)}`)
++    for (const control of geometry.controls) {
++      assert.ok(control.w >= 44 && control.h >= 44, `44px target: ${JSON.stringify(control)}`)
++      assert.ok(control.x >= 0 && control.right <= width, `horizontal target bounds: ${JSON.stringify(control)}`)
++    }
++    if (out) {
++      await page.screenshot({ path: join(out, `creator-${width}x${height}.png`) })
++      await writeFile(join(out, `creator-${width}x${height}.json`), JSON.stringify({ width, height, geometry, browser: page.context().browser().version(), method: 'Isolated offline production creator, Bun celebration at756ms, all wardrobe slots equipped through real controls.' }, null, 2) + '\n')
++    }
++    const faceTab = page.getByRole('tab', { name: 'Face', exact: true })
++    if (await faceTab.count()) await faceTab.click()
++    const eyes = page.getByRole('radio', { name: 'Sparkly', exact: true })
++    await eyes.focus(); await page.keyboard.press('Enter')
++    const faceBox = await eyes.boundingBox()
++    assert.ok(faceBox.y >= 0 && faceBox.y + faceBox.height <= height, 'face options remain reachable through the scrolling panel')
++    assert.equal(await eyes.evaluate(node => node === document.activeElement), true)
++    assert.equal(await art.locator('[data-expression="happy"]').count(), 1, 'new face choice is visible immediately')
++    assert.match(await art.locator('[data-character-body]').getAttribute('transform'), /^translate\(0 0\)/)
++    await page.clock.runFor(2200)
++    assert.equal(await art.locator('[data-expression="happy"]').count(), 1)
++    assert.deepEqual((await snapshot(page)).tables.pets, before, 'look preview remains a draft until Save')
++    await page.getByRole('button', { name: 'Save', exact: true }).click()
++    await page.getByRole('heading', { name: 'Mochi', exact: true }).waitFor()
++    const after = Object.values((await snapshot(page)).tables.pets)[0]
++    assert.equal(after.species, 'bun')
++    assert.equal(after.bodyColour, '#FFFFFF')
++    assert.equal(after.eyes, 'sparkly')
++    assert.deepEqual(after.equipped, Object.values(before)[0].equipped)
++  })
++}
++
++test('creator settles live reduction and initial reduction keeps look choices available', { timeout: 20000 }, async t => {
++  const page = await creatorApp(t)
++  const art = page.locator('.cc-preview .ch-animated')
++  await page.getByRole('radio', { name: 'Bun', exact: true }).click()
++  await page.clock.runFor(756)
++  await changeReducedMotion(page, 'reduce')
++  assert.match(await art.locator('[data-character-body]').getAttribute('transform'), /^translate\(0 0\)/)
++  const still = await art.innerHTML()
++  await changeReducedMotion(page, 'no-preference')
++  await page.clock.runFor(2000)
++  assert.equal(await art.innerHTML(), still, 'clearing reduced motion must not replay a cancelled preview')
++  await changeReducedMotion(page, 'reduce')
++  await page.reload()
++  await page.getByRole('heading', { name: 'Change look', exact: true }).waitFor()
++  await page.getByRole('radio', { name: 'Sprout', exact: true }).click()
++  await page.clock.runFor(756)
++  assert.match(await art.locator('[data-character-body]').getAttribute('transform'), /^translate\(0 0\)/)
++  assert.equal(await page.getByRole('radio', { name: 'Sprout', exact: true }).getAttribute('aria-checked'), 'true')
++})

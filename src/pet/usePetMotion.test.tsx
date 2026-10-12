@@ -46,6 +46,47 @@ function Clock({ tick, active = true }: {
   return <output>{String(reducedMotion)}</output>
 }
 
+it('delivers real preference changes to the latest handler while inactive, and cleans up', () => {
+  const first = vi.fn(), latest = vi.fn()
+  function Preference({ changed }: { changed: (reduced: boolean) => void }) {
+    const { reducedMotion } = usePetMotion(() => {}, false, changed)
+    return <output>{String(reducedMotion)}</output>
+  }
+  const ui = render(<StrictMode><Preference changed={first} /></StrictMode>)
+  mounted.add(ui)
+  expect(first).not.toHaveBeenCalled()
+  act(() => preference(true))
+  expect(first.mock.calls).toEqual([[true]])
+  expect(ui.container.textContent).toBe('true')
+  act(() => preference(true))
+  expect(first).toHaveBeenCalledTimes(1)
+  ui.rerender(<StrictMode><Preference changed={latest} /></StrictMode>)
+  act(() => preference(false))
+  expect(latest.mock.calls).toEqual([[false]])
+  expect(first).toHaveBeenCalledTimes(1)
+  expect(frames.size).toBe(0)
+  ui.unmount(); mounted.delete(ui)
+  act(() => preference(true))
+  expect(latest).toHaveBeenCalledTimes(1)
+})
+
+it('delivers a preference changed between initial read and subscription without an animation frame', () => {
+  const firstRead = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
+  Object.defineProperty(media, 'matches', { value: true, configurable: true })
+  let reads = 0
+  vi.stubGlobal('matchMedia', () => reads++ === 0 ? firstRead : media)
+  const changed = vi.fn()
+  function Preference() {
+    const { reducedMotion } = usePetMotion(() => {}, false, changed)
+    return <output>{String(reducedMotion)}</output>
+  }
+  const ui = render(<Preference />)
+  mounted.add(ui)
+  expect(changed.mock.calls).toEqual([[true]])
+  expect(ui.container.textContent).toBe('true')
+  expect(frames.size).toBe(0)
+})
+
 function mount(tick = vi.fn(), active = true, strict = false) {
   const clock = <Clock tick={tick} active={active} />
   const ui = render(strict ? <StrictMode>{clock}</StrictMode> : clock)

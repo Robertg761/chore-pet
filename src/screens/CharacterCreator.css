@@ -17,7 +17,6 @@
   padding: 4px;
 }
 .cc-preview svg { display: block; width: 100%; height: 100%; }
-.cc-cheer { animation: cc-hop 0.5s ease-in-out 2; }
 
 .cc-field { flex: none; display: flex; flex-direction: column; gap: 4px; }
 .cc-field-row { display: flex; align-items: center; gap: 10px; }
@@ -84,11 +83,6 @@
 .cc-face { display: block; width: 100%; height: auto; border-radius: 9px; background: var(--ground); }
 .cc-face-label { font-size: 0.75rem; font-weight: 800; line-height: 1.3; }
 
-@keyframes cc-hop {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
 @media (max-height: 640px) {
   .cc-panel { height: 190px; }
   .cc-species-art svg { max-width: 64px; }
@@ -123,5 +117,4 @@
 @media (prefers-reduced-motion: reduce) {
   .cc-choice { transition: none; }
   .cc-choice:hover { transform: none; }
-  .cc-cheer { animation: none; }
 }

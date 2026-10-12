@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from 'react'
+import { useState } from 'react'
 import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
 import { ACTION_MS, sampleMotion } from '../character/motion'
 import type { PoseName } from '../character/poses'
@@ -20,10 +20,7 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
     const time = Math.max(0, now - run.start)
     if (reduced || time >= ACTION_MS[run.action]) setRun(null)
     else setElapsed(time)
-  }, run !== null)
-  useLayoutEffect(() => {
-    if (reducedMotion) setRun(null)
-  }, [reducedMotion])
+  }, run !== null, reduced => { if (reduced) setRun(null) })
   const active = reducedMotion ? null : run
   const frame = sampleMotion({ species: pet.species, mood: pose === 'sick' ? 'sick' : 'happy',
     action: active?.action ?? 'idle', elapsedMs: active ? elapsed : 0, distance: 0,

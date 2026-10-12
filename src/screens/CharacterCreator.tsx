@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react'
+import { useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react'
 import { Character, CharacterArt } from '../character/Character'
 import { SPECIES, type CheekStyle, type EyeStyle, type Pet, type Species } from '../domain/types'
 import {
@@ -14,6 +14,7 @@ import {
 import { ScreenHeader } from '../shell/ScreenHeader'
 import { SegThumb } from '../shell/SegThumb'
 import { useWide } from '../shell/useViewport'
+import { CreatorPreview, type CreatorPreviewControl } from './CreatorPreview'
 import './CharacterCreator.css'
 
 export type PetLookPatch = Partial<Pick<Pet, 'name' | 'species' | 'bodyColour' | 'eyes' | 'cheeks'>>
@@ -25,7 +26,6 @@ export interface CharacterCreatorProps {
 }
 
 const MAX_NAME = 20
-const CHEER_MS = 1000
 
 type Part = 'who' | 'colour' | 'face'
 const PARTS: { part: Part; label: string }[] = [
@@ -35,10 +35,6 @@ const PARTS: { part: Part; label: string }[] = [
 ]
 
 const SPECIES_LABEL: Record<Species, string> = { mochi: 'Mochi', bun: 'Bun', sprout: 'Sprout' }
-
-function prefersReducedMotion() {
-  return typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-}
 
 interface ChoiceGroupProps<T extends string> {
   label: string
@@ -98,27 +94,18 @@ function FaceCrop({ species, bodyColour, eyes, cheeks }: { species: Species; bod
 
 export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps) {
   const [draft, setDraft] = useState(() => draftFromPet(pet))
-  const [cheering, setCheering] = useState(false)
   const [nameError, setNameError] = useState(false)
   const wide = useWide()
   const [part, setPart] = useState<Part>('who')
   const tabsRef = useRef<HTMLDivElement>(null)
-  const timer = useRef<number | undefined>(undefined)
+  const preview = useRef<CreatorPreviewControl | null>(null)
   const nameRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => () => window.clearTimeout(timer.current), [])
-
-  const cheer = () => {
-    if (prefersReducedMotion()) return
-    window.clearTimeout(timer.current)
-    setCheering(true)
-    timer.current = window.setTimeout(() => setCheering(false), CHEER_MS)
-  }
 
   const change = (patch: Partial<typeof draft>) => {
     setDraft((d) => ({ ...d, ...patch }))
     // The cheer squeezes the eyes shut, so face choices show the face instead.
-    if (!('eyes' in patch) && !('cheeks' in patch)) cheer()
+    if ('eyes' in patch || 'cheeks' in patch) preview.current?.settle()
+    else preview.current?.cheer()
   }
 
   const chooseSpecies = (species: Species) => {
@@ -139,7 +126,6 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
   }
 
   const { species, bodyColour, eyes, cheeks } = draft
-  const look = { eyes, cheeks }
   const swatches = swatchesFor(bodyColour)
   const selectedColour = swatches.find((c) => sameColour(c.hex, bodyColour))?.hex
 
@@ -266,18 +252,8 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
 
       <div className="cc-body">
         <div className="cc-stage">
-          <div className={`cc-preview${cheering ? ' cc-cheer' : ''}`}>
-            <Character
-              species={species}
-              mood="happy"
-              pose={cheering ? 'cheering' : undefined}
-              bodyColour={bodyColour}
-              equipped={pet.equipped}
-              look={look}
-              size={170}
-              title={`${draft.name.trim() || 'Your pet'}, ${SPECIES_LABEL[species]}`}
-            />
-          </div>
+          <CreatorPreview draft={draft} equipped={pet.equipped} control={preview}
+            label={`${draft.name.trim() || 'Your pet'}, ${SPECIES_LABEL[species]}`} />
 
           <div className="cc-field">
             <div className="cc-field-row">
