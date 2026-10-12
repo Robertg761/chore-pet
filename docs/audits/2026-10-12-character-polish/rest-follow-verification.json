@@ -1,0 +1,131 @@
+{
+  "freeze": {
+    "baseCommit": "43e660a271ef8e81ad1d9edda9c9f91703763cc3",
+    "sources": {
+      "src/character/motion.ts": "27af4dbddb2f7ace9672447a9aa10040d755f10b17a0f3508eb27edd88a1d2db",
+      "src/character/motion.rest.test.ts": "8cb4812a2c9c5e14841e5ed55448fc8dcb246c3e3b970fc1ed4c464b0d42f6d9",
+      "scripts/browser/pet-rest-follow.test.mjs": "f8f7f9052318834ac91831bc5d80f6cb1d2a3cc74352c2628de3c23721f33f1e",
+      "docs/ART.md": "176ecc62916ebdcefc12a71cb6bbbb763ac4208ca9b12f8a43d4b1e69669c973",
+      "docs/audits/2026-10-12-character-polish/capture-rest-follow.mjs": "205540a4f8d6d605f2578d8a6439a9cffa05b0bc8587b75566a17ed7684d493c",
+      "docs/audits/2026-10-12-character-polish/compare-rest-follow.mjs": "da831a38a7c91e9a7c2b982e6f59883b2a789d4122c81283cb43d3852a33ef64"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/rest-follow-source.diff",
+      "sha256": "db94a5dc721209cc682d45c4b372668fcbf7212329b53b2ca16aa3c15fb56b40"
+    },
+    "scope": "One runtime pure sampler adds restrained one-cycle environmental rest appendage follow. Two unit/native files, two bounded diagnostic runners, ART. No other fields/actions/durations/state/timer/routing/contact/store changes."
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/rest-follow-artifacts.json",
+    "sha256": "d6ddcb423bc5f051c4362e30e8421106c68a1382c7b9dd0bd9e90a3005629886"
+  },
+  "checks": [
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/rest-follow-browser-red.log",
+      "logSha256": "577a94ed8f5f9d3f70fee3b6d5ddb5ea74e31b4d78defd286103b4c8a73e31f5",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/rest-follow-browser-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/rest-follow-browser.log",
+      "logSha256": "bfee596412cc055c9d86e01b1b5a6ff40661dace1d26b4f77f38d220bce0eb27",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/rest-follow-browser.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/rest-follow-build.log",
+      "logSha256": "90d87538f4f27f896019a4e5e9e48b7b59f7de84ec5ffc04d6590ee2487c1cd3",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/rest-follow-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/rest-follow-capture-after.log",
+      "logSha256": "9059d7e17b808c0c6bb7ab47fa1d226d99becf51ea1a72cca64b3771e14265f9",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/rest-follow-capture-after.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/rest-follow-capture-before.log",
+      "logSha256": "80ee272c1c101063cb8d893653196da8e238b085f4824f9436773c7e3c43aabc",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/rest-follow-capture-before.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "differential",
+      "log": "docs/audits/2026-10-12-character-polish/rest-follow-differential.log",
+      "logSha256": "23bc44d7dec2b71f9ba476f77ef5fbf604441024262b3f26521ec37ffea430a4",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/rest-follow-differential.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/rest-follow-focused.log",
+      "logSha256": "3b33f45548614d879727bfddfe2cae1b7ce4098844bf04b6503f7643a29c772a",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/rest-follow-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/rest-follow-full.log",
+      "logSha256": "6706278cf553747a3b9f1e8388fa87bacea2bbc06f3e2f12738c99d041ca9531",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/rest-follow-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/rest-follow-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/rest-follow-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/rest-follow-red.log",
+      "logSha256": "455f573b327d327b4d948eeb9c2b60dccec498ea6a650e23f869fba27b1c6b73",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/rest-follow-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "status": "Verified with independent static/still approval;6sources/patch/8artifacts/10rawexit-logpairs/nestedcapture+differentialbindings/report root rechecked.",
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/rest-follow-review.md",
+    "sha256": "f2390dc5f57c06505fec1622343556900fdede42d5271a9a89469f3b89898f46"
+  },
+  "result": "2203unit/104files64.82s;280focused/7files4.71s;9native12.145s (3new actual dressed rug/rest,6existing Explore);typebuild/zero-warninglint/captures/differential all exit0.43200frames:42210exact,990normalrestappendage-only.53actual SVG samples/species, foot contact<.01local units, one resident clock and same position/node/announcement/store.7newunits (6red/1reducedbaselinepass),3native angle-budget reds preserved.",
+  "limits": "Static happy/dressed/mirrored sampled sheets and numeric curves, isolated Chromium152; no human temporal, physical-device, assistive-technology or CPU/battery acceptance."
+}

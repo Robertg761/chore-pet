@@ -1,0 +1,16 @@
+{
+  "method": "Exact sampled frames across3species/5moods/16actions/3durations/2motionpolicies/2facings/15phases. Only normal rest appendages may differ;allotherfields/actions/reduced/durations exact. Static numeric checks,not temporal acceptance.",
+  "samples": 43200,
+  "unchanged": 42210,
+  "changed": 990,
+  "changes": {
+    "mochi/rest": 330,
+    "bun/rest": 330,
+    "sprout/rest": 330
+  },
+  "sourceSha256": {
+    "baseline": "4f337fb3c7d69d02cc7476d0e262b35e8f92daae67d9578b8f3c26140a96b60d",
+    "current": "27af4dbddb2f7ace9672447a9aa10040d755f10b17a0f3508eb27edd88a1d2db",
+    "runner": "da831a38a7c91e9a7c2b982e6f59883b2a789d4122c81283cb43d3852a33ef64"
+  }
+}

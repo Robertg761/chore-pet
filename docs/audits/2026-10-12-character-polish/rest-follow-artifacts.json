@@ -1,0 +1,13 @@
+{
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/rest-follow-baseline.ts.txt": "4f337fb3c7d69d02cc7476d0e262b35e8f92daae67d9578b8f3c26140a96b60d",
+    "docs/audits/2026-10-12-character-polish/rest-follow-before-sizes.png": "17b591bff0915542c3aa5b31e951714b142d7522777a0ba651f66d87ecf02740",
+    "docs/audits/2026-10-12-character-polish/rest-follow-before-curves.png": "a108dbaf41ddc42e21e78f40297037c5d6537b3d8794f9d278f684ecc4ee3a70",
+    "docs/audits/2026-10-12-character-polish/rest-follow-before.json": "55d1a0a691993e7853676e6b25d26a75c07a6e5ecddd175b943656fe59d7fcad",
+    "docs/audits/2026-10-12-character-polish/rest-follow-after-sizes.png": "2e0fa2835e00ad08aa06487341d4d07dba069351b7acbb3b51421c7afd6a7294",
+    "docs/audits/2026-10-12-character-polish/rest-follow-after-curves.png": "b80ecf20993132c780477f685598bae51fc1e86c19fad142bdcbe287b6ce3511",
+    "docs/audits/2026-10-12-character-polish/rest-follow-after.json": "8281c6cb8695e286b2d879ffdbd4f1e33086311f9beae5ae732901c23d74656d",
+    "docs/audits/2026-10-12-character-polish/rest-follow-differential.json": "6054ce2e0ea9cfc7f497d90f27a8779674280e4ba1f0396e16f66ed11ca86fb2"
+  },
+  "scope": "Exact43e660a baseline; before/after18happy dressed/mirror/phase samples each54views at200/60/25px and three appendage curves;43200-frame differential (42210exact,990normal-rest appendage-only changes). Static/numeric review, not human playback/device performance."
+}

@@ -1,0 +1,79 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/motion.rest.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/motion.rest.test.ts (7 tests | 6 failed) 24ms
+   ❯ quiet environmental rest follow-through (7)
+     × keeps mochi appendages small and slow beside resting furnishings 9ms
+     × keeps bun appendages small and slow beside resting furnishings 4ms
+     × keeps sprout appendages small and slow beside resting furnishings 2ms
+     × mochi makes one quiet sway across different finite durations 5ms
+     × bun makes one quiet sway across different finite durations 1ms
+     × sprout makes one quiet sway across different finite durations 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/motion.rest.test.ts > quiet environmental rest follow-through > keeps mochi appendages small and slow beside resting furnishings
+AssertionError: expected 4.999998640167109 to be less than or equal to 1.250000001
+ ❯ src/character/motion.rest.test.ts:17:49
+     15|     for (const side of ['leftAppendage', 'rightAppendage'] as const) {
+     16|       const values = frames.map(frame => frame[side])
+     17|       expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(li…
+       |                                                 ^
+     18|       expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(.25)
+     19|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/character/motion.rest.test.ts > quiet environmental rest follow-through > keeps bun appendages small and slow beside resting furnishings
+AssertionError: expected 11.999997912150267 to be less than or equal to 3.600000001
+ ❯ src/character/motion.rest.test.ts:17:49
+     15|     for (const side of ['leftAppendage', 'rightAppendage'] as const) {
+     16|       const values = frames.map(frame => frame[side])
+     17|       expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(li…
+       |                                                 ^
+     18|       expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(.25)
+     19|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/character/motion.rest.test.ts > quiet environmental rest follow-through > keeps sprout appendages small and slow beside resting furnishings
+AssertionError: expected 8.99999911858814 to be less than or equal to 2.250000001
+ ❯ src/character/motion.rest.test.ts:17:49
+     15|     for (const side of ['leftAppendage', 'rightAppendage'] as const) {
+     16|       const values = frames.map(frame => frame[side])
+     17|       expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(li…
+       |                                                 ^
+     18|       expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(.25)
+     19|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/character/motion.rest.test.ts > quiet environmental rest follow-through > mochi makes one quiet sway across different finite durations
+ FAIL  src/character/motion.rest.test.ts > quiet environmental rest follow-through > bun makes one quiet sway across different finite durations
+ FAIL  src/character/motion.rest.test.ts > quiet environmental rest follow-through > sprout makes one quiet sway across different finite durations
+AssertionError: expected [ -1, 1, -1 ] to have a length of 1 but got 3
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/character/motion.rest.test.ts:30:73
+     28|       const signs = Array.from({ length: 1001 }, (_, phase) => at(spec…
+     29|         .filter(value => Math.abs(value) > 1e-6).map(Math.sign)
+     30|       expect(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1])…
+       |                                                                         ^
+     31|     }
+     32|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  20:26:57
+   Duration  213ms (transform 46%, tests 31%, import 18%, worker 5%)
+
