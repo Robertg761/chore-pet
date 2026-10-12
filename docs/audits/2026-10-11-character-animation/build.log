@@ -10,15 +10,15 @@ dist/index.html                                    2.43 kB │ gzip:   0.97 kB
 dist/assets/ArtGallery-CnVJUPbJ.css                1.48 kB │ gzip:   0.59 kB
 dist/assets/TimePanel-CTPLu1xs.css                 1.50 kB │ gzip:   0.62 kB
 dist/assets/index-CrDW8fr2.css                   107.98 kB │ gzip:  20.14 kB
-dist/assets/TimePanel-BpJld5Od.js                  1.81 kB │ gzip:   0.80 kB
+dist/assets/TimePanel-BgmH8ptR.js                  1.81 kB │ gzip:   0.80 kB
 dist/assets/workbox-window.prod.es5-Bd17z0YL.js    5.65 kB │ gzip:   2.20 kB
 dist/assets/jsx-runtime-CWXmGRJK.js                9.31 kB │ gzip:   3.57 kB
-dist/assets/CoverB-Byk8M301.js                     9.33 kB │ gzip:   3.57 kB
-dist/assets/ArtGallery-CPmxRT46.js                18.71 kB │ gzip:   5.55 kB
+dist/assets/CoverB-IzAVcafH.js                     9.33 kB │ gzip:   3.57 kB
+dist/assets/ArtGallery-CowlkY2q.js                18.71 kB │ gzip:   5.55 kB
 dist/assets/dist-CyFDDxv-.js                     218.96 kB │ gzip:  56.51 kB
-dist/assets/index-MyGkqIGP.js                    669.90 kB │ gzip: 206.95 kB
+dist/assets/index-4_yBKy-7.js                    669.93 kB │ gzip: 206.95 kB
 
-✓ built in 696ms
+✓ built in 703ms
 [plugin builtin:vite-reporter] 
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
@@ -27,7 +27,7 @@ dist/assets/index-MyGkqIGP.js                    669.90 kB │ gzip: 206.95 kB
 
 PWA v2.0.0
 mode      generateSW
-precache  19 entries (1096.02 KiB)
+precache  19 entries (1096.05 KiB)
 files generated
   dist/sw.js
   dist/workbox-2fbc6a65.js

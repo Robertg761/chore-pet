@@ -112,11 +112,13 @@ Tasks 1 and 3 can be developed independently. Task 2 consumes Task 1. Task 4 con
 - [x] Run `npm test`, `npm run lint`, `npm run build`, `npm run test:browser`, and `npm run test:multiroom`. Record actual results, commands, browser version, and any environmental limitations.
 - [ ] Review all species/actions/moods at normal and slow playback. Sweep default colors plus yellow/pink/sky/white/dark. Review every wardrobe item at motion extrema, including combined slots. Inspect mobile room size, 60px, and enlarged previews. Capture representative sequences and report measured continuity/contact defects rather than general impressions.
 - [x] Review actual rooms with both object orientations and all action families: plants, fish tank, decor, restful pause, dust, smell, wilt, and fallback. Exercise blocked/moved/removed targets, tap during each phase, celebrations during interactions, travel retargeting, hiding the page, and preference changes during landing.
-- [ ] Fix every grounding, clipping, timing, interruption, accessibility, or routing defect found. Add a regression test when the defect is programmatically observable; repeat the affected visual sequence and appropriate automated checks.
-- [ ] Obtain independent final review against the approved spec. Resolve actionable findings and rerun affected checks. Mark checked combinations and evidence paths in `REVIEW.md`; explicitly disclose untested environments.
-- [ ] Commit as `test: verify and refine character interaction animations`. Deliver final change summary, review instructions, test results, and representative animation captures. Do not claim perfect or exhaustive quality beyond the recorded evidence.
+- [x] Fix every grounding, clipping, timing, interruption, accessibility, or routing defect found. Add a regression test when the defect is programmatically observable; repeat the affected visual sequence and appropriate automated checks.
+- [x] Obtain independent final review against the approved spec. Resolve actionable findings and rerun affected checks. Mark checked combinations and evidence paths in `REVIEW.md`; explicitly disclose untested environments.
+- [x] Commit as `test: verify and refine character interaction animations`. Deliver final change summary, review instructions, test results, and representative animation captures. Do not claim perfect or exhaustive quality beyond the recorded evidence.
 
 Playback acceptance remains open: the normal/slow clips and frame matrix were generated and sampled as documented in the audit, but interactive browser reconnect was rejected by tool policy. Human temporal playback was not verified. Automated and sampled-art checks do not replace it.
+
+Final code/evidence delivery: 1,863 unit tests, 45 production browser tests, and 16 multiroom checks pass after the final correction wave. Lint and build pass. Independent scoped re-review approves all four requested fixes. Minor out-of-scope observations and their deferrals remain explicit in the audit. Human playback is the unchecked acceptance item above.
 
 ## Plan self-review
 

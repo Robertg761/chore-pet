@@ -15,3 +15,7 @@ Ruling: Add optional blinkMs sampler input and eyeOpen frame value with neutral 
 Ruling: Start Task5integration against reviewed renderer architecture while Task2 stance/contrast/bounds refinements continue in disjoint character files — public rendering API stays stable and this advances room integration — if stance API changes, integration must be adjusted and re-reviewed; final acceptance waits for both.
 
 Ruling: Transfer sick/away travelers immediately through the existing arrival callbacks, as reduced motion does. Sliding the whole bed or sleeping silhouette would contradict resting-pose intent. Normal travel timing stays unchanged. If wrong, suppressed-state travel needs a dedicated transition and timing revision.
+
+Ruling: Defer synthetic suppression-layer consolidation, M2, because no normal-use failure is demonstrated and arbitrary truncation would risk the reviewed contact continuity. Normal taps already coalesce. If wrong, sustained externally driven mood churn consumes excess allocation and frame work until a bounded representation is implemented.
+
+Ruling: Defer the pre-existing room-summary crash for an object ID of __proto__ with positive neglect because it is outside the animation fix diff and normal object creation uses UUIDs. If wrong, externally supplied reserved-ID data can still crash the room summary until its name map is hardened.

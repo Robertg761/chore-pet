@@ -32,4 +32,4 @@ RUN Desktop and phone layouts keep rooms visible without page overflow
 PASS Desktop and phone layouts keep rooms visible without page overflow
 RUN Existing doorway obstruction keeps the pet in place until the furniture is moved
 PASS Existing doorway obstruction keeps the pet in place until the furniture is moved
-PASS 16 multiroom checks. Screenshots and result: /tmp/chore-pet-multiroom-final
+PASS 16 multiroom checks. Screenshots and result: /tmp/chore-pet-multiroom-postfix

@@ -257,12 +257,12 @@
   ],
   "sampleCount": 1407,
   "sourceSha256": {
-    "src/character/motion.ts": "5ccdcc29b4aa5b22223be52593c82e93bb3cab751a5ebf7be54fb97aff96ec44",
+    "src/character/motion.ts": "5e1f316efcb2612a6b0a2d53009785892ee3ad999580bf910fea5c39a67e4e8b",
     "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
     "src/character/species/animatedBody.tsx": "e338788eeb57e5c7f651d198f8ecfd85925ce33c9e0cd7528f45575cf8b79212",
     "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
     "src/character/parts.tsx": "de2ccd72ba68d5ededd87f89d99e7d4275608b138c6ae04fadaac2dd9ccc399d",
-    "src/pet/behaviour.ts": "6ba10608540b1db0f6d9a227b102d366e4c609133973bb1302beaeb65a508d8f",
+    "src/pet/behaviour.ts": "4bed9fcf40912fba2733ed5cdb17d302af59a1e42f7ebfeca78e7c17f5fbd472",
     "src/pet/activityMotion.ts": "6401e236e3a3d71d6cba8d30f66986f3e40a0ba05f35c26b057d59139518452a",
     "scripts/render-pet-motion.mjs": "382b61c8500820d114d457b0a26d670a3357720349efd77fc13c824502aadcda"
   },
@@ -374,5 +374,6 @@
     "src/character/motion.ts": "5ccdcc29b4aa5b22223be52593c82e93bb3cab751a5ebf7be54fb97aff96ec44",
     "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
     "src/character/species/animatedBody.tsx": "e338788eeb57e5c7f651d198f8ecfd85925ce33c9e0cd7528f45575cf8b79212"
-  }
+  },
+  "boundsEvidenceStatus": "Historical pre-blink-fix scan. Fix-wave geometry comparison and 24 closed-endpoint raster cases supplement it. See verification.json and final-fix-report.md."
 }

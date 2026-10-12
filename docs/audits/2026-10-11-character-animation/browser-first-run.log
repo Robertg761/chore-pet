@@ -1,0 +1,90 @@
+npm notice run chore-pet@0.0.0 test:browser
+npm notice run node --test scripts/browser/*.test.mjs
+✔ adding a chore says so, and Undo takes it back (5338.435232ms)
+✔ removing a chore says so, and Undo brings it back (3391.618453ms)
+✔ editing a chore gives no toast (2260.116969ms)
+✔ Cancel from the editor puts focus on the home heading (2353.678053ms)
+✔ hydration reconciles the selected home rather than the most furnished home (4905.737823ms)
+✔ Back dismisses the sheet and visible gift while keeping correction reachable (4916.949294ms)
+✔ Back dismisses the sheet and pending gift while keeping correction reachable (4135.483502ms)
+✔ Cancel with Enter adds no washer or chores (5032.850099ms)
+✔ Cancel with Space adds no washer or chores (2690.598654ms)
+✔ All chores keeps Undo in the active dialog (3115.488605ms)
+✔ a sheet gift is interactive and preserves Undo past five seconds (9701.635743ms)
+✔ Turn with Enter rotates once without placing (1228.858702ms)
+✔ Turn with Space rotates once without placing (1520.65569ms)
+✔ room arrows, R, Enter still move, rotate and place the preview (1135.363701ms)
+✔ keyboard gift dismissal restores the sheet, then its opener (3575.265804ms)
+✔ More pauses a home correction until it can be reached again (8734.321688ms)
+✔ home gift preserves correction and wears its reward (reduce) (8927.300321ms)
+✔ home gift preserves correction and wears its reward (no-preference) (10482.332162ms)
+✔ queued decor and style gifts survive Place it and Try it navigation (6709.843345ms)
+✔ phone sheet still dismisses by touch drag after correction (1995.923936ms)
+✔ new and existing drafts survive tabs and history; Save and Cancel clear them (6428.441831ms)
+✔ More and All chores dismiss with Back, menu selection replaces the sheet entry, deep links reload (2823.475113ms)
+✔ landing sign-in and cancel do not create a disposable home (3317.546769ms)
+✔ reload warns about a draft; stale edit deep links never become a new chore (1883.385517ms)
+✔ Start over in Settings clears the room and chores, or erases everything (2171.085047ms)
+✔ the sample home has no Start over; Start fresh is its way out (994.248377ms)
+✔ Start fresh goes straight to the pet picker, whose Back returns to the landing (967.001048ms)
+✔ Make it mine shows a brief thank-you where the banner was (3810.176953ms)
+✔ the Chores screen edits, removes several at once and adds a removed chore back (6844.277101ms)
+✔ a chore dated ahead by a clock can be edited and removed from the Chores screen (1013.217094ms)
+✔ browser fixtures block external service URLs with nested paths (4227.983753ms)
+✔ keyboard Enter reaches and activates the resident without moving its world position (5310.262896ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (3192.126938ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (6462.768561ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.1123 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1860.980252ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.1441 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (2791.41685ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1844.803541ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (2171.834449ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 498ms; lift sampled at 1254ms; landing at 1674ms
+✔ a second room gets its own furniture and chores, and the kitchen keeps its own (5483.091403ms)
+✔ the pill counts late chores in the other rooms (2673.156995ms)
+✔ removing a room asks first, then archives its chores (3189.046125ms)
+✔ Skip this time settles a late chore without a completion (10656.442255ms)
+✖ Undo takes a skip back (2726.211052ms)
+✔ Skip is offered only while a round is owed (1458.824206ms)
+✔ the home shows the streak once a day counts (3816.714325ms)
+ℹ tests 45
+ℹ suites 0
+ℹ pass 44
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 65671.9153
+
+✖ failing tests:
+
+test at scripts/browser/skip.test.mjs:31:1
+✖ Undo takes a skip back (2726.211052ms)
+  locator.click: Target page, context or browser has been closed
+  Browser logs:
+  
+  <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-2ieHrO --remote-debugging-pipe --no-startup-window
+  <launched> pid=2737107
+  [pid=2737107][err] 
+  [pid=2737107][err] (playwright_chromiumdev_profile-2ieHrO --remote-debugging-pipe --no-startup-window --noerrdialogs --ozone-platform=headless --ozone-override-screen-size=800,600 --use-angle=swiftshader-webgl:2737107): dbind-WARNING **: 14:54:23.088: Couldn't connect to accessibility bus: Failed to connect to socket /run/user/1000/at-spi/bus_0: Connection refused
+  Call log:
+  [2m  - waiting for getByRole('button', { name: /All chores/ })[22m
+  [2m    - locator resolved to <button type="button" class="cl-add cl-all">…</button>[22m
+  [2m  - attempting click action[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is visible, enabled and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - performing click action[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/skip.test.mjs:37:58) {
+    log: [ "  - waiting for getByRole('button', { name: /All chores/ })", '    - locator resolved to <button type="button" class="cl-add cl-all">…</button>', '  - attempting click action', '    - waiting for element to be visible, enabled and stable', '    - element is visible, enabled and stable', '    - scrolling into view if needed', '    - done scrolling', '    - performing click action' ]
+  }

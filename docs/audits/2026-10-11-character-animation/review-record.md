@@ -17,6 +17,19 @@ Task reviews used frozen diffs, implementation reports, the approved specificati
 | Grounding follow-up Fix2 | Spec and quality APPROVED, both findings addressed | Retained collision contacts and full rendered mood-angle reflection approved; no new breakage. 154 focused tests/typecheck/lint passed. |
 | Room/travel integration | Constraint wiring accepted; two dialogue P2s require changes | Both P2s addressed and independently approved in round 1, with one nonblocking reserved-ID stage-lookup P3 for final triage. Retarget identity/geometry and harness corrections accepted. |
 
-Integration re-review approved both P2 corrections. Whole-branch review is pending. Deferred sequencing minors remain visible for that review: duplicated target validation transition-layer growth under synthetic 16ms alternation of sick/sleep inputs, and the new reserved-ID dialogue stage lookup. Ordinary rapid taps are bounded by separate integration/browser tests. No judgment about the deferred items is implied here.
+Integration re-review approved both dialogue P2 corrections. Whole-branch review requested one P2 walking-arrival blink correction and recorded four nonblocking P3s. The single combined correction pass fixed I1, M1, M3, and M4. The exactly one scoped re-review approved spec and quality for that wave, with no new source breakage. M2 remains explicitly deferred under Ruling 9. The pre-existing reserved-ID room-summary observation is deferred under Ruling 10. Normal rapid taps remain bounded by separate integration/browser tests.
 
-The controller's eight decisions and their costs are preserved in [decisions.md](decisions.md). Normal/slow playback acceptance remains open as described in [REVIEW.md](REVIEW.md).
+The complete [whole-branch report](final-review.md), [fix report](final-fix-report.md), and [scoped re-review](final-fix-re-review.md) preserve the findings and evidence. The reviewer completed its report before root's final browser replay and multiroom checks; current integrated outcomes belong to verification.json. Reviewer approval covers the source fix, and does not claim human playback acceptance.
+
+The controller's decisions and their costs are preserved in [decisions.md](decisions.md). Normal/slow playback acceptance remains open as described in [REVIEW.md](REVIEW.md).
+
+## Root disposition of declined judgments
+
+- Human temporal playback and perceived naturalness remain open acceptance work. Generated clips and stills do not close it.
+- Safari, Firefox, real touch hardware, and low-end frame pacing/battery remain unverified and are disclosed limits.
+- Physical furniture contact, sitting, eating, bathing, and washing stay outside the approved scope until verified geometry exists.
+- Furniture redesign/customization belongs to the other chat and remains outside this change.
+- The build chunk advisory is recorded; no measured or attributable performance regression is inferred from it alone.
+- The appearance/bounds matrix is finite sampled evidence. No exhaustive claim is made for arbitrary colors, paths, times, or wardrobe combinations.
+
+The complete independent findings are preserved in [final-review.md](final-review.md).

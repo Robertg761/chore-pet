@@ -5,7 +5,7 @@
   },
   "final": {
     "unitFiles": 82,
-    "unitTests": 1848,
+    "unitTests": 1863,
     "unitExit": 0,
     "lintExit": 0,
     "buildExit": 0,
@@ -29,19 +29,21 @@
         "log": "build.log"
       },
       "browser": {
-        "command": "CHROME=/usr/bin/chromium npm run test:browser",
+        "command": "DEBUG=pw:browser CHROME=/usr/bin/chromium npm run test:browser",
         "log": "browser-tests.log"
       },
       "multiroom": {
         "command": "npm run test:multiroom",
         "environment": {
           "URL": "http://127.0.0.1:5187/",
-          "CHROME": "/usr/bin/chromium"
+          "CHROME": "/usr/bin/chromium",
+          "OUTPUT_DIR": "/tmp/chore-pet-multiroom-postfix"
         },
         "prerequisite": "Offline local dev server with Supabase disabled.",
         "log": "multiroom-tests.log"
       }
-    }
+    },
+    "codeCommit": "6b1ab203330b717f8b6e70774509be72366cc77b"
   },
   "rasterBounds": {
     "actionWardrobeSamples": 25740,
@@ -60,9 +62,19 @@
     "exit": 0,
     "sampledArtPng": 19,
     "browserScreenshots": 2,
-    "status": "pre-wave; sampler hash changes, root must regenerate 42 sheets and 10 videos and update provenance",
+    "status": "Regenerated after the fix wave; all eight recorded source hashes match the reviewed source.",
     "manifest": "manifest.json",
-    "clips": "clips.json"
+    "clips": "clips.json",
+    "command": "node scripts/render-pet-motion.mjs /tmp/chore-pet-motion-review-postfix --video",
+    "log": "captures.log",
+    "arrivalBlink": {
+      "source": "arrival-blink-source.mjs",
+      "command": "node docs/audits/2026-10-11-character-animation/arrival-blink-source.mjs",
+      "png": "arrival-blink.png",
+      "samples": "arrival-blink.json",
+      "frames": 8,
+      "method": "Actual production step/motionFor/AnimatedCharacterArt local walk arrival, 3054 through 3190ms. Still-frame inspection only."
+    }
   },
   "limitations": [
     "Human temporal playback unverified after tool-policy browser reconnect rejection.",
@@ -70,24 +82,22 @@
   ],
   "priorNonpassingRuns": [
     "One raster-test timeout under concurrent capture/build; font scans removed and full suite replay passed.",
-    "Final multiroom first attempt could not connect to the stopped dev server; restarted offline server and all16 checks passed."
+    "Final multiroom first attempt could not connect to the stopped dev server; restarted offline server and all16 checks passed.",
+    "Post-wave browser run44/45 lost Chromium during existing Undo skip case; isolated1/1 and diagnostic full45/45 replays passed unchanged. Cause remains unknown; all logs retained."
   ],
   "evidenceState": {
-    "snapshot": "96b185d55b2759088f90be20d9f06084b4095959",
-    "status": "pre-wave",
-    "note": "The integrated results, bounds, and captures below predate the combined I1/M1/M3/M4 fix wave. Root owns fresh final regression counts and capture regeneration.",
+    "snapshot": "6b1ab203330b717f8b6e70774509be72366cc77b",
+    "status": "post-wave integrated checks and source-bound captures passed",
+    "note": "Current unit/lint/build/browser/multiroom results verify the reviewed code commit. The broad bounds scan retains its explicitly historical source hashes, supplemented by the new endpoint matrix. Final source re-review approved I1/M1/M3/M4; human playback remains open.",
     "logPathsRelativeTo": "docs/audits/2026-10-11-character-animation",
-    "logPublication": "The six named raw logs exist locally but remain ignored. Root will force-add them after final verification."
+    "logPublication": "All six indexed raw logs and the fix-wave evidence are preserved in Git. Current browser replay, original closed-browser failure, focused replay, and capture logs are included."
   },
   "remainingFinalWork": [
-    "Root final regression and fresh integrated counts/logs.",
-    "Root regeneration of the 42 sheets and 10 videos with current source hashes.",
-    "Exactly one scoped independent re-review of the combined fix wave.",
     "Human normal/slow temporal playback acceptance remains open after the policy block; automated or sampled evidence cannot close it."
   ],
   "fixWave": {
     "base": "96b185d55b2759088f90be20d9f06084b4095959",
-    "status": "covering checks passed; ready for the one root-owned scoped re-review",
+    "status": "I1/M1/M3/M4 independently ADDRESSED; scoped spec PASS and quality APPROVE; no new source breakage.",
     "addressed": [
       "I1",
       "M1",
@@ -102,29 +112,29 @@
       "files": 5,
       "tests": 247,
       "exit": 0,
-      "log": "../../../.superpowers/sdd/2026-10-11-character-animation/final-fix-green-final.log"
+      "log": "fix-wave/final-fix-green-final.log"
     },
     "typecheck": [
       {
         "command": "./node_modules/.bin/tsc -p tsconfig.app.json --noEmit --incremental false",
         "exit": 0,
-        "log": "../../../.superpowers/sdd/2026-10-11-character-animation/final-fix-typecheck-app.log"
+        "log": "fix-wave/final-fix-typecheck-app.log"
       },
       {
         "command": "./node_modules/.bin/tsc -p tsconfig.node.json --noEmit --incremental false",
         "exit": 0,
-        "log": "../../../.superpowers/sdd/2026-10-11-character-animation/final-fix-typecheck-node.log"
+        "log": "fix-wave/final-fix-typecheck-node.log"
       }
     ],
     "scopedLint": {
       "command": "./node_modules/.bin/oxlint src/character/motion.ts src/character/motion.test.ts src/character/AnimatedCharacter.test.tsx src/pet/activityMotion.test.ts src/pet/behaviour.ts src/pet/LivingRoom.tsx src/pet/PetIntegration.test.tsx",
       "exit": 0,
-      "log": "../../../.superpowers/sdd/2026-10-11-character-animation/final-fix-lint.log"
+      "log": "fix-wave/final-fix-lint.log"
     },
     "geometryRetention": {
       "numericComparisons": 480,
       "unchanged": "Every MotionFrame field except eyeOpen, including expression.",
-      "log": "../../../.superpowers/sdd/2026-10-11-character-animation/final-fix-geometry.log",
+      "log": "fix-wave/final-fix-geometry.log",
       "samplerSha256": "5e1f316efcb2612a6b0a2d53009785892ee3ad999580bf910fea5c39a67e4e8b",
       "historicalBoundsRetained": "The walking guard moved after bounded eye sampling. Ground/body/limb/shadow/wardrobe geometry and renderer source are unchanged; no repeat of the 42,660-render scan."
     },
@@ -134,11 +144,46 @@
       "outside": 0,
       "matrix": "All three species, happy/scruffy, walk start/end during closed lifetime blink, combined wardrobe, stroke scales 1 and 1.6; padded 240px raster, alpha >5/255 outside the unchanged 200-unit box."
     },
-    "report": "../../../.superpowers/sdd/2026-10-11-character-animation/final-fix-report.md",
+    "report": "final-fix-report.md",
     "limits": [
-      "No full-suite, build, browser, multiroom, broad capture, or broad bounds rerun in this wave. Historical integrated counts remain pre-wave.",
+      "The fix author ran covering checks. Root subsequently passed the fresh integrated gates and regenerated source-bound captures; the broad bounds scan remains historical.",
       "An extra __proto__ fixture with positive neglect exposed an existing roomSummary objectNames/neglectSummary name-map crash outside the authorized wave scope. Requested empty-record and owned-stage dialogue cases pass; positive-neglect reserved-ID support is not claimed.",
       "Human normal/slow temporal playback acceptance remains open under the existing policy block."
-    ]
+    ],
+    "review": "final-fix-re-review.md"
+  },
+  "preWaveIntegrated": {
+    "snapshot": "96b185d55b2759088f90be20d9f06084b4095959",
+    "unitTests": 1848,
+    "browserTests": 45,
+    "multiroomChecks": 16,
+    "status": "All passed before the final correction wave; current results below supersede them."
+  },
+  "browserReplay": {
+    "firstRun": {
+      "passed": 44,
+      "failed": 1,
+      "exit": 1,
+      "log": "browser-first-run.log",
+      "failure": "Existing Undo takes a skip back case lost its Chromium page/browser during a click. No product assertion failure or pageerror was reported. Cause remains unknown."
+    },
+    "isolatedReplay": {
+      "command": "CHROME=/usr/bin/chromium node --test --test-name-pattern='Undo takes a skip back' scripts/browser/skip.test.mjs",
+      "passed": 1,
+      "failed": 0,
+      "exit": 0,
+      "log": "browser-focused-replay.log"
+    },
+    "fullReplay": {
+      "passed": 45,
+      "failed": 0,
+      "exit": 0,
+      "log": "browser-tests.log",
+      "note": "Same source and assertions, process-exit diagnostics enabled. No application/test/timeout change."
+    }
+  },
+  "deferredObservations": {
+    "M2": "Synthetic suppression-layer churn, Ruling 9. No demonstrated normal-use failure; arbitrary truncation risks contact continuity.",
+    "reservedIdRoomSummary": "Pre-existing __proto__ object ID with positive neglect can crash roomSummary.ts name lookup. Normal IDs are UUIDs. Deferred outside this animation wave under Ruling 10."
   }
 }

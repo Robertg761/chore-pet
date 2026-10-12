@@ -1,0 +1,40 @@
+{
+  "source": "production step/motionFor/AnimatedCharacterArt",
+  "species": "bun",
+  "stepStart": 2650,
+  "arriveAt": 3070,
+  "samples": [
+    {
+      "now": 3054,
+      "eyeOpen": 0.09999999999999998
+    },
+    {
+      "now": 3069.999,
+      "eyeOpen": 0.09999999999999998
+    },
+    {
+      "now": 3070,
+      "eyeOpen": 0.09999999999999998
+    },
+    {
+      "now": 3086,
+      "eyeOpen": 0.09999999999999998
+    },
+    {
+      "now": 3100,
+      "eyeOpen": 0.11462499999999998
+    },
+    {
+      "now": 3110,
+      "eyeOpen": 0.1821333333333333
+    },
+    {
+      "now": 3140,
+      "eyeOpen": 0.6614583333333334
+    },
+    {
+      "now": 3190,
+      "eyeOpen": 1
+    }
+  ]
+}
