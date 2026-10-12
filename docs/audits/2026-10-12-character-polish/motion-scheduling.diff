@@ -1,0 +1,333 @@
+diff --git c/scripts/browser/pet-explore.test.mjs w/scripts/browser/pet-explore.test.mjs
+index fe9a27b..250db9f 100644
+--- c/scripts/browser/pet-explore.test.mjs
++++ w/scripts/browser/pet-explore.test.mjs
+@@ -166,7 +166,7 @@ test('an invitation joins a live step, reaches the chosen detail, coalesces repe
+   assert.match(await page.locator('.pet-explore [role="status"]').textContent(), /from here/)
+   await page.clock.runFor(300)
+   assert.equal(await resident.getAttribute('transform'), still)
+-  assert.equal(await page.evaluate(() => window.__exploreFrames.size), 1)
++  assert.equal(await page.evaluate(() => window.__exploreFrames.size), 0)
+   assert.deepEqual((await snapshot(page)).tables, beforeData, 'invitations must not alter saved home data')
+   t.diagnostic(`Chromium ${page.context().browser().version()}; pose join ${displacement.toFixed(4)} room SVG units; one application rAF`)
+ })
+diff --git c/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index a97c906..a277ca4 100644
+--- c/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useImperativeHandle, useLayoutEffec
+ import { createPortal } from 'react-dom'
+ import { catalogEntry } from '../catalog/objects'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
++import { ACTION_MS } from '../character/motion'
+ import { CAUGHT_UP_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
+ import { messiestObject } from '../domain/mess'
+ import type { NeglectLevel } from '../domain/neglect'
+@@ -92,7 +93,13 @@ function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
+ }) {
+   const [sample, setSample] = useState(() => ({ state: live.current.state, now: performance.now(), attention: { x: 0, y: 0 } }))
+   const gaze = useRef<AttentionSample | null>(null)
+-  const { reducedMotion } = usePetMotion(tick, true)
++  const finite = (sample.state.activity.kind === 'react' && sample.now < sample.state.activity.until)
++    || (sample.state.noticeStart !== undefined && sample.now < sample.state.noticeStart + ACTION_MS.notice)
++  const blending = sample.state.transition && blendProgress(sample.state.transition.start, sample.now) < 1
++  const { reducedMotion } = usePetMotion(tick, {
++    normal: (!away && mood !== 'sick') || finite || Boolean(blending),
++    reduced: finite,
++  })
+   useImperativeHandle(control, () => ({ paint: (state, now) => {
+     const still = reducedMotion || away || mood === 'sick' || attention.current.reset
+     const idle = state.activity.kind === 'idle' && (!state.transition || blendProgress(state.transition.start, now) >= 1)
+@@ -167,6 +174,9 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+ 
+   const [shown, setShown] = useState<Shown>(() => {
+     const state = initialPet(initialTile ?? freeTile(solid) ?? { tx: 3, ty: 3 }, performance.now())
++    // A resting first mount has no previously visible motion to blend out.
++    if (away) state.activity = { kind: 'sleep' }
++    else if (mood === 'sick') state.activity = { kind: 'sick' }
+     return { state, pos: state.tile }
+   })
+   const [said, setSaid] = useState<Said | null>(null)
+diff --git c/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index cf61cc2..3c176ef 100644
+--- c/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -62,6 +62,65 @@ function gaze(container: Element) {
+   return container.querySelector('[data-eye-gaze]')!.getAttribute('transform')
+ }
+ 
++it('uses no reduced idle frames, responds to invitations, and clocks only a finite greeting', () => {
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" objects={[plant]} control={control} />)
++  expect(frames.size).toBe(0)
++  act(() => { expect(control.current!.lookAt('plant')).toBe('still') })
++  expect(ui.container.querySelector('[aria-live]')!.textContent).not.toBe('')
++  expect(frames.size).toBe(0)
++  click(ui.container.querySelector('.room-pet')!)
++  expect(frames.size).toBe(1)
++  frame(500)
++  expect(ui.container.querySelector('[data-expression="cheering"]')).not.toBeNull()
++  frame(1200)
++  expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
++  expect(frames.size).toBe(0)
++  visibility(true); visibility(false)
++  expect(frames.size).toBe(0)
++  preference(false)
++  expect(frames.size).toBe(1)
++  preference(true)
++  expect(frames.size).toBe(0)
++})
++
++it.each(['sick', 'away'] as const)('rests without frames during %s but completes an explicit notice', resting => {
++  const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? 'sick' : 'happy'} away={resting === 'away'} />)
++  expect(frames.size).toBe(0)
++  click(ui.container.querySelector('.room-pet')!)
++  expect(frames.size).toBe(1)
++  frame(300)
++  expect(frames.size).toBe(1)
++  frame(600)
++  expect(frames.size).toBe(0)
++  click(ui.container.querySelector('.room-pet')!)
++  expect(frames.size).toBe(1)
++  frame(1200)
++  expect(frames.size).toBe(0)
++})
++
++it.each(['sick', 'away'] as const)('finishes the existing suppression blend before stopping the %s clock', resting => {
++  const control = createRef<LivingRoomControl>()
++  const teddy: PlacedObject = { ...plant, id: 'bear', catalogId: 'teddy', tileX: 5, tileY: 4 }
++  const scene = (suppressed: boolean) => <LivingRoom {...props} objects={[teddy]} control={control}
++    mood={suppressed && resting === 'sick' ? 'sick' : 'happy'} away={suppressed && resting === 'away'} />
++  const ui = mount(scene(false))
++  act(() => { expect(control.current!.lookAt('bear')).toBe('started') })
++  frame(100)
++  const resident = ui.container.querySelector('.room-pet')!, position = resident.getAttribute('transform')
++  ui.rerender(scene(true))
++  expect(resident.getAttribute('transform')).toBe(position)
++  expect(frames.size).toBe(1)
++  frame(219)
++  expect(frames.size).toBe(1)
++  frame(220)
++  expect(frames.size).toBe(0)
++  expect(resident.getAttribute('transform')).toBe(position)
++  ui.rerender(scene(false))
++  expect(frames.size).toBe(1)
++})
++
+ it('announces an invited observation once at arrival using the existing single clock', () => {
+   const control = createRef<LivingRoomControl>()
+   const teddy: PlacedObject = { ...plant, id: 'bear', catalogId: 'teddy', tileX: 5, tileY: 4 }
+@@ -100,7 +159,20 @@ it('answers an invitation from its current position in reduced motion', () => {
+   frame(2000); frame(5000)
+   expect(resident.getAttribute('transform')).toBe(before)
+   expect(Number(ui.container.querySelector('[data-character-accents]')!.getAttribute('opacity'))).toBe(0)
+-  expect(frames.size).toBe(1)
++  expect(frames.size).toBe(0)
++})
++
++it('validates changed room occupancy before paint while the reduced resident clock is paused', () => {
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const onPosition = vi.fn()
++  const ui = mount(<LivingRoom {...props} mood="happy" onPosition={onPosition} />)
++  const resident = ui.container.querySelector('.room-pet')!, before = resident.getAttribute('transform')
++  expect(frames.size).toBe(0)
++  const moved = { ...plant, tileX: 3, tileY: 2 }
++  ui.rerender(<LivingRoom {...props} mood="happy" objects={[moved]} onPosition={onPosition} />)
++  expect(resident.getAttribute('transform')).not.toBe(before)
++  expect(onPosition.mock.calls.at(-1)?.[0]).not.toEqual({ tx: 3, ty: 2 })
++  expect(frames.size).toBe(0)
+ })
+ 
+ it('makes an already-running ambient interaction audible without restarting it', () => {
+diff --git c/src/pet/usePetMotion.test.tsx w/src/pet/usePetMotion.test.tsx
+index 741cd52..cb2d10b 100644
+--- c/src/pet/usePetMotion.test.tsx
++++ w/src/pet/usePetMotion.test.tsx
+@@ -40,7 +40,7 @@ afterEach(() => {
+ 
+ function Clock({ tick, active = true }: {
+   tick: (now: number, reducedMotion: boolean) => void
+-  active?: boolean
++  active?: boolean | { normal: boolean; reduced: boolean }
+ }) {
+   const { reducedMotion } = usePetMotion(tick, active)
+   return <output>{String(reducedMotion)}</output>
+@@ -112,6 +112,40 @@ function preference(value: boolean) {
+   media.dispatchEvent(Object.assign(new Event('change'), { matches: value, media: media.media }))
+ }
+ 
++it('can pause only reduced-motion scheduling while retaining live preferences and stable pending callbacks', () => {
++  const tick = vi.fn()
++  const ui = render(<Clock tick={tick} active={{ normal: true, reduced: false }} />)
++  mounted.add(ui)
++  const pending = [...frames.keys()]
++  ui.rerender(<Clock tick={tick} active={{ normal: true, reduced: false }} />)
++  expect([...frames.keys()]).toEqual(pending)
++  act(() => preference(true))
++  expect(ui.container.textContent).toBe('true')
++  expect(frames.size).toBe(0)
++  visibility(true); visibility(false)
++  expect(frames.size).toBe(0)
++  act(() => preference(false))
++  expect(frames.size).toBe(1)
++  frame(200)
++  expect(tick.mock.calls).toEqual([[200, false]])
++})
++
++it('starts a finite reduced-motion consumer on demand and returns to no frames', () => {
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const tick = vi.fn()
++  const ui = render(<Clock tick={tick} active={{ normal: false, reduced: false }} />)
++  mounted.add(ui)
++  expect(frames.size).toBe(0)
++  ui.rerender(<Clock tick={tick} active={{ normal: false, reduced: true }} />)
++  expect(frames.size).toBe(1)
++  frame(200)
++  expect(tick.mock.calls).toEqual([[200, true]])
++  ui.rerender(<Clock tick={tick} active={{ normal: false, reduced: false }} />)
++  expect(frames.size).toBe(0)
++  act(() => preference(false))
++  expect(frames.size).toBe(0)
++})
++
+ it('keeps exactly one frame outstanding while active, including Strict Mode replay', () => {
+   const tick = vi.fn()
+   mount(tick, true, true)
+diff --git c/src/pet/usePetMotion.ts w/src/pet/usePetMotion.ts
+index 1e37d02..3647e23 100644
+--- c/src/pet/usePetMotion.ts
++++ w/src/pet/usePetMotion.ts
+@@ -1,5 +1,8 @@
+ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+ 
++/** Boolean callers keep one activity policy for both motion preferences. */
++export type MotionActivity = boolean | { normal: boolean; reduced: boolean }
++
+ /**
+  * Supplies browser rAF timestamps in the same monotonic time domain as
+  * performance.now(). Hidden tabs receive no ticks; the first visible frame
+@@ -9,7 +12,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+  */
+ export function usePetMotion(
+   tick: (now: number, reducedMotion: boolean) => void,
+-  active: boolean,
++  active: MotionActivity,
+   onPreferenceChange?: (reducedMotion: boolean) => void,
+ ): { reducedMotion: boolean } {
+   const latestTick = useRef(tick)
+@@ -22,6 +25,7 @@ export function usePetMotion(
+     (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false),
+   )
+   const preference = useRef(reducedMotion)
++  const running = typeof active === 'boolean' ? active : reducedMotion ? active.reduced : active.normal
+ 
+   useEffect(() => {
+     const query = window.matchMedia?.('(prefers-reduced-motion: reduce)')
+@@ -38,7 +42,7 @@ export function usePetMotion(
+   }, [])
+ 
+   useEffect(() => {
+-    if (!active) return
++    if (!running) return
+     let disposed = false
+     let pending: number | null = null
+     const cancel = () => {
+@@ -67,7 +71,7 @@ export function usePetMotion(
+       document.removeEventListener('visibilitychange', onVisibility)
+       cancel()
+     }
+-  }, [active])
++  }, [running])
+ 
+   return { reducedMotion }
+ }
+diff --git 1/scripts/browser/pet-idle-clock.test.mjs 2/scripts/browser/pet-idle-clock.test.mjs
+new file mode 100644
+index 0000000..265c32c
+--- /dev/null
++++ 2/scripts/browser/pet-idle-clock.test.mjs
+@@ -0,0 +1,83 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { browserApp, changeReducedMotion } from './helpers.mjs'
++
++async function restingFixture(page, mode) {
++  if (mode === 'reduced') return
++  await page.evaluate(mode => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
++      const read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, home = Object.values(saved.tables.homes)[0]
++        const localDay = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
++        if (mode === 'away') home.vacations = [{ start: localDay(new Date()), end: localDay(new Date()) }]
++        else {
++          const old = new Date(); old.setDate(old.getDate() - 10)
++          for (const chore of Object.values(saved.tables.chores)) {
++            chore.createdOn = localDay(old)
++            chore.schedule = { kind: 'daily' }
++          }
++          saved.tables.completions = {}
++        }
++        saved.outbox = {}
++        store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), mode)
++}
++
++for (const mode of ['reduced', 'sick', 'away']) {
++  test(`the ${mode} resident stops idle frames but completes an explicit response`, async t => {
++    const page = await browserApp(t, { reducedMotion: mode === 'reduced' ? 'reduce' : 'no-preference' })
++    await restingFixture(page, mode)
++    await page.clock.install()
++    await page.clock.pauseAt(Date.now() + 1000)
++    await page.addInitScript(() => {
++      const request = requestAnimationFrame, cancel = cancelAnimationFrame
++      window.__residentClock = { pending: new Set(), delivered: 0 }
++      window.requestAnimationFrame = callback => {
++        const id = request(now => {
++          window.__residentClock.pending.delete(id)
++          window.__residentClock.delivered++
++          callback(now)
++        })
++        window.__residentClock.pending.add(id)
++        return id
++      }
++      window.cancelAnimationFrame = id => { window.__residentClock.pending.delete(id); cancel(id) }
++    })
++    await page.reload()
++    const resident = page.locator('.room-pet')
++    await resident.waitFor()
++    if (mode === 'sick') assert.match(await resident.getAttribute('aria-label'), /feeling sick/)
++    if (mode === 'away') assert.ok(await resident.locator('[data-expression="sleeping"]').count())
++    await page.clock.runFor(64)
++    const read = () => page.evaluate(() => ({ pending: window.__residentClock.pending.size, delivered: window.__residentClock.delivered }))
++    const resting = await read()
++    assert.equal(resting.pending, 0)
++    await page.clock.runFor(2000)
++    assert.deepEqual(await read(), resting, 'settled resident must deliver no idle frames')
++    await resident.focus()
++    await page.keyboard.press('Enter')
++    assert.equal((await read()).pending, 1, 'explicit response must use the single existing clock')
++    await page.clock.runFor(mode === 'reduced' ? 1600 : 800)
++    assert.equal((await read()).pending, 0, 'response deadline must return to a paused clock')
++    assert.ok((await page.locator('.living-room [aria-live="polite"]').textContent()).trim())
++    if (mode === 'reduced') {
++      await changeReducedMotion(page, 'no-preference')
++      assert.equal((await read()).pending, 1)
++      await page.clock.runFor(300)
++      await changeReducedMotion(page, 'reduce')
++      assert.equal((await read()).pending, 0)
++      const settled = await read()
++      await page.clock.runFor(600)
++      assert.deepEqual(await read(), settled)
++    }
++    t.diagnostic(`Chromium ${page.context().browser().version()}; ${mode}:0 idle frames,1 finite clock,0 after response`)
++  })
++}

@@ -1,0 +1,85 @@
+{
+  "baseCommit": "20c825f",
+  "resourcePolicy": "Heavy checks sequential with NODE_OPTIONS=--max-old-space-size=768 and nice -n10; one unit worker/browser. Available RAM6.8GB and /tmp4.1GB free at checkpoint.",
+  "checks": [
+    {
+      "name": "red",
+      "command": "npm test -- --maxWorkers=1 src/pet/usePetMotion.test.tsx src/pet/PetIntegration.test.tsx",
+      "log": "motion-scheduling-red.log",
+      "exitCode": 1,
+      "result": "7 expected failures,88 pass",
+      "logSha256": "ffa0d1b3929910f803f4ce59fb531fbc15fd5c75b5a801b7132110e773b496b5"
+    },
+    {
+      "name": "first-green",
+      "command": "npm test -- --maxWorkers=1 src/pet/usePetMotion.test.tsx src/pet/PetIntegration.test.tsx",
+      "log": "motion-scheduling-green.log",
+      "exitCode": 1,
+      "result": "3 remaining failures: initial resting blends and obsolete expectation;92 pass",
+      "logSha256": "7cf5672fc5e6df9e5249bd03131ab89f6dbb4b08e2cdb2810195ff5daa26ca81"
+    },
+    {
+      "name": "focused",
+      "command": "npm test -- --maxWorkers=1 src/pet/usePetMotion.test.tsx src/pet/PetIntegration.test.tsx",
+      "log": "motion-scheduling-focused.log",
+      "exitCode": 0,
+      "result": "96 pass,2files,3.18s",
+      "logSha256": "644d0982381eb3cd2f6e1202542ae04b2a11bbcc668157ceba56590aee386f37"
+    },
+    {
+      "name": "browser-red",
+      "command": "CHROME=/usr/bin/chromium node --test --test-concurrency=1 scripts/browser/pet-idle-clock.test.mjs",
+      "log": "motion-scheduling-browser-red.log",
+      "exitCode": 1,
+      "result": "all3 fail old production initial pending1 instead of0",
+      "logSha256": "fe9c434108cade0485ae78075468b953c921fc1ce5b5de41bd3e2a2447fb4973"
+    },
+    {
+      "name": "build",
+      "command": "npm run build",
+      "log": "motion-scheduling-build.log",
+      "exitCode": null,
+      "result": "Successful TypeScript/Vite/PWA footer; original exit metadata unavailable after compaction",
+      "logSha256": "2a9dcc26e6c31e9edcec6f8c1644af60ab18a10d1e6226f50597ece247f4cc42"
+    },
+    {
+      "name": "production-browser",
+      "command": "CHROME=/usr/bin/chromium node --test --test-concurrency=1 scripts/browser/pet-idle-clock.test.mjs scripts/browser/pet-explore.test.mjs scripts/browser/pet-motion.test.mjs",
+      "log": "motion-scheduling-browser.log",
+      "exitCode": null,
+      "result": "17 pass,0fail,22.09s; Chromium152.0.7977.82; original exit metadata unavailable after compaction",
+      "logSha256": "b94c6df76f2deea224d9287f7e6beaaa8c8cc42101fb4940dec3a7b15a61f880"
+    },
+    {
+      "name": "full-unit",
+      "command": "npm test -- --maxWorkers=1",
+      "log": "motion-scheduling-full.log",
+      "exitCode": 0,
+      "result": "2051 pass,92files,59.02s",
+      "logSha256": "be655c4938cb0e25cb5681dae1389a6e7722002836f33a0a3559428e2a420ccb"
+    },
+    {
+      "name": "lint-final",
+      "command": "npm run lint",
+      "log": "motion-scheduling-lint-final.log",
+      "exitCode": 0,
+      "result": "zero warnings",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68"
+    }
+  ],
+  "sourceSha256": {
+    "src/pet/usePetMotion.ts": "03ea73bb227214e99a5100174e8a754d70799da24e587f7cac9c2d6c091adefb",
+    "src/pet/usePetMotion.test.tsx": "9daeb9594648ffef0dc69555f223cac97ba1771a95d3e5db83dd564077972713",
+    "src/pet/LivingRoom.tsx": "a6d243023139e86f5f18eb0308d71e2c19f2fe1f9091058e5bf4d0ae34e9970f",
+    "src/pet/PetIntegration.test.tsx": "1fca47b74b99e133e3336134324d9216895c04e81fbfd1fabe3dee43c9b6a3f6",
+    "scripts/browser/pet-explore.test.mjs": "130074fb84ee57c34c3aefa71025b67ba7109cf244a33056cb4a35cddb7b1e0e",
+    "scripts/browser/pet-idle-clock.test.mjs": "367d4b77c6395e5bd4eaab3e481db40312500209b2f774440b91d6324fddf6a5"
+  },
+  "patchSha256": "7865ed8c1b0c3ac7521e8e416c67b5fbb4cd914709b616f9ff851820eef2bea1",
+  "limitations": [
+    "No measured CPU/battery savings claimed; pending and delivered frame counts are verified in offline production.",
+    "Healthy normal-motion and Boolean clock consumers retain scheduling; no new timers, clocks or persistence.",
+    "Independent static source review and root runtime verification are separate.",
+    "Human temporal and assistive-technology playback remain open."
+  ]
+}

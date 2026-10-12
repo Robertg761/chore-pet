@@ -1,0 +1,60 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/usePetMotion.test.tsx src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (76 tests | 3 failed) 1578ms
+   × rests without frames during sick but completes an explicit notice 33ms
+   × rests without frames during away but completes an explicit notice 21ms
+   × answers an invitation from its current position in reduced motion 16ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > rests without frames during sick but completes an explicit notice
+ FAIL  src/pet/PetIntegration.test.tsx > rests without frames during away but completes an explicit notice
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/pet/PetIntegration.test.tsx:90:23
+     88| it.each(['sick', 'away'] as const)('rests without frames during %s but…
+     89|   const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? '…
+     90|   expect(frames.size).toBe(0)
+       |                       ^
+     91|   click(ui.container.querySelector('.room-pet')!)
+     92|   expect(frames.size).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > answers an invitation from its current position in reduced motion
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/pet/PetIntegration.test.tsx:162:23
+    160|   expect(resident.getAttribute('transform')).toBe(before)
+    161|   expect(Number(ui.container.querySelector('[data-character-accents]')…
+    162|   expect(frames.size).toBe(1)
+       |                       ^
+    163| })
+    164|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  3 failed | 92 passed (95)
+   Start at  17:08:31
+   Duration  2.98s (tests 58%, transform 19%, environment 18%, import 5%)
+
+    Isolate  2 workers spawned · ~333ms startup each (spawn + environment, per file)
+             at least ~333ms faster with isolate: false — reuses workers across files instead of one per file
+

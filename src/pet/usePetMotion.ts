@@ -1,5 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
+/** Boolean callers keep one activity policy for both motion preferences. */
+export type MotionActivity = boolean | { normal: boolean; reduced: boolean }
+
 /**
  * Supplies browser rAF timestamps in the same monotonic time domain as
  * performance.now(). Hidden tabs receive no ticks; the first visible frame
@@ -9,7 +12,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
  */
 export function usePetMotion(
   tick: (now: number, reducedMotion: boolean) => void,
-  active: boolean,
+  active: MotionActivity,
   onPreferenceChange?: (reducedMotion: boolean) => void,
 ): { reducedMotion: boolean } {
   const latestTick = useRef(tick)
@@ -22,6 +25,7 @@ export function usePetMotion(
     (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false),
   )
   const preference = useRef(reducedMotion)
+  const running = typeof active === 'boolean' ? active : reducedMotion ? active.reduced : active.normal
 
   useEffect(() => {
     const query = window.matchMedia?.('(prefers-reduced-motion: reduce)')
@@ -38,7 +42,7 @@ export function usePetMotion(
   }, [])
 
   useEffect(() => {
-    if (!active) return
+    if (!running) return
     let disposed = false
     let pending: number | null = null
     const cancel = () => {
@@ -67,7 +71,7 @@ export function usePetMotion(
       document.removeEventListener('visibilitychange', onVisibility)
       cancel()
     }
-  }, [active])
+  }, [running])
 
   return { reducedMotion }
 }

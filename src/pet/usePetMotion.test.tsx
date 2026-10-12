@@ -40,7 +40,7 @@ afterEach(() => {
 
 function Clock({ tick, active = true }: {
   tick: (now: number, reducedMotion: boolean) => void
-  active?: boolean
+  active?: boolean | { normal: boolean; reduced: boolean }
 }) {
   const { reducedMotion } = usePetMotion(tick, active)
   return <output>{String(reducedMotion)}</output>
@@ -111,6 +111,40 @@ function preference(value: boolean) {
   Object.defineProperty(media, 'matches', { configurable: true, value })
   media.dispatchEvent(Object.assign(new Event('change'), { matches: value, media: media.media }))
 }
+
+it('can pause only reduced-motion scheduling while retaining live preferences and stable pending callbacks', () => {
+  const tick = vi.fn()
+  const ui = render(<Clock tick={tick} active={{ normal: true, reduced: false }} />)
+  mounted.add(ui)
+  const pending = [...frames.keys()]
+  ui.rerender(<Clock tick={tick} active={{ normal: true, reduced: false }} />)
+  expect([...frames.keys()]).toEqual(pending)
+  act(() => preference(true))
+  expect(ui.container.textContent).toBe('true')
+  expect(frames.size).toBe(0)
+  visibility(true); visibility(false)
+  expect(frames.size).toBe(0)
+  act(() => preference(false))
+  expect(frames.size).toBe(1)
+  frame(200)
+  expect(tick.mock.calls).toEqual([[200, false]])
+})
+
+it('starts a finite reduced-motion consumer on demand and returns to no frames', () => {
+  Object.defineProperty(media, 'matches', { value: true, configurable: true })
+  const tick = vi.fn()
+  const ui = render(<Clock tick={tick} active={{ normal: false, reduced: false }} />)
+  mounted.add(ui)
+  expect(frames.size).toBe(0)
+  ui.rerender(<Clock tick={tick} active={{ normal: false, reduced: true }} />)
+  expect(frames.size).toBe(1)
+  frame(200)
+  expect(tick.mock.calls).toEqual([[200, true]])
+  ui.rerender(<Clock tick={tick} active={{ normal: false, reduced: false }} />)
+  expect(frames.size).toBe(0)
+  act(() => preference(false))
+  expect(frames.size).toBe(0)
+})
 
 it('keeps exactly one frame outstanding while active, including Strict Mode replay', () => {
   const tick = vi.fn()

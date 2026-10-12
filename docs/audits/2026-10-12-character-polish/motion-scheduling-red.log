@@ -1,0 +1,125 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/usePetMotion.test.tsx src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (76 tests | 5 failed) 1641ms
+   × uses no reduced idle frames, responds to invitations, and clocks only a finite greeting 64ms
+   × rests without frames during sick but completes an explicit notice 30ms
+   × rests without frames during away but completes an explicit notice 21ms
+   × finishes the existing suppression blend before stopping the sick clock 56ms
+   × finishes the existing suppression blend before stopping the away clock 31ms
+ ❯ src/pet/usePetMotion.test.tsx (19 tests | 2 failed) 60ms
+   × can pause only reduced-motion scheduling while retaining live preferences and stable pending callbacks 8ms
+   × starts a finite reduced-motion consumer on demand and returns to no frames 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > uses no reduced idle frames, responds to invitations, and clocks only a finite greeting
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/pet/PetIntegration.test.tsx:69:23
+     67|   const control = createRef<LivingRoomControl>()
+     68|   const ui = mount(<LivingRoom {...props} mood="happy" objects={[plant…
+     69|   expect(frames.size).toBe(0)
+       |                       ^
+     70|   act(() => { expect(control.current!.lookAt('plant')).toBe('still') })
+     71|   expect(ui.container.querySelector('[aria-live]')!.textContent).not.t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > rests without frames during sick but completes an explicit notice
+ FAIL  src/pet/PetIntegration.test.tsx > rests without frames during away but completes an explicit notice
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/pet/PetIntegration.test.tsx:90:23
+     88| it.each(['sick', 'away'] as const)('rests without frames during %s but…
+     89|   const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? '…
+     90|   expect(frames.size).toBe(0)
+       |                       ^
+     91|   click(ui.container.querySelector('.room-pet')!)
+     92|   expect(frames.size).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > finishes the existing suppression blend before stopping the sick clock
+ FAIL  src/pet/PetIntegration.test.tsx > finishes the existing suppression blend before stopping the away clock
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/pet/PetIntegration.test.tsx:118:23
+    116|   expect(frames.size).toBe(1)
+    117|   frame(220)
+    118|   expect(frames.size).toBe(0)
+       |                       ^
+    119|   expect(resident.getAttribute('transform')).toBe(position)
+    120|   ui.rerender(scene(false))
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/pet/usePetMotion.test.tsx > can pause only reduced-motion scheduling while retaining live preferences and stable pending callbacks
+AssertionError: expected [ 1 ] to deeply equal [ +0 ]
+
+- Expected
++ Received
+
+  [
+-   0,
++   1,
+  ]
+
+ ❯ src/pet/usePetMotion.test.tsx:121:30
+    119|   const pending = [...frames.keys()]
+    120|   ui.rerender(<Clock tick={tick} active={{ normal: true, reduced: fals…
+    121|   expect([...frames.keys()]).toEqual(pending)
+       |                              ^
+    122|   act(() => preference(true))
+    123|   expect(ui.container.textContent).toBe('true')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/pet/usePetMotion.test.tsx > starts a finite reduced-motion consumer on demand and returns to no frames
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/pet/usePetMotion.test.tsx:138:23
+    136|   const ui = render(<Clock tick={tick} active={{ normal: false, reduce…
+    137|   mounted.add(ui)
+    138|   expect(frames.size).toBe(0)
+       |                       ^
+    139|   ui.rerender(<Clock tick={tick} active={{ normal: false, reduced: tru…
+    140|   expect(frames.size).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  7 failed | 88 passed (95)
+   Start at  17:08:16
+   Duration  3.14s (tests 58%, environment 19%, transform 18%, import 5%)
+
+    Isolate  2 workers spawned · ~361ms startup each (spawn + environment, per file)
+             at least ~361ms faster with isolate: false — reuses workers across files instead of one per file
+

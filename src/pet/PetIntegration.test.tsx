@@ -62,6 +62,65 @@ function gaze(container: Element) {
   return container.querySelector('[data-eye-gaze]')!.getAttribute('transform')
 }
 
+it('uses no reduced idle frames, responds to invitations, and clocks only a finite greeting', () => {
+  Object.defineProperty(media, 'matches', { value: true, configurable: true })
+  const control = createRef<LivingRoomControl>()
+  const ui = mount(<LivingRoom {...props} mood="happy" objects={[plant]} control={control} />)
+  expect(frames.size).toBe(0)
+  act(() => { expect(control.current!.lookAt('plant')).toBe('still') })
+  expect(ui.container.querySelector('[aria-live]')!.textContent).not.toBe('')
+  expect(frames.size).toBe(0)
+  click(ui.container.querySelector('.room-pet')!)
+  expect(frames.size).toBe(1)
+  frame(500)
+  expect(ui.container.querySelector('[data-expression="cheering"]')).not.toBeNull()
+  frame(1200)
+  expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
+  expect(frames.size).toBe(0)
+  visibility(true); visibility(false)
+  expect(frames.size).toBe(0)
+  preference(false)
+  expect(frames.size).toBe(1)
+  preference(true)
+  expect(frames.size).toBe(0)
+})
+
+it.each(['sick', 'away'] as const)('rests without frames during %s but completes an explicit notice', resting => {
+  const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? 'sick' : 'happy'} away={resting === 'away'} />)
+  expect(frames.size).toBe(0)
+  click(ui.container.querySelector('.room-pet')!)
+  expect(frames.size).toBe(1)
+  frame(300)
+  expect(frames.size).toBe(1)
+  frame(600)
+  expect(frames.size).toBe(0)
+  click(ui.container.querySelector('.room-pet')!)
+  expect(frames.size).toBe(1)
+  frame(1200)
+  expect(frames.size).toBe(0)
+})
+
+it.each(['sick', 'away'] as const)('finishes the existing suppression blend before stopping the %s clock', resting => {
+  const control = createRef<LivingRoomControl>()
+  const teddy: PlacedObject = { ...plant, id: 'bear', catalogId: 'teddy', tileX: 5, tileY: 4 }
+  const scene = (suppressed: boolean) => <LivingRoom {...props} objects={[teddy]} control={control}
+    mood={suppressed && resting === 'sick' ? 'sick' : 'happy'} away={suppressed && resting === 'away'} />
+  const ui = mount(scene(false))
+  act(() => { expect(control.current!.lookAt('bear')).toBe('started') })
+  frame(100)
+  const resident = ui.container.querySelector('.room-pet')!, position = resident.getAttribute('transform')
+  ui.rerender(scene(true))
+  expect(resident.getAttribute('transform')).toBe(position)
+  expect(frames.size).toBe(1)
+  frame(219)
+  expect(frames.size).toBe(1)
+  frame(220)
+  expect(frames.size).toBe(0)
+  expect(resident.getAttribute('transform')).toBe(position)
+  ui.rerender(scene(false))
+  expect(frames.size).toBe(1)
+})
+
 it('announces an invited observation once at arrival using the existing single clock', () => {
   const control = createRef<LivingRoomControl>()
   const teddy: PlacedObject = { ...plant, id: 'bear', catalogId: 'teddy', tileX: 5, tileY: 4 }
@@ -100,7 +159,20 @@ it('answers an invitation from its current position in reduced motion', () => {
   frame(2000); frame(5000)
   expect(resident.getAttribute('transform')).toBe(before)
   expect(Number(ui.container.querySelector('[data-character-accents]')!.getAttribute('opacity'))).toBe(0)
-  expect(frames.size).toBe(1)
+  expect(frames.size).toBe(0)
+})
+
+it('validates changed room occupancy before paint while the reduced resident clock is paused', () => {
+  Object.defineProperty(media, 'matches', { value: true, configurable: true })
+  const onPosition = vi.fn()
+  const ui = mount(<LivingRoom {...props} mood="happy" onPosition={onPosition} />)
+  const resident = ui.container.querySelector('.room-pet')!, before = resident.getAttribute('transform')
+  expect(frames.size).toBe(0)
+  const moved = { ...plant, tileX: 3, tileY: 2 }
+  ui.rerender(<LivingRoom {...props} mood="happy" objects={[moved]} onPosition={onPosition} />)
+  expect(resident.getAttribute('transform')).not.toBe(before)
+  expect(onPosition.mock.calls.at(-1)?.[0]).not.toEqual({ tx: 3, ty: 2 })
+  expect(frames.size).toBe(0)
 })
 
 it('makes an already-running ambient interaction audible without restarting it', () => {

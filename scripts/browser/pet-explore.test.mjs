@@ -166,7 +166,7 @@ test('an invitation joins a live step, reaches the chosen detail, coalesces repe
   assert.match(await page.locator('.pet-explore [role="status"]').textContent(), /from here/)
   await page.clock.runFor(300)
   assert.equal(await resident.getAttribute('transform'), still)
-  assert.equal(await page.evaluate(() => window.__exploreFrames.size), 1)
+  assert.equal(await page.evaluate(() => window.__exploreFrames.size), 0)
   assert.deepEqual((await snapshot(page)).tables, beforeData, 'invitations must not alter saved home data')
   t.diagnostic(`Chromium ${page.context().browser().version()}; pose join ${displacement.toFixed(4)} room SVG units; one application rAF`)
 })

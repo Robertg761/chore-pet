@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useImperativeHandle, useLayoutEffec
 import { createPortal } from 'react-dom'
 import { catalogEntry } from '../catalog/objects'
 import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+import { ACTION_MS } from '../character/motion'
 import { CAUGHT_UP_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
 import { messiestObject } from '../domain/mess'
 import type { NeglectLevel } from '../domain/neglect'
@@ -92,7 +93,13 @@ function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
 }) {
   const [sample, setSample] = useState(() => ({ state: live.current.state, now: performance.now(), attention: { x: 0, y: 0 } }))
   const gaze = useRef<AttentionSample | null>(null)
-  const { reducedMotion } = usePetMotion(tick, true)
+  const finite = (sample.state.activity.kind === 'react' && sample.now < sample.state.activity.until)
+    || (sample.state.noticeStart !== undefined && sample.now < sample.state.noticeStart + ACTION_MS.notice)
+  const blending = sample.state.transition && blendProgress(sample.state.transition.start, sample.now) < 1
+  const { reducedMotion } = usePetMotion(tick, {
+    normal: (!away && mood !== 'sick') || finite || Boolean(blending),
+    reduced: finite,
+  })
   useImperativeHandle(control, () => ({ paint: (state, now) => {
     const still = reducedMotion || away || mood === 'sick' || attention.current.reset
     const idle = state.activity.kind === 'idle' && (!state.transition || blendProgress(state.transition.start, now) >= 1)
@@ -167,6 +174,9 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
 
   const [shown, setShown] = useState<Shown>(() => {
     const state = initialPet(initialTile ?? freeTile(solid) ?? { tx: 3, ty: 3 }, performance.now())
+    // A resting first mount has no previously visible motion to blend out.
+    if (away) state.activity = { kind: 'sleep' }
+    else if (mood === 'sick') state.activity = { kind: 'sick' }
     return { state, pos: state.tile }
   })
   const [said, setSaid] = useState<Said | null>(null)
