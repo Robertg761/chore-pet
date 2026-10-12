@@ -49,3 +49,9 @@ The creator motion bundle checks the finite, coalesced character celebration,
 stationary card, immediate face choices, actual clothing, draft/Save behavior,
 keyboard focus, reduced motion, and narrow phone/landscape/desktop layout. The
 same capture option saves three creator screenshots and layout measurements.
+
+The gallery motion bundle checks zero repeating timers/frame requests at rest,
+visible-row CSS animation, keyboard controls, initial/live reduced motion,
+finite manual effects, computed accent deadlines, and independent sampled
+motion-review playback. Capture output is opt-in through the same environment
+variable and saves phone/desktop gallery controls and measurements.

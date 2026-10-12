@@ -1,0 +1,37 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/dev/GalleryMotion.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/dev/GalleryMotion.test.tsx (9 tests | 2 failed) 562ms
+   × settles manual effects on either live preference change, initially reduced=false 22ms
+   × settles manual effects on either live preference change, initially reduced=true 15ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/dev/GalleryMotion.test.tsx > settles manual effects on either live preference change, initially reduced=false
+ FAIL  src/dev/GalleryMotion.test.tsx > settles manual effects on either live preference change, initially reduced=true
+AssertionError: expected 7 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 7
+
+ ❯ src/dev/GalleryMotion.test.tsx:190:82
+    188|   expect(vi.getTimerCount()).toBe(4)
+    189|   reduction(!initialReduced)
+    190|   expect(ui.container.querySelectorAll('.fx-cheer-hop,.fx-sparkle-star…
+       |                                                                                  ^
+    191|   expect(vi.getTimerCount()).toBe(0)
+    192|   reduction(initialReduced)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 7 passed (9)
+   Start at  16:06:45
+   Duration  1.43s (tests 42%, transform 31%, environment 20%, import 7%)
+

@@ -1,0 +1,5 @@
+npm notice run chore-pet@0.0.0 build
+npm notice run tsc -b && vite build
+src/dev/ArtGallery.tsx(3,21): error TS6133: 'CharacterArt' is declared but its value is never read.
+src/dev/GalleryMotion.test.tsx(23,17): error TS1294: This syntax is not allowed when 'erasableSyntaxOnly' is enabled.
+src/dev/GalleryMotion.test.tsx(137,17): error TS1294: This syntax is not allowed when 'erasableSyntaxOnly' is enabled.

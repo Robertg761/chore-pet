@@ -1,0 +1,685 @@
+diff --git i/src/dev/ArtGallery.tsx w/src/dev/ArtGallery.tsx
+index af9cc49..42a791e 100644
+--- i/src/dev/ArtGallery.tsx
++++ w/src/dev/ArtGallery.tsx
+@@ -1,9 +1,7 @@
+-import { useEffect, useState, type ReactNode } from 'react'
++import { useState, type ReactNode } from 'react'
+ import { PALETTE, SPECIES_COLOUR } from '../art/palette'
+-import { Character, CharacterArt } from '../character/Character'
++import { Character } from '../character/Character'
+ import { LoadingPet } from '../shell/LoadingPet'
+-import { Cheer } from '../effects/Cheer'
+-import { Sparkle } from '../effects/Sparkle'
+ import { POSES, type PoseName } from '../character/poses'
+ import { CHEEK_STYLES, EYE_STYLES, SPECIES, type CharacterSlot, type MessStage, type Mood } from '../domain/types'
+ import { isoPoints } from '../room/iso'
+@@ -25,6 +23,8 @@ import { WeekView } from '../screens/WeekView'
+ import { play, type Sound } from '../audio/sfx'
+ import type { Chore, Completion } from '../domain/types'
+ import MotionReview from './MotionReview'
++import GalleryMotion from './GalleryMotion'
++import EffectReview from './EffectReview'
+ 
+ // Dev-only review sheet (open /?art). Every species in every mood, items on
+ // every pose, objects in every mess stage. Use it to check new art against
+@@ -55,6 +55,7 @@ export default function ArtGallery() {
+ 
+       <MotionReview />
+ 
++      <GalleryMotion>
+       <h2>Close-up</h2>
+       <section className="gallery-row">
+         {SPECIES.map((s) => (
+@@ -152,11 +153,12 @@ export default function ArtGallery() {
+       </section>
+ 
+       <NeglectSection />
+-      <EffectsSection />
++      <EffectReview />
+       <WeekViewSection />
+       <WardrobeCheck />
+       <FaceOptions />
+       <SoundsSection />
++      </GalleryMotion>
+     </main>
+   )
+ }
+@@ -250,48 +252,6 @@ function BusyNeglectRoom() {
+   )
+ }
+ 
+-/** Bumps every `ms` so effects keyed on it replay forever. */
+-function useReplay(ms: number) {
+-  const [n, setN] = useState(0)
+-  useEffect(() => {
+-    const t = setInterval(() => setN((v) => v + 1), ms)
+-    return () => clearInterval(t)
+-  }, [ms])
+-  return n
+-}
+-
+-function EffectsSection() {
+-  const sparkleRun = useReplay(2000)
+-  const cheerRun = useReplay(2500)
+-  const sink = OBJECT_ART.sink
+-  // The sink's top, in room px around its back corner; the sparkle sits just above the counter.
+-  const sparkleAt = { x: 0, y: -22 * OBJECT_SCALE }
+-  return (
+-    <>
+-      <h2>Effects</h2>
+-      <section className="gallery-row">
+-        <figure>
+-          <svg width={220} height={200} viewBox="-70 -90 140 128" style={{ overflow: 'visible' }} role="img" aria-label="Sparkle over the sink">
+-            <g transform={`scale(${OBJECT_SCALE})`}>{sink.render('clean')}</g>
+-            <Sparkle key={sparkleRun} x={sparkleAt.x} y={sparkleAt.y} size={56.67} />
+-          </svg>
+-          <figcaption>sparkle, replays every 2 s</figcaption>
+-        </figure>
+-        {SPECIES.map((s) => (
+-          <figure key={s}>
+-            <svg width={220} height={260} viewBox="-10 -60 220 260" style={{ overflow: 'visible' }} role="img" aria-label={`${s} cheering`}>
+-              <Cheer key={cheerRun}>
+-                <CharacterArt species={s} mood="happy" pose="cheering" bodyColour={SPECIES_COLOUR[s]} />
+-              </Cheer>
+-            </svg>
+-            <figcaption>{s} cheer, replays every 2.5 s</figcaption>
+-          </figure>
+-        ))}
+-      </section>
+-    </>
+-  )
+-}
+-
+ // Sample week for the week view: a fixed "today" so the picture never changes.
+ const WEEK_TODAY = '2026-10-07'
+ const weekChore = (id: string, name: string, createdOn: string): Chore => ({
+diff --git i/src/effects/Cheer.tsx w/src/effects/Cheer.tsx
+index 07ea09d..a7a0899 100644
+--- i/src/effects/Cheer.tsx
++++ w/src/effects/Cheer.tsx
+@@ -60,7 +60,11 @@ export function Cheer({ children, onDone }: CheerProps) {
+       <g style={{ pointerEvents: 'none' }} aria-hidden="true">
+         {BURSTS.map(([x, y, kind, size, fill, delay], i) => {
+           // Start pulled toward the pet's middle so each one pops outward.
+-          const style = { '--fx-delay': `${delay}ms`, '--fx-sx': `${(100 - x) * 0.6}px`, '--fx-sy': `${(104 - y) * 0.6}px`, '--fx-spin': `${i % 2 ? 14 : -14}deg` } as Vars
++          // Late marks must finish fading before the owner's cleanup deadline.
++          // Keep earlier marks' timing; shorten only the late second wave.
++          const style = { '--fx-delay': `${delay}ms`, '--fx-dur': `${Math.min(1000, DURATION - delay)}ms`,
++            '--fx-reduced-dur': `${Math.min(1000, REDUCED_DURATION - delay * 0.4)}ms`,
++            '--fx-sx': `${(100 - x) * 0.6}px`, '--fx-sy': `${(104 - y) * 0.6}px`, '--fx-spin': `${i % 2 ? 14 : -14}deg` } as Vars
+           return (
+             <g key={i} transform={`translate(${x} ${y})`}>
+               <AccentMark className="fx-cheer-pop" style={style} kind={kind} size={size} fill={fill} />
+diff --git i/src/effects/effects.css w/src/effects/effects.css
+index 07d6e7d..4bb260a 100644
+--- i/src/effects/effects.css
++++ w/src/effects/effects.css
+@@ -53,7 +53,7 @@
+   animation: fx-hop var(--fx-hop, 700ms) linear var(--fx-hops, 2) both;
+ }
+ .fx-cheer-pop {
+-  animation: fx-pop-burst 1000ms ease-out var(--fx-delay, 0ms) both;
++  animation: fx-pop-burst var(--fx-dur, 1000ms) ease-out var(--fx-delay, 0ms) both;
+ }
+ 
+ /* One hop: squash, take off stretched, hang, fall stretched, land squashed. */
+@@ -97,7 +97,7 @@
+     animation: none;
+   }
+   .fx-cheer-pop {
+-    animation: fx-static-fade 1000ms ease-in-out calc(var(--fx-delay, 0ms) * 0.4) both;
++    animation: fx-static-fade var(--fx-reduced-dur, 1000ms) ease-in-out calc(var(--fx-delay, 0ms) * 0.4) both;
+     transform: none;
+   }
+ }
+diff --git 1/src/dev/GalleryMotion.tsx 2/src/dev/GalleryMotion.tsx
+new file mode 100644
+index 0000000..e19180b
+--- /dev/null
++++ 2/src/dev/GalleryMotion.tsx
+@@ -0,0 +1,57 @@
++import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
++import { usePetMotion } from '../pet/usePetMotion'
++import './GalleryMotion.css'
++
++const noFrame = () => {}
++
++/** CSS examples need visibility and a user switch, never another frame clock. */
++export default function GalleryMotion({ children }: { children: ReactNode }) {
++  const root = useRef<HTMLDivElement>(null)
++  const description = useId()
++  const [playing, setPlaying] = useState(false)
++  const [hidden, setHidden] = useState(() => typeof document !== 'undefined' && document.visibilityState === 'hidden')
++  const { reducedMotion } = usePetMotion(noFrame, false, (reduced) => { if (reduced) setPlaying(false) })
++  const supported = typeof IntersectionObserver !== 'undefined'
++  const requested = playing && !reducedMotion && supported
++  const enabled = requested && !hidden
++
++  useEffect(() => {
++    const visibility = () => setHidden(document.visibilityState === 'hidden')
++    document.addEventListener('visibilitychange', visibility)
++    visibility()
++    return () => document.removeEventListener('visibilitychange', visibility)
++  }, [])
++
++  useEffect(() => {
++    if (!enabled || !root.current) return
++    const rows = [...root.current.querySelectorAll<HTMLElement>('.gallery-row:not(.gallery-effects)')]
++    let disposed = false
++    const observer = new IntersectionObserver((entries) => {
++      if (disposed) return
++      for (const entry of entries) {
++        const row = entry.target as HTMLElement
++        row.dataset.galleryVisible = String(entry.isIntersecting && entry.intersectionRatio >= 0.01)
++      }
++    }, { threshold: 0.01 })
++    for (const row of rows) observer.observe(row)
++    return () => {
++      disposed = true
++      observer.disconnect()
++      for (const row of rows) row.dataset.galleryVisible = 'false'
++    }
++  }, [enabled])
++
++  return <div ref={root} className="gallery-examples" data-examples-motion={enabled ? 'running' : 'paused'}
++    data-examples-requested={requested} data-document-visible={!hidden}>
++    <div className="gallery-motion-controls" role="group" aria-label="Example animation controls">
++      <button type="button" aria-pressed={requested} aria-describedby={description}
++        disabled={reducedMotion || !supported} onClick={() => setPlaying((value) => !value)}>
++        {requested ? 'Stop example animations' : 'Start example animations'}
++      </button>
++      <p id={description}>{reducedMotion ? 'System reduced motion is active. Examples stay still.'
++        : !supported ? 'Animation visibility tracking is unavailable. Examples stay still.'
++          : 'Examples start still. Only visible rows animate. Effects replay on demand; motion review has its own controls.'}</p>
++    </div>
++    {children}
++  </div>
++}
+diff --git 1/src/dev/GalleryMotion.css 2/src/dev/GalleryMotion.css
+new file mode 100644
+index 0000000..a684f5a
+--- /dev/null
++++ 2/src/dev/GalleryMotion.css
+@@ -0,0 +1,46 @@
++.gallery-motion-controls {
++  display: flex;
++  flex-wrap: wrap;
++  align-items: center;
++  gap: 12px;
++  margin: 20px 0;
++}
++
++.gallery-motion-controls p { flex: 1 1 240px; margin: 0; }
++.gallery-motion-controls button,
++.gallery-effects-controls button {
++  min-height: 44px;
++  padding: 8px 12px;
++  font: inherit;
++  border: 2px solid var(--ink);
++  border-radius: 10px;
++  background: var(--cream);
++  color: var(--ink);
++}
++.gallery-motion-controls button:focus-visible,
++.gallery-effects-controls button:focus-visible {
++  outline: 3px solid var(--accent);
++  outline-offset: 3px;
++}
++.gallery-effects-controls { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; }
++
++/* Manual effects exempt only their finite fx-* motion. Their character layers
++   stay static before, during and after a replay, including outside the viewport. */
++.gallery-effects .ch-breathe,
++.gallery-effects .ch-eye {
++  animation: none !important;
++  transform: none;
++}
++
++/* Stopped examples return to their exact static art. Manual finite effects and
++   the separate sampled MotionReview retain their own explicit controls. */
++.gallery-examples[data-examples-requested='false'] .gallery-row:not(.gallery-effects) * {
++  animation: none !important;
++}
++
++/* One observer marks rows; no per-example React state or frame requests. */
++.gallery-examples .gallery-row:not(.gallery-effects):not([data-gallery-visible='true']) *,
++.gallery-examples[data-examples-motion='paused'] .gallery-row:not(.gallery-effects) *,
++.gallery-examples[data-document-visible='false'] .gallery-row * {
++  animation-play-state: paused !important;
++}
+diff --git 1/src/dev/EffectReview.tsx 2/src/dev/EffectReview.tsx
+new file mode 100644
+index 0000000..f670fee
+--- /dev/null
++++ 2/src/dev/EffectReview.tsx
+@@ -0,0 +1,47 @@
++import { useState } from 'react'
++import { SPECIES_COLOUR } from '../art/palette'
++import { CharacterArt } from '../character/Character'
++import { SPECIES } from '../domain/types'
++import { Cheer } from '../effects/Cheer'
++import { Sparkle } from '../effects/Sparkle'
++import { OBJECT_ART } from '../room/objects'
++import { OBJECT_SCALE } from '../room/shell/geometry'
++import { usePetMotion } from '../pet/usePetMotion'
++
++const noFrame = () => {}
++
++/** Explicit finite replays replace repeating gallery effect timers. */
++export default function EffectReview() {
++  const [sparkleRun, setSparkleRun] = useState(0)
++  const [cheerRun, setCheerRun] = useState(0)
++  // A CSS media change can restart its fade timeline. Settle instead, so an
++  // old finite deadline never cuts a newly restarted fade off midway.
++  usePetMotion(noFrame, false, () => { setSparkleRun(0); setCheerRun(0) })
++  const sink = OBJECT_ART.sink
++  const sparkleAt = { x: 0, y: -22 * OBJECT_SCALE }
++  return <>
++    <h2>Effects</h2>
++    <div className="gallery-effects-controls" role="group" aria-label="Effect replay controls">
++      <button type="button" onClick={() => setSparkleRun((run) => run + 1)}>Replay sparkle</button>
++      <button type="button" onClick={() => setCheerRun((run) => run + 1)}>Replay cheers</button>
++    </div>
++    <section className="gallery-row gallery-effects">
++      <figure>
++        <svg width={220} height={200} viewBox="-70 -90 140 128" style={{ overflow: 'visible' }} role="img" aria-label="Sparkle over the sink">
++          <g transform={`scale(${OBJECT_SCALE})`}>{sink.render('clean')}</g>
++          {sparkleRun > 0 && <Sparkle key={sparkleRun} x={sparkleAt.x} y={sparkleAt.y} size={56.67} onDone={() => setSparkleRun(0)} />}
++        </svg>
++        <figcaption>sparkle, replay on demand</figcaption>
++      </figure>
++      {SPECIES.map((s) => {
++        const art = <CharacterArt species={s} mood="happy" pose="cheering" bodyColour={SPECIES_COLOUR[s]} />
++        return <figure key={s}>
++          <svg width={220} height={260} viewBox="-10 -60 220 260" style={{ overflow: 'visible' }} role="img" aria-label={`${s} cheering`}>
++            {cheerRun > 0 ? <Cheer key={cheerRun} onDone={() => setCheerRun(0)}>{art}</Cheer> : art}
++          </svg>
++          <figcaption>{s} cheer, replay on demand</figcaption>
++        </figure>
++      })}
++    </section>
++  </>
++}
+diff --git 1/src/dev/GalleryMotion.test.tsx 2/src/dev/GalleryMotion.test.tsx
+new file mode 100644
+index 0000000..37e4240
+--- /dev/null
++++ 2/src/dev/GalleryMotion.test.tsx
+@@ -0,0 +1,196 @@
++// @vitest-environment jsdom
++import { act } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import { click, render } from '../test/react'
++import GalleryMotion from './GalleryMotion'
++import EffectReview from './EffectReview'
++
++let ui: ReturnType<typeof render> | undefined
++let media: MediaQueryList
++let observers: { callback: IntersectionObserverCallback; observe: ReturnType<typeof vi.fn>; disconnect: ReturnType<typeof vi.fn> }[]
++
++beforeEach(() => {
++  vi.useFakeTimers()
++  media = Object.assign(new EventTarget(), { matches: false, media: '(prefers-reduced-motion: reduce)' }) as MediaQueryList
++  vi.stubGlobal('matchMedia', () => media)
++  vi.stubGlobal('requestAnimationFrame', vi.fn())
++  vi.stubGlobal('cancelAnimationFrame', vi.fn())
++  Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'visible' })
++  observers = []
++  vi.stubGlobal('IntersectionObserver', class {
++    observe = vi.fn()
++    disconnect = vi.fn()
++    callback: IntersectionObserverCallback
++    constructor(callback: IntersectionObserverCallback) { this.callback = callback; observers.push(this) }
++  })
++})
++
++afterEach(() => {
++  ui?.unmount()
++  ui = undefined
++  vi.useRealTimers()
++  vi.unstubAllGlobals()
++  vi.restoreAllMocks()
++})
++
++function button(name: string) {
++  const found = [...ui!.container.querySelectorAll('button')].find((el) => el.textContent === name)
++  expect(found, name).toBeTruthy()
++  return found!
++}
++function mountGallery() {
++  ui = render(<GalleryMotion><section className="gallery-row"><span className="ch-breathe" /></section><section className="gallery-row" /></GalleryMotion>)
++  return ui.container.querySelector<HTMLElement>('.gallery-examples')!
++}
++function intersect(index: number, row: Element, visible: boolean) {
++  act(() => observers[index].callback([{ target: row, isIntersecting: visible, intersectionRatio: visible ? 0.5 : 0 } as IntersectionObserverEntry], {} as IntersectionObserver))
++}
++function visibility(value: DocumentVisibilityState) {
++  act(() => {
++    Object.defineProperty(document, 'visibilityState', { configurable: true, value })
++    document.dispatchEvent(new Event('visibilitychange'))
++  })
++}
++function reduction(matches: boolean) {
++  act(() => {
++    Object.defineProperty(media, 'matches', { configurable: true, value: matches })
++    media.dispatchEvent(Object.assign(new Event('change'), { matches, media: media.media }))
++  })
++}
++
++it('starts still without a frame request, timer or observer', () => {
++  const gallery = mountGallery()
++  expect(gallery.dataset.examplesMotion).toBe('paused')
++  expect(button('Start example animations').getAttribute('aria-pressed')).toBe('false')
++  expect(observers).toHaveLength(0)
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++  expect(vi.getTimerCount()).toBe(0)
++})
++
++it('uses one observer for all rows and changes only the visible rows', () => {
++  const gallery = mountGallery()
++  const rows = [...gallery.querySelectorAll<HTMLElement>('.gallery-row')]
++  const art = rows[0].firstChild
++  click(button('Start example animations'))
++  expect(gallery.dataset.examplesMotion).toBe('running')
++  expect(observers).toHaveLength(1)
++  expect(observers[0].observe.mock.calls.map(([row]) => row)).toEqual(rows)
++  intersect(0, rows[0], true)
++  intersect(0, rows[1], false)
++  expect(rows[0].dataset.galleryVisible).toBe('true')
++  expect(rows[1].dataset.galleryVisible).toBe('false')
++  expect(rows[0].firstChild).toBe(art)
++  intersect(0, rows[0], false)
++  expect(rows[0].dataset.galleryVisible).toBe('false')
++  click(button('Stop example animations'))
++  expect(gallery.dataset.examplesMotion).toBe('paused')
++  expect(observers[0].disconnect).toHaveBeenCalledOnce()
++  intersect(0, rows[0], true)
++  expect(rows[0].dataset.galleryVisible).toBe('false')
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++})
++
++it('pauses hidden examples, discards stale observer callbacks and resumes only the existing intent', () => {
++  const gallery = mountGallery()
++  const row = gallery.querySelector<HTMLElement>('.gallery-row')!
++  click(button('Start example animations'))
++  intersect(0, row, true)
++  visibility('hidden')
++  expect(gallery.dataset.documentVisible).toBe('false')
++  expect(gallery.dataset.examplesMotion).toBe('paused')
++  expect(observers[0].disconnect).toHaveBeenCalledOnce()
++  intersect(0, row, true)
++  expect(row.dataset.galleryVisible).toBe('false')
++  visibility('visible')
++  expect(gallery.dataset.examplesMotion).toBe('running')
++  expect(observers).toHaveLength(2)
++  intersect(1, row, true)
++  expect(row.dataset.galleryVisible).toBe('true')
++})
++
++it('honors initial/live reduction and does not restart when the preference is restored', () => {
++  const gallery = mountGallery()
++  click(button('Start example animations'))
++  reduction(true)
++  expect(gallery.dataset.examplesMotion).toBe('paused')
++  expect(button('Start example animations').disabled).toBe(true)
++  reduction(false)
++  expect(gallery.dataset.examplesMotion).toBe('paused')
++  expect(button('Start example animations').disabled).toBe(false)
++  ui!.unmount()
++  ui = undefined
++  reduction(true)
++  const initial = mountGallery()
++  expect(initial.dataset.examplesMotion).toBe('paused')
++  expect(button('Start example animations').disabled).toBe(true)
++})
++
++it('keeps examples still when observation is unavailable and cleans up on unmount', () => {
++  vi.stubGlobal('IntersectionObserver', undefined)
++  const gallery = mountGallery()
++  expect(button('Start example animations').disabled).toBe(true)
++  expect(gallery.textContent).toContain('Animation visibility tracking is unavailable')
++  expect(gallery.dataset.examplesMotion).toBe('paused')
++  ui!.unmount()
++  vi.stubGlobal('IntersectionObserver', class {
++    observe = vi.fn()
++    disconnect = vi.fn()
++    callback: IntersectionObserverCallback
++    constructor(callback: IntersectionObserverCallback) { this.callback = callback; observers.push(this) }
++  })
++  mountGallery()
++  click(button('Start example animations'))
++  ui!.unmount()
++  ui = undefined
++  expect(observers[0].disconnect).toHaveBeenCalledOnce()
++  visibility('hidden')
++  expect(vi.getTimerCount()).toBe(0)
++})
++
++it('keeps effect examples static until requested, then finishes without replay', () => {
++  ui = render(<EffectReview />)
++  expect(vi.getTimerCount()).toBe(0)
++  expect(ui.container.querySelector('.fx-cheer-hop')).toBeNull()
++  expect(ui.container.querySelector('.fx-sparkle-star')).toBeNull()
++  click(button('Replay sparkle'))
++  click(button('Replay cheers'))
++  expect(vi.getTimerCount()).toBe(4)
++  expect(ui.container.querySelectorAll('.fx-cheer-hop')).toHaveLength(3)
++  act(() => vi.advanceTimersByTime(900))
++  expect(ui.container.querySelector('.fx-sparkle-star')).toBeNull()
++  act(() => vi.advanceTimersByTime(850))
++  expect(ui.container.querySelector('.fx-cheer-hop')).toBeNull()
++  expect(vi.getTimerCount()).toBe(0)
++  act(() => vi.advanceTimersByTime(30000))
++  expect(ui.container.querySelector('.fx-cheer-hop')).toBeNull()
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++})
++
++it('bounds rapid effect replays and cancels every finite deadline on unmount', () => {
++  ui = render(<EffectReview />)
++  for (let i = 0; i < 20; i++) {
++    click(button('Replay sparkle'))
++    click(button('Replay cheers'))
++  }
++  expect(vi.getTimerCount()).toBe(4)
++  expect(ui.container.querySelectorAll('.fx-cheer-hop')).toHaveLength(3)
++  expect(ui.container.querySelectorAll('.fx-sparkle-ring')).toHaveLength(1)
++  ui.unmount()
++  ui = undefined
++  expect(vi.getTimerCount()).toBe(0)
++})
++
++it.each([false, true])('settles manual effects on either live preference change, initially reduced=%s', (initialReduced) => {
++  Object.defineProperty(media, 'matches', { configurable: true, value: initialReduced })
++  ui = render(<EffectReview />)
++  click(button('Replay sparkle'))
++  click(button('Replay cheers'))
++  expect(vi.getTimerCount()).toBe(4)
++  reduction(!initialReduced)
++  expect(ui.container.querySelectorAll('.fx-cheer-hop,.fx-sparkle-star').length).toBe(0)
++  expect(vi.getTimerCount()).toBe(0)
++  reduction(initialReduced)
++  expect(ui.container.querySelectorAll('.fx-cheer-hop,.fx-sparkle-star').length).toBe(0)
++  click(button('Replay cheers'))
++  expect(ui.container.querySelectorAll('.fx-cheer-hop')).toHaveLength(3)
++})
+diff --git 1/scripts/browser/gallery-motion.test.mjs 2/scripts/browser/gallery-motion.test.mjs
+new file mode 100644
+index 0000000..31b75c8
+--- /dev/null
++++ 2/scripts/browser/gallery-motion.test.mjs
+@@ -0,0 +1,174 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, changeReducedMotion } from './helpers.mjs'
++
++function recordScheduling() {
++  window.__galleryScheduling = { intervals: 0, frames: 0 }
++  const interval = window.setInterval.bind(window)
++  const frame = window.requestAnimationFrame.bind(window)
++  window.setInterval = (...args) => { window.__galleryScheduling.intervals++; return interval(...args) }
++  window.requestAnimationFrame = (...args) => { window.__galleryScheduling.frames++; return frame(...args) }
++}
++
++async function galleryApp(t, reducedMotion = 'no-preference', viewport = { width: 390, height: 664 }, observation = true) {
++  const page = await browserApp(t, { reducedMotion, viewport })
++  await page.addInitScript(recordScheduling)
++  if (!observation) await page.addInitScript(() => { window.IntersectionObserver = undefined })
++  const url = new URL(page.url())
++  url.search = '?art'
++  await page.goto(url.href)
++  await page.getByRole('heading', { name: 'Art gallery', exact: true }).waitFor()
++  t.diagnostic(`Chromium ${page.context().browser().version()}; isolated offline production art gallery`)
++  return page
++}
++
++async function css(locator) {
++  return locator.evaluate((node) => ({ name: getComputedStyle(node).animationName, state: getComputedStyle(node).animationPlayState }))
++}
++
++async function assertCheerDeadline(page, deadline) {
++  const ends = await page.locator('.gallery-effects .fx-cheer-pop').evaluateAll((nodes) => nodes.map((node) => {
++    const style = getComputedStyle(node)
++    return (Number.parseFloat(style.animationDelay) + Number.parseFloat(style.animationDuration)) * 1000
++  }))
++  assert.equal(ends.length, 36)
++  assert.ok(ends.every((end) => Number.isFinite(end) && end >= 900 && end <= deadline + 0.1), `every accent must finish by cleanup at ${deadline}ms, latest=${Math.max(...ends)}ms`)
++}
++
++async function assertStillEffectCharacters(page) {
++  const names = await page.locator('.gallery-effects .ch-breathe').evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).animationName))
++  assert.equal(names.length, 3)
++  assert.ok(names.every((name) => name === 'none'), `effect-preview characters must not animate ambiently: ${names.join(', ')}`)
++}
++
++for (const viewport of [{ width: 390, height: 664 }, { width: 1280, height: 800 }]) {
++test(`gallery starts without repeating work and animates only visible rows at ${viewport.width}px`, { timeout: 20000 }, async (t) => {
++  const page = await galleryApp(t, 'no-preference', viewport)
++  assert.equal(await page.evaluate(() => window.__galleryScheduling.intervals), 0, 'the gallery must not start repeating effect timers')
++  assert.equal(await page.evaluate(() => window.__galleryScheduling.frames), 0, 'a still gallery needs no application frame requests')
++  await assertStillEffectCharacters(page)
++  const examples = page.locator('.gallery-examples')
++  assert.equal(await examples.getAttribute('data-examples-motion'), 'paused')
++  assert.equal(await page.locator('.fx-cheer-hop,.fx-sparkle-star').count(), 0)
++  const rows = examples.locator('.gallery-row:has(.ch-breathe)')
++  const first = rows.first(), last = rows.last()
++  assert.equal((await css(first.locator('.ch-breathe').first())).name, 'none')
++  const toggle = page.getByRole('button', { name: 'Start example animations', exact: true })
++  await toggle.focus()
++  await page.keyboard.press('Enter')
++  await first.scrollIntoViewIfNeeded()
++  await page.waitForFunction(() => document.querySelector('.gallery-examples .gallery-row:has(.ch-breathe)')?.dataset.galleryVisible === 'true', undefined, { polling: 50 })
++  assert.equal((await css(first.locator('.ch-breathe').first())).state, 'running')
++  assert.notEqual((await css(first.locator('.ch-breathe').first())).name, 'none')
++  assert.equal((await css(last.locator('.ch-breathe').first())).state, 'paused')
++  await last.scrollIntoViewIfNeeded()
++  await page.waitForFunction(() => {
++    const rows = [...document.querySelectorAll('.gallery-examples .gallery-row:has(.ch-breathe)')]
++    return rows[0]?.dataset.galleryVisible === 'false' && rows.at(-1)?.dataset.galleryVisible === 'true'
++  }, undefined, { polling: 50 })
++  assert.equal((await css(first.locator('.ch-breathe').first())).state, 'paused')
++  assert.equal((await css(last.locator('.ch-breathe').first())).state, 'running')
++  const stop = page.getByRole('button', { name: 'Stop example animations', exact: true })
++  await stop.click()
++  assert.equal(await examples.getAttribute('data-examples-motion'), 'paused')
++  assert.equal((await css(last.locator('.ch-breathe').first())).name, 'none')
++  await assertStillEffectCharacters(page)
++  assert.equal(await page.getByRole('button', { name: 'Start example animations', exact: true }).evaluate((node) => node === document.activeElement), true)
++  const bounds = await page.getByRole('button', { name: 'Start example animations', exact: true }).boundingBox()
++  assert.ok(bounds.height >= 44 && bounds.x >= 0 && bounds.x + bounds.width <= viewport.width, 'gallery animation control must fit the viewport')
++  assert.equal(await page.evaluate(() => window.__galleryScheduling.frames), 0, 'CSS examples must not add an application frame clock')
++  assert.equal(await page.evaluate(() => window.__galleryScheduling.intervals), 0)
++  if (process.env.CHORE_PET_CAPTURE_DIR) {
++    await mkdir(process.env.CHORE_PET_CAPTURE_DIR, { recursive: true })
++    await page.locator('.gallery-motion-controls').evaluate((node) => node.scrollIntoView({ block: 'start' }))
++    await page.screenshot({ path: join(process.env.CHORE_PET_CAPTURE_DIR, `gallery-${viewport.width}.png`) })
++    await writeFile(join(process.env.CHORE_PET_CAPTURE_DIR, `gallery-${viewport.width}.json`), JSON.stringify({ viewport, bounds, scheduling: await page.evaluate(() => window.__galleryScheduling) }, null, 2) + '\n')
++  }
++})
++}
++
++test('gallery initial and live reduced motion stay authoritative without automatic replay', { timeout: 20000 }, async (t) => {
++  const page = await galleryApp(t, 'reduce')
++  const examples = page.locator('.gallery-examples')
++  assert.equal(await page.getByRole('button', { name: 'Start example animations', exact: true }).isDisabled(), true)
++  assert.equal(await examples.getAttribute('data-examples-motion'), 'paused')
++  await changeReducedMotion(page, 'no-preference')
++  await page.getByRole('button', { name: 'Start example animations', exact: true }).click()
++  assert.equal(await examples.getAttribute('data-examples-motion'), 'running')
++  await changeReducedMotion(page, 'reduce')
++  assert.equal(await examples.getAttribute('data-examples-motion'), 'paused')
++  assert.equal(await page.getByRole('button', { name: 'Start example animations', exact: true }).isDisabled(), true)
++  await changeReducedMotion(page, 'no-preference')
++  assert.equal(await examples.getAttribute('data-examples-motion'), 'paused')
++  assert.equal(await page.getByRole('button', { name: 'Start example animations', exact: true }).isDisabled(), false)
++  await assertStillEffectCharacters(page)
++  await changeReducedMotion(page, 'reduce')
++  await page.getByRole('button', { name: 'Replay cheers', exact: true }).click()
++  await assertCheerDeadline(page, 1200)
++  await changeReducedMotion(page, 'no-preference')
++  assert.equal(await page.locator('.gallery-effects .fx-cheer-hop').count(), 0, 'restoring motion settles the active fade')
++  await assertStillEffectCharacters(page)
++  await page.getByRole('button', { name: 'Replay cheers', exact: true }).click()
++  await assertCheerDeadline(page, 1750)
++  await changeReducedMotion(page, 'reduce')
++  assert.equal(await page.locator('.gallery-effects .fx-cheer-hop').count(), 0, 'reducing motion settles the active cheer')
++})
++
++test('gallery effects replay finitely with bounded nodes and no automatic restart', { timeout: 20000 }, async (t) => {
++  const page = await galleryApp(t)
++  await page.clock.install()
++  await page.clock.pauseAt(Date.now() + 1000)
++  await page.evaluate(recordScheduling)
++  const sparkle = page.getByRole('button', { name: 'Replay sparkle', exact: true })
++  const cheers = page.getByRole('button', { name: 'Replay cheers', exact: true })
++  for (let i = 0; i < 5; i++) {
++    await sparkle.click()
++    await cheers.click()
++  }
++  assert.equal(await page.locator('.gallery-effects .fx-cheer-hop').count(), 3)
++  assert.equal(await page.locator('.gallery-effects .fx-sparkle-ring').count(), 1)
++  const cheerCss = await css(page.locator('.gallery-effects .fx-cheer-hop').first())
++  assert.equal(cheerCss.name, 'fx-hop', 'manual effects must work while idle examples are stopped')
++  assert.equal(cheerCss.state, 'running')
++  await assertCheerDeadline(page, 1750)
++  await page.clock.runFor(900)
++  assert.equal(await page.locator('.gallery-effects .fx-sparkle-star').count(), 0)
++  await page.clock.runFor(850)
++  assert.equal(await page.locator('.gallery-effects .fx-cheer-hop').count(), 0)
++  await page.clock.runFor(20000)
++  assert.equal(await page.locator('.gallery-effects .fx-cheer-hop,.gallery-effects .fx-sparkle-star').count(), 0)
++  await assertStillEffectCharacters(page)
++  assert.equal(await page.evaluate(() => window.__galleryScheduling.intervals), 0)
++  assert.equal(await page.locator('.gallery-examples').getAttribute('data-examples-motion'), 'paused')
++})
++
++test('gallery effects stay still when visibility observation is unavailable', { timeout: 20000 }, async (t) => {
++  const page = await galleryApp(t, 'no-preference', undefined, false)
++  assert.equal(await page.getByRole('button', { name: 'Start example animations', exact: true }).isDisabled(), true)
++  assert.equal(await page.locator('.gallery-examples').getAttribute('data-examples-motion'), 'paused')
++  await assertStillEffectCharacters(page)
++  await page.getByRole('button', { name: 'Replay cheers', exact: true }).click()
++  assert.equal((await css(page.locator('.gallery-effects .fx-cheer-hop').first())).name, 'fx-hop')
++  await assertStillEffectCharacters(page)
++})
++
++test('sampled motion review plays independently while gallery examples remain still', { timeout: 20000 }, async (t) => {
++  const page = await galleryApp(t)
++  await page.clock.install()
++  await page.clock.pauseAt(Date.now() + 1000)
++  await page.evaluate(recordScheduling)
++  const review = page.locator('.motion-review')
++  await review.getByRole('button', { name: 'Play', exact: true }).click()
++  await page.clock.runFor(128)
++  assert.ok(Number(await review.getByLabel('Elapsed milliseconds', { exact: true }).inputValue()) > 0)
++  assert.equal(await page.locator('.gallery-examples').getAttribute('data-examples-motion'), 'paused')
++  assert.equal((await css(page.locator('.gallery-examples .ch-breathe').first())).name, 'none')
++  await review.getByRole('button', { name: 'Pause', exact: true }).click()
++  const requests = await page.evaluate(() => window.__galleryScheduling.frames)
++  assert.ok(requests > 1)
++  await page.clock.runFor(10000)
++  assert.equal(await page.evaluate(() => window.__galleryScheduling.frames), requests)
++  assert.equal(await page.evaluate(() => window.__galleryScheduling.intervals), 0)
++})

@@ -1,0 +1,29 @@
+✖ gallery starts without repeating work and animates only visible examples on request (2127.421556ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2516.394767
+
+✖ failing tests:
+
+test at scripts/browser/gallery-motion.test.mjs:26:1
+✖ gallery starts without repeating work and animates only visible examples on request (2127.421556ms)
+  AssertionError [ERR_ASSERTION]: the gallery must not start repeating effect timers
+  
+  2 !== 0
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/gallery-motion.test.mjs:28:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

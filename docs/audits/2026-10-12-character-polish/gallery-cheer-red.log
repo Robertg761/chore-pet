@@ -1,0 +1,27 @@
+✖ gallery effects replay finitely with bounded nodes and no automatic restart (7582.741348ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7957.630773
+
+✖ failing tests:
+
+test at scripts/browser/gallery-motion.test.mjs:92:1
+✖ gallery effects replay finitely with bounded nodes and no automatic restart (7582.741348ms)
+  AssertionError [ERR_ASSERTION]: every accent must finish by cleanup at 1750ms, latest=1880ms
+      at assertCheerDeadline (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/gallery-motion.test.mjs:34:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/gallery-motion.test.mjs:108:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

@@ -1,0 +1,13 @@
+✔ a sheet gift is interactive and preserves Undo past five seconds (8908.181714ms)
+✔ keyboard gift dismissal restores the sheet, then its opener (3274.336912ms)
+✔ home gift preserves correction and wears its reward (reduce) (8830.034949ms)
+✔ home gift preserves correction and wears its reward (no-preference) (9529.142955ms)
+✔ queued decor and style gifts survive Place it and Try it navigation (6288.460066ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37218.755236

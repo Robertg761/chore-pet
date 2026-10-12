@@ -1,0 +1,60 @@
+✔ gallery starts without repeating work and animates only visible examples on request (6220.054072ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✖ gallery initial and live reduced motion stay authoritative without automatic replay (2127.03217ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery effects replay finitely with bounded nodes and no automatic restart (8585.076408ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✖ sampled motion review plays independently while gallery examples remain still (2881.954174ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ keyboard Enter reaches and activates the resident without moving its world position (1018.802671ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (967.892935ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (2885.935443ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.0140 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1122.875233ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.0740 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (1700.448676ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (897.901229ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1252.450009ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (1264.268497ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 609ms; lift sampled at 1365ms; landing at 1785ms
+ℹ tests 12
+ℹ suites 0
+ℹ pass 10
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 31746.233313
+
+✖ failing tests:
+
+test at scripts/browser/gallery-motion.test.mjs:62:1
+✖ gallery initial and live reduced motion stay authoritative without automatic replay (2127.03217ms)
+  page.emulateMedia: reducedMotion: expected one of (reduce|no-preference|no-override)
+      at changeReducedMotion (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/helpers.mjs:114:14)
+      at async TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/gallery-motion.test.mjs:67:3)
+
+test at scripts/browser/gallery-motion.test.mjs:103:1
+✖ sampled motion review plays independently while gallery examples remain still (2881.954174ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(requests > 1)
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/gallery-motion.test.mjs:115:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

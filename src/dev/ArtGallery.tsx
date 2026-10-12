@@ -1,9 +1,7 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { PALETTE, SPECIES_COLOUR } from '../art/palette'
-import { Character, CharacterArt } from '../character/Character'
+import { Character } from '../character/Character'
 import { LoadingPet } from '../shell/LoadingPet'
-import { Cheer } from '../effects/Cheer'
-import { Sparkle } from '../effects/Sparkle'
 import { POSES, type PoseName } from '../character/poses'
 import { CHEEK_STYLES, EYE_STYLES, SPECIES, type CharacterSlot, type MessStage, type Mood } from '../domain/types'
 import { isoPoints } from '../room/iso'
@@ -25,6 +23,8 @@ import { WeekView } from '../screens/WeekView'
 import { play, type Sound } from '../audio/sfx'
 import type { Chore, Completion } from '../domain/types'
 import MotionReview from './MotionReview'
+import GalleryMotion from './GalleryMotion'
+import EffectReview from './EffectReview'
 
 // Dev-only review sheet (open /?art). Every species in every mood, items on
 // every pose, objects in every mess stage. Use it to check new art against
@@ -55,6 +55,7 @@ export default function ArtGallery() {
 
       <MotionReview />
 
+      <GalleryMotion>
       <h2>Close-up</h2>
       <section className="gallery-row">
         {SPECIES.map((s) => (
@@ -152,11 +153,12 @@ export default function ArtGallery() {
       </section>
 
       <NeglectSection />
-      <EffectsSection />
+      <EffectReview />
       <WeekViewSection />
       <WardrobeCheck />
       <FaceOptions />
       <SoundsSection />
+      </GalleryMotion>
     </main>
   )
 }
@@ -247,48 +249,6 @@ function BusyNeglectRoom() {
         </figure>
       ))}
     </section>
-  )
-}
-
-/** Bumps every `ms` so effects keyed on it replay forever. */
-function useReplay(ms: number) {
-  const [n, setN] = useState(0)
-  useEffect(() => {
-    const t = setInterval(() => setN((v) => v + 1), ms)
-    return () => clearInterval(t)
-  }, [ms])
-  return n
-}
-
-function EffectsSection() {
-  const sparkleRun = useReplay(2000)
-  const cheerRun = useReplay(2500)
-  const sink = OBJECT_ART.sink
-  // The sink's top, in room px around its back corner; the sparkle sits just above the counter.
-  const sparkleAt = { x: 0, y: -22 * OBJECT_SCALE }
-  return (
-    <>
-      <h2>Effects</h2>
-      <section className="gallery-row">
-        <figure>
-          <svg width={220} height={200} viewBox="-70 -90 140 128" style={{ overflow: 'visible' }} role="img" aria-label="Sparkle over the sink">
-            <g transform={`scale(${OBJECT_SCALE})`}>{sink.render('clean')}</g>
-            <Sparkle key={sparkleRun} x={sparkleAt.x} y={sparkleAt.y} size={56.67} />
-          </svg>
-          <figcaption>sparkle, replays every 2 s</figcaption>
-        </figure>
-        {SPECIES.map((s) => (
-          <figure key={s}>
-            <svg width={220} height={260} viewBox="-10 -60 220 260" style={{ overflow: 'visible' }} role="img" aria-label={`${s} cheering`}>
-              <Cheer key={cheerRun}>
-                <CharacterArt species={s} mood="happy" pose="cheering" bodyColour={SPECIES_COLOUR[s]} />
-              </Cheer>
-            </svg>
-            <figcaption>{s} cheer, replays every 2.5 s</figcaption>
-          </figure>
-        ))}
-      </section>
-    </>
   )
 }
 

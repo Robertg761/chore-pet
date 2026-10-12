@@ -53,7 +53,7 @@
   animation: fx-hop var(--fx-hop, 700ms) linear var(--fx-hops, 2) both;
 }
 .fx-cheer-pop {
-  animation: fx-pop-burst 1000ms ease-out var(--fx-delay, 0ms) both;
+  animation: fx-pop-burst var(--fx-dur, 1000ms) ease-out var(--fx-delay, 0ms) both;
 }
 
 /* One hop: squash, take off stretched, hang, fall stretched, land squashed. */
@@ -97,7 +97,7 @@
     animation: none;
   }
   .fx-cheer-pop {
-    animation: fx-static-fade 1000ms ease-in-out calc(var(--fx-delay, 0ms) * 0.4) both;
+    animation: fx-static-fade var(--fx-reduced-dur, 1000ms) ease-in-out calc(var(--fx-delay, 0ms) * 0.4) both;
     transform: none;
   }
 }

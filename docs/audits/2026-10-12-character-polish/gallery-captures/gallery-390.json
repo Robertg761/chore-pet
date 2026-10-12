@@ -1,0 +1,16 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 664
+  },
+  "bounds": {
+    "x": 20,
+    "y": 310.3125,
+    "width": 211.90625,
+    "height": 44
+  },
+  "scheduling": {
+    "intervals": 0,
+    "frames": 0
+  }
+}

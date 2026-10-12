@@ -1,0 +1,46 @@
+.gallery-motion-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.gallery-motion-controls p { flex: 1 1 240px; margin: 0; }
+.gallery-motion-controls button,
+.gallery-effects-controls button {
+  min-height: 44px;
+  padding: 8px 12px;
+  font: inherit;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--ink);
+}
+.gallery-motion-controls button:focus-visible,
+.gallery-effects-controls button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+.gallery-effects-controls { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; }
+
+/* Manual effects exempt only their finite fx-* motion. Their character layers
+   stay static before, during and after a replay, including outside the viewport. */
+.gallery-effects .ch-breathe,
+.gallery-effects .ch-eye {
+  animation: none !important;
+  transform: none;
+}
+
+/* Stopped examples return to their exact static art. Manual finite effects and
+   the separate sampled MotionReview retain their own explicit controls. */
+.gallery-examples[data-examples-requested='false'] .gallery-row:not(.gallery-effects) * {
+  animation: none !important;
+}
+
+/* One observer marks rows; no per-example React state or frame requests. */
+.gallery-examples .gallery-row:not(.gallery-effects):not([data-gallery-visible='true']) *,
+.gallery-examples[data-examples-motion='paused'] .gallery-row:not(.gallery-effects) *,
+.gallery-examples[data-document-visible='false'] .gallery-row * {
+  animation-play-state: paused !important;
+}

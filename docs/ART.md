@@ -144,6 +144,10 @@ Every pose defines all six anchors (`src/character/slots.ts`). Items are drawn c
 
 Open `/?art` in the dev server for the art gallery (`src/dev/ArtGallery.tsx`): every species in every mood, items on every pose, the 60 px check, body colours, and every object in all three stages with its bounds drawn. Add new poses, items and objects to it as they land.
 
+Gallery examples start still. Start example animations enables CSS animation only in visible gallery rows, using one observer and no frame clock. Stopping restores static art; hidden documents pause the existing intent. Live reduced motion cancels it without replay, and unsupported visibility tracking leaves examples still. The separate sampled motion panel retains its own controls. Sparkle and cheer examples replay only on request, with finite deadlines and bounded effect nodes. Either motion-preference change settles an active manual replay.
+
+Cheer accents finish fading by the 1750ms cleanup deadline, or 1200ms under reduced motion. Preserve earlier accent timing and shorten only late marks; no visible accent should outlive its owner.
+
 The deterministic motion panel uses the production sampler and renderer. Compare 200px, 60px, and 25px previews, play at 1×/0.5×/0.25×, and scrub exact milliseconds or choose a key frame. Ground line and ground-anchor overlays are optional. Furniture contact overlay is unavailable because the standalone panel supplies no contact geometry. Review settings stay local to the panel; the system reduced-motion preference remains authoritative over its local override.
 
 Use playback and real-room checks to judge grounding, clipping, interrupted motion, and gaze. Numeric continuity and SVG attachment tests support that review but do not establish visual quality by themselves.

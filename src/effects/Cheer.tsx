@@ -60,7 +60,11 @@ export function Cheer({ children, onDone }: CheerProps) {
       <g style={{ pointerEvents: 'none' }} aria-hidden="true">
         {BURSTS.map(([x, y, kind, size, fill, delay], i) => {
           // Start pulled toward the pet's middle so each one pops outward.
-          const style = { '--fx-delay': `${delay}ms`, '--fx-sx': `${(100 - x) * 0.6}px`, '--fx-sy': `${(104 - y) * 0.6}px`, '--fx-spin': `${i % 2 ? 14 : -14}deg` } as Vars
+          // Late marks must finish fading before the owner's cleanup deadline.
+          // Keep earlier marks' timing; shorten only the late second wave.
+          const style = { '--fx-delay': `${delay}ms`, '--fx-dur': `${Math.min(1000, DURATION - delay)}ms`,
+            '--fx-reduced-dur': `${Math.min(1000, REDUCED_DURATION - delay * 0.4)}ms`,
+            '--fx-sx': `${(100 - x) * 0.6}px`, '--fx-sy': `${(104 - y) * 0.6}px`, '--fx-spin': `${i % 2 ? 14 : -14}deg` } as Vars
           return (
             <g key={i} transform={`translate(${x} ${y})`}>
               <AccentMark className="fx-cheer-pop" style={style} kind={kind} size={size} fill={fill} />

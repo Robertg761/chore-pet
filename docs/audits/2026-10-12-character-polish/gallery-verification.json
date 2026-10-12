@@ -1,0 +1,88 @@
+{
+  "baseCommit": "e86703a678c1f85dafe9abdc3ddfe588fc0019e0",
+  "checks": [
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "gallery-unit-final.log",
+      "exitCode": 0,
+      "result": "1938 pass in87 files,52.79s",
+      "scope": "Before the final CSS-only gallery ambient correction; JavaScript/TypeScript production source is unchanged."
+    },
+    {
+      "name": "build",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "gallery-build-reviewed.log",
+      "exitCode": 0,
+      "result": "Final TypeScript/production build pass; existing chunk-size advisory."
+    },
+    {
+      "name": "lint",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "gallery-lint-reviewed.log",
+      "exitCode": 0,
+      "result": "Final pass,zero warnings."
+    },
+    {
+      "name": "gallery-resident-browser",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium CHORE_PET_CAPTURE_DIR=docs/audits/2026-10-12-character-polish/gallery-captures nice -n 10 node --test --test-concurrency=1 scripts/browser/gallery-motion.test.mjs scripts/browser/pet-motion.test.mjs",
+      "log": "gallery-browser-reviewed.log",
+      "result": "14 pass,0 fail,0 cancelled,49.23s; Chromium152.0.7977.82",
+      "completionEvidence": "Final Node test-runner footer recovered after context compaction. Command exit metadata was not retained; no invented exit code."
+    },
+    {
+      "name": "gift-browser",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium nice -n 10 node --test --test-concurrency=1 --test-name-pattern='gift' scripts/browser/interaction.test.mjs",
+      "log": "gallery-gift-browser.log",
+      "exitCode": 0,
+      "result": "5 pass,37.22s",
+      "scope": "Before the gallery-scoped CSS correction; shared effect source unchanged."
+    }
+  ],
+  "sourceSha256": {
+    "src/dev/ArtGallery.tsx": "3e3beb9632afd8d6cebdb78d673b0d382409e48d29ea85781180eefc5c7bb9d2",
+    "src/dev/GalleryMotion.tsx": "b487d897f7e5187c7aa05328305266c06c11ed62fd05e5f340bc4da2dc568105",
+    "src/dev/GalleryMotion.css": "8736d06c45d5ad208448b65c8861c71524a3e2e871f01ceb44c16626df4aa752",
+    "src/dev/GalleryMotion.test.tsx": "b41c56a3a3ac5c645a04edb2a71061be5af4c69237db89abe89882996f92508c",
+    "src/dev/EffectReview.tsx": "a0d7c620338a5b1f7625eae9e8156fc0e0cbbf010dfa43a1be21889727298850",
+    "src/effects/Cheer.tsx": "83f9c76dd8641394e2735f8a381fa2434971c6b842b4e7e11de6f39e195b7d11",
+    "src/effects/effects.css": "11accd912dd4c5aa66033c379737b5d1535e40567c8129e1f2f8c68a90a0f286",
+    "scripts/browser/gallery-motion.test.mjs": "2ca168f5f6a675e15f0014da10825e79848a5a496f3719cfc614dddd5ec24b38",
+    "src/pet/usePetMotion.ts": "b0d46259f21a5b961eeb44747fb7929799c434a276fb18cddd9b5ba9e62a7ffa"
+  },
+  "captures": [
+    {
+      "file": "gallery-captures/gallery-1280.json",
+      "sha256": "a9fb8575bae9bace0fb7f234c8c4c4275af4e25804797aeeeba5f97d22d92dbd"
+    },
+    {
+      "file": "gallery-captures/gallery-1280.png",
+      "sha256": "df2d0078a9c553fb786d2d3a00a61fddc8ffaa88b32b200e8113e6480b321b81"
+    },
+    {
+      "file": "gallery-captures/gallery-390.json",
+      "sha256": "627f334dfa2d5948e98a68ebb4ece655a582d41f6903d270cac95445444a7f19"
+    },
+    {
+      "file": "gallery-captures/gallery-390.png",
+      "sha256": "bbfa5da3bca647b40d8d8df0b78e27d1742b0135e373395f87de82ec7d026704"
+    }
+  ],
+  "redEvidence": [
+    "gallery-browser-red.log: old gallery starts two repeating intervals.",
+    "gallery-cheer-red.log: computed last accent ends at1880ms, beyond1750ms cleanup.",
+    "gallery-preference-red-final.log: seven manual effect nodes remain on either preference change before cancellation.",
+    "gallery-ambient-red.log: all three manual-preview character nodes still have ch-breathe while examples are stopped."
+  ],
+  "history": [
+    "gallery-red.log is missing-module setup failure, not behavioral red.",
+    "gallery-build.log records unused import and fixture parameter-property compiler errors, corrected.",
+    "gallery-browser.log includes two corrected fixture errors: helper preference type and fake-clock scheduling wrappers.",
+    "gallery-preference-red.log includes an assertion formatter TypeError; numeric-count red reproduces the actual missing cancellation."
+  ],
+  "limitations": [
+    "One observer gates rows, not individual SVGs. Scheduling counters exclude CSS animations; computed CSS assertions cover static and finite states.",
+    "Root inspected final390/1280 layout stills. Capture framing starts at controls and the focus outline touches the viewport edge.",
+    "Independent static re-review approves the correction; root owns runtime records. Human temporal playback remains open."
+  ]
+}
