@@ -22,6 +22,15 @@ describe('neglectSummary', () => {
     expect(neglectSummary(objects, {})).toBe('')
     expect(neglectSummary(objects, { t: 0 })).toBe('')
   })
+
+  it.each(['__proto__', 'constructor', 'toString'])('summarizes an overdue object with reserved ID %s', (id) => {
+    expect(neglectSummary([placed(id, 'plant')], { [id]: 2 })).toBe('The potted plant needs a tidy.')
+  })
+
+  it('ignores inherited neglect entries while retaining owned entries', () => {
+    const neglect = Object.assign(Object.create({ t: 3 }), { s: 1 })
+    expect(neglectSummary(objects, neglect)).toBe('The sink needs a little tidy.')
+  })
 })
 
 describe('objectsBackToFront', () => {

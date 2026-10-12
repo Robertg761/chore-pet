@@ -12,7 +12,7 @@ export function objectNames(objects: Pick<PlacedObject, 'id' | 'catalogId'>[]): 
   const total = new Map<string, number>()
   for (const o of objects) total.set(o.catalogId, (total.get(o.catalogId) ?? 0) + 1)
   const seen = new Map<string, number>()
-  const out: Record<string, string> = {}
+  const out: Record<string, string> = Object.create(null)
   for (const o of objects) {
     const name = catalogEntry(o.catalogId)?.name ?? 'Thing'
     const n = (seen.get(o.catalogId) ?? 0) + 1
@@ -28,7 +28,7 @@ export const MESS_WORDS: Record<1 | 2 | 3, string> = { 1: 'needs a little tidy',
 export function neglectSummary(objects: Pick<PlacedObject, 'id' | 'catalogId'>[], neglect: Record<string, NeglectLevel>): string {
   const names = objectNames(objects)
   const late = objects
-    .map((o, i) => ({ o, i, level: neglect[o.id] ?? 0 }))
+    .map((o, i) => ({ o, i, level: Object.prototype.hasOwnProperty.call(neglect, o.id) ? neglect[o.id] ?? 0 : 0 }))
     .filter((x): x is typeof x & { level: 1 | 2 | 3 } => x.level > 0)
     .sort((a, b) => b.level - a.level || a.i - b.i)
   if (!late.length) return ''

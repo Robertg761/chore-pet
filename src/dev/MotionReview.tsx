@@ -5,6 +5,7 @@ import { ITEMS } from '../character/items'
 import { ACTION_MS, sampleMotion, type MotionAction, type MotionFrame } from '../character/motion'
 import { CHARACTER_SLOTS, CHEEK_STYLES, EYE_STYLES, SPECIES, type CheekStyle, type CharacterSlot, type EyeStyle, type Mood, type Species } from '../domain/types'
 import { usePetMotion } from '../pet/usePetMotion'
+import { PET_STROKE_SCALE } from '../room/shell/geometry'
 import './MotionReview.css'
 
 const MOODS: Mood[] = ['happy', 'content', 'meh', 'scruffy', 'sick']
@@ -29,6 +30,8 @@ export default function MotionReview() {
   const [equipped, setEquipped] = useState<Partial<Record<CharacterSlot, string>>>({})
   const [elapsedMs, setElapsedMs] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const [loop, setLoop] = useState(false)
+  const [facing, setFacing] = useState<1 | -1>(1)
   const [speed, setSpeed] = useState(1)
   const [reduce, setReduce] = useState(false)
   const [ground, setGround] = useState(false)
@@ -39,9 +42,10 @@ export default function MotionReview() {
   const { reducedMotion: systemReducedMotion } = usePetMotion((now) => {
     const delta = previousTick.current === null ? 0 : Math.max(0, now - previousTick.current)
     previousTick.current = now
-    playTime.current = Math.min(durationMs, playTime.current + delta * speed)
+    const time = playTime.current + delta * speed
+    playTime.current = loop ? time % durationMs : Math.min(durationMs, time)
     setElapsedMs(Math.round(playTime.current))
-    if (playTime.current >= durationMs) {
+    if (!loop && playTime.current >= durationMs) {
       setPlaying(false)
       previousTick.current = null
     }
@@ -69,7 +73,7 @@ export default function MotionReview() {
 
   function frameAt(time: number): MotionFrame {
     return sampleMotion({ species, mood, action, elapsedMs: time, durationMs,
-      distance: action === 'walk' ? time / durationMs * 2 : 0, reducedMotion })
+      distance: action === 'walk' ? time / durationMs * 2 : 0, facing, reducedMotion })
   }
 
   const frame = frameAt(elapsedMs)
@@ -87,7 +91,9 @@ export default function MotionReview() {
   function preview(size: number, sampled: MotionFrame, label: string, overlays = false) {
     return (
       <svg width={size} height={size} viewBox="0 0 200 200" role="img" aria-label={label}>
-        <AnimatedCharacterArt species={species} mood={mood} bodyColour={bodyColour} equipped={equipped} look={look} frame={sampled} strokeScale={size === 25 ? 1.5 : 1} />
+        <g data-review-facing={facing} transform={facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined}>
+          <AnimatedCharacterArt species={species} mood={mood} bodyColour={bodyColour} equipped={equipped} look={look} frame={sampled} strokeScale={size === 25 ? PET_STROKE_SCALE : 1} />
+        </g>
         {overlays && <g aria-hidden="true" pointerEvents="none" fill="none" stroke={PALETTE.accent} strokeWidth={1}>
           {ground && <path data-review-overlay="ground" d="M 0 181 H 200" strokeDasharray="4 3" />}
           {anchor && <g data-review-overlay="anchor">
@@ -107,6 +113,9 @@ export default function MotionReview() {
         <legend>Character and action</legend>
         <label>Species<select value={species} onChange={(event) => setSpecies(event.target.value as Species)}>{SPECIES.map((value) => <option key={value}>{value}</option>)}</select></label>
         <label>Mood<select value={mood} onChange={(event) => setMood(event.target.value as Mood)}>{MOODS.map((value) => <option key={value}>{value}</option>)}</select></label>
+        <label>Facing<select value={facing === -1 ? 'left' : 'right'} onChange={(event) => setFacing(event.target.value === 'left' ? -1 : 1)}>
+          <option value="right">Right</option><option value="left">Left</option>
+        </select></label>
         <label>Action<select value={action} onChange={(event) => {
           const next = event.target.value as MotionAction
           seek(elapsedMs, ACTION_MS[next])
@@ -128,10 +137,13 @@ export default function MotionReview() {
         <div className="motion-review-buttons">
           <button type="button" onClick={togglePlay}>{playing ? 'Pause' : 'Play'}</button>
           <button type="button" onClick={() => seek(0)}>Restart</button>
+          <button type="button" onClick={() => seek(elapsedMs - 16)}>Back 16 ms</button>
+          <button type="button" onClick={() => seek(elapsedMs + 16)}>Forward 16 ms</button>
           <label>Playback speed<select value={speed} onChange={(event) => { previousTick.current = null; setSpeed(Number(event.target.value)) }}>
             <option value={1}>1×</option><option value={0.5}>0.5×</option><option value={0.25}>0.25×</option>
           </select></label>
         </div>
+        <label className="motion-review-loop"><input type="checkbox" checked={loop} onChange={(event) => setLoop(event.target.checked)} />Loop playback</label>
         <p>Action duration: {durationMs} ms. {playing ? 'Playing' : 'Paused'} at {elapsedMs} ms.</p>
         <label>Time scrubber<input type="range" min={0} max={durationMs} step={1} value={elapsedMs} aria-valuetext={`${elapsedMs} milliseconds`} onChange={(event) => seek(Number(event.target.value))} /></label>
         <label>Elapsed milliseconds<input type="number" min={0} max={durationMs} step={1} value={elapsedMs} onChange={(event) => seek(event.target.valueAsNumber)} /></label>

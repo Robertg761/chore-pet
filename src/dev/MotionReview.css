@@ -62,7 +62,8 @@
   align-items: center;
 }
 
-.motion-review-overlays label {
+.motion-review-overlays label,
+.motion-review .motion-review-loop {
   flex-direction: row;
   align-items: center;
   min-height: 44px;

@@ -1,0 +1,118 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/room/roomSummary.test.ts src/dev/MotionReview.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/dev/MotionReview.test.tsx (13 tests | 3 failed) 945ms
+   × mirrors all review art and samples the selected facing 32ms
+   × steps by 16 milliseconds, clamps endpoints and pauses an active clock 19ms
+   × loops with overshoot retained and returns to one-shot playback when disabled 22ms
+ ❯ src/room/roomSummary.test.ts (8 tests | 2 failed) 12ms
+   ❯ neglectSummary (6)
+     × summarizes an overdue object with reserved ID __proto__ 3ms
+     × ignores inherited neglect entries while retaining owned entries 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/dev/MotionReview.test.tsx > mirrors all review art and samples the selected facing
+AssertionError: Control labeled Facing: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ control src/dev/MotionReview.test.tsx:44:44
+     42|   const node = [...ui.container.querySelectorAll('label')].find((el) =…
+     43|     ?.querySelector('input, select')
+     44|   expect(node, `Control labeled ${label}`).toBeTruthy()
+       |                                            ^
+     45|   return node as T
+     46| }
+ ❯ src/dev/MotionReview.test.tsx:56:16
+ ❯ process.env.NODE_ENV.exports.act node_modules/react/cjs/react.development.js:890:22
+ ❯ select src/dev/MotionReview.test.tsx:55:3
+ ❯ src/dev/MotionReview.test.tsx:218:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/dev/MotionReview.test.tsx > steps by 16 milliseconds, clamps endpoints and pauses an active clock
+AssertionError: Button Back 16 ms: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/dev/MotionReview.test.tsx:50:34
+     48| function button(name: string) {
+     49|   const node = [...ui.container.querySelectorAll('button')].find((el) …
+     50|   expect(node, `Button ${name}`).toBeTruthy()
+       |                                  ^
+     51|   return node!
+     52| }
+ ❯ src/dev/MotionReview.test.tsx:231:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/dev/MotionReview.test.tsx > loops with overshoot retained and returns to one-shot playback when disabled
+AssertionError: Control labeled Loop playback: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ control src/dev/MotionReview.test.tsx:44:44
+     42|   const node = [...ui.container.querySelectorAll('label')].find((el) =…
+     43|     ?.querySelector('input, select')
+     44|   expect(node, `Control labeled ${label}`).toBeTruthy()
+       |                                            ^
+     45|   return node as T
+     46| }
+ ❯ src/dev/MotionReview.test.tsx:248:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/room/roomSummary.test.ts > neglectSummary > summarizes an overdue object with reserved ID __proto__
+TypeError: names[o.id].toLowerCase is not a function
+ ❯ src/room/roomSummary.ts:36:30
+     34|   if (!late.length) return ''
+     35|   const parts = late.map(({ o, level }) => {
+     36|     const name = names[o.id].toLowerCase()
+       |                              ^
+     37|     // "the sink needs a tidy", "the fairy lights need a tidy".
+     38|     const plural = /[^s]s$/.test(names[o.id].replace(/ \d+$/, ''))
+ ❯ neglectSummary src/room/roomSummary.ts:35:22
+ ❯ src/room/roomSummary.test.ts:27:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/room/roomSummary.test.ts > neglectSummary > ignores inherited neglect entries while retaining owned entries
+AssertionError: expected 'The trash can needs a big tidy, the s…' to be 'The sink needs a little tidy.' // Object.is equality
+
+Expected: "The sink needs a little tidy."
+Received: "The trash can needs a big tidy, the sink needs a little tidy."
+
+ ❯ src/room/roomSummary.test.ts:32:46
+     30|   it('ignores inherited neglect entries while retaining owned entries'…
+     31|     const neglect = Object.assign(Object.create({ t: 3 }), { s: 1 })
+     32|     expect(neglectSummary(objects, neglect)).toBe('The sink needs a li…
+       |                                              ^
+     33|   })
+     34| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  5 failed | 16 passed (21)
+   Start at  15:03:31
+   Duration  1.99s (tests 54%, environment 25%, transform 16%, import 5%)
+
+    Isolate  2 workers spawned · ~316ms startup each (spawn + environment, per file)
+             at least ~316ms faster with isolate: false — reuses workers across files instead of one per file
+
