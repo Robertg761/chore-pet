@@ -208,3 +208,14 @@ describe('reachable interaction choice', () => {
     expect(chooseInteraction(targets[0].tile, targets, () => false, 0)).toBeNull()
   })
 })
+
+
+describe('reserved object IDs', () => {
+  it.each(['__proto__', 'constructor', 'toString'])('treats inherited stage for %s as clean', (id) => {
+    const objects = [object('plant', { id })]
+    const clean = interactionTargets(objects, room(objects), {})
+    expect(clean[0].action).toBe('wave')
+    expect(clean[0].signature).toBe(interactionTargets(objects, room(objects), { [id]: 'clean' })[0].signature)
+    expect(interactionTargets(objects, room(objects), { [id]: 'messy1' })[0].action).toBe('concern')
+  })
+})

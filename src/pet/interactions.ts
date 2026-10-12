@@ -3,8 +3,8 @@ import type { MotionAction } from '../character/motion'
 import type { MessStage, PlacedObject } from '../domain/types'
 import { footprintOf, insideRoom, ROOM_SIZE } from '../room/grid'
 import { TILE_H } from '../room/iso'
-import { findPath } from './behaviour'
-import type { Tile } from './behaviour'
+import { findPath } from './pathfinding'
+import type { Tile } from './pathfinding'
 
 export interface InteractionTarget {
   objectId: string
@@ -61,7 +61,7 @@ export function interactionTargets(
     if (!Number.isInteger(footprint.tx) || !Number.isInteger(footprint.ty) || !insideRoom(footprint)) continue
 
     const profile = PROFILES.get(entry.id) ?? { action: 'inspect' }
-    const stage = stages[object.id] ?? 'clean'
+    const stage = Object.prototype.hasOwnProperty.call(stages, object.id) ? stages[object.id] ?? 'clean' : 'clean'
     const action = stage === 'clean' ? profile.action : CONDITION_ACTION[entry.mess]
     const signature = JSON.stringify([object.id, entry.id, object.tileX, object.tileY, object.rotation, stage, action])
     const local = profile.gaze ?? { tx: entry.footprint.w / 2, ty: entry.footprint.d / 2, z: 0 }
