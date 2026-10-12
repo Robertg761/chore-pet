@@ -52,6 +52,24 @@ export const MOOD_LINES: Record<Mood, string[]> = {
 
 /** Shown when this object's chore is the most overdue. Keyed by catalog id. */
 export const OBJECT_LINES: Record<string, string[]> = {
+  armchair: ['That reading chair has a little dust.', 'A fresh cushion is a lovely reading spot.'],
+  'dining-chair': ['The dining chairs caught some crumbs.', 'Those seats could use a little wipe.'],
+  bench: ['The bench has room for a little tidy.', 'I found a dust bunny under the bench.'],
+  ottoman: ['The footrest is collecting a little fluff.', 'A quick brush would freshen that soft seat.'],
+  'coffee-table': ['A mug left a little ring on the coffee table.', 'The coffee table is wearing crumb freckles.'],
+  'side-table': ['A little dust has settled on the side table.', 'A quick wipe would brighten that small table.'],
+  desk: ['The desk is collecting little bits of paper.', 'A clear desk has room for more doodles.'],
+  nightstand: ['The nightstand is wearing a dust blanket.', 'A tidy bedside spot feels lovely.'],
+  dresser: ['The dresser has a little dust on top.', 'The drawers could use a little sorting.'],
+  wardrobe: ['The wardrobe is getting a bit jumbled.', 'I think those sweaters want some space.'],
+  'tv-stand': ['The TV stand has gathered a little dust.', 'A dust bunny is watching the screen.'],
+  'shoe-rack': ['The shoes are having a jumble party.', 'Matching up those shoes could be fun.'],
+  bathtub: ['The tub could use a little sparkle.', 'A bubbly scrub would freshen the bath.'],
+  'bathroom-vanity': ['The washbasin has some splash spots.', 'A wiped vanity would feel so fresh.'],
+  'laundry-hamper': ['The hamper has a little mountain inside.', 'Those clothes are ready for laundry day.'],
+  mirror: ['The mirror has a few tiny smudges.', 'A polished mirror makes a shiny hello.'],
+  'wall-shelf': ['A dust bunny has climbed onto the shelf.', 'Those books would love a dust-free perch.'],
+  'pet-bed': ['My little bed is ready for fresh bedding.', 'A clean cushion makes the coziest nap.'],
   bed: [
     'The bed looks a little rumpled.',
     'Fresh sheets would be a dream.',

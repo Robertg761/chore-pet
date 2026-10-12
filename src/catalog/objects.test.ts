@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CATALOG, DECOR, catalogEntry } from './objects'
+import { ALL_ENTRIES, CATALOG, DECOR, catalogEntry } from './objects'
 import { UNLOCKS } from '../domain/unlocks'
 import type { Schedule } from '../domain/types'
 import { ROOM_SIZE } from '../room/grid'
@@ -21,6 +21,15 @@ function validSchedule(s: Schedule): boolean {
 }
 
 describe('object catalog', () => {
+  it('ships matching artwork and placement footprints for every furniture family', () => {
+    for (const entry of ALL_ENTRIES) {
+      const art = OBJECT_ART[entry.id]
+      expect(art, entry.id).toBeDefined()
+      expect(art.footprint, entry.id).toEqual(entry.footprint)
+      expect(art.bounds.width, entry.id).toBeGreaterThan(0)
+      expect(art.bounds.height, entry.id).toBeGreaterThan(0)
+    }
+  })
   it('has unique ids', () => {
     const ids = CATALOG.map((e) => e.id)
     expect(new Set(ids).size).toBe(ids.length)

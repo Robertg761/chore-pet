@@ -3,6 +3,7 @@ import { toISODate } from '../domain/dates'
 import { archiveEnd, choreRetiredBy, completionCounts, resumeFrom, sameSchedule, SCHEDULE_HISTORY, SKIP_HISTORY, skipDays, standingOf, trimHistory } from '../domain/schedule'
 import { startStylesOf } from '../room/shell/styles'
 import type { CatalogEntry } from '../catalog/types'
+import { normalizeAppearance, type FurnitureAppearance } from '../catalog/customization'
 import { applyUnlocks, choreCountOf, streakHistory, type Unlock } from '../domain/unlocks'
 import type { Chore, Completion, Home, ISODate, Pet, PlacedObject, Progress, Room, RoomType, Schedule, Species, VacationWindow } from '../domain/types'
 import { clearOp, deleteOp, selectHome, upsertOp, type NewOp, type Snapshot } from './state'
@@ -51,6 +52,12 @@ export function placeObject(
 
 export function moveObject(object: PlacedObject, to: Pick<PlacedObject, 'tileX' | 'tileY' | 'rotation'>): NewOp[] {
   return [upsertOp('placed_objects', { ...object, ...to })]
+}
+
+/** Appearance edits keep furniture identity, placement, chores and their history intact. */
+export function restyleObject(object: PlacedObject, appearance?: FurnitureAppearance): NewOp[] {
+  const { appearance: _previous, ...original } = object
+  return [upsertOp('placed_objects', appearance ? { ...original, appearance: normalizeAppearance(appearance) } : original)]
 }
 
 /** The retained history available when removing a chore or object. */

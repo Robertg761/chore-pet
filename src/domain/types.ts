@@ -1,3 +1,5 @@
+import type { FurnitureAppearance } from '../catalog/customization'
+
 // Core domain types. Dates are ISO calendar dates ("YYYY-MM-DD") in the user's
 // local time zone; timestamps are full ISO strings.
 
@@ -75,6 +77,8 @@ export interface PlacedObject {
   tileX: number
   tileY: number
   rotation: 0 | 1 | 2 | 3
+  /** Missing on older furniture: preserve its original drawing. */
+  appearance?: FurnitureAppearance
 }
 
 export interface Chore {

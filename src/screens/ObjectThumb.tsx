@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import type { CatalogEntry } from '../catalog/types'
 import { OBJECT_ART, cleanTop } from '../room/objects'
 import type { ObjectArt } from '../room/objects/types'
+import type { FurnitureAppearance } from '../catalog/customization'
 
 // A catalog picture cropped to the clean drawing. An object's `bounds` leave
 // headroom for its messiest stage, which made thumbnails small and uneven, so
@@ -23,14 +24,15 @@ function estimate(art: ObjectArt): Box {
 }
 
 /** A small picture of a catalog object, or a soft placeholder until its art lands. */
-export function ObjectThumb({ entry, className }: { entry: CatalogEntry; className?: string }) {
+export function ObjectThumb({ entry, className, appearance }: { entry: CatalogEntry; className?: string; appearance?: FurnitureAppearance }) {
   const art = OBJECT_ART[entry.id]
+  const cacheKey = `${entry.id}:${JSON.stringify(appearance ?? null)}`
   const artRef = useRef<SVGGElement>(null)
   // Bumped once the art is measured, to redraw with the tighter crop.
   const [, setMeasuredFor] = useState<string | null>(null)
 
   useLayoutEffect(() => {
-    if (!art || measured.has(entry.id)) return
+    if (!art || measured.has(cacheKey)) return
     let b: DOMRect | undefined
     try {
       b = artRef.current?.getBBox()
@@ -39,9 +41,11 @@ export function ObjectThumb({ entry, className }: { entry: CatalogEntry; classNa
     }
     if (!b || !b.width || !b.height) return
     const fit = { x: b.x - PAD, y: b.y - PAD, width: b.width + PAD * 2, height: b.height + PAD * 2 }
-    measured.set(entry.id, fit)
-    setMeasuredFor(entry.id)
-  }, [art, entry.id])
+    // Bound the cache even after a long customization session.
+    if (measured.size >= 400) measured.delete(measured.keys().next().value!)
+    measured.set(cacheKey, fit)
+    setMeasuredFor(cacheKey)
+  }, [art, cacheKey])
 
   if (!art) {
     return (
@@ -50,10 +54,10 @@ export function ObjectThumb({ entry, className }: { entry: CatalogEntry; classNa
       </svg>
     )
   }
-  const { x, y, width, height } = measured.get(entry.id) ?? estimate(art)
+  const { x, y, width, height } = measured.get(cacheKey) ?? estimate(art)
   return (
     <svg className={className} viewBox={`${x} ${y} ${width} ${height}`} aria-hidden="true" focusable="false">
-      <g ref={artRef}>{art.render('clean')}</g>
+      <g ref={artRef}>{art.render('clean', appearance)}</g>
     </svg>
   )
 }

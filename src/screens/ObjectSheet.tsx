@@ -1,10 +1,12 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { CatalogEntry } from '../catalog/types'
+import type { FurnitureAppearance } from '../catalog/customization'
 import type { Chore, Completion, PlacedObject, Schedule, VacationWindow } from '../domain/types'
 import { dueText } from './buildModel'
 import { describeSchedule } from './choreForm'
 import { ChoreInlineEditor } from './ChoreInlineEditor'
 import { ObjectThumb } from './ObjectThumb'
+import { FurnitureCustomizer } from './FurnitureCustomizer'
 import '../shell/controls.css'
 import './ObjectSheet.css'
 
@@ -22,6 +24,8 @@ export interface ObjectSheetProps {
   onSaveChore: (chore: Chore | null, value: { name: string; schedule: Schedule }) => void
   onRemoveChore: (chore: Chore) => void
   onTurn: () => void
+  /** Appearance edits save immediately and leave this object's chores in place. */
+  onAppearanceChange?: (appearance: FurnitureAppearance | undefined) => void
   /** Takes the object out of the room. `keepChores` leaves its chores in the list, no longer tied to a place. */
   onRemove: (keepChores: boolean) => void
   onClose: () => void
@@ -46,6 +50,7 @@ function Sheet({
   onSaveChore,
   onRemoveChore,
   onTurn,
+  onAppearanceChange,
   onRemove,
   onClose,
 }: ObjectSheetProps) {
@@ -78,7 +83,7 @@ function Sheet({
   return (
     <section className="sheet" aria-labelledby={`${uid}-title`}>
       <header className="sheet-head">
-        <ObjectThumb entry={entry} className="sheet-art" />
+        <ObjectThumb entry={entry} appearance={object.appearance} className="sheet-art" />
         <h2 className="sheet-title" id={`${uid}-title`}>
           {entry.name}
         </h2>
@@ -90,6 +95,8 @@ function Sheet({
       </header>
 
       <p className="sheet-hint">Drag it in the room to move it.</p>
+
+      {onAppearanceChange && <FurnitureCustomizer entry={entry} appearance={object.appearance} onChange={onAppearanceChange} />}
 
       <div className="sheet-block">
         <h3 className="sheet-subheading">Chores it brings</h3>

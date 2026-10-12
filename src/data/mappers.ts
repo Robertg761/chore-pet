@@ -1,5 +1,6 @@
 import type { Chore, Completion, Home, Pet, PlacedObject, Progress, Room } from '../domain/types'
 import type { Created, TableMap, TableName } from './tables'
+import { normalizeAppearance } from '../catalog/customization'
 
 // Domain objects (camelCase) <-> database rows (snake_case). owner_id is never
 // written: the database fills it from auth.uid() and row-level security checks it.
@@ -49,7 +50,7 @@ const rooms: Mapper<Room & Created> = {
 }
 
 const placedObjects: Mapper<PlacedObject> = {
-  toRow: (o) => ({ id: o.id, room_id: o.roomId, catalog_id: o.catalogId, tile_x: o.tileX, tile_y: o.tileY, rotation: o.rotation }),
+  toRow: (o) => ({ id: o.id, room_id: o.roomId, catalog_id: o.catalogId, tile_x: o.tileX, tile_y: o.tileY, rotation: o.rotation, appearance: o.appearance ? normalizeAppearance(o.appearance) : null }),
   fromRow: (r) => ({
     id: r.id as string,
     roomId: r.room_id as string,
@@ -57,6 +58,7 @@ const placedObjects: Mapper<PlacedObject> = {
     tileX: r.tile_x as number,
     tileY: r.tile_y as number,
     rotation: r.rotation as PlacedObject['rotation'],
+    ...(r.appearance && typeof r.appearance === 'object' && !Array.isArray(r.appearance) ? { appearance: normalizeAppearance(r.appearance) } : {}),
   }),
 }
 

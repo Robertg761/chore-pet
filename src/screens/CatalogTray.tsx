@@ -1,12 +1,24 @@
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import type { CatalogEntry } from '../catalog/types'
 import { CATALOG, DECOR } from '../catalog/objects'
+import { furnitureCategory, type FurnitureCategory } from '../catalog/customization'
 import type { PlacedObject, RoomType } from '../domain/types'
 import type { Footprint } from '../room/grid'
 import { fitsSomewhere } from '../room/placement'
 import { choreCountLabel, groupCatalog, splitCatalog } from './buildModel'
 import { ObjectThumb } from './ObjectThumb'
 import './CatalogTray.css'
+
+const CATEGORIES: { id: FurnitureCategory | 'all'; name: string }[] = [
+  { id: 'all', name: 'All furniture' },
+  { id: 'seating', name: 'Seating' },
+  { id: 'tables', name: 'Tables' },
+  { id: 'storage', name: 'Storage' },
+  { id: 'bedroom', name: 'Bedroom' },
+  { id: 'kitchen', name: 'Kitchen' },
+  { id: 'bathroom', name: 'Bathroom' },
+  { id: 'decor', name: 'Decor' },
+]
 
 export interface CatalogTrayProps {
   roomType: RoomType
@@ -24,13 +36,31 @@ export interface CatalogTrayProps {
 
 export function CatalogTray({ roomType, objects, reserved, hasWestWindow = true, onPick, unlocked = [], oneRow = false }: CatalogTrayProps) {
   const uid = useId()
+  const [query, setQuery] = useState('')
+  const [category, setCategory] = useState<FurnitureCategory | 'all'>('all')
+  const [onlyFits, setOnlyFits] = useState(false)
   const earnedDecor = DECOR.filter((e) => e.unlock && unlocked.includes(e.unlock))
-  const { suited, others } = splitCatalog([...CATALOG, ...earnedDecor], roomType)
+  const available = [...CATALOG, ...earnedDecor]
+  const fitsById = new Map(available.map((entry) => [entry.id, fitsSomewhere(entry, objects, reserved, hasWestWindow)]))
+  const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean)
+  const filtered = available.filter((entry) => {
+    if (category !== 'all' && furnitureCategory(entry) !== category) return false
+    if (onlyFits && !fitsById.get(entry.id)) return false
+    const searchable = `${entry.name} ${entry.description ?? ''} ${furnitureCategory(entry)}`.toLowerCase()
+    return terms.every((term) => searchable.includes(term))
+  })
+  const { suited, others } = splitCatalog(filtered, roomType)
+  const filtering = terms.length > 0 || category !== 'all' || onlyFits
+  const clearFilters = () => {
+    setQuery('')
+    setCategory('all')
+    setOnlyFits(false)
+  }
 
   const row = (entries: CatalogEntry[], className = 'tray-row') => (
     <ul className={className}>
       {entries.map((e) => {
-        const fits = fitsSomewhere(e, objects, reserved, hasWestWindow)
+        const fits = fitsById.get(e.id)
         return (
           <li key={e.id}>
             <button type="button" className="tray-tile" disabled={!fits} onClick={() => onPick(e)}>
@@ -58,7 +88,32 @@ export function CatalogTray({ roomType, objects, reserved, hasWestWindow = true,
       <h2 className={oneRow ? 'tray-title sr-only' : 'tray-title'} id={`${uid}-title`}>
         Add to your room
       </h2>
-      {oneRow ? (
+      <div className="tray-filters">
+        <div className="tray-search-row">
+          <label className="tray-search">
+            <span className="sr-only">Search furniture</span>
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+              <circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" strokeWidth="2.5" />
+              <path d="m15 15 5 5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+            </svg>
+            <input type="search" placeholder="Search furniture" value={query} onChange={(event) => setQuery(event.target.value)} />
+          </label>
+          <select className="tray-category" aria-label="Furniture category" value={category} onChange={(event) => setCategory(event.target.value as FurnitureCategory | 'all')}>
+            {CATEGORIES.map((option) => <option key={option.id} value={option.id}>{option.name}</option>)}
+          </select>
+        </div>
+        <div className="tray-filter-meta">
+          <label className="tray-fit-toggle">
+            <input type="checkbox" aria-label="Only show what fits" checked={onlyFits} onChange={(event) => setOnlyFits(event.target.checked)} />
+            Only show what fits
+          </label>
+          <span className="tray-count" role="status" aria-live="polite">{filtered.length} {filtered.length === 1 ? 'item' : 'items'}</span>
+          {filtering && <button type="button" className="tray-clear" aria-label="Clear furniture filters" onClick={clearFilters}>Clear</button>}
+        </div>
+      </div>
+      {filtered.length === 0 ? (
+        <p className="tray-empty">No furniture matches. Try another search or clear the filters.</p>
+      ) : oneRow ? (
         // Each room's things behind a small sideways label, so a long row still reads as Kitchen, Bathroom, ...
         <div className="tray-row tray-scroller">
           {groupCatalog([...suited, ...others], roomType).map((g) => (

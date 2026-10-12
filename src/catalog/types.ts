@@ -1,4 +1,5 @@
 import type { RoomType, Schedule } from '../domain/types'
+import type { FurnitureCategory } from './customization'
 
 /**
  * - wall: the object's back must touch a wall (a counter, a bed's headboard).
@@ -31,6 +32,8 @@ export interface DefaultChore {
 export interface CatalogEntry {
   id: string
   name: string
+  category?: FurnitureCategory
+  description?: string
   /** Rooms it is offered in first; it can still be placed anywhere. */
   rooms: RoomType[]
   /** Tiles at rotation 0: w along +tx (away from the left wall), d along +ty. */

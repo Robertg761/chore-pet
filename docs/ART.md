@@ -77,11 +77,19 @@ The tokens live in `src/art/palette.ts`; art code uses those names, never raw he
 ### Object art contract
 
 - Object art is drawn in object-local units where one tile is 64 x 32 (`src/room/iso.ts`). The origin is the back (top) corner of the footprint on the floor; +tx runs toward the lower right, +ty toward the lower left, +z up. Use `iso()` and `isoPoints()` rather than hand-computing corners. The room renderer scales art to its tile size.
-- Each object exports an `ObjectArt` (`src/room/objects/types.ts`): catalog id, footprint, a fixed `bounds` box shared by all three stages, and `render(stage)`.
+- Each object exports an `ObjectArt` (`src/room/objects/types.ts`): catalog id, footprint, a fixed `bounds` box shared by all three stages, and `render(stage, appearance?)`.
 - Rotation 0 has the object's back against the left wall (tx = 0), so its front is the right-front face.
 - Face shading: left-front face darker, right-front lighter, top lightest (same light as the walls).
 - Mess goes on top of the clean drawing: `messy1` is one or two things (a couple of plates, one fly), `messy2` is a funny pile (stacked dishes, three flies, stink lines, a drip). Use the shared pieces in `src/room/objects/mess.tsx` (`fly`, `stink`, `smudge`, `plate`) so mess looks like one world.
 - **Reference object: the sink** (`src/room/objects/sink.tsx`). Copy its structure: cabinet faces, fixtures, then mess layers.
+
+### Furniture appearances
+
+Furniture stores optional `appearance` settings on each placed object. The allowed style, finish, fabric, pattern and detail choices live in `src/catalog/customization.ts`. Keep footprints fixed across styles so a style change never overlaps another piece or blocks a doorway. Missing appearance must preserve the original drawing for older saves.
+
+The added furniture uses shared isometric parts in `src/room/objects/furniture/`. Legacy furniture is wrapped through `legacyStyles.tsx`; the original art remains the default. Style changes should alter construction, such as spindle backs, pedestal bases, steel braces or rounded frames. Materials and patterns remain independent. Keep the ink outline and readable mess marks when recoloring.
+
+Thumbnail bounds are cached by both catalog ID and appearance. The furniture comparison at the top of `/?art` shows all six styles for a selected piece and mess stage.
 
 ### Room shell styles
 

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { MessStage } from '../../domain/types'
+import type { FurnitureAppearance } from '../../catalog/customization'
 
 /** Hand-drawn art for one catalog object, in object-local iso units (see ../iso.ts). */
 export interface ObjectArt {
@@ -14,5 +15,5 @@ export interface ObjectArt {
    * where catalog thumbnails are cropped. Without it, cleanTop() in ./index.ts estimates one.
    */
   cueY?: number
-  render: (stage: MessStage) => ReactNode
+  render: (stage: MessStage, appearance?: FurnitureAppearance) => ReactNode
 }

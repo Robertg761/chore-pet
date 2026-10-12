@@ -1,4 +1,5 @@
 import type { CatalogEntry } from './types'
+import { FURNITURE } from './furniture'
 
 // The starting catalog. Footprints, placement and layer are fixed by the lead
 // (object art is drawn to them); names, rooms and default chores are content.
@@ -12,6 +13,7 @@ import type { CatalogEntry } from './types'
 // they stay realistic: oven 90, trash can 60, fish tank 14.
 
 export const CATALOG: CatalogEntry[] = [
+  ...FURNITURE,
   // Bathroom
   {
     id: 'shower',

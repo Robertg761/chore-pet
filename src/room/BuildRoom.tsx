@@ -72,7 +72,7 @@ const KEYS_HINT = 'Arrows move, R turns, Enter opens, Escape deselects.'
 
 function focusSheet() {
   const sheet = document.querySelector<HTMLElement>('.sheet')
-  const target = sheet?.querySelector<HTMLElement>('button:not(.sheet-close), input, select, textarea, [tabindex="0"]')
+  const target = sheet?.querySelector<HTMLElement>('summary, button:not(.sheet-close), input, select, textarea, [tabindex="0"]')
   target?.focus()
 }
 
@@ -224,7 +224,12 @@ export function BuildRoom({ room, objects, reserved, hasWestWindow = true, stage
 
   const ghostSource = pending ?? moving
   const ghostCheck = ghostSource && check(ghostSource.entry, ghostSource.placement, moving?.id)
-  const ghost = ghostSource && ghostCheck ? { entry: ghostSource.entry, placement: ghostSource.placement, ok: ghostCheck.ok } : null
+  const ghost = ghostSource && ghostCheck ? {
+    entry: ghostSource.entry,
+    placement: ghostSource.placement,
+    ok: ghostCheck.ok,
+    appearance: moving ? objects.find((o) => o.id === moving.id)?.appearance : undefined,
+  } : null
   const problem = ghostCheck && !ghostCheck.ok && ghostCheck.problem ? PROBLEM_TEXT[ghostCheck.problem] : ''
   const selectedName = selectedId && !ghost ? names[selectedId] : undefined
   const hint = !problem && keyed && selectedName ? `${selectedName} selected. ${KEYS_HINT}` : ''

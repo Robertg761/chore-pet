@@ -33,6 +33,7 @@ export interface Ghost {
   entry: CatalogEntry
   placement: Placement
   ok: boolean
+  appearance?: PlacedObject['appearance']
 }
 
 export interface RoomPet {
@@ -79,13 +80,13 @@ export interface RoomProps {
 type Item = Sortable & { draw: () => ReactNode }
 
 /** Object art placed on its tiles, mirrored for odd rotations. Memoised: it only changes when moved or its mess changes. */
-const PlacedArt = memo(function PlacedArt({ entry, placement, stage }: { entry: CatalogEntry; placement: Placement; stage: MessStage }) {
+const PlacedArt = memo(function PlacedArt({ entry, placement, stage, appearance }: { entry: CatalogEntry; placement: Placement; stage: MessStage; appearance?: PlacedObject['appearance'] }) {
   const corner = roomPoint(placement.tileX, placement.tileY)
   const flip = placement.rotation % 2 === 1 ? -1 : 1
   const art = OBJECT_ART[entry.id]
   return (
     <g transform={`translate(${corner.x} ${corner.y}) scale(${flip * OBJECT_SCALE} ${OBJECT_SCALE})`}>
-      {art ? art.render(stage) : placeholder(entry)}
+      {art ? art.render(stage, appearance) : placeholder(entry)}
     </g>
   )
 })
@@ -190,7 +191,7 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, 
       layer: entry.layer,
       draw: () => (
         <g key={o.id} data-object-id={o.id} className={justPlaced.has(o.id) ? 'room-obj-drop' : undefined} style={{ cursor: 'pointer' }}>
-          <PlacedArt entry={entry} placement={o} stage={stages[o.id] ?? 'clean'} />
+          <PlacedArt entry={entry} placement={o} stage={stages[o.id] ?? 'clean'} appearance={o.appearance} />
         </g>
       ),
     })
@@ -203,7 +204,7 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, 
       layer: ghost.entry.layer,
       draw: () => (
         <g key="__ghost" opacity={0.78} style={{ pointerEvents: 'none' }}>
-          <PlacedArt entry={ghost.entry} placement={ghost.placement} stage="clean" />
+          <PlacedArt entry={ghost.entry} placement={ghost.placement} stage="clean" appearance={ghost.appearance} />
         </g>
       ),
     })

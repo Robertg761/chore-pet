@@ -25,6 +25,7 @@ import {
   createHousehold,
   createRoom,
   moveObject,
+  restyleObject,
   placeObject,
   reconcileProgress,
   removeChore,
@@ -848,6 +849,7 @@ export default function App() {
               vacations={home.vacations}
               today={today}
               canTurn={canTurn}
+              onAppearanceChange={(appearance) => appStore.apply(...restyleObject(selected, appearance))}
               onSaveChore={(chore, value) =>
                 appStore.apply(...(chore ? updateChore(chore, value, today) : addChore(home, { ...value, objectId: selected.id }, today)))
               }

@@ -12,7 +12,7 @@ Open the app and tap **Try a sample home**: a furnished kitchen with two late ch
 
 1. `npm install`
 2. Create a Supabase project, then in Authentication settings turn on **Allow anonymous sign-ins**.
-3. Run the files in `supabase/migrations/` in order (`0001` to `0009`) in the Supabase SQL editor (or with the Supabase CLI).
+3. Run the files in `supabase/migrations/` in order (`0001` to `0011`) in the Supabase SQL editor (or with the Supabase CLI).
 4. Copy `.env.example` to `.env` and fill in your project URL and anon key.
 5. `npm run dev`
 
@@ -25,6 +25,14 @@ In Build, choose **Add room** to add a kitchen, bedroom, bathroom, living room, 
 Build mode keeps doorway approaches clear of furniture (rugs are allowed). Existing layouts are preserved; if furniture blocks a route, the pet stays where it is and asks you to clear the path. Moving the obstruction lets it continue. Switching rooms cancels an unfinished furniture placement. Zoom in to arrange furniture, scroll around the home, or choose **Fit home** to see it all.
 
 Furniture and styles are saved per room through the existing local and cloud storage. Room order and focus are remembered on this device. Chores cover the whole home, and completing one focuses its room. Sharing uses the focused room.
+
+### Furniture customization
+
+Build includes 18 additional furniture types: armchair, dining chair, bench, ottoman, coffee table, side table, writing desk, nightstand, dresser, wardrobe, TV stand, shoe rack, bathtub, bathroom vanity, laundry hamper, wall mirror, wall shelf and pet bed. Search by name or description, choose a category, or show only pieces that fit the room.
+
+Place a piece, select it, and open **Customize furniture**. Choose Classic, Cottage, Modern, Nordic, Industrial or Playful, then mix eight finishes, ten fabric/accent colors, four patterns and optional details. The previews and room update together. **Reset to original** restores the starting drawing. Each piece saves its own choices; changing style keeps its position, footprint and chore history.
+
+Local saves work immediately. For cloud saves, apply `0011_furniture_appearance.sql` before deploying this client. It adds the optional appearance column; existing rows keep their original art. The art gallery at `/?art` includes a furniture style comparison for reviewing silhouettes and mess stages.
 
 ### Accounts (saving progress across devices)
 

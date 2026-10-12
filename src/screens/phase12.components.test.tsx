@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { click, render } from '../test/react'
+import { click, input, render } from '../test/react'
 import { HealthBar } from './HealthBar'
 import { ChoreEditor } from './ChoreEditor'
 import { CatalogTray } from './CatalogTray'
@@ -182,6 +182,7 @@ describe('CatalogTray default groups', () => {
 
   it('titles the only group All things when nothing suits the room', () => {
     const ui = mount(<CatalogTray roomType="other" objects={[]} onPick={vi.fn()} />)
+    input(ui.container.querySelector<HTMLInputElement>('input[type="search"]')!, 'Washing machine')
     expect([...ui.container.querySelectorAll('[role="group"] > h3')].map((h) => h.textContent)).toEqual(['All things'])
   })
 })

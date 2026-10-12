@@ -13,6 +13,7 @@ import {
   createHousehold,
   createRoom,
   moveObject,
+  restyleObject,
   placeObject,
   removeChore,
   removeHome,
@@ -139,7 +140,10 @@ function device(db: PGlite, user: string, clockError = 0, latency = 0, madeAtCol
                 step.ops.map((o) => {
                   const row = MAPPERS[step.table].toRow((o as { value: never }).value)
                   // A database still before 0010 has no made_at column (the new client must come after the migration).
-                  if (!madeAtColumn) delete row.made_at
+                  if (!madeAtColumn) {
+                    delete row.made_at
+                    delete row.appearance
+                  }
                   return row
                 }),
               )
@@ -467,6 +471,43 @@ describe('supabase migrations (0006 applied)', () => {
       expect(users.rows.map((u) => u.id)).toEqual([A, C, D])
     })
   })
+})
+
+describe('furniture appearance (0011)', () => {
+  it('upgrades existing furniture and syncs appearance changes and resets without changing chores', async () => {
+    const db = await supabaseLike(MIGRATIONS.find((file) => file.startsWith('0010_'))!)
+    const old = device(db, A, 0, 0, false)
+    expect(await old.apply(...sampleHome({ species: 'mochi', userId: A, today: TODAY }))).toEqual([])
+    const object = rowsOf<PlacedObject>(old, 'placed_objects')[0]
+    const before = await as(db, A, 'select id, object_id, name from chores order by id')
+    await db.exec(sql('0011_furniture_appearance.sql'))
+    const read = () => as(db, A, 'select * from placed_objects where id = $1', [object.id])
+    const original = await read()
+    expect(original).toMatchObject({ ok: true, rows: [{ appearance: null }] })
+    const current = device(db, A)
+    const appearance = { style: 'industrial', finish: 'walnut', fabric: 'mint', pattern: 'checks', details: false } as const
+    expect(await current.apply(...restyleObject(object, appearance))).toEqual([])
+    const styled = await read()
+    expect(styled).toMatchObject({ ok: true, rows: [{ appearance }] })
+    if (styled.ok) expect(MAPPERS.placed_objects.fromRow(styled.rows[0])).toEqual({ ...object, appearance })
+    expect(await as(db, A, 'select id, object_id, name from chores order by id')).toEqual(before)
+    expect(await current.apply(...restyleObject({ ...object, appearance }, undefined))).toEqual([])
+    expect(await read()).toMatchObject({ ok: true, rows: [{ appearance: null }] })
+    await db.close()
+  }, 60_000)
+
+  it('validates appearance objects and retains row ownership checks', async () => {
+    const db = await supabaseLike()
+    const owner = device(db, A)
+    expect(await owner.apply(...sampleHome({ species: 'bun', userId: A, today: TODAY }))).toEqual([])
+    const object = rowsOf<PlacedObject>(owner, 'placed_objects')[0]
+    for (const invalid of [[], 'classic', { style: 'unknown' }, { style: null }, { details: 'yes' }, { unknown: true }, { fabric: 'x'.repeat(1200) }]) {
+      expectRefused(await as(db, A, 'update placed_objects set appearance = $1::jsonb where id = $2', [JSON.stringify(invalid), object.id]), '23514')
+    }
+    expect(await as(db, B, `update placed_objects set appearance = '{"style":"modern"}'::jsonb where id = $1 returning id`, [object.id])).toEqual({ ok: true, rows: [] })
+    expect(await as(db, A, 'select appearance from placed_objects where id = $1', [object.id])).toMatchObject({ ok: true, rows: [{ appearance: null }] })
+    await db.close()
+  }, 60_000)
 })
 
 describe('upgrading an existing database to 0006', () => {
@@ -969,7 +1010,7 @@ describe('room made_at (0010)', () => {
   }, 60_000)
 
   it('upgrades a database that has rooms already: they keep working with no made_at, in the old order', async () => {
-    const last = MIGRATIONS[MIGRATIONS.length - 1]
+    const last = MIGRATIONS.find((file) => file.startsWith('0010_'))!
     const before = MIGRATIONS[MIGRATIONS.indexOf(last) - 1]
     expect(last).toMatch(/^0010_/)
     const db = await supabaseLike(before)

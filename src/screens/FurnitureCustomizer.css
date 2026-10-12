@@ -1,0 +1,50 @@
+.furniture-customizer { container-type: inline-size; min-width: 0; background: var(--ground); border: 2px solid var(--ink); border-radius: var(--radius); }
+.furniture-summary { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 12px; font-weight: 800; cursor: pointer; border-radius: var(--radius); list-style: none; }
+.furniture-summary::-webkit-details-marker { display: none; }
+.furniture-summary::before { content: ''; flex: none; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 6px solid var(--accent); }
+.furniture-customizer[open] > .furniture-summary::before { rotate: 90deg; }
+.furniture-summary-style { margin-left: auto; font-size: 0.8125rem; line-height: 1.6; font-weight: 700; color: var(--ink-soft); }
+.furniture-summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.furniture-controls { display: flex; flex-direction: column; gap: 16px; min-width: 0; padding: 0 12px 12px; }
+.furniture-preview { display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--card); border-radius: 12px; }
+.furniture-preview-art { flex: none; width: 86px; height: 76px; }
+.furniture-preview-title { margin: 0 0 4px; font-weight: 800; }
+.furniture-preview-hint, .furniture-help { margin: 0; font-size: 0.8125rem; line-height: 1.4; font-weight: 600; color: var(--ink-soft); }
+.furniture-field { min-width: 0; margin: 0; padding: 0; border: 0; }
+.furniture-field legend { margin-bottom: 8px; padding: 0; font-size: 0.9375rem; font-weight: 800; }
+.furniture-field legend > span { margin-left: 6px; font-size: 0.8125rem; font-weight: 600; color: var(--ink-soft); }
+.furniture-field > .furniture-help { margin-top: 8px; }
+.furniture-styles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.furniture-choice { position: relative; display: flex; align-items: center; justify-content: center; min-width: 0; color: var(--ink); background: var(--card); border: 2px solid var(--ink); border-radius: 10px; cursor: pointer; }
+.furniture-choice input { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.furniture-choice:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); background: var(--ground-soft); }
+.furniture-choice:has(input:focus-visible) { outline: 3px solid var(--ink); outline-offset: 4px; }
+.furniture-style { flex-direction: column; gap: 4px; min-height: 82px; padding: 6px 2px; font-size: 0.75rem; font-weight: 800; }
+.furniture-style-art { display: block; width: 52px; max-width: 100%; height: 48px; }
+.furniture-swatches { display: grid; gap: 8px; }
+.furniture-finishes { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.furniture-fabrics { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.furniture-swatch { min-height: 44px; padding: 5px; }
+.furniture-swatch-color { width: 100%; height: 28px; background: var(--swatch); border: 1px solid var(--ink-soft); border-radius: 6px; }
+.furniture-swatch:has(input:checked)::after { content: '\2713'; position: absolute; display: grid; place-items: center; width: 20px; height: 20px; font-size: 0.875rem; font-weight: 900; color: var(--ink); background: var(--card); border: 1px solid var(--ink); border-radius: 50%; }
+.furniture-patterns { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.furniture-pattern { flex-direction: column; gap: 4px; min-height: 64px; padding: 6px 2px; font-size: 0.75rem; font-weight: 800; }
+.furniture-pattern-sample { display: block; width: 28px; height: 22px; background-color: var(--card); border: 1px solid var(--ink); border-radius: 4px; }
+.furniture-pattern-stripes { background-image: repeating-linear-gradient(90deg, transparent 0 4px, var(--ink-soft) 4px 6px); }
+.furniture-pattern-checks { background-image: repeating-linear-gradient(90deg, transparent 0 5px, var(--ink-soft) 5px 7px), repeating-linear-gradient(0deg, transparent 0 5px, var(--ink-soft) 5px 7px); }
+.furniture-pattern-dots { background-image: radial-gradient(circle, var(--ink-soft) 1.5px, transparent 2px); background-size: 7px 7px; }
+.furniture-details { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 0.875rem; font-weight: 800; cursor: pointer; }
+.furniture-details input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--accent); }
+.furniture-details input:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.furniture-details .furniture-help { display: block; margin-top: 2px; }
+.furniture-reset { align-self: stretch; font-size: 0.875rem; }
+
+@container (max-width: 260px) {
+  .furniture-summary-style { display: none; }
+  .furniture-summary { font-size: 0.8125rem; }
+  .furniture-controls { padding-inline: 8px; }
+  .furniture-preview { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .furniture-preview-art { align-self: center; }
+  .furniture-swatches { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .furniture-styles, .furniture-patterns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

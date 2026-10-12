@@ -23,7 +23,7 @@ const fake = (id: string, rooms: RoomType[], withChores = true): CatalogEntry =>
 const idsByKey = (groups: CatalogGroup[]) => Object.fromEntries(groups.map((g) => [g.key, g.entries.map((e) => e.id)]))
 
 describe('groupCatalog with the real catalog', () => {
-  it('lists groups with their labels, leaving out empty groups (no "other" entries exist yet)', () => {
+  it('lists groups with their labels, leaving out groups already assigned to a preferred room', () => {
     const groups = groupCatalog(ALL, 'kitchen')
     expect(groups.map((g) => [g.key, g.label])).toEqual([
       ['kitchen', 'Kitchen'],
@@ -34,56 +34,23 @@ describe('groupCatalog with the real catalog', () => {
     ])
   })
 
-  it('kitchen: the kitchen first, with the washer and plant under their first kitchen-or-later room', () => {
-    expect(idsByKey(groupCatalog(ALL, 'kitchen'))).toEqual({
-      kitchen: ['washer', 'counter', 'dining-table', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'table', 'trash', 'plant'],
-      bathroom: ['shower', 'toilet'],
-      bedroom: ['bed', 'rug'],
-      living: ['couch', 'fish-tank'],
-      decor: ['teddy', 'lamp', 'poster', 'fairy-lights', 'bookshelf', 'wall-clock', 'bean-bag'],
-    })
+  it('puts shared furniture in the focused room before the fallback room order', () => {
+    expect(idsByKey(groupCatalog(ALL, 'kitchen')).kitchen).toEqual(expect.arrayContaining(['washer', 'plant', 'dining-chair', 'wall-shelf']))
+    expect(idsByKey(groupCatalog(ALL, 'bathroom')).bathroom).toEqual(expect.arrayContaining(['washer', 'mirror', 'bathtub', 'bathroom-vanity']))
+    expect(idsByKey(groupCatalog(ALL, 'bedroom')).bedroom).toEqual(expect.arrayContaining(['bed', 'plant', 'nightstand', 'wardrobe', 'desk']))
+    expect(idsByKey(groupCatalog(ALL, 'living')).living).toEqual(expect.arrayContaining(['table', 'plant', 'rug', 'armchair', 'coffee-table']))
   })
 
-  it('bathroom: the bathroom first, so the washer moves up from the kitchen group', () => {
-    const groups = groupCatalog(ALL, 'bathroom')
-    expect(groups.map((g) => g.key)).toEqual(['bathroom', 'kitchen', 'bedroom', 'living', 'decor'])
-    expect(idsByKey(groups)).toEqual({
-      bathroom: ['shower', 'toilet', 'washer'],
-      kitchen: ['counter', 'dining-table', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'table', 'trash', 'plant'],
-      bedroom: ['bed', 'rug'],
-      living: ['couch', 'fish-tank'],
-      decor: ['teddy', 'lamp', 'poster', 'fairy-lights', 'bookshelf', 'wall-clock', 'bean-bag'],
-    })
+  it.each(ROOM_TYPES)('leads with furniture suited to %s', (roomType) => {
+    const groups = groupCatalog(ALL, roomType)
+    expect(groups[0].key).toBe(roomType)
+    expect(groups[0].entries.every((entry) => entry.rooms.includes(roomType))).toBe(true)
   })
 
-  it('bedroom: the bedroom first, so the plant moves from the kitchen group to the bedroom group', () => {
-    const groups = groupCatalog(ALL, 'bedroom')
-    expect(groups.map((g) => g.key)).toEqual(['bedroom', 'kitchen', 'bathroom', 'living', 'decor'])
-    expect(idsByKey(groups)).toEqual({
-      bedroom: ['bed', 'plant', 'rug'],
-      kitchen: ['washer', 'counter', 'dining-table', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'table', 'trash'],
-      bathroom: ['shower', 'toilet'],
-      living: ['couch', 'fish-tank'],
-      decor: ['teddy', 'lamp', 'poster', 'fairy-lights', 'bookshelf', 'wall-clock', 'bean-bag'],
-    })
-  })
-
-  it('living: the living room first, so the table, plant and rug move up', () => {
-    const groups = groupCatalog(ALL, 'living')
-    expect(groups.map((g) => g.key)).toEqual(['living', 'kitchen', 'bathroom', 'bedroom', 'decor'])
-    expect(idsByKey(groups)).toEqual({
-      living: ['table', 'couch', 'fish-tank', 'plant', 'rug'],
-      kitchen: ['washer', 'counter', 'dining-table', 'dishwasher', 'fridge', 'recycling', 'sink', 'stove', 'trash'],
-      bathroom: ['shower', 'toilet'],
-      bedroom: ['bed'],
-      decor: ['teddy', 'lamp', 'poster', 'fairy-lights', 'bookshelf', 'wall-clock', 'bean-bag'],
-    })
-  })
-
-  it('other: no entry is listed under "other", so that group is omitted and the default order applies', () => {
+  it('offers work and entryway furniture first in other rooms', () => {
     const groups = groupCatalog(ALL, 'other')
-    expect(groups.map((g) => g.key)).toEqual(['kitchen', 'bathroom', 'bedroom', 'living', 'decor'])
-    expect(idsByKey(groups).kitchen).toEqual(idsByKey(groupCatalog(ALL, 'kitchen')).kitchen)
+    expect(groups.map((g) => g.key)).toEqual(['other', 'kitchen', 'bathroom', 'bedroom', 'living', 'decor'])
+    expect(idsByKey(groups).other).toEqual(['bench', 'desk', 'shoe-rack', 'wall-shelf'])
   })
 
   it.each(ROOM_TYPES)('for %s, every entry appears exactly once, and decor is always last', (roomType) => {
