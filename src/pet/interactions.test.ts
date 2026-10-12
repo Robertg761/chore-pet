@@ -148,6 +148,35 @@ describe('environmental profiles', () => {
     }
   })
 
+  it.each([
+    ['shower', 'clean', -12.16, -55.08],
+    ['shower', 'messy1', 44.8, -14.4],
+    ['shower', 'messy2', 28.8, -19.4],
+    ['toilet', 'clean', -9.6, -33.8],
+    ['toilet', 'messy1', -16, -27.6],
+    ['toilet', 'messy2', 5.12, 0.88],
+    ['washer', 'clean', 16, 10],
+    ['washer', 'messy1', -3, -26],
+    ['washer', 'messy2', 16, 6],
+  ] as const)('looks at the visible bathroom %s detail in %s', (id, stage, x, y) => {
+    // Independent SVG points: shower head face, water spot, steam smiley;
+    // tank button/smudge and stained water; washer window, blue laundry and
+    // pink fabric. Washer onRight(1,1) adds(0,32) and skews y by -x/2.
+    for (const rotation of [0, 1, 2, 3] as const) {
+      const objects = [object(id, { rotation })]
+      const targets = interactionTargets(objects, room(objects), { object: stage })
+      expect(targets.length).toBeGreaterThan(0)
+      for (const target of targets) {
+        const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+        expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+        expect((tx + ty) * 16).toBeCloseTo(y)
+        expect(target.action).toBe(stage === 'clean' ? 'inspect' : 'smell')
+        expect(target.contact).toBe(false)
+        expect(room(objects)(target.tile)).toBe(true)
+      }
+    }
+  })
+
   it('changes signatures when catalog, position, rotation, or stage changes', () => {
     const base = object('plant')
     const signature = (o: PlacedObject, stages: Record<string, MessStage> = {}) =>

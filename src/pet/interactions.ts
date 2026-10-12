@@ -27,6 +27,20 @@ interface Profile {
 // These gaze points follow the existing art, without importing its React renderers.
 // No profile has verified paw/contact anchors, so none emits reach or contact.
 const PROFILES: ReadonlyMap<string, Profile> = new Map([
+  // Shower head underside (+5 below its z86 centre); follow visible glass
+  // cues when dirty, including the smiley's centre 3 units above its origin.
+  ['shower', { action: 'inspect', gaze: { tx: 0.62, ty: 1, z: 81 }, gazeByStage: {
+    messy1: { tx: 2, ty: 0.6, z: 56 }, messy2: { tx: 2, ty: 1.1, z: 69 },
+  } }],
+  // Tank flush button, lid smudge, then the lowered stained water line.
+  ['toilet', { action: 'inspect', gaze: { tx: 0.2, ty: 0.5, z: 45 }, gazeByStage: {
+    messy1: { tx: 0.2, ty: 0.7, z: 42 }, messy2: { tx: 0.67, ty: 0.51, z: 18 },
+  } }],
+  // onRight(1,1) puts the door at tx1,ty.5,z14. The blue laundry top
+  // is (-3,-26) in SVG space; messy2 pink cloth covers the open window.
+  ['washer', { action: 'inspect', gaze: { tx: 1, ty: 0.5, z: 14 }, gazeByStage: {
+    messy1: { tx: 0.5 - 3 / 64, ty: 0.5 + 3 / 64, z: 42 }, messy2: { tx: 1, ty: 0.5, z: 18 },
+  } }],
   // Basin centre and the upper plate centres in sink.tsx.
   ['sink', { action: 'inspect', gaze: { tx: 0.58, ty: 0.5, z: 34 }, gazeByStage: {
     // The second plate is nudged one SVG unit right: keep projected y fixed.

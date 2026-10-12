@@ -1,0 +1,65 @@
+diff --git i/src/pet/interactions.test.ts w/src/pet/interactions.test.ts
+index 2e65aad..e8d9746 100644
+--- i/src/pet/interactions.test.ts
++++ w/src/pet/interactions.test.ts
+@@ -148,6 +148,35 @@ describe('environmental profiles', () => {
+     }
+   })
+ 
++  it.each([
++    ['shower', 'clean', -12.16, -55.08],
++    ['shower', 'messy1', 44.8, -14.4],
++    ['shower', 'messy2', 28.8, -19.4],
++    ['toilet', 'clean', -9.6, -33.8],
++    ['toilet', 'messy1', -16, -27.6],
++    ['toilet', 'messy2', 5.12, 0.88],
++    ['washer', 'clean', 16, 10],
++    ['washer', 'messy1', -3, -26],
++    ['washer', 'messy2', 16, 6],
++  ] as const)('looks at the visible bathroom %s detail in %s', (id, stage, x, y) => {
++    // Independent SVG points: shower head face, water spot, steam smiley;
++    // tank button/smudge and stained water; washer window, blue laundry and
++    // pink fabric. Washer onRight(1,1) adds(0,32) and skews y by -x/2.
++    for (const rotation of [0, 1, 2, 3] as const) {
++      const objects = [object(id, { rotation })]
++      const targets = interactionTargets(objects, room(objects), { object: stage })
++      expect(targets.length).toBeGreaterThan(0)
++      for (const target of targets) {
++        const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
++        expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
++        expect((tx + ty) * 16).toBeCloseTo(y)
++        expect(target.action).toBe(stage === 'clean' ? 'inspect' : 'smell')
++        expect(target.contact).toBe(false)
++        expect(room(objects)(target.tile)).toBe(true)
++      }
++    }
++  })
++
+   it('changes signatures when catalog, position, rotation, or stage changes', () => {
+     const base = object('plant')
+     const signature = (o: PlacedObject, stages: Record<string, MessStage> = {}) =>
+diff --git i/src/pet/interactions.ts w/src/pet/interactions.ts
+index 9ce3132..9998509 100644
+--- i/src/pet/interactions.ts
++++ w/src/pet/interactions.ts
+@@ -27,6 +27,20 @@ interface Profile {
+ // These gaze points follow the existing art, without importing its React renderers.
+ // No profile has verified paw/contact anchors, so none emits reach or contact.
+ const PROFILES: ReadonlyMap<string, Profile> = new Map([
++  // Shower head underside (+5 below its z86 centre); follow visible glass
++  // cues when dirty, including the smiley's centre 3 units above its origin.
++  ['shower', { action: 'inspect', gaze: { tx: 0.62, ty: 1, z: 81 }, gazeByStage: {
++    messy1: { tx: 2, ty: 0.6, z: 56 }, messy2: { tx: 2, ty: 1.1, z: 69 },
++  } }],
++  // Tank flush button, lid smudge, then the lowered stained water line.
++  ['toilet', { action: 'inspect', gaze: { tx: 0.2, ty: 0.5, z: 45 }, gazeByStage: {
++    messy1: { tx: 0.2, ty: 0.7, z: 42 }, messy2: { tx: 0.67, ty: 0.51, z: 18 },
++  } }],
++  // onRight(1,1) puts the door at tx1,ty.5,z14. The blue laundry top
++  // is (-3,-26) in SVG space; messy2 pink cloth covers the open window.
++  ['washer', { action: 'inspect', gaze: { tx: 1, ty: 0.5, z: 14 }, gazeByStage: {
++    messy1: { tx: 0.5 - 3 / 64, ty: 0.5 + 3 / 64, z: 42 }, messy2: { tx: 1, ty: 0.5, z: 18 },
++  } }],
+   // Basin centre and the upper plate centres in sink.tsx.
+   ['sink', { action: 'inspect', gaze: { tx: 0.58, ty: 0.5, z: 34 }, gazeByStage: {
+     // The second plate is nudged one SVG unit right: keep projected y fixed.

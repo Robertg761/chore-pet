@@ -1,0 +1,77 @@
+{
+  "baseCommit": "e58c7fec27b4e804f52f248c9066a13b9c4cbe75",
+  "checks": [
+    {
+      "name": "focused-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/pet/interactions.test.ts src/pet/behaviour.test.ts src/pet/activityMotion.test.ts",
+      "log": "bathroom-green.log",
+      "exitCode": 0,
+      "result": "178 pass"
+    },
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "bathroom-unit.log",
+      "exitCode": 0,
+      "result": "1929 pass in86 files,51.88s"
+    },
+    {
+      "name": "build",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "bathroom-build.log",
+      "exitCode": 0,
+      "result": "TypeScript and production build pass"
+    },
+    {
+      "name": "lint",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "bathroom-lint.log",
+      "exitCode": 0,
+      "result": "pass,zero warnings"
+    },
+    {
+      "name": "resident-browser",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium nice -n 10 node --test --test-concurrency=1 scripts/browser/pet-motion.test.mjs",
+      "log": "bathroom-browser.log",
+      "exitCode": 0,
+      "result": "8 pass,11.68s"
+    },
+    {
+      "name": "room-stills",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 node docs/audits/2026-10-12-character-polish/capture-bathroom.mjs",
+      "log": "bathroom-capture.log",
+      "exitCode": 0,
+      "result": "18 annotated details and18 behavior-derived Room stills"
+    }
+  ],
+  "sourceSha256": {
+    "src/pet/interactions.ts": "5a96ea1ed13a04d74294b32e7bf4871f03dd6fd9ed1d0412131c0e9f07f20562",
+    "src/pet/interactions.test.ts": "61d05a5dd0f8bd0865744a739eb1bc32b1dabe9639fc737c504b047405388491",
+    "src/pet/behaviour.ts": "4bed9fcf40912fba2733ed5cdb17d302af59a1e42f7ebfeca78e7c17f5fbd472",
+    "src/pet/activityMotion.ts": "6401e236e3a3d71d6cba8d30f66986f3e40a0ba05f35c26b057d59139518452a",
+    "src/room/objects/shower.tsx": "17c8f5f84399512a88e2d5d31f4c46e1b3bc4765b26e8fe64a852efbaae1d1cd",
+    "src/room/objects/toilet.tsx": "f0c876047c941ac86b93c4c782321a3fd3fd920d7cd95ef579df6fbb7ffd84f4",
+    "src/room/objects/washer.tsx": "cb260bae31bb0643c9c48c2a49e189486191859a1630247663daa89bed6145b6",
+    "src/room/objects/batch2-parts.tsx": "d497f69a9af9709597667668293ef3627f383db7105033c0873a3b2ee7a08d54",
+    "docs/audits/2026-10-12-character-polish/capture-bathroom.mjs": "8aed670ae2e9866318d8ddb2144dd1a190a46f027dae92649c0055c6a25bfd6f"
+  },
+  "captures": [
+    {
+      "file": "bathroom-targets.png",
+      "sha256": "392dd3d8df2477b75eca68115d8735c75f09c89046e0fa47f5c55e7d14d89f61"
+    },
+    {
+      "file": "bathroom-rooms.png",
+      "sha256": "bda04ae7922ce5ae419c8fab59ebd7759099beadbdbd023fa85a3da8cd417d90"
+    },
+    {
+      "file": "bathroom-captures.json",
+      "sha256": "f2e85f9d009f371ad60659110ed2c9d902febf8539bcaaa01524e86b1d59c2fe"
+    }
+  ],
+  "redEvidence": "bathroom-red.log:9 new expected failures,55 existing pass.",
+  "limitations": [
+    "Stored stills use actual Room rendering and behavior-derived interaction action frames, separate from live LivingRoom timing or human temporal playback.",
+    "Existing browser regressions cover resident integration; new coordinate cases are covered by independent screen-point assertions and production art stills."
+  ]
+}

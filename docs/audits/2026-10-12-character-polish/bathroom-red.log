@@ -1,0 +1,122 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/interactions.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/interactions.test.ts (64 tests | 9 failed) 42ms
+   ❯ environmental profiles (55)
+     × looks at the visible bathroom shower detail in clean 4ms
+     × looks at the visible bathroom shower detail in messy1 1ms
+     × looks at the visible bathroom shower detail in messy2 0ms
+     × looks at the visible bathroom toilet detail in clean 0ms
+     × looks at the visible bathroom toilet detail in messy1 0ms
+     × looks at the visible bathroom toilet detail in messy2 0ms
+     × looks at the visible bathroom washer detail in clean 0ms
+     × looks at the visible bathroom washer detail in messy1 0ms
+     × looks at the visible bathroom washer detail in messy2 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at the visible bathroom shower detail in clean
+AssertionError: expected +0 to be close to -12.16, received difference is 12.16, but expected 0.005
+ ❯ src/pet/interactions.test.ts:171:32
+    169|       for (const target of targets) {
+    170|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    171|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    172|         expect((tx + ty) * 16).toBeCloseTo(y)
+    173|         expect(target.action).toBe(stage === 'clean' ? 'inspect' : 'sm…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at the visible bathroom shower detail in messy1
+AssertionError: expected +0 to be close to 44.8, received difference is 44.8, but expected 0.005
+ ❯ src/pet/interactions.test.ts:171:32
+    169|       for (const target of targets) {
+    170|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    171|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    172|         expect((tx + ty) * 16).toBeCloseTo(y)
+    173|         expect(target.action).toBe(stage === 'clean' ? 'inspect' : 'sm…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at the visible bathroom shower detail in messy2
+AssertionError: expected +0 to be close to 28.8, received difference is 28.8, but expected 0.005
+ ❯ src/pet/interactions.test.ts:171:32
+    169|       for (const target of targets) {
+    170|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    171|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    172|         expect((tx + ty) * 16).toBeCloseTo(y)
+    173|         expect(target.action).toBe(stage === 'clean' ? 'inspect' : 'sm…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at the visible bathroom toilet detail in clean
+AssertionError: expected +0 to be close to -9.6, received difference is 9.6, but expected 0.005
+ ❯ src/pet/interactions.test.ts:171:32
+    169|       for (const target of targets) {
+    170|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    171|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    172|         expect((tx + ty) * 16).toBeCloseTo(y)
+    173|         expect(target.action).toBe(stage === 'clean' ? 'inspect' : 'sm…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at the visible bathroom toilet detail in messy1
+AssertionError: expected +0 to be close to -16, received difference is 16, but expected 0.005
+ ❯ src/pet/interactions.test.ts:171:32
+    169|       for (const target of targets) {
+    170|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    171|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    172|         expect((tx + ty) * 16).toBeCloseTo(y)
+    173|         expect(target.action).toBe(stage === 'clean' ? 'inspect' : 'sm…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at the visible bathroom toilet detail in messy2
+AssertionError: expected +0 to be close to 5.12, received difference is 5.12, but expected 0.005
+ ❯ src/pet/interactions.test.ts:171:32
+    169|       for (const target of targets) {
+    170|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    171|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    172|         expect((tx + ty) * 16).toBeCloseTo(y)
+    173|         expect(target.action).toBe(stage === 'clean' ? 'inspect' : 'sm…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at the visible bathroom washer detail in clean
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at the visible bathroom washer detail in messy2
+AssertionError: expected +0 to be close to 16, received difference is 16, but expected 0.005
+ ❯ src/pet/interactions.test.ts:171:32
+    169|       for (const target of targets) {
+    170|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    171|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    172|         expect((tx + ty) * 16).toBeCloseTo(y)
+    173|         expect(target.action).toBe(stage === 'clean' ? 'inspect' : 'sm…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at the visible bathroom washer detail in messy1
+AssertionError: expected +0 to be close to -3, received difference is 3, but expected 0.005
+ ❯ src/pet/interactions.test.ts:171:32
+    169|       for (const target of targets) {
+    170|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    171|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    172|         expect((tx + ty) * 16).toBeCloseTo(y)
+    173|         expect(target.action).toBe(stage === 'clean' ? 'inspect' : 'sm…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 55 passed (64)
+   Start at  15:52:14
+   Duration  241ms (transform 52%, tests 32%, import 13%, worker 2%)
+

@@ -1,0 +1,344 @@
+{
+  "method": "18 annotated production object details and18 Room SVG stills. Real initialPet/step transitions choose orientation/action from an adjacent tile, then motionFor samples42% through the action. Glasses on all species. Separate from a live LivingRoom clock or human temporal playback.",
+  "samples": [
+    {
+      "id": "shower",
+      "stage": "clean",
+      "rotation": 0,
+      "species": "mochi",
+      "standing": {
+        "tx": 4,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": -12.159999999999997,
+        "y": -55.08
+      },
+      "contact": false
+    },
+    {
+      "id": "shower",
+      "stage": "clean",
+      "rotation": 1,
+      "species": "mochi",
+      "standing": {
+        "tx": 2,
+        "ty": 4
+      },
+      "facing": 1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 12.159999999999997,
+        "y": -55.08
+      },
+      "contact": false
+    },
+    {
+      "id": "shower",
+      "stage": "messy1",
+      "rotation": 0,
+      "species": "bun",
+      "standing": {
+        "tx": 4,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 44.8,
+        "y": -14.399999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "shower",
+      "stage": "messy1",
+      "rotation": 1,
+      "species": "bun",
+      "standing": {
+        "tx": 2,
+        "ty": 4
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -44.8,
+        "y": -14.399999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "shower",
+      "stage": "messy2",
+      "rotation": 0,
+      "species": "sprout",
+      "standing": {
+        "tx": 4,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 28.799999999999997,
+        "y": -19.4
+      },
+      "contact": false
+    },
+    {
+      "id": "shower",
+      "stage": "messy2",
+      "rotation": 1,
+      "species": "sprout",
+      "standing": {
+        "tx": 2,
+        "ty": 4
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -28.799999999999997,
+        "y": -19.4
+      },
+      "contact": false
+    },
+    {
+      "id": "toilet",
+      "stage": "clean",
+      "rotation": 0,
+      "species": "mochi",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": -9.599999999999994,
+        "y": -33.8
+      },
+      "contact": false
+    },
+    {
+      "id": "toilet",
+      "stage": "clean",
+      "rotation": 1,
+      "species": "mochi",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 9.599999999999994,
+        "y": -33.8
+      },
+      "contact": false
+    },
+    {
+      "id": "toilet",
+      "stage": "messy1",
+      "rotation": 0,
+      "species": "bun",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -16,
+        "y": -27.599999999999994
+      },
+      "contact": false
+    },
+    {
+      "id": "toilet",
+      "stage": "messy1",
+      "rotation": 1,
+      "species": "bun",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 16,
+        "y": -27.599999999999994
+      },
+      "contact": false
+    },
+    {
+      "id": "toilet",
+      "stage": "messy2",
+      "rotation": 0,
+      "species": "sprout",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 5.1200000000000045,
+        "y": 0.8799999999999955
+      },
+      "contact": false
+    },
+    {
+      "id": "toilet",
+      "stage": "messy2",
+      "rotation": 1,
+      "species": "sprout",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -5.1200000000000045,
+        "y": 0.8799999999999955
+      },
+      "contact": false
+    },
+    {
+      "id": "washer",
+      "stage": "clean",
+      "rotation": 0,
+      "species": "mochi",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 16,
+        "y": 10
+      },
+      "contact": false
+    },
+    {
+      "id": "washer",
+      "stage": "clean",
+      "rotation": 1,
+      "species": "mochi",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": -16,
+        "y": 10
+      },
+      "contact": false
+    },
+    {
+      "id": "washer",
+      "stage": "messy1",
+      "rotation": 0,
+      "species": "bun",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -3,
+        "y": -26
+      },
+      "contact": false
+    },
+    {
+      "id": "washer",
+      "stage": "messy1",
+      "rotation": 1,
+      "species": "bun",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 3,
+        "y": -26
+      },
+      "contact": false
+    },
+    {
+      "id": "washer",
+      "stage": "messy2",
+      "rotation": 0,
+      "species": "sprout",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 16,
+        "y": 6
+      },
+      "contact": false
+    },
+    {
+      "id": "washer",
+      "stage": "messy2",
+      "rotation": 1,
+      "species": "sprout",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -16,
+        "y": 6
+      },
+      "contact": false
+    }
+  ],
+  "sourceSha256": {
+    "src/pet/interactions.ts": "5a96ea1ed13a04d74294b32e7bf4871f03dd6fd9ed1d0412131c0e9f07f20562",
+    "src/pet/behaviour.ts": "4bed9fcf40912fba2733ed5cdb17d302af59a1e42f7ebfeca78e7c17f5fbd472",
+    "src/pet/activityMotion.ts": "6401e236e3a3d71d6cba8d30f66986f3e40a0ba05f35c26b057d59139518452a",
+    "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+    "src/character/motion.ts": "c5728645139ddfdf5c73296fc07dc1fbca12ae6a98e3640d269862166c240091",
+    "src/room/Room.tsx": "10e3faba9fe3419d4b88427d55a0468da6e39c402c7ed3cbee0338d258137a8a",
+    "src/room/objects/shower.tsx": "17c8f5f84399512a88e2d5d31f4c46e1b3bc4765b26e8fe64a852efbaae1d1cd",
+    "src/room/objects/toilet.tsx": "f0c876047c941ac86b93c4c782321a3fd3fd920d7cd95ef579df6fbb7ffd84f4",
+    "src/room/objects/washer.tsx": "cb260bae31bb0643c9c48c2a49e189486191859a1630247663daa89bed6145b6",
+    "src/room/objects/batch2-parts.tsx": "d497f69a9af9709597667668293ef3627f383db7105033c0873a3b2ee7a08d54",
+    "src/room/objects/shapes3.tsx": "073f5eb139e09f9b94d0c06bcc74eb095ea1abf5a974277169e9c032b948a04c",
+    "src/room/objects/mess.tsx": "490389adab426507fcbc3a1b09612471e6df49bf76dfd9092bb9fa6afc6a8dc5",
+    "docs/audits/2026-10-12-character-polish/capture-bathroom.mjs": "8aed670ae2e9866318d8ddb2144dd1a190a46f027dae92649c0055c6a25bfd6f"
+  }
+}
