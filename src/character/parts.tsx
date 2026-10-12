@@ -1,17 +1,46 @@
-import { useContext, useId, type ReactNode } from 'react'
+import { createContext, useContext, useId, type ReactNode } from 'react'
 import { bodyShade, mix } from '../art/color'
 import { PALETTE } from '../art/palette'
 import type { EyeStyle, Mood } from '../domain/types'
 import { useStrokeScale } from './strokeScale'
 import { LookContext } from './look'
+import type { MotionFrame } from './motion'
 
 // Shared building blocks for every species, so Mochi, Bun and Sprout read as
 // one family: same body shading, eyes, cheeks, feet, shadow and mood tint.
 
 const { ink, blush, sickTint, dirt, white, sky, woodDark, floorWood, cream, creamDark, fabricBlue, warmRed } = PALETTE
 
+/** Shared by static poses and articulated art without changing their public APIs. */
+const FaceBodyColourContext = createContext<string | undefined>(undefined)
+
+export function FaceBodyColour({ colour, children }: { colour: string; children: ReactNode }) {
+  return <FaceBodyColourContext.Provider value={colour}>{children}</FaceBodyColourContext.Provider>
+}
+
+function needsFaceBacking(colour: string | undefined): boolean {
+  if (!colour || !/^#(?:[a-f\d]{3}|[a-f\d]{6})$/i.test(colour)) return false
+  const luminance = (hex: string) => {
+    const full = hex.length === 4 ? [...hex.slice(1)].map((c) => c + c).join('') : hex.slice(1)
+    const rgb = [0, 2, 4].map((offset) => parseInt(full.slice(offset, offset + 2), 16) / 255)
+      .map((v) => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
+    return rgb[0] * 0.2126 + rgb[1] * 0.7152 + rgb[2] * 0.0722
+  }
+  const body = luminance(colour), face = luminance(ink)
+  return (Math.max(body, face) + 0.05) / (Math.min(body, face) + 0.05) < 3
+}
+
+/** Existing special poses can omit their embedded shadow when composed over animated ground. */
+const ShadowVisibilityContext = createContext(true)
+
+export function WithoutShadow({ children }: { children: ReactNode }) {
+  return <ShadowVisibilityContext.Provider value={false}>{children}</ShadowVisibilityContext.Provider>
+}
+
 /** Soft ground shadow under the feet. */
 export function Shadow({ rx }: { rx: number }) {
+  const visible = useContext(ShadowVisibilityContext)
+  if (!visible) return null
   return <ellipse cx={100} cy={186} rx={rx} ry={7} fill={ink} opacity={0.15} stroke="none" />
 }
 
@@ -104,7 +133,7 @@ function Glint({ x, y, r }: { x: number; y: number; r: number }) {
 }
 
 /** A big glossy eye: two highlights make it read as wet and alive. */
-function OpenEye({ x, y, scale = 1, drop = 0, style, children }: { x: number; y: number; scale?: number; drop?: number; style: EyeStyle; children?: ReactNode }) {
+function OpenEye({ x, y, scale = 1, drop = 0, style, children, gaze, eyeOpen }: { x: number; y: number; scale?: number; drop?: number; style: EyeStyle; children?: ReactNode; gaze?: Gaze; eyeOpen?: number }) {
   // `drop` sinks the main highlight toward the middle of the eye: a softer, wetter, sadder gaze.
   // The whole eye (and any `children`, like lashes) blinks as one; see Character.css.
   let drawing: ReactNode
@@ -136,10 +165,14 @@ function OpenEye({ x, y, scale = 1, drop = 0, style, children }: { x: number; y:
       </g>
     )
   }
+  const eyeArt = <>
+      {gaze ? <g data-eye-gaze="" transform={`translate(${Math.max(-3, Math.min(3, gaze.x))} ${Math.max(-2, Math.min(2, gaze.y))})`}>{drawing}</g> : drawing}
+      {children}
+  </>
+  const openness = eyeOpen !== undefined && Number.isFinite(eyeOpen) ? Math.max(0, Math.min(1, eyeOpen)) : 1
   return (
     <g className="ch-eye">
-      {drawing}
-      {children}
+      {eyeOpen === undefined ? eyeArt : <g data-eye-open={openness} transform={`translate(${x} ${y}) scale(1 ${openness}) translate(${-x} ${-y})`}>{eyeArt}</g>}
     </g>
   )
 }
@@ -165,14 +198,16 @@ function Brow({ x, y, side }: { x: number; y: number; side: -1 | 1 }) {
   return <path d={`M${x + 7 * side} ${y - 13} Q${x} ${y - 17} ${x - 6 * side} ${y - 18}`} strokeWidth={3 * useStrokeScale()} />
 }
 
-function Eye({ x, y, mood, side }: { x: number; y: number; mood: Expression; side: -1 | 1 }) {
+function Eye({ x, y, mood, side, gaze, alert, eyeOpen }: { x: number; y: number; mood: Expression; side: -1 | 1; gaze?: Gaze; alert?: boolean; eyeOpen?: number }) {
   const { eyes } = useContext(LookContext)
   // Lashes go inside an open eye so they blink with it.
   const lashes = eyes === 'lashes' ? <Lashes x={x} y={y} mood={mood} side={side} /> : null
-  return <EyeShape x={x} y={y} mood={mood} side={side} style={eyes} lashes={lashes} />
+  return <EyeShape x={x} y={y} mood={mood} side={side} style={eyes} lashes={lashes} gaze={gaze} alert={alert} eyeOpen={eyeOpen} />
 }
 
-function EyeShape({ x, y, mood, side, style, lashes }: { x: number; y: number; mood: Expression; side: -1 | 1; style: EyeStyle; lashes: ReactNode }) {
+function EyeShape({ x, y, mood, side, style, lashes, gaze, alert, eyeOpen }: { x: number; y: number; mood: Expression; side: -1 | 1; style: EyeStyle; lashes: ReactNode; gaze?: Gaze; alert?: boolean; eyeOpen?: number }) {
+  // Closed eyes can stir by less than a third of a unit without moving the mouth or props.
+  if (mood === 'sleeping' || mood === 'sick') y += Math.max(-2, Math.min(2, gaze?.y ?? 0)) * 0.12
   switch (mood) {
     case 'sleeping':
       // Peacefully shut: soft downward curves.
@@ -192,17 +227,17 @@ function EyeShape({ x, y, mood, side, style, lashes }: { x: number; y: number; m
       )
     case 'happy':
     case 'content':
-      return <OpenEye x={x} y={y} style={style}>{lashes}</OpenEye>
+      return <OpenEye x={x} y={y} style={style} scale={alert ? 1.06 : 1} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
     case 'meh':
       // Still bright, a touch smaller: "hm, okay". No lids, so it never looks unimpressed.
-      return <OpenEye x={x} y={y + 1} scale={0.82} style={style}>{lashes}</OpenEye>
+      return <OpenEye x={x} y={y + 1} scale={0.82} style={style} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
     case 'scruffy':
       // Tired and a bit sad, but hopeful: the same open eye as meh (smaller, glossy, no lid,
       // so never smug or cross) with its main highlight sunk lower, under worried brows.
       return (
         <g>
           <Brow x={x} y={y} side={side} />
-          <OpenEye x={x} y={y + 1.5} scale={0.78} drop={2.4} style={style}>{lashes}</OpenEye>
+          <OpenEye x={x} y={y + 1.5} scale={0.78} drop={2.4} style={style} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
         </g>
       )
     case 'sick':
@@ -240,14 +275,32 @@ function Mouth({ y, mood }: { y: number; mood: Expression }) {
   }
 }
 
-/** Eyes and mouth. Eyes sit at (100 +/- EYE_SPREAD, eyeY). */
-export function Face({ mood, eyeY, mouthY }: { mood: Expression; eyeY: number; mouthY: number }) {
+interface Gaze { x: number; y: number }
+
+/** Lets existing bed/sleep art receive a restrained notice without replacing its geometry. */
+const FaceMotionContext = createContext<{ gaze?: Gaze; expression?: MotionFrame['expression'] }>({})
+
+export function RestingFaceMotion({ gaze, children }: { gaze: Gaze; children: ReactNode }) {
+  return <FaceMotionContext.Provider value={{ expression: 'mood', gaze }}>{children}</FaceMotionContext.Provider>
+}
+
+/** Eyes and mouth. Gaze moves eye ink only, leaving brows, mouth and glasses attached. */
+export function Face({ mood, eyeY, mouthY, gaze, expression, eyeOpen }: { mood: Expression; eyeY: number; mouthY: number; gaze?: Gaze; expression?: MotionFrame['expression']; eyeOpen?: number }) {
   const scale = useStrokeScale()
+  const backing = needsFaceBacking(useContext(FaceBodyColourContext))
+  const motion = useContext(FaceMotionContext)
+  gaze ??= motion.gaze
+  expression ??= motion.expression
+  const faceMood = mood === 'sick' || mood === 'scruffy' || mood === 'sleeping' ? mood : expression === 'pleased' ? 'cheering' : mood
   return (
-    <g stroke={ink} strokeWidth={3.5 * scale} strokeLinecap="round" strokeLinejoin="round" fill="none">
-      <Eye x={100 - EYE_SPREAD} y={eyeY} mood={mood} side={-1} />
-      <Eye x={100 + EYE_SPREAD} y={eyeY} mood={mood} side={1} />
-      <Mouth y={mouthY} mood={mood} />
+    <g data-expression={expression !== undefined ? faceMood : undefined} stroke={ink} strokeWidth={3.5 * scale} strokeLinecap="round" strokeLinejoin="round" fill="none">
+      {backing && <g data-face-contrast="" fill={cream} stroke="none">
+        {[80, 120].map((x) => <ellipse key={x} cx={x} cy={eyeY - (faceMood === 'scruffy' || faceMood === 'sick' ? 4 : 0)} rx={15} ry={faceMood === 'scruffy' || faceMood === 'sick' ? 21 : faceMood === 'sleeping' || faceMood === 'cheering' ? 9 : 15} />)}
+        <ellipse cx={100} cy={mouthY + 1} rx={13} ry={9} />
+      </g>}
+      <Eye x={100 - EYE_SPREAD} y={eyeY} mood={faceMood} side={-1} gaze={gaze} alert={expression === 'alert'} eyeOpen={eyeOpen} />
+      <Eye x={100 + EYE_SPREAD} y={eyeY} mood={faceMood} side={1} gaze={gaze} alert={expression === 'alert'} eyeOpen={eyeOpen} />
+      <Mouth y={mouthY} mood={faceMood} />
       {mood === 'sick' && (
         <path d={`M151 ${eyeY - 16} q-6 9 0 12 q6 -3 0 -12 Z`} fill={sky} strokeWidth={2.5} />
       )}

@@ -43,3 +43,10 @@
     animation: none;
   }
 }
+
+/* Sampled art has one clock supplied by the pet. CSS must never override its SVG transforms. */
+.ch-animated .ch-breathe,
+.ch-animated .ch-eye {
+  animation: none;
+  transform: none;
+}

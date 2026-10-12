@@ -23,8 +23,8 @@ interface ToqueCut {
 }
 
 const TOQUES: Record<Species, ToqueCut> = {
-  // Mochi: a big toque that swallows the pinched knot.
-  mochi: { bw: 40, bandTop: 6, bandBottom: 20, sag: 4, top: -50, side: 11 },
+  // Mochi: a big toque that swallows the pinch, with headroom for the highest hop.
+  mochi: { bw: 40, bandTop: 6, bandBottom: 20, sag: 4, top: -42, side: 11 },
   // Bun: a shorter puff so the ears rise out beside it.
   bun: { bw: 36, bandTop: 1, bandBottom: 13, sag: 3, top: -47, side: 9 },
   // Sprout: low puffs either side of a dip; the stem and leaves rise out of the dip.

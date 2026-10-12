@@ -4,13 +4,20 @@ export type MotionAction =
   | 'idle' | 'walk' | 'turn' | 'greet' | 'affection' | 'celebrate' | 'celebrate-big'
   | 'notice' | 'inspect' | 'wave' | 'reach' | 'rest' | 'dust' | 'smell' | 'concern'
 
+/** Projected route point in unmirrored character SVG units, including past corners. */
+export interface GroundPoint { distance: number; x: number; y: number }
+
 export interface MotionInput {
   species: Species
   mood: Mood
   action: MotionAction
   elapsedMs: number
+  /** Monotonic pet lifetime for blinks across action changes. Defaults to elapsedMs. */
+  blinkMs?: number
   /** Accumulated route distance in tiles, continuous across intermediate tiles. */
   distance: number
+  groundPath?: readonly GroundPoint[]
+  facing?: 1 | -1
   /** Whole action/journey duration. Invalid durations use ACTION_MS; zero ends finite actions. */
   durationMs: number
   reducedMotion: boolean
@@ -27,6 +34,11 @@ export interface MotionFrame {
   /** Nonnegative foot lifts in SVG units; zero means ground contact. */
   leftFoot: number
   rightFoot: number
+  /** Ground-space foot offsets after torso cancellation; omitted values mean zero. */
+  leftGroundX?: number
+  leftGroundY?: number
+  rightGroundX?: number
+  rightGroundY?: number
   leftArm: number
   rightArm: number
   leftAppendage: number
@@ -34,6 +46,8 @@ export interface MotionFrame {
   /** Gaze offsets in SVG units. */
   gazeX: number
   gazeY: number
+  /** Open-eye height multiplier. Omitted frames remain fully open. */
+  eyeOpen?: number
   /** Multipliers on the renderer's ground shadow size and base opacity. */
   shadowScale: number
   shadowOpacity: number
@@ -58,8 +72,8 @@ const PERSONALITY: Record<Species, { amplitude: number; squash: number; stride: 
 function neutral(): MotionFrame {
   return {
     bodyX: 0, bodyY: 0, scaleX: 1, scaleY: 1, lean: 0,
-    leftFoot: 0, rightFoot: 0, leftArm: 0, rightArm: 0,
-    leftAppendage: 0, rightAppendage: 0, gazeX: 0, gazeY: 0,
+    leftFoot: 0, rightFoot: 0, leftGroundX: 0, leftGroundY: 0, rightGroundX: 0, rightGroundY: 0, leftArm: 0, rightArm: 0,
+    leftAppendage: 0, rightAppendage: 0, gazeX: 0, gazeY: 0, eyeOpen: 1,
     shadowScale: 1, shadowOpacity: 1, accentOpacity: 0, expression: 'mood',
   }
 }
@@ -75,7 +89,8 @@ function envelope(t: number, start: number, rise: number, hold: number, end: num
 }
 
 function expressionFor(action: MotionAction, mood: Mood): MotionFrame['expression'] {
-  if (mood === 'sick') return 'mood'
+  // The resting face keeps its sick art; alert only lets notice gaze reach it.
+  if (mood === 'sick') return action === 'notice' ? 'alert' : 'mood'
   switch (action) {
     case 'greet': case 'affection': case 'celebrate': case 'celebrate-big': case 'wave':
       return 'pleased'
@@ -84,6 +99,65 @@ function expressionFor(action: MotionAction, mood: Mood): MotionFrame['expressio
     default:
       return 'mood'
   }
+}
+
+/** A fixed world landing in stance, then a smooth transfer to the next landing. */
+function plantFeet(frame: MotionFrame, input: MotionInput, distance: number, stride: number, strength: number) {
+  const path = input.groundPath
+  if (!path?.length || !path.every((p, i) => Number.isFinite(p.distance) && Number.isFinite(p.x) && Number.isFinite(p.y) && (i === 0 || p.distance > path[i - 1].distance))) return
+  const at = (d: number) => {
+    if (d <= path[0].distance) return path[0]
+    for (let i = 1; i < path.length; i++) if (d <= path[i].distance) {
+      const a = path[i - 1], b = path[i], t = (d - a.distance) / (b.distance - a.distance)
+      return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }
+    }
+    return path[path.length - 1]
+  }
+  const position = at(distance)
+  const end = path[path.length - 1].distance
+  const landing = (side: 'left' | 'right') => {
+    if (distance >= end) return { ...at(end), lift: 0 }
+    const phase = side === 'left' ? 0.25 : 0.75
+    const first = distance < stride * phase
+    const last = first ? 0 : (Math.floor((distance - stride * phase) / stride) + phase) * stride
+    const next = Math.min(end, first ? stride * phase : last + stride)
+    // Center steady stance around its landing rather than trailing by half a
+    // stride. The initial rear foot releases earlier to leave uphill clearance.
+    const lead = stride / 4
+    // Shorten the final step itself. Never fade a planted foot's offset to zero.
+    const release = first ? side === 'left' ? 0 : Math.min(lead, next / 2) : last + (next - last) / 2
+    const t = next > release ? Math.max(0, Math.min(1, (distance - release) / (next - release))) : 1
+    const a = at(first ? 0 : Math.min(end, last + lead))
+    const b = at(Math.min(end, next + lead)), progress = ease(t)
+    return { x: a.x + (b.x - a.x) * progress, y: a.y + (b.y - a.y) * progress, lift: 6 * strength * Math.sin(t * Math.PI) ** 2 }
+  }
+  const left = landing('left'), right = landing('right')
+  frame.leftFoot = left.lift
+  frame.rightFoot = right.lift
+  const facing = input.facing === -1 ? -1 : 1
+  const offset = (value: number) => Number.isFinite(value) ? Math.max(-48, Math.min(48, value)) : 0
+  frame.leftGroundX = offset((left.x - position.x) * facing - frame.bodyX)
+  frame.leftGroundY = offset(left.y - position.y)
+  frame.rightGroundX = offset((right.x - position.x) * facing - frame.bodyX)
+  frame.rightGroundY = offset(right.y - position.y)
+}
+
+type GroundFeet = Pick<MotionFrame, 'leftFoot' | 'rightFoot' | 'leftGroundX' | 'leftGroundY' | 'rightGroundX' | 'rightGroundY'>
+
+/** Blend already mirrored/rebased ground contacts; lift any contact being replanted. */
+export function blendGroundFeet(from: MotionFrame, to: MotionFrame, progress: number): GroundFeet {
+  const t = Number.isFinite(progress) ? Math.max(0, Math.min(1, progress)) : 0
+  const result: GroundFeet = { leftFoot: 0, rightFoot: 0 }
+  for (const side of ['left', 'right'] as const) {
+    const x = `${side}GroundX` as const, y = `${side}GroundY` as const, lift = `${side}Foot` as const
+    const ax = from[x] ?? 0, ay = from[y] ?? 0, bx = to[x] ?? 0, by = to[y] ?? 0
+    result[x] = t === 0 ? ax : t === 1 ? bx : ax + (bx - ax) * t
+    result[y] = t === 0 ? ay : t === 1 ? by : ay + (by - ay) * t
+    const moving = Math.hypot(from.bodyX + ax - to.bodyX - bx, ay - by) > 0.000001
+    const release = moving && t > 0 && t < 1 ? 6 * Math.sin(t * Math.PI) ** 2 : 0
+    result[lift] = t === 0 ? from[lift] : t === 1 ? to[lift] : Math.min(24, from[lift] + (to[lift] - from[lift]) * t + release)
+  }
+  return result
 }
 
 /** Pure sampling: no clock, randomness, renderer state, or mutable shared frame. */
@@ -95,6 +169,7 @@ export function sampleMotion(input: MotionInput): MotionFrame {
   const elapsed = input.elapsedMs === Infinity ? Infinity : Number.isFinite(input.elapsedMs) ? Math.max(0, input.elapsedMs) : 0
   const looping = action === 'idle' || action === 'walk'
   if (!looping && (duration === 0 || elapsed === 0 || elapsed >= duration)) return frame
+  if (action === 'walk' && (duration === 0 || elapsed === 0 || elapsed >= duration)) return frame
 
   frame.expression = expressionFor(action, mood)
   if (reducedMotion) return frame
@@ -103,6 +178,13 @@ export function sampleMotion(input: MotionInput): MotionFrame {
   const energy = mood === 'sick' ? 0.22 : mood === 'scruffy' ? 0.65 : mood === 'meh' ? 0.8 : mood === 'content' ? 0.9 : 1
   const amplitude = personality.amplitude * energy
   const safeElapsed = Number.isFinite(elapsed) ? elapsed : 0
+  const blinkMs = input.blinkMs ?? safeElapsed
+  const blinkOffset = { bun: 0, mochi: 1700, sprout: 3300 }[species]
+  const blinkPhase = ((Number.isFinite(blinkMs) ? Math.max(0, blinkMs) : 0) % 6000 + blinkOffset) % 6000
+  // A 140ms blink, with smooth closure/reopening and no second clock in the SVG.
+  // Finite actions ease to neutral at their endpoints, even during a lifetime blink.
+  const blinkStrength = looping ? 1 : envelope(elapsed / duration, 0, 0.1, 0.9, 1)
+  frame.eyeOpen = 1 - 0.9 * envelope(blinkPhase, 3000, 3050, 3090, 3140) * blinkStrength
   if (action === 'idle') {
     const breath = (1 - Math.cos((safeElapsed % ACTION_MS.idle) / ACTION_MS.idle * Math.PI * 2)) / 2
     frame.scaleX -= 0.004 * breath * amplitude
@@ -130,6 +212,7 @@ export function sampleMotion(input: MotionInput): MotionFrame {
     const follow = Math.sin(phase - personality.lag) * personality.follow * strength
     frame.leftAppendage = follow
     frame.rightAppendage = follow * 0.8
+    plantFeet(frame, input, distance, personality.stride, strength)
   } else {
     const t = elapsed / duration
     const anticipation = envelope(t, 0, 0.1, 0.18, 0.3)
