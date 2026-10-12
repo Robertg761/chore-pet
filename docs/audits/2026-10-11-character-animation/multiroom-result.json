@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "steps": [
+    "Sample home exposes a focused room in the shared scene",
+    "Room creation can cancel and creates a separate focused bedroom",
+    "Connected floor edges meet and a doorway sends one moving pet to its destination",
+    "Rapid room reselection leaves one pet in the final requested room",
+    "Reduced motion doorway navigation arrives without a lingering traveler",
+    "Placing and moving a bed changes only the focused bedroom",
+    "Build keeps doorway approaches clear and doorway clicks cancel pending placement",
+    "Keyboard room switching cancels pending placement and clears selection",
+    "Zoom keeps keyboard focus and supports dragging and faded floor clicks",
+    "Chore editor offers objects from every room",
+    "Wall and floor edits affect only the focused room",
+    "Build navigation, focus, room objects, and styles survive reload",
+    "Share preview uses the selected bedroom objects and style",
+    "Duplicate room names are numbered, all room types fit, and the six-room limit is respected",
+    "Desktop and phone layouts keep rooms visible without page overflow",
+    "Existing doorway obstruction keeps the pet in place until the furniture is moved"
+  ],
+  "errors": []
+}

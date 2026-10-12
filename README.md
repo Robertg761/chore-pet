@@ -61,6 +61,10 @@ The anon key is public by design: row-level security in the migrations protects 
 - `/?art` opens the art gallery (every pet, pose, item, object and mess state, plus a sound audition row).
 - `/?dev` opens the time panel, which skips days to show mess, sickness and recovery. In a dev build, a long-press on the top-left corner opens it too.
 
+In `/?art`, the **Deterministic motion review** panel selects species, mood, action, body color, eye/cheek styles, and wardrobe items. Play at normal or slower speed, pause, or scrub to an exact millisecond. Restart pauses at zero; key-frame buttons pause at the displayed time. Previews show 200px, 60px, and 25px sizes. Optional overlays mark the ground line and pivot. Furniture contact targets are unavailable in this standalone preview.
+
+**Force reduced motion in this panel** is a local override. The system preference always applies, including changes while the panel is open. These controls do not change the saved pet. Check motion and wardrobe attachment in playback and actual rooms; see `docs/ART.md` for the motion and anchor contracts.
+
 ## Scripts
 
 | Command | What it does |
@@ -76,6 +80,10 @@ The anon key is public by design: row-level security in the migrations protects 
 | `npm run cover` | Render the cover and social card into `docs/media/` (build first; see `scripts/cover.mjs`) |
 | `npm run demo:story` | Record the story demo video (`FORMAT=landscape` for 16:9; see `scripts/record-story.mjs`) |
 | `npm run showcase` | Render the earlier screenshot showcase into `demo/showcase/` (see `scripts/showcase.mjs`) |
+
+After building, `CHROME=/usr/bin/chromium node --test scripts/browser/pet-motion.test.mjs` runs the focused production motion checks. Use your browser binary's path if different. These tests use isolated offline contexts with motion explicitly enabled, covering keyboard activation, rapid taps, interruption continuity, furniture occupancy, and live reduced-motion changes. Existing multiroom travel checks remain a separate command above.
+
+To reproduce the character review sheets and raster bounds checks, run `node scripts/render-pet-motion.mjs /tmp/pet-motion-review --bounds --ground-bounds`. Add `--video` to create normal and quarter-speed MP4 sequences with the installed `ffmpeg`. The captures use the production SVG renderer and sampler. Bounds violations appear in the manifest and make the command exit unsuccessfully. Review coverage, fixes, representative captures, and remaining evidence limits are recorded in [the animation audit](docs/audits/2026-10-11-character-animation/REVIEW.md).
 
 ## Docs
 

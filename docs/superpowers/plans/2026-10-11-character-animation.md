@@ -40,11 +40,11 @@ Tasks 1 and 3 can be developed independently. Task 2 consumes Task 1. Task 4 con
 
 **Interfaces:** Export `MotionAction = 'idle' | 'walk' | 'turn' | 'greet' | 'affection' | 'celebrate' | 'celebrate-big' | 'notice' | 'inspect' | 'wave' | 'reach' | 'rest' | 'dust' | 'smell' | 'concern'`. Export `MotionInput { species: Species; mood: Mood; action: MotionAction; elapsedMs: number; distance: number; durationMs: number; reducedMotion: boolean }`. Export `MotionFrame` with numeric `bodyX`, `bodyY`, `scaleX`, `scaleY`, `lean`, `leftFoot`, `rightFoot`, `leftArm`, `rightArm`, `leftAppendage`, `rightAppendage`, `gazeX`, `gazeY`, `shadowScale`, `shadowOpacity`, `accentOpacity`, and expression `'mood' | 'pleased' | 'alert'`. Export `sampleMotion(input: MotionInput): MotionFrame` and `ACTION_MS: Record<MotionAction, number>`.
 
-- [ ] Write tests for finite frame values, identical input producing identical output, neutral non-looping endpoints, nonnegative shadow opacity, opposite gait feet, and distance-driven gait phase. Assert greeting 1200ms, affection 1600ms, celebration 1800ms, and big celebration 2200ms.
-- [ ] Run `npm test -- src/character/motion.test.ts`; confirm the missing module fails before implementation.
-- [ ] Implement smooth piecewise anticipation/action/recovery envelopes. Ground body transforms at `(100,181)`. Set species-specific amplitude and follow-through constants. Clamp negative time and completed finite actions. Reduced motion returns no displacement or accent animation while preserving a useful still expression.
-- [ ] Run the new tests; require PASS. Sample every action/species/mood at start, phase boundaries, end, and 16ms intervals. Assert body lift no greater than 24 SVG units, positive scales in `[0.85,1.15]`, and no NaN even for zero duration or nonfinite elapsed input.
-- [ ] Commit the sampler and tests as `feat: add deterministic pet motion sampling`.
+- [x] Write tests for finite frame values, identical input producing identical output, neutral non-looping endpoints, nonnegative shadow opacity, opposite gait feet, and distance-driven gait phase. Assert greeting 1200ms, affection 1600ms, celebration 1800ms, and big celebration 2200ms.
+- [x] Run `npm test -- src/character/motion.test.ts`; confirm the missing module fails before implementation.
+- [x] Implement smooth piecewise anticipation/action/recovery envelopes. Ground body transforms at `(100,181)`. Set species-specific amplitude and follow-through constants. Clamp negative time and completed finite actions. Reduced motion returns no displacement or accent animation while preserving a useful still expression.
+- [x] Run the new tests; require PASS. Sample every action/species/mood at start, phase boundaries, end, and 16ms intervals. Assert body lift no greater than 24 SVG units, positive scales in `[0.85,1.15]`, and no NaN even for zero duration or nonfinite elapsed input.
+- [x] Commit the sampler and tests as `feat: add deterministic pet motion sampling`.
 
 ## Task 2: Articulated character and wardrobe composition
 
@@ -52,11 +52,11 @@ Tasks 1 and 3 can be developed independently. Task 2 consumes Task 1. Task 4 con
 
 **Interfaces:** Export `AnimatedCharacterArt(props: Omit<CharacterProps, 'size' | 'title'> & { frame: MotionFrame }): ReactNode`. Export `articulatedPose(species: Species, frame: MotionFrame): Pose` from `animatedBody.tsx`. Extend shared face rendering with optional gaze and expression inputs without changing existing default callers. Retain `CharacterArt` and `Character` signatures.
 
-- [ ] Write rendering tests using the existing React test helpers: all species render with every motion expression; SVG clip IDs stay unique; a full equipped outfit has all expected slot layers; sick/sleeping art retains its existing hidden-slot rules. Confirm failures before implementation.
-- [ ] Implement body/limb geometry using existing silhouette constants and shared `Body`, `Face`, `Cheeks`, `Nub`, and mood tint helpers. Keep shadow outside body transforms. Animate Bun ears at their bases, Mochi knot at its pinch, and Sprout stem/leaves at their existing pivots.
-- [ ] Share wardrobe layer composition instead of duplicating slot order. Derive anchors and silhouette from the same pose transform. Preserve static rendering for gallery, picker, loading pet, and share serialization. Disable existing breathing/blink CSS on sampled animated art to avoid competing clocks.
-- [ ] Run `npm test -- src/character` and `npm run build`; require PASS. Inspect each species at frame extrema with hat, face, neck, outfit, and back slots together; record defects for Task 7.
-- [ ] Commit as `feat: articulate pet bodies and keep wardrobe attached`.
+- [x] Write rendering tests using the existing React test helpers: all species render with every motion expression; SVG clip IDs stay unique; a full equipped outfit has all expected slot layers; sick/sleeping art retains its existing hidden-slot rules. Confirm failures before implementation.
+- [x] Implement body/limb geometry using existing silhouette constants and shared `Body`, `Face`, `Cheeks`, `Nub`, and mood tint helpers. Keep shadow outside body transforms. Animate Bun ears at their bases, Mochi knot at its pinch, and Sprout stem/leaves at their existing pivots.
+- [x] Share wardrobe layer composition instead of duplicating slot order. Derive anchors and silhouette from the same pose transform. Preserve static rendering for gallery, picker, loading pet, and share serialization. Disable existing breathing/blink CSS on sampled animated art to avoid competing clocks.
+- [x] Run `npm test -- src/character` and `npm run build`; require PASS. Inspect each species at frame extrema with hat, face, neck, outfit, and back slots together; record defects for Task 7.
+- [x] Commit as `feat: articulate pet bodies and keep wardrobe attached`.
 
 ## Task 3: Rotation-aware environmental targets
 
@@ -64,10 +64,10 @@ Tasks 1 and 3 can be developed independently. Task 2 consumes Task 1. Task 4 con
 
 **Interfaces:** Export `InteractionTarget { objectId: string; signature: string; tile: Tile; gaze: Tile; action: MotionAction; contact: boolean }`. Export `interactionTargets(objects: readonly PlacedObject[], free: (tile: Tile) => boolean, stages: Readonly<Record<string, MessStage>>): InteractionTarget[]`. Signature includes catalog ID, position, rotation, and action-relevant stage. Export `chooseInteraction(from: Tile, targets: readonly InteractionTarget[], free: (tile: Tile) => boolean, choice: number): { target: InteractionTarget; path: Tile[] } | null`.
 
-- [ ] Write tests for plant, tank, decor, rest, dusty, smelly, wilted, and unknown object profiles; test both rendered rotations, blocked fronts, enclosed targets, already-adjacent pets, and removed objects. Assert all returned standing tiles are in bounds and free, and every route step is free. Confirm missing implementation fails.
-- [ ] Implement profiles using actual catalog IDs. Front preference follows rotation parity used by the room renderer. Include visual gaze targets; permit contact only for profiles with explicit reachable contact geometry. Otherwise use a contact-free gesture. Unknown objects get inspect. Choose deterministically from reachable candidates; return null when none exist.
-- [ ] Run `npm test -- src/pet/interactions.test.ts src/pet/behaviour.test.ts`; require PASS. Test stage/rotation changes alter signatures and invalid IDs are ignored safely.
-- [ ] Commit as `feat: select safe environmental interaction targets`.
+- [x] Write tests for plant, tank, decor, rest, dusty, smelly, wilted, and unknown object profiles; test both rendered rotations, blocked fronts, enclosed targets, already-adjacent pets, and removed objects. Assert all returned standing tiles are in bounds and free, and every route step is free. Confirm missing implementation fails.
+- [x] Implement profiles using actual catalog IDs. Front preference follows rotation parity used by the room renderer. Include visual gaze targets; permit contact only for profiles with explicit reachable contact geometry. Otherwise use a contact-free gesture. Unknown objects get inspect. Choose deterministically from reachable candidates; return null when none exist.
+- [x] Run `npm test -- src/pet/interactions.test.ts src/pet/behaviour.test.ts`; require PASS. Test stage/rotation changes alter signatures and invalid IDs are ignored safely.
+- [x] Commit as `feat: select safe environmental interaction targets`.
 
 ## Task 4: Interruptible activity sequencing
 
@@ -75,11 +75,11 @@ Tasks 1 and 3 can be developed independently. Task 2 consumes Task 1. Task 4 con
 
 **Interfaces:** Preserve existing exported helpers where possible. Extend `World` with `interactions: readonly InteractionTarget[]`. Export `react(state: PetState, now: number, kind: 'tap' | 'celebrate' | 'celebrate-big'): PetState`; keep `tap` as a compatibility wrapper. Add reaction start time, pending tap flag, variant count, and saved fractional position to state as needed. Export `motionFor(state: PetState, now: number, species: Species, mood: Mood, reducedMotion: boolean): MotionInput` from `activityMotion.ts`.
 
-- [ ] Write failing tests for tap halfway through a tile preserving `positionAt` exactly, one pending response under 20 rapid taps, alternating greeting/affection, completion priority, sick/sleep notice, target rotation/removal invalidation, blocked next step, and mood/away interruption.
-- [ ] Implement explicit approach/orient/action/settle timing. Use sampler durations. Keep random choice injection in `step`; never randomize rendering. Revalidate current target signatures and upcoming route tiles. Preserve fractional interruption origin and connect it safely to the next valid grid route; do not round the drawn position abruptly.
-- [ ] Implement `motionFor` mapping activity phase to action/time/distance. Increase activity beat when a visible phase starts. End finite actions in correct mood and retain existing dialogue selection semantics. Ambient interactions have an idle interval between them.
-- [ ] Run `npm test -- src/pet/behaviour.test.ts src/pet/activityMotion.test.ts src/pet/interactions.test.ts`; require PASS. Update legacy tests only where intended behavior changes; retain pathfinding and depth-sort assertions.
-- [ ] Commit as `feat: sequence pet actions with continuous interruptions`.
+- [x] Write failing tests for tap halfway through a tile preserving `positionAt` exactly, one pending response under 20 rapid taps, alternating greeting/affection, completion priority, sick/sleep notice, target rotation/removal invalidation, blocked next step, and mood/away interruption.
+- [x] Implement explicit approach/orient/action/settle timing. Use sampler durations. Keep random choice injection in `step`; never randomize rendering. Revalidate current target signatures and upcoming route tiles. Preserve fractional interruption origin and connect it safely to the next valid grid route; do not round the drawn position abruptly.
+- [x] Implement `motionFor` mapping activity phase to action/time/distance. Increase activity beat when a visible phase starts. End finite actions in correct mood and retain existing dialogue selection semantics. Ambient interactions have an idle interval between them.
+- [x] Run `npm test -- src/pet/behaviour.test.ts src/pet/activityMotion.test.ts src/pet/interactions.test.ts`; require PASS. Update legacy tests only where intended behavior changes; retain pathfinding and depth-sort assertions.
+- [x] Commit as `feat: sequence pet actions with continuous interruptions`.
 
 ## Task 5: Shared browser clock and room integration
 
@@ -87,11 +87,11 @@ Tasks 1 and 3 can be developed independently. Task 2 consumes Task 1. Task 4 con
 
 **Interfaces:** Export `usePetMotion(tick: (now: number, reducedMotion: boolean) => void, active: boolean): { reducedMotion: boolean }`. Clock uses a latest-callback ref, document visibility, and a live media-query subscription. Both room renderers consume `AnimatedCharacterArt` and Task 4 motion inputs; travel maps its accumulated screen distance to equivalent tile distance for gait sampling.
 
-- [ ] Write hook tests for one outstanding frame, latest callbacks, cleanup, hidden-tab suspension, and changing reduced motion while active. Add integration tests for chore completion replacing ambient activity and a reaction returning to mood art. Confirm failures.
-- [ ] Integrate target profiles into the world ref and shared animation sampling into `LivingRoom`. Remove keyed hop wrappers and old CSS motion. Keep world-position updates and depth sorting; avoid React updates for unchanged semantic activity. Preserve accessible pet activation and dialogue announcements.
-- [ ] Integrate the same gait into `HomeTraveler`; retain route retargeting callbacks, waypoint reporting, immediate reduced-motion arrival, and existing maximum route duration. Departure and settle apply to the journey endpoints rather than every tile.
-- [ ] Run `npm test -- src/pet src/room` and `npm run test:multiroom`; require PASS. Check retargeting mid-travel retains the rendered position and that reduced-motion changes finish cleanly.
-- [ ] Commit as `feat: integrate shared pet animation across the home`.
+- [x] Write hook tests for one outstanding frame, latest callbacks, cleanup, hidden-tab suspension, and changing reduced motion while active. Add integration tests for chore completion replacing ambient activity and a reaction returning to mood art. Confirm failures.
+- [x] Integrate target profiles into the world ref and shared animation sampling into `LivingRoom`. Remove keyed hop wrappers and old CSS motion. Keep world-position updates and depth sorting; avoid React updates for unchanged semantic activity. Preserve accessible pet activation and dialogue announcements.
+- [x] Integrate the same gait into `HomeTraveler`; retain route retargeting callbacks, waypoint reporting, immediate reduced-motion arrival, and existing maximum route duration. Departure and settle apply to the journey endpoints rather than every tile.
+- [x] Run `npm test -- src/pet src/room` and `npm run test:multiroom`; require PASS. Check retargeting mid-travel retains the rendered position and that reduced-motion changes finish cleanly.
+- [x] Commit as `feat: integrate shared pet animation across the home`.
 
 ## Task 6: Deterministic visual review panel
 
@@ -99,22 +99,24 @@ Tasks 1 and 3 can be developed independently. Task 2 consumes Task 1. Task 4 con
 
 **Interfaces:** Export default `MotionReview(): ReactNode`. Use production `sampleMotion` and `AnimatedCharacterArt`; do not create alternate animation art. Provide labeled species/mood/action/color controls, wardrobe item selection per slot, play/pause/restart, time scrubber, and ground/anchor/contact overlays.
 
-- [ ] Write tests that pausing and scrubbing selects exact sampler time, restart resets time, action changes clamp the scrubber, and controls have accessible labels. Confirm failures.
-- [ ] Implement close-up and 60px previews plus key-frame comparisons for anticipation, action, landing/contact, and recovery. Show action duration. Keep overlay markers separate from character art and disable them in normal app scenes.
-- [ ] Run `npm test -- src/dev/MotionReview.test.tsx` and `npm run build`; require PASS. Manually check keyboard operation and that running the panel does not alter persisted pet data.
-- [ ] Commit as `dev: add deterministic pet motion review controls`.
+- [x] Write tests that pausing and scrubbing selects exact sampler time, restart resets time, action changes clamp the scrubber, and controls have accessible labels. Confirm failures.
+- [x] Implement close-up and 60px previews plus key-frame comparisons for anticipation, action, landing/contact, and recovery. Show action duration. Keep overlay markers separate from character art and disable them in normal app scenes.
+- [x] Run `npm test -- src/dev/MotionReview.test.tsx` and `npm run build`; require PASS. Manually check keyboard operation and that running the panel does not alter persisted pet data.
+- [x] Commit as `dev: add deterministic pet motion review controls`.
 
 ## Task 7: Visual refinement and regression evidence
 
 **Files:** Create `scripts/browser/pet-motion.test.mjs`; save review notes to `docs/audits/2026-10-11-character-animation/REVIEW.md` and representative captures beside it. Modify production files only to resolve documented defects; update `docs/ART.md` with final motion/anchor rules and `README.md` with review-panel instructions.
 
-- [ ] Add production browser checks for keyboard pet activation, repeated taps with bounded effect nodes, interruption continuity, no collisions during ambient actions, dynamic reduced motion, and existing multiroom travel. Use isolated offline contexts and explicitly enable motion for motion tests; the current browser helper defaults to reduced motion.
-- [ ] Run `npm test`, `npm run lint`, `npm run build`, `npm run test:browser`, and `npm run test:multiroom`. Record actual results, commands, browser version, and any environmental limitations.
+- [x] Add production browser checks for keyboard pet activation, repeated taps with bounded effect nodes, interruption continuity, no collisions during ambient actions, dynamic reduced motion, and existing multiroom travel. Use isolated offline contexts and explicitly enable motion for motion tests; the current browser helper defaults to reduced motion.
+- [x] Run `npm test`, `npm run lint`, `npm run build`, `npm run test:browser`, and `npm run test:multiroom`. Record actual results, commands, browser version, and any environmental limitations.
 - [ ] Review all species/actions/moods at normal and slow playback. Sweep default colors plus yellow/pink/sky/white/dark. Review every wardrobe item at motion extrema, including combined slots. Inspect mobile room size, 60px, and enlarged previews. Capture representative sequences and report measured continuity/contact defects rather than general impressions.
-- [ ] Review actual rooms with both object orientations and all action families: plants, fish tank, decor, restful pause, dust, smell, wilt, and fallback. Exercise blocked/moved/removed targets, tap during each phase, celebrations during interactions, travel retargeting, hiding the page, and preference changes during landing.
+- [x] Review actual rooms with both object orientations and all action families: plants, fish tank, decor, restful pause, dust, smell, wilt, and fallback. Exercise blocked/moved/removed targets, tap during each phase, celebrations during interactions, travel retargeting, hiding the page, and preference changes during landing.
 - [ ] Fix every grounding, clipping, timing, interruption, accessibility, or routing defect found. Add a regression test when the defect is programmatically observable; repeat the affected visual sequence and appropriate automated checks.
 - [ ] Obtain independent final review against the approved spec. Resolve actionable findings and rerun affected checks. Mark checked combinations and evidence paths in `REVIEW.md`; explicitly disclose untested environments.
 - [ ] Commit as `test: verify and refine character interaction animations`. Deliver final change summary, review instructions, test results, and representative animation captures. Do not claim perfect or exhaustive quality beyond the recorded evidence.
+
+Playback acceptance remains open: the normal/slow clips and frame matrix were generated and sampled as documented in the audit, but interactive browser reconnect was rejected by tool policy. Human temporal playback was not verified. Automated and sampled-art checks do not replace it.
 
 ## Plan self-review
 

@@ -1,0 +1,72 @@
+{
+  "environment-normal.mp4": {
+    "durationSeconds": 10.433333,
+    "width": 720,
+    "height": 260,
+    "avg_frame_rate": "30/1",
+    "nb_frames": "313"
+  },
+  "environment-slow.mp4": {
+    "durationSeconds": 41.733333,
+    "width": 720,
+    "height": 260,
+    "avg_frame_rate": "15/2",
+    "nb_frames": "313"
+  },
+  "player-normal.mp4": {
+    "durationSeconds": 6.033333,
+    "width": 720,
+    "height": 260,
+    "avg_frame_rate": "30/1",
+    "nb_frames": "181"
+  },
+  "player-slow.mp4": {
+    "durationSeconds": 24.133333,
+    "width": 720,
+    "height": 260,
+    "avg_frame_rate": "15/2",
+    "nb_frames": "181"
+  },
+  "rooms-normal.mp4": {
+    "durationSeconds": 7.0,
+    "width": 1560,
+    "height": 700,
+    "avg_frame_rate": "20/1",
+    "nb_frames": "140"
+  },
+  "rooms-slow.mp4": {
+    "durationSeconds": 28.0,
+    "width": 1560,
+    "height": 700,
+    "avg_frame_rate": "5/1",
+    "nb_frames": "140"
+  },
+  "travel-normal.mp4": {
+    "durationSeconds": 0.916667,
+    "width": 1980,
+    "height": 340,
+    "avg_frame_rate": "60/1",
+    "nb_frames": "55"
+  },
+  "travel-slow.mp4": {
+    "durationSeconds": 3.666667,
+    "width": 1980,
+    "height": 340,
+    "avg_frame_rate": "15/1",
+    "nb_frames": "55"
+  },
+  "walk-normal.mp4": {
+    "durationSeconds": 1.283333,
+    "width": 1320,
+    "height": 340,
+    "avg_frame_rate": "60/1",
+    "nb_frames": "77"
+  },
+  "walk-slow.mp4": {
+    "durationSeconds": 5.133333,
+    "width": 1320,
+    "height": 340,
+    "avg_frame_rate": "15/1",
+    "nb_frames": "77"
+  }
+}

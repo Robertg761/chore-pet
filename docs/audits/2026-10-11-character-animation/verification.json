@@ -1,0 +1,41 @@
+{
+  "baseline": {
+    "unitFiles": 75,
+    "unitTests": 1564
+  },
+  "final": {
+    "unitFiles": 82,
+    "unitTests": 1848,
+    "unitExit": 0,
+    "lintExit": 0,
+    "buildExit": 0,
+    "buildWarning": "Main application chunk exceeds the 500kB advisory threshold.",
+    "browserTests": 45,
+    "browserExit": 0,
+    "browserVersion": "Chromium 152.0.7977.82",
+    "multiroomChecks": 16,
+    "multiroomExit": 0
+  },
+  "rasterBounds": {
+    "actionWardrobeSamples": 25740,
+    "groundPathSamples": 16920,
+    "outside": 0,
+    "exit": 0
+  },
+  "captures": {
+    "sheets": 42,
+    "sampledPoses": 1407,
+    "videos": 10,
+    "exit": 0,
+    "sampledArtPng": 19,
+    "browserScreenshots": 2
+  },
+  "limitations": [
+    "Human temporal playback unverified after tool-policy browser reconnect rejection.",
+    "No mobile Safari, Firefox, real touch hardware, or low-end device performance check."
+  ],
+  "priorNonpassingRuns": [
+    "One raster-test timeout under concurrent capture/build; font scans removed and full suite replay passed.",
+    "Final multiroom first attempt could not connect to the stopped dev server; restarted offline server and all16 checks passed."
+  ]
+}

@@ -125,6 +125,23 @@ Items attach to named anchors so one hat works in every pose. Draw order, back t
 
 Every pose defines all six anchors (`src/character/slots.ts`). Items are drawn centred on (0,0) and transformed onto the anchor. Anchors may carry a `scale` so one item fits each species' head. A new item must look right on every existing pose of every species before it ships.
 
+### Sampled character motion
+
+`src/character/motion.ts` samples deterministic frames. `AnimatedCharacterArt` composes those frames with the shared character layers; static `Character` and share-image callers keep their existing poses. Mochi's knot, Bun's ears, and Sprout's stem and leaves rotate around explicit attachment pivots.
+
+- Apply torso scale and lean around `(100,181)`. Keep the shadow in ground coordinates outside the torso transform. Walking stance feet compensate for the complete torso transform and world travel. During an unsupported jump with no explicit foot lifts or ground offsets, both feet follow the body's lift.
+- Walking callers supply the full projected `groundPath`, including passed corners, in character SVG units. Keep its accumulated tile distance separate from projection and scale. Ground offsets hold stance landings against world translation. Mirror paired feet once, rebase frozen contacts when the container moves, and use `blendGroundFeet` to lift contacts being replanted during an interruption.
+- Body outline, outfit clip, and wardrobe anchors share the same torso geometry and transform. Keep the slot order above, including front backpack straps. Preserve sick-bed and sleeping art and their hidden-slot rules during gentle notices.
+- Walking phase follows accumulated route distance across tile boundaries. Departure fades in over 120ms and arrival fades out over 180ms across the whole journey. Do not restart the gait on each tile. Body lift stays within 24 SVG units; sampled scale stays within `[0.85,1.15]`.
+- Greeting, affection, celebration, and big celebration last 1200, 1600, 1800, and 2200ms. Finite actions recover to their mood pose. Interruptions preserve the visible fractional world position and blend from the outgoing sampled pose. Rapid taps allow one pending response and reuse the same decorative accent nodes.
+- Sampled art owns breathing, blinks, limb motion, and accents. Disable independent CSS breathing and blinking inside it. Reduced motion removes sampled displacement, gait, breathing, secondary sway, blinks, and animated accents while retaining still mood/reaction expressions. System preference changes apply during the session.
+- Environmental profiles live in `src/pet/interactions.ts`. They choose reachable adjacent standing tiles and gaze points from the rotated object footprint. Current profiles use contact-free gestures; no paw-to-furniture contact geometry is verified. Do not depict chores being completed or sitting on furniture without dedicated anchors and occlusion rules.
+- Dark body colors use small cream backdrops behind the shared eyes, brows, and mouth when facial ink would lose contrast. Keep the selected body color and existing facial paths; light colors retain their original treatment. Check static and sampled open, blinking, pleased, sleeping, and tired expressions with glasses.
+
 ## Reviewing art
 
 Open `/?art` in the dev server for the art gallery (`src/dev/ArtGallery.tsx`): every species in every mood, items on every pose, the 60 px check, body colours, and every object in all three stages with its bounds drawn. Add new poses, items and objects to it as they land.
+
+The deterministic motion panel uses the production sampler and renderer. Compare 200px, 60px, and 25px previews, play at 1×/0.5×/0.25×, and scrub exact milliseconds or choose a key frame. Ground line and ground-anchor overlays are optional. Furniture contact overlay is unavailable because the standalone panel supplies no contact geometry. Review settings stay local to the panel; the system reduced-motion preference remains authoritative over its local override.
+
+Use playback and real-room checks to judge grounding, clipping, interrupted motion, and gaze. Numeric continuity and SVG attachment tests support that review but do not establish visual quality by themselves.

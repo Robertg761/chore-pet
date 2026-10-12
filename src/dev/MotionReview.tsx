@@ -142,7 +142,7 @@ export default function MotionReview() {
         <label><input type="checkbox" checked={ground} onChange={(event) => setGround(event.target.checked)} />Ground line</label>
         <label><input type="checkbox" checked={anchor} onChange={(event) => setAnchor(event.target.checked)} />Ground anchor</label>
         <label><input type="checkbox" disabled checked={false} readOnly />Contact target, unavailable</label>
-        <label><input type="checkbox" checked={reduce} onChange={(event) => setReduce(event.target.checked)} />Reduced motion</label>
+        <label><input type="checkbox" checked={reduce} onChange={(event) => setReduce(event.target.checked)} />Force reduced motion in this panel</label>
       </fieldset>
       <p id={notesId}>Ground line and pivot anchor use sampler coordinates y=181 and (100,181). No furniture contact target is supplied by this standalone preview. Overlays appear only on the close-up. {systemReducedMotion && 'System reduced motion is active.'}</p>
       <div className="motion-review-previews">

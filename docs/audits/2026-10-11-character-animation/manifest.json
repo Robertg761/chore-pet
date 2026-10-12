@@ -1,0 +1,378 @@
+{
+  "renderer": "AnimatedCharacterArt",
+  "sampler": "sampleMotion",
+  "sheets": [
+    {
+      "name": "mochi-happy",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "mochi-content",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "mochi-meh",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "mochi-scruffy",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "mochi-sick",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "mochi-colors",
+      "width": 3150,
+      "height": 1524,
+      "samples": 90
+    },
+    {
+      "name": "mochi-wardrobe-1",
+      "width": 1260,
+      "height": 1524,
+      "samples": 36
+    },
+    {
+      "name": "mochi-wardrobe-2",
+      "width": 1260,
+      "height": 1524,
+      "samples": 36
+    },
+    {
+      "name": "mochi-wardrobe-3",
+      "width": 1260,
+      "height": 1270,
+      "samples": 30
+    },
+    {
+      "name": "mochi-small-1",
+      "width": 1050,
+      "height": 508,
+      "samples": 10
+    },
+    {
+      "name": "mochi-small-2",
+      "width": 1050,
+      "height": 508,
+      "samples": 10
+    },
+    {
+      "name": "mochi-small-3",
+      "width": 1050,
+      "height": 508,
+      "samples": 10
+    },
+    {
+      "name": "mochi-sleep-notice",
+      "width": 420,
+      "height": 762,
+      "samples": 6
+    },
+    {
+      "name": "mochi-rooms",
+      "width": 1560,
+      "height": 1400,
+      "samples": 16
+    },
+    {
+      "name": "bun-happy",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "bun-content",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "bun-meh",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "bun-scruffy",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "bun-sick",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "bun-colors",
+      "width": 3150,
+      "height": 1524,
+      "samples": 90
+    },
+    {
+      "name": "bun-wardrobe-1",
+      "width": 1260,
+      "height": 1524,
+      "samples": 36
+    },
+    {
+      "name": "bun-wardrobe-2",
+      "width": 1260,
+      "height": 1524,
+      "samples": 36
+    },
+    {
+      "name": "bun-wardrobe-3",
+      "width": 1260,
+      "height": 1270,
+      "samples": 30
+    },
+    {
+      "name": "bun-small-1",
+      "width": 1050,
+      "height": 508,
+      "samples": 10
+    },
+    {
+      "name": "bun-small-2",
+      "width": 1050,
+      "height": 508,
+      "samples": 10
+    },
+    {
+      "name": "bun-small-3",
+      "width": 1050,
+      "height": 508,
+      "samples": 10
+    },
+    {
+      "name": "bun-sleep-notice",
+      "width": 420,
+      "height": 762,
+      "samples": 6
+    },
+    {
+      "name": "bun-rooms",
+      "width": 1560,
+      "height": 1400,
+      "samples": 16
+    },
+    {
+      "name": "sprout-happy",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "sprout-content",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "sprout-meh",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "sprout-scruffy",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "sprout-sick",
+      "width": 3150,
+      "height": 762,
+      "samples": 45
+    },
+    {
+      "name": "sprout-colors",
+      "width": 3150,
+      "height": 1524,
+      "samples": 90
+    },
+    {
+      "name": "sprout-wardrobe-1",
+      "width": 1260,
+      "height": 1524,
+      "samples": 36
+    },
+    {
+      "name": "sprout-wardrobe-2",
+      "width": 1260,
+      "height": 1524,
+      "samples": 36
+    },
+    {
+      "name": "sprout-wardrobe-3",
+      "width": 1260,
+      "height": 1270,
+      "samples": 30
+    },
+    {
+      "name": "sprout-small-1",
+      "width": 1050,
+      "height": 508,
+      "samples": 10
+    },
+    {
+      "name": "sprout-small-2",
+      "width": 1050,
+      "height": 508,
+      "samples": 10
+    },
+    {
+      "name": "sprout-small-3",
+      "width": 1050,
+      "height": 508,
+      "samples": 10
+    },
+    {
+      "name": "sprout-sleep-notice",
+      "width": 420,
+      "height": 762,
+      "samples": 6
+    },
+    {
+      "name": "sprout-rooms",
+      "width": 1560,
+      "height": 1400,
+      "samples": 16
+    }
+  ],
+  "sampleCount": 1407,
+  "sourceSha256": {
+    "src/character/motion.ts": "5ccdcc29b4aa5b22223be52593c82e93bb3cab751a5ebf7be54fb97aff96ec44",
+    "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+    "src/character/species/animatedBody.tsx": "e338788eeb57e5c7f651d198f8ecfd85925ce33c9e0cd7528f45575cf8b79212",
+    "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+    "src/character/parts.tsx": "de2ccd72ba68d5ededd87f89d99e7d4275608b138c6ae04fadaac2dd9ccc399d",
+    "src/pet/behaviour.ts": "6ba10608540b1db0f6d9a227b102d366e4c609133973bb1302beaeb65a508d8f",
+    "src/pet/activityMotion.ts": "6401e236e3a3d71d6cba8d30f66986f3e40a0ba05f35c26b057d59139518452a",
+    "scripts/render-pet-motion.mjs": "382b61c8500820d114d457b0a26d670a3357720349efd77fc13c824502aadcda"
+  },
+  "videos": [
+    "player-normal.mp4",
+    "player-slow.mp4",
+    "environment-normal.mp4",
+    "environment-slow.mp4",
+    "walk-normal.mp4",
+    "walk-slow.mp4",
+    "travel-normal.mp4",
+    "travel-slow.mp4",
+    "rooms-normal.mp4",
+    "rooms-slow.mp4"
+  ],
+  "bounds": {
+    "samples": 25740,
+    "alphaThreshold": 5,
+    "artBox": [
+      0,
+      0,
+      200,
+      200
+    ],
+    "outside": []
+  },
+  "groundBounds": {
+    "samples": 16920,
+    "alphaThreshold": 5,
+    "artBox": [
+      0,
+      0,
+      200,
+      200
+    ],
+    "routes": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          -3,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          3
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          -3
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          -2,
+          -1
+        ]
+      ]
+    ],
+    "outside": []
+  },
+  "boundsSourceSha256": {
+    "src/character/motion.ts": "5ccdcc29b4aa5b22223be52593c82e93bb3cab751a5ebf7be54fb97aff96ec44",
+    "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+    "src/character/species/animatedBody.tsx": "e338788eeb57e5c7f651d198f8ecfd85925ce33c9e0cd7528f45575cf8b79212"
+  }
+}

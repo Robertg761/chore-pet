@@ -10,8 +10,17 @@ import MotionReview from './MotionReview'
 let ui: ReturnType<typeof render>
 let frames: Map<number, FrameRequestCallback>
 let nextFrame: number
+let media: MediaQueryList
 
 beforeEach(() => {
+  media = Object.assign(new EventTarget(), {
+    matches: false,
+    media: '(prefers-reduced-motion: reduce)',
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+  }) as MediaQueryList
+  vi.stubGlobal('matchMedia', () => media)
   frames = new Map()
   nextFrame = 0
   vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
@@ -120,7 +129,7 @@ it('stops on the exact final frame instead of running beyond the scrubber', () =
 })
 
 it('labels every control and offers each wardrobe slot and its existing items', () => {
-  for (const label of ['Species', 'Mood', 'Action', 'Body color', 'Eyes', 'Cheeks', 'Time scrubber', 'Elapsed milliseconds', 'Ground line', 'Ground anchor', 'Contact target', 'Reduced motion']) {
+  for (const label of ['Species', 'Mood', 'Action', 'Body color', 'Eyes', 'Cheeks', 'Time scrubber', 'Elapsed milliseconds', 'Ground line', 'Ground anchor', 'Contact target', 'Force reduced motion in this panel']) {
     expect(control(label)).toBeTruthy()
   }
   for (const slot of CHARACTER_SLOTS) {
@@ -137,10 +146,45 @@ it('passes selected species, mood, action, and reduced motion to the production 
   select('Species', 'bun')
   select('Mood', 'sick')
   select('Action', 'walk')
-  click(control('Reduced motion'))
+  click(control('Force reduced motion in this panel'))
   input(control('Time scrubber'), '321')
   expect(currentSample()).toMatchObject({ species: 'bun', mood: 'sick', action: 'walk', elapsedMs: 321, reducedMotion: true })
   expect(currentSample()!.distance).toBeGreaterThan(0)
+})
+
+it('labels the local override separately from authoritative live system reduced motion', () => {
+  ui.unmount()
+  Object.defineProperty(media, 'matches', { configurable: true, value: true })
+  ui = render(<MotionReview />)
+  select('Action', 'celebrate')
+  input(control('Time scrubber'), '756')
+  const override = control<HTMLInputElement>('Force reduced motion in this panel')
+  const body = () => ui.container.querySelector('[data-character-body]')!.getAttribute('transform')
+  const still = body()
+  expect(override.checked).toBe(false)
+  expect(currentSample()?.reducedMotion).toBe(true)
+  expect(ui.container.textContent).toContain('System reduced motion is active.')
+
+  const systemPreference = (matches: boolean) => act(() => {
+    Object.defineProperty(media, 'matches', { configurable: true, value: matches })
+    media.dispatchEvent(Object.assign(new Event('change'), { matches, media: media.media }))
+  })
+  systemPreference(false)
+  expect(override.checked).toBe(false)
+  expect(currentSample()?.reducedMotion).toBe(false)
+  expect(body()).not.toBe(still)
+  expect(ui.container.textContent).not.toContain('System reduced motion is active.')
+
+  click(override)
+  expect(body()).toBe(still)
+  systemPreference(true)
+  click(override)
+  expect(override.checked).toBe(false)
+  expect(body()).toBe(still)
+  systemPreference(false)
+  expect(body()).not.toBe(still)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('756')
+  expect(frames.size).toBe(0)
 })
 
 it('renders actual 200px, 60px, and 25px previews plus selectable key frames', () => {
