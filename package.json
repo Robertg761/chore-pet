@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "art:furniture": "node scripts/render-furniture.mjs",
     "icons": "node scripts/make-icons.mjs",
     "preview": "vite preview",
     "test": "vitest run",

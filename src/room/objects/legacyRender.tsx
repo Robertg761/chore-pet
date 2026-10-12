@@ -4,7 +4,7 @@ import { PALETTE, ROOM_STROKE } from '../../art/palette'
 import { appearanceColors, normalizeAppearance, type FurnitureAppearance } from '../../catalog/customization'
 import type { MessStage } from '../../domain/types'
 import { legacyAccent, legacyDetails, styledCabinet } from './legacyDetails'
-import { styledBedFrame, styledBeanBag, styledBeanBagSurfaceMess, styledBookshelf, styledCouch, styledLamp, styledRug, styledTable, type LegacyStyle } from './legacyFurniture'
+import { styledBedFrame, styledBeanBag, styledBeanBagSurfaceMess, styledBookshelf, styledBookshelfMess, styledCouch, styledLamp, styledRug, styledTable, type LegacyStyle } from './legacyFurniture'
 import type { ObjectArt } from './types'
 
 interface SvgProps {
@@ -79,8 +79,6 @@ function recolor(node: ReactNode, id: string, s: LegacyStyle, colors: Map<string
     const color = colors.get(p.stroke)!
     props.stroke = color.startsWith('url(') ? s.c.fabric : color
   }
-  // The original fallen teddy's dust puff extends below its declared footprint.
-  if (id === 'teddy' && p.transform === 'translate(-24 20) scale(0.9)') props.transform = 'translate(-24 9) scale(0.9)'
   if (p.id) props.id = `${prefix}-${p.id}`
   if (p.clipPath) props.clipPath = p.clipPath.replace(/url\(#([^)]*)\)/g, `url(#${prefix}-$1)`)
   if (!s.a.details && id === 'teddy' && node.type === 'g' && Array.isArray(p.children) && p.children.some((child: ReactNode) => isValidElement<SvgProps>(child) && child.props.cy === -17.4 && child.type === 'ellipse')) return null
@@ -135,16 +133,16 @@ function recolorArt(art: ObjectArt, stage: MessStage, s: LegacyStyle, prefix: st
       return id === 'couch' && stage === 'messy2' && i === 1 ? paintParts(node, [0, 1]) : node
     })]
   } else if (id === 'bookshelf') {
-    children = classic ? [...nodes.slice(0, 3).map(paint), s.a.details ? nodes[3] : null, ...nodes.slice(4)] : [styledBookshelf(s), s.a.details ? nodes[3] : null, ...nodes.slice(4)]
+    children = classic ? [...nodes.slice(0, 3).map(paint), s.a.details ? nodes[3] : null, ...nodes.slice(4)] : [styledBookshelf(s), s.a.details ? nodes[3] : null, styledBookshelfMess(s, stage)]
   } else if (id === 'lamp') {
     children = classic ? [...nodes.slice(0, 3).map(paint), ...nodes.slice(3)] : [styledLamp(s), ...nodes.slice(3)]
   } else if (id === 'bean-bag' && isValidElement<SvgProps>(nodes[0])) {
     const inner = nodes[0]
     const parts = childList(inner)
     const body = isValidElement<SvgProps>(parts[1]) ? cloneElement(parts[1], {}, classic ? paint(parts[1].props.children) : styledBeanBag(s)) : parts[1]
-    const ottoman = s.a.style === 'modern' || s.a.style === 'industrial'
-    const mess = !ottoman || stage === 'clean' ? parts.slice(2) : stage === 'messy1' ? [styledBeanBagSurfaceMess(stage)] : [
-      styledBeanBagSurfaceMess(stage),
+    const fittedMess = !classic && s.a.style !== 'playful'
+    const mess = !fittedMess || stage === 'clean' ? parts.slice(2) : stage === 'messy1' ? [styledBeanBagSurfaceMess(stage, s)] : [
+      styledBeanBagSurfaceMess(stage, s),
       isValidElement<SvgProps>(parts[3]) ? cloneElement(parts[3], {}, keyed(childList(parts[3]).slice(2))) : parts[3],
     ]
     children = [cloneElement(inner, {}, keyed([parts[0], body, ...mess]))]
@@ -170,8 +168,15 @@ function recolorArt(art: ObjectArt, stage: MessStage, s: LegacyStyle, prefix: st
     children = nodes.map(paint)
     children.push(legacyDetails(id, s, stage), legacyAccent(id, s))
   } else if (id === 'shower') {
-    children = nodes.map((node, i) => [0, 1, 2, 5].includes(i) ? paint(node) : node)
+    // The selected finish belongs to the enclosure. Chrome fixtures, steam and glass shine retain their materials.
+    children = nodes.map((node, i) => i === 0 ? paintParts(node, [0, 1]) : i === 1 ? paint(node) : i === 5 ? paintParts(node, [4, 5, 6, 7, 8]) : node)
     children.splice(3, 0, legacyDetails(id, s, stage), legacyAccent(id, s))
+  } else if (id === 'toilet') {
+    // Tank decorations sit behind the bowl and raised seat rather than being pasted over them.
+    children = [nodes[0], paintParts(nodes[1], [0, 1, 2]), legacyDetails(id, s, stage), legacyAccent(id, s), paintParts(nodes[2], [0, 1, 2]), paint(nodes[3]), ...nodes.slice(4)]
+  } else if (id === 'stove' || id === 'washer') {
+    // Repaint the cabinet while keeping cookware, burners, controls and window highlights separate.
+    children = [id === 'stove' ? paintParts(nodes[0], [0]) : paint(nodes[0]), nodes[1], nodes[2], legacyDetails(id, s, stage), legacyAccent(id, s), ...nodes.slice(3)]
   } else if (id === 'recycling' && stage === 'messy2' && isValidElement<SvgProps>(nodes[2])) {
     const mess = nodes[2]
     const parts = childList(mess)

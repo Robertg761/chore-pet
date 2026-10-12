@@ -48,7 +48,7 @@ export function legacyDetails(id: string, s: LegacyStyle, stage: MessStage) {
     const height = id === 'fridge' ? 80 : 28
     return <g>
       {onLeft(1.002, panel(s, 32, height))}
-      {id === 'fridge' && stage !== 'messy2' && onRight(1.002, 1, <g><path d={a.style === 'cottage' ? 'M4 -60 q4 -6 8 0' : a.style === 'modern' ? 'M3 -57 H28' : a.style === 'nordic' ? 'M4 -58 V-34' : a.style === 'industrial' ? 'M4 -58 H12 M4 -34 H12 M8 -58 V-34' : 'M4 -56 Q16 -62 12 -46'} fill="none" stroke={c.fabric} strokeWidth={3} />{a.details && <circle cx={22} cy={-70} r={3} fill={c.fabric} strokeWidth={1.3} />}</g>)}
+      {id === 'fridge' && stage !== 'messy2' && onRight(1.002, 1, <g><path d={a.style === 'cottage' ? 'M13 -46 q5 -6 10 0' : a.style === 'modern' ? 'M13 -47 H25' : a.style === 'nordic' ? 'M24 -45 V-16' : a.style === 'industrial' ? 'M23 -45 H28 M23 -19 H28 M26 -45 V-19' : 'M13 -43 Q24 -49 22 -33'} fill="none" stroke={c.fabric} strokeWidth={3} />{a.details && <circle cx={22} cy={-70} r={3} fill={c.fabric} strokeWidth={1.3} />}</g>)}
     </g>
   }
   if (id === 'toilet') return <g>
@@ -98,13 +98,12 @@ export function legacyAccent(id: string, s: LegacyStyle) {
   if (id === 'toilet') return onRight(0.375, 0.88, <g transform="translate(5 -19)">{accent(15, 7)}</g>)
   if (id === 'plant') return <g><path d="M-12 8 Q0 14 12 8 L10 15 Q0 20 -10 15 Z" fill={fabricFill} strokeWidth={1.2} />{a.details && <circle cx={0} cy={15} r={2} fill={PALETTE.cream} strokeWidth={1} />}</g>
   if (id === 'trash' || id === 'recycling') return <g transform="translate(-8 10)">{accent(16, 7)}</g>
-  if (id === 'fish-tank') return onRight(0.91, 0.86, <g transform="translate(4 -7)">{accent(16, 10)}</g>)
+  if (id === 'fish-tank') return onRight(0.965, 0.96, <g transform="translate(5 -20.5)">{accent(20, 3.8)}</g>)
   if (id === 'shower') return onRight(0.185, 2, <g transform="translate(3 -10)">{accent(58, 8)}</g>)
   if (id === 'table' || id === 'dining-table') {
     const z = id === 'table' ? 34.2 : 40.2
     return <g><polygon points={isoPoints([0.65, 0.17, z], [0.99, 0.17, z], [0.99, 1.82, z], [0.65, 1.82, z])} fill={fabricFill} strokeWidth={1.2} />{a.details && <polygon points={isoPoints([1.34, 0.45, z], [1.66, 0.45, z], [1.66, 0.77, z], [1.34, 0.77, z])} fill={c.woodDark} strokeWidth={1.2} />}</g>
   }
-  if (id === 'bookshelf') return onRight(0.65, 0.98, <g transform="translate(4 -9)">{accent(5, 14)}</g>)
   if (id === 'bed') return a.details ? <polyline points={isoPoints([1.32, 0.24, 19.2], [2.56, 0.24, 19.2], [2.56, 1.61, 19.2])} fill="none" stroke={c.fabricLight} strokeWidth={1.6} strokeDasharray="2 3" /> : null
   if (id === 'rug') return <g><polyline points={isoPoints([0.4, 2.2, 5.4], [0.55, 2.2, 5.4])} stroke={c.wood} strokeWidth={5} />{a.details && <polyline points={isoPoints([0.58, 2.2, 5.4], [0.73, 2.2, 5.4])} stroke={c.woodLight} strokeWidth={3} />}</g>
   if (id === 'bean-bag') return <g><path d="M15 24 l8 -3" fill="none" stroke={c.woodDark} strokeWidth={2} />{a.details && <rect x={15} y={23} width={4} height={3} rx={1} fill={c.woodLight} strokeWidth={1} />}</g>

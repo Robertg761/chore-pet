@@ -91,6 +91,8 @@ The added furniture uses shared isometric parts in `src/room/objects/furniture/`
 
 Thumbnail bounds are cached by both catalog ID and appearance. The furniture comparison at the top of `/?art` shows all six styles for a selected piece and mess stage.
 
+Run `npm run art:furniture -- /tmp/furniture-review` to render contact sheets of every object in its original appearance and all six styles, across all three mess stages. Inspect the PNGs at full size for supported contents, shelf openings, depth order, and patterns. The sheets also exercise dark finishes, different accents, and disabled details. Pixel bounds and appearance tests alone do not establish that a piece is physically coherent.
+
 ### Room shell styles
 
 `src/room/shell/` draws the room: back walls, floor and a window. Floor styles: `wood` (default, planks), `tile` (cream and steel checker), `carpet` (rose, with a rug border), `seaside` (white and sky checker). Wall styles: `peach` (default), `mint` (faint stripes), `lavender`, `sky` (faint stripes). Every wall style is a darker left wall plus a lighter right wall. Wall tops, baseboards and the window sill use `cream` / `cream-dark` in every style. Floor slab edges are drawn below the diamond so the room reads as a diorama.

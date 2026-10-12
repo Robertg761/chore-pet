@@ -1,10 +1,10 @@
 import { PALETTE, ROOM_STROKE } from '../../art/palette'
 import { mix } from '../../art/color'
 import type { MessStage } from '../../domain/types'
-import { iso, isoPoints } from '../iso'
+import { iso } from '../iso'
 import { DUST, darker, dustSpecks, lighter } from './decorParts'
 import { cobweb, dustBunny } from './lamp'
-import { poly } from './shapes3'
+import { poly, softBox } from './shapes3'
 import type { ObjectArt } from './types'
 
 // A short wooden bookcase with two shelves of chunky books, one leaning, and a
@@ -34,44 +34,21 @@ const BX1 = D - 0.06
 const front = (ty: number, z: number) => iso(D, ty, z)
 
 function carcass() {
-  return (
-    <g>
-      {/* left-front side panel, a little plank line on it */}
-      <polygon points={isoPoints([0, Y1, H], [D, Y1, H], [D, Y1, 0], [0, Y1, 0])} fill={woodDark} />
-      <path d={`M${iso(0.05, Y1, 30).x} ${iso(0.05, Y1, 30).y} L${iso(D - 0.05, Y1, 30).x} ${iso(D - 0.05, Y1, 30).y}`} stroke={darker(woodDark)} strokeWidth={1.5} opacity={0.55} fill="none" />
-      {/* right-front frame */}
-      <polygon points={isoPoints([D, Y0, H], [D, Y1, H], [D, Y1, 0], [D, Y0, 0])} fill={floorWood} />
-      {/* top, lightest */}
-      <polygon points={isoPoints([0, Y0, H], [D, Y0, H], [D, Y1, H], [0, Y1, H])} fill={lighter(floorWood)} />
-    </g>
-  )
+  return <g>
+    {/* The back is a thin board, behind the depth occupied by the books. */}
+    {softBox({ x0: 0, x1: 0.07, y0: Y0, y1: Y1, z0: 0, z1: H, top: lighter(floorWood), left: woodDark, right: INNER, r: 1 })}
+    {/* Far side first; the near side is drawn over the shelf contents below. */}
+    {softBox({ x0: 0, x1: D, y0: Y0, y1: OY0, z0: 0, z1: H, top: lighter(floorWood), left: INNER_SIDE, right: floorWood, r: 1 })}
+  </g>
 }
 
-/** The dim opening with the inside wall catching a bit of light. */
+/** Kept as a separate layer so legacy appearance rendering retains its slots. */
 function opening() {
-  const quad = (a: number, b: number) => poly(front(a, CEIL), front(b, CEIL), front(b, FLOOR), front(a, FLOOR))
-  return (
-    <g>
-      <polygon points={quad(OY0, OY1)} fill={INNER} />
-      <polygon points={quad(OY0, OY0 + 0.2)} fill={INNER_SIDE} stroke="none" />
-      <polygon points={quad(OY0, OY1)} fill="none" />
-    </g>
-  )
+  return null
 }
 
-/** A shelf's top surface, seen from above, running back from its front edge. */
-function shelfTop(z: number) {
-  return <polygon points={isoPoints([D, OY0, z], [D, OY1, z], [BX0 - 0.02, OY1, z], [BX0 - 0.02, OY0, z])} fill={lighter(floorWood)} />
-}
-
-function midBoard() {
-  const [z0, z1] = MID_BOARD
-  return (
-    <g>
-      {shelfTop(z1)}
-      <polygon points={poly(front(OY0, z1), front(OY1, z1), front(OY1, z0), front(OY0, z0))} fill={floorWood} />
-    </g>
-  )
+function board(z0: number, z1: number) {
+  return softBox({ x0: 0.04, x1: D, y0: OY0, y1: OY1, z0, z1, top: lighter(floorWood), left: woodDark, right: floorWood, r: 1 })
 }
 
 interface BookSpec {
@@ -113,18 +90,18 @@ const UPPER: BookSpec[] = [
   { ty: 0.28, w: 0.13, h: 15, colour: fabricBlue },
   { ty: 0.41, w: 0.15, h: 20, colour: warmRed },
   // leaning against the red one
-  { ty: 0.66, w: 0.14, h: 19, colour: blush, lean: -0.13 },
+  { ty: 0.66, w: 0.14, h: 19, colour: blush, lean: -0.1 },
 ]
 
 function shelves() {
-  return (
-    <g>
-      {shelfTop(FLOOR)}
-      {LOWER.map((b, i) => book(b, FLOOR, i))}
-      {midBoard()}
-      {UPPER.map((b, i) => book(b, MID_BOARD[1], i))}
-    </g>
-  )
+  return <g>
+    {board(0, FLOOR)}
+    {LOWER.map((b, i) => book(b, FLOOR, i))}
+    {board(...MID_BOARD)}
+    {UPPER.map((b, i) => book(b, MID_BOARD[1], i))}
+    {softBox({ x0: 0, x1: D, y0: OY1, y1: Y1, z0: 0, z1: H, top: lighter(floorWood), left: woodDark, right: floorWood, r: 1 })}
+    {softBox({ x0: 0, x1: D, y0: Y0, y1: Y1, z0: CEIL, z1: H, top: lighter(floorWood), left: woodDark, right: floorWood, r: 1 })}
+  </g>
 }
 
 /** A tiny potted plant on the top board. */
@@ -160,7 +137,7 @@ function messy1() {
   return (
     <g>
       {dustOn(H, [[0.12, 0.2, 3.2], [0.48, 0.78, 3.4], [0.2, 0.86, 2], [0.5, 0.3, 2.2]])}
-      {dustOn(MID_BOARD[1], [[D - 0.08, 0.84, 2.4], [D - 0.1, 0.2, 1.8]])}
+      {dustOn(MID_BOARD[1], [[D - 0.03, 0.84, 0.9], [D - 0.03, 0.2, 0.8]])}
       {/* a single cobweb strand hanging in the upper corner of the opening */}
       <g fill="none" stroke={ink} strokeWidth={1.2} opacity={0.6} strokeLinecap="round">
         <path d={`M${front(OY0, CEIL).x} ${front(OY0, CEIL).y} q-1 7 -6 9 q-4 1 -5 6`} />
@@ -179,8 +156,8 @@ function messy2() {
   return (
     <g>
       {dustOn(H, [[0.12, 0.2, 3.4], [0.5, 0.8, 3.6], [0.22, 0.88, 2.2], [0.5, 0.3, 2.4], [0.1, 0.6, 2]])}
-      {dustOn(MID_BOARD[1], [[D - 0.08, 0.84, 2.6], [D - 0.1, 0.2, 2], [D - 0.09, 0.52, 1.8]])}
-      {dustOn(FLOOR, [[D - 0.08, 0.84, 2.2], [D - 0.1, 0.5, 2]])}
+      {dustOn(MID_BOARD[1], [[D - 0.03, 0.84, 0.9], [D - 0.03, 0.2, 0.8], [D - 0.03, 0.52, 0.8]])}
+      {dustOn(FLOOR, [[D - 0.03, 0.84, 0.9], [D - 0.03, 0.5, 0.8]])}
       {cobweb(corner, left, down, 3)}
       {dustBunny(bunnyTop.x, bunnyTop.y + 1, 0.75)}
       {dustBunny(bunnyFloor.x, bunnyFloor.y, 0.9)}
@@ -188,7 +165,7 @@ function messy2() {
       <g fill={DUST} stroke="none">
         {[LOWER[2], UPPER[2]].map((b, i) => {
           const p = iso(BX0 + 0.12, b.ty + b.w / 2, (i === 0 ? FLOOR : MID_BOARD[1]) + b.h)
-          return <ellipse key={i} cx={p.x} cy={p.y} rx={3} ry={1.5} />
+          return <ellipse key={i} cx={p.x} cy={p.y} rx={1.8} ry={0.9} />
         })}
       </g>
     </g>

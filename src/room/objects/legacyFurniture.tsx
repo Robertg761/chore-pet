@@ -4,7 +4,7 @@ import type { MessStage } from '../../domain/types'
 import { iso, isoPoints } from '../iso'
 import { drum, onRight, ring } from './batch2-parts'
 import { dustSpecks } from './decorParts'
-import { cobweb } from './lamp'
+import { cobweb, dustBunny } from './lamp'
 import { softBox, roundedPath, slab } from './shapes3'
 
 export interface LegacyStyle {
@@ -60,18 +60,19 @@ export function styledCouch(s: LegacyStyle, stage: MessStage) {
   return <g>
     {[0.06, 0.63].flatMap((x) => [0.05, 1.8].map((y) => <g key={`${x}-${y}`}>{softBox({ x0: x, x1: x + 0.12, y0: y, y1: y + 0.13, z0: 0, z1: modern ? 4 : 11, ...frame, r: 1.5 })}</g>))}
     {softBox({ x0: 0, x1: 0.8, y0: 0, y1: 2, z0: modern ? 3 : 9, z1: 18, ...(airy || modern ? frame : upholstery), r: modern ? 2 : 6 })}
+    {airy && [0.04, 0.66].flatMap((x) => [0.04, 1.82].map((y) => <g key={`arm-post-${x}-${y}`}>{softBox({ x0: x, x1: x + 0.12, y0: y, y1: y + 0.12, z0: 11, z1: 30, ...frame, r: 1 })}</g>))}
     {softBox({ x0: 0, x1: 0.24, y0: 0.18, y1: 1.82, z0: 17, z1: back, ...(airy ? frame : upholstery), r: playful ? 14 : modern ? 2 : 5 })}
     {airy && [0.42, 0.78, 1.14, 1.5].map((y) => <polyline key={y} points={line([0.26, y, 24], [0.26, y, back - 3])} stroke={c.woodDark} strokeWidth={3} />)}
-    {softBox({ x0: 0, x1: 0.82, y0: 0, y1: 0.24, z0: airy ? 22 : 9, z1: modern ? 29 : 34, ...arm, r: a.style === 'cottage' ? 10 : modern ? 2 : 5 })}
+    {softBox({ x0: 0, x1: 0.82, y0: 0, y1: 0.24, z0: airy ? 29 : 9, z1: modern ? 29 : 34, ...arm, r: a.style === 'cottage' ? 10 : modern ? 2 : 5 })}
     {stage !== 'messy2' && [0.26, 1].map((y) => <g key={y}>
       {softBox({ x0: 0.25, x1: 0.44, y0: y, y1: y + 0.71, z0: 23, z1: back - 3, ...upholstery, r: playful ? 12 : 5 })}
       {a.details && onRight(0.45, 2, a.style === 'cottage' ? <g fill={c.fabricDark} stroke="none">{[y + 0.24, y + 0.49].map((t) => <circle key={t} cx={(2 - t) * 32} cy={-38} r={1.8} />)}</g> : a.style === 'playful' ? <path d={`M${(2 - y - 0.38) * 32 - 5} -37 q5 -7 10 0 q-5 7 -10 0 Z`} fill={c.fabricLight} strokeWidth={1.5} /> : null)}
     </g>)}
     {softBox({ x0: 0.26, x1: 0.8, y0: 0.26, y1: 1, z0: 18, z1: 26, ...upholstery, r: playful ? 8 : 4 })}
     {stage !== 'messy2' && <g transform={stage === 'messy1' ? 'translate(4 -2) rotate(-8 -28 3)' : undefined}>{softBox({ x0: 0.26, x1: 0.8, y0: 1, y1: 1.74, z0: 18, z1: 26, ...upholstery, r: playful ? 8 : 4 })}</g>}
-    {softBox({ x0: 0, x1: 0.82, y0: 1.76, y1: 2, z0: airy ? 22 : 9, z1: modern ? 29 : 34, ...arm, r: a.style === 'cottage' ? 10 : modern ? 2 : 5 })}
-    {a.style === 'industrial' && <polyline points={line([0.1, 2, 25], [0.72, 2, 5])} fill="none" stroke={c.metal} strokeWidth={3} />}
-    {airy && <polyline points={line([0.1, 2, 5], [0.72, 2, 25])} fill="none" stroke={c.woodDark} strokeWidth={3} />}
+    {softBox({ x0: 0, x1: 0.82, y0: 1.76, y1: 2, z0: airy ? 29 : 9, z1: modern ? 29 : 34, ...arm, r: a.style === 'cottage' ? 10 : modern ? 2 : 5 })}
+    {a.style === 'industrial' && <polyline points={line([0.1, 2, 29], [0.72, 2, 11])} fill="none" stroke={c.metal} strokeWidth={3} />}
+    {airy && <polyline points={line([0.1, 2, 11], [0.72, 2, 29])} fill="none" stroke={c.woodDark} strokeWidth={3} />}
     {a.details && modern && onRight(0.83, 2, <path d="M4 -23 H60" fill="none" stroke={c.fabricLight} strokeWidth={1.5} />)}
     {a.details && airy && onRight(0.83, 2, <g fill={a.style === 'industrial' ? cream : c.woodLight} strokeWidth={1}>{[4, 60].map((x) => <circle key={x} cx={x} cy={-28} r={2} />)}</g>)}
   </g>
@@ -103,7 +104,7 @@ export function styledTable(s: LegacyStyle, dining: boolean) {
       {drum({ cx: 1, cy: 1, a: 0.42, b: 0.42, z0: 0, z1: 4, top: c.woodLight, side: c.woodDark })}
       {drum({ cx: 1, cy: 1, a: 0.17, b: 0.17, z0: 3, z1: z - 4, top: c.woodLight, side: c.wood })}
     </> : <>
-      {[0.2, 1.57].flatMap((x) => [0.2, 1.57].map((y) => <g key={`${x}-${y}`}>{leg(x, y)}</g>))}
+      {(a.style === 'playful' ? [0.37, 1.39] : [0.2, 1.57]).flatMap((x) => (a.style === 'playful' ? [0.37, 1.39] : [0.2, 1.57]).map((y) => <g key={`${x}-${y}`}>{leg(x, y)}</g>))}
       {a.style === 'cottage' && <>
         {softBox({ x0: 0.22, x1: 1.78, y0: 0.92, y1: 1.08, z0: 9, z1: 13, ...woods(s), r: 2 })}
         {softBox({ x0: 0.14, x1: 1.86, y0: 0.14, y1: 1.86, z0: z - 10, z1: z - 4, ...woods(s), r: 2 })}
@@ -123,22 +124,68 @@ export function styledBookshelf(s: LegacyStyle) {
   const { a, c } = s
   const metal = a.style === 'industrial'
   const open = metal || a.style === 'nordic'
+  const modern = a.style === 'modern'
+  const playful = a.style === 'playful'
   const frame = metal ? { top: c.metal, left: c.woodDark, right: c.metal } : woods(s)
-  const heights = a.style === 'modern' ? [5, 23, 41, 60] : [5, 31, 60]
+  const heights = modern ? [6, 24, 42] : [6, 32]
+  const post = (x: number, y: number) => softBox({ x0: x, x1: x + 0.08, y0: y, y1: y + 0.08, z0: 0, z1: 60, ...frame, r: 1 })
+  const side = (y0: number, y1: number) => softBox({ x0: 0.02, x1: 0.64, y0, y1, z0: 0, z1: 60, ...woods(s), r: playful ? 3 : 1 })
+  const book = (y: number, i: number, z: number) => softBox({
+    x0: 0.24, x1: 0.56, y0: y, y1: y + 0.1, z0: z,
+    z1: z + (modern ? 10 + i % 2 * 2 : 16 + i % 2 * 3),
+    top: [c.fabricLight, cream, PALETTE.petDefault, PALETTE.wallMintRight][i],
+    left: c.fabricDark,
+    right: [s.fabricFill, c.woodLight, PALETTE.petDefault, PALETTE.wallMintLeft][i], r: 0.7,
+  })
   return <g>
-    {!open && softBox({ x0: 0.02, x1: 0.56, y0: 0.02, y1: 0.98, z0: 2, z1: 60, ...woods(s), r: a.style === 'playful' ? 8 : 2 })}
-    {!open && onRight(0.57, 0.98, <rect x={3} y={-56} width={25} height={49} rx={a.style === 'cottage' ? 9 : 1} fill={c.woodDark} />)}
-    {[0.03, 0.86].map((y) => <g key={y}>{softBox({ x0: 0.12, x1: 0.64, y0: y, y1: y + 0.1, z0: 0, z1: 60, ...frame, r: a.style === 'playful' ? 4 : 1 })}</g>)}
-    {heights.map((z) => <g key={z}>
-      {softBox({ x0: 0.06, x1: 0.65, y0: 0.02, y1: 0.98, z0: z - 4, z1: z, ...frame, r: a.style === 'playful' ? 4 : 1.5 })}
-      {z < 50 && [0.2, 0.36, 0.52, 0.68].map((y, i) => <g key={y}>
-        {softBox({ x0: 0.32, x1: 0.59, y0: y, y1: y + 0.12, z0: z, z1: z + (a.style === 'modern' ? 11 + i % 2 * 2 : 16 + i % 2 * 3), top: [c.fabricLight, cream, PALETTE.petDefault, PALETTE.wallMintRight][i], left: c.fabricDark, right: [c.fabric, c.woodLight, PALETTE.petDefault, PALETTE.wallMintLeft][i], r: 1 })}
-      </g>)}
+    {/* A thin rear board leaves the shelf depth genuinely empty. */}
+    {!open && softBox({ x0: 0.02, x1: 0.09, y0: 0.02, y1: 0.98, z0: 2, z1: 60, top: c.woodLight, left: c.woodDark, right: c.woodDark, r: playful ? 4 : 1 })}
+    {open ? <>{post(0.03, 0.04)}{post(0.03, 0.88)}{post(0.56, 0.04)}</> : side(0.02, 0.12)}
+    {a.style === 'cottage' && onRight(0.1, 0.98, <path d="M0 -59 Q15 -73 31 -59 Z" fill={c.woodLight} />)}
+    {heights.map((z, row) => <g key={z}>
+      {softBox({ x0: 0.02, x1: 0.65, y0: 0.02, y1: 0.98, z0: z - 4, z1: z, ...woods(s), r: playful ? 3 : 1 })}
+      <g strokeWidth={1.8}>
+        {(modern || playful ? [0.16, 0.3] : [0.16, 0.32, 0.48, 0.64]).map((y, i) => <g key={y}>{book(y, i, z)}</g>)}
+        {modern && softBox({ x0: 0.1, x1: 0.64, y0: row % 2 ? 0.46 : 0.51, y1: row % 2 ? 0.53 : 0.58, z0: z, z1: row === 2 ? 56 : heights[row + 1] - 4, ...woods(s), r: 1 })}
+        {playful && softBox({ x0: 0.1, x1: 0.64, y0: 0.48, y1: 0.56, z0: z, z1: row === 0 ? 28 : 56, ...woods(s), r: 2 })}
+        {(modern || playful) && [0.63, 0.75].map((y, i) => <g key={y}>{book(y, i + 2, z)}</g>)}
+      </g>
     </g>)}
-    {a.style === 'cottage' && onRight(0.66, 0.98, <path d="M0 -59 Q15 -74 31 -59 Z" fill={c.woodLight} />)}
-    {a.style === 'modern' && [0.45, 0.66].map((y, i) => <g key={y}>{softBox({ x0: 0.25, x1: 0.65, y0: y, y1: y + 0.055, z0: i ? 41 : 23, z1: i ? 56 : 38, ...woods(s), r: 1 })}</g>)}
-    {a.details && metal && onRight(0.67, 0.98, <g fill={cream} strokeWidth={1}>{[4, 29].flatMap((x) => [8, 34, 57].map((y) => <circle key={`${x}-${y}`} cx={x} cy={-y} r={1.3} />))}</g>)}
-    {a.details && a.style === 'playful' && onRight(0.67, 0.98, <path d="M12 -59 L15 -65 L18 -59 L24 -58 L19 -54 L20 -48 L15 -51 L10 -48 L11 -54 L6 -58 Z" fill={c.fabric} strokeWidth={1.5} />)}
+    {/* Near supports must cover the ends of boards and books. */}
+    {open ? <>
+      {metal && <g fill="none" stroke={c.metal} strokeWidth={2.5}>
+        <polyline points={line([0.08, 0.96, 10], [0.6, 0.96, 53])} />
+        <polyline points={line([0.08, 0.96, 53], [0.6, 0.96, 10])} />
+      </g>}
+      {post(0.56, 0.88)}
+    </> : side(0.88, 0.98)}
+    {softBox({ x0: 0.02, x1: 0.65, y0: 0.02, y1: 0.98, z0: 56, z1: 60, ...woods(s), r: playful ? 3 : 1 })}
+    {a.details && metal && [6, 32, 58].map((z) => { const p = iso(0.65, 0.92, z); return <circle key={z} cx={p.x} cy={p.y} r={1.1} fill={cream} strokeWidth={0.8} /> })}
+    {a.details && playful && (() => { const p = iso(0.31, 0.985, 44); return <path d={`M${p.x} ${p.y - 5} l1.5 3.2 3.5 .5 -2.5 2.4 .6 3.4 -3.1 -1.6 -3.1 1.6 .6 -3.4 -2.5 -2.4 3.5 -.5 Z`} fill={c.fabric} strokeWidth={1.2} /> })()}
+  </g>
+}
+
+/** Replacement shelves collect dust at their own board heights. */
+export function styledBookshelfMess(s: LegacyStyle, stage: MessStage) {
+  if (stage === 'clean') return null
+  const modern = s.a.style === 'modern'
+  const spot = (x: number, y: number, z: number, r: number): [number, number, number] => {
+    const p = iso(x, y, z)
+    return [p.x, p.y, r]
+  }
+  const heights = modern ? [6, 24, 42] : [6, 32]
+  const corner = iso(0.63, 0.14, 56)
+  const top = iso(0.35, 0.17, 60)
+  const floor = iso(0.98, 0.62, 0)
+  return <g>
+    {dustSpecks([spot(0.17, 0.25, 60, 2.5), spot(0.46, 0.79, 60, 2.5), spot(0.24, 0.82, 60, 1.7)])}
+    {dustSpecks(heights.flatMap((z) => [spot(0.61, 0.79, z, 1.2), spot(0.61, 0.32, z, 1)]))}
+    {stage === 'messy2' ? <>
+      {dustSpecks([spot(0.4, 0.54, 60, 2), spot(0.13, 0.6, 60, 1.8)])}
+      {cobweb(corner, iso(0.63, 0.47, 56), iso(0.63, 0.14, modern ? 44 : 40), 3)}
+      {dustBunny(top.x, top.y, 0.65)}
+      {dustBunny(floor.x, floor.y, 0.8)}
+    </> : <path d={`M${corner.x} ${corner.y} q-1 6 -5 9`} fill="none" strokeWidth={1.1} opacity={0.6} />}
   </g>
 }
 
@@ -211,11 +258,16 @@ export function styledBeanBag(s: LegacyStyle) {
   </g>
 }
 
-/** The shorter ottoman styles collect dust on their top instead of the old bag's back lobe. */
-export function styledBeanBagSurfaceMess(stage: MessStage) {
-  const lift = stage === 'messy1' ? -3 : 0
-  return <g>
-    {dustSpecks([[-15, -17 + lift, 2.4], [-5, -19 + lift, 2], [17, -12 + lift, 2.2], [-19, -8 + lift, 1.8], [6, -14 + lift, 1.6], [20, -4 + lift, 1.6]], 0.6)}
-    {stage === 'messy2' && cobweb({ x: -14, y: -14 }, { x: 0, y: -19 }, { x: -8, y: -4 }, 3)}
+/** Dust and webs follow each replacement silhouette, including the flattened messy bag. */
+export function styledBeanBagSurfaceMess(stage: MessStage, s: LegacyStyle) {
+  const ottoman = s.a.style === 'modern' || s.a.style === 'industrial'
+  const cottage = s.a.style === 'cottage'
+  return <g transform={stage === 'messy2' ? 'translate(0 8) scale(1 0.88) translate(0 -8)' : undefined}>
+    {dustSpecks(ottoman
+      ? [[-15, -17, 2.4], [-5, -19, 2], [17, -12, 2.2], [-19, -8, 1.8], [6, -14, 1.6], [20, -4, 1.6]]
+      : [[-13, -20, 2.4], [-3, cottage ? -25 : -23, 2], [17, -12, 2.2], [-21, -8, 1.8], [6, -15, 1.6], [20, -4, 1.6]], 0.6)}
+    {stage === 'messy2' && (ottoman
+      ? cobweb({ x: -14, y: -14 }, { x: 0, y: -19 }, { x: -8, y: -4 }, 3)
+      : cobweb({ x: -12, y: -19 }, { x: -2, y: cottage ? -25 : -23 }, { x: -2, y: -7 }, 3))}
   </g>
 }

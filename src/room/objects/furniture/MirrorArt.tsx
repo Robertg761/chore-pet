@@ -36,7 +36,7 @@ export function MirrorArt({ look, stage }: { look: FurnitureLook; stage: MessSta
     {frame(0, c.wood, style === 'industrial' ? c.metal : ink, style === 'industrial' ? 3 : 2)}
     {frame(3, c.fabric, ink, 1)}
     {frame(5, PALETTE.sky, ink, 1)}
-    <path d="M10 -95 L18 -105 M9 -89 L20 -103" stroke={cream} strokeWidth={2.5} opacity={0.8} fill="none" />
+    <g clipPath={`url(#${glassClip})`}><path d="M10 -95 L18 -105 M9 -89 L20 -103" stroke={cream} strokeWidth={2.5} opacity={0.8} fill="none" /></g>
     <g clipPath={`url(#${frameClip})`}>{pattern !== 'plain' && [0, 1, 2, 3, 4].map((i) => {
       const y = -98 + i * 9
       return <g key={i} fill={c.fabricLight} strokeWidth={0.8}>
@@ -44,7 +44,7 @@ export function MirrorArt({ look, stage }: { look: FurnitureLook; stage: MessSta
       </g>
     })}</g>
     {style === 'industrial' && [-104, -55].flatMap((y) => [3.5, 23.5].map((x) => <circle key={`${x}-${y}`} cx={x} cy={y} r={1.1} fill={cream} strokeWidth={0.7} />))}
-    {details && <><path d="M19 -64 V-72 M16 -68 H22" fill="none" stroke={cream} strokeWidth={1.5} /><circle cx={9} cy={-80} r={1.3} fill={cream} stroke="none" /></>}
+    {details && <g clipPath={`url(#${glassClip})`}><path d="M19 -64 V-72 M16 -68 H22" fill="none" stroke={cream} strokeWidth={1.5} /><circle cx={9} cy={-80} r={1.3} fill={cream} stroke="none" /></g>}
     {stage !== 'clean' && <g clipPath={`url(#${glassClip})`}>
       {dustSpecks([[11, -73, 2.5], [17, -85, 1.8]], 0.85)}
       {stage === 'messy2' && <>

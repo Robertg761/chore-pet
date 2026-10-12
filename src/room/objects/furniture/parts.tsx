@@ -6,7 +6,7 @@ import type { MessStage } from '../../../domain/types'
 import { iso, isoPoints } from '../../iso'
 import { drum } from '../batch2-parts'
 import { dustSpecks } from '../decorParts'
-import { cobweb, dustBunny } from '../lamp'
+import { dustBunny } from '../lamp'
 import { roundedPath, softBox } from '../shapes3'
 
 export interface FurnitureLook {
@@ -17,6 +17,11 @@ export type FurnitureDrawing = (look: FurnitureLook, stage: MessStage) => ReactN
 export const { ink, cream, creamDark, white, steel, steelDark, leaf, leafDark, warmRed, petDefault } = PALETTE
 export const pts = (...points: [number, number, number][]) => isoPoints(...points)
 export const point = iso
+
+/** The surface shared by a cabinet's trim, its props, and accumulated dust. */
+export function cabinetTop(look: FurnitureLook, height: number) {
+  return height + (look.options.style === 'classic' ? 3 : look.options.style === 'cottage' ? 4 : look.options.style === 'industrial' ? 1 : 0)
+}
 
 export function timber(look: FurnitureLook, x0: number, x1: number, y0: number, y1: number, z0: number, z1: number, r = 2) {
   const c = look.colors
@@ -111,7 +116,15 @@ export function knob(look: FurnitureLook, x: number, y: number, z: number) {
 }
 
 export function book(look: FurnitureLook, x: number, y: number, z: number, color: string = look.colors.fabric, height = 12) {
-  return softBox({ x0: x, x1: x + 0.24, y0: y, y1: y + 0.12, z0: z, z1: z + height, top: cream, right: color, left: mix(color, ink, 0.2), r: 0.7 })
+  const flat = height <= 4
+  const depth = flat ? 0.42 : 0.24
+  const width = flat ? 0.24 : 0.12
+  return <g strokeWidth={1.2}>
+    {softBox({ x0: x, x1: x + depth, y0: y, y1: y + width, z0: z, z1: z + height,
+      top: flat ? mix(color, white, 0.18) : cream,
+      right: flat ? cream : color, left: mix(color, ink, 0.2), r: 0.5 })}
+    {line([x + depth, y + width * 0.18, z + height * 0.55], [x + depth, y + width * 0.82, z + height * 0.55], flat ? look.colors.woodDark : cream, flat ? 0.5 : 0.75)}
+  </g>
 }
 
 export function plant(look: FurnitureLook, x: number, y: number, z: number) {
@@ -127,16 +140,18 @@ export function roundedTop(x0: number, x1: number, y0: number, y1: number, z: nu
   return <path d={roundedPath([iso(x0, y0, z), iso(x1, y0, z), iso(x1, y1, z), iso(x0, y1, z)], r)} fill={fill} />
 }
 
-export function furnitureMess(stage: MessStage, w: number, d: number, h: number, wall = false) {
+export function furnitureMess(stage: MessStage, w: number, d: number, h: number, at: [number, number] = [w * 0.55, d * 0.55]) {
   if (stage === 'clean') return null
-  const top = iso(w * 0.55, d * 0.55, h)
-  const ground = iso(w * 0.85, d * 0.83, wall ? h - 26 : 1)
+  const spot = (x: number, y: number, r: number): [number, number, number] => {
+    const p = iso(at[0] + x, at[1] + y, h)
+    return [p.x, p.y, r]
+  }
+  const ground = iso(w * 0.85, d * 0.83, 1)
   return <g>
-    {dustSpecks([[top.x - 8, top.y + 2, 3], [top.x + 6, top.y - 1, 2], [top.x + 2, top.y + 5, 1.8]])}
+    {dustSpecks([spot(-0.08, 0.08, 2.8), spot(0.07, -0.08, 2), spot(0.08, 0.1, 1.8)])}
     {stage === 'messy2' && <>
-      {cobweb({ x: top.x - 13, y: top.y - 6 }, { x: top.x + 1, y: top.y + 1 }, { x: top.x - 12, y: top.y + 10 }, 3)}
       {dustBunny(ground.x, ground.y, 0.65)}
-      {dustSpecks([[top.x - 2, top.y + 8, 3], [ground.x - 10, ground.y + 2, 2.5]])}
+      {dustSpecks([spot(-0.08, -0.09, 3), spot(0.14, 0.02, 2.3), [ground.x - 10, ground.y + 2, 2.5]])}
     </>}
   </g>
 }

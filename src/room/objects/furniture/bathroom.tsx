@@ -1,7 +1,7 @@
 import { PALETTE } from '../../../art/palette'
 import { mix } from '../../../art/color'
 import { drum, ring } from '../batch2-parts'
-import { cream, creamDark, front, frontPattern, ink, knob, legs, line, metalBox, plant, point, timber, topPattern, upholstered, type FurnitureLook } from './parts'
+import { cream, creamDark, front, frontPattern, ink, knob, legs, line, metalBox, plant, point, pts, timber, topPattern, upholstered, type FurnitureLook } from './parts'
 
 function tap(look: FurnitureLook, x: number, y: number, z: number, big = false) {
   const p = point(x, y, z)
@@ -17,11 +17,15 @@ export function bathtub(look: FurnitureLook) {
   const { style, details } = look.options
   const c = look.colors
   const angular = style === 'modern' || style === 'industrial' || style === 'nordic'
+  const towelX = angular ? 1.96 : 1.87
   return <g>
     {style === 'classic' || style === 'playful' ? legs(look, 1.94, 1.94, 16, 0.3) : timber(look, 0.3, 1.7, 0.3, 1.7, 0, 12, 3)}
     {angular ? <>
       {timber(look, 0.05, 1.95, 0.06, 1.94, 8, style === 'modern' ? 40 : 38, style === 'modern' ? 8 : 3)}
-      {style === 'industrial' && <>{metalBox(look, 0.04, 1.96, 0.05, 1.95, 8, 12)}{metalBox(look, 0.04, 1.96, 0.05, 1.95, 32, 36)}</>}
+      {style === 'industrial' && [8, 32].map((z) => <g key={z}>
+        <polygon points={pts([0.05, 1.95, z], [1.95, 1.95, z], [1.95, 1.95, z + 4], [0.05, 1.95, z + 4])} fill={mix(c.metal, ink, 0.2)} />
+        <polygon points={pts([1.96, 0.05, z], [1.96, 1.95, z], [1.96, 1.95, z + 4], [1.96, 0.05, z + 4])} fill={c.metal} />
+      </g>)}
       {style === 'nordic' && [0.24, 0.49, 0.74, 0.99, 1.24, 1.49, 1.74].map((y) => <g key={y}>{line([1.96, y, 11], [1.96, y, 35], c.woodDark, 1.5)}</g>)}
     </> : drum({ cx: 1, cy: 1, a: 0.94, b: 0.9, z0: style === 'classic' ? 13 : 7, z1: 39, top: cream, side: c.wood, leftSide: c.woodDark })}
     {drum({ cx: 1, cy: 1, a: 0.96, b: 0.92, z0: 36, z1: 41, top: cream, side: creamDark })}
@@ -32,8 +36,8 @@ export function bathtub(look: FurnitureLook) {
     {style === 'playful' && front(1.92, 0.6, 1.4, <g fill={c.fabric} strokeWidth={1.2}><circle cx={7} cy={-23} r={3} /><circle cx={19} cy={-23} r={3} /><path d="M9 -17 Q13 -12 17 -17" fill="none" /></g>)}
     {tap(look, 0.19, 0.39, 41, true)}
     <>
-      {front(1.76, 0.96, 1.45, <g><rect x={0} y={-42} width={15.7} height={25} rx={3} fill={c.fabric} strokeWidth={1.5} /><path d="M2 -20 H14 M2 -23 H14" stroke={c.fabricLight} strokeWidth={1.3} /></g>)}
-      {frontPattern(look, 1.765, 1, 1.4, 23, 38)}
+      {front(towelX, 0.96, 1.45, <g><rect x={0} y={-42} width={15.7} height={25} rx={3} fill={c.fabric} strokeWidth={1.5} /><path d="M2 -20 H14 M2 -23 H14" stroke={c.fabricLight} strokeWidth={1.3} /></g>)}
+      {frontPattern(look, towelX + 0.005, 1, 1.4, 23, 38)}
       {details && [0, 1, 2].map((i) => { const p = point(0.89 + i * 0.2, 0.75, 43 + (i % 2) * 4); return <circle key={i} cx={p.x} cy={p.y} r={3 - i * 0.3} fill={cream} stroke={PALETTE.steel} strokeWidth={1} /> })}
     </>
   </g>
@@ -43,6 +47,8 @@ export function bathroomVanity(look: FurnitureLook) {
   const { style, details } = look.options
   const c = look.colors
   const open = style === 'nordic' || style === 'industrial'
+  const counter = style === 'modern' ? 51 : 49
+  const basin = counter + (style === 'modern' || style === 'playful' ? 8 : 4)
   return <g>
     {legs(look, 0.91, 2, open ? 48 : 14)}
     {open ? <>
@@ -63,15 +69,15 @@ export function bathroomVanity(look: FurnitureLook) {
     {timber(look, 0.01, 0.99, 0.01, 1.99, 45, style === 'modern' ? 51 : 49, style === 'playful' ? 6 : 3)}
     {style === 'classic' && timber(look, 0.01, 0.12, 0.01, 1.99, 49, 59, 3)}
     {[0.56, 1.44].map((y) => <g key={y}>
-      {drum({ cx: 0.58, cy: y, a: 0.31, b: 0.36, z0: 49, z1: style === 'modern' || style === 'playful' ? 57 : 53, top: cream, side: creamDark })}
-      <polygon points={ring(0.59, y, 0.24, 0.27, style === 'modern' || style === 'playful' ? 57.2 : 53.2)} fill={PALETTE.sky} strokeWidth={1.5} />
-      {tap(look, 0.2, y, 49)}
+      {drum({ cx: 0.58, cy: y, a: 0.31, b: 0.36, z0: counter, z1: basin, top: cream, side: creamDark })}
+      <polygon points={ring(0.59, y, 0.24, 0.27, basin + 0.2)} fill={PALETTE.sky} strokeWidth={1.5} />
+      {tap(look, 0.2, y, counter)}
     </g>)}
     {style === 'classic' && knob(look, 0.94, 1, 20)}
     <>
       {front(0.97, 1.62, 1.96, <rect x={0} y={-46} width={10.9} height={23} rx={2} fill={c.fabric} strokeWidth={1.5} />)}
       {frontPattern(look, 0.975, 1.66, 1.92, 26, 43)}
-      {details && plant(look, 0.14, 1.87, 50)}
+      {details && plant(look, 0.14, 1.87, counter + 1)}
     </>
   </g>
 }
@@ -81,6 +87,7 @@ export function laundryHamper(look: FurnitureLook) {
   const c = look.colors
   const round = style === 'classic' || style === 'playful' || style === 'cottage'
   const h = style === 'playful' ? 39 : 45
+  const lid = h + (style === 'nordic' || style === 'industrial' ? 2 : 4)
   return <g>
     {style === 'nordic' && <>
       {line([0.04, 0.05, 0], [0.94, 0.05, h + 7], ink, 7)}
@@ -115,7 +122,7 @@ export function laundryHamper(look: FurnitureLook) {
       </> : front(0.89, 0.32, 0.68, <rect x={0} y={-h + 7} width={11.5} height={4} rx={2} fill={c.woodDark} strokeWidth={1} />)}
     </>}
     {style === 'modern' ? timber(look, 0.06, 0.9, 0.06, 0.9, h, h + 4, 7) : round ? drum({ cx: 0.5, cy: 0.5, a: 0.44, b: 0.44, z0: h - 1, z1: h + 4, top: c.fabricLight, side: c.wood }) : timber(look, 0.04, 0.94, 0.04, 0.94, h - 2, h + 2, 3)}
-    {topPattern(look, 0.24, 0.76, 0.24, 0.76, h + 4.2)}
+    {topPattern(look, 0.24, 0.76, 0.24, 0.76, lid + 0.2)}
     {style === 'playful' && <>{knob(look, 0.48, 0.48, h + 7)}{front(0.9, 0.26, 0.74, <g fill={c.fabric}><circle cx={3} cy={-26} r={2} /><circle cx={12} cy={-26} r={2} /><path d="M6 -20 Q8 -17 10 -20" fill="none" strokeWidth={1.3} /></g>)}</>}
     {details && <>{front(0.91, 0.62, 0.91, <path d={`M0 ${-h - 3} H9 V${-h + 17} Q4 ${-h + 21} 0 ${-h + 17} Z`} fill={c.fabric} strokeWidth={1.4} />)}{frontPattern(look, 0.915, 0.65, 0.88, h - 14, h)}</>}
   </g>

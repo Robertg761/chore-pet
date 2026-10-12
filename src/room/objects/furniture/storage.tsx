@@ -1,6 +1,6 @@
 import { PALETTE } from '../../../art/palette'
-import { mix } from '../../../art/color'
-import { book, cream, front, frontPattern, ink, knob, legs, line, metalBox, panel, plant, point, timber, topPattern, upholstered, type FurnitureLook } from './parts'
+import { Opening } from './Opening'
+import { book, cabinetTop, cream, front, frontPattern, ink, knob, legs, line, metalBox, panel, plant, timber, topPattern, upholstered, type FurnitureLook } from './parts'
 
 function cabinet(look: FurnitureLook, d: number, h: number, x = 0.84) {
   const { style } = look.options
@@ -38,22 +38,19 @@ function drawer(look: FurnitureLook, x: number, y0: number, y1: number, z0: numb
   </g>
 }
 
-function opening(look: FurnitureLook, x: number, y0: number, y1: number, z0: number, z1: number) {
-  const c = look.colors
-  return front(x, y0, y1, <g><rect x={0} y={-z1} width={(y1 - y0) * 32} height={z1 - z0} rx={1} fill={mix(c.woodDark, ink, 0.38)} strokeWidth={1.5} /><path d={`M1 ${-z0 - 2} H${(y1 - y0) * 32 - 1}`} stroke={c.woodLight} strokeWidth={2} /></g>)
-}
-
 export function nightstand(look: FurnitureLook) {
   const { style, details } = look.options
   const c = look.colors
+  const top = cabinetTop(look, 39)
   return <g>
     {cabinet(look, 1, 39)}
     {drawer(look, 0.85, 0.13, 0.87, 26, 35)}
     {style === 'modern' || style === 'playful' ? drawer(look, 0.85, 0.13, 0.87, 13, 24) : <>
-      {opening(look, 0.85, 0.13, 0.87, 13, 24)}
-      {details && <>{book(look, 0.6, 0.28, 13, c.fabric, 8)}{book(look, 0.6, 0.44, 13, cream, 9)}</>}
+      <Opening look={look} x={0.85} y0={0.13} y1={0.87} z0={13} z1={24}>
+        {details && <>{book(look, 0.6, 0.28, 13, c.fabric, 8)}{book(look, 0.6, 0.44, 13, cream, 9)}</>}
+      </Opening>
     </>}
-    {details && <>{plant(look, 0.25, 0.28, 43)}{book(look, 0.41, 0.64, 43, c.fabric, 3)}</>}
+    {details && <>{plant(look, 0.25, 0.28, top + 1)}{book(look, 0.41, 0.64, top, c.fabric, 3)}</>}
   </g>
 }
 
@@ -62,6 +59,7 @@ export function dresser(look: FurnitureLook) {
   const c = look.colors
   const h = style === 'nordic' ? 55 : style === 'modern' ? 46 : 51
   const split = style !== 'modern'
+  const top = cabinetTop(look, h)
   return <g>
     {cabinet(look, 2, h)}
     {[0, 1, 2].map((i) => {
@@ -69,7 +67,7 @@ export function dresser(look: FurnitureLook) {
       const top = bottom + (h - 17) / 3 - 2
       return <g key={i}>{split ? <>{drawer(look, 0.855, 0.13, 0.97, bottom, top)}{drawer(look, 0.855, 1.03, 1.87, bottom, top)}</> : drawer(look, 0.855, 0.13, 1.87, bottom, top)}</g>
     })}
-    {details && <>{plant(look, 0.35, 0.31, h + 4)}{book(look, 0.24, 1.51, h + 4, c.fabric, 3)}</>}
+    {details && <>{plant(look, 0.35, 0.31, top + 1)}{book(look, 0.24, 1.51, top, c.fabric, 3)}</>}
     {style === 'playful' && panel(look, 0.12, 0.68, 1.32, h + 1, h + 16, false, true)}
   </g>
 }
@@ -88,7 +86,7 @@ export function wardrobe(look: FurnitureLook) {
       {knob(look, 0.89, 0.82, 53)}{knob(look, 0.89, 1.18, 53)}
       {style === 'cottage' && [0.34, 0.56, 1.31, 1.54].map((y) => <g key={y}>{line([0.88, y, 23], [0.88, y, h - 22], c.woodDark, 1)}</g>)}
     </> : style === 'nordic' ? <>
-      {opening(look, 0.875, 0.13, 0.95, 17, h - 8)}
+      <Opening look={look} x={0.875} y0={0.13} y1={0.95} z0={17} z1={h - 8} />
       {line([0.88, 0.23, 89], [0.88, 0.84, 89], c.woodLight, 2.4)}
       {front(0.88, 0.13, 0.95, <g fill={c.fabric} strokeWidth={1.2}><path d="M5 -81 L10 -88 L16 -81 L20 -64 H13 V-46 H5 V-64 H1 Z" /><path d="M15 -84 Q18 -91 20 -86" fill="none" /></g>)}
       {drawer(look, 0.875, 1.06, 1.86, 18, h - 8)}
@@ -107,14 +105,16 @@ export function tvStand(look: FurnitureLook) {
   const { style, details } = look.options
   const c = look.colors
   const h = style === 'modern' ? 26 : 34
+  const top = cabinetTop(look, h)
   return <g>
     {cabinet(look, 2, h)}
     {drawer(look, 0.855, 0.13, 0.6, 13, h - 5)}
-    {opening(look, 0.855, 0.68, 1.31, 13, h - 5)}
+    <Opening look={look} x={0.855} y0={0.68} y1={1.31} z0={13} z1={h - 5}>
+      {details && <>{book(look, 0.62, 0.76, 13, c.fabric, 7)}{book(look, 0.62, 0.92, 13, cream, 8)}</>}
+    </Opening>
     {drawer(look, 0.855, 1.39, 1.87, 13, h - 5)}
-    {details && <>{book(look, 0.62, 0.76, 13, c.fabric, 7)}{book(look, 0.62, 0.92, 13, cream, 8)}</>}
-    {line([0.42, 0.55, h + 3], [0.28, 0.74, h + 10], c.metal, 3)}
-    {line([0.42, 1.45, h + 3], [0.28, 1.26, h + 10], c.metal, 3)}
+    {line([0.42, 0.55, top], [0.31, 0.74, h + 8], c.metal, 3)}
+    {line([0.42, 1.45, top], [0.31, 1.26, h + 8], c.metal, 3)}
     {front(0.31, 0.2, 1.8, <g>
       <rect x={-1} y={-h - 51} width={53.2} height={43} rx={style === 'playful' ? 9 : style === 'classic' ? 4 : 2} fill={style === 'cottage' ? c.wood : ink} />
       <rect x={3} y={-h - 47} width={45.2} height={34} rx={style === 'playful' ? 6 : 1} fill={c.fabricLight} strokeWidth={1.2} />
@@ -132,18 +132,24 @@ export function shoeRack(look: FurnitureLook) {
   return <g>
     {legs(look, 0.83, 2, h, 0.09)}
     {style === 'modern' && <>{timber(look, 0.06, 0.85, 0.03, 0.14, 1, h, 1)}{timber(look, 0.06, 0.85, 1.86, 1.97, 1, h, 1)}</>}
-    {[7, 21, h].map((z) => <g key={z}>{timber(look, 0.03, 0.9, 0.02, 1.98, z, z + 3, style === 'playful' ? 8 : 2)}{style === 'industrial' && line([0.89, 0.05, z - 1], [0.89, 1.95, z - 1], c.metal, 2)}</g>)}
     {style === 'cottage' && <>{panel(look, 0.05, 0.05, 1.95, h, h + 12, false, true)}{line([0.03, 1.94, 10], [0.82, 1.94, 33], c.wood, 3)}</>}
     {style === 'nordic' && <>{line([0.02, 0.1, 9], [0.02, 1.9, 36], c.woodDark, 2)}{line([0.02, 0.1, 36], [0.02, 1.9, 9], c.woodDark, 2)}</>}
+    {[7, 21].map((z, row) => <g key={z}>
+      {timber(look, 0.03, 0.9, 0.02, 1.98, z, z + 3, style === 'playful' ? 8 : 2)}
+      {style === 'industrial' && line([0.89, 0.05, z - 1], [0.89, 1.95, z - 1], c.metal, 2)}
+      {details && [1.35, 0.77, 0.19].map((y, i) => {
+        const sole = z + 3
+        return <g key={`${z}-${y}`}>
+          {front(0.88, y, y + 0.5, <g strokeWidth={1.2}>
+            <path d={`M1 ${-sole} Q0 ${-sole - 1} 1 ${-sole - 4} L2 ${-sole - 7} Q5 ${-sole - 8} 7 ${-sole - 5} L9 ${-sole - 3} Q13 ${-sole - 3} 16 ${-sole - 1} Q17 ${-sole} 14 ${-sole} Z`} fill={(i + row) % 2 ? c.fabricDark : c.fabric} />
+            <path d={`M1 ${-sole - 0.8} H15 M6 ${-sole - 4.7} L9 ${-sole - 3.6}`} fill="none" stroke={cream} strokeWidth={1.2} />
+          </g>)}
+        </g>
+      })}
+    </g>)}
+    {timber(look, 0.03, 0.9, 0.02, 1.98, h, h + 3, style === 'playful' ? 8 : 2)}
     {style === 'classic' && timber(look, 0.84, 0.91, 0.04, 1.96, h - 5, h + 3)}
     {upholstered(look, 0.1, 0.85, 0.13, 1.87, h + 3, h + 6, 3)}
     {topPattern(look, 0.18, 0.76, 0.24, 1.76, h + 6.1)}
-    {details && [8, 22].flatMap((z, row) => [0.25, 0.78, 1.34].map((y, i) => {
-      const p = point(0.75, y, z + 3)
-      return <g key={`${z}-${y}`} transform={`translate(${p.x} ${p.y})`} strokeWidth={1.4}>
-        <path d="M-9 -3 Q-10 -10 -5 -10 L-1 -6 Q4 -6 7 -2 Q9 2 4 3 H-8 Z" fill={(i + row) % 2 ? c.fabricDark : c.fabric} />
-        <path d="M-8 1 H6 M-3 -5 L1 -3" fill="none" stroke={cream} strokeWidth={1.4} />
-      </g>
-    }))}
   </g>
 }

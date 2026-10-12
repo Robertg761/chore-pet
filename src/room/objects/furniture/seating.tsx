@@ -54,7 +54,7 @@ export function armchair(look: FurnitureLook) {
       {leg(look, 0.8, 0.9, 36)}
       {timber(look, 0.14, 0.9, 0.84, 0.96, 34, 38, 3)}
     </> : upholstered(look, 0.03, 0.94, 0.8, 0.98, 6, playful ? 39 : 36, playful ? 12 : 7)}
-    {details && upholstered(look, 0.29, 0.49, 0.3, 0.71, seat + 2, seat + 15, 6)}
+    {details && upholstered(look, 0.29, 0.49, 0.3, 0.71, seat, seat + 13, 6)}
     {details && style === 'classic' && <>{line([0.33, 0.98, 31], [0.83, 0.98, 31], look.colors.fabricLight, 1.3)}</>}
   </g>
 }
@@ -77,16 +77,19 @@ export function diningChair(look: FurnitureLook) {
 export function bench(look: FurnitureLook) {
   const { style, details } = look.options
   const c = look.colors
+  const narrowCushion = style === 'industrial' || style === 'nordic'
+  const surface = style === 'playful' ? 27 : narrowCushion ? 30 : 33
   return <g>
-    {style === 'modern' ? <>{timber(look, 0.12, 0.87, 0.1, 0.26, 0, 24, 1)}{timber(look, 0.12, 0.87, 1.74, 1.9, 0, 24, 1)}</> : legs(look, 0.94, 2, 23)}
+    {style === 'modern' ? <>{timber(look, 0.12, 0.87, 0.1, 0.26, 0, 24, 1)}{timber(look, 0.12, 0.87, 1.74, 1.9, 0, 24, 1)}</> : style === 'playful' ? <>{leg(look, 0.25, 0.4, 23)}{leg(look, 0.73, 0.4, 23)}{leg(look, 0.25, 1.6, 23)}{leg(look, 0.73, 1.6, 23)}</> : legs(look, 0.94, 2, 23)}
     {style === 'industrial' && <>{line([0.13, 0.12, 5], [0.13, 1.88, 19], c.metal, 3)}{line([0.13, 0.12, 19], [0.13, 1.88, 5], c.metal, 3)}</>}
-    {style === 'cottage' && <>{back(look, 2, 23, 56)}{timber(look, 0.1, 0.95, 0.04, 0.16, 33, 37)}{timber(look, 0.1, 0.95, 1.84, 1.96, 33, 37)}</>}
+    {style === 'cottage' && <>{back(look, 2, 23, 56)}{timber(look, 0.1, 0.95, 0.04, 0.16, 33, 37)}</>}
     {style === 'playful' ? drum({ cx: 0.49, cy: 1, a: 0.42, b: 0.93, z0: 17, z1: 27, top: c.fabricLight, side: c.fabric }) : timber(look, 0.03, 0.97, 0.02, 1.98, 22, 27, 3)}
+    {(style === 'industrial' || style === 'nordic') && [0.25, 0.49, 0.73].map((x) => <g key={x}>{line([x, 0.08, 27.1], [x, 1.92, 27.1], c.woodDark, 1.3)}</g>)}
     {style !== 'industrial' && style !== 'nordic' && style !== 'playful' && upholstered(look, 0.13, 0.9, 0.16, 1.84, 27, 33, 5)}
     {(style === 'industrial' || style === 'nordic') && upholstered(look, 0.18, 0.87, 0.49, 1.51, 27, 30, 3)}
-    {topPattern(look, 0.22, 0.81, style === 'industrial' || style === 'nordic' ? 0.55 : 0.26, style === 'industrial' || style === 'nordic' ? 1.45 : 1.74, style === 'industrial' || style === 'nordic' ? 30.2 : style === 'playful' ? 27.2 : 33.2)}
-    {(style === 'industrial' || style === 'nordic') && [0.25, 0.49, 0.73].map((x) => <g key={x}>{line([x, 0.08, 27.1], [x, 1.92, 27.1], c.woodDark, 1.3)}</g>)}
-    {details && upholstered(look, 0.23, 0.85, 1.35, 1.74, style === 'playful' ? 28 : 34, style === 'playful' ? 32 : 38, 3)}
+    {topPattern(look, style === 'playful' ? 0.25 : 0.22, style === 'playful' ? 0.74 : 0.81, narrowCushion ? 0.55 : style === 'playful' ? 0.37 : 0.26, narrowCushion ? 1.45 : style === 'playful' ? 1.63 : 1.74, surface + 0.2)}
+    {style === 'cottage' && timber(look, 0.1, 0.95, 1.84, 1.96, 33, 37)}
+    {details && upholstered(look, 0.23, style === 'playful' ? 0.74 : 0.85, narrowCushion ? 1.08 : 1.35, narrowCushion ? 1.45 : style === 'playful' ? 1.63 : 1.74, surface, surface + 4, 3)}
     {details && style === 'classic' && <>{panel(look, 0.9, 0.04, 0.24, 27, 43, true, true)}{panel(look, 0.9, 1.76, 1.96, 27, 43, true, true)}</>}
   </g>
 }
@@ -96,7 +99,7 @@ export function ottoman(look: FurnitureLook) {
   const c = look.colors
   const round = style === 'playful' || style === 'modern'
   return <g>
-    {style === 'industrial' ? <>{legs(look, 0.94, 0.94, 18)}{metalBox(look, 0.08, 0.87, 0.08, 0.87, 12, 16)}</> : legs(look, 0.92, 0.92, style === 'nordic' ? 12 : 5)}
+    {style === 'industrial' ? <>{legs(look, 0.94, 0.94, 18)}{metalBox(look, 0.08, 0.87, 0.08, 0.87, 12, 16)}</> : legs(look, 0.92, 0.92, style === 'nordic' ? 12 : 5, round ? 0.25 : 0.14)}
     {round ? <>
       {drum({ cx: 0.48, cy: 0.48, a: 0.44, b: 0.44, z0: 4, z1: style === 'playful' ? 31 : 26, top: c.fabricLight, side: c.fabric })}
       {style === 'playful' && drum({ cx: 0.48, cy: 0.48, a: 0.47, b: 0.47, z0: 25, z1: 33, top: c.fabricLight, side: c.fabricDark })}
@@ -117,15 +120,25 @@ export function petBed(look: FurnitureLook) {
   const c = look.colors
   const round = style === 'playful' || style === 'cottage'
   return <g>
-    {legs(look, 1.94, 0.96, style === 'nordic' || style === 'industrial' ? 10 : 4)}
+    {round ? <>{leg(look, 0.35, 0.28, 4)}{leg(look, 1.65, 0.28, 4)}{leg(look, 0.35, 0.72, 4)}{leg(look, 1.65, 0.72, 4)}</> : legs(look, 1.94, 0.96, style === 'nordic' || style === 'industrial' ? 10 : 4)}
     {round ? drum({ cx: 1, cy: 0.5, a: 0.92, b: 0.45, z0: 3, z1: 18, top: c.woodLight, side: c.wood }) : timber(look, 0.03, 1.97, 0.02, 0.98, 5, 13, style === 'modern' ? 2 : 6)}
     {style === 'industrial' && <>{metalBox(look, 0.04, 0.12, 0.03, 0.95, 9, 20)}{metalBox(look, 1.88, 1.96, 0.03, 0.95, 9, 20)}</>}
-    {style === 'cottage' && [6, 10, 14].map((z) => <g key={z}>{line([0.3, 0.94, z], [1.7, 0.94, z], c.woodDark, 1)}{line([1.93, 0.25, z], [1.93, 0.75, z], c.woodDark, 1)}</g>)}
+    {style === 'cottage' && [6, 10, 14].map((z) => {
+      const edge = Math.atan2(0.45, 0.92)
+      const arc = Array.from({ length: 21 }, (_, i) => {
+        const angle = Math.PI - edge - Math.PI * i / 20
+        const p = point(1 + 0.92 * Math.cos(angle), 0.5 + 0.45 * Math.sin(angle), z)
+        return `${i === 0 ? 'M' : 'L'}${p.x} ${p.y}`
+      }).join(' ')
+      return <path key={z} d={arc} fill="none" stroke={c.woodDark} strokeWidth={1} />
+    })}
+    {style === 'classic' && <>{upholstered(look, 0.1, 1.91, 0.02, 0.18, 12, 27, 7)}{upholstered(look, 0.03, 0.24, 0.06, 0.94, 11, 31, 9)}</>}
+    {style === 'modern' && timber(look, 0.04, 0.17, 0.02, 0.98, 10, 28, 2)}
+    {style === 'nordic' && timber(look, 0.03, 0.1, 0.04, 0.96, 15, 30)}
     {upholstered(look, 0.18, 1.82, 0.14, 0.85, 12, 21, round ? 13 : 5)}
     {topPattern(look, 0.3, 1.7, 0.25, 0.75, 21.2)}
-    {style === 'classic' && <>{upholstered(look, 0.03, 0.24, 0.06, 0.94, 11, 31, 9)}{upholstered(look, 0.1, 1.91, 0.02, 0.18, 12, 27, 7)}</>}
-    {style === 'modern' && <>{timber(look, 0.04, 0.17, 0.02, 0.98, 10, 28, 2)}{timber(look, 1.83, 1.96, 0.02, 0.98, 10, 28, 2)}</>}
-    {style === 'nordic' && <>{timber(look, 0.03, 0.1, 0.04, 0.96, 15, 30)}{timber(look, 1.9, 1.97, 0.04, 0.96, 15, 30)}</>}
+    {style === 'modern' && timber(look, 1.83, 1.96, 0.02, 0.98, 10, 28, 2)}
+    {style === 'nordic' && timber(look, 1.9, 1.97, 0.04, 0.96, 15, 30)}
     {style === 'playful' && <>
       {panel(look, 0.18, 0.08, 0.92, 17, 49, true, true)}
       {front(0.185, 0.08, 0.92, <g fill={c.fabricLight}><ellipse cx={5} cy={-44} rx={4} ry={10} /><ellipse cx={22} cy={-44} rx={4} ry={10} /></g>)}

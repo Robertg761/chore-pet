@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { Buffer } from 'node:buffer'
 import { Resvg } from '@resvg/resvg-js'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
@@ -19,10 +20,17 @@ const appearance: FurnitureAppearance = { style: 'cottage', finish: 'sage', fabr
 const svg = (art: (typeof originals)[number], stage: (typeof stages)[number], look?: FurnitureAppearance) =>
   renderToStaticMarkup(<svg>{customizeLegacyArt(art, stage, look)}</svg>)
 const raster = (art: (typeof originals)[number], stage: (typeof stages)[number], look: FurnitureAppearance, bounds = art.bounds) => {
-  const drawing = renderToStaticMarkup(<svg xmlns="http://www.w3.org/2000/svg" width={bounds.width} height={bounds.height} viewBox={`${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`}>
+  const b = art.bounds
+  const drawing = renderToStaticMarkup(<svg xmlns="http://www.w3.org/2000/svg" width={b.width} height={b.height} viewBox={`${b.x} ${b.y} ${b.width} ${b.height}`}>
     {customizeLegacyArt(art, stage, look)}
   </svg>)
-  return new Resvg(drawing, { font: { loadSystemFonts: false } }).render().pixels
+  const pixels = new Resvg(drawing, { font: { loadSystemFonts: false } }).render().pixels
+  if (bounds === b) return pixels
+  // Render at the object's full bounds before cropping; tiny SVG viewBoxes can make resvg panic.
+  return Buffer.concat(Array.from({ length: bounds.height }, (_, y) => {
+    const start = ((bounds.y + y - b.y) * b.width + bounds.x - b.x) * 4
+    return pixels.subarray(start, start + bounds.width * 4)
+  }))
 }
 
 describe('legacy furniture appearances', () => {
@@ -90,6 +98,41 @@ describe('legacy furniture appearances', () => {
     expect(svg(art, 'messy2', { ...appearance, finish: 'charcoal' })).not.toContain('fill="#FFF6E6"')
   })
 
+  it('preserves appliance glass highlights and chrome fixtures when changing the finish', () => {
+    for (const id of ['stove', 'washer', 'shower', 'toilet']) for (const stage of stages) {
+      const art = originals.find((entry) => entry.catalogId === id)!
+      const original = new DOMParser().parseFromString(svg(art, stage), 'image/svg+xml')
+      const paths = [...original.querySelectorAll('path[stroke="#FFFFFF"]')]
+      if (id === 'stove' || id === 'shower') paths.push(original.querySelector('path[stroke="#C9D3E6"]')!)
+      for (const style of styles) {
+        const styled = new DOMParser().parseFromString(svg(art, stage, { ...appearance, style, finish: 'charcoal' }), 'image/svg+xml')
+        for (const path of paths) {
+          const matching = [...styled.querySelectorAll('path')].find((candidate) => candidate.getAttribute('d') === path.getAttribute('d') && candidate.getAttribute('stroke-width') === path.getAttribute('stroke-width'))!
+          expect(matching.getAttribute('stroke'), `${id}/${style}/${stage}/highlight`).toBe(path.getAttribute('stroke'))
+        }
+        if (id === 'washer') expect(styled.querySelector('circle[r="10.5"]')!.getAttribute('fill'), `${style}/${stage}/washer ring`).toBe('#C9D3E6')
+        if (id === 'toilet') {
+          const button = original.querySelector('polygon[fill="#C9D3E6"]')!
+          const matching = [...styled.querySelectorAll('polygon')].find((candidate) => candidate.getAttribute('points') === button.getAttribute('points'))!
+          expect(matching.getAttribute('fill'), `${style}/${stage}/flush button`).toBe('#C9D3E6')
+          const lid = original.querySelectorAll('polygon[fill="#FFFFFF"]')[2]
+          const styledLid = [...styled.querySelectorAll('polygon')].find((candidate) => candidate.getAttribute('points') === lid.getAttribute('points'))!
+          expect(styledLid.getAttribute('fill'), `${style}/${stage}/tank lid finish`).not.toBe('#FFFFFF')
+        }
+      }
+    }
+  })
+
+  it('keeps fish-tank accents on the stand apron, leaving open stands empty', () => {
+    const art = originals.find((entry) => entry.catalogId === 'fish-tank')!
+    const opening = { x: 7, y: 12, width: 9, height: 8 }
+    for (const style of ['classic', 'nordic', 'industrial'] as const) for (const stage of stages) {
+      const base = { ...appearance, style, fabric: 'blue' as const, pattern: 'plain' as const, details: false }
+      expect(raster(art, stage, base, opening).equals(raster(art, stage, { ...base, fabric: 'rose' }, opening)), `${style}/${stage}/opening`).toBe(true)
+      expect(raster(art, stage, base).equals(raster(art, stage, { ...base, fabric: 'rose' })), `${style}/${stage}/accent`).toBe(false)
+    }
+  })
+
   it('keeps modern bean-bag mess on its shorter surface', () => {
     const art = originals.find((entry) => entry.catalogId === 'bean-bag')!
     for (const stage of ['messy1', 'messy2'] as const) {
@@ -114,14 +157,14 @@ describe('legacy furniture appearances', () => {
     }
   })
 
-  it('keeps pixels inside each original object bound for every style and mess stage', () => {
+  it('keeps pixels inside each object bound with original and styled appearances in every mess stage', () => {
     const outside: string[] = []
-    for (const art of originals) for (const style of styles) for (const stage of stages) {
+    for (const art of originals) for (const style of [undefined, ...styles]) for (const stage of stages) {
       const b = art.bounds
       const width = Math.ceil(b.width + 40)
       const height = Math.ceil(b.height + 40)
       const drawing = renderToStaticMarkup(<svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox={`${b.x - 20} ${b.y - 20} ${width} ${height}`}>
-        {customizeLegacyArt(art, stage, { ...appearance, style })}
+        {customizeLegacyArt(art, stage, style ? { ...appearance, style } : undefined)}
       </svg>)
       const pixels = new Resvg(drawing, { font: { loadSystemFonts: false } }).render().pixels
       let escaped = false
@@ -129,7 +172,7 @@ describe('legacy furniture appearances', () => {
         if (x >= 19 && x <= width - 19 && y >= 19 && y <= height - 19) continue
         if (pixels[(y * width + x) * 4 + 3] > 8) { escaped = true; break }
       }
-      if (escaped) outside.push(`${art.catalogId}/${style}/${stage}`)
+      if (escaped) outside.push(`${art.catalogId}/${style ?? 'original'}/${stage}`)
     }
     expect(outside).toEqual([])
   }, 15000)
