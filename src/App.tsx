@@ -376,7 +376,8 @@ export default function App() {
   const names = roomNames(rooms)
   const focusRoom = (roomId: string) => {
     if (roomId === focusedRoomId) { travel.go(roomId); return }
-    travel.pause()
+    // The routing layout effect redirects the live journey before paint.
+    // Clearing it here would unmount the traveler and lose its outgoing pose.
     setSelectedId(null)
     setPlacing(null)
     setSparkles([])
@@ -757,7 +758,7 @@ export default function App() {
       residentRoom={view.name === 'home' ? livingRoom : resident && resident.id !== room.id && stationaryPet ? <Room room={resident} objects={residentObjects} stages={stages} neglect={neglect} pet={stationaryPet} /> : null}
       connections={connections}
       travelNotice={travel.notice}
-      overlay={travel.journey && <HomeTraveler key={travel.journey.id} path={travel.journey.path} layout={layout} pet={pet} mood={condition.mood} away={away} onPosition={travel.onPosition} onDone={(at) => travel.arrive(travel.journey!.id, at)} />}
+      overlay={travel.journey && <HomeTraveler key={home.id} path={travel.journey.path} layout={layout} pet={pet} mood={condition.mood} away={away} onPosition={travel.onPosition} onDone={(at) => travel.arrive(travel.journey!.id, at)} />}
       stages={stages}
       neglect={neglect}
       overdue={overdue}

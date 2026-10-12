@@ -7,18 +7,3 @@
   pointer-events: none;
   z-index: 1000;
 }
-
-.home-traveler-run {
-  transform-box: fill-box;
-  transform-origin: center bottom;
-  animation: home-traveler-run 180ms ease-in-out infinite;
-}
-
-@keyframes home-traveler-run {
-  0%, 100% { transform: translateY(0) rotate(3deg); }
-  50% { transform: translateY(-9px) rotate(-3deg); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .home-traveler-run { animation: none; }
-}

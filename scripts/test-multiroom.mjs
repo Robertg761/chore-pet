@@ -90,19 +90,21 @@ async function assertPetAt(id, timeout = 12_000) {
   await eventually(async () => {
     assert.equal(await scene().locator('.home-traveler').count(), 0, 'Travel must finish')
     assert.equal(await scene().locator('.room-pet').count(), 1, 'There must be exactly one resident pet')
-    assert.equal(await scene().locator('.ch-breathe').count(), 1, 'Only one character must be drawn in the home')
+    assert.equal(await scene().locator('.ch-animated').count(), 1, 'Only one character must be drawn in the home')
     assert.equal(await room(id).locator('.room-pet').count(), 1, 'The pet must arrive in the requested room')
   }, 'The single pet must settle in the destination room', timeout)
 }
 
 async function watchPetTravel(id) {
-  await scene().locator('.home-traveler').waitFor({ state: 'attached' })
+  // Focus checks can outlast a short route. Observe from before the door click,
+  // so driver latency cannot discard the movement this assertion must verify.
+  await page.waitForFunction(() => window.__multiroomTravelTrace?.samples.some((sample) => sample.present))
   const positions = new Set()
   const end = Date.now() + 12_000
   while (await scene().locator('.home-traveler').count()) {
     const state = await scene().evaluate((element) => ({
       count: element.querySelectorAll('.room-pet, .home-traveler').length,
-      characters: element.querySelectorAll('.ch-breathe').length,
+      characters: element.querySelectorAll('.ch-animated').length,
       transform: element.querySelector('.home-traveler > g')?.getAttribute('transform'),
     }))
     assert.equal(state.count, 1, 'Exactly one pet must exist throughout the journey')
@@ -111,8 +113,50 @@ async function watchPetTravel(id) {
     assert.ok(Date.now() < end, 'The pet journey must finish within twelve seconds')
     await page.waitForTimeout(25)
   }
+  const trace = await page.evaluate(() => {
+    const trace = window.__multiroomTravelTrace
+    trace?.observer.disconnect()
+    return trace ? { startedAt: trace.startedAt, endedAt: performance.now(), samples: trace.samples } : null
+  })
+  await writeFile(join(output, 'pet-travel-trace.json'), JSON.stringify({ polledPositions: [...positions], trace }, null, 2))
+  for (const sample of trace.samples) {
+    assert.equal(sample.count, 1, 'Exactly one pet must exist in every observed journey commit')
+    assert.equal(sample.characters, 1, 'Every observed journey commit must draw exactly one character')
+    if (sample.present && sample.transform) positions.add(sample.transform)
+  }
   assert.ok(positions.size > 1, 'Normal motion must move the pet through the scene')
   await assertPetAt(id)
+}
+
+// Capture before input so a failed poll can distinguish an immediate arrival
+// from a real journey that finished before the remote assertions began watching.
+async function startPetTravelTrace() {
+  await page.evaluate(() => {
+    window.__multiroomTravelTrace?.observer.disconnect()
+    const samples = []
+    const scene = document.querySelector('.home-scene')
+    const record = () => {
+      if (samples.length >= 2000) return
+      const pet = document.querySelector('.home-traveler')
+      samples.push({ at: performance.now(), hidden: document.hidden,
+        reduced: matchMedia('(prefers-reduced-motion: reduce)').matches,
+        present: !!pet, away: pet?.getAttribute('data-away'),
+        room: pet?.getAttribute('data-travel-room'), travelling: pet?.getAttribute('data-travelling'),
+        pose: pet?.querySelector('[data-character-pose]')?.getAttribute('data-character-pose'),
+        transform: pet?.querySelector(':scope > g')?.getAttribute('transform'),
+        count: scene.querySelectorAll('.room-pet, .home-traveler').length,
+        characters: scene.querySelectorAll('.ch-animated').length,
+        childTags: pet ? [...pet.children].map((child) => child.tagName) : [],
+      })
+    }
+    const observer = new MutationObserver((records) => {
+      if (records.some((record) => record.type === 'childList'
+        || record.target.closest?.('.home-traveler'))) record()
+    })
+    window.__multiroomTravelTrace = { observer, samples, startedAt: performance.now() }
+    observer.observe(scene, { subtree: true, childList: true, attributes: true, attributeFilter: ['transform', 'data-travelling'] })
+    record()
+  })
 }
 
 async function addRoom(type) {
@@ -287,7 +331,7 @@ async function blockedDoorRecovery() {
       assert.equal(await sc().locator('.home-traveler').count(), 0)
       assert.equal(await r(kitchen).locator('.room-pet').count(), 1)
       assert.equal(await r(bedroom).locator('.room-pet').count(), 0)
-      assert.equal(await sc().locator('.ch-breathe').count(), 1)
+      assert.equal(await sc().locator('.ch-animated').count(), 1)
     }, 'A blocked route must keep the one pet in its original room and explain why')
     assert.equal(await b('Door to Kitchen, blocked by furniture').getAttribute('aria-disabled'), 'true')
     await blockedPage.screenshot({ path: join(output, 'blocked-doorway.png'), fullPage: true })
@@ -311,7 +355,7 @@ async function blockedDoorRecovery() {
     await eventually(async () => {
       assert.equal(await sc().locator('.home-traveler').count(), 0)
       assert.equal(await r(bedroom).locator('.room-pet').count(), 1)
-      assert.equal(await sc().locator('.ch-breathe').count(), 1)
+      assert.equal(await sc().locator('.ch-animated').count(), 1)
       assert.match(await sc().locator('.home-scene-travel-status').textContent(), /arrived in Bedroom/)
     }, 'Clearing the doorway must restore pet travel to the selected bedroom')
     await blockedPage.screenshot({ path: join(output, 'cleared-doorway.png'), fullPage: true })
@@ -375,6 +419,7 @@ try {
       const b = await boundaryPoint(bedroomId, 0, 5)
       assert.ok(Math.hypot(a.x - b.x, a.y - b.y) < 0.5, 'The two room floors must share a boundary without a gap')
       await page.emulateMedia({ reducedMotion: 'no-preference' })
+      await startPetTravelTrace()
       await button('Door to Kitchen').click()
       await assertFocus(kitchenId, 2)
       await watchPetTravel(kitchenId)
@@ -383,10 +428,50 @@ try {
     })
 
     await step('Rapid room reselection leaves one pet in the final requested room', async () => {
+      await page.clock.install()
+      await page.reload()
+      await button('Collapse time panel').click()
+      await page.clock.pauseAt(Date.now() + 1000)
       await focusSelect().selectOption(bedroomId)
       await scene().locator('.home-traveler').waitFor({ state: 'attached' })
-      await focusSelect().selectOption(kitchenId)
-      await focusSelect().selectOption(bedroomId)
+      await page.clock.runFor(128)
+      const traveler = scene().locator('.home-traveler')
+      const originalSvg = await traveler.elementHandle()
+      const originalArt = await traveler.locator('.ch-animated').elementHandle()
+      const readJoin = () => traveler.evaluate((svg) => {
+        const world = svg.querySelector(':scope > g').transform.baseVal.consolidate().matrix
+        const facing = svg.querySelector(':scope > g > g').transform.baseVal.consolidate()?.matrix.a ?? 1
+        const body = svg.querySelector('[data-character-body]').getScreenCTM()
+        const screen = svg.getScreenCTM()
+        const sceneBody = screen.inverse().multiply(body)
+        return { x: world.e, y: world.f, facing, screen: [screen.a, screen.b, screen.c, screen.d, screen.e, screen.f], bodyTransform: svg.querySelector('[data-character-body]').getAttribute('transform'), torso: [[45, 40], [155, 40], [45, 182], [155, 182]].map(([x, y]) => {
+          // A reversed route mirrors the rig. Match the same screen-side torso
+          // corners, rather than comparing the old left edge to the new right.
+          // Focus changes can also change page height and scroll. Scene-space
+          // geometry isolates the actual pet join from that document movement.
+          const point = new DOMPoint(facing < 0 ? 200 - x : x, y).matrixTransform(sceneBody)
+          return { x: point.x, y: point.y }
+        }) }
+      })
+      const joins = []
+      const retarget = async (id) => {
+        const before = await readJoin()
+        await focusSelect().selectOption(id)
+        assert.equal(await traveler.evaluate((node, original) => node === original, originalSvg), true, 'App must retain the active traveler SVG across route retargets')
+        assert.equal(await traveler.locator('.ch-animated').evaluate((node, original) => node === original, originalArt), true, 'App must retain the active sampled character across route retargets')
+        const after = await readJoin()
+        const worldJump = Math.hypot(after.x - before.x, after.y - before.y)
+        const torsoJump = Math.max(...before.torso.map((point, i) => Math.hypot(after.torso[i].x - point.x, after.torso[i].y - point.y)))
+        joins.push({ worldJump, torsoJump, before, after })
+        await writeFile(join(output, 'app-retarget-joins.json'), JSON.stringify(joins, null, 2))
+        assert.ok(worldJump < 0.01, `retarget must retain its reported fractional scene position, jump ${worldJump}`)
+        assert.ok(torsoJump < 0.01, `App retarget must preserve the outgoing body pose, jump ${torsoJump} scene units`)
+      }
+      await retarget(kitchenId)
+      await page.clock.runFor(32)
+      await retarget(bedroomId)
+      await writeFile(join(output, 'app-retarget-joins.json'), JSON.stringify(joins, null, 2))
+      await page.clock.resume()
       await assertFocus(bedroomId, 2)
       await assertPetAt(bedroomId)
       await page.waitForTimeout(300)
