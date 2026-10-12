@@ -227,7 +227,8 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     const seed = shown.interactionBeat ?? state.beat
     if (entry && target) {
       const level = neglect?.[target.id] ?? 0
-      const messy = level > 0 || (stages[target.id] ?? 'clean') !== 'clean'
+      const stage = Object.prototype.hasOwnProperty.call(stages, target.id) ? stages[target.id] ?? 'clean' : 'clean'
+      const messy = level > 0 || stage !== 'clean'
       // Healthy objects invite a calm observation, independent of other overdue chores.
       line = messy ? messLine(entry.mess, level, seed) || objectLine(entry.id, chore?.name ?? '', seed) || null
         : pickLine(MOOD_LINES.content, seed)

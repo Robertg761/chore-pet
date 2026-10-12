@@ -348,7 +348,6 @@ export function step(state: PetState, world: World, now: number, rand: () => num
       if (!world.mess || world.mess.objectId !== a.objectId) return cancel(state, now, rand)
       return now >= a.until ? change(state, idle(now, rand), now) : state
     case 'interact': {
-      if (!targetValid(a.target, world)) return cancel(state, now, rand)
       if (now < a.until) return state
       // Use deadlines, not tick time, so background gaps settle all elapsed phases.
       const actionEnd = a.phase === 'orient' ? a.until + ACTION_MS[a.target.action] : a.until

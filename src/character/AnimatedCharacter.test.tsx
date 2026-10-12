@@ -465,6 +465,24 @@ describe('AnimatedCharacterArt', () => {
     }
   })
 
+  it('keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales', () => {
+    for (const [species, blinkMs] of [['bun', 3070], ['mochi', 1370], ['sprout', 5770]] as const) {
+      for (const mood of ['happy', 'scruffy'] as const) for (const elapsedMs of [0, 420]) for (const strokeScale of [1, 1.6]) {
+        const frame = sampleMotion({ species, mood, action: 'walk', elapsedMs, blinkMs,
+          distance: elapsedMs / 420, durationMs: 420, reducedMotion: false,
+          groundPath: [{ distance: 0, x: 0, y: 0 }, { distance: 1, x: 64, y: -32 }],
+        })
+        expect.soft(frame.eyeOpen, `${species}/${mood}/${elapsedMs} closed endpoint`).toBeCloseTo(0.1, 12)
+        const { pixels } = new Resvg(renderToStaticMarkup(<svg xmlns="http://www.w3.org/2000/svg" width={240} height={240} viewBox="-20 -20 240 240"><AnimatedCharacterArt species={species} mood={mood} bodyColour={PALETTE.petDefault} equipped={outfit} frame={frame} strokeScale={strokeScale} /></svg>), { font: { loadSystemFonts: false } }).render()
+        let outside = 0
+        for (let y = 0; y < 240; y++) for (let x = 0; x < 240; x++) {
+          if ((x < 20 || x >= 220 || y < 20 || y >= 220) && pixels[(y * 240 + x) * 4 + 3] > 5) outside++
+        }
+        expect.soft(outside, `${species}/${mood}/${elapsedMs}/stroke${strokeScale}`).toBe(0)
+      }
+    }
+  })
+
   it('keeps projected uphill feet inside the unchanged art box on both axes and facings', () => {
     // These path-only art renders do not need a system-font scan per sample.
     for (const [species, stride] of [['bun', 0.72], ['mochi', 0.9], ['sprout', 0.82]] as const) {

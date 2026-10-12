@@ -13,6 +13,44 @@ const walk = (): PetState => ({ ...initialPet({ tx: 2, ty: 2 }, 0), activity: {
 } })
 const motion = (pet: PetState, now: number, mood: World['mood'] = 'happy', reduced = false) => motionFor(pet, now, 'bun', mood, reduced)
 
+it.each([
+  { species: 'bun', arriveAt: 3070 },
+  { species: 'mochi', arriveAt: 1370 },
+  { species: 'sprout', arriveAt: 5770 },
+] as const)('preserves a closed $species blink through the actual walk arrival blend', ({ species, arriveAt }) => {
+  const walking: PetState = { ...initialPet({ tx: 2, ty: 2 }, arriveAt - 420), activity: {
+    kind: 'walk', path: [{ tx: 3, ty: 2 }], stepStart: arriveAt - 420, then: 'idle',
+  } }
+  const before = motionFor(walking, arriveAt - 0.001, species, 'happy', false).frame
+  const arrived = step(walking, world, arriveAt, () => 0.9)
+  expect(arrived.activity.kind).toBe('idle')
+  expect(positionAt(arrived, arriveAt)).toEqual({ tx: 3, ty: 2 })
+  expect(arrived.facing).toBe(walking.facing)
+  expect(before.eyeOpen).toBeCloseTo(0.1, 12)
+  const joined = motionFor(arrived, arriveAt, species, 'happy', false).frame
+  expect(joined.eyeOpen).toBeCloseTo(0.1, 12)
+  for (const key of Object.keys(before) as (keyof MotionFrame)[]) {
+    if (key !== 'expression') expect(Math.abs(joined[key]! - before[key]!)).toBeLessThan(0.001)
+  }
+  const snapshot = arrived.transition!.layers.at(-1)!.snapshot
+  expect(snapshot.activity).toMatchObject({ kind: 'walk', origin: { tx: 2, ty: 2 } })
+  if (snapshot.activity.kind !== 'walk') throw new Error('expected walking snapshot')
+  expect(snapshot.activity.groundPath?.map((point) => point.distance)).toEqual([0, 1])
+  let previous = 0.1
+  for (const offset of [0, 16, 20, 30, 40, 70, 100, 119, 120]) {
+    const frame = motionFor(arrived, arriveAt + offset, species, 'happy', false).frame
+    expect(frame.eyeOpen).toBeGreaterThanOrEqual(previous - 1e-12)
+    expect(frame.eyeOpen).toBeLessThanOrEqual(1)
+    if (offset <= 20) expect(frame.eyeOpen).toBeCloseTo(0.1, 12)
+    expect(frame.leftFoot).toBe(0)
+    expect(frame.rightFoot).toBe(0)
+    expect(frame.leftGroundX).toBe(0)
+    expect(frame.rightGroundY).toBe(0)
+    previous = frame.eyeOpen!
+  }
+  expect(previous).toBe(1)
+})
+
 // Renderer ground feet cancel torso scale/rotation. Reconstruct the sole in
 // room pixels, including the outer character mirror and placement pivot.
 function sole(pet: PetState, now: number, species: MotionInput['species'], side: 'left' | 'right', frame: MotionFrame) {

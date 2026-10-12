@@ -9,6 +9,10 @@ import { render } from '../test/react'
 import { LivingRoom, type LivingRoomProps } from './LivingRoom'
 import { HomeTraveler } from './HomeTraveler'
 import type { RoomWaypoint } from './homeTravel'
+import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+import { initialPet, positionAt, step, type PetState } from './behaviour'
+import { motionFor } from './activityMotion'
+import { PET_SCALE, roomPoint } from '../room/shell/geometry'
 
 const roomRenders = vi.hoisted(() => ({ count: 0 }))
 vi.mock('../room/Room', async (importOriginal) => {
@@ -46,6 +50,48 @@ function preference(value: boolean) { act(() => { Object.defineProperty(media, '
 function visibility(value: boolean) { act(() => { hidden = value; document.dispatchEvent(new Event('visibilitychange')) }) }
 function click(element: Element) { act(() => element.dispatchEvent(new MouseEvent('click', { bubbles: true }))) }
 function art(container: Element) { return container.querySelector('.ch-animated')! }
+
+function expectEyeScale(container: Element, expected: number) {
+  const eyes = container.querySelectorAll('[data-eye-open]')
+  expect(eyes).toHaveLength(2)
+  for (const eye of eyes) {
+    expect(Number(eye.getAttribute('data-eye-open'))).toBeCloseTo(expected, 12)
+    const scale = eye.getAttribute('transform')!.match(/scale\(1 ([^)]+)\)/)!
+    expect(Number(scale[1])).toBeCloseTo(expected, 12)
+  }
+}
+
+it('keeps rendered eyes and world geometry continuous at the closed-blink local arrival', () => {
+  const walking: PetState = { ...initialPet({ tx: 2, ty: 2 }, 2650), activity: {
+    kind: 'walk', path: [{ tx: 3, ty: 2 }], stepStart: 2650, then: 'idle',
+  } }
+  const world = { free: () => true, mood: 'happy' as const, away: false, mess: null, interactions: [] }
+  const scene = (state: PetState, time: number) => {
+    const position = positionAt(state, time), point = roomPoint(position.tx + 0.5, position.ty + 0.5)
+    return <svg><g transform={`translate(${point.x - 100 * PET_SCALE} ${point.y - 182 * PET_SCALE}) scale(${PET_SCALE})`}>
+      <AnimatedCharacterArt species="bun" mood="happy" bodyColour={pet.bodyColour}
+        frame={motionFor(state, time, 'bun', 'happy', false).frame} />
+    </g></svg>
+  }
+  const ui = mount(scene(walking, 3069.999))
+  expectEyeScale(ui.container, 0.1)
+  const original = art(ui.container)
+  const body = worldPoint(ui.container.querySelector('[data-character-body]')!, 100, 140)
+  const soles = ['left', 'right'].map((side) => foot(ui.container, side))
+  const arrived = step(walking, world, 3070, () => 0.9)
+  ui.rerender(scene(arrived, 3070))
+  expectEyeScale(ui.container, 0.1)
+  expect(art(ui.container)).toBe(original)
+  const joinedBody = worldPoint(ui.container.querySelector('[data-character-body]')!, 100, 140)
+  joinedBody.forEach((value, i) => expect(Math.abs(value - body[i])).toBeLessThan(0.001))
+  for (const [i, side] of ['left', 'right'].entries()) {
+    foot(ui.container, side).forEach((value, axis) => expect(Math.abs(value - soles[i][axis])).toBeLessThan(0.001))
+  }
+  ui.rerender(scene(arrived, 3086))
+  expectEyeScale(ui.container, 0.1)
+  ui.rerender(scene(arrived, 3190))
+  expectEyeScale(ui.container, 1)
+})
 
 it('renders sampled greetings and affection, then restores mood without remounting art', () => {
   const { container } = mount(<LivingRoom {...props} />)
@@ -122,6 +168,33 @@ const dialogueObjects = [
   { catalogId: 'sink', name: 'Wash the dishes', kind: 'stink' },
   { catalogId: 'counter', name: 'Wipe the counters', kind: 'stink' },
 ] as const
+it.each(['constructor', 'toString', '__proto__'])('uses clean dialogue for reserved object ID %s with empty ordinary records', (id) => {
+  const { container } = mount(<LivingRoom {...props} objects={[{ ...plant, id }]} stages={{}} neglect={{}} />)
+  frame(1500)
+  const line = container.querySelector('.pet-bubble')!.textContent
+  expect(MOOD_LINES.content).toContain(line)
+  expect(container.querySelector('[aria-live]')!.textContent).toBe('')
+  frame(2400)
+  expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
+  frame(2600) // Complete the orient-to-action blend before checking its expression.
+  // A healthy plant waves; a wilted one uses the alert concern expression.
+  expect(art(container).querySelector('[data-expression="cheering"]')).not.toBeNull()
+})
+
+it.each(['constructor', 'toString', '__proto__'])(
+  'keeps owned stage-based condition dialogue for reserved ID %s', (id) => {
+    const { container } = mount(<LivingRoom {...props} objects={[{ ...plant, id }]} stages={{ [id]: 'messy1' }}
+      neglect={{}} />)
+    frame(1500)
+    const line = container.querySelector('.pet-bubble')!.textContent
+    expect(OBJECT_LINES.plant).toContain(line)
+    expect(MOOD_LINES.content).not.toContain(line)
+    frame(2400)
+    expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
+    frame(2600)
+    expect(art(container).querySelector('[data-expression="cheering"]')).toBeNull()
+  },
+)
 function choreFor(object: PlacedObject, name: string): Chore {
   return { id: `${object.id}-chore`, homeId: 'home', objectId: object.id, name,
     schedule: { kind: 'daily' }, createdOn: '2026-10-11', photoProof: false }
@@ -233,6 +306,29 @@ it('keeps repeated taps bounded, keyboard activation, and expired hidden reactio
 
 const layout = homeLayout(['a', 'b'])
 const route: RoomWaypoint[] = [{ roomId: 'a', tx: 6, ty: 4 }, { roomId: 'a', tx: 7, ty: 4 }, { roomId: 'b', tx: 0, ty: 4 }, { roomId: 'b', tx: 1, ty: 4 }, { roomId: 'b', tx: 2, ty: 4 }]
+it('keeps the shared travel endpoint blink while settling body and feet and arriving once', () => {
+  now = 2980
+  const path = [{ roomId: 'a', tx: 2, ty: 2 }, { roomId: 'a', tx: 3, ty: 2 }]
+  const onDone = vi.fn()
+  const ui = mount(<HomeTraveler path={path} layout={layout} pet={pet} mood="happy" onDone={onDone} />)
+  const neutralBody = ui.container.querySelector('[data-character-body]')!.getAttribute('transform')
+  const original = art(ui.container)
+  frame(3069.999)
+  expectEyeScale(ui.container, 0.1)
+  const soles = ['left', 'right'].map((side) => foot(ui.container, side))
+  expect(onDone).not.toHaveBeenCalled()
+  frame(3070)
+  expectEyeScale(ui.container, 0.1)
+  expect(art(ui.container)).toBe(original)
+  expect(ui.container.querySelector('[data-character-body]')!.getAttribute('transform')).toBe(neutralBody)
+  for (const [i, side] of ['left', 'right'].entries()) {
+    foot(ui.container, side).forEach((value, axis) => expect(value).toBeCloseTo(soles[i][axis], 4))
+  }
+  expect(onDone.mock.calls).toEqual([[path.at(-1)]])
+  expect(frames.size).toBe(0)
+  frame(3086)
+  expect(onDone).toHaveBeenCalledTimes(1)
+})
 it('travels with sampled gait across intermediate waypoints and immediately arrives on live reduced motion', () => {
   const onDone = vi.fn(); const onPosition = vi.fn()
   const ui = mount(<HomeTraveler path={route} layout={layout} pet={pet} mood="happy" onDone={onDone} onPosition={onPosition} />)

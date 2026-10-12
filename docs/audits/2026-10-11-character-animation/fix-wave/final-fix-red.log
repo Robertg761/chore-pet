@@ -1,0 +1,217 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run src/character/motion.test.ts src/pet/activityMotion.test.ts src/pet/behaviour.test.ts src/pet/PetIntegration.test.tsx src/character/AnimatedCharacter.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/activityMotion.test.ts (64 tests | 3 failed) 180ms
+   × preserves a closed bun blink through the actual walk arrival blend 13ms
+   × preserves a closed mochi blink through the actual walk arrival blend 2ms
+   × preserves a closed sprout blink through the actual walk arrival blend 4ms
+ ❯ src/character/motion.test.ts (30 tests | 3 failed) 635ms
+   ❯ readable reactions and accessibility (10)
+     × keeps the bun lifetime blink at neutral walking endpoints 5ms
+     × keeps the mochi lifetime blink at neutral walking endpoints 1ms
+     × keeps the sprout lifetime blink at neutral walking endpoints 0ms
+ ❯ src/pet/PetIntegration.test.tsx (59 tests | 6 failed) 1544ms
+   × keeps rendered eyes and world geometry continuous at the closed-blink local arrival 57ms
+   × uses clean dialogue for reserved object ID constructor with empty ordinary records 19ms
+   × uses clean dialogue for reserved object ID toString with empty ordinary records 21ms
+   × uses clean dialogue for reserved object ID __proto__ with empty ordinary records 18ms
+   × keeps owned condition dialogue for reserved ID __proto__ with neglect: true 10ms
+   × keeps the shared travel endpoint blink while settling body and feet and arriving once 20ms
+ ❯ src/character/AnimatedCharacter.test.tsx (47 tests | 1 failed) 8276ms
+   ❯ AnimatedCharacterArt (47)
+     × keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales 219ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+AssertionError: bun/happy/0 closed endpoint: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/AnimatedCharacter.test.tsx:475:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/36]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+AssertionError: bun/happy/420 closed endpoint: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/AnimatedCharacter.test.tsx:475:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/36]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+AssertionError: bun/scruffy/0 closed endpoint: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/AnimatedCharacter.test.tsx:475:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/36]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+AssertionError: bun/scruffy/420 closed endpoint: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/AnimatedCharacter.test.tsx:475:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/36]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+AssertionError: mochi/happy/0 closed endpoint: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/AnimatedCharacter.test.tsx:475:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/36]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+AssertionError: mochi/happy/420 closed endpoint: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/AnimatedCharacter.test.tsx:475:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/36]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+AssertionError: mochi/scruffy/0 closed endpoint: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/AnimatedCharacter.test.tsx:475:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/36]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+AssertionError: mochi/scruffy/420 closed endpoint: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/AnimatedCharacter.test.tsx:475:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/36]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+AssertionError: sprout/happy/0 closed endpoint: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/AnimatedCharacter.test.tsx:475:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/36]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+AssertionError: sprout/happy/420 closed endpoint: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/AnimatedCharacter.test.tsx:475:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/36]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+AssertionError: sprout/scruffy/0 closed endpoint: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/AnimatedCharacter.test.tsx:475:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/36]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > keeps closed walking endpoints inside the art box with combined wardrobe and both outline scales
+AssertionError: sprout/scruffy/420 closed endpoint: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/AnimatedCharacter.test.tsx:475:87
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/36]⎯
+
+ FAIL  src/character/motion.test.ts > readable reactions and accessibility > keeps the bun lifetime blink at neutral walking endpoints
+ FAIL  src/character/motion.test.ts > readable reactions and accessibility > keeps the mochi lifetime blink at neutral walking endpoints
+ FAIL  src/character/motion.test.ts > readable reactions and accessibility > keeps the sprout lifetime blink at neutral walking endpoints
+AssertionError: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/character/motion.test.ts:310:29
+    308|     for (const elapsedMs of [-1, 0, 420, 421, Infinity]) {
+    309|       const frame = at(elapsedMs)
+    310|       expect(frame.eyeOpen).toBeCloseTo(0.1, 12)
+       |                             ^
+    311|       expect({ ...frame, eyeOpen: 1 }).toEqual(neutral)
+    312|       expect(at(elapsedMs, closedAt + 70)).toEqual(neutral)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/36]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps rendered eyes and world geometry continuous at the closed-blink local arrival
+AssertionError: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ expectEyeScale src/pet/PetIntegration.test.tsx:58:55
+     56|   expect(eyes).toHaveLength(2)
+     57|   for (const eye of eyes) {
+     58|     expect(Number(eye.getAttribute('data-eye-open'))).toBeCloseTo(expe…
+       |                                                       ^
+     59|     const scale = eye.getAttribute('transform')!.match(/scale\(1 ([^)]…
+     60|     expect(Number(scale[1])).toBeCloseTo(expected, 12)
+ ❯ src/pet/PetIntegration.test.tsx:83:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/36]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > uses clean dialogue for reserved object ID constructor with empty ordinary records
+ FAIL  src/pet/PetIntegration.test.tsx > uses clean dialogue for reserved object ID toString with empty ordinary records
+ FAIL  src/pet/PetIntegration.test.tsx > uses clean dialogue for reserved object ID __proto__ with empty ordinary records
+AssertionError: expected [ 'Mmm, cosy. This is nice.', …(4) ] to include 'The leaves are drooping for a drink.'
+ ❯ src/pet/PetIntegration.test.tsx:175:30
+    173|   frame(1500)
+    174|   const line = container.querySelector('.pet-bubble')!.textContent
+    175|   expect(MOOD_LINES.content).toContain(line)
+       |                              ^
+    176|   expect(container.querySelector('[aria-live]')!.textContent).toBe('')
+    177|   frame(2400)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/36]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps owned condition dialogue for reserved ID __proto__ with neglect: true
+TypeError: names[o.id].toLowerCase is not a function
+ ❯ src/room/roomSummary.ts:36:30
+     34|   if (!late.length) return ''
+     35|   const parts = late.map(({ o, level }) => {
+     36|     const name = names[o.id].toLowerCase()
+       |                              ^
+     37|     // "the sink needs a tidy", "the fairy lights need a tidy".
+     38|     const plural = /[^s]s$/.test(names[o.id].replace(/ \d+$/, ''))
+ ❯ neglectSummary src/room/roomSummary.ts:35:22
+ ❯ src/room/Room.tsx:269:33
+ ❯ mountMemo node_modules/react-dom/cjs/react-dom-client.development.js:9161:23
+ ❯ Object.useMemo node_modules/react-dom/cjs/react-dom-client.development.js:28886:18
+ ❯ process.env.NODE_ENV.exports.useMemo node_modules/react/cjs/react.development.js:1297:34
+ ❯ Room src/room/Room.tsx:269:19
+ ❯ Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:28571:20
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom-client.development.js:8030:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/36]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps the shared travel endpoint blink while settling body and feet and arriving once
+AssertionError: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ expectEyeScale src/pet/PetIntegration.test.tsx:58:55
+     56|   expect(eyes).toHaveLength(2)
+     57|   for (const eye of eyes) {
+     58|     expect(Number(eye.getAttribute('data-eye-open'))).toBeCloseTo(expe…
+       |                                                       ^
+     59|     const scale = eye.getAttribute('transform')!.match(/scale\(1 ([^)]…
+     60|     expect(Number(scale[1])).toBeCloseTo(expected, 12)
+ ❯ src/pet/PetIntegration.test.tsx:319:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/36]⎯
+
+ FAIL  src/pet/activityMotion.test.ts > preserves a closed bun blink through the actual walk arrival blend
+ FAIL  src/pet/activityMotion.test.ts > preserves a closed mochi blink through the actual walk arrival blend
+ FAIL  src/pet/activityMotion.test.ts > preserves a closed sprout blink through the actual walk arrival blend
+AssertionError: expected 1 to be close to 0.1, received difference is 0.9, but expected 5e-13
+ ❯ src/pet/activityMotion.test.ts:31:26
+     29|   expect(before.eyeOpen).toBeCloseTo(0.1, 12)
+     30|   const joined = motionFor(arrived, arriveAt, species, 'happy', false)…
+     31|   expect(joined.eyeOpen).toBeCloseTo(0.1, 12)
+       |                          ^
+     32|   for (const key of Object.keys(before) as (keyof MotionFrame)[]) {
+     33|     if (key !== 'expression') expect(joined[key]).toBeCloseTo(before[k…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/36]⎯
+
+
+ Test Files  4 failed | 1 passed (5)
+      Tests  13 failed | 237 passed (250)
+   Start at  14:48:04
+   Duration  9.36s (tests 76%, transform 12%, environment 8%, import 5%)
+

@@ -1,0 +1,65 @@
+npm notice run chore-pet@0.0.0 test:browser
+npm notice run node --test scripts/browser/*.test.mjs
+✔ adding a chore says so, and Undo takes it back (4023.04071ms)
+✔ removing a chore says so, and Undo brings it back (2962.515707ms)
+✔ editing a chore gives no toast (2336.209219ms)
+✔ Cancel from the editor puts focus on the home heading (2515.604698ms)
+✔ hydration reconciles the selected home rather than the most furnished home (3923.51056ms)
+✔ Back dismisses the sheet and visible gift while keeping correction reachable (4825.155723ms)
+✔ Back dismisses the sheet and pending gift while keeping correction reachable (4291.816308ms)
+✔ Cancel with Enter adds no washer or chores (4076.336876ms)
+✔ Cancel with Space adds no washer or chores (2803.082654ms)
+✔ All chores keeps Undo in the active dialog (3239.506111ms)
+✔ a sheet gift is interactive and preserves Undo past five seconds (9767.111136ms)
+✔ Turn with Enter rotates once without placing (1275.03419ms)
+✔ Turn with Space rotates once without placing (1731.284406ms)
+✔ room arrows, R, Enter still move, rotate and place the preview (1069.294675ms)
+✔ keyboard gift dismissal restores the sheet, then its opener (3480.998887ms)
+✔ More pauses a home correction until it can be reached again (8669.342801ms)
+✔ home gift preserves correction and wears its reward (reduce) (8777.028889ms)
+✔ home gift preserves correction and wears its reward (no-preference) (10420.72308ms)
+✔ queued decor and style gifts survive Place it and Try it navigation (6428.324209ms)
+✔ phone sheet still dismisses by touch drag after correction (2129.279568ms)
+✔ new and existing drafts survive tabs and history; Save and Cancel clear them (5869.228212ms)
+✔ More and All chores dismiss with Back, menu selection replaces the sheet entry, deep links reload (2953.289857ms)
+✔ landing sign-in and cancel do not create a disposable home (3651.967546ms)
+✔ reload warns about a draft; stale edit deep links never become a new chore (1947.768934ms)
+✔ Start over in Settings clears the room and chores, or erases everything (1886.804658ms)
+✔ the sample home has no Start over; Start fresh is its way out (1105.205314ms)
+✔ Start fresh goes straight to the pet picker, whose Back returns to the landing (985.496269ms)
+✔ Make it mine shows a brief thank-you where the banner was (3691.557996ms)
+✔ the Chores screen edits, removes several at once and adds a removed chore back (6921.339525ms)
+✔ a chore dated ahead by a clock can be edited and removed from the Chores screen (1049.291677ms)
+✔ browser fixtures block external service URLs with nested paths (3250.460376ms)
+✔ keyboard Enter reaches and activates the resident without moving its world position (5191.513009ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (2793.917791ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (6584.679833ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.1403 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1683.471623ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.2825 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (2854.444592ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1768.647646ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (2123.402363ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 536ms; lift sampled at 1292ms; landing at 1712ms
+✔ a second room gets its own furniture and chores, and the kitchen keeps its own (5377.768592ms)
+✔ the pill counts late chores in the other rooms (2792.014353ms)
+✔ removing a room asks first, then archives its chores (3224.03662ms)
+✔ Skip this time settles a late chore without a completion (9121.681594ms)
+✔ Undo takes a skip back (2904.974939ms)
+✔ Skip is offered only while a round is owed (1589.132667ms)
+✔ the home shows the streak once a day counts (3712.459158ms)
+ℹ tests 45
+ℹ suites 0
+ℹ pass 45
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 64526.31684

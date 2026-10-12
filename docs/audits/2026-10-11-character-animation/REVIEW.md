@@ -2,9 +2,11 @@
 
 Mochi, Bun, and Sprout now share deterministic motion and articulated SVG rendering in rooms, between rooms, and in the art review panel. Each species keeps its existing silhouette, colors, moods, face choices, and wardrobe. Environmental gestures use actual object footprints and rotation. Surface contact remains disabled because furniture has no verified paw anchors.
 
-Integrated automated verification passed. Independent whole-branch review is in progress. Counts below describe completed evidence, not planned checks.
+Integrated automated verification passed at the pre-wave snapshot `96b185d`. Whole-branch review requested a walk-arrival blink fix and recorded four minor observations. The combined fix wave addresses I1, M1, M3, and M4; root formally deferred M2's synthetic suppression-layer churn because no normal-use failure is demonstrated and arbitrary truncation risks contact continuity. Root's fresh final regression, capture regeneration, and one scoped re-review remain pending. Human playback acceptance remains open.
 
 ## Integrated checks
+
+All results in this table predate the combined fix wave. They are historical evidence, not fresh verification of the amended source.
 
 | Check | Result |
 | --- | --- |
@@ -15,7 +17,9 @@ Integrated automated verification passed. Independent whole-branch review is in 
 | Multiroom travel and retargeting | 16 checks PASS |
 | Raster bounds | 42,660 renders, zero outside pixels |
 
-Commands, exit statuses, logs, and remaining limits are in [verification.json](verification.json). The first full run hit one 5,233ms raster-test timeout under concurrent capture/build work. Disabling unused system-font scans preserved all 60 bounds cases and assertions. Independent review approved that test-only change; the isolated full-suite replay above passed. No production motion or timeout setting changed for it.
+Actual commands, exit statuses, relative log paths, evidence status, and remaining limits are in [verification.json](verification.json). The six named raw logs exist locally but remain ignored; root will force-add them after final verification. The first full run hit one 5,233ms raster-test timeout under concurrent capture/build work. Disabling unused system-font scans preserved all 60 bounds cases and assertions. Independent review approved that test-only change; the isolated full-suite replay above passed. No production motion or timeout setting changed for it.
+
+The combined fix wave passed 247 covering tests in five files, both TypeScript configurations, and scoped lint. Its [fix report](../../../.superpowers/sdd/2026-10-11-character-animation/final-fix-report.md) records red/green evidence, self-review, geometry retention, and remaining limits. These focused results do not replace root's final integrated regression or the open human playback gate.
 
 ## Evidence collected
 
@@ -24,6 +28,8 @@ The baseline passed 1,564 tests in 75 files. The renderer and behavior received 
 The final character bounds scan passed with zero painted pixels above alpha 5/255 outside the 200-unit art box across 42,660 renders. It includes 25,740 action/wardrobe samples and 16,920 projected walking samples. The latter cover four cardinal directions, two corners, all species and moods, normal and faster travel cadence, and both outline scales. Happy and scruffy walking are sampled at 101 route phases; the other moods use 11. These checks establish bounds for the sampled matrix, not every possible configuration.
 
 The capture tool generates 42 sheets containing 1,407 poses. They cover all 15 motion actions, all species and moods, six body colors, all 16 individual wardrobe items and a combined outfit, 60px and 25px art, sick/sleeping notice, and eight environmental families in both object rotations. Enlarged sheets use native 200px art. The 25px samples use the heavier production room outline. Nineteen representative PNG sheets and ten MP4 clips are saved alongside this record. The full matrix is reproducible; not all 42 sheets are committed. Source hashes and matrix counts are in [manifest.json](manifest.json), and video dimensions, frames, and durations are in [clips.json](clips.json).
+
+These captures predate the fix wave. The sampler hash changes, so root must regenerate the 42 sheets and ten videos and update source provenance before treating them as current. The 42,660-render bounds scan remains historical evidence. The fix moves only the walking endpoint guard after lifetime eye sampling; torso, limb, ground-contact, facing, shadow, and wardrobe geometry remain unchanged. Focused checks cover the newly closed walking endpoints at both outline scales. The fix report records that evidence and the reason a second broad bounds scan is unnecessary for this change.
 
 ## Captures
 
@@ -47,6 +53,8 @@ Fresh [phone home](phone-home.png) and [desktop home](desktop-home.png) captures
 
 | Finding | Correction and evidence |
 | --- | --- |
+| Walk arrival forced a closed lifetime blink open | Sample lifetime eye openness before returning neutral walk geometry. Regressions cover all-species sampler endpoints, actual local arrival blends, both rendered eye transforms, shared travel arrival, and 24 focused endpoint rasters. Finite gesture taper and neutral endpoints remain intact. Root's scoped re-review is pending. |
+| Duplicate interaction validation and reserved-ID clean dialogue | Keep the pre-relocation target check and remove its duplicate. Dialogue now uses the target selector's own-property/default-clean stage lookup. Empty ordinary records and explicit owned stages are covered for `constructor`, `toString`, and `__proto__`. |
 | Planted feet moved with world translation | Path-derived stance contacts cancel container travel, body sway, and facing. Regression checks measure rendered world contacts in both projected axes. |
 | Uphill stance feet exceeded the art box | Quarter-stride landing/stance timing keeps contacts centered without fading their correction or shifting the sole baseline. Independent re-review approved it; the broad path bounds scan passed. |
 | Dark body colors hid closed eyes and mouths | Shared cream face backings preserve ink contrast on low-contrast body fills, including static art. Body colors themselves remain unchanged. |

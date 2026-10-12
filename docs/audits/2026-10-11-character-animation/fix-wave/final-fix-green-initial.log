@@ -1,0 +1,86 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run src/character/motion.test.ts src/pet/activityMotion.test.ts src/pet/behaviour.test.ts src/pet/PetIntegration.test.tsx src/character/AnimatedCharacter.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/activityMotion.test.ts (64 tests | 3 failed) 158ms
+   × preserves a closed bun blink through the actual walk arrival blend 14ms
+   × preserves a closed mochi blink through the actual walk arrival blend 1ms
+   × preserves a closed sprout blink through the actual walk arrival blend 1ms
+ ❯ src/pet/PetIntegration.test.tsx (56 tests | 4 failed) 1447ms
+   × keeps rendered eyes and world geometry continuous at the closed-blink local arrival 66ms
+   × uses clean dialogue for reserved object ID constructor with empty ordinary records 27ms
+   × uses clean dialogue for reserved object ID toString with empty ordinary records 24ms
+   × uses clean dialogue for reserved object ID __proto__ with empty ordinary records 21ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps rendered eyes and world geometry continuous at the closed-blink local arrival
+AssertionError: expected 216.25 to be close to 216.2499494048206, received difference is 0.000050595179402534995, but expected 0.00005
+ ❯ src/pet/PetIntegration.test.tsx:86:50
+     84|   expect(art(ui.container)).toBe(original)
+     85|   const joinedBody = worldPoint(ui.container.querySelector('[data-char…
+     86|   joinedBody.forEach((value, i) => expect(value).toBeCloseTo(body[i], …
+       |                                                  ^
+     87|   for (const [i, side] of ['left', 'right'].entries()) {
+     88|     foot(ui.container, side).forEach((value, axis) => expect(value).to…
+ ❯ src/pet/PetIntegration.test.tsx:86:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > uses clean dialogue for reserved object ID constructor with empty ordinary records
+ FAIL  src/pet/PetIntegration.test.tsx > uses clean dialogue for reserved object ID toString with empty ordinary records
+ FAIL  src/pet/PetIntegration.test.tsx > uses clean dialogue for reserved object ID __proto__ with empty ordinary records
+AssertionError: expected null not to be null
+ ❯ src/pet/PetIntegration.test.tsx:180:76
+    178|   expect(container.querySelector('.pet-bubble')!.textContent).toBe(lin…
+    179|   // A healthy plant waves; a wilted one uses the alert concern expres…
+    180|   expect(art(container).querySelector('[data-expression="cheering"]'))…
+       |                                                                            ^
+    181| })
+    182|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/pet/activityMotion.test.ts > preserves a closed bun blink through the actual walk arrival blend
+AssertionError: expected +0 to be close to 0.00015331883193566337, received difference is 0.00015331883193566337, but expected 0.00005
+ ❯ src/pet/activityMotion.test.ts:33:51
+     31|   expect(joined.eyeOpen).toBeCloseTo(0.1, 12)
+     32|   for (const key of Object.keys(before) as (keyof MotionFrame)[]) {
+     33|     if (key !== 'expression') expect(joined[key]).toBeCloseTo(before[k…
+       |                                                   ^
+     34|   }
+     35|   const snapshot = arrived.transition!.layers.at(-1)!.snapshot
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/pet/activityMotion.test.ts > preserves a closed mochi blink through the actual walk arrival blend
+AssertionError: expected +0 to be close to 0.00015331483346791447, received difference is 0.00015331483346791447, but expected 0.00005
+ ❯ src/pet/activityMotion.test.ts:33:51
+     31|   expect(joined.eyeOpen).toBeCloseTo(0.1, 12)
+     32|   for (const key of Object.keys(before) as (keyof MotionFrame)[]) {
+     33|     if (key !== 'expression') expect(joined[key]).toBeCloseTo(before[k…
+       |                                                   ^
+     34|   }
+     35|   const snapshot = arrived.transition!.layers.at(-1)!.snapshot
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/pet/activityMotion.test.ts > preserves a closed sprout blink through the actual walk arrival blend
+AssertionError: expected +0 to be close to 0.00015331473562005003, received difference is 0.00015331473562005003, but expected 0.00005
+ ❯ src/pet/activityMotion.test.ts:33:51
+     31|   expect(joined.eyeOpen).toBeCloseTo(0.1, 12)
+     32|   for (const key of Object.keys(before) as (keyof MotionFrame)[]) {
+     33|     if (key !== 'expression') expect(joined[key]).toBeCloseTo(before[k…
+       |                                                   ^
+     34|   }
+     35|   const snapshot = arrived.transition!.layers.at(-1)!.snapshot
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+
+ Test Files  2 failed | 3 passed (5)
+      Tests  7 failed | 240 passed (247)
+   Start at  14:48:59
+   Duration  9.05s (tests 73%, transform 19%, environment 5%, import 3%)
+

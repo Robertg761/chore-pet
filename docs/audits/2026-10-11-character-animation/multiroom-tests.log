@@ -1,0 +1,35 @@
+npm notice run chore-pet@0.0.0 test:multiroom
+npm notice run node scripts/test-multiroom.mjs
+RUN Sample home exposes a focused room in the shared scene
+PASS Sample home exposes a focused room in the shared scene
+RUN Room creation can cancel and creates a separate focused bedroom
+PASS Room creation can cancel and creates a separate focused bedroom
+RUN Connected floor edges meet and a doorway sends one moving pet to its destination
+PASS Connected floor edges meet and a doorway sends one moving pet to its destination
+RUN Rapid room reselection leaves one pet in the final requested room
+PASS Rapid room reselection leaves one pet in the final requested room
+RUN Reduced motion doorway navigation arrives without a lingering traveler
+PASS Reduced motion doorway navigation arrives without a lingering traveler
+RUN Placing and moving a bed changes only the focused bedroom
+PASS Placing and moving a bed changes only the focused bedroom
+RUN Build keeps doorway approaches clear and doorway clicks cancel pending placement
+PASS Build keeps doorway approaches clear and doorway clicks cancel pending placement
+RUN Keyboard room switching cancels pending placement and clears selection
+PASS Keyboard room switching cancels pending placement and clears selection
+RUN Zoom keeps keyboard focus and supports dragging and faded floor clicks
+PASS Zoom keeps keyboard focus and supports dragging and faded floor clicks
+RUN Chore editor offers objects from every room
+PASS Chore editor offers objects from every room
+RUN Wall and floor edits affect only the focused room
+PASS Wall and floor edits affect only the focused room
+RUN Build navigation, focus, room objects, and styles survive reload
+PASS Build navigation, focus, room objects, and styles survive reload
+RUN Share preview uses the selected bedroom objects and style
+PASS Share preview uses the selected bedroom objects and style
+RUN Duplicate room names are numbered, all room types fit, and the six-room limit is respected
+PASS Duplicate room names are numbered, all room types fit, and the six-room limit is respected
+RUN Desktop and phone layouts keep rooms visible without page overflow
+PASS Desktop and phone layouts keep rooms visible without page overflow
+RUN Existing doorway obstruction keeps the pet in place until the furniture is moved
+PASS Existing doorway obstruction keeps the pet in place until the furniture is moved
+PASS 16 multiroom checks. Screenshots and result: /tmp/chore-pet-multiroom-final

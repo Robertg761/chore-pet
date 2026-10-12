@@ -295,6 +295,28 @@ describe('grounded gait and personalities', () => {
 })
 
 describe('readable reactions and accessibility', () => {
+  it.each([
+    { species: 'bun', closedAt: 3070 },
+    { species: 'mochi', closedAt: 1370 },
+    { species: 'sprout', closedAt: 5770 },
+  ] as const)('keeps the $species lifetime blink at neutral walking endpoints', ({ species, closedAt }) => {
+    const at = (elapsedMs: number, blinkMs: number = closedAt) => sampleMotion(input({ species, action: 'walk',
+      elapsedMs, blinkMs, durationMs: 420, distance: Math.max(0, Math.min(1, elapsedMs / 420)),
+      groundPath: [{ distance: 0, x: 0, y: 0 }, { distance: 1, x: 64, y: -32 }],
+    }))
+    expect(at(419.999).eyeOpen).toBeCloseTo(0.1, 12)
+    for (const elapsedMs of [-1, 0, 420, 421, Infinity]) {
+      const frame = at(elapsedMs)
+      expect(frame.eyeOpen).toBeCloseTo(0.1, 12)
+      expect({ ...frame, eyeOpen: 1 }).toEqual(neutral)
+      expect(at(elapsedMs, closedAt + 70)).toEqual(neutral)
+    }
+    expect(sampleMotion(input({ species, action: 'walk', elapsedMs: 420, durationMs: 420,
+      blinkMs: closedAt, reducedMotion: true }))).toEqual(neutral)
+    expect(sampleMotion(input({ species, action: 'walk', elapsedMs: 0, durationMs: 0,
+      blinkMs: closedAt })).eyeOpen).toBeCloseTo(0.1, 12)
+  })
+
   it('samples a short deterministic blink with a separate phase for each species', () => {
     for (const [species, start] of [['bun', 3000], ['mochi', 1300], ['sprout', 5700]] as const) {
       const at = (blinkMs: number) => sampleMotion(input({ species, action: 'idle', elapsedMs: 400, blinkMs })).eyeOpen

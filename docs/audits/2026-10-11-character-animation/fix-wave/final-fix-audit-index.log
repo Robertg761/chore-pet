@@ -1,0 +1,15 @@
+unit-tests.log: exists, 491 bytes
+lint.log: exists, 58 bytes
+build.log: exists, 1651 bytes
+browser-tests.log: exists, 4715 bytes
+multiroom-tests.log: exists, 2466 bytes
+bounds.log: exists, 250 bytes
+Historical counts retained as pre-wave; fresh focused evidence indexed separately.
+CHANGED src/character/motion.ts 5e1f316efcb2612a6b0a2d53009785892ee3ad999580bf910fea5c39a67e4e8b
+UNCHANGED src/character/AnimatedCharacter.tsx 8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67
+UNCHANGED src/character/species/animatedBody.tsx e338788eeb57e5c7f651d198f8ecfd85925ce33c9e0cd7528f45575cf8b79212
+UNCHANGED src/character/Character.tsx c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca
+UNCHANGED src/character/parts.tsx de2ccd72ba68d5ededd87f89d99e7d4275608b138c6ae04fadaac2dd9ccc399d
+CHANGED src/pet/behaviour.ts 4bed9fcf40912fba2733ed5cdb17d302af59a1e42f7ebfeca78e7c17f5fbd472
+UNCHANGED src/pet/activityMotion.ts 6401e236e3a3d71d6cba8d30f66986f3e40a0ba05f35c26b057d59139518452a
+UNCHANGED scripts/render-pet-motion.mjs 382b61c8500820d114d457b0a26d670a3357720349efd77fc13c824502aadcda

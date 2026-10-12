@@ -169,7 +169,6 @@ export function sampleMotion(input: MotionInput): MotionFrame {
   const elapsed = input.elapsedMs === Infinity ? Infinity : Number.isFinite(input.elapsedMs) ? Math.max(0, input.elapsedMs) : 0
   const looping = action === 'idle' || action === 'walk'
   if (!looping && (duration === 0 || elapsed === 0 || elapsed >= duration)) return frame
-  if (action === 'walk' && (duration === 0 || elapsed === 0 || elapsed >= duration)) return frame
 
   frame.expression = expressionFor(action, mood)
   if (reducedMotion) return frame
@@ -185,6 +184,9 @@ export function sampleMotion(input: MotionInput): MotionFrame {
   // Finite actions ease to neutral at their endpoints, even during a lifetime blink.
   const blinkStrength = looping ? 1 : envelope(elapsed / duration, 0, 0.1, 0.9, 1)
   frame.eyeOpen = 1 - 0.9 * envelope(blinkPhase, 3000, 3050, 3090, 3140) * blinkStrength
+  // Walking settles its geometry, but retains the lifetime blink for arrival
+  // snapshots and shared travel. Finite gestures keep their neutral guard above.
+  if (action === 'walk' && (duration === 0 || elapsed === 0 || elapsed >= duration)) return frame
   if (action === 'idle') {
     const breath = (1 - Math.cos((safeElapsed % ACTION_MS.idle) / ACTION_MS.idle * Math.PI * 2)) / 2
     frame.scaleX -= 0.004 * breath * amplitude

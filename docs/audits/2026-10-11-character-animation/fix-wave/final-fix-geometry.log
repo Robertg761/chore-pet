@@ -1,0 +1,6 @@
+{
+  "compared": 480,
+  "unchangedFields": "all MotionFrame fields except eyeOpen, including expression",
+  "changedEyes": 195,
+  "outsidePixels": "not scanned; focused 24-raster endpoint matrix is in AnimatedCharacter.test.tsx"
+}
