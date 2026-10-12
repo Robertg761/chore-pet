@@ -55,3 +55,5 @@ visible-row CSS animation, keyboard controls, initial/live reduced motion,
 finite manual effects, computed accent deadlines, and independent sampled
 motion-review playback. Capture output is opt-in through the same environment
 variable and saves phone/desktop gallery controls and measurements.
+
+`motion-review.test.mjs` checks the complete12-second idle study at390px and1280px: exact paired-blink eye scales for all species, keyboard comparison controls, still initial/scrub state, native reduced motion and44px control fit. Set CHORE_PET_CAPTURE_DIR to opt into two small panel stills and their layout metadata.

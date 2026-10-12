@@ -1,0 +1,3 @@
+npm notice run chore-pet@0.0.0 build
+npm notice run tsc -b && vite build
+src/dev/MotionReview.tsx(94,14): error TS2367: This comparison appears to be unintentional because the types '"rest" | "dust" | "walk" | "turn" | "greet" | "affection" | "celebrate" | "celebrate-big" | "notice" | "inspect" | "wave" | "reach" | "smell" | "concern"' and '"idle"' have no overlap.

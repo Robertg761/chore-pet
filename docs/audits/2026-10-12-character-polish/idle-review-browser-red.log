@@ -1,0 +1,22 @@
+✖ idle study exposes exact paired blinks with no automatic clock at 390px (6123.903148ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6567.697567
+
+✖ failing tests:
+
+test at scripts/browser/motion-review.test.mjs:8:3
+✖ idle study exposes exact paired blinks with no automatic clock at 390px (6123.903148ms)
+  locator.selectOption: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.motion-review').getByLabel('Action', { exact: true })[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/motion-review.test.mjs:20:56) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.motion-review').getByLabel('Action', { exact: true })" ]
+  }

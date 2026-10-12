@@ -261,3 +261,54 @@ it('loops with overshoot retained and returns to one-shot playback when disabled
   expect(button('Play')).toBeTruthy()
   expect(frames.size).toBe(0)
 })
+
+it('studies a complete idle blink pattern without changing the production breath duration', () => {
+  select('Action', 'idle')
+  expect(control<HTMLInputElement>('Time scrubber').max).toBe('12000')
+  input(control('Elapsed milliseconds'), '9270')
+  expect(currentSample()).toMatchObject({ action: 'idle', elapsedMs: 9270, durationMs: 4000, distance: 0 })
+  expect(ui.container.textContent).toContain('three 4-second breathing cycles')
+  expect(frames.size).toBe(0)
+  select('Action', 'turn')
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('360')
+  expect(control<HTMLInputElement>('Time scrubber').max).toBe('360')
+})
+
+it.each([
+  { species: 'bun', primary: 9070, gap: 9170, second: 9270 },
+  { species: 'mochi', primary: 7370, gap: 7470, second: 7570 },
+  { species: 'sprout', primary: 5770, gap: 5870, second: 5970 },
+])('renders $species paired blink comparison frames at exact species-specific times', ({ species, primary, gap, second }) => {
+  select('Species', species)
+  select('Action', 'idle')
+  for (const [label, time, openness] of [['Primary blink', primary, 0.1], ['Between blinks', gap, 1], ['Second blink', second, 0.1]] as const) {
+    const key = ui.container.querySelector<HTMLButtonElement>(`[aria-label="${label}, ${time} milliseconds"]`)
+    expect(Boolean(key)).toBe(true)
+    click(key!)
+    expect(control<HTMLInputElement>('Time scrubber').value).toBe(String(time))
+    const eyes = ui.container.querySelectorAll('.motion-review-previews [data-eye-open]')
+    expect(eyes).toHaveLength(6)
+    for (const eye of eyes) expect(Number(eye.getAttribute('data-eye-open'))).toBeCloseTo(openness)
+    expect(frames.size).toBe(0)
+  }
+  click(control('Force reduced motion in this panel'))
+  for (const eye of ui.container.querySelectorAll('.motion-review-previews [data-eye-open]')) {
+    expect(Number(eye.getAttribute('data-eye-open'))).toBe(1)
+  }
+})
+
+it('finishes and loops the idle review at twelve seconds with one clock', () => {
+  select('Action', 'idle')
+  input(control('Elapsed milliseconds'), '11990')
+  click(button('Play'))
+  frame(1000); frame(1030)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('12000')
+  expect(frames.size).toBe(0)
+  click(control('Loop playback'))
+  click(button('Play'))
+  frame(2000); frame(14025)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('25')
+  expect(frames.size).toBe(1)
+  click(button('Pause'))
+  expect(frames.size).toBe(0)
+})

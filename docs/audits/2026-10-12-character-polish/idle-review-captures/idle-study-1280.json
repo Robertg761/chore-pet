@@ -1,0 +1,138 @@
+{
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "species": "sprout",
+  "elapsedMs": 5970,
+  "body": "dark",
+  "face": "glasses",
+  "controls": [
+    {
+      "x": 55,
+      "right": 240,
+      "height": 44
+    },
+    {
+      "x": 252,
+      "right": 437,
+      "height": 44
+    },
+    {
+      "x": 449,
+      "right": 634,
+      "height": 44
+    },
+    {
+      "x": 646,
+      "right": 831,
+      "height": 44
+    },
+    {
+      "x": 843,
+      "right": 1028,
+      "height": 44
+    },
+    {
+      "x": 1040,
+      "right": 1225,
+      "height": 44
+    },
+    {
+      "x": 55,
+      "right": 240,
+      "height": 44
+    },
+    {
+      "x": 55,
+      "right": 240,
+      "height": 44
+    },
+    {
+      "x": 252,
+      "right": 437,
+      "height": 44
+    },
+    {
+      "x": 449,
+      "right": 634,
+      "height": 44
+    },
+    {
+      "x": 646,
+      "right": 831,
+      "height": 44
+    },
+    {
+      "x": 843,
+      "right": 1028,
+      "height": 44
+    },
+    {
+      "x": 1040,
+      "right": 1225,
+      "height": 44
+    },
+    {
+      "x": 55,
+      "right": 135,
+      "height": 44
+    },
+    {
+      "x": 151,
+      "right": 231,
+      "height": 44
+    },
+    {
+      "x": 247,
+      "right": 346.5625,
+      "height": 44
+    },
+    {
+      "x": 362.5625,
+      "right": 487.71875,
+      "height": 44
+    },
+    {
+      "x": 503.71875,
+      "right": 615.9375,
+      "height": 44
+    },
+    {
+      "x": 55,
+      "right": 1225,
+      "height": 44
+    },
+    {
+      "x": 55,
+      "right": 1225,
+      "height": 44
+    },
+    {
+      "x": 42,
+      "right": 162,
+      "height": 172
+    },
+    {
+      "x": 178,
+      "right": 298,
+      "height": 172
+    },
+    {
+      "x": 314,
+      "right": 445.03125,
+      "height": 172
+    },
+    {
+      "x": 461.03125,
+      "right": 581.03125,
+      "height": 172
+    },
+    {
+      "x": 597.03125,
+      "right": 717.03125,
+      "height": 172
+    }
+  ],
+  "applicationFrames": 0
+}

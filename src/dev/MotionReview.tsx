@@ -39,20 +39,22 @@ export default function MotionReview() {
   const previousTick = useRef<number | null>(null)
   const playTime = useRef(0)
   const durationMs = ACTION_MS[action]
+  // Study the whole blink pattern without changing the sampler's body cycle.
+  const reviewSpanMs = action === 'idle' ? 12000 : durationMs
   const { reducedMotion: systemReducedMotion } = usePetMotion((now) => {
     const delta = previousTick.current === null ? 0 : Math.max(0, now - previousTick.current)
     previousTick.current = now
     const time = playTime.current + delta * speed
-    playTime.current = loop ? time % durationMs : Math.min(durationMs, time)
+    playTime.current = loop ? time % reviewSpanMs : Math.min(reviewSpanMs, time)
     setElapsedMs(Math.round(playTime.current))
-    if (!loop && playTime.current >= durationMs) {
+    if (!loop && playTime.current >= reviewSpanMs) {
       setPlaying(false)
       previousTick.current = null
     }
   }, playing)
   const reducedMotion = reduce || systemReducedMotion
 
-  function seek(value: number, limit = durationMs) {
+  function seek(value: number, limit = reviewSpanMs) {
     const time = Number.isFinite(value) ? Math.round(Math.max(0, Math.min(limit, value))) : 0
     setPlaying(false)
     previousTick.current = null
@@ -62,7 +64,7 @@ export default function MotionReview() {
 
   function togglePlay() {
     previousTick.current = null
-    if (!playing && elapsedMs >= durationMs) {
+    if (!playing && elapsedMs >= reviewSpanMs) {
       playTime.current = 0
       setElapsedMs(0)
     } else {
@@ -80,9 +82,16 @@ export default function MotionReview() {
   const bodyColour = COLORS[color].value || SPECIES_COLOUR[species]
   const look = { eyes, cheeks }
   const jumping = action === 'celebrate' || action === 'celebrate-big'
-  const keyFrames = [
+  const pairedBlinkStart = { bun: 9000, mochi: 7300, sprout: 5700 }[species]
+  const keyFrames = action === 'idle' ? [
     { label: 'Start', time: 0 },
-    { label: action === 'idle' || action === 'walk' ? 'Early cycle' : 'Anticipation', time: Math.round(durationMs * 0.1) },
+    { label: 'Primary blink', time: pairedBlinkStart + 70 },
+    { label: 'Between blinks', time: pairedBlinkStart + 170 },
+    { label: 'Second blink', time: pairedBlinkStart + 270 },
+    { label: 'Recovery', time: reviewSpanMs },
+  ] : [
+    { label: 'Start', time: 0 },
+    { label: action === 'walk' ? 'Early cycle' : 'Anticipation', time: Math.round(durationMs * 0.1) },
     { label: jumping ? 'Lift' : 'Action', time: Math.round(durationMs * 0.42) },
     { label: jumping ? 'Landing / compression' : 'Settle', time: Math.round(durationMs * 0.76) },
     { label: 'Recovery', time: durationMs },
@@ -118,7 +127,7 @@ export default function MotionReview() {
         </select></label>
         <label>Action<select value={action} onChange={(event) => {
           const next = event.target.value as MotionAction
-          seek(elapsedMs, ACTION_MS[next])
+          seek(elapsedMs, next === 'idle' ? 12000 : ACTION_MS[next])
           setAction(next)
         }}>{(Object.keys(ACTION_MS) as MotionAction[]).map((value) => <option key={value}>{value}</option>)}</select></label>
         <label>Body color<select value={color} onChange={(event) => setColor(event.target.value as keyof typeof COLORS)}>{Object.entries(COLORS).map(([value, choice]) => <option key={value} value={value}>{choice.label}</option>)}</select></label>
@@ -145,8 +154,9 @@ export default function MotionReview() {
         </div>
         <label className="motion-review-loop"><input type="checkbox" checked={loop} onChange={(event) => setLoop(event.target.checked)} />Loop playback</label>
         <p>Action duration: {durationMs} ms. {playing ? 'Playing' : 'Paused'} at {elapsedMs} ms.</p>
-        <label>Time scrubber<input type="range" min={0} max={durationMs} step={1} value={elapsedMs} aria-valuetext={`${elapsedMs} milliseconds`} onChange={(event) => seek(Number(event.target.value))} /></label>
-        <label>Elapsed milliseconds<input type="number" min={0} max={durationMs} step={1} value={elapsedMs} onChange={(event) => seek(event.target.valueAsNumber)} /></label>
+        {action === 'idle' && <p>Idle review spans 12000 ms: one full blink pattern and three 4-second breathing cycles.</p>}
+        <label>Time scrubber<input type="range" min={0} max={reviewSpanMs} step={1} value={elapsedMs} aria-valuetext={`${elapsedMs} milliseconds`} onChange={(event) => seek(Number(event.target.value))} /></label>
+        <label>Elapsed milliseconds<input type="number" min={0} max={reviewSpanMs} step={1} value={elapsedMs} onChange={(event) => seek(event.target.valueAsNumber)} /></label>
         {action === 'walk' && <p>Walk preview covers two tiles over {durationMs} ms. Distance drives the production gait.</p>}
       </fieldset>
       <fieldset className="motion-review-overlays" aria-describedby={notesId}>

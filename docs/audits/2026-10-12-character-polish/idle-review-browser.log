@@ -1,0 +1,24 @@
+✔ gallery starts without repeating work and animates only visible rows at 390px (5539.733842ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery starts without repeating work and animates only visible rows at 1280px (5907.621949ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery initial and live reduced motion stay authoritative without automatic replay (11110.099673ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery effects replay finitely with bounded nodes and no automatic restart (8753.303279ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery effects stay still when visibility observation is unavailable (3073.830981ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ sampled motion review plays independently while gallery examples remain still (2805.391558ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ idle study exposes exact paired blinks with no automatic clock at 390px (9531.746691ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; no automatic frame requests
+✔ idle study exposes exact paired blinks with no automatic clock at 1280px (8251.81793ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; no automatic frame requests
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 55726.448363

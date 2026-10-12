@@ -1,0 +1,97 @@
+{
+  "baseCommit": "1533dd04d9e761e8e9244f6ca7a6c7e36beb71a8",
+  "checks": [
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "idle-review-unit.log",
+      "exitCode": 0,
+      "result": "1957 pass,87files,54.69s",
+      "scope": "Before unreachable-condition compile correction; no reachable behavior changes."
+    },
+    {
+      "name": "final-focused",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/dev/MotionReview.test.tsx",
+      "log": "idle-review-focused-final.log",
+      "exitCode": 0,
+      "result": "18 pass"
+    },
+    {
+      "name": "build",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "idle-review-build-final.log",
+      "exitCode": 0,
+      "result": "TypeScript/build pass; existing chunk advisory"
+    },
+    {
+      "name": "lint",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "idle-review-lint.log",
+      "exitCode": 0,
+      "result": "zero warnings",
+      "scope": "Before removal of unreachable idle comparison in non-idle branch."
+    },
+    {
+      "name": "production-browser",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium CHORE_PET_CAPTURE_DIR=docs/audits/2026-10-12-character-polish/idle-review-captures nice -n 10 node --test --test-concurrency=1 scripts/browser/motion-review.test.mjs scripts/browser/gallery-motion.test.mjs",
+      "log": "idle-review-browser.log",
+      "exitCode": 0,
+      "result": "8 pass,55.73s; final idle study2cases plus gallery6cases"
+    }
+  ],
+  "sourceSha256": {
+    "src/dev/MotionReview.tsx": "07bf71c922ccecf73e33ca9f57866eafc79196759bb86929e06e5ff41b06dfdd",
+    "src/dev/MotionReview.test.tsx": "51e597a8aad5e873122b6d93d985981c9cdcdb75844ad9f0bfaa0cbeb3d7ff42",
+    "scripts/browser/motion-review.test.mjs": "8d584e7b82dbc37720b519b5bd3d319a077a657fd7304df7ad2263bdb4c3dea7",
+    "src/character/motion.ts": "c5728645139ddfdf5c73296fc07dc1fbca12ae6a98e3640d269862166c240091"
+  },
+  "captures": [
+    {
+      "file": "idle-review-captures/gallery-1280.json",
+      "sha256": "a9fb8575bae9bace0fb7f234c8c4c4275af4e25804797aeeeba5f97d22d92dbd"
+    },
+    {
+      "file": "idle-review-captures/gallery-1280.png",
+      "sha256": "50f4779e4b6e72d5858f447c6b40f69dddccf8e7656cda557601df8642a1d3a0"
+    },
+    {
+      "file": "idle-review-captures/gallery-390.json",
+      "sha256": "627f334dfa2d5948e98a68ebb4ece655a582d41f6903d270cac95445444a7f19"
+    },
+    {
+      "file": "idle-review-captures/gallery-390.png",
+      "sha256": "bbfa5da3bca647b40d8d8df0b78e27d1742b0135e373395f87de82ec7d026704"
+    },
+    {
+      "file": "idle-review-captures/idle-study-1280.json",
+      "sha256": "332c589b5d90b0a6cc1698e57d2bd8cec15ce5ec05b877095e544dc22bb92030"
+    },
+    {
+      "file": "idle-review-captures/idle-study-1280.png",
+      "sha256": "8cbf89f6472714fb59c4c5927f45c9dd0d18f23c4790f68933b21a6303f2effa"
+    },
+    {
+      "file": "idle-review-captures/idle-study-390.json",
+      "sha256": "976c072af17cd563f682baa82a83c7655f5b76fd96e6d1d0d9a6ada19f106626"
+    },
+    {
+      "file": "idle-review-captures/idle-study-390.png",
+      "sha256": "293aea9323703834aef7686f2e5929471e23d895c8a1b694aa056f229225689e"
+    }
+  ],
+  "redEvidence": [
+    "idle-review-red.log:5 fail,13pass on old span and missing idle keyframes.",
+    "idle-review-browser-red-final.log:corrected fixture reaches4000!=12000 old production span assertion."
+  ],
+  "history": [
+    "idle-review-browser-red.log is select-label locator setup timeout, not behavioral red. Anchored combobox-role names fix it.",
+    "idle-review-build.log catches the unreachable idle comparison in the narrowed non-idle branch; final build passes."
+  ],
+  "limitations": [
+    "All three species have rendered eye checks, but optional dark/glasses layout captures use Sprout only.",
+    "Root inspected both idle panel stills, including phone control fit and open/closed/glasses readability; two incidental gallery stills are retained as generated evidence.",
+    "Browser tests use Enter on focused controls, not a full Tab-order audit. Eye data attributes are verified on the production rendering path, not independent pixel geometry.",
+    "No automatic frame requests; playback uses the existing clock. Human temporal playback remains open.",
+    "Separately uncommitted catalog tests are excluded from this batch; full suite above precedes them."
+  ]
+}

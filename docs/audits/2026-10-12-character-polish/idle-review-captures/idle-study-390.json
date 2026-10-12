@@ -1,0 +1,138 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 664
+  },
+  "species": "sprout",
+  "elapsedMs": 5970,
+  "body": "dark",
+  "face": "glasses",
+  "controls": [
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 125,
+      "height": 44
+    },
+    {
+      "x": 141,
+      "right": 221,
+      "height": 44
+    },
+    {
+      "x": 237,
+      "right": 336.5625,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 170.15625,
+      "height": 44
+    },
+    {
+      "x": 186.15625,
+      "right": 298.375,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 45,
+      "right": 345,
+      "height": 44
+    },
+    {
+      "x": 32,
+      "right": 152,
+      "height": 172
+    },
+    {
+      "x": 168,
+      "right": 288,
+      "height": 172
+    },
+    {
+      "x": 32,
+      "right": 163.03125,
+      "height": 172
+    },
+    {
+      "x": 179.03125,
+      "right": 299.03125,
+      "height": 172
+    },
+    {
+      "x": 32,
+      "right": 152,
+      "height": 172
+    }
+  ],
+  "applicationFrames": 0
+}

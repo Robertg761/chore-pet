@@ -1,0 +1,73 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/dev/MotionReview.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/dev/MotionReview.test.tsx (18 tests | 5 failed) 1244ms
+   × studies a complete idle blink pattern without changing the production breath duration 29ms
+   × renders bun paired blink comparison frames at exact species-specific times 41ms
+   × renders mochi paired blink comparison frames at exact species-specific times 28ms
+   × renders sprout paired blink comparison frames at exact species-specific times 39ms
+   × finishes and loops the idle review at twelve seconds with one clock 47ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/dev/MotionReview.test.tsx > studies a complete idle blink pattern without changing the production breath duration
+AssertionError: expected '4000' to be '12000' // Object.is equality
+
+Expected: "12000"
+Received: "4000"
+
+ ❯ src/dev/MotionReview.test.tsx:267:58
+    265| it('studies a complete idle blink pattern without changing the product…
+    266|   select('Action', 'idle')
+    267|   expect(control<HTMLInputElement>('Time scrubber').max).toBe('12000')
+       |                                                          ^
+    268|   input(control('Elapsed milliseconds'), '9270')
+    269|   expect(currentSample()).toMatchObject({ action: 'idle', elapsedMs: 9…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/dev/MotionReview.test.tsx > renders bun paired blink comparison frames at exact species-specific times
+ FAIL  src/dev/MotionReview.test.tsx > renders mochi paired blink comparison frames at exact species-specific times
+ FAIL  src/dev/MotionReview.test.tsx > renders sprout paired blink comparison frames at exact species-specific times
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/dev/MotionReview.test.tsx:286:26
+    284|   for (const [label, time, openness] of [['Primary blink', primary, 0.…
+    285|     const key = ui.container.querySelector<HTMLButtonElement>(`[aria-l…
+    286|     expect(Boolean(key)).toBe(true)
+       |                          ^
+    287|     click(key!)
+    288|     expect(control<HTMLInputElement>('Time scrubber').value).toBe(Stri…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/dev/MotionReview.test.tsx > finishes and loops the idle review at twelve seconds with one clock
+AssertionError: expected '30' to be '12000' // Object.is equality
+
+Expected: "12000"
+Received: "30"
+
+ ❯ src/dev/MotionReview.test.tsx:305:60
+    303|   click(button('Play'))
+    304|   frame(1000); frame(1030)
+    305|   expect(control<HTMLInputElement>('Time scrubber').value).toBe('12000…
+       |                                                            ^
+    306|   expect(frames.size).toBe(0)
+    307|   click(control('Loop playback'))
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 13 passed (18)
+   Start at  16:20:22
+   Duration  1.83s (tests 72%, environment 15%, transform 10%, import 3%)
+
