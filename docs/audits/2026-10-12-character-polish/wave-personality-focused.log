@@ -1,0 +1,11 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/wavePersonality.test.ts src/character/motion.test.ts src/character/AnimatedCharacter.test.tsx src/character/idleMotion.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+
+ Test Files  4 passed (4)
+      Tests  103 passed (103)
+   Start at  18:21:13
+   Duration  9.86s (tests 93%, transform 3%, environment 3%, import 1%)
+

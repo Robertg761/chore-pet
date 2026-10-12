@@ -1,0 +1,17 @@
+{
+  "method": "Exact sampled frames across3species/5moods/15actions/3durations/2motionpolicies/2facings/15phases. Only Mochi/Sprout normal greet/wave rightArm may differ;Bun/allotherfields/reduced/durations exact. Static numeric checks,not temporal acceptance.",
+  "samples": 40500,
+  "unchanged": 39480,
+  "changed": 1020,
+  "changes": {
+    "mochi/greet": 240,
+    "mochi/wave": 240,
+    "sprout/greet": 270,
+    "sprout/wave": 270
+  },
+  "sourceSha256": {
+    "baseline": "c5728645139ddfdf5c73296fc07dc1fbca12ae6a98e3640d269862166c240091",
+    "current": "1492fa421fbfa88b8294305d1f17079cefa5403ea3f6ab3395cfca368f0721bd",
+    "runner": "c89b03250eb4f191c24af9d4e536101dad057184a5bd390dbc9c0fe60e9c706e"
+  }
+}

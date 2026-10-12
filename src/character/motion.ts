@@ -69,6 +69,26 @@ const PERSONALITY: Record<Species, { amplitude: number; squash: number; stride: 
   sprout: { amplitude: 0.72, squash: 0.65, stride: 0.82, follow: 9, lag: 1.1 },
 }
 
+// The shared gesture envelope raises/lowers the hand. These held sweeps give
+// Mochi a slower wave and Sprout a smaller one, retaining Bun's lively timing.
+const HAND_WAVE: Record<'greet' | 'wave', Record<Species, { lift: number; arc: number; cycles: number }>> = {
+  greet: {
+    mochi: { lift: 42, arc: 10, cycles: 3 },
+    bun: { lift: 42, arc: 12, cycles: 4 },
+    sprout: { lift: 34, arc: 8, cycles: 2 },
+  },
+  wave: {
+    mochi: { lift: 30, arc: 8, cycles: 4 },
+    bun: { lift: 30, arc: 10, cycles: 5 },
+    sprout: { lift: 26, arc: 6, cycles: 3 },
+  },
+}
+
+function waveArm(species: Species, action: 'greet' | 'wave', phase: number): number {
+  const { lift, arc, cycles } = HAND_WAVE[action][species]
+  return -(lift + arc * Math.sin((phase - 0.35) * Math.PI * (cycles * 2)))
+}
+
 function neutral(): MotionFrame {
   return {
     bodyX: 0, bodyY: 0, scaleX: 1, scaleY: 1, lean: 0,
@@ -241,7 +261,7 @@ export function sampleMotion(input: MotionInput): MotionFrame {
         break
       case 'greet':
         frame.lean = -3 * gesture
-        frame.rightArm = -(42 + 12 * Math.sin((t - 0.35) * Math.PI * 8)) * gesture
+        frame.rightArm = waveArm(species, action, t) * gesture
         frame.leftArm = 5 * gesture
         frame.gazeY = -2 * attention
         break
@@ -279,7 +299,7 @@ export function sampleMotion(input: MotionInput): MotionFrame {
         break
       case 'wave':
         frame.lean = 4 * gesture
-        frame.rightArm = -(30 + 10 * Math.sin((t - 0.35) * Math.PI * 10)) * gesture
+        frame.rightArm = waveArm(species, action, t) * gesture
         frame.gazeX = 4 * attention
         break
       case 'reach':

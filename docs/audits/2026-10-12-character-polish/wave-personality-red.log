@@ -1,0 +1,94 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/wavePersonality.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/wavePersonality.test.ts (8 tests | 6 failed) 19ms
+   ❯ species wave cadence (8)
+     × mochi greet keeps a calm held hand sweep below 160 degrees per second 8ms
+     × sprout greet keeps a calm held hand sweep below 100 degrees per second 4ms
+     × mochi wave keeps a calm held hand sweep below 150 degrees per second 2ms
+     × sprout wave keeps a calm held hand sweep below 100 degrees per second 2ms
+     × gives greet distinct timing rather than scaling one shared sweep 1ms
+     × gives wave distinct timing rather than scaling one shared sweep 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/wavePersonality.test.ts > species wave cadence > mochi greet keeps a calm held hand sweep below 160 degrees per second
+AssertionError: expected 206.06678263538572 to be less than 160
+ ❯ src/character/wavePersonality.test.ts:24:40
+     22|   ] as const)('%s %s keeps a calm held hand sweep below %s degrees per…
+     23|     expect(heldSpeed(species, action)).toBeGreaterThan(35)
+     24|     expect(heldSpeed(species, action)).toBeLessThan(limit)
+       |                                        ^
+     25|   })
+     26|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/character/wavePersonality.test.ts > species wave cadence > sprout greet keeps a calm held hand sweep below 100 degrees per second
+AssertionError: expected 180.93668719204223 to be less than 100
+ ❯ src/character/wavePersonality.test.ts:24:40
+     22|   ] as const)('%s %s keeps a calm held hand sweep below %s degrees per…
+     23|     expect(heldSpeed(species, action)).toBeGreaterThan(35)
+     24|     expect(heldSpeed(species, action)).toBeLessThan(limit)
+       |                                        ^
+     25|   })
+     26|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/character/wavePersonality.test.ts > species wave cadence > mochi wave keeps a calm held hand sweep below 150 degrees per second
+AssertionError: expected 183.97730317189797 to be less than 150
+ ❯ src/character/wavePersonality.test.ts:24:40
+     22|   ] as const)('%s %s keeps a calm held hand sweep below %s degrees per…
+     23|     expect(heldSpeed(species, action)).toBeGreaterThan(35)
+     24|     expect(heldSpeed(species, action)).toBeLessThan(limit)
+       |                                        ^
+     25|   })
+     26|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/character/wavePersonality.test.ts > species wave cadence > sprout wave keeps a calm held hand sweep below 100 degrees per second
+AssertionError: expected 161.5410466875211 to be less than 100
+ ❯ src/character/wavePersonality.test.ts:24:40
+     22|   ] as const)('%s %s keeps a calm held hand sweep below %s degrees per…
+     23|     expect(heldSpeed(species, action)).toBeGreaterThan(35)
+     24|     expect(heldSpeed(species, action)).toBeLessThan(limit)
+       |                                        ^
+     25|   })
+     26|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/character/wavePersonality.test.ts > species wave cadence > gives greet distinct timing rather than scaling one shared sweep
+AssertionError: expected 3.9968028886505635e-15 to be greater than 5
+ ❯ src/character/wavePersonality.test.ts:42:76
+     40|     expect(sprout).not.toEqual(bun)
+     41|     expect(sprout).not.toEqual(mochi)
+     42|     expect(Math.max(...mochi.map((value, i) => Math.abs(value - bun[i]…
+       |                                                                            ^
+     43|     expect(Math.max(...sprout.map((value, i) => Math.abs(value - mochi…
+     44|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/character/wavePersonality.test.ts > species wave cadence > gives wave distinct timing rather than scaling one shared sweep
+AssertionError: expected 2.220446049250313e-15 to be greater than 5
+ ❯ src/character/wavePersonality.test.ts:42:76
+     40|     expect(sprout).not.toEqual(bun)
+     41|     expect(sprout).not.toEqual(mochi)
+     42|     expect(Math.max(...mochi.map((value, i) => Math.abs(value - bun[i]…
+       |                                                                            ^
+     43|     expect(Math.max(...sprout.map((value, i) => Math.abs(value - mochi…
+     44|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 2 passed (8)
+   Start at  18:20:47
+   Duration  170ms (transform 47%, tests 28%, import 20%, worker 5%)
+

@@ -1,0 +1,26 @@
+✔ native player choices stay still and fit 320px (1629.460646ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (1569.200234ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (1580.891854ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (1626.595972ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (1581.987836ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (914.414556ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2306.284188ms)
+ℹ Chromium 152.0.7977.82; join0.2253roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (2259.168831ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (2169.863026ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (2252.577806ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (2209.206961ms)
+✔ wardrobe live reduced motion settles the preview and does not restart when restored (1819.675789ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22695.001947

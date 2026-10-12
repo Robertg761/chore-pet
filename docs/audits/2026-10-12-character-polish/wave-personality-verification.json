@@ -1,0 +1,105 @@
+{
+  "freeze": {
+    "baseCommit": "7612669",
+    "sources": {
+      "src/character/motion.ts": "1492fa421fbfa88b8294305d1f17079cefa5403ea3f6ab3395cfca368f0721bd",
+      "src/character/wavePersonality.test.ts": "a2ea4dd3deb7c836576240f03d90b6038f1ce979f780b15ab7cb3c4dda1e5a67",
+      "docs/ART.md": "981c09877e5c05b0ff1895b8cf245ffe90abb52f83aca5676a214325bc4b21ef",
+      "docs/audits/2026-10-12-character-polish/capture-wave-personality.mjs": "ad0f83336ded655664aa818bb40b201488bf48e9ed82f1d2b70a33dfb2cf343a",
+      "docs/audits/2026-10-12-character-polish/compare-wave-personality.mjs": "c89b03250eb4f191c24af9d4e536101dad057184a5bd390dbc9c0fe60e9c706e"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/wave-personality-source.diff",
+      "sha256": "7bf87da8fc0fcb8960f7a6e0da9aa8758b91f22351a4a1d078164e1ba54cfde8"
+    },
+    "scope": "Only Mochi/Sprout normal greet/wave rightArm sampler. Bun/reduced/all other fields/actions/durations preserved. 3product/test/doc paths +2bounded evidence runners."
+  },
+  "checks": [
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/wave-personality-capture-before.log",
+      "logSha256": "be1061c4178ee781e3d8bd88dabd4e09e71e75d57947317bd8633c368160d70d",
+      "exitCode": 0,
+      "result": "108static sizeviews+6curves from exact prior sampler."
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/wave-personality-red.log",
+      "logSha256": "f6b38b3ae623b425947cfa832a672e21298498468fa381487991c6e600ed0489",
+      "exitCode": 1,
+      "result": "6fail/2pass:old speeds/shared shape reproduce."
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/wave-personality-focused.log",
+      "logSha256": "42e9421841a660f7129d9dddf6c6f9dbdf7a9e54dbe0a610cdb8ede041fbdde4",
+      "exitCode": 0,
+      "result": "103pass/4files9.86s sampler/render/idle/ground checks."
+    },
+    {
+      "name": "differential",
+      "log": "docs/audits/2026-10-12-character-polish/wave-personality-differential.log",
+      "logSha256": "b14c2f34bd39abb9572a2b28019287a44f01fc68e284ee6a098817dce6d6561c",
+      "exitCode": 0,
+      "result": "40500samples;39480exact/1020rightArm-onlydifferences;Bun/reduced/allotherfields exact."
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/wave-personality-capture-after.log",
+      "logSha256": "cb557901a3fc55e67278545c692c1e2e476790882186f80c31362be566c88287",
+      "exitCode": 0,
+      "result": "108static sizeviews+6curves from currentproduction art."
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/wave-personality-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Zero warnings."
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/wave-personality-build.log",
+      "logSha256": "00d20e4c1e72bf2581b54baa526479235f13741d4736596a1b11f06e1f7d93fb",
+      "exitCode": 0,
+      "result": "TypeScript/production build."
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/wave-personality-full.log",
+      "logSha256": "24cc8943bd8fda8ca023aaf9ff61cb760c79e842e5a289b2c8383157ce6cf62f",
+      "exitCode": 0,
+      "result": "2114pass/98files60.67s."
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/wave-personality-browser.log",
+      "logSha256": "ee9ca593715b743930d4a81eccf90c6e7ae5041006c928141e6c2f803d8997f8",
+      "exitCode": 0,
+      "result": "12nativeplayer/wardrobe regressions22.6950s."
+    }
+  ],
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/wave-personality-baseline.ts.txt": "c5728645139ddfdf5c73296fc07dc1fbca12ae6a98e3640d269862166c240091",
+    "docs/audits/2026-10-12-character-polish/wave-personality-differential.json": "8e9e15ca6829025f179ea03f4d95ecac00b173eadcbc51ce2a1cbab2b19df66b",
+    "docs/audits/2026-10-12-character-polish/wave-personality-before-sizes.png": "4e923ac39d2dfcef29c5c38dfd0a9085496ea932b0d21f4e55eb4938b292a2d1",
+    "docs/audits/2026-10-12-character-polish/wave-personality-before-curves.png": "9ddbcdaa476ffbdd093ac0f127a28cef45fa453785198ebd60eb2061b0cd5b91",
+    "docs/audits/2026-10-12-character-polish/wave-personality-before.json": "963c4ffe23411afa5a7b1da9bf341061517cf7f40aec6e34dc75c164a1e9317e",
+    "docs/audits/2026-10-12-character-polish/wave-personality-after-sizes.png": "72d2f97286facc8445b427b00212ba3fca591cf4dfd7400a42ec7e985a8fbe0c",
+    "docs/audits/2026-10-12-character-polish/wave-personality-after-curves.png": "3ad5f857873847d3c8e3aecddfc197f2786fa805e6877051c892abc443bd39da",
+    "docs/audits/2026-10-12-character-polish/wave-personality-after.json": "a51e55f31b1dc1fff631851fc5bf44c10ecc2e3c197d7bbd519281e97728bec8"
+  },
+  "verificationScope": "All103focused/2114full/typebuild/zero-warninglint/12nativebrowser/twocaptures/differential exits0 observed root and bound to final5sources. Before/after staticviews inspected root;human temporal acceptance not established.",
+  "resources": "Singleheavyprocess,oneworker/browser;RAM7.5GBavailable,/tmp4.1GBfree;lastaccount14%usedordinaryusageallowed.",
+  "limits": [
+    "Static/numeric views do not establish human playback feel.",
+    "No AT/physicaldevice/CPU/battery claim.",
+    "Before/after sizeviews use beanie/glasses/scarf/overalls/backpack;not exhaustive everyoutfit combination."
+  ],
+  "pending": [],
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/wave-personality-review.md",
+    "sha256": "0f2845afe7a6dd2c24c3c6686c5476d573edfd1a8a5ddecb1ea59b3c2a6db72a",
+    "result": "Approved bounded static/still scope,noactionablefindings. Rootexecution andhumanplayback separate."
+  }
+}

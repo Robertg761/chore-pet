@@ -1,0 +1,221 @@
+diff --git c/docs/ART.md w/docs/ART.md
+index 109ce48..9c44988 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -134,6 +134,7 @@ Every pose defines all six anchors (`src/character/slots.ts`). Items are drawn c
+ - Body outline, outfit clip, and wardrobe anchors share the same torso geometry and transform. Keep the slot order above, including front backpack straps. Preserve sick-bed and sleeping art and their hidden-slot rules during gentle notices.
+ - Walking phase follows accumulated route distance across tile boundaries. Departure fades in over 120ms and arrival fades out over 180ms across the whole journey. Do not restart the gait on each tile. Body lift stays within 24 SVG units; sampled scale stays within `[0.85,1.15]`.
+ - Greeting, affection, celebration, and big celebration last 1200, 1600, 1800, and 2200ms. Finite actions recover to their mood pose. Interruptions preserve the visible fractional world position and blend from the outgoing sampled pose. Rapid taps allow one pending response and reuse the same decorative accent nodes.
++- Greeting and wardrobe waves use species-specific held hand sweeps. Bun retains its lively cadence, Mochi sweeps more slowly, and Sprout uses a smaller, slower wave. Preserve action durations, gesture envelopes, torso/feet/appendages, gaze, wardrobe attachment and reduced-motion stills.
+ - Sampled art owns breathing, blinks, limb motion, and accents. Disable independent CSS breathing and blinking inside it. Reduced motion removes sampled displacement, gait, breathing, secondary sway, blinks, and animated accents while retaining still mood/reaction expressions. System preference changes apply during the session.
+ - Idle appendages follow the existing four-second breath with a small species-specific delay; they settle to neutral position and zero velocity at the loop boundary. Feet, body position and shadow stay fixed. Primary140ms blinks keep their lifetime phase across actions; every other primary blink has a second140ms blink after60ms fully open. Sleeping and sick art retain their existing static geometry.
+ - Environmental profiles live in `src/pet/interactions.ts`. They choose reachable adjacent standing tiles and gaze points from the rotated object footprint. Kitchen profiles gaze at the rendered basin/plate stacks, pot knob/raised lid, retained freezer magnet, and tomato/takeout opening. Bathroom profiles follow the shower-head underside/water spot/steam smiley, toilet flush button/lid smudge/stained water line, and washer window/laundry/open-door fabric. Points follow the current condition. The remaining catalog profiles follow dishwasher controls/plate stacks, dining-table flower/place settings, coffee-table top/plates, trash handle/bags and retained recycling badge. The resident reserves additional front clearance for the folded messy2 dishwasher door, mirrored with its art; placement footprints remain fixed. Resident and multi-room routes share the same condition-aware pet obstacles. A clearance change replans travel from its current drawn position; closed fixtures restore their original routes. This changes pet navigation without changing placement footprints. Current profiles use contact-free gestures; no paw-to-furniture contact geometry is verified. Do not depict chores being completed or sitting on furniture without dedicated anchors and occlusion rules.
+diff --git c/src/character/motion.ts w/src/character/motion.ts
+index 3750c94..c920e35 100644
+--- c/src/character/motion.ts
++++ w/src/character/motion.ts
+@@ -69,6 +69,26 @@ const PERSONALITY: Record<Species, { amplitude: number; squash: number; stride:
+   sprout: { amplitude: 0.72, squash: 0.65, stride: 0.82, follow: 9, lag: 1.1 },
+ }
+ 
++// The shared gesture envelope raises/lowers the hand. These held sweeps give
++// Mochi a slower wave and Sprout a smaller one, retaining Bun's lively timing.
++const HAND_WAVE: Record<'greet' | 'wave', Record<Species, { lift: number; arc: number; cycles: number }>> = {
++  greet: {
++    mochi: { lift: 42, arc: 10, cycles: 3 },
++    bun: { lift: 42, arc: 12, cycles: 4 },
++    sprout: { lift: 34, arc: 8, cycles: 2 },
++  },
++  wave: {
++    mochi: { lift: 30, arc: 8, cycles: 4 },
++    bun: { lift: 30, arc: 10, cycles: 5 },
++    sprout: { lift: 26, arc: 6, cycles: 3 },
++  },
++}
++
++function waveArm(species: Species, action: 'greet' | 'wave', phase: number): number {
++  const { lift, arc, cycles } = HAND_WAVE[action][species]
++  return -(lift + arc * Math.sin((phase - 0.35) * Math.PI * (cycles * 2)))
++}
++
+ function neutral(): MotionFrame {
+   return {
+     bodyX: 0, bodyY: 0, scaleX: 1, scaleY: 1, lean: 0,
+@@ -241,7 +261,7 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+         break
+       case 'greet':
+         frame.lean = -3 * gesture
+-        frame.rightArm = -(42 + 12 * Math.sin((t - 0.35) * Math.PI * 8)) * gesture
++        frame.rightArm = waveArm(species, action, t) * gesture
+         frame.leftArm = 5 * gesture
+         frame.gazeY = -2 * attention
+         break
+@@ -279,7 +299,7 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+         break
+       case 'wave':
+         frame.lean = 4 * gesture
+-        frame.rightArm = -(30 + 10 * Math.sin((t - 0.35) * Math.PI * 10)) * gesture
++        frame.rightArm = waveArm(species, action, t) * gesture
+         frame.gazeX = 4 * attention
+         break
+       case 'reach':
+diff --git 1/src/character/wavePersonality.test.ts 2/src/character/wavePersonality.test.ts
+new file mode 100644
+index 0000000..34e8277
+--- /dev/null
++++ 2/src/character/wavePersonality.test.ts
+@@ -0,0 +1,45 @@
++import { describe, expect, it } from 'vitest'
++import type { Species } from '../domain/types'
++import { ACTION_MS, sampleMotion } from './motion'
++
++type WaveAction = 'greet' | 'wave'
++function arm(species: Species, action: WaveAction, phase: number) {
++  return sampleMotion({ species, action, mood: 'happy', elapsedMs: phase * ACTION_MS[action],
++    durationMs: ACTION_MS[action], distance: 0, reducedMotion: false }).rightArm
++}
++function heldSpeed(species: Species, action: WaveAction) {
++  let maximum = 0
++  for (let phase = .35; phase < .64; phase += .001) {
++    maximum = Math.max(maximum, Math.abs(arm(species, action, phase + .001) - arm(species, action, phase)) / (.001 * ACTION_MS[action] / 1000))
++  }
++  return maximum
++}
++
++describe('species wave cadence', () => {
++  it.each([
++    ['mochi', 'greet', 160], ['sprout', 'greet', 100],
++    ['mochi', 'wave', 150], ['sprout', 'wave', 100],
++  ] as const)('%s %s keeps a calm held hand sweep below %s degrees per second', (species, action, limit) => {
++    expect(heldSpeed(species, action)).toBeGreaterThan(35)
++    expect(heldSpeed(species, action)).toBeLessThan(limit)
++  })
++
++  it.each(['greet', 'wave'] as const)('retains Bun’s lively %s sweep', action => {
++    expect(heldSpeed('bun', action)).toBeGreaterThan(200)
++    expect(heldSpeed('bun', action)).toBeLessThan(260)
++  })
++
++  it.each(['greet', 'wave'] as const)('gives %s distinct timing rather than scaling one shared sweep', action => {
++    // Compare normalized held shapes, independent of species amplitude and arm
++    // lift. Different cadence must move the hand at different relative times.
++    const amplitude = { mochi: .82, bun: 1, sprout: .72 }
++    const sweep = (species: Species) => [.4, .48, .56, .64].map(phase =>
++      (arm(species, action, phase) - arm(species, action, .35)) / amplitude[species])
++    const mochi = sweep('mochi'), bun = sweep('bun'), sprout = sweep('sprout')
++    expect(mochi).not.toEqual(bun)
++    expect(sprout).not.toEqual(bun)
++    expect(sprout).not.toEqual(mochi)
++    expect(Math.max(...mochi.map((value, i) => Math.abs(value - bun[i])))).toBeGreaterThan(5)
++    expect(Math.max(...sprout.map((value, i) => Math.abs(value - mochi[i])))).toBeGreaterThan(5)
++  })
++})
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-wave-personality.mjs 2/docs/audits/2026-10-12-character-polish/capture-wave-personality.mjs
+new file mode 100644
+index 0000000..ae9763c
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-wave-personality.mjs
+@@ -0,0 +1,59 @@
++// Static production art and numeric arm curves; no live animation clock.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const label = process.argv[2], out = 'docs/audits/2026-10-12-character-polish'
++if (!['before', 'after'].includes(label)) throw new Error('Expected before or after')
++const baseline = await readFile(`${out}/wave-personality-baseline.ts.txt`, 'utf8')
++const server = await createServer({ plugins: [{ name: 'wave-baseline', enforce: 'pre', transform(code, id) {
++  if (label === 'before' && id.split('?')[0] === `${process.cwd()}/src/character/motion.ts`) return { code: baseline, map: null }
++} }], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++  const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++  const { sampleMotion, ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts')
++  const { SPECIES_COLOUR, PALETTE } = await server.ssrLoadModule('/src/art/palette.ts')
++  const { PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++  const h = React.createElement, speciesList = ['mochi', 'bun', 'sprout'], actions = ['greet', 'wave'], cells = [], samples = []
++  const equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++  const at = (species, action, elapsedMs) => sampleMotion({ species, action, mood: 'happy', elapsedMs, blinkMs: elapsedMs, distance: 0, durationMs: ACTION_MS[action], reducedMotion: false })
++  for (const species of speciesList) for (const action of actions) for (const facing of [1, -1]) for (const phase of [.35, .5, .75]) {
++    const frame = at(species, action, ACTION_MS[action] * phase)
++    const draw = size => h('g', { transform: facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined }, h(AnimatedCharacterArt,
++      { species, mood: 'happy', frame, equipped, bodyColour: SPECIES_COLOUR[species], strokeScale: size === 25 ? PET_STROKE_SCALE : 1 }))
++    const views = [200, 60, 25].map((size, i) => h('g', { key: size, transform: `translate(${[0, 205, 280][i]} ${100 - size / 2}) scale(${size / 200})` }, draw(size)))
++    cells.push(h('g', { key: cells.length, transform: `translate(${cells.length % 4 * 330} ${Math.floor(cells.length / 4) * 230})` }, views,
++      h('text', { x: 8, y: 220, fontSize: 11, fill: PALETTE.ink }, `${species} ${action} f${facing} ${phase * 100}%;200/60/25px`)))
++    samples.push({ species, action, facing, phase, frame })
++  }
++  async function png(name, width, height, children) {
++    const markup = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width, height }, h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), children))
++    await writeFile(`${out}/${name}`, new Resvg(markup).render().asPng())
++  }
++  const sizes = `wave-personality-${label}-sizes.png`, curvesFile = `wave-personality-${label}-curves.png`
++  await png(sizes, 1320, 2070, cells)
++  const colours = { mochi: '#ca6080', bun: '#397dbb', sprout: '#568747' }, curveSamples = []
++  const charts = actions.map((action, i) => {
++    const x0 = 54, y0 = 50, width = 430, height = 200, duration = ACTION_MS[action]
++    const curves = speciesList.map(species => {
++      const points = Array.from({ length: 351 }, (_, n) => { const ms = duration * n / 350; return { ms, arm: at(species, action, ms).rightArm } })
++      curveSamples.push({ species, action, points })
++      return h('path', { key: species, d: points.map((p, n) => `${n ? 'L' : 'M'}${(x0 + p.ms / duration * width).toFixed(3)} ${(y0 + (p.arm + 60) / 70 * height).toFixed(3)}`).join(' '), fill: 'none', stroke: colours[species], strokeWidth: 1.8 })
++    })
++    return h('g', { key: action, transform: `translate(${i * 520} 0)` },
++      h('text', { x: x0, y: 20, fontSize: 14, fill: PALETTE.ink }, `${action}:right arm angle over ${duration}ms`),
++      speciesList.map((species, n) => h('text', { key: species, x: x0 + n * 130, y: 39, fontSize: 12, fill: colours[species] }, species)),
++      [-60, -40, -20, 0].map(angle => h('g', { key: angle }, h('path', { d: `M${x0} ${y0 + (angle + 60) / 70 * height} h${width}`, stroke: '#d8d0c4', fill: 'none' }),
++        h('text', { x: 12, y: y0 + (angle + 60) / 70 * height + 4, fontSize: 11, fill: PALETTE.ink }, `${angle}°`))), curves,
++      [0, duration / 2, duration].map(ms => h('text', { key: ms, x: x0 + ms / duration * width, y: 275, textAnchor: 'middle', fontSize: 11, fill: PALETTE.ink }, `${ms}ms`)))
++  })
++  await png(curvesFile, 1040, 290, charts)
++  const hash = bytes => createHash('sha256').update(bytes).digest('hex')
++  const sources = ['src/character/motion.ts', 'src/character/AnimatedCharacter.tsx', 'src/character/species/animatedBody.tsx', 'src/character/parts.tsx', `${out}/capture-wave-personality.mjs`]
++  await writeFile(`${out}/wave-personality-${label}.json`, JSON.stringify({ method: '36dressed species/action/mirror/phase samples,108views at200/60/25px,and arm-angle/time curves. Static/numeric comparison only;no human temporal playback. Baseline is exact091d8c4 sampler source.', samples, curveSamples,
++    sourceSha256: Object.fromEntries(await Promise.all(sources.map(async path => [path, hash(label === 'before' && path === 'src/character/motion.ts' ? baseline : await readFile(path))]))),
++    captureSha256: Object.fromEntries(await Promise.all([sizes, curvesFile].map(async file => [file, hash(await readFile(`${out}/${file}`))]))) }, null, 2) + '\n')
++  console.log(`Wrote ${label}:108sizeviews and6arm curves`)
++} finally { await server.close() }
+diff --git 1/docs/audits/2026-10-12-character-polish/compare-wave-personality.mjs 2/docs/audits/2026-10-12-character-polish/compare-wave-personality.mjs
+new file mode 100644
+index 0000000..68f2a6a
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/compare-wave-personality.mjs
+@@ -0,0 +1,38 @@
++// Exact sampler differential, isolated from live playback and browser clocks.
++import assert from 'node:assert/strict'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++import ts from 'typescript'
++const out = 'docs/audits/2026-10-12-character-polish'
++const baseline = await readFile(`${out}/wave-personality-baseline.ts.txt`, 'utf8')
++const current = await readFile('src/character/motion.ts', 'utf8')
++async function load(source) {
++  const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText
++  return import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`)
++}
++const before = await load(baseline), after = await load(current)
++assert.deepEqual(after.ACTION_MS, before.ACTION_MS)
++const phases = [0, .1, .18, .3, .35, .4, .48, .5, .56, .64, .75, .9, .92, 1, 2]
++let samples = 0, unchanged = 0, changed = 0
++const changes = {}
++for (const species of ['mochi', 'bun', 'sprout']) for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick']) {
++  for (const action of Object.keys(before.ACTION_MS)) for (const factor of [.5, 1, 2]) for (const reducedMotion of [false, true]) for (const facing of [1, -1]) for (const phase of phases) {
++    const durationMs = before.ACTION_MS[action] * factor
++    const input = { species, mood, action, durationMs, elapsedMs: phase * durationMs, blinkMs: 9250 + phase * durationMs, distance: phase * 3, facing, reducedMotion }
++    const a = before.sampleMotion(input), b = after.sampleMotion(input)
++    const allowed = !reducedMotion && species !== 'bun' && ['greet', 'wave'].includes(action)
++    if (allowed) {
++      const { rightArm: oldArm, ...oldRest } = a, { rightArm: newArm, ...newRest } = b
++      assert.deepEqual(newRest, oldRest, `${species}/${mood}/${action}/${factor}/${phase}: only right arm may change`)
++      if (oldArm !== newArm) {
++        changed++; const key = `${species}/${action}`; changes[key] = (changes[key] ?? 0) + 1
++      } else unchanged++
++    } else { assert.deepEqual(b, a, `${species}/${mood}/${action}/${factor}/${phase}/${reducedMotion}: exact preservation`); unchanged++ }
++    samples++
++  }
++}
++assert.deepEqual(Object.keys(changes).sort(), ['mochi/greet', 'mochi/wave', 'sprout/greet', 'sprout/wave'])
++assert.ok(changed > 0)
++const sha256 = text => createHash('sha256').update(text).digest('hex')
++await writeFile(`${out}/wave-personality-differential.json`, JSON.stringify({ method: 'Exact sampled frames across3species/5moods/15actions/3durations/2motionpolicies/2facings/15phases. Only Mochi/Sprout normal greet/wave rightArm may differ;Bun/allotherfields/reduced/durations exact. Static numeric checks,not temporal acceptance.', samples, unchanged, changed, changes, sourceSha256: { baseline: sha256(baseline), current: sha256(current), runner: sha256(await readFile(new URL(import.meta.url))) } }, null, 2) + '\n')
++console.log(`Compared ${samples} frames;${unchanged} exact;${changed} right-arm-only differences`)

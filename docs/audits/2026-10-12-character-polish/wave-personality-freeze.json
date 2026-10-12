@@ -1,0 +1,15 @@
+{
+  "baseCommit": "7612669",
+  "sources": {
+    "src/character/motion.ts": "1492fa421fbfa88b8294305d1f17079cefa5403ea3f6ab3395cfca368f0721bd",
+    "src/character/wavePersonality.test.ts": "a2ea4dd3deb7c836576240f03d90b6038f1ce979f780b15ab7cb3c4dda1e5a67",
+    "docs/ART.md": "981c09877e5c05b0ff1895b8cf245ffe90abb52f83aca5676a214325bc4b21ef",
+    "docs/audits/2026-10-12-character-polish/capture-wave-personality.mjs": "ad0f83336ded655664aa818bb40b201488bf48e9ed82f1d2b70a33dfb2cf343a",
+    "docs/audits/2026-10-12-character-polish/compare-wave-personality.mjs": "c89b03250eb4f191c24af9d4e536101dad057184a5bd390dbc9c0fe60e9c706e"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/wave-personality-source.diff",
+    "sha256": "7bf87da8fc0fcb8960f7a6e0da9aa8758b91f22351a4a1d078164e1ba54cfde8"
+  },
+  "scope": "Only Mochi/Sprout normal greet/wave rightArm sampler. Bun/reduced/all other fields/actions/durations preserved. 3product/test/doc paths +2bounded evidence runners."
+}
