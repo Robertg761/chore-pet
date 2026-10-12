@@ -1,8 +1,8 @@
-import { catalogEntry } from '../catalog/objects'
-import type { PlacedObject } from '../domain/types'
+import type { MessStage, PlacedObject } from '../domain/types'
 import type { RoomConnection, RoomSide } from '../room/connections'
-import { footprintOf, overlaps, ROOM_SIZE, type Footprint } from '../room/grid'
+import { overlaps, ROOM_SIZE, type Footprint } from '../room/grid'
 import type { HomeLayout } from '../room/homeLayout'
+import { petObstacles } from './obstacles'
 import { ROOM_VIEWBOX, roomPoint } from '../room/shell/geometry'
 
 /** Tile coordinates locate tile centres, just like the room's wandering pet. */
@@ -102,16 +102,17 @@ export function findHomePath(
   objects: readonly PlacedObject[],
   from: RoomWaypoint,
   toRoomId: string,
+  stages: Readonly<Record<string, MessStage>> = {},
 ): RoomWaypoint[] | null {
   const rooms = new Map(layout.rooms.map((room) => [room.id, room]))
   if (!rooms.has(from.roomId) || !rooms.has(toRoomId) || !insideFloor(from)) return null
 
   const solids = new Map<string, Footprint[]>()
   for (const object of objects) {
-    const entry = catalogEntry(object.catalogId)
-    if (!entry || entry.layer !== 'solid') continue
+    const obstacles = petObstacles([object], stages)
+    if (!obstacles.length) continue
     const roomSolids = solids.get(object.roomId) ?? []
-    roomSolids.push(footprintOf(object, entry))
+    roomSolids.push(...obstacles)
     solids.set(object.roomId, roomSolids)
   }
   const free = (point: RoomWaypoint) => inside(point) && !(solids.get(point.roomId) ?? []).some((solid) => overlaps(solid, { ...point, w: 1, d: 1 }))

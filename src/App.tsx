@@ -178,7 +178,14 @@ export default function App() {
     roomFocus?.homeId === data.home?.id ? roomFocus?.roomId : data.home ? readFocusedRoomId(data.home.id) : null)
   const layout = homeLayout(roomIds)
   const connections = roomConnections(layout, data.objects)
-  const travel = useHomePet(data.home?.id, focusedRoomId, layout, connections, data.objects, roomNames(rooms), data.pet?.name ?? 'Your pet', view.name)
+  // One current condition drives art, reminders, and stage-aware pet routes.
+  const { condition, neglect, stages } = useMemo(() => {
+    const condition = petCondition(data.chores, data.completions, today, data.home?.vacations ?? [])
+    const neglect = objectNeglect(data.chores, condition.statuses)
+    const stages = Object.fromEntries(Object.entries(neglect).map(([id, level]) => [id, messStageFor(level)]))
+    return { condition, neglect, stages }
+  }, [data.chores, data.completions, today, data.home?.vacations])
+  const travel = useHomePet(data.home?.id, focusedRoomId, layout, connections, data.objects, roomNames(rooms), data.pet?.name ?? 'Your pet', view.name, stages)
   /** Change screen with a short slide: forward when going deeper, back when returning. */
   const setView = (next: View) => {
     if (next.name === view.name) { setViewNow(next); return }
@@ -308,10 +315,9 @@ export default function App() {
   }
 
   // The pet's daily nudge (while the app is open); needs the same view of the day as the screen.
-  const reminderStatuses = data.home ? petCondition(data.chores, data.completions, today, data.home.vacations).statuses : []
   useReminders(
     data.home && data.pet
-      ? { pet: data.pet, chores: data.chores, statuses: reminderStatuses, today, away: isInVacation(today, data.home.vacations) }
+      ? { pet: data.pet, chores: data.chores, statuses: condition.statuses, today, away: isInVacation(today, data.home.vacations) }
       : null,
   )
 
@@ -676,10 +682,7 @@ export default function App() {
     )
   }
 
-  const condition = petCondition(chores, completions, today, home.vacations)
   const away = isInVacation(today, home.vacations)
-  const neglect = objectNeglect(chores, condition.statuses)
-  const stages = Object.fromEntries(Object.entries(neglect).map(([id, level]) => [id, messStageFor(level)]))
   // Rooms: a pill over the room picture names the one on show (and counts what's late in the others);
   // it opens a sheet to switch, add or remove rooms.
   const late = lateByRoom(objects, chores, condition.statuses)

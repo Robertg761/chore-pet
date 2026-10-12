@@ -127,6 +127,20 @@ describe('home routes', () => {
     expect(findHomePath(layout, [door('a', 'b')], [object('a', 1, 0), object('a', 0, 1)], { roomId: 'a', tx: 0, ty: 0 }, 'b')).toBeNull()
   })
 
+  it.each([0, 1] as const)('routes around an open dishwasher at rotation %s and restores its closed lane', (rotation) => {
+    const fixture = rotation === 0 ? object('a', 6, 4, 'dishwasher', rotation) : object('a', 7, 3, 'dishwasher', rotation)
+    const from = { roomId: 'a', tx: 7, ty: 2 }
+    const front = { roomId: 'a', tx: 7, ty: 4 }
+    const clean = findHomePath(layout, [door('a', 'b')], [fixture], from, 'b', { [fixture.id]: 'clean' })!
+    const open = findHomePath(layout, [door('a', 'b')], [fixture], from, 'b', { [fixture.id]: 'messy2' })!
+    expect(clean.some((point) => point.roomId === front.roomId && point.tx === front.tx && point.ty === front.ty)).toBe(true)
+    expect(open.some((point) => point.roomId === front.roomId && point.tx === front.tx && point.ty === front.ty)).toBe(false)
+    expect(open.some((point) => point.roomId === 'b' && point.tx === 0 && point.ty === 5)).toBe(true)
+    expect(findHomePath(layout, [door('a', 'b')], [fixture], from, 'b', { [fixture.id]: 'messy1' })).toEqual(clean)
+    expect(findHomePath(layout, [door('a', 'b')], [fixture], front, 'b', { [fixture.id]: 'messy2' })).toBeNull()
+    expect(findHomePath(layout, [door('a', 'b')], [fixture], { ...from, tx: 6.8 }, 'b', { [fixture.id]: 'messy2' })?.at(-1)?.roomId).toBe('b')
+  })
+
   it('does not invent a journey when already there or given missing rooms', () => {
     const from = { roomId: 'a', tx: 6, ty: 4 }
     expect(findHomePath(layout, [], [], from, 'a')).toEqual([from])

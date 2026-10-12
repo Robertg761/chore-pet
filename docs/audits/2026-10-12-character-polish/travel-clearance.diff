@@ -1,0 +1,277 @@
+diff --git c/src/App.navigation.test.tsx w/src/App.navigation.test.tsx
+index 30cc2ea..4f8677d 100644
+--- c/src/App.navigation.test.tsx
++++ w/src/App.navigation.test.tsx
+@@ -13,6 +13,7 @@ vi.mock('./data/appStore', () => ({
+   appStore: { getState: () => fixture.state, sync: fixture.sync, apply: fixture.apply, savedHomes: async () => [] },
+ }))
+ vi.mock('./lib/account', () => ({ useAccount: () => ({ kind: 'local' }), useAccountOperationError: () => null }))
++import * as homePet from './pet/useHomePet'
+ import App from './App'
+ const cleanups: (() => void)[] = []
+ beforeEach(() => {
+@@ -24,7 +25,7 @@ beforeEach(() => {
+   fixture.state = { ready: true, hydrated: true, savedLocally: true, snapshot: emptySnapshot(), sync: 'local-only', lastError: null, pendingCount: 0, rejectedCount: 0 }
+   vi.clearAllMocks()
+ })
+-afterEach(() => { cleanups.splice(0).forEach((fn) => fn()); vi.unstubAllGlobals() })
++afterEach(() => { cleanups.splice(0).forEach((fn) => fn()); vi.restoreAllMocks(); vi.useRealTimers(); vi.unstubAllGlobals() })
+ function recovered() {
+   fixture.state = { ...fixture.state, hydrated: true, lastError: null, snapshot: sampleHome({ species: 'mochi', userId: 'returning', today: '2026-10-07' }).reduce((state, op) => change(state, op), emptySnapshot('returning')) }
+ }
+@@ -61,3 +62,26 @@ it('closes an edit deleted or archived elsewhere without recreating it', () => {
+   expect(ui.container.querySelector('form.editor')).toBeNull()
+   expect(fixture.apply).not.toHaveBeenCalled()
+ })
++
++it('passes current fixture stages into routing and updates them after a schedule edit', () => {
++  vi.useFakeTimers()
++  vi.setSystemTime(new Date('2026-10-12T12:00:00'))
++  recovered()
++  const watched = vi.spyOn(homePet, 'useHomePet')
++  const tables = fixture.state.snapshot.tables
++  const dishwasher = Object.values(tables.placed_objects).find((object) => object.catalogId === 'dishwasher')!
++  const chore = Object.values(tables.chores).find((item) => item.objectId === dishwasher.id)!
++  const active = { ...chore, createdOn: '2026-10-01', schedule: { kind: 'daily' as const } }
++  fixture.state = { ...fixture.state, snapshot: { ...fixture.state.snapshot, tables: { ...tables,
++    chores: { ...tables.chores, [chore.id]: active },
++    completions: Object.fromEntries(Object.entries(tables.completions).filter(([, item]) => item.choreId !== chore.id)),
++  } } }
++  const ui = render(<App />); cleanups.push(ui.unmount)
++  expect(watched.mock.calls.at(-1)?.[8]?.[dishwasher.id]).toBe('messy2')
++  fixture.state = { ...fixture.state, snapshot: { ...fixture.state.snapshot, tables: { ...fixture.state.snapshot.tables,
++    chores: { ...fixture.state.snapshot.tables.chores, [chore.id]: { ...active, createdOn: '2026-10-12' } },
++  } } }
++  ui.rerender(<App />)
++  expect(watched.mock.calls.at(-1)?.[8]).toBeDefined()
++  expect(watched.mock.calls.at(-1)?.[8]?.[dishwasher.id] ?? 'clean').toBe('clean')
++})
+diff --git c/src/App.tsx w/src/App.tsx
+index 5a5f424..6e41e69 100644
+--- c/src/App.tsx
++++ w/src/App.tsx
+@@ -178,7 +178,14 @@ export default function App() {
+     roomFocus?.homeId === data.home?.id ? roomFocus?.roomId : data.home ? readFocusedRoomId(data.home.id) : null)
+   const layout = homeLayout(roomIds)
+   const connections = roomConnections(layout, data.objects)
+-  const travel = useHomePet(data.home?.id, focusedRoomId, layout, connections, data.objects, roomNames(rooms), data.pet?.name ?? 'Your pet', view.name)
++  // One current condition drives art, reminders, and stage-aware pet routes.
++  const { condition, neglect, stages } = useMemo(() => {
++    const condition = petCondition(data.chores, data.completions, today, data.home?.vacations ?? [])
++    const neglect = objectNeglect(data.chores, condition.statuses)
++    const stages = Object.fromEntries(Object.entries(neglect).map(([id, level]) => [id, messStageFor(level)]))
++    return { condition, neglect, stages }
++  }, [data.chores, data.completions, today, data.home?.vacations])
++  const travel = useHomePet(data.home?.id, focusedRoomId, layout, connections, data.objects, roomNames(rooms), data.pet?.name ?? 'Your pet', view.name, stages)
+   /** Change screen with a short slide: forward when going deeper, back when returning. */
+   const setView = (next: View) => {
+     if (next.name === view.name) { setViewNow(next); return }
+@@ -308,10 +315,9 @@ export default function App() {
+   }
+ 
+   // The pet's daily nudge (while the app is open); needs the same view of the day as the screen.
+-  const reminderStatuses = data.home ? petCondition(data.chores, data.completions, today, data.home.vacations).statuses : []
+   useReminders(
+     data.home && data.pet
+-      ? { pet: data.pet, chores: data.chores, statuses: reminderStatuses, today, away: isInVacation(today, data.home.vacations) }
++      ? { pet: data.pet, chores: data.chores, statuses: condition.statuses, today, away: isInVacation(today, data.home.vacations) }
+       : null,
+   )
+ 
+@@ -676,10 +682,7 @@ export default function App() {
+     )
+   }
+ 
+-  const condition = petCondition(chores, completions, today, home.vacations)
+   const away = isInVacation(today, home.vacations)
+-  const neglect = objectNeglect(chores, condition.statuses)
+-  const stages = Object.fromEntries(Object.entries(neglect).map(([id, level]) => [id, messStageFor(level)]))
+   // Rooms: a pill over the room picture names the one on show (and counts what's late in the others);
+   // it opens a sheet to switch, add or remove rooms.
+   const late = lateByRoom(objects, chores, condition.statuses)
+diff --git c/src/pet/homeTravel.test.ts w/src/pet/homeTravel.test.ts
+index e71f176..df9787a 100644
+--- c/src/pet/homeTravel.test.ts
++++ w/src/pet/homeTravel.test.ts
+@@ -127,6 +127,20 @@ describe('home routes', () => {
+     expect(findHomePath(layout, [door('a', 'b')], [object('a', 1, 0), object('a', 0, 1)], { roomId: 'a', tx: 0, ty: 0 }, 'b')).toBeNull()
+   })
+ 
++  it.each([0, 1] as const)('routes around an open dishwasher at rotation %s and restores its closed lane', (rotation) => {
++    const fixture = rotation === 0 ? object('a', 6, 4, 'dishwasher', rotation) : object('a', 7, 3, 'dishwasher', rotation)
++    const from = { roomId: 'a', tx: 7, ty: 2 }
++    const front = { roomId: 'a', tx: 7, ty: 4 }
++    const clean = findHomePath(layout, [door('a', 'b')], [fixture], from, 'b', { [fixture.id]: 'clean' })!
++    const open = findHomePath(layout, [door('a', 'b')], [fixture], from, 'b', { [fixture.id]: 'messy2' })!
++    expect(clean.some((point) => point.roomId === front.roomId && point.tx === front.tx && point.ty === front.ty)).toBe(true)
++    expect(open.some((point) => point.roomId === front.roomId && point.tx === front.tx && point.ty === front.ty)).toBe(false)
++    expect(open.some((point) => point.roomId === 'b' && point.tx === 0 && point.ty === 5)).toBe(true)
++    expect(findHomePath(layout, [door('a', 'b')], [fixture], from, 'b', { [fixture.id]: 'messy1' })).toEqual(clean)
++    expect(findHomePath(layout, [door('a', 'b')], [fixture], front, 'b', { [fixture.id]: 'messy2' })).toBeNull()
++    expect(findHomePath(layout, [door('a', 'b')], [fixture], { ...from, tx: 6.8 }, 'b', { [fixture.id]: 'messy2' })?.at(-1)?.roomId).toBe('b')
++  })
++
+   it('does not invent a journey when already there or given missing rooms', () => {
+     const from = { roomId: 'a', tx: 6, ty: 4 }
+     expect(findHomePath(layout, [], [], from, 'a')).toEqual([from])
+diff --git c/src/pet/homeTravel.ts w/src/pet/homeTravel.ts
+index 0cd9a4d..90458b1 100644
+--- c/src/pet/homeTravel.ts
++++ w/src/pet/homeTravel.ts
+@@ -1,8 +1,8 @@
+-import { catalogEntry } from '../catalog/objects'
+-import type { PlacedObject } from '../domain/types'
++import type { MessStage, PlacedObject } from '../domain/types'
+ import type { RoomConnection, RoomSide } from '../room/connections'
+-import { footprintOf, overlaps, ROOM_SIZE, type Footprint } from '../room/grid'
++import { overlaps, ROOM_SIZE, type Footprint } from '../room/grid'
+ import type { HomeLayout } from '../room/homeLayout'
++import { petObstacles } from './obstacles'
+ import { ROOM_VIEWBOX, roomPoint } from '../room/shell/geometry'
+ 
+ /** Tile coordinates locate tile centres, just like the room's wandering pet. */
+@@ -102,16 +102,17 @@ export function findHomePath(
+   objects: readonly PlacedObject[],
+   from: RoomWaypoint,
+   toRoomId: string,
++  stages: Readonly<Record<string, MessStage>> = {},
+ ): RoomWaypoint[] | null {
+   const rooms = new Map(layout.rooms.map((room) => [room.id, room]))
+   if (!rooms.has(from.roomId) || !rooms.has(toRoomId) || !insideFloor(from)) return null
+ 
+   const solids = new Map<string, Footprint[]>()
+   for (const object of objects) {
+-    const entry = catalogEntry(object.catalogId)
+-    if (!entry || entry.layer !== 'solid') continue
++    const obstacles = petObstacles([object], stages)
++    if (!obstacles.length) continue
+     const roomSolids = solids.get(object.roomId) ?? []
+-    roomSolids.push(footprintOf(object, entry))
++    roomSolids.push(...obstacles)
+     solids.set(object.roomId, roomSolids)
+   }
+   const free = (point: RoomWaypoint) => inside(point) && !(solids.get(point.roomId) ?? []).some((solid) => overlaps(solid, { ...point, w: 1, d: 1 }))
+diff --git c/src/pet/useHomePet.ts w/src/pet/useHomePet.ts
+index 6f2f101..75d4685 100644
+--- c/src/pet/useHomePet.ts
++++ w/src/pet/useHomePet.ts
+@@ -1,25 +1,22 @@
+ import { useLayoutEffect, useRef, useState } from 'react'
+-import { catalogEntry } from '../catalog/objects'
+-import type { PlacedObject } from '../domain/types'
++import type { MessStage, PlacedObject } from '../domain/types'
+ import type { RoomConnection } from '../room/connections'
+-import { footprintOf, freeTile } from '../room/grid'
++import { freeTile } from '../room/grid'
+ import type { HomeLayout } from '../room/homeLayout'
++import { petObstacles } from './obstacles'
+ import { findHomePath, type RoomWaypoint } from './homeTravel'
+ 
+ interface Journey { id: number; homeId: string; path: RoomWaypoint[]; arrivalNotice?: string }
+ 
+ /** The pet has a position of its own; selecting a room requests a route to it. */
+-export function useHomePet(homeId: string | undefined, targetId: string | null, layout: HomeLayout, connections: RoomConnection[], objects: PlacedObject[], names: Record<string, string>, petName: string, view: string) {
++export function useHomePet(homeId: string | undefined, targetId: string | null, layout: HomeLayout, connections: RoomConnection[], objects: PlacedObject[], names: Record<string, string>, petName: string, view: string, stages: Readonly<Record<string, MessStage>> = {}) {
+   const [settled, setSettled] = useState<{ homeId: string; at: RoomWaypoint } | null>(null)
+   const [journey, setJourney] = useState<Journey | null>(null)
+   const [notice, setNotice] = useState('')
+   const current = useRef<{ homeId: string; at: RoomWaypoint } | null>(null)
+   const serial = useRef(0)
+   const fallbackId = targetId ?? layout.rooms[0]?.id
+-  const fallbackTile = freeTile(objects.filter((object) => object.roomId === fallbackId).flatMap((object) => {
+-    const entry = catalogEntry(object.catalogId)
+-    return entry?.layer === 'solid' ? [footprintOf(object, entry)] : []
+-  }))
++  const fallbackTile = freeTile(petObstacles(objects.filter((object) => object.roomId === fallbackId), stages))
+   const position = settled && settled.homeId === homeId && layout.rooms.some((room) => room.id === settled.at.roomId)
+     ? settled.at : fallbackId && fallbackTile ? { roomId: fallbackId, ...fallbackTile } : null
+ 
+@@ -31,14 +28,14 @@ export function useHomePet(homeId: string | undefined, targetId: string | null,
+     if (!homeId || !position) return
+     const live = current.current
+     const from = source ?? (live?.homeId === homeId && layout.rooms.some((room) => room.id === live.at.roomId) ? live.at : position)
+-    const path = findHomePath(layout, connections, objects, from, toRoomId)
++    const path = findHomePath(layout, connections, objects, from, toRoomId, stages)
+     serial.current++
+     setSettled({ homeId, at: from })
+     if (!path) {
+       const blocked = `${petName}'s path to ${names[toRoomId]} is blocked. Move furniture out of the way.`
+       // A cancelled run can leave the pet between tiles. Finish that small step
+       // before handing it back to the room's tile-based wandering behaviour.
+-      const settle = findHomePath(layout, connections, objects, from, from.roomId)
++      const settle = findHomePath(layout, connections, objects, from, from.roomId, stages)
+       setJourney(settle && settle.length > 1 ? { id: serial.current, homeId, path: settle, arrivalNotice: blocked } : null)
+       setNotice(blocked)
+     } else if (path.length <= 1) {
+@@ -66,9 +63,9 @@ export function useHomePet(homeId: string | undefined, targetId: string | null,
+     setNotice('')
+   }
+ 
+-  // Re-plan after room/furniture changes commit and before painting: an old
++  // Re-plan after room/furniture/clearance changes commit and before painting: an old
+   // traveller must not draw its departure point again when the layout changes.
+-  const worldKey = JSON.stringify([homeId, targetId, view, layout.rooms.map((room) => room.id), objects.map((object) => [object.id, object.roomId, object.catalogId, object.tileX, object.tileY, object.rotation])])
++  const worldKey = JSON.stringify([homeId, targetId, view, layout.rooms.map((room) => room.id), objects.map((object) => [object.id, object.roomId, object.catalogId, object.tileX, object.tileY, object.rotation, petObstacles([object], stages)])])
+   useLayoutEffect(() => {
+     if (!targetId || (view !== 'home' && view !== 'build')) return
+     const live = current.current
+diff --git 1/src/pet/useHomePet.test.tsx 2/src/pet/useHomePet.test.tsx
+new file mode 100644
+index 0000000..a3de695
+--- /dev/null
++++ 2/src/pet/useHomePet.test.tsx
+@@ -0,0 +1,54 @@
++// @vitest-environment jsdom
++import { act, useLayoutEffect } from 'react'
++import { afterEach, expect, it, vi } from 'vitest'
++import type { MessStage, PlacedObject } from '../domain/types'
++import { homeLayout } from '../room/homeLayout'
++import { render } from '../test/react'
++import { useHomePet } from './useHomePet'
++
++const layout = homeLayout(['a', 'b'])
++const connections = [{ id: 'a-b', aRoomId: 'a', bRoomId: 'b', aSide: 'east' as const, bSide: 'west' as const, start: 4, end: 6, blocked: false, blockerIds: [] }]
++const fixtures: PlacedObject[] = [{ id: 'door', roomId: 'a', catalogId: 'dishwasher', tileX: 6, tileY: 4, rotation: 0 }]
++let travel: ReturnType<typeof useHomePet>
++const cleanups: (() => void)[] = []
++function Harness({ stages, objects = fixtures, targetId = 'b' }: { stages: Record<string, MessStage>; objects?: PlacedObject[]; targetId?: string }) {
++  const current = useHomePet('home', targetId, layout, connections, objects, { a: 'Kitchen', b: 'Bedroom' }, 'Bun', 'home', stages)
++  useLayoutEffect(() => { travel = current }, [current])
++  return <output>{current.notice}</output>
++}
++function mount(props: Parameters<typeof Harness>[0]) {
++  const ui = render(<Harness {...props} />)
++  cleanups.push(ui.unmount)
++  return ui
++}
++afterEach(() => { cleanups.splice(0).forEach((cleanup) => cleanup()); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++const entersFront = () => Boolean(travel.journey?.path.some((point) => point.roomId === 'a' && point.tx === 7 && point.ty === 4))
++
++it('replans actual clearance changes, retains live source, and ignores unchanged closed geometry', () => {
++  vi.stubGlobal('requestAnimationFrame', vi.fn())
++  const ui = mount({ stages: { door: 'clean' } })
++  act(() => { travel.onPosition({ roomId: 'a', tx: 7, ty: 2 }); travel.go('b') })
++  expect(entersFront()).toBe(true)
++  const first = travel.journey!.id
++  ui.rerender(<Harness stages={{ door: 'messy1' }} />)
++  expect(travel.journey!.id).toBe(first)
++  act(() => travel.onPosition({ roomId: 'a', tx: 7, ty: 2.2 }))
++  ui.rerender(<Harness stages={{ door: 'messy2' }} />)
++  expect(travel.journey!.id).toBeGreaterThan(first)
++  expect(travel.journey!.path[0]).toEqual({ roomId: 'a', tx: 7, ty: 2.2 })
++  expect(entersFront()).toBe(false)
++  const second = travel.journey!.id
++  ui.rerender(<Harness stages={{ door: 'messy2' }} />)
++  expect(travel.journey!.id).toBe(second)
++  ui.rerender(<Harness stages={{ door: 'clean' }} />)
++  expect(travel.journey!.id).toBeGreaterThan(second)
++  expect(entersFront()).toBe(true)
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++})
++
++it('spawns on clear floor when the folded door covers the old fallback tile', () => {
++  const objects: PlacedObject[] = [{ ...fixtures[0], tileY: 7 }]
++  mount({ stages: { door: 'messy2' }, objects, targetId: 'a' })
++  expect(travel.position).toEqual({ roomId: 'a', tx: 7, ty: 6 })
++  expect(travel.journey).toBeNull()
++})

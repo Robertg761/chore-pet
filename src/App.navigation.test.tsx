@@ -13,6 +13,7 @@ vi.mock('./data/appStore', () => ({
   appStore: { getState: () => fixture.state, sync: fixture.sync, apply: fixture.apply, savedHomes: async () => [] },
 }))
 vi.mock('./lib/account', () => ({ useAccount: () => ({ kind: 'local' }), useAccountOperationError: () => null }))
+import * as homePet from './pet/useHomePet'
 import App from './App'
 const cleanups: (() => void)[] = []
 beforeEach(() => {
@@ -24,7 +25,7 @@ beforeEach(() => {
   fixture.state = { ready: true, hydrated: true, savedLocally: true, snapshot: emptySnapshot(), sync: 'local-only', lastError: null, pendingCount: 0, rejectedCount: 0 }
   vi.clearAllMocks()
 })
-afterEach(() => { cleanups.splice(0).forEach((fn) => fn()); vi.unstubAllGlobals() })
+afterEach(() => { cleanups.splice(0).forEach((fn) => fn()); vi.restoreAllMocks(); vi.useRealTimers(); vi.unstubAllGlobals() })
 function recovered() {
   fixture.state = { ...fixture.state, hydrated: true, lastError: null, snapshot: sampleHome({ species: 'mochi', userId: 'returning', today: '2026-10-07' }).reduce((state, op) => change(state, op), emptySnapshot('returning')) }
 }
@@ -60,4 +61,27 @@ it('closes an edit deleted or archived elsewhere without recreating it', () => {
   ui.rerender(<App />)
   expect(ui.container.querySelector('form.editor')).toBeNull()
   expect(fixture.apply).not.toHaveBeenCalled()
+})
+
+it('passes current fixture stages into routing and updates them after a schedule edit', () => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date('2026-10-12T12:00:00'))
+  recovered()
+  const watched = vi.spyOn(homePet, 'useHomePet')
+  const tables = fixture.state.snapshot.tables
+  const dishwasher = Object.values(tables.placed_objects).find((object) => object.catalogId === 'dishwasher')!
+  const chore = Object.values(tables.chores).find((item) => item.objectId === dishwasher.id)!
+  const active = { ...chore, createdOn: '2026-10-01', schedule: { kind: 'daily' as const } }
+  fixture.state = { ...fixture.state, snapshot: { ...fixture.state.snapshot, tables: { ...tables,
+    chores: { ...tables.chores, [chore.id]: active },
+    completions: Object.fromEntries(Object.entries(tables.completions).filter(([, item]) => item.choreId !== chore.id)),
+  } } }
+  const ui = render(<App />); cleanups.push(ui.unmount)
+  expect(watched.mock.calls.at(-1)?.[8]?.[dishwasher.id]).toBe('messy2')
+  fixture.state = { ...fixture.state, snapshot: { ...fixture.state.snapshot, tables: { ...fixture.state.snapshot.tables,
+    chores: { ...fixture.state.snapshot.tables.chores, [chore.id]: { ...active, createdOn: '2026-10-12' } },
+  } } }
+  ui.rerender(<App />)
+  expect(watched.mock.calls.at(-1)?.[8]).toBeDefined()
+  expect(watched.mock.calls.at(-1)?.[8]?.[dishwasher.id] ?? 'clean').toBe('clean')
 })

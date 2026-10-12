@@ -1,0 +1,63 @@
+{
+  "baseCommit": "6362c87",
+  "checks": [
+    {
+      "name": "focused-final",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/pet/homeTravel.test.ts src/pet/useHomePet.test.tsx src/pet/obstacles.test.ts src/App.navigation.test.tsx",
+      "log": "travel-clearance-focused-lint-final.log",
+      "exitCode": 0,
+      "result": "37 pass,4files,2.69s"
+    },
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "travel-clearance-unit-final.log",
+      "exitCode": null,
+      "result": "1990 pass,89files,55.32s. Footer recovered after compaction; original process exit metadata unavailable. Predates only test harness effect cleanup."
+    },
+    {
+      "name": "build-final",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "travel-clearance-build-final.log",
+      "exitCode": 0,
+      "result": "TypeScript/production pass; existing chunk-size advisory"
+    },
+    {
+      "name": "lint-final",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "travel-clearance-lint-final.log",
+      "exitCode": 0,
+      "result": "zero warnings"
+    },
+    {
+      "name": "production-browser",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium nice -n 10 node --test --test-concurrency=1 scripts/browser/rooms.test.mjs scripts/browser/pet-motion.test.mjs",
+      "log": "travel-clearance-browser.log",
+      "exitCode": 0,
+      "result": "11 pass,15.30s; production artifact predates only test harness effect cleanup"
+    }
+  ],
+  "sourceSha256": {
+    "src/App.navigation.test.tsx": "b3feda82e0367d9e470fe00edc7d248da4c783e8f8be180569029ceb2f1277a1",
+    "src/App.tsx": "6d43d225ff90672e01cd92b6a8d9e7fbbaede56ce8863f0efcdfe966a01fe718",
+    "src/pet/homeTravel.test.ts": "180fe25c0e57e814969fa5d1fce90dcb150859b9be622f7ee75d1f3d347c6ece",
+    "src/pet/homeTravel.ts": "4574da3c0bcd650fde4f7d07c0ac0747ab855d7d3215ea38f932ea260ec72940",
+    "src/pet/useHomePet.ts": "75b408b50c9eed0d78745b2115f5ea5ed3b504d31785286c87e4f9ef1d6da1ba",
+    "src/pet/useHomePet.test.tsx": "7e1ae46c40cbb58b95a9236e7075a91dafca2e33a9fa81115a5f28c83bf925a0"
+  },
+  "patchSha256": "66ab882f781dbb8edb6e13ecae64ab791ebd73d7c64095937863e580ccf471b5",
+  "history": [
+    "travel-clearance-red.log:4 expected routing/spawn/replan failures,18pass.",
+    "travel-clearance-green.log:25 focused pass before App mapping case.",
+    "travel-clearance-focused.log:1fixture failure,36pass. Healthy object stages are intentionally omitted.",
+    "travel-clearance-unit.log:discarded full run started before inspecting failed fixture;1same assertion failure,1989pass. No production bug inferred.",
+    "travel-clearance-focused-final.log:37pass after missing-as-clean assertion.",
+    "travel-clearance-lint.log:one test-harness render-side-effect warning. Final harness moves exposure into layout effect."
+  ],
+  "limitations": [
+    "Static review certifies frozen source only; runtime commands are root evidence.",
+    "Full suite predates only final test-harness exposure cleanup, covered by final37 focused tests.",
+    "Existing stationary occupancy relocation behavior remains.",
+    "Human temporal playback remains open."
+  ]
+}

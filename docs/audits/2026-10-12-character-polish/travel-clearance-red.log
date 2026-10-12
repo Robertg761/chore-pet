@@ -1,0 +1,76 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/homeTravel.test.ts src/pet/useHomePet.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/homeTravel.test.ts (20 tests | 2 failed) 29ms
+   ❯ home routes (18)
+     × routes around an open dishwasher at rotation 0 and restores its closed lane 7ms
+     × routes around an open dishwasher at rotation 1 and restores its closed lane 1ms
+ ❯ src/pet/useHomePet.test.tsx (2 tests | 2 failed) 33ms
+   × replans actual clearance changes, retains live source, and ignores unchanged closed geometry 25ms
+   × spawns on clear floor when the folded door covers the old fallback tile 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/homeTravel.test.ts > home routes > routes around an open dishwasher at rotation 0 and restores its closed lane
+ FAIL  src/pet/homeTravel.test.ts > home routes > routes around an open dishwasher at rotation 1 and restores its closed lane
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/pet/homeTravel.test.ts:137:115
+    135|     const open = findHomePath(layout, [door('a', 'b')], [fixture], fro…
+    136|     expect(clean.some((point) => point.roomId === front.roomId && poin…
+    137|     expect(open.some((point) => point.roomId === front.roomId && point…
+       |                                                                                                                   ^
+    138|     expect(open.some((point) => point.roomId === 'b' && point.tx === 0…
+    139|     expect(findHomePath(layout, [door('a', 'b')], [fixture], from, 'b'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/pet/useHomePet.test.tsx > replans actual clearance changes, retains live source, and ignores unchanged closed geometry
+AssertionError: expected 2 to be greater than 2
+ ❯ src/pet/useHomePet.test.tsx:36:30
+     34|   act(() => travel.onPosition({ roomId: 'a', tx: 7, ty: 2.2 }))
+     35|   ui.rerender(<Harness stages={{ door: 'messy2' }} />)
+     36|   expect(travel.journey!.id).toBeGreaterThan(first)
+       |                              ^
+     37|   expect(travel.journey!.path[0]).toEqual({ roomId: 'a', tx: 7, ty: 2.…
+     38|   expect(entersFront()).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/pet/useHomePet.test.tsx > spawns on clear floor when the folded door covers the old fallback tile
+AssertionError: expected { roomId: 'a', tx: 7, ty: 7 } to deeply equal { roomId: 'a', tx: 7, ty: 6 }
+
+- Expected
++ Received
+
+  {
+    "roomId": "a",
+    "tx": 7,
+-   "ty": 6,
++   "ty": 7,
+  }
+
+ ❯ src/pet/useHomePet.test.tsx:51:27
+     49|   const objects: PlacedObject[] = [{ ...fixtures[0], tileY: 7 }]
+     50|   mount({ stages: { door: 'messy2' }, objects, targetId: 'a' })
+     51|   expect(travel.position).toEqual({ roomId: 'a', tx: 7, ty: 6 })
+       |                           ^
+     52|   expect(travel.journey).toBeNull()
+     53| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 18 passed (22)
+   Start at  16:35:06
+   Duration  675ms (environment 53%, transform 21%, tests 13%, import 11%, worker 1%)
+

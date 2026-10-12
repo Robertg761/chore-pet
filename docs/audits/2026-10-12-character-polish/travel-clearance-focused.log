@@ -1,0 +1,44 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/App.navigation.test.tsx src/pet/homeTravel.test.ts src/pet/useHomePet.test.tsx src/pet/obstacles.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+stderr | src/App.navigation.test.tsx > passes current fixture stages into routing and updates them after a schedule edit
+Encountered two children with the same key, `a`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+Encountered two children with the same key, `b`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+Encountered two children with the same key, `c`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+Encountered two children with the same key, `b`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+
+ ❯ src/App.navigation.test.tsx (4 tests | 1 failed) 723ms
+   × passes current fixture stages into routing and updates them after a schedule edit 184ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.navigation.test.tsx > passes current fixture stages into routing and updates them after a schedule edit
+AssertionError: expected undefined to be 'clean' // Object.is equality
+
+- Expected:
+"clean"
+
++ Received:
+undefined
+
+ ❯ src/App.navigation.test.tsx:85:59
+     83|   } } }
+     84|   ui.rerender(<App />)
+     85|   expect(watched.mock.calls.at(-1)?.[8]?.[dishwasher.id]).toBe('clean')
+       |                                                           ^
+     86| })
+     87|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 36 passed (37)
+   Start at  16:37:02
+   Duration  3.13s (transform 42%, tests 29%, environment 19%, import 9%, worker 1%)
+
+    Isolate  4 workers spawned · ~221ms startup each (spawn + environment, per file)
+             at least ~663ms faster with isolate: false — reuses workers across files instead of one per file
+

@@ -1,0 +1,3 @@
+npm notice run chore-pet@0.0.0 lint
+npm notice run oxlint
+src/pet/useHomePet.test.tsx:15:3: warning react(globals): Cannot reassign variables declared outside of the component/hook help: Variable `travel` is declared outside of the component/hook. Reassigning this value during render is a side effect which can cause unpredictable behavior. If this variable is used in rendering, use useState instead. Otherwise, update it in an effect
