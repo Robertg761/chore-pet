@@ -69,6 +69,9 @@ const PERSONALITY: Record<Species, { amplitude: number; squash: number; stride: 
   sprout: { amplitude: 0.72, squash: 0.65, stride: 0.82, follow: 9, lag: 1.1 },
 }
 
+// Pats settle with a smaller, slower sway than energetic finite gestures.
+const AFFECTION_FOLLOW: Record<Species, number> = { mochi: 0.45, bun: 0.55, sprout: 0.5 }
+
 // The shared gesture envelope raises/lowers the hand. These held sweeps give
 // Mochi a slower wave and Sprout a smaller one, retaining Bun's lively timing.
 const HAND_WAVE: Record<'greet' | 'wave', Record<Species, { lift: number; arc: number; cycles: number }>> = {
@@ -349,7 +352,11 @@ export function sampleMotion(input: MotionInput): MotionFrame {
     frame.scaleY += extension * amplitude - compression * personality.squash * energy
     // A delayed settling envelope stays active after the main gesture lowers.
     const follow = envelope(t, 0.1, 0.42, 0.8, 1)
-    const sway = Math.sin(t * Math.PI * 4 - personality.lag) * follow * personality.follow * energy
+    // Advance the gentle stroke so inherited lag cannot add a tiny initial
+    // counter-movement after the follow envelope first becomes visible.
+    const sway = action === 'affection'
+      ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * AFFECTION_FOLLOW[species] * energy
+      : Math.sin(t * Math.PI * 4 - personality.lag) * follow * personality.follow * energy
     frame.leftAppendage = sway
     frame.rightAppendage = sway * (species === 'sprout' ? -0.75 : 0.8)
   }

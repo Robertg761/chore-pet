@@ -1,0 +1,18 @@
+✔ mochi settles into one gentle affection sway on the resident clock (1612.080021ms)
+ℹ Chromium 152.0.7977.82; 44 actual SVG-angle samples; one resident clock; unchanged position/node/saved tables
+✔ bun settles into one gentle affection sway on the resident clock (1338.166801ms)
+ℹ Chromium 152.0.7977.82; 44 actual SVG-angle samples; one resident clock; unchanged position/node/saved tables
+✔ sprout settles into one gentle affection sway on the resident clock (1505.044105ms)
+ℹ Chromium 152.0.7977.82; 44 actual SVG-angle samples; one resident clock; unchanged position/node/saved tables
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2379.377388ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1742.102381ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9391.189742

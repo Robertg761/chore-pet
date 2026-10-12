@@ -1,0 +1,10 @@
+{
+  "docs/audits/2026-10-12-character-polish/affection-follow-before-sizes.png": "4e1f16a8d96a19e0702691a74377089f234a16ab47f49a527ce7e681fafe151b",
+  "docs/audits/2026-10-12-character-polish/affection-follow-before-curves.png": "0767f30534b6b385dee23118c21584cbb6448aaf2ded86e345ae0f6c52a8d7e0",
+  "docs/audits/2026-10-12-character-polish/affection-follow-after-sizes.png": "f934ee03b5150fda957fb5fd01b4fd7508c2018ab8369c45e73d52d37ee880b4",
+  "docs/audits/2026-10-12-character-polish/affection-follow-after-curves.png": "5c2988d0070466dd36f9efb29ae655eeba75c2132f938defec5e8425de5b7954",
+  "docs/audits/2026-10-12-character-polish/affection-follow-before.json": "e397b05fc73a7e1a3a436a3b408c5cef42720034b2201071a40dc95e893c2af7",
+  "docs/audits/2026-10-12-character-polish/affection-follow-after.json": "86699a562457dc759cb6d199a35c5dcfc789841268c699e36d7561fa1e31818c",
+  "docs/audits/2026-10-12-character-polish/affection-follow-baseline.ts.txt": "1492fa421fbfa88b8294305d1f17079cefa5403ea3f6ab3395cfca368f0721bd",
+  "docs/audits/2026-10-12-character-polish/affection-follow-differential.json": "de68cd07eab448a2c8ada9333deda72f42f9912e31bbbcdd69b15d57fd5ecdc6"
+}

@@ -1,0 +1,158 @@
+{
+  "freeze": {
+    "baseCommit": "8ec7aa73d54dffcdeb3a38291f9b748608e3d759",
+    "sources": {
+      "src/character/motion.ts": "81e5c16b30f1133158b1f51d743a7faba4d496ec8183679e34375bfc21e31cb5",
+      "src/character/motion.affection.test.ts": "f7810edd3a67ae3fd029380c514b9fb1fec362db62497a3e861e84cd76c5ebfa",
+      "scripts/browser/pet-affection-follow.test.mjs": "035cc869b89783af1325862e9e479436e3e555c16db82c87660fa8ac776970fb",
+      "docs/ART.md": "273738fbe95549655cc0a66b5ad1fc078bf0f6052ade2b9d4c43faeb23cf967a",
+      "docs/audits/2026-10-12-character-polish/capture-affection-follow.mjs": "6d9abdc202ea936e2797ec8ff637d6dd40a2d9cb9dd46f0638d59cbfdbc7034b",
+      "docs/audits/2026-10-12-character-polish/compare-affection-follow.mjs": "60ba0dabae93b826d327ce565bbf63e56af2e8f3ef25ce058c4fffd89aafe375",
+      "scripts/browser/pet-play.test.mjs": "f375090b932f5c0acee142024cafacb4a5806df029f7bdf0638ba5527601cf7a",
+      "docs/audits/2026-10-12-character-polish/affection-follow-join-diagnostic.mjs": "1bf9f15094a33d653c8602db7593945ea403d8050982c0f6eec618719a7ca7a3"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/affection-follow-source-final.diff",
+      "sha256": "41cd31fc1559f6c531ca3fc5fc8d9639e140bb025630db4ec803655ea6affa58"
+    },
+    "scope": "Eight paths: original six plus existing pats browser fixture alignment to exact outgoing timestamp and a six-trial diagnostic helper with two unused imports removed. Production sampler unchanged since original freeze; no runtime/controller/renderer/clock changes.",
+    "priorFreeze": {
+      "path": "docs/audits/2026-10-12-character-polish/affection-follow-freeze.json",
+      "sha256": "4e1b367394a5f826bedc6987f282227ab96e74e951cefdc84bc76a0610759523"
+    }
+  },
+  "checks": [
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-red.log",
+      "logSha256": "6d581c9ad464a752d4c7e89588d450c4dfe86c43ea9727f4cc1ed2e5b82b4243",
+      "exitCode": 1,
+      "result": "6newangle/sign failures;1reduced pass,396ms."
+    },
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-browser-red.log",
+      "logSha256": "424abcc20a8f7d375295756f907f3544ebea4148e0dbd2b7a30a5a4059b78df8",
+      "exitCode": 1,
+      "result": "3actualSVGanglebudget failures before implementation."
+    },
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-capture-before.log",
+      "logSha256": "57967ed85ebdd3f6394cbedb523a05fe3a84f80df94d49bf40101230559e743e",
+      "exitCode": 0,
+      "result": "18dressed samples/54sizeviews and3curves; exact8ec7aa7 sampler baseline."
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-focused.log",
+      "logSha256": "438da6c488a1e14cbdb4467f1d9f648137153188d00d3d98ad4132a934855768",
+      "exitCode": 1,
+      "result": "Firstcandidate251pass/3sign-countfail;247existing checks pass. Initial inheritedlag counterstroke revised."
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-capture-after.log",
+      "logSha256": "9059d7e17b808c0c6bb7ab47fa1d226d99becf51ea1a72cca64b3771e14265f9",
+      "exitCode": 0,
+      "result": "Firstcandidatecapture. Finalartifacts regenerated; no exactfirstcandidateartifactbinding claim."
+    },
+    {
+      "name": "focused-final",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-focused-final.log",
+      "logSha256": "5342e5b8c34c6df94f6cf40aede24f016652497ce170885768d9d66e1d4bfdc2",
+      "exitCode": 0,
+      "result": "254tests/5files12.80s; final runtime."
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Clean before diagnostic andpatsfixture amendment."
+    },
+    {
+      "name": "capture-final",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-capture-final.log",
+      "logSha256": "9059d7e17b808c0c6bb7ab47fa1d226d99becf51ea1a72cca64b3771e14265f9",
+      "exitCode": 0,
+      "result": "Final18dressed samples/54sizeviews and3curves."
+    },
+    {
+      "name": "differential",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-differential.log",
+      "logSha256": "5575966483834912c21af88edf2f8a3f844c1a238a784d3343b1b3bc44a86adb",
+      "exitCode": 0,
+      "result": "40500frames:39510exact,990only-affection-appendages differ; all durations exact."
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-build.log",
+      "logSha256": "e1ce3a416de5332e87eed0eb94e888e3eb8c39c21ab07acde58ef63c50749819",
+      "exitCode": 0,
+      "result": "TypeScript/productionbuild; final runtime, before diagnostic andtest-onlyfixture amendment. Bundle-size advisory."
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-browser.log",
+      "logSha256": "c915ce3e4745af6559322e9f7744ddfd780fe1a1a10848a6de71549d5c5af0a1",
+      "exitCode": 1,
+      "result": "24cases/23pass/1existingpatsjoinfail,42.751761s; all3newanglecases pass."
+    },
+    {
+      "name": "join-diagnostic",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-join-diagnostic.log",
+      "logSha256": "2dcfe6bb9f02cd23bbe432d7104c142ff793a79497fd32d3b8d8ee5b5a6a88d3",
+      "exitCode": null,
+      "result": "6footerpasses17.116087s. Processhandle lost acrossautomaticcontinuation; no completionexitmetadata retained. Rawtimestamps show normalwalk sample-age effects."
+    },
+    {
+      "name": "browser-final",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-browser-final.log",
+      "logSha256": "d0b2bae65198e8c1fe21db963f65e98a3cfd8699d88236459e4894934532cb85",
+      "exitCode": 0,
+      "result": "5finalaffectednativecases9.391190s;3species,patsjoin0.0000andhop. All24unique selected cases covered across applicable final setups."
+    },
+    {
+      "name": "lint-final",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Clean onfinal8sourcepaths."
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/affection-follow-full.log",
+      "logSha256": "87cbd8df937243cb9f96ca504ce15877664ec4dd194b52673376190937a43d8e",
+      "exitCode": 0,
+      "result": "2153tests/100files62.60s onfinal8sourcepaths; observed completionexit0."
+    }
+  ],
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/affection-follow-before-sizes.png": "4e1f16a8d96a19e0702691a74377089f234a16ab47f49a527ce7e681fafe151b",
+    "docs/audits/2026-10-12-character-polish/affection-follow-before-curves.png": "0767f30534b6b385dee23118c21584cbb6448aaf2ded86e345ae0f6c52a8d7e0",
+    "docs/audits/2026-10-12-character-polish/affection-follow-after-sizes.png": "f934ee03b5150fda957fb5fd01b4fd7508c2018ab8369c45e73d52d37ee880b4",
+    "docs/audits/2026-10-12-character-polish/affection-follow-after-curves.png": "5c2988d0070466dd36f9efb29ae655eeba75c2132f938defec5e8425de5b7954",
+    "docs/audits/2026-10-12-character-polish/affection-follow-before.json": "e397b05fc73a7e1a3a436a3b408c5cef42720034b2201071a40dc95e893c2af7",
+    "docs/audits/2026-10-12-character-polish/affection-follow-after.json": "86699a562457dc759cb6d199a35c5dcfc789841268c699e36d7561fa1e31818c",
+    "docs/audits/2026-10-12-character-polish/affection-follow-baseline.ts.txt": "1492fa421fbfa88b8294305d1f17079cefa5403ea3f6ab3395cfca368f0721bd",
+    "docs/audits/2026-10-12-character-polish/affection-follow-differential.json": "de68cd07eab448a2c8ada9333deda72f42f9912e31bbbcdd69b15d57fd5ecdc6",
+    "docs/audits/2026-10-12-character-polish/affection-follow-freeze.json": "4e1b367394a5f826bedc6987f282227ab96e74e951cefdc84bc76a0610759523",
+    "docs/audits/2026-10-12-character-polish/affection-follow-source.diff": "90ea397213c911035c62dc98ae9f56f7d9fe217b37efae9e5a2f62f3b4ae6fed",
+    "docs/audits/2026-10-12-character-polish/affection-follow-join-diagnostic-original.mjs.txt": "487f102a29286d483d109205201cba130748f304d9222e269e74e173471ca395"
+  },
+  "verificationScope": "Root binds8finalsources/patch/11artifacts and observes final executionexits. Both before/after sheets/curves inspected. Native24unique cases across applicable final setups; not one24casepassingrun. Original fixture failure andfirstcandidate failures retained.",
+  "resources": "Oneheavyprocess at a time, one worker/Chromium, nice10/768MBheap. AvailableRAM minimum observed5.7GBduringbrowser,6.2GBduringfull,6.65GBbeforefull. /tmp4.1GBfree.",
+  "limits": [
+    "No human temporal/AT/device/CPU/battery acceptance claim.",
+    "Static sheets depict happy dressed art at3phases/2facings/200/60/25px. Numericdifferential covers5moods/15actions/3durations/2policies/2facings/15phases.",
+    "Initialcandidateartifacts were regenerated; only finalartifactbindings are claimed.",
+    "Nextbatch27 Wardrobe-only tests will be excluded and postdatefull2153; no laterwholeworkspacepassclaim."
+  ],
+  "pending": [],
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/affection-follow-review.md",
+    "sha256": "982c877def4cecc6ac5a5acae496b55197062cbb24a75f5ed904483e2f36ade8",
+    "result": "Parfit independent final8path/static/stillapproval; no actionablefindings. Rootfull2153 andexecutionbindings separatelyobserved."
+  }
+}

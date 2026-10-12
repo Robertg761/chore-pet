@@ -1,0 +1,402 @@
+diff --git i/src/character/motion.ts w/src/character/motion.ts
+index c920e35..9776971 100644
+--- i/src/character/motion.ts
++++ w/src/character/motion.ts
+@@ -69,6 +69,9 @@ const PERSONALITY: Record<Species, { amplitude: number; squash: number; stride:
+   sprout: { amplitude: 0.72, squash: 0.65, stride: 0.82, follow: 9, lag: 1.1 },
+ }
+ 
++// Pats settle with a smaller, slower sway than energetic finite gestures.
++const AFFECTION_FOLLOW: Record<Species, number> = { mochi: 0.45, bun: 0.55, sprout: 0.5 }
++
+ // The shared gesture envelope raises/lowers the hand. These held sweeps give
+ // Mochi a slower wave and Sprout a smaller one, retaining Bun's lively timing.
+ const HAND_WAVE: Record<'greet' | 'wave', Record<Species, { lift: number; arc: number; cycles: number }>> = {
+@@ -349,7 +352,11 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+     frame.scaleY += extension * amplitude - compression * personality.squash * energy
+     // A delayed settling envelope stays active after the main gesture lowers.
+     const follow = envelope(t, 0.1, 0.42, 0.8, 1)
+-    const sway = Math.sin(t * Math.PI * 4 - personality.lag) * follow * personality.follow * energy
++    // Advance the gentle stroke so inherited lag cannot add a tiny initial
++    // counter-movement after the follow envelope first becomes visible.
++    const sway = action === 'affection'
++      ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * AFFECTION_FOLLOW[species] * energy
++      : Math.sin(t * Math.PI * 4 - personality.lag) * follow * personality.follow * energy
+     frame.leftAppendage = sway
+     frame.rightAppendage = sway * (species === 'sprout' ? -0.75 : 0.8)
+   }
+diff --git 1/src/character/motion.affection.test.ts 2/src/character/motion.affection.test.ts
+new file mode 100644
+index 0000000..801a365
+--- /dev/null
++++ 2/src/character/motion.affection.test.ts
+@@ -0,0 +1,44 @@
++import { describe, expect, it } from 'vitest'
++import { ACTION_MS, sampleMotion } from './motion'
++import type { Species } from '../domain/types'
++
++const at = (species: Species, elapsedMs: number, durationMs = ACTION_MS.affection, reducedMotion = false) =>
++  sampleMotion({ species, mood: 'happy', action: 'affection', elapsedMs, durationMs, reducedMotion, distance: 0 })
++
++describe('gentle affection follow-through', () => {
++  it.each([
++    { species: 'mochi', limit: 2.25, speed: 12 },
++    { species: 'bun', limit: 6.6, speed: 35 },
++    { species: 'sprout', limit: 4.5, speed: 24 },
++  ] as const)('keeps $species appendages small and slow while pats settle', ({ species, limit, speed }) => {
++    const frames = Array.from({ length: 1601 }, (_, ms) => at(species, ms))
++    for (const side of ['leftAppendage', 'rightAppendage'] as const) {
++      const values = frames.map(frame => frame[side])
++      expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(limit + 1e-9)
++      const velocity = values.slice(1).map((value, i) => Math.abs(value - values[i]) * 1000)
++      expect(Math.max(...velocity)).toBeLessThan(speed)
++      expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(.5)
++      expect(values[0]).toBe(0)
++      expect(values.at(-1)).toBe(0)
++      expect(velocity.at(-1)).toBeLessThan(.2)
++    }
++  })
++
++  it.each(['mochi', 'bun', 'sprout'] as const)('%s makes one relaxed sway at short, normal and long durations', species => {
++    for (const duration of [800, 1600, 3200]) {
++      for (const side of ['leftAppendage', 'rightAppendage'] as const) {
++        const signs = Array.from({ length: 1001 }, (_, phase) => at(species, phase / 1000 * duration, duration)[side])
++          .filter(value => Math.abs(value) > 1e-6).map(Math.sign)
++        expect(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1])).toHaveLength(1)
++      }
++    }
++  })
++
++  it('leaves reduced affection appendages still through the full finite response', () => {
++    for (const species of ['mochi', 'bun', 'sprout'] as const) for (const ms of [0, 160, 384, 800, 1280, 1599, 1600, 1800]) {
++      const frame = at(species, ms, ACTION_MS.affection, true)
++      expect(frame.leftAppendage).toBe(0)
++      expect(frame.rightAppendage).toBe(0)
++    }
++  })
++})
+diff --git 1/scripts/browser/pet-affection-follow.test.mjs 2/scripts/browser/pet-affection-follow.test.mjs
+new file mode 100644
+index 0000000..3728b61
+--- /dev/null
++++ 2/scripts/browser/pet-affection-follow.test.mjs
+@@ -0,0 +1,71 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { browserApp, snapshot } from './helpers.mjs'
++
++for (const { species, selector, limit, factor } of [
++  { species: 'mochi', selector: '[data-appendage="knot"] > g', limit: 2.25, factor: 1 },
++  { species: 'bun', selector: '[data-appendage="left-ear"]', limit: 6.6, factor: 1 },
++  { species: 'sprout', selector: '[data-appendage="stem"]', limit: 4.5, factor: .4 },
++]) {
++  test(`${species} settles into one gentle affection sway on the resident clock`, async t => {
++    const page = await browserApp(t, { reducedMotion: 'no-preference', viewport: { width: 1280, height: 800 } })
++    await page.evaluate(species => new Promise((resolve, reject) => {
++      const request = indexedDB.open('chore-pet', 1)
++      request.onerror = () => reject(request.error)
++      request.onsuccess = () => {
++        const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
++        const read = store.get('snapshot')
++        read.onsuccess = () => {
++          const saved = read.result, pet = Object.values(saved.tables.pets)[0]
++          pet.species = species
++          pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++          saved.outbox = {}
++          store.put(saved, 'snapshot')
++        }
++        tx.oncomplete = () => { db.close(); resolve() }
++        tx.onerror = () => { db.close(); reject(tx.error) }
++      }
++    }), species)
++    await page.clock.install()
++    await page.clock.pauseAt(Date.now() + 1000)
++    await page.addInitScript(() => {
++      Math.random = () => .99
++      const request = requestAnimationFrame, cancel = cancelAnimationFrame
++      window.__affectionFrames = new Set()
++      window.requestAnimationFrame = callback => {
++        const id = request(now => { window.__affectionFrames.delete(id); callback(now) })
++        window.__affectionFrames.add(id)
++        return id
++      }
++      window.cancelAnimationFrame = id => { window.__affectionFrames.delete(id); cancel(id) }
++    })
++    await page.reload()
++    const resident = page.locator('.room-pet')
++    await resident.waitFor()
++    const saved = (await snapshot(page)).tables
++    await resident.evaluate(node => { window.__affectionPet = node })
++    await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++    await page.getByRole('button', { name: 'Gentle pats', exact: true }).click()
++    const position = await resident.getAttribute('transform')
++    await page.clock.runFor(192)
++    const angles = []
++    for (let elapsed = 192; elapsed < 1600; elapsed += 32) {
++      angles.push(await resident.evaluate((node, { selector, species, factor }) => {
++        const part = node.querySelector(selector), matrix = part.transform.baseVal.consolidate().matrix
++        const pose = node.querySelector('[data-character-pose]').dataset.characterPose
++        const posture = species === 'mochi' ? pose === 'scruffy' ? 38 : ['meh', 'content'].includes(pose) ? 16 : 0 : 0
++        return (Math.atan2(matrix.b, matrix.a) * 180 / Math.PI - posture) / factor
++      }, { selector, species, factor }))
++      assert.equal(await page.evaluate(() => window.__affectionFrames.size), 1)
++      assert.equal(await resident.getAttribute('transform'), position)
++      await page.clock.runFor(32)
++    }
++    assert.ok(Math.max(...angles.map(Math.abs)) <= limit + 1e-6, 'actual appendage must stay inside gentle-angle budget')
++    assert.ok(Math.max(...angles.map(Math.abs)) > .5, 'normal motion must visibly respond')
++    const signs = angles.filter(angle => Math.abs(angle) > 1e-6).map(Math.sign)
++    assert.equal(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1]).length, 1, 'actual appendage must make one relaxed sway')
++    assert.equal(await resident.evaluate(node => node === window.__affectionPet), true)
++    assert.deepEqual((await snapshot(page)).tables, saved)
++    t.diagnostic(`Chromium ${page.context().browser().version()}; ${angles.length} actual SVG-angle samples; one resident clock; unchanged position/node/saved tables`)
++  })
++}
+diff --git i/docs/ART.md w/docs/ART.md
+index ba804e6..255d16e 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -169,6 +169,8 @@ One native IntersectionObserver pauses that same clock when the resident's SVG i
+ 
+ Spend time together follows the home chore list and offers explicit Wave, Gentle pats and Happy hop choices. They use the resident's existing finite greeting/affection/celebration samplers, retaining its fractional position and outgoing pose. Busy requests do not queue or extend a reaction; chore cheers keep priority. The resident owns the single successful spoken line, and the controls explain resting/travel without waking or moving the pet. Reduced motion keeps a still pose and returns to zero pending frames when the response ends. Controls remain optional, with no saved changes or separate clock.
+ 
++Gentle pats use one slow, delayed appendage sway. Mochi's knot, Bun's ears and Sprout's leaves move at 45%, 55% and 50% of their usual finite-gesture strength, with their existing phase lag and smooth return. This affects only affection appendages; the body, hands, heart, grounded feet, 1600ms duration and other actions retain their geometry and timing. Reduced motion leaves appendages still.
++
+ Environmental gaze starts at the actual drawn eye centre, including tired-eye offsets, species/mood torso geometry and facing. Convert the current detail through the inverse torso before bounding local eye travel to the renderer's three-by-two-unit limits. Inspection retains its forward tilt for low details and eases toward a small backward tilt for overhead details, using the existing finite gesture envelope. Keep feet grounded, clothing under the same torso transform and current safe approaches; no contact is implied.
+ 
+ Happy hop uses a separate transient player reaction with play dialogue and the existing1800ms celebration geometry. Chore cheers can preempt it; a hop cannot replace an active response or alter tap alternation/progress. Reduced motion stays still, offscreen expiry samples before return, and all three native choices share the same resident clock. Compact wrapping buttons preserve44px+targets and scene visibility on narrow phones.
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-affection-follow.mjs 2/docs/audits/2026-10-12-character-polish/capture-affection-follow.mjs
+new file mode 100644
+index 0000000..cb40728
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-affection-follow.mjs
+@@ -0,0 +1,59 @@
++// Static production art and numeric appendage curves; no live animation clock.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const label = process.argv[2], out = 'docs/audits/2026-10-12-character-polish'
++if (!['before', 'after'].includes(label)) throw new Error('Expected before or after')
++const baseline = await readFile(`${out}/affection-follow-baseline.ts.txt`, 'utf8')
++const server = await createServer({ plugins: [{ name: 'affection-baseline', enforce: 'pre', transform(code, id) {
++  if (label === 'before' && id.split('?')[0] === `${process.cwd()}/src/character/motion.ts`) return { code: baseline, map: null }
++} }], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++  const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++  const { sampleMotion, ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts')
++  const { SPECIES_COLOUR, PALETTE } = await server.ssrLoadModule('/src/art/palette.ts')
++  const { PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++  const h = React.createElement, speciesList = ['mochi', 'bun', 'sprout'], actions = ['affection'], cells = [], samples = []
++  const equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++  const at = (species, action, elapsedMs) => sampleMotion({ species, action, mood: 'happy', elapsedMs, blinkMs: elapsedMs, distance: 0, durationMs: ACTION_MS[action], reducedMotion: false })
++  for (const species of speciesList) for (const action of actions) for (const facing of [1, -1]) for (const phase of [.25, .5, .85]) {
++    const frame = at(species, action, ACTION_MS[action] * phase)
++    const draw = size => h('g', { transform: facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined }, h(AnimatedCharacterArt,
++      { species, mood: 'happy', frame, equipped, bodyColour: SPECIES_COLOUR[species], strokeScale: size === 25 ? PET_STROKE_SCALE : 1 }))
++    const views = [200, 60, 25].map((size, i) => h('g', { key: size, transform: `translate(${[0, 205, 280][i]} ${100 - size / 2}) scale(${size / 200})` }, draw(size)))
++    cells.push(h('g', { key: cells.length, transform: `translate(${cells.length % 4 * 330} ${Math.floor(cells.length / 4) * 230})` }, views,
++      h('text', { x: 8, y: 220, fontSize: 11, fill: PALETTE.ink }, `${species} ${action} f${facing} ${phase * 100}%;200/60/25px`)))
++    samples.push({ species, action, facing, phase, frame })
++  }
++  async function png(name, width, height, children) {
++    const markup = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width, height }, h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), children))
++    await writeFile(`${out}/${name}`, new Resvg(markup).render().asPng())
++  }
++  const sizes = `affection-follow-${label}-sizes.png`, curvesFile = `affection-follow-${label}-curves.png`
++  await png(sizes, 1320, 1150, cells)
++  const colours = { mochi: '#ca6080', bun: '#397dbb', sprout: '#568747' }, curveSamples = []
++  const charts = actions.map((action, i) => {
++    const x0 = 54, y0 = 50, width = 430, height = 200, duration = ACTION_MS[action]
++    const curves = speciesList.map(species => {
++      const points = Array.from({ length: 351 }, (_, n) => { const ms = duration * n / 350; return { ms, angle: at(species, action, ms).leftAppendage } })
++      curveSamples.push({ species, action, points })
++      return h('path', { key: species, d: points.map((p, n) => `${n ? 'L' : 'M'}${(x0 + p.ms / duration * width).toFixed(3)} ${(y0 + (p.angle + 14) / 28 * height).toFixed(3)}`).join(' '), fill: 'none', stroke: colours[species], strokeWidth: 1.8 })
++    })
++    return h('g', { key: action, transform: `translate(${i * 520} 0)` },
++      h('text', { x: x0, y: 20, fontSize: 14, fill: PALETTE.ink }, `${action}:left appendage angle over ${duration}ms`),
++      speciesList.map((species, n) => h('text', { key: species, x: x0 + n * 130, y: 39, fontSize: 12, fill: colours[species] }, species)),
++      [-12, -6, 0, 6, 12].map(angle => h('g', { key: angle }, h('path', { d: `M${x0} ${y0 + (angle + 14) / 28 * height} h${width}`, stroke: '#d8d0c4', fill: 'none' }),
++        h('text', { x: 12, y: y0 + (angle + 14) / 28 * height + 4, fontSize: 11, fill: PALETTE.ink }, `${angle}°`))), curves,
++      [0, duration / 2, duration].map(ms => h('text', { key: ms, x: x0 + ms / duration * width, y: 275, textAnchor: 'middle', fontSize: 11, fill: PALETTE.ink }, `${ms}ms`)))
++  })
++  await png(curvesFile, 520, 290, charts)
++  const hash = bytes => createHash('sha256').update(bytes).digest('hex')
++  const sources = ['src/character/motion.ts', 'src/character/AnimatedCharacter.tsx', 'src/character/species/animatedBody.tsx', 'src/character/parts.tsx', `${out}/capture-affection-follow.mjs`]
++  await writeFile(`${out}/affection-follow-${label}.json`, JSON.stringify({ method: '18dressed species/action/mirror/phase samples,54views at200/60/25px,and appendage-angle/time curves. Static/numeric comparison only;no human temporal playback. Baseline is exact8ec7aa7 sampler source.', samples, curveSamples,
++    sourceSha256: Object.fromEntries(await Promise.all(sources.map(async path => [path, hash(label === 'before' && path === 'src/character/motion.ts' ? baseline : await readFile(path))]))),
++    captureSha256: Object.fromEntries(await Promise.all([sizes, curvesFile].map(async file => [file, hash(await readFile(`${out}/${file}`))]))) }, null, 2) + '\n')
++  console.log(`Wrote ${label}:54sizeviews and3appendage curves`)
++} finally { await server.close() }
+diff --git 1/docs/audits/2026-10-12-character-polish/compare-affection-follow.mjs 2/docs/audits/2026-10-12-character-polish/compare-affection-follow.mjs
+new file mode 100644
+index 0000000..892ea48
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/compare-affection-follow.mjs
+@@ -0,0 +1,38 @@
++// Exact sampler differential, isolated from live playback and browser clocks.
++import assert from 'node:assert/strict'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++import ts from 'typescript'
++const out = 'docs/audits/2026-10-12-character-polish'
++const baseline = await readFile(`${out}/affection-follow-baseline.ts.txt`, 'utf8')
++const current = await readFile('src/character/motion.ts', 'utf8')
++async function load(source) {
++  const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText
++  return import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`)
++}
++const before = await load(baseline), after = await load(current)
++assert.deepEqual(after.ACTION_MS, before.ACTION_MS)
++const phases = [0, .1, .18, .3, .35, .4, .48, .5, .56, .64, .75, .9, .92, 1, 2]
++let samples = 0, unchanged = 0, changed = 0
++const changes = {}
++for (const species of ['mochi', 'bun', 'sprout']) for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick']) {
++  for (const action of Object.keys(before.ACTION_MS)) for (const factor of [.5, 1, 2]) for (const reducedMotion of [false, true]) for (const facing of [1, -1]) for (const phase of phases) {
++    const durationMs = before.ACTION_MS[action] * factor
++    const input = { species, mood, action, durationMs, elapsedMs: phase * durationMs, blinkMs: 9250 + phase * durationMs, distance: phase * 3, facing, reducedMotion }
++    const a = before.sampleMotion(input), b = after.sampleMotion(input)
++    const allowed = !reducedMotion && action === 'affection'
++    if (allowed) {
++      const { leftAppendage: oldLeft, rightAppendage: oldRight, ...oldRest } = a, { leftAppendage: newLeft, rightAppendage: newRight, ...newRest } = b
++      assert.deepEqual(newRest, oldRest, `${species}/${mood}/${action}/${factor}/${phase}: only appendages may change`)
++      if (oldLeft !== newLeft || oldRight !== newRight) {
++        changed++; const key = `${species}/${action}`; changes[key] = (changes[key] ?? 0) + 1
++      } else unchanged++
++    } else { assert.deepEqual(b, a, `${species}/${mood}/${action}/${factor}/${phase}/${reducedMotion}: exact preservation`); unchanged++ }
++    samples++
++  }
++}
++assert.deepEqual(Object.keys(changes).sort(), ['bun/affection', 'mochi/affection', 'sprout/affection'])
++assert.ok(changed > 0)
++const sha256 = text => createHash('sha256').update(text).digest('hex')
++await writeFile(`${out}/affection-follow-differential.json`, JSON.stringify({ method: 'Exact sampled frames across3species/5moods/15actions/3durations/2motionpolicies/2facings/15phases. Only normal affection appendages may differ;allotherfields/actions/reduced/durations exact. Static numeric checks,not temporal acceptance.', samples, unchanged, changed, changes, sourceSha256: { baseline: sha256(baseline), current: sha256(current), runner: sha256(await readFile(new URL(import.meta.url))) } }, null, 2) + '\n')
++console.log(`Compared ${samples} frames;${unchanged} exact;${changed} appendage-only differences`)
+diff --git i/scripts/browser/pet-play.test.mjs w/scripts/browser/pet-play.test.mjs
+index 8428031..ff1d081 100644
+--- i/scripts/browser/pet-play.test.mjs
++++ w/scripts/browser/pet-play.test.mjs
+@@ -210,6 +210,12 @@ test('chosen affection joins a live step, ignores rapid busy choices, and honors
+     if (Math.hypot(at.x - start.x, at.y - start.y) > 1) { before = at; break }
+   }
+   assert.ok(before, 'sample must start during a genuine walk')
++  // Compare interruption geometry at the same delivered fake-clock frame.
++  // Reload can offset performance.now() from the 16ms rAF grid; the click
++  // advances the mathematical walk to now even if its last painted frame lags.
++  await page.clock.runFor(16 - (before.at - before.frameAt))
++  before = await resident.evaluate(readPet)
++  assert.equal(before.at, before.frameAt, 'the outgoing pose must be sampled at the activation timestamp')
+   const pats = page.getByRole('button', { name: 'Gentle pats', exact: true })
+   await pats.click()
+   const after = await resident.evaluate(readPet)
+diff --git 1/docs/audits/2026-10-12-character-polish/affection-follow-join-diagnostic.mjs 2/docs/audits/2026-10-12-character-polish/affection-follow-join-diagnostic.mjs
+new file mode 100644
+index 0000000..865e570
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/affection-follow-join-diagnostic.mjs
+@@ -0,0 +1,103 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { browserApp, changeReducedMotion, snapshot } from '../../../scripts/browser/helpers.mjs'
++
++async function instrument(page) {
++  await page.clock.install()
++  await page.clock.pauseAt(Date.now() + 1000)
++  await page.addInitScript(() => {
++    Math.random = () => .99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__playFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__playFrames.delete(id); window.__playFrameAt = now; callback(now) })
++      window.__playFrames.add(id)
++      return id
++    }
++    window.cancelAnimationFrame = id => { window.__playFrames.delete(id); cancel(id) }
++  })
++  await page.reload()
++}
++
++function readPet(node) {
++  const matrix = node.transform.baseVal.consolidate().matrix
++  const body = node.querySelector('[data-character-body]').getCTM()
++  return { at: performance.now(), frameAt: window.__playFrameAt,
++    x: matrix.e, y: matrix.f,
++    body: [[45, 40], [155, 40], [45, 182], [155, 182]].map(([x, y]) => {
++      const point = new DOMPoint(x, y).matrixTransform(body)
++      return { x: point.x, y: point.y }
++    }) }
++}
++
++function readAccentMarks(node) {
++  return [...node.querySelectorAll('[data-character-accents] path')].map(path => {
++    const matrix = path.getCTM()
++    return { x: matrix.e, y: matrix.f, scale: Math.hypot(matrix.a, matrix.b) }
++  })
++}
++
++function assertAccentEmergence(early, peak) {
++  assert.equal(early.length, 2)
++  assert.equal(peak.length, 2)
++  for (let i = 0; i < early.length; i++) {
++    assert.ok(peak[i].scale > early[i].scale, 'each accent must emerge at its own anchor')
++    assert.ok(peak[i].y < early[i].y, 'each accent must rise gently into its peak')
++    assert.ok(Math.abs(peak[i].x - early[i].x) < .001, 'emergence must preserve horizontal placement')
++  }
++}
++
++for (let trial = 0; trial < 6; trial++) {
++test(`join diagnostic ${trial}`, async t => {
++  const page = await browserApp(t, { reducedMotion: 'no-preference' })
++  await instrument(page)
++  const resident = page.locator('.room-pet')
++  await resident.waitFor()
++  const toggle = page.getByRole('button', { name: 'Spend time together', exact: true })
++  assert.equal(await toggle.count(), 1)
++  await toggle.click()
++  await resident.evaluate(node => { window.__playPet = node })
++  const saved = (await snapshot(page)).tables
++  const start = await resident.evaluate(readPet)
++  let before
++  for (let i = 0; i < 100; i++) {
++    await page.clock.runFor(32)
++    const at = await resident.evaluate(readPet)
++    if (Math.hypot(at.x - start.x, at.y - start.y) > 1) { before = at; break }
++  }
++  assert.ok(before, 'sample must start during a genuine walk')
++  const pats = page.getByRole('button', { name: 'Gentle pats', exact: true })
++  await pats.click()
++  const after = await resident.evaluate(readPet)
++  const subframe = Math.hypot(21.25, 10.625) / 420 * Math.max(0, after.at - before.frameAt)
++  assert.ok(Math.hypot(after.x - before.x, after.y - before.y) <= subframe + .01)
++  const join = Math.max(...before.body.map((point, i) => Math.hypot(point.x - after.body[i].x, point.y - after.body[i].y)))
++  t.diagnostic(JSON.stringify({ before, after, subframe, join }))
++  assert.ok(join < .5, `chosen affection pose join:${join}roomSVGunits`)
++  assert.equal(await resident.evaluate(node => node === window.__playPet), true)
++  const live = page.locator('.living-room [aria-live="polite"]')
++  const heard = await live.textContent()
++  await page.clock.runFor(384)
++  const earlyAccents = await resident.evaluate(readAccentMarks)
++  await page.clock.runFor(216)
++  assertAccentEmergence(earlyAccents, await resident.evaluate(readAccentMarks))
++  const active = await resident.evaluate(readPet)
++  for (let i = 0; i < 20; i++) await page.getByRole('button', { name: 'Wave', exact: true }).click()
++  const busy = await resident.evaluate(readPet)
++  assert.deepEqual(busy.body, active.body)
++  assert.equal(await live.textContent(), heard)
++  assert.match(await page.locator('.pet-play [role="status"]').textContent(), /moment/)
++  assert.equal(await page.evaluate(() => window.__playFrames.size), 1)
++  await changeReducedMotion(page, 'reduce')
++  await page.clock.runFor(1800)
++  assert.equal(await page.evaluate(() => window.__playFrames.size), 0)
++  await page.getByRole('button', { name: 'Wave', exact: true }).click()
++  assert.equal(await page.locator('.pet-play [role="status"]').textContent(), '')
++  assert.notEqual(await live.textContent(), heard)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  t.diagnostic(`Chromium ${page.context().browser().version()}; join${join.toFixed(4)}roomSVGunits;20busychoices;oneframeclock;live reduction`)
++})
++
++
++
++}

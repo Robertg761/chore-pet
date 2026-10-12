@@ -210,6 +210,12 @@ test('chosen affection joins a live step, ignores rapid busy choices, and honors
     if (Math.hypot(at.x - start.x, at.y - start.y) > 1) { before = at; break }
   }
   assert.ok(before, 'sample must start during a genuine walk')
+  // Compare interruption geometry at the same delivered fake-clock frame.
+  // Reload can offset performance.now() from the 16ms rAF grid; the click
+  // advances the mathematical walk to now even if its last painted frame lags.
+  await page.clock.runFor(16 - (before.at - before.frameAt))
+  before = await resident.evaluate(readPet)
+  assert.equal(before.at, before.frameAt, 'the outgoing pose must be sampled at the activation timestamp')
   const pats = page.getByRole('button', { name: 'Gentle pats', exact: true })
   await pats.click()
   const after = await resident.evaluate(readPet)

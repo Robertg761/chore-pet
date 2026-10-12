@@ -1,0 +1,16 @@
+{
+  "method": "Exact sampled frames across3species/5moods/15actions/3durations/2motionpolicies/2facings/15phases. Only normal affection appendages may differ;allotherfields/actions/reduced/durations exact. Static numeric checks,not temporal acceptance.",
+  "samples": 40500,
+  "unchanged": 39510,
+  "changed": 990,
+  "changes": {
+    "mochi/affection": 330,
+    "bun/affection": 330,
+    "sprout/affection": 330
+  },
+  "sourceSha256": {
+    "baseline": "1492fa421fbfa88b8294305d1f17079cefa5403ea3f6ab3395cfca368f0721bd",
+    "current": "81e5c16b30f1133158b1f51d743a7faba4d496ec8183679e34375bfc21e31cb5",
+    "runner": "60ba0dabae93b826d327ce565bbf63e56af2e8f3ef25ce058c4fffd89aafe375"
+  }
+}

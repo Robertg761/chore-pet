@@ -1,0 +1,68 @@
+✔ mochi settles into one gentle affection sway on the resident clock (1439.92807ms)
+ℹ Chromium 152.0.7977.82; 44 actual SVG-angle samples; one resident clock; unchanged position/node/saved tables
+✔ bun settles into one gentle affection sway on the resident clock (1415.659048ms)
+ℹ Chromium 152.0.7977.82; 44 actual SVG-angle samples; one resident clock; unchanged position/node/saved tables
+✔ sprout settles into one gentle affection sway on the resident clock (1616.0193ms)
+ℹ Chromium 152.0.7977.82; 44 actual SVG-angle samples; one resident clock; unchanged position/node/saved tables
+✔ keyboard Enter reaches and activates the resident without moving its world position (1171.207104ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (994.848237ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (2914.889121ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.0140 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1089.063864ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.0740 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (1801.302937ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (892.610371ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1263.196154ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (1318.279261ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 497ms; lift sampled at 1253ms; landing at 1673ms
+✔ native player choices stay still and fit 320px (2071.684434ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2011.040784ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2330.235282ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2061.397062ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2017.863214ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (918.643414ms)
+✖ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (1184.667416ms)
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1773.770307ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (2252.681403ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (2190.920175ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (2216.331604ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (2287.313659ms)
+✔ wardrobe live reduced motion settles the preview and does not restart when restored (1819.985714ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 23
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 42751.761295
+
+✖ failing tests:
+
+test at scripts/browser/pet-play.test.mjs:195:1
+✖ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (1184.667416ms)
+  AssertionError [ERR_ASSERTION]: chosen affection pose join:0.6626565945422594roomSVGunits
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:219:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

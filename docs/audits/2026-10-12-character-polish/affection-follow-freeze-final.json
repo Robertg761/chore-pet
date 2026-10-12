@@ -1,0 +1,22 @@
+{
+  "baseCommit": "8ec7aa73d54dffcdeb3a38291f9b748608e3d759",
+  "sources": {
+    "src/character/motion.ts": "81e5c16b30f1133158b1f51d743a7faba4d496ec8183679e34375bfc21e31cb5",
+    "src/character/motion.affection.test.ts": "f7810edd3a67ae3fd029380c514b9fb1fec362db62497a3e861e84cd76c5ebfa",
+    "scripts/browser/pet-affection-follow.test.mjs": "035cc869b89783af1325862e9e479436e3e555c16db82c87660fa8ac776970fb",
+    "docs/ART.md": "273738fbe95549655cc0a66b5ad1fc078bf0f6052ade2b9d4c43faeb23cf967a",
+    "docs/audits/2026-10-12-character-polish/capture-affection-follow.mjs": "6d9abdc202ea936e2797ec8ff637d6dd40a2d9cb9dd46f0638d59cbfdbc7034b",
+    "docs/audits/2026-10-12-character-polish/compare-affection-follow.mjs": "60ba0dabae93b826d327ce565bbf63e56af2e8f3ef25ce058c4fffd89aafe375",
+    "scripts/browser/pet-play.test.mjs": "f375090b932f5c0acee142024cafacb4a5806df029f7bdf0638ba5527601cf7a",
+    "docs/audits/2026-10-12-character-polish/affection-follow-join-diagnostic.mjs": "1bf9f15094a33d653c8602db7593945ea403d8050982c0f6eec618719a7ca7a3"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/affection-follow-source-final.diff",
+    "sha256": "41cd31fc1559f6c531ca3fc5fc8d9639e140bb025630db4ec803655ea6affa58"
+  },
+  "scope": "Eight paths: original six plus existing pats browser fixture alignment to exact outgoing timestamp and a six-trial diagnostic helper with two unused imports removed. Production sampler unchanged since original freeze; no runtime/controller/renderer/clock changes.",
+  "priorFreeze": {
+    "path": "docs/audits/2026-10-12-character-polish/affection-follow-freeze.json",
+    "sha256": "4e1b367394a5f826bedc6987f282227ab96e74e951cefdc84bc76a0610759523"
+  }
+}
