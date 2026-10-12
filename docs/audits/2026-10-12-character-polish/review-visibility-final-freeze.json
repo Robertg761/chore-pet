@@ -1,0 +1,18 @@
+{
+  "baseCommit": "ab4735fa80660caa0188aae309a14bc340fe6e70",
+  "sources": {
+    "src/pet/usePetMotion.ts": "e7f9d9dd50894d9e16223e1891d1f2c8223d7400671c75500932ce52e5b57669",
+    "src/pet/usePetMotion.test.tsx": "07474f35781bb9b3442939d6eba0da4753211092a0d423d69c88236c782de93b",
+    "src/dev/MotionReview.tsx": "47957ba03d18838278e29dfd5fa106e5bdc94fa0d415b9df96a8b1d45de7b24b",
+    "src/dev/MotionReview.test.tsx": "511ee0b577fa5eda724b2fb1653624f6eb391614f06eda4dc91110c52ba871ec",
+    "scripts/browser/motion-review-visibility.test.mjs": "0c2d758b75f35f49c258f2f8ae896406f7c3645507d35e59e0759c5cb430893e",
+    "docs/ART.md": "fdbefdbe3e446377e25faf98d5b84f17413ae54c8a45fb3e9f2a974f54d7de6f",
+    "scripts/browser/gallery-motion.test.mjs": "f094343b1c636f59a68063c6d3b39528a447462d3b21bd27ebd2d9bff7dde91f"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/review-visibility-final-source.diff",
+    "sha256": "925b72cac3d3e1283b48855b1525e8b9493061640585665336a52a7e4bb49786"
+  },
+  "priorFreezeSha256": "7c8ab660f5a58080d9c76d6bb5cd7eb2036679e59b69663e17be4adb7cfbc090",
+  "scope": "Six paths: reuse one observer and the existing motion clock to pause offscreen review playback. Optional resume notification resets relative review time before a delivered frame; preserve absolute RAF timestamps, existing two-argument ticks, resident activity deadlines, sampler, art, and saved data. Seventh path updates the existing gallery native fixture to scroll the actual previews into view before expecting playback."
+}

@@ -161,6 +161,9 @@ test('sampled motion review plays independently while gallery examples remain st
   await page.evaluate(recordScheduling)
   const review = page.locator('.motion-review')
   await review.getByRole('button', { name: 'Play', exact: true }).click()
+  // On a phone, the playback controls are above the actual preview row.
+  await review.locator('.motion-review-previews').scrollIntoViewIfNeeded()
+  await page.waitForFunction(() => document.querySelector('.motion-review').textContent.includes('Playing at'))
   await page.clock.runFor(128)
   assert.ok(Number(await review.getByLabel('Elapsed milliseconds', { exact: true }).inputValue()) > 0)
   assert.equal(await page.locator('.gallery-examples').getAttribute('data-examples-motion'), 'paused')

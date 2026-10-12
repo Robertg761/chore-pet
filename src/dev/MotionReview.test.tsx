@@ -312,3 +312,63 @@ it('finishes and loops the idle review at twelve seconds with one clock', () => 
   click(button('Pause'))
   expect(frames.size).toBe(0)
 })
+
+function observePreviews() {
+  ui.unmount()
+  let callback: IntersectionObserverCallback, target: Element
+  const disconnect = vi.fn()
+  vi.stubGlobal('IntersectionObserver', class {
+    constructor(next: IntersectionObserverCallback) { callback = next }
+    observe(node: Element) { target = node }
+    disconnect = disconnect
+  })
+  ui = render(<MotionReview />)
+  return {
+    target: () => target,
+    disconnect,
+    show(visible: boolean) {
+      act(() => callback([{ target, isIntersecting: visible, intersectionRatio: visible ? 1 : 0 } as IntersectionObserverEntry], {} as IntersectionObserver))
+    },
+  }
+}
+
+it('pauses offscreen previews and resumes relative review time with one existing clock', () => {
+  const visibility = observePreviews()
+  expect(visibility.target()).toBe(ui.container.querySelector('.motion-review-previews'))
+  click(button('Play'))
+  frame(1000); frame(1100)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('100')
+  visibility.show(false)
+  expect(frames.size).toBe(0)
+  frame(9000)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('100')
+  expect(ui.container.textContent).toContain('Waiting for preview visibility')
+  visibility.show(true)
+  expect(frames.size).toBe(1)
+  frame(10000)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('100')
+  frame(10025)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('125')
+  expect(frames.size).toBe(1)
+  ui.unmount()
+  expect(visibility.disconnect).toHaveBeenCalledOnce()
+  expect(frames.size).toBe(0)
+  visibility.show(true)
+  expect(frames.size).toBe(0)
+})
+
+it('excludes hidden-document time from the review timeline without changing absolute sampler time', () => {
+  let hidden = false
+  vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden)
+  click(button('Play'))
+  frame(1000); frame(1100)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('100')
+  act(() => { hidden = true; document.dispatchEvent(new Event('visibilitychange')) })
+  expect(frames.size).toBe(0)
+  frame(9000)
+  act(() => { hidden = false; document.dispatchEvent(new Event('visibilitychange')) })
+  frame(10000)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('100')
+  frame(10025)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('125')
+})

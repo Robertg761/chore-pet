@@ -5,6 +5,7 @@ import { ITEMS } from '../character/items'
 import { ACTION_MS, sampleMotion, type MotionAction, type MotionFrame } from '../character/motion'
 import { CHARACTER_SLOTS, CHEEK_STYLES, EYE_STYLES, SPECIES, type CheekStyle, type CharacterSlot, type EyeStyle, type Mood, type Species } from '../domain/types'
 import { usePetMotion } from '../pet/usePetMotion'
+import { usePetVisibility } from '../pet/usePetVisibility'
 import { PET_STROKE_SCALE } from '../room/shell/geometry'
 import './MotionReview.css'
 
@@ -38,6 +39,8 @@ export default function MotionReview() {
   const [anchor, setAnchor] = useState(false)
   const previousTick = useRef<number | null>(null)
   const playTime = useRef(0)
+  const previewNode = useRef<HTMLDivElement>(null)
+  const inView = usePetVisibility(previewNode)
   const durationMs = ACTION_MS[action]
   // Study the whole blink pattern without changing the sampler's body cycle.
   const reviewSpanMs = action === 'idle' ? 12000 : durationMs
@@ -51,7 +54,7 @@ export default function MotionReview() {
       setPlaying(false)
       previousTick.current = null
     }
-  }, playing)
+  }, playing && inView, undefined, () => { previousTick.current = null })
   const reducedMotion = reduce || systemReducedMotion
 
   function seek(value: number, limit = reviewSpanMs) {
@@ -153,7 +156,7 @@ export default function MotionReview() {
           </select></label>
         </div>
         <label className="motion-review-loop"><input type="checkbox" checked={loop} onChange={(event) => setLoop(event.target.checked)} />Loop playback</label>
-        <p>Action duration: {durationMs} ms. {playing ? 'Playing' : 'Paused'} at {elapsedMs} ms.</p>
+        <p>Action duration: {durationMs} ms. {playing ? inView ? 'Playing' : 'Waiting for preview visibility' : 'Paused'} at {elapsedMs} ms.</p>
         {action === 'idle' && <p>Idle review spans 12000 ms: one full blink pattern and three 4-second breathing cycles.</p>}
         <label>Time scrubber<input type="range" min={0} max={reviewSpanMs} step={1} value={elapsedMs} aria-valuetext={`${elapsedMs} milliseconds`} onChange={(event) => seek(Number(event.target.value))} /></label>
         <label>Elapsed milliseconds<input type="number" min={0} max={reviewSpanMs} step={1} value={elapsedMs} onChange={(event) => seek(event.target.valueAsNumber)} /></label>
@@ -167,7 +170,7 @@ export default function MotionReview() {
         <label><input type="checkbox" checked={reduce} onChange={(event) => setReduce(event.target.checked)} />Force reduced motion in this panel</label>
       </fieldset>
       <p id={notesId}>Ground line and pivot anchor use sampler coordinates y=181 and (100,181). No furniture contact target is supplied by this standalone preview. Overlays appear only on the close-up. {systemReducedMotion && 'System reduced motion is active.'}</p>
-      <div className="motion-review-previews">
+      <div className="motion-review-previews" ref={previewNode}>
         {[200, 60, 25].map((size) => <figure key={size}>
           <div className="motion-review-stage">{preview(size, frame, `${species}, ${mood}, ${action} at ${elapsedMs} ms, ${size}px`, size === 200)}</div>
           <figcaption>{size}px{size === 25 ? ' · fit-home' : size === 60 ? ' · room check' : ' · close-up'}</figcaption>

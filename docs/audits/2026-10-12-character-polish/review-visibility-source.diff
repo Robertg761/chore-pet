@@ -1,0 +1,295 @@
+diff --git c/docs/ART.md w/docs/ART.md
+index 8c8dcf8..56586de 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -150,7 +150,7 @@ Gallery examples start still. Start example animations enables CSS animation onl
+ 
+ Cheer accents finish fading by the 1750ms cleanup deadline, or 1200ms under reduced motion. Preserve earlier accent timing and shorten only late marks; no visible accent should outlive its owner.
+ 
+-The deterministic motion panel uses the production sampler and renderer. Idle review spans12seconds to expose the complete blink pattern and three4-second breath cycles, while the sampler keeps its4000ms body duration. Species-specific primary blink, open-gap and second-blink comparison frames pause at exact times. Compare 200px, 60px, and 25px previews, play at 1×/0.5×/0.25×, and scrub exact milliseconds or choose a key frame. Ground line and ground-anchor overlays are optional. Furniture contact overlay is unavailable because the standalone panel supplies no contact geometry. Review settings stay local to the panel; the system reduced-motion preference remains authoritative over its local override.
++The deterministic motion panel uses the production sampler and renderer. Explicit playback pauses while its three previews are offscreen or the document is hidden, resuming at the same review time. A single native observer gates the existing clock; unsupported observation keeps manual playback available. The optional clock resume callback resets relative review timing before its first tick, preserving absolute resident timestamps and deadlines. Idle review spans12seconds to expose the complete blink pattern and three4-second breath cycles, while the sampler keeps its4000ms body duration. Species-specific primary blink, open-gap and second-blink comparison frames pause at exact times. Compare 200px, 60px, and 25px previews, play at 1×/0.5×/0.25×, and scrub exact milliseconds or choose a key frame. Ground line and ground-anchor overlays are optional. Furniture contact overlay is unavailable because the standalone panel supplies no contact geometry. Review settings stay local to the panel; the system reduced-motion preference remains authoritative over its local override.
+ 
+ Use playback and real-room checks to judge grounding, clipping, interrupted motion, and gaze. Numeric continuity and SVG attachment tests support that review but do not establish visual quality by themselves.
+ 
+diff --git c/src/dev/MotionReview.test.tsx w/src/dev/MotionReview.test.tsx
+index 36b7e39..a3f1e8c 100644
+--- c/src/dev/MotionReview.test.tsx
++++ w/src/dev/MotionReview.test.tsx
+@@ -312,3 +312,63 @@ it('finishes and loops the idle review at twelve seconds with one clock', () =>
+   click(button('Pause'))
+   expect(frames.size).toBe(0)
+ })
++
++function observePreviews() {
++  ui.unmount()
++  let callback: IntersectionObserverCallback, target: Element
++  const disconnect = vi.fn()
++  vi.stubGlobal('IntersectionObserver', class {
++    constructor(next: IntersectionObserverCallback) { callback = next }
++    observe(node: Element) { target = node }
++    disconnect = disconnect
++  })
++  ui = render(<MotionReview />)
++  return {
++    target: () => target,
++    disconnect,
++    show(visible: boolean) {
++      act(() => callback([{ target, isIntersecting: visible, intersectionRatio: visible ? 1 : 0 } as IntersectionObserverEntry], {} as IntersectionObserver))
++    },
++  }
++}
++
++it('pauses offscreen previews and resumes relative review time with one existing clock', () => {
++  const visibility = observePreviews()
++  expect(visibility.target()).toBe(ui.container.querySelector('.motion-review-previews'))
++  click(button('Play'))
++  frame(1000); frame(1100)
++  expect(control<HTMLInputElement>('Time scrubber').value).toBe('100')
++  visibility.show(false)
++  expect(frames.size).toBe(0)
++  frame(9000)
++  expect(control<HTMLInputElement>('Time scrubber').value).toBe('100')
++  expect(ui.container.textContent).toContain('Waiting for preview visibility')
++  visibility.show(true)
++  expect(frames.size).toBe(1)
++  frame(10000)
++  expect(control<HTMLInputElement>('Time scrubber').value).toBe('100')
++  frame(10025)
++  expect(control<HTMLInputElement>('Time scrubber').value).toBe('125')
++  expect(frames.size).toBe(1)
++  ui.unmount()
++  expect(visibility.disconnect).toHaveBeenCalledOnce()
++  expect(frames.size).toBe(0)
++  visibility.show(true)
++  expect(frames.size).toBe(0)
++})
++
++it('excludes hidden-document time from the review timeline without changing absolute sampler time', () => {
++  let hidden = false
++  vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden)
++  click(button('Play'))
++  frame(1000); frame(1100)
++  expect(control<HTMLInputElement>('Time scrubber').value).toBe('100')
++  act(() => { hidden = true; document.dispatchEvent(new Event('visibilitychange')) })
++  expect(frames.size).toBe(0)
++  frame(9000)
++  act(() => { hidden = false; document.dispatchEvent(new Event('visibilitychange')) })
++  frame(10000)
++  expect(control<HTMLInputElement>('Time scrubber').value).toBe('100')
++  frame(10025)
++  expect(control<HTMLInputElement>('Time scrubber').value).toBe('125')
++})
+diff --git c/src/dev/MotionReview.tsx w/src/dev/MotionReview.tsx
+index f0dc6dd..f073208 100644
+--- c/src/dev/MotionReview.tsx
++++ w/src/dev/MotionReview.tsx
+@@ -5,6 +5,7 @@ import { ITEMS } from '../character/items'
+ import { ACTION_MS, sampleMotion, type MotionAction, type MotionFrame } from '../character/motion'
+ import { CHARACTER_SLOTS, CHEEK_STYLES, EYE_STYLES, SPECIES, type CheekStyle, type CharacterSlot, type EyeStyle, type Mood, type Species } from '../domain/types'
+ import { usePetMotion } from '../pet/usePetMotion'
++import { usePetVisibility } from '../pet/usePetVisibility'
+ import { PET_STROKE_SCALE } from '../room/shell/geometry'
+ import './MotionReview.css'
+ 
+@@ -38,6 +39,8 @@ export default function MotionReview() {
+   const [anchor, setAnchor] = useState(false)
+   const previousTick = useRef<number | null>(null)
+   const playTime = useRef(0)
++  const previewNode = useRef<HTMLDivElement>(null)
++  const inView = usePetVisibility(previewNode)
+   const durationMs = ACTION_MS[action]
+   // Study the whole blink pattern without changing the sampler's body cycle.
+   const reviewSpanMs = action === 'idle' ? 12000 : durationMs
+@@ -51,7 +54,7 @@ export default function MotionReview() {
+       setPlaying(false)
+       previousTick.current = null
+     }
+-  }, playing)
++  }, playing && inView, undefined, () => { previousTick.current = null })
+   const reducedMotion = reduce || systemReducedMotion
+ 
+   function seek(value: number, limit = reviewSpanMs) {
+@@ -153,7 +156,7 @@ export default function MotionReview() {
+           </select></label>
+         </div>
+         <label className="motion-review-loop"><input type="checkbox" checked={loop} onChange={(event) => setLoop(event.target.checked)} />Loop playback</label>
+-        <p>Action duration: {durationMs} ms. {playing ? 'Playing' : 'Paused'} at {elapsedMs} ms.</p>
++        <p>Action duration: {durationMs} ms. {playing ? inView ? 'Playing' : 'Waiting for preview visibility' : 'Paused'} at {elapsedMs} ms.</p>
+         {action === 'idle' && <p>Idle review spans 12000 ms: one full blink pattern and three 4-second breathing cycles.</p>}
+         <label>Time scrubber<input type="range" min={0} max={reviewSpanMs} step={1} value={elapsedMs} aria-valuetext={`${elapsedMs} milliseconds`} onChange={(event) => seek(Number(event.target.value))} /></label>
+         <label>Elapsed milliseconds<input type="number" min={0} max={reviewSpanMs} step={1} value={elapsedMs} onChange={(event) => seek(event.target.valueAsNumber)} /></label>
+@@ -167,7 +170,7 @@ export default function MotionReview() {
+         <label><input type="checkbox" checked={reduce} onChange={(event) => setReduce(event.target.checked)} />Force reduced motion in this panel</label>
+       </fieldset>
+       <p id={notesId}>Ground line and pivot anchor use sampler coordinates y=181 and (100,181). No furniture contact target is supplied by this standalone preview. Overlays appear only on the close-up. {systemReducedMotion && 'System reduced motion is active.'}</p>
+-      <div className="motion-review-previews">
++      <div className="motion-review-previews" ref={previewNode}>
+         {[200, 60, 25].map((size) => <figure key={size}>
+           <div className="motion-review-stage">{preview(size, frame, `${species}, ${mood}, ${action} at ${elapsedMs} ms, ${size}px`, size === 200)}</div>
+           <figcaption>{size}px{size === 25 ? ' · fit-home' : size === 60 ? ' · room check' : ' · close-up'}</figcaption>
+diff --git c/src/pet/usePetMotion.test.tsx w/src/pet/usePetMotion.test.tsx
+index cb2d10b..e7eb05e 100644
+--- c/src/pet/usePetMotion.test.tsx
++++ w/src/pet/usePetMotion.test.tsx
+@@ -346,3 +346,35 @@ it('defaults to full motion when matchMedia is unavailable', () => {
+   frame(100)
+   expect(tick.mock.calls).toEqual([[100, false]])
+ })
++
++it('notifies the latest resume handler before the first delivered tick after activity or document pause', () => {
++  const tick = vi.fn(), first = vi.fn(), latest = vi.fn()
++  function ResumeClock({ resumed, active = true }: { resumed: () => void; active?: boolean }) {
++    usePetMotion(tick, active, undefined, resumed)
++    return null
++  }
++  const ui = render(<StrictMode><ResumeClock resumed={first} /></StrictMode>)
++  mounted.add(ui)
++  expect(first).not.toHaveBeenCalled()
++  expect(frames.size).toBe(1)
++  frame(100)
++  expect(first).toHaveBeenCalledOnce()
++  expect(first.mock.invocationCallOrder[0]).toBeLessThan(tick.mock.invocationCallOrder[0])
++  frame(116)
++  expect(first).toHaveBeenCalledOnce()
++  ui.rerender(<StrictMode><ResumeClock resumed={latest} /></StrictMode>)
++  visibility(true); visibility(false); visibility(false)
++  expect(latest).not.toHaveBeenCalled()
++  frame(10_000)
++  expect(latest).toHaveBeenCalledOnce()
++  expect(tick.mock.calls).toEqual([[100, false], [116, false], [10_000, false]])
++  ui.rerender(<StrictMode><ResumeClock resumed={latest} active={false} /></StrictMode>)
++  expect(frames.size).toBe(0)
++  ui.rerender(<StrictMode><ResumeClock resumed={latest} /></StrictMode>)
++  frame(10_050)
++  expect(latest).toHaveBeenCalledTimes(2)
++  ui.unmount(); mounted.delete(ui)
++  visibility(true); visibility(false)
++  expect(frames.size).toBe(0)
++  expect(latest).toHaveBeenCalledTimes(2)
++})
+diff --git c/src/pet/usePetMotion.ts w/src/pet/usePetMotion.ts
+index 3647e23..7a4709f 100644
+--- c/src/pet/usePetMotion.ts
++++ w/src/pet/usePetMotion.ts
+@@ -9,16 +9,22 @@ export type MotionActivity = boolean | { normal: boolean; reduced: boolean }
+  * includes elapsed hidden time, so existing activity deadlines remain valid.
+  * Preference handlers share the query subscription and run only on changes,
+  * even while inactive, so finite previews can cancel in the same event batch.
++ * Optional resume handlers run before the first delivered tick after starting
++ * or resuming, allowing relative playback to exclude paused time. Absolute
++ * timestamps and existing two-argument tick callbacks remain unchanged.
+  */
+ export function usePetMotion(
+   tick: (now: number, reducedMotion: boolean) => void,
+   active: MotionActivity,
+   onPreferenceChange?: (reducedMotion: boolean) => void,
++  onResume?: () => void,
+ ): { reducedMotion: boolean } {
+   const latestTick = useRef(tick)
+   useLayoutEffect(() => { latestTick.current = tick }, [tick])
+   const latestPreferenceChange = useRef(onPreferenceChange)
+   useLayoutEffect(() => { latestPreferenceChange.current = onPreferenceChange }, [onPreferenceChange])
++  const latestResume = useRef(onResume)
++  useLayoutEffect(() => { latestResume.current = onResume }, [onResume])
+ 
+   const [reducedMotion, setReducedMotion] = useState(() =>
+     typeof window !== 'undefined' &&
+@@ -45,16 +51,19 @@ export function usePetMotion(
+     if (!running) return
+     let disposed = false
+     let pending: number | null = null
++    let resuming = true
+     const cancel = () => {
+       if (pending !== null) cancelAnimationFrame(pending)
+       pending = null
++      resuming = true
+     }
+     const schedule = () => {
+       if (disposed || document.hidden || pending !== null) return
+       const id = requestAnimationFrame((now) => {
+         if (disposed || pending !== id) return
+         pending = null
+-        if (document.hidden) return
++        if (document.hidden) { resuming = true; return }
++        if (resuming) { resuming = false; latestResume.current?.() }
+         latestTick.current(now, preference.current)
+         schedule()
+       })
+diff --git 1/scripts/browser/motion-review-visibility.test.mjs 2/scripts/browser/motion-review-visibility.test.mjs
+new file mode 100644
+index 0000000..97dc318
+--- /dev/null
++++ 2/scripts/browser/motion-review-visibility.test.mjs
+@@ -0,0 +1,72 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { browserApp } from './helpers.mjs'
++
++async function reviewPage(t, observation = true) {
++  const page = await browserApp(t, { reducedMotion: 'no-preference', viewport: { width: 1280, height: 800 } })
++  await page.addInitScript(observation => {
++    if (!observation) Object.defineProperty(window, 'IntersectionObserver', { value: undefined, configurable: true })
++  }, observation)
++  const url = new URL(page.url()); url.search = '?art'
++  await page.goto(url.href)
++  const review = page.locator('.motion-review'), previews = review.locator('.motion-review-previews')
++  // Let the lazy gallery commit before pausing timers used by Suspense.
++  await review.getByRole('heading', { name: 'Deterministic motion review' }).waitFor()
++  await page.clock.install()
++  await page.clock.pauseAt(Date.now() + 1000)
++  // Install counters after Playwright replaces the page clock functions.
++  await page.evaluate(() => {
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__visibleReviewFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__visibleReviewFrames.delete(id); callback(now) })
++      window.__visibleReviewFrames.add(id)
++      return id
++    }
++    window.cancelAnimationFrame = id => { window.__visibleReviewFrames.delete(id); cancel(id) }
++  })
++  await review.getByRole('button', { name: 'Play', exact: true }).click()
++  await previews.scrollIntoViewIfNeeded()
++  await page.waitForFunction(() => window.__visibleReviewFrames.size === 1)
++  await page.clock.runFor(96)
++  assert.ok(Number(await review.getByLabel('Elapsed milliseconds', { exact: true }).inputValue()) > 0)
++  return { page, review, previews, time: review.getByLabel('Elapsed milliseconds', { exact: true }) }
++}
++
++async function scrollAway(page) {
++  await page.mouse.move(1000, 100)
++  await page.mouse.wheel(0, -100000)
++  await page.waitForFunction(() => document.querySelector('.motion-review-previews').getBoundingClientRect().top > innerHeight)
++}
++
++test('native offscreen review playback pauses and resumes without counting the hidden interval', async t => {
++  const { page, review, previews, time } = await reviewPage(t)
++  await scrollAway(page)
++  await page.waitForFunction(() => window.__visibleReviewFrames.size === 0, null, { timeout: 2000 })
++  const paused = Number(await time.inputValue())
++  assert.match(await review.textContent(), /Waiting for preview visibility/)
++  await page.clock.runFor(10000)
++  assert.equal(Number(await time.inputValue()), paused)
++  assert.equal(await page.evaluate(() => window.__visibleReviewFrames.size), 0)
++  await previews.scrollIntoViewIfNeeded()
++  await page.waitForFunction(() => window.__visibleReviewFrames.size === 1)
++  await page.clock.runFor(16)
++  const resumed = Number(await time.inputValue())
++  assert.ok(resumed >= paused && resumed <= paused + 32, `review must resume near ${paused}ms,got${resumed}`)
++  await page.clock.runFor(32)
++  assert.ok(Number(await time.inputValue()) > resumed)
++  await review.getByRole('button', { name: 'Pause', exact: true }).click()
++  assert.equal(await page.evaluate(() => window.__visibleReviewFrames.size), 0)
++  t.diagnostic(`Chromium ${page.context().browser().version()};native scroll;0offscreen/1visible frame;10000ms gap excluded`)
++})
++
++test('unavailable native observation preserves explicit manual review playback', async t => {
++  const { page, review, time } = await reviewPage(t, false)
++  const before = Number(await time.inputValue())
++  await scrollAway(page)
++  assert.equal(await page.evaluate(() => window.__visibleReviewFrames.size), 1)
++  await page.clock.runFor(64)
++  assert.ok(Number(await time.inputValue()) > before)
++  await review.getByRole('button', { name: 'Pause', exact: true }).click()
++  assert.equal(await page.evaluate(() => window.__visibleReviewFrames.size), 0)
++})

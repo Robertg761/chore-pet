@@ -1,0 +1,23 @@
+✖ native offscreen review playback pauses and resumes without counting the hidden interval (4765.344281ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5554.49865
+
+✖ failing tests:
+
+test at scripts/browser/motion-review-visibility.test.mjs:37:1
+✖ native offscreen review playback pauses and resumes without counting the hidden interval (4765.344281ms)
+  locator.click: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.motion-review').getByRole('button', { name: 'Play', exact: true })[22m
+  
+      at reviewPage (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/motion-review-visibility.test.mjs:23:67)
+      at async TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/motion-review-visibility.test.mjs:38:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.motion-review').getByRole('button', { name: 'Play', exact: true })" ]
+  }

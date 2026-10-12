@@ -1,0 +1,20 @@
+✔ gallery starts without repeating work and animates only visible rows at 390px (5635.875815ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery starts without repeating work and animates only visible rows at 1280px (6050.123975ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery initial and live reduced motion stay authoritative without automatic replay (11220.562556ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery effects replay finitely with bounded nodes and no automatic restart (8563.997172ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery effects stay still when visibility observation is unavailable (3043.451743ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ sampled motion review plays independently while gallery examples remain still (2931.456355ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37869.662988

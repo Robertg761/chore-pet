@@ -1,0 +1,115 @@
+{
+  "freeze": {
+    "baseCommit": "ab4735fa80660caa0188aae309a14bc340fe6e70",
+    "sources": {
+      "src/pet/usePetMotion.ts": "e7f9d9dd50894d9e16223e1891d1f2c8223d7400671c75500932ce52e5b57669",
+      "src/pet/usePetMotion.test.tsx": "07474f35781bb9b3442939d6eba0da4753211092a0d423d69c88236c782de93b",
+      "src/dev/MotionReview.tsx": "47957ba03d18838278e29dfd5fa106e5bdc94fa0d415b9df96a8b1d45de7b24b",
+      "src/dev/MotionReview.test.tsx": "511ee0b577fa5eda724b2fb1653624f6eb391614f06eda4dc91110c52ba871ec",
+      "scripts/browser/motion-review-visibility.test.mjs": "0c2d758b75f35f49c258f2f8ae896406f7c3645507d35e59e0759c5cb430893e",
+      "docs/ART.md": "fdbefdbe3e446377e25faf98d5b84f17413ae54c8a45fb3e9f2a974f54d7de6f",
+      "scripts/browser/gallery-motion.test.mjs": "f094343b1c636f59a68063c6d3b39528a447462d3b21bd27ebd2d9bff7dde91f"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/review-visibility-final-source.diff",
+      "sha256": "925b72cac3d3e1283b48855b1525e8b9493061640585665336a52a7e4bb49786"
+    },
+    "priorFreezeSha256": "7c8ab660f5a58080d9c76d6bb5cd7eb2036679e59b69663e17be4adb7cfbc090",
+    "scope": "Six paths: reuse one observer and the existing motion clock to pause offscreen review playback. Optional resume notification resets relative review time before a delivered frame; preserve absolute RAF timestamps, existing two-argument ticks, resident activity deadlines, sampler, art, and saved data. Seventh path updates the existing gallery native fixture to scroll the actual previews into view before expecting playback."
+  },
+  "checks": [
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/review-visibility-red.log",
+      "logSha256": "7733f3fbf478e9b8d9e0c2f0294f438b31099a36f416557829dbf4d0dc4ac591",
+      "exitCode": 1,
+      "result": "3 new unit regressions fail;37 prior pass. No implementation present."
+    },
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/review-visibility-browser-red.log",
+      "logSha256": "ac7c3ead0081ef61b0796bb7bff6782443774d25ef8e445cc0e5b1a375a444f6",
+      "exitCode": 1,
+      "result": "Fixture failure: fake clock paused lazy gallery commit; not product red."
+    },
+    {
+      "name": "browser-red-2",
+      "log": "docs/audits/2026-10-12-character-polish/review-visibility-browser-red-2.log",
+      "logSha256": "471716b8ea081302cd4ef7ecf101585ea1b3ad602243fde649a83af5057bc3d7",
+      "exitCode": 1,
+      "result": "Fixture failure: Playwright clock overwrote RAF instrumentation; not product red."
+    },
+    {
+      "name": "browser-red-3",
+      "log": "docs/audits/2026-10-12-character-polish/review-visibility-browser-red-3.log",
+      "logSha256": "3d05e7b66707fb9db10661714b505351ff820a3deab23817a4a237a7413a8bb0",
+      "exitCode": null,
+      "result": "Corrected fixture reaches offscreen assertion; log records one timeout/failure because old artifact retains a frame. Completion metadata was not retained across compaction."
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/review-visibility-focused.log",
+      "logSha256": "9a000f38e38b0c1313a2c7482df4c288abcec7c34fc092bd66303e948fdeb2e2",
+      "exitCode": 0,
+      "result": "137 tests/4files5.67s."
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/review-visibility-build.log",
+      "logSha256": "57aebf34668d38542efbb443c07b3b3bd0e89206fcc4ccf913ee85a761c4c6dc",
+      "exitCode": 0,
+      "result": "TypeScript and production artifact complete. Bundle-size advisory is separate from lint."
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/review-visibility-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Zero warnings."
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/review-visibility-browser.log",
+      "logSha256": "c7325f605660ff4ca2acec80087503fd3d1b9c8d7f814a1530790a6238647c8a",
+      "exitCode": 1,
+      "result": "42 cases:41pass/1oldgalleryfixturefail;121.936s. All new offscreen/fallback and resident/player/wardrobe/creator cases pass."
+    },
+    {
+      "name": "gallery-diagnostic",
+      "log": "docs/audits/2026-10-12-character-polish/review-visibility-gallery-diagnostic.log",
+      "logSha256": "54f8ece27e079507fa4c88a75da2ffa58cf0d0587af6fb55c2c2488cf8d725c4",
+      "exitCode": 0,
+      "result": "One native geometry diagnostic confirms Play leaves previews below phone viewport; scroll resumes playback. Its time selector returned undefined; status gives 0ms/112ms."
+    },
+    {
+      "name": "gallery-final",
+      "log": "docs/audits/2026-10-12-character-polish/review-visibility-gallery-final.log",
+      "logSha256": "a962fb1951140a750904c83bf30083057673f6e8e21b14e4af7ebdada2073126",
+      "exitCode": 0,
+      "result": "All6gallery cases pass in37.870s after only the existing fixture scroll amendment. Together with prior run, all42 unique selected native cases pass in their final applicable setup."
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/review-visibility-full.log",
+      "logSha256": "8cb65c65e99dc85aa4f5d569f422cf92aca4a70011483f1df0d69db925bd81d0",
+      "exitCode": 0,
+      "result": "2132 tests/98files59.54s after final fixture amendment; runtime sources unchanged throughout verification."
+    }
+  ],
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/review-visibility-review.md",
+    "sha256": "3c46472cfd8905b5f5906e3e4f4d4021c09ed14c1e10c5bdaa0274607e7cc83c",
+    "result": "Independent static approval of final7paths;originalP2fixturefindingclosed. Root execution recorded separately; reviewer report predates final gallery/full completion."
+  },
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/review-visibility-initial-review.md": "16bbf50bbacae8a5b9139655ccf9ec811d2a29407ab90c8d2cdf163a790ce568",
+    "docs/audits/2026-10-12-character-polish/review-visibility-gallery-diagnostic.mjs": "c77dbbd0196d5bef0b0d2d562e4a21a04dd2bf77a7117301079b6cbd91ff2027"
+  },
+  "verificationScope": "Final137focused/typebuild/zero-warninglint/2132full exits0. Native original41pass/1fixturefail plus final6gallery pass cover42 unique cases. No runtime edit after successful build. Final7source/patch bindings verified by root and independent reviewer.",
+  "resources": "One heavy process at a time, one unit worker or Chromium,768MB Node heap,nice10. AvailableRAM5.9\u20136.7GB,/tmp4.1GB. Account15%used ordinaryusageallowed.",
+  "limits": [
+    "Static and automated checks do not certify human temporal quality, assistive-technology playback, physical-device behavior, CPU or battery performance.",
+    "Two native red attempts were fixture failures; original logs preserved. Third product red completion metadata was not retained."
+  ],
+  "pending": []
+}

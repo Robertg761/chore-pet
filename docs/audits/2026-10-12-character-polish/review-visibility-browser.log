@@ -1,0 +1,103 @@
+✔ creator previews the actual character while keeping face choices visible at 320x568 (4089.148807ms)
+✔ creator previews the actual character while keeping face choices visible at 844x390 (3339.421928ms)
+✔ creator previews the actual character while keeping face choices visible at 1280x800 (3306.513363ms)
+✔ creator settles live reduction and initial reduction keeps look choices available (3929.893243ms)
+✔ gallery starts without repeating work and animates only visible rows at 390px (5548.998692ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery starts without repeating work and animates only visible rows at 1280px (6758.283905ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery initial and live reduced motion stay authoritative without automatic replay (12581.870175ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery effects replay finitely with bounded nodes and no automatic restart (9122.770711ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery effects stay still when visibility observation is unavailable (2973.842528ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✖ sampled motion review plays independently while gallery examples remain still (2252.359785ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ native offscreen review playback pauses and resumes without counting the hidden interval (2792.490206ms)
+ℹ Chromium 152.0.7977.82;native scroll;0offscreen/1visible frame;10000ms gap excluded
+✔ unavailable native observation preserves explicit manual review playback (2444.392593ms)
+✔ idle study exposes exact paired blinks with no automatic clock at 390px (7946.226999ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; no automatic frame requests
+✔ idle study exposes exact paired blinks with no automatic clock at 1280px (5784.526624ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; no automatic frame requests
+✔ the reduced resident stops idle frames but completes an explicit response (1223.73745ms)
+ℹ Chromium 152.0.7977.82; reduced:0 idle frames,1 finite clock,0 after response
+✔ the sick resident stops idle frames but completes an explicit response (930.912981ms)
+ℹ Chromium 152.0.7977.82; sick:0 idle frames,1 finite clock,0 after response
+✔ the away resident stops idle frames but completes an explicit response (900.45188ms)
+ℹ Chromium 152.0.7977.82; away:0 idle frames,1 finite clock,0 after response
+✔ keyboard Enter reaches and activates the resident without moving its world position (1049.038055ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (979.201ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (2934.485844ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.0421 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1108.2979ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.0740 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (2045.485928ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (890.75504ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1225.763281ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (1333.184236ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 578ms; lift sampled at 1334ms; landing at 1754ms
+✔ a scrolled-away resident pauses, lets an offscreen response expire, and resumes when partly visible (2779.226711ms)
+ℹ Offscreen pending frames before pause:0
+ℹ Chromium 152.0.7977.82; real native scroll;0offscreen/1visible pending resident frame
+✔ missing native observation retains the existing resident clock (900.292212ms)
+✔ native default observer emits edge contact without a second positive-area entry (856.12292ms)
+ℹ Native default threshold contract matches the hook notification-filtering regression.
+✔ native ancestor clipping pauses a resident still inside the viewport (805.434276ms)
+ℹ Native ancestor entries:[{"inside":false,"ratio":0,"bottom":434.37969970703125,"height":0}]
+✔ native player choices stay still and fit 320px (2069.923189ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2002.490399ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (1992.592312ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2001.306033ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (1999.470822ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (898.535632ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2293.090835ms)
+ℹ Chromium 152.0.7977.82; join0.3356roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1703.427447ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (2310.834423ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (2180.703005ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (2261.702505ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (2190.285757ms)
+✔ wardrobe live reduced motion settles the preview and does not restart when restored (1784.218172ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 41
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 121936.146851
+
+✖ failing tests:
+
+test at scripts/browser/gallery-motion.test.mjs:157:1
+✖ sampled motion review plays independently while gallery examples remain still (2252.359785ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(Number(await review.getByLabel('Elapsed milliseconds', { exact: true }).inputValue()) > 0)
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/gallery-motion.test.mjs:165:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

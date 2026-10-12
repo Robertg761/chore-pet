@@ -1,0 +1,20 @@
+✖ native offscreen review playback pauses and resumes without counting the hidden interval (6319.418395ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6715.300761
+
+✖ failing tests:
+
+test at scripts/browser/motion-review-visibility.test.mjs:39:1
+✖ native offscreen review playback pauses and resumes without counting the hidden interval (6319.418395ms)
+  page.waitForFunction: Timeout 4000ms exceeded.
+      at reviewPage (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/motion-review-visibility.test.mjs:27:14)
+      at async TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/motion-review-visibility.test.mjs:40:44) {
+    name: 'TimeoutError',
+    log: []
+  }
