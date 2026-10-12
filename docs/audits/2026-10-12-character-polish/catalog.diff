@@ -1,0 +1,367 @@
+diff --git i/src/content/petLines.test.ts w/src/content/petLines.test.ts
+index 8177055..2ff7190 100644
+--- i/src/content/petLines.test.ts
++++ w/src/content/petLines.test.ts
+@@ -168,10 +168,12 @@ describe('line lists', () => {
+ 
+ describe('calmObjectLine', () => {
+   const observedIds = ['shower', 'toilet', 'washer', 'sink', 'stove', 'fridge', 'counter', 'plant', 'fish-tank',
+-    'bookshelf', 'teddy', 'lamp', 'poster', 'wall-clock', 'fairy-lights', 'bed', 'couch', 'bean-bag', 'rug']
++    'bookshelf', 'teddy', 'lamp', 'poster', 'wall-clock', 'fairy-lights', 'bed', 'couch', 'bean-bag', 'rug',
++    'dishwasher', 'dining-table', 'table', 'trash', 'recycling']
+ 
+-  it('has two distinct observations for every current interaction profile, including reward decor', () => {
++  it('has two distinct observations for every catalog entry, including reward decor', () => {
+     expect(Object.keys(CALM_OBJECT_LINES).sort()).toEqual([...observedIds].sort())
++    expect([...observedIds].sort()).toEqual(ALL_ENTRIES.map((entry) => entry.id).sort())
+     for (const id of observedIds) {
+       expect(ALL_ENTRIES.some((entry) => entry.id === id), id).toBe(true)
+       expect(CALM_OBJECT_LINES[id]).toHaveLength(2)
+@@ -187,7 +189,7 @@ describe('calmObjectLine', () => {
+     }
+   })
+ 
+-  it.each(['dishwasher', 'nope', '', 'constructor', 'toString', '__proto__', 'hasOwnProperty'])(
++  it.each(['nope', '', 'constructor', 'toString', '__proto__', 'hasOwnProperty'])(
+     'leaves an unmapped or inherited key %s quiet', (id) => {
+       expect(calmObjectLine(id, 0)).toBe('')
+     },
+diff --git i/src/content/petLines.ts w/src/content/petLines.ts
+index 8b541fd..c7b318d 100644
+--- i/src/content/petLines.ts
++++ w/src/content/petLines.ts
+@@ -148,6 +148,11 @@ export const CALM_OBJECT_LINES: Record<string, string[]> = {
+   stove: ['A little pot with a little lid.', 'A tiny knob on top of the pot.'],
+   fridge: ['That red magnet caught my eye.', 'A little red dot on a big fridge.'],
+   counter: ['I spotted a tiny tomato!', 'A little tomato on a little board.'],
++  dishwasher: ['Three little buttons in a row.', 'A blue button between red and green.'],
++  'dining-table': ['Tiny flowers for a tiny table.', 'I like that little pink flower.'],
++  table: ['A lovely little wooden table.', 'That wood looks warm and golden.'],
++  trash: ['A tiny handle on a tiny lid.', 'That round lid looks like a little hat.'],
++  recycling: ["There's a tiny triangle on the front.", 'I like that little green badge.'],
+   plant: ['Hello, little leaves!', "I'm waving to the plant."],
+   'fish-tank': ['Hello in there, little fish!', 'A tiny wave for the fish.'],
+   bookshelf: ['So many colours on those shelves.', 'I wonder what is in that red book.'],
+diff --git i/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index bee23ce..480c61b 100644
+--- i/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -8,9 +8,10 @@ import type { NeglectLevel } from '../domain/neglect'
+ import type { ChoreStatus } from '../domain/schedule'
+ import type { Chore, MessStage, Mood, Pet, PlacedObject, Room as RoomRow } from '../domain/types'
+ import { objectOverdue } from '../room/cuePlan'
+-import { footprintOf, freeTile, overlaps, tilesOf, type Footprint } from '../room/grid'
++import { footprintOf, freeTile, overlaps, tilesOf } from '../room/grid'
+ import { Room } from '../room/Room'
+ import { SceneContext } from '../room/sceneContext'
++import { petObstacles } from './obstacles'
+ import { PET_STROKE_SCALE, ROOM_WIDTH, petTransform } from '../room/shell/geometry'
+ import { play } from '../audio/sfx'
+ import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sortTile, step, tap, type PetState, type Tile, type World } from './behaviour'
+@@ -133,14 +134,7 @@ interface Said {
+ 
+ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, chores, statuses, celebrate, onCelebrated, initialTile, onPosition, overlay }: LivingRoomProps) {
+   const scene = useContext(SceneContext)
+-  const solid = useMemo<Footprint[]>(
+-    () =>
+-      objects.flatMap((o) => {
+-        const e = catalogEntry(o.catalogId)
+-        return e && e.layer === 'solid' ? [footprintOf(o, e)] : []
+-      }),
+-    [objects],
+-  )
++  const solid = useMemo(() => petObstacles(objects, stages), [objects, stages])
+   const messiest = messiestObject(chores, statuses)
+   const messObject = messiest && objects.find((o) => o.id === messiest.objectId)
+   const messEntry = messObject && catalogEntry(messObject.catalogId)
+diff --git i/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index 4f43666..28e6803 100644
+--- i/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -1,6 +1,7 @@
+ // @vitest-environment jsdom
+ import { act, Profiler, StrictMode } from 'react'
+ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import * as petLines from '../content/petLines'
+ import { KIND_LINES, MOOD_LINES, OBJECT_LINES } from '../content/petLines'
+ import type { ChoreStatus } from '../domain/schedule'
+ import type { Chore, Pet, PlacedObject } from '../domain/types'
+@@ -305,17 +306,29 @@ it.each(dialogueObjects.flatMap((object) => [false, true].map((otherOverdue) =>
+   },
+ )
+ 
+-it.each(['teddy', 'dishwasher'])('uses observations or the calm fallback for chore-free %s', (catalogId) => {
++it.each(['teddy', 'dishwasher'])('uses observations for a clean %s without an assigned chore', (catalogId) => {
+     const { container } = mount(<LivingRoom {...props} objects={[{ ...plant, catalogId }]} />)
+     frame(1500)
+     const line = container.querySelector('.pet-bubble')!.textContent
+-    const expected = catalogId === 'teddy' ? ['Hello, soft little friend.', 'That teddy has such a sweet face.'] : MOOD_LINES.content
++    const expected = catalogId === 'teddy' ? ['Hello, soft little friend.', 'That teddy has such a sweet face.']
++      : ['Three little buttons in a row.', 'A blue button between red and green.']
+     expect(expected).toContain(line)
+     expect(container.querySelector('[aria-live]')!.textContent).toBe('')
+     frame(1860); frame(2400)
+     expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
+ })
+ 
++it('keeps a calm mood fallback when the target has no observation content', () => {
++  vi.spyOn(petLines, 'calmObjectLine').mockReturnValue('')
++  const { container } = mount(<LivingRoom {...props} objects={[plant]} />)
++  frame(1500)
++  const line = container.querySelector('.pet-bubble')!.textContent
++  expect(MOOD_LINES.content).toContain(line)
++  frame(1860); frame(2400)
++  expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
++  expect(container.querySelector('[aria-live]')!.textContent).toBe('')
++})
++
+ it.each(dialogueObjects.flatMap((object) => ([1, 2, 3] as const).map((level) => ({ ...object, level }))))(
+   'keeps condition dialogue for an overdue $catalogId at neglect $level',
+   ({ catalogId, name, kind, level }) => {
+@@ -335,6 +348,26 @@ it.each(dialogueObjects.flatMap((object) => ([1, 2, 3] as const).map((level) =>
+   },
+ )
+ 
++it.each([0, 1] as const)('keeps the resident route and resting position clear of the open dishwasher at rotation %s', (rotation) => {
++  const object = { ...plant, catalogId: 'dishwasher', rotation }
++  const front = rotation === 0 ? { tx: 3, ty: 2 } : { tx: 2, ty: 3 }
++  const from = rotation === 0 ? { tx: 4, ty: 2 } : { tx: 2, ty: 4 }
++  const onPosition = vi.fn()
++  const ui = mount(<LivingRoom {...props} objects={[object]} stages={{ plant: 'messy2' }} initialTile={from} onPosition={onPosition} />)
++  let observed = false
++  for (let time = 1500; time <= 5500; time += 50) {
++    frame(time)
++    observed ||= Boolean(ui.container.querySelector('.pet-bubble')?.textContent)
++  }
++  const entersFront = () => onPosition.mock.calls.some(([at]) => Math.abs(at.tx - front.tx) < 0.5 && Math.abs(at.ty - front.ty) < 0.5)
++  expect(entersFront()).toBe(false)
++  expect(observed).toBe(true)
++  onPosition.mockClear()
++  ui.rerender(<LivingRoom {...props} objects={[object]} stages={{ plant: 'clean' }} initialTile={from} onPosition={onPosition} />)
++  for (let time = 5550; time <= 11000; time += 50) frame(time)
++  expect(entersFront()).toBe(true)
++})
++
+ it('uses current suppression props for input before a frame and retains sleeping/sick art', () => {
+   const ui = mount(<LivingRoom {...props} />)
+   ui.rerender(<LivingRoom {...props} away />)
+diff --git i/src/pet/interactions.test.ts w/src/pet/interactions.test.ts
+index e8d9746..5b02468 100644
+--- i/src/pet/interactions.test.ts
++++ w/src/pet/interactions.test.ts
+@@ -177,6 +177,41 @@ describe('environmental profiles', () => {
+     }
+   })
+ 
++  it.each([
++    ['dishwasher', 'clean', 21.12, -2.65, 'inspect'],
++    ['dishwasher', 'messy1', 3.7, -29.5, 'smell'],
++    ['dishwasher', 'messy2', 23.92, 10.21, 'smell'],
++    ['dining-table', 'clean', -5, -31, 'inspect'],
++    ['dining-table', 'messy1', -16.64, -17.32, 'dust'],
++    ['dining-table', 'messy2', 0, -3.5, 'dust'],
++    ['table', 'clean', 0, -2, 'inspect'],
++    ['table', 'messy1', 14.4, -5.4, 'dust'],
++    ['table', 'messy2', 0, -21.8, 'dust'],
++    ['trash', 'clean', 0, -13.25, 'inspect'],
++    ['trash', 'messy1', 1, -15, 'smell'],
++    ['trash', 'messy2', 6, -17, 'smell'],
++    ['recycling', 'clean', 0, 11.72, 'inspect'],
++    ['recycling', 'messy1', 0, 11.72, 'smell'],
++    ['recycling', 'messy2', 0, 11.72, 'smell'],
++  ] as const)('follows the rendered %s detail in %s without contact', (id, stage, x, y, action) => {
++    // Independent SVG points derived from actual circles/plate centres,
++    // the flower tip, tabletop height, and retained badge; no profile imports.
++    for (const rotation of [0, 1, 2, 3] as const) {
++      const objects = [object(id, { rotation })]
++      const free = room(objects)
++      const targets = interactionTargets(objects, free, { object: stage })
++      expect(targets.length).toBeGreaterThan(0)
++      for (const target of targets) {
++        const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
++        expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
++        expect((tx + ty) * 16).toBeCloseTo(y)
++        expect(target.action).toBe(action)
++        expect(target.contact).toBe(false)
++        expect(free(target.tile)).toBe(true)
++      }
++    }
++  })
++
+   it('changes signatures when catalog, position, rotation, or stage changes', () => {
+     const base = object('plant')
+     const signature = (o: PlacedObject, stages: Record<string, MessStage> = {}) =>
+diff --git i/src/pet/interactions.ts w/src/pet/interactions.ts
+index 9998509..7d4e52a 100644
+--- i/src/pet/interactions.ts
++++ w/src/pet/interactions.ts
+@@ -56,6 +56,25 @@ const PROFILES: ReadonlyMap<string, Profile> = new Map([
+   ['counter', { action: 'inspect', gaze: { tx: 0.62, ty: 1.52, z: 36 }, gazeByStage: {
+     messy2: { tx: 0.56, ty: 1.5, z: 47 },
+   } }],
++  // Middle blue control; upper counter plate, then the tilted rack plate.
++  ['dishwasher', { action: 'inspect', gaze: { tx: 1, ty: 0.34, z: 24.09 }, gazeByStage: {
++    messy1: { tx: 0.55 + 0.5 / 64, ty: 0.45 - 0.5 / 64, z: 45.5 },
++    messy2: { tx: 1.2475, ty: 0.5, z: 17.75 },
++  } }],
++  // Pink flower tip, first place-setting plate, then the raised stack.
++  ['dining-table', { action: 'inspect', gaze: { tx: 1 - 5 / 64, ty: 1 + 5 / 64, z: 63 }, gazeByStage: {
++    messy1: { tx: 0.48, ty: 1, z: 41 }, messy2: { tx: 1.5, ty: 1.5, z: 51.5 },
++  } }],
++  ['table', { action: 'inspect', gaze: { tx: 1, ty: 1, z: 34 }, gazeByStage: {
++    messy1: { tx: 1.15, ty: 0.7, z: 35 }, messy2: { tx: 0.85, ty: 0.85, z: 49 },
++  } }],
++  // Lid-handle centre; exposed bag, then the blue overflow bag.
++  ['trash', { action: 'inspect', gaze: { tx: 0.5, ty: 0.5, z: 29.25 }, gazeByStage: {
++    messy1: { tx: 0.5 + 1 / 64, ty: 0.5 - 1 / 64, z: 31 },
++    messy2: { tx: 0.5 + 6 / 64, ty: 0.5 - 6 / 64, z: 33 },
++  } }],
++  // The green front badge remains exposed beneath every recycling pile.
++  ['recycling', { action: 'inspect', gaze: { tx: 0.71, ty: 0.71, z: 11 } }],
+   ['plant', { action: 'wave', gaze: { tx: 0, ty: 0, z: 28 } }], // leaves around SVG (0,-28)
+   ['fish-tank', { action: 'wave', gaze: { tx: 0.92, ty: 0.5, z: 40 } }], // front glass
+   ['bookshelf', { action: 'inspect', gaze: { tx: 0.62, ty: 0.5, z: 42 } }], // open upper shelf
+diff --git 1/src/pet/obstacles.ts 2/src/pet/obstacles.ts
+new file mode 100644
+index 0000000..2589bcc
+--- /dev/null
++++ 2/src/pet/obstacles.ts
+@@ -0,0 +1,19 @@
++import { catalogEntry } from '../catalog/objects'
++import type { MessStage, PlacedObject } from '../domain/types'
++import { footprintOf, type Footprint } from '../room/grid'
++
++/** Pet clearance can exceed a placement footprint when a fixture opens. */
++export function petObstacles(objects: readonly PlacedObject[], stages: Readonly<Record<string, MessStage>>): Footprint[] {
++  return objects.flatMap((object) => {
++    const entry = catalogEntry(object.catalogId)
++    if (!entry || entry.layer !== 'solid') return []
++    const footprint = footprintOf(object, entry)
++    const stage = Object.prototype.hasOwnProperty.call(stages, object.id) ? stages[object.id] : 'clean'
++    // The folded dishwasher door reaches tx1.45 in its local art. Reserve
++    // the adjacent tile for feet/body clearance; the room mirrors that axis.
++    if (entry.id === 'dishwasher' && stage === 'messy2') {
++      return [object.rotation % 2 ? { ...footprint, d: footprint.d + 0.45 } : { ...footprint, w: footprint.w + 0.45 }]
++    }
++    return [footprint]
++  })
++}
+diff --git 1/src/pet/obstacles.test.ts 2/src/pet/obstacles.test.ts
+new file mode 100644
+index 0000000..9375454
+--- /dev/null
++++ 2/src/pet/obstacles.test.ts
+@@ -0,0 +1,46 @@
++import { expect, it } from 'vitest'
++import { ALL_ENTRIES } from '../catalog/objects'
++import type { PlacedObject } from '../domain/types'
++import { footprintOf, overlaps } from '../room/grid'
++import { petObstacles } from './obstacles'
++
++const object: PlacedObject = { id: 'fixture', roomId: 'room', catalogId: 'dishwasher', tileX: 2, tileY: 2, rotation: 0 }
++
++it.each([0, 1, 2, 3] as const)('reserves the folded door and the front standing tile at rotation %s', (rotation) => {
++  const obstacles = petObstacles([{ ...object, rotation }], { fixture: 'messy2' })
++  expect(obstacles).toEqual([{ tx: 2, ty: 2, w: rotation % 2 ? 1 : 1.45, d: rotation % 2 ? 1.45 : 1 }])
++  const front = rotation % 2 ? { tx: 2, ty: 3 } : { tx: 3, ty: 2 }
++  const side = rotation % 2 ? { tx: 3, ty: 2 } : { tx: 2, ty: 3 }
++  expect(obstacles.some((solid) => overlaps(solid, { ...front, w: 1, d: 1 }))).toBe(true)
++  expect(obstacles.some((solid) => overlaps(solid, { ...side, w: 1, d: 1 }))).toBe(false)
++})
++
++it.each(['clean', 'messy1'] as const)('restores the original footprint and clear front when %s', (stage) => {
++  expect(petObstacles([object], { fixture: stage })).toEqual([{ tx: 2, ty: 2, w: 1, d: 1 }])
++})
++
++it.each(['constructor', 'toString', '__proto__'])('requires an owned stage for reserved object ID %s', (id) => {
++  const fixture = { ...object, id }
++  expect(petObstacles([fixture], {})).toEqual([{ tx: 2, ty: 2, w: 1, d: 1 }])
++  expect(petObstacles([fixture], { [id]: 'messy2' })).toEqual([{ tx: 2, ty: 2, w: 1.45, d: 1 }])
++})
++
++it('keeps every other solid footprint unchanged, with flat/hung/missing objects walkable', () => {
++  for (const entry of ALL_ENTRIES) for (const rotation of [0, 1, 2, 3] as const) {
++    const fixture = { ...object, catalogId: entry.id, rotation }
++    const original = footprintOf(fixture, entry)
++    const expected = entry.layer !== 'solid' ? [] : entry.id === 'dishwasher'
++      ? [{ ...original, w: rotation % 2 ? original.w : original.w + 0.45, d: rotation % 2 ? original.d + 0.45 : original.d }]
++      : [original]
++    expect(petObstacles([fixture], { fixture: 'messy2' }), entry.id).toEqual(expected)
++  }
++  expect(petObstacles([{ ...object, catalogId: 'missing' }], { fixture: 'messy2' })).toEqual([])
++})
++
++it('does not mutate objects or stage records', () => {
++  const objects = Object.freeze([Object.freeze({ ...object })])
++  const stages = Object.freeze({ fixture: 'messy2' as const })
++  expect(petObstacles(objects, stages)).toHaveLength(1)
++  expect(objects[0]).toEqual(object)
++  expect(stages).toEqual({ fixture: 'messy2' })
++})
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-catalog.mjs 2/docs/audits/2026-10-12-character-polish/capture-catalog.mjs
+new file mode 100644
+index 0000000..822cf41
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-catalog.mjs
+@@ -0,0 +1,61 @@
++// Run from the repository root; bounded stills from actual art and behavior.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const out = 'docs/audits/2026-10-12-character-polish'
++const server = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++  const { OBJECT_ART } = await server.ssrLoadModule('/src/room/objects/index.ts')
++  const { Room } = await server.ssrLoadModule('/src/room/Room.tsx')
++  const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++  const { ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts')
++  const { PALETTE, SPECIES_COLOUR } = await server.ssrLoadModule('/src/art/palette.ts')
++  const { overlaps } = await server.ssrLoadModule('/src/room/grid.ts')
++  const { petObstacles } = await server.ssrLoadModule('/src/pet/obstacles.ts')
++  const { interactionTargets } = await server.ssrLoadModule('/src/pet/interactions.ts')
++  const { initialPet, step, positionAt } = await server.ssrLoadModule('/src/pet/behaviour.ts')
++  const { motionFor } = await server.ssrLoadModule('/src/pet/activityMotion.ts')
++  const { iso } = await server.ssrLoadModule('/src/room/iso.ts')
++  const { roomPoint, PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++  const h = React.createElement, scenes = [], details = [], samples = []
++  const species = ['mochi', 'bun', 'sprout']
++  for (const id of ['dishwasher', 'dining-table', 'table', 'trash', 'recycling']) for (const stage of ['clean', 'messy1', 'messy2']) for (const rotation of [0, 1]) {
++    const object = { id: 'detail', roomId: 'room', catalogId: id, tileX: 2, tileY: 2, rotation }
++    const stages = { detail: stage }, obstacles = petObstacles([object], stages)
++    const free = tile => tile.tx >= 0 && tile.ty >= 0 && tile.tx < 8 && tile.ty < 8 && !obstacles.some(footprint => overlaps(footprint, { ...tile, w: 1, d: 1 }))
++    const targets = interactionTargets([object], free, stages), target = targets[0]
++    const world = { free, mood: 'happy', away: false, mess: null, interactions: targets }
++    let state = initialPet(target.tile, 0)
++    state.activity.until = 0
++    state = step(state, world, 0, () => 0)
++    state = step(state, world, ACTION_MS.turn, () => 0)
++    const now = ACTION_MS.turn + ACTION_MS[target.action] * 0.42
++    state = step(state, world, now, () => 0)
++    if (state.activity.kind !== 'interact' || state.activity.phase !== 'action') throw new Error(`Expected real interaction action for ${id}/${stage}`)
++    const s = species[Math.floor(scenes.length / 2) % 3], sampled = motionFor(state, now, s, 'happy', false)
++    const point = iso(target.gaze.tx - 2, target.gaze.ty - 2), screen = roomPoint(target.gaze.tx, target.gaze.ty)
++    const marker = (x, y, radius) => h('g', { fill: 'none', stroke: PALETTE.accent, strokeWidth: 1.25, pointerEvents: 'none' },
++      h('circle', { cx: x, cy: y, r: radius }), h('path', { d: `M${x - radius - 2} ${y} h${radius * 2 + 4} M${x} ${y - radius - 2} v${radius * 2 + 4}` }))
++    const label = `${id} ${stage}, rotation ${rotation}`
++    details.push({ label, art: h('g', { transform: 'translate(100 130)' }, h('g', { transform: rotation ? 'scale(-1 1)' : undefined }, OBJECT_ART[id].render(stage)), marker(point.x, point.y, 3)) })
++    scenes.push({ label: `${s}: ${label}, ${target.action}`, art: h(Room, { room: { floorStyle: 'mosaic', wallStyle: 'cloud' }, objects: [object], stages, width: 390,
++      pet: { tile: positionAt(state, now), facing: state.facing, art: h(AnimatedCharacterArt, { species: s, mood: 'happy', bodyColour: SPECIES_COLOUR[s], frame: sampled.frame, equipped: { face: 'glasses' }, strokeScale: PET_STROKE_SCALE }) },
++      overlay: marker(screen.x, screen.y, 2.5) }) })
++    samples.push({ id, stage, rotation, species: s, standing: positionAt(state, now), facing: state.facing, action: sampled.action, phase: state.activity.phase, localGaze: point, contact: target.contact })
++  }
++  async function sheet(cells, width, height, name) {
++    const rows = Math.ceil(cells.length / 4), svg = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width: width * 4, height: height * rows },
++      h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), cells.map((cell, i) => h('g', { key: i, transform: `translate(${i % 4 * width} ${Math.floor(i / 4) * height})` },
++        cell.art, h('text', { x: 8, y: height - 8, fontSize: 10, fill: PALETTE.ink }, cell.label)))))
++    await writeFile(`${out}/${name}`, new Resvg(svg).render().asPng())
++  }
++  await sheet(details, 200, 220, 'catalog-targets.png')
++  await sheet(scenes, 390, 350, 'catalog-rooms.png')
++  const sources = ['src/pet/obstacles.ts', 'src/pet/interactions.ts', 'src/pet/behaviour.ts', 'src/pet/activityMotion.ts', 'src/character/AnimatedCharacter.tsx', 'src/character/motion.ts', 'src/room/Room.tsx', ...['dishwasher', 'diningTable', 'table', 'trash', 'recycling', 'kitchenParts', 'shapes3', 'mess', 'tableware', 'batch2-parts'].map(id => `src/room/objects/${id}.tsx`), `${out}/capture-catalog.mjs`]
++  const sourceSha256 = Object.fromEntries(await Promise.all(sources.map(async p => [p, createHash('sha256').update(await readFile(p)).digest('hex')])))
++  await writeFile(`${out}/catalog-captures.json`, JSON.stringify({ method: '30 annotated production object details and30 Room SVG stills. Real initialPet/step transitions choose orientation/action from an adjacent tile, then motionFor samples42% through the action. Glasses on all species. Separate from a live LivingRoom clock or human temporal playback.', samples, sourceSha256 }, null, 2) + '\n')
++  console.log(`${details.length} annotated object details; ${scenes.length} behavior-derived Room stills`)
++} finally { await server.close() }

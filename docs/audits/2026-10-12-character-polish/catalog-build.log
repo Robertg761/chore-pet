@@ -1,0 +1,33 @@
+npm notice run chore-pet@0.0.0 build
+npm notice run tsc -b && vite build
+vite v8.3.3 building client environment for production...
+transforming...
+✓ 295 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/manifest.webmanifest                          0.60 kB
+dist/index.html                                    2.43 kB │ gzip:   0.97 kB
+dist/assets/TimePanel-CTPLu1xs.css                 1.50 kB │ gzip:   0.62 kB
+dist/assets/ArtGallery-DaOs4H3m.css                2.55 kB │ gzip:   0.82 kB
+dist/assets/index-DZFwoRka.css                   108.09 kB │ gzip:  20.16 kB
+dist/assets/TimePanel-Bq2uGyjC.js                  1.81 kB │ gzip:   0.80 kB
+dist/assets/workbox-window.prod.es5-Bd17z0YL.js    5.65 kB │ gzip:   2.20 kB
+dist/assets/jsx-runtime-CWXmGRJK.js                9.31 kB │ gzip:   3.57 kB
+dist/assets/CoverB-QAk1FM34.js                     9.33 kB │ gzip:   3.57 kB
+dist/assets/ArtGallery-KIHiIeJN.js                21.77 kB │ gzip:   6.52 kB
+dist/assets/dist-CyFDDxv-.js                     218.96 kB │ gzip:  56.51 kB
+dist/assets/index-DmIQcSCU.js                    677.32 kB │ gzip: 209.57 kB
+
+✓ built in 477ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+PWA v2.0.0
+mode      generateSW
+precache  19 entries (1107.41 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-2fbc6a65.js

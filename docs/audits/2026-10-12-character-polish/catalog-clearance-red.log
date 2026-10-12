@@ -1,0 +1,37 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetIntegration.test.tsx -t open dishwasher
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (64 tests | 2 failed | 62 skipped) 503ms
+   × keeps the resident route and resting position clear of the open dishwasher at rotation 0 277ms
+   × keeps the resident route and resting position clear of the open dishwasher at rotation 1 225ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps the resident route and resting position clear of the open dishwasher at rotation 0
+ FAIL  src/pet/PetIntegration.test.tsx > keeps the resident route and resting position clear of the open dishwasher at rotation 1
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/pet/PetIntegration.test.tsx:359:25
+    357|   for (let time = 1500; time <= 5500; time += 50) frame(time)
+    358|   const entersFront = () => onPosition.mock.calls.some(([at]) => Math.…
+    359|   expect(entersFront()).toBe(false)
+       |                         ^
+    360|   expect(ui.container.querySelector('.pet-bubble')?.textContent).toBeT…
+    361|   onPosition.mockClear()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 62 skipped (64)
+   Start at  16:30:37
+   Duration  1.48s (transform 37%, tests 36%, environment 18%, import 8%)
+

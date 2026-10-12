@@ -1,0 +1,98 @@
+{
+  "baseCommit": "b832803",
+  "checks": [
+    {
+      "name": "focused",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/pet/obstacles.test.ts src/pet/interactions.test.ts src/content/petLines.test.ts src/pet/PetIntegration.test.tsx src/pet/behaviour.test.ts",
+      "log": "catalog-focused-final.log",
+      "exitCode": 0,
+      "result": "242 pass,5files,3.91s"
+    },
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "catalog-unit.log",
+      "exitCode": 0,
+      "result": "1985 pass,88files,54.07s"
+    },
+    {
+      "name": "build",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "catalog-build.log",
+      "exitCode": 0,
+      "result": "TypeScript/production pass; existing chunk-size advisory"
+    },
+    {
+      "name": "lint",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "catalog-lint.log",
+      "exitCode": 0,
+      "result": "zero warnings"
+    },
+    {
+      "name": "resident-browser",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium nice -n 10 node --test --test-concurrency=1 scripts/browser/pet-motion.test.mjs",
+      "log": "catalog-browser.log",
+      "exitCode": 0,
+      "result": "8 pass,11.84s"
+    },
+    {
+      "name": "final-stills",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 node docs/audits/2026-10-12-character-polish/capture-catalog.mjs",
+      "log": "catalog-capture-final.log",
+      "exitCode": 0,
+      "result": "30 annotated details and30 behavior-derived Room stills"
+    }
+  ],
+  "sourceSha256": {
+    "src/content/petLines.ts": "7980991f46ac78304205130e31d578bd3060bb04493b7b557d148f5c7307efaf",
+    "src/content/petLines.test.ts": "9544ae29904de7038dc68407c505c9f54210eba3340e1b20a3941dacbac5a2ac",
+    "src/pet/LivingRoom.tsx": "707fe6166844a57ab585162620c9914516cb29a9f499ce5c94cc4f5fd3bb765b",
+    "src/pet/PetIntegration.test.tsx": "6256c4bed764b21684d74452cd2d26b456769f0763cfac3271740709e4c6bcd9",
+    "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7",
+    "src/pet/interactions.test.ts": "14c60a908f3cc24a51ae06a2061065be3c5ebc8e469e5a0069ac3f965605c516",
+    "src/pet/obstacles.ts": "88b74b0d6816f01bbac28e13da3f8641e84d7969a164b4d84132d0f7ec42b62c",
+    "src/pet/obstacles.test.ts": "b157c397a6183e77f46b26f998abe9103cc91c84bc8452d4aa3fefcd1f0001d7",
+    "/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/capture-catalog.mjs": "f92fd0241c49fd5f970869560637fb045bea83dcfa329c8b9f75d44dde1fe60e"
+  },
+  "captures": [
+    {
+      "file": "catalog-targets.png",
+      "sha256": "a430ee285f2f6c0e3a6bef774f00893ce73c4eb3f13e010c53f663d32c7f5529"
+    },
+    {
+      "file": "catalog-rooms.png",
+      "sha256": "a1e93c4c1cfe1d7b1963702de3c819327730f9a441100a619896f2a105d60057"
+    },
+    {
+      "file": "catalog-captures.json",
+      "sha256": "8db4aab1f65c80bd6758088a0add77c1ac77ad1e815e04f9ebb9c18b484ce5a4"
+    },
+    {
+      "file": "catalog-rooms-before-clearance.png",
+      "sha256": "110e82d864f779092f272b8eb3d34fb8535675dd9a533587f45389cc67461b9b"
+    },
+    {
+      "file": "catalog-captures-before-clearance.json",
+      "sha256": "7ea307ddac02fcf57e5de00ab8f566c88a7eaa96c75d6a899d0c4d7066cd71b0"
+    },
+    {
+      "file": "capture-catalog-before-clearance.mjs",
+      "sha256": "831166978e80fe3f3645c83923543cbdb8cafa663050c59ec8fb532f85593f54"
+    }
+  ],
+  "redEvidence": [
+    "catalog-red.log:18fail,161pass;15coordinatecases and3content/integration failures.",
+    "catalog-clearance-red.log:both mirrored resident routes enter the future door clearance before the obstacle helper."
+  ],
+  "history": [
+    "catalog-clearance-green.log:clearance assertions pass, but2bubble assertions sample after the interaction finished. Final tests track dialogue throughout the interaction instead.",
+    "catalog-capture.log and preserved before-clearance evidence show the folded door under the old front resident. Original helper bytes match its preserved capture-manifest hash."
+  ],
+  "limitations": [
+    "Resident spawn/walking/interaction clearance is stage-aware. Multi-room travel still uses separate old footprints at this checkpoint; its integration is the next bounded batch.",
+    "Target details and room stills are sampled evidence, not live clock or human temporal acceptance.",
+    "Complete batch11 checks precede separately uncommitted travel-clearance tests.",
+    "The established stationary-occupancy relocation behavior is retained on world changes."
+  ]
+}

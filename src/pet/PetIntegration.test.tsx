@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { act, Profiler, StrictMode } from 'react'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import * as petLines from '../content/petLines'
 import { KIND_LINES, MOOD_LINES, OBJECT_LINES } from '../content/petLines'
 import type { ChoreStatus } from '../domain/schedule'
 import type { Chore, Pet, PlacedObject } from '../domain/types'
@@ -305,15 +306,27 @@ it.each(dialogueObjects.flatMap((object) => [false, true].map((otherOverdue) => 
   },
 )
 
-it.each(['teddy', 'dishwasher'])('uses observations or the calm fallback for chore-free %s', (catalogId) => {
+it.each(['teddy', 'dishwasher'])('uses observations for a clean %s without an assigned chore', (catalogId) => {
     const { container } = mount(<LivingRoom {...props} objects={[{ ...plant, catalogId }]} />)
     frame(1500)
     const line = container.querySelector('.pet-bubble')!.textContent
-    const expected = catalogId === 'teddy' ? ['Hello, soft little friend.', 'That teddy has such a sweet face.'] : MOOD_LINES.content
+    const expected = catalogId === 'teddy' ? ['Hello, soft little friend.', 'That teddy has such a sweet face.']
+      : ['Three little buttons in a row.', 'A blue button between red and green.']
     expect(expected).toContain(line)
     expect(container.querySelector('[aria-live]')!.textContent).toBe('')
     frame(1860); frame(2400)
     expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
+})
+
+it('keeps a calm mood fallback when the target has no observation content', () => {
+  vi.spyOn(petLines, 'calmObjectLine').mockReturnValue('')
+  const { container } = mount(<LivingRoom {...props} objects={[plant]} />)
+  frame(1500)
+  const line = container.querySelector('.pet-bubble')!.textContent
+  expect(MOOD_LINES.content).toContain(line)
+  frame(1860); frame(2400)
+  expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
+  expect(container.querySelector('[aria-live]')!.textContent).toBe('')
 })
 
 it.each(dialogueObjects.flatMap((object) => ([1, 2, 3] as const).map((level) => ({ ...object, level }))))(
@@ -334,6 +347,26 @@ it.each(dialogueObjects.flatMap((object) => ([1, 2, 3] as const).map((level) => 
     expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
   },
 )
+
+it.each([0, 1] as const)('keeps the resident route and resting position clear of the open dishwasher at rotation %s', (rotation) => {
+  const object = { ...plant, catalogId: 'dishwasher', rotation }
+  const front = rotation === 0 ? { tx: 3, ty: 2 } : { tx: 2, ty: 3 }
+  const from = rotation === 0 ? { tx: 4, ty: 2 } : { tx: 2, ty: 4 }
+  const onPosition = vi.fn()
+  const ui = mount(<LivingRoom {...props} objects={[object]} stages={{ plant: 'messy2' }} initialTile={from} onPosition={onPosition} />)
+  let observed = false
+  for (let time = 1500; time <= 5500; time += 50) {
+    frame(time)
+    observed ||= Boolean(ui.container.querySelector('.pet-bubble')?.textContent)
+  }
+  const entersFront = () => onPosition.mock.calls.some(([at]) => Math.abs(at.tx - front.tx) < 0.5 && Math.abs(at.ty - front.ty) < 0.5)
+  expect(entersFront()).toBe(false)
+  expect(observed).toBe(true)
+  onPosition.mockClear()
+  ui.rerender(<LivingRoom {...props} objects={[object]} stages={{ plant: 'clean' }} initialTile={from} onPosition={onPosition} />)
+  for (let time = 5550; time <= 11000; time += 50) frame(time)
+  expect(entersFront()).toBe(true)
+})
 
 it('uses current suppression props for input before a frame and retains sleeping/sick art', () => {
   const ui = mount(<LivingRoom {...props} />)

@@ -1,0 +1,266 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/interactions.test.ts src/content/petLines.test.ts src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (62 tests | 1 failed) 1266ms
+   × uses observations for a clean dishwasher without an assigned chore 18ms
+ ❯ src/content/petLines.test.ts (38 tests | 2 failed) 111ms
+   ❯ calmObjectLine (8)
+     × has two distinct observations for every catalog entry, including reward decor 7ms
+     × uses deterministic selection for ordinary and unusual beat values 3ms
+ ❯ src/pet/interactions.test.ts (79 tests | 15 failed) 49ms
+   ❯ environmental profiles (70)
+     × follows the rendered dishwasher detail in clean without contact 4ms
+     × follows the rendered dishwasher detail in messy1 without contact 1ms
+     × follows the rendered dishwasher detail in messy2 without contact 0ms
+     × follows the rendered dining-table detail in clean without contact 0ms
+     × follows the rendered dining-table detail in messy1 without contact 0ms
+     × follows the rendered dining-table detail in messy2 without contact 0ms
+     × follows the rendered table detail in clean without contact 0ms
+     × follows the rendered table detail in messy1 without contact 0ms
+     × follows the rendered table detail in messy2 without contact 0ms
+     × follows the rendered trash detail in clean without contact 0ms
+     × follows the rendered trash detail in messy1 without contact 0ms
+     × follows the rendered trash detail in messy2 without contact 0ms
+     × follows the rendered recycling detail in clean without contact 0ms
+     × follows the rendered recycling detail in messy1 without contact 0ms
+     × follows the rendered recycling detail in messy2 without contact 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 18 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/content/petLines.test.ts > calmObjectLine > has two distinct observations for every catalog entry, including reward decor
+AssertionError: expected [ 'bean-bag', 'bed', …(17) ] to deeply equal [ 'bean-bag', 'bed', …(22) ]
+
+- Expected
++ Received
+
+@@ -2,25 +2,20 @@
+    "bean-bag",
+    "bed",
+    "bookshelf",
+    "couch",
+    "counter",
+-   "dining-table",
+-   "dishwasher",
+    "fairy-lights",
+    "fish-tank",
+    "fridge",
+    "lamp",
+    "plant",
+    "poster",
+-   "recycling",
+    "rug",
+    "shower",
+    "sink",
+    "stove",
+-   "table",
+    "teddy",
+    "toilet",
+-   "trash",
+    "wall-clock",
+    "washer",
+  ]
+
+ ❯ src/content/petLines.test.ts:175:51
+    173|
+    174|   it('has two distinct observations for every catalog entry, including…
+    175|     expect(Object.keys(CALM_OBJECT_LINES).sort()).toEqual([...observed…
+       |                                                   ^
+    176|     expect([...observedIds].sort()).toEqual(ALL_ENTRIES.map((entry) =>…
+    177|     for (const id of observedIds) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/18]⎯
+
+ FAIL  src/content/petLines.test.ts > calmObjectLine > uses deterministic selection for ordinary and unusual beat values
+TypeError: Cannot read properties of undefined (reading 'filter')
+ ❯ pickLine src/content/petLines.ts:318:40
+    316|   const raw = vars.chore?.trim()
+    317|   const chore = raw && raw.length > 1 && raw[1] === raw[1].toLowerCase…
+    318|   const usable = chore ? lines : lines.filter((line) => !line.includes…
+       |                                        ^
+    319|   if (usable.length === 0) return ''
+    320|
+ ❯ src/content/petLines.test.ts:187:47
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/18]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > uses observations for a clean dishwasher without an assigned chore
+AssertionError: expected [ …(2) ] to include 'I found the warmest spot in the room.'
+ ❯ src/pet/PetIntegration.test.tsx:315:22
+    313|     const expected = catalogId === 'teddy' ? ['Hello, soft little frie…
+    314|       : ['Three little buttons in a row.', 'A blue button between red …
+    315|     expect(expected).toContain(line)
+       |                      ^
+    316|     expect(container.querySelector('[aria-live]')!.textContent).toBe('…
+    317|     frame(1860); frame(2400)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered dishwasher detail in clean without contact
+AssertionError: expected +0 to be close to 21.12, received difference is 21.12, but expected 0.005
+ ❯ src/pet/interactions.test.ts:206:32
+    204|       for (const target of targets) {
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+    208|         expect(target.action).toBe(action)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered dishwasher detail in messy1 without contact
+AssertionError: expected +0 to be close to 3.7, received difference is 3.7, but expected 0.005
+ ❯ src/pet/interactions.test.ts:206:32
+    204|       for (const target of targets) {
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+    208|         expect(target.action).toBe(action)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered dishwasher detail in messy2 without contact
+AssertionError: expected +0 to be close to 23.92, received difference is 23.92, but expected 0.005
+ ❯ src/pet/interactions.test.ts:206:32
+    204|       for (const target of targets) {
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+    208|         expect(target.action).toBe(action)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered dining-table detail in clean without contact
+AssertionError: expected +0 to be close to -5, received difference is 5, but expected 0.005
+ ❯ src/pet/interactions.test.ts:206:32
+    204|       for (const target of targets) {
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+    208|         expect(target.action).toBe(action)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered dining-table detail in messy1 without contact
+AssertionError: expected +0 to be close to -16.64, received difference is 16.64, but expected 0.005
+ ❯ src/pet/interactions.test.ts:206:32
+    204|       for (const target of targets) {
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+    208|         expect(target.action).toBe(action)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered dining-table detail in messy2 without contact
+AssertionError: expected 32 to be close to -3.5, received difference is 35.5, but expected 0.005
+ ❯ src/pet/interactions.test.ts:207:32
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+       |                                ^
+    208|         expect(target.action).toBe(action)
+    209|         expect(target.contact).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered table detail in clean without contact
+AssertionError: expected 32 to be close to -2, received difference is 34, but expected 0.005
+ ❯ src/pet/interactions.test.ts:207:32
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+       |                                ^
+    208|         expect(target.action).toBe(action)
+    209|         expect(target.contact).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered table detail in messy1 without contact
+AssertionError: expected +0 to be close to 14.4, received difference is 14.4, but expected 0.005
+ ❯ src/pet/interactions.test.ts:206:32
+    204|       for (const target of targets) {
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+    208|         expect(target.action).toBe(action)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered table detail in messy2 without contact
+AssertionError: expected 32 to be close to -21.8, received difference is 53.8, but expected 0.005
+ ❯ src/pet/interactions.test.ts:207:32
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+       |                                ^
+    208|         expect(target.action).toBe(action)
+    209|         expect(target.contact).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered trash detail in clean without contact
+AssertionError: expected 16 to be close to -13.25, received difference is 29.25, but expected 0.005
+ ❯ src/pet/interactions.test.ts:207:32
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+       |                                ^
+    208|         expect(target.action).toBe(action)
+    209|         expect(target.contact).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered trash detail in messy1 without contact
+AssertionError: expected +0 to be close to 1, received difference is 1, but expected 0.005
+ ❯ src/pet/interactions.test.ts:206:32
+    204|       for (const target of targets) {
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+    208|         expect(target.action).toBe(action)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered trash detail in messy2 without contact
+AssertionError: expected +0 to be close to 6, received difference is 6, but expected 0.005
+ ❯ src/pet/interactions.test.ts:206:32
+    204|       for (const target of targets) {
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+    208|         expect(target.action).toBe(action)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/18]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered recycling detail in clean without contact
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered recycling detail in messy1 without contact
+ FAIL  src/pet/interactions.test.ts > environmental profiles > follows the rendered recycling detail in messy2 without contact
+AssertionError: expected 16 to be close to 11.72, received difference is 4.279999999999999, but expected 0.005
+ ❯ src/pet/interactions.test.ts:207:32
+    205|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    206|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+    207|         expect((tx + ty) * 16).toBeCloseTo(y)
+       |                                ^
+    208|         expect(target.action).toBe(action)
+    209|         expect(target.contact).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/18]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  18 failed | 161 passed (179)
+   Start at  16:27:38
+   Duration  2.76s (tests 58%, transform 25%, environment 11%, import 6%)
+
+    Isolate  3 workers spawned · ~166ms startup each (spawn + environment, per file)
+             at least ~333ms faster with isolate: false — reuses workers across files instead of one per file
+

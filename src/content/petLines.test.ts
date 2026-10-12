@@ -168,10 +168,12 @@ describe('line lists', () => {
 
 describe('calmObjectLine', () => {
   const observedIds = ['shower', 'toilet', 'washer', 'sink', 'stove', 'fridge', 'counter', 'plant', 'fish-tank',
-    'bookshelf', 'teddy', 'lamp', 'poster', 'wall-clock', 'fairy-lights', 'bed', 'couch', 'bean-bag', 'rug']
+    'bookshelf', 'teddy', 'lamp', 'poster', 'wall-clock', 'fairy-lights', 'bed', 'couch', 'bean-bag', 'rug',
+    'dishwasher', 'dining-table', 'table', 'trash', 'recycling']
 
-  it('has two distinct observations for every current interaction profile, including reward decor', () => {
+  it('has two distinct observations for every catalog entry, including reward decor', () => {
     expect(Object.keys(CALM_OBJECT_LINES).sort()).toEqual([...observedIds].sort())
+    expect([...observedIds].sort()).toEqual(ALL_ENTRIES.map((entry) => entry.id).sort())
     for (const id of observedIds) {
       expect(ALL_ENTRIES.some((entry) => entry.id === id), id).toBe(true)
       expect(CALM_OBJECT_LINES[id]).toHaveLength(2)
@@ -187,7 +189,7 @@ describe('calmObjectLine', () => {
     }
   })
 
-  it.each(['dishwasher', 'nope', '', 'constructor', 'toString', '__proto__', 'hasOwnProperty'])(
+  it.each(['nope', '', 'constructor', 'toString', '__proto__', 'hasOwnProperty'])(
     'leaves an unmapped or inherited key %s quiet', (id) => {
       expect(calmObjectLine(id, 0)).toBe('')
     },

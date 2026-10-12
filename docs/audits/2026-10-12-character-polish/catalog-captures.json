@@ -1,0 +1,565 @@
+{
+  "method": "30 annotated production object details and30 Room SVG stills. Real initialPet/step transitions choose orientation/action from an adjacent tile, then motionFor samples42% through the action. Glasses on all species. Separate from a live LivingRoom clock or human temporal playback.",
+  "samples": [
+    {
+      "id": "dishwasher",
+      "stage": "clean",
+      "rotation": 0,
+      "species": "mochi",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 21.120000000000005,
+        "y": -2.6500000000000057
+      },
+      "contact": false
+    },
+    {
+      "id": "dishwasher",
+      "stage": "clean",
+      "rotation": 1,
+      "species": "mochi",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": -21.120000000000005,
+        "y": -2.6500000000000057
+      },
+      "contact": false
+    },
+    {
+      "id": "dishwasher",
+      "stage": "messy1",
+      "rotation": 0,
+      "species": "bun",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 3.6999999999999886,
+        "y": -29.5
+      },
+      "contact": false
+    },
+    {
+      "id": "dishwasher",
+      "stage": "messy1",
+      "rotation": 1,
+      "species": "bun",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -3.6999999999999886,
+        "y": -29.5
+      },
+      "contact": false
+    },
+    {
+      "id": "dishwasher",
+      "stage": "messy2",
+      "rotation": 0,
+      "species": "sprout",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 23.92,
+        "y": 10.21
+      },
+      "contact": false
+    },
+    {
+      "id": "dishwasher",
+      "stage": "messy2",
+      "rotation": 1,
+      "species": "sprout",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -23.92,
+        "y": 10.21
+      },
+      "contact": false
+    },
+    {
+      "id": "dining-table",
+      "stage": "clean",
+      "rotation": 0,
+      "species": "mochi",
+      "standing": {
+        "tx": 4,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": -5,
+        "y": -31
+      },
+      "contact": false
+    },
+    {
+      "id": "dining-table",
+      "stage": "clean",
+      "rotation": 1,
+      "species": "mochi",
+      "standing": {
+        "tx": 2,
+        "ty": 4
+      },
+      "facing": 1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 5,
+        "y": -31
+      },
+      "contact": false
+    },
+    {
+      "id": "dining-table",
+      "stage": "messy1",
+      "rotation": 0,
+      "species": "bun",
+      "standing": {
+        "tx": 4,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "dust",
+      "phase": "action",
+      "localGaze": {
+        "x": -16.64,
+        "y": -17.32
+      },
+      "contact": false
+    },
+    {
+      "id": "dining-table",
+      "stage": "messy1",
+      "rotation": 1,
+      "species": "bun",
+      "standing": {
+        "tx": 2,
+        "ty": 4
+      },
+      "facing": 1,
+      "action": "dust",
+      "phase": "action",
+      "localGaze": {
+        "x": 16.64,
+        "y": -17.32
+      },
+      "contact": false
+    },
+    {
+      "id": "dining-table",
+      "stage": "messy2",
+      "rotation": 0,
+      "species": "sprout",
+      "standing": {
+        "tx": 4,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "dust",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -3.5
+      },
+      "contact": false
+    },
+    {
+      "id": "dining-table",
+      "stage": "messy2",
+      "rotation": 1,
+      "species": "sprout",
+      "standing": {
+        "tx": 2,
+        "ty": 4
+      },
+      "facing": 1,
+      "action": "dust",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -3.5
+      },
+      "contact": false
+    },
+    {
+      "id": "table",
+      "stage": "clean",
+      "rotation": 0,
+      "species": "mochi",
+      "standing": {
+        "tx": 4,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -2
+      },
+      "contact": false
+    },
+    {
+      "id": "table",
+      "stage": "clean",
+      "rotation": 1,
+      "species": "mochi",
+      "standing": {
+        "tx": 2,
+        "ty": 4
+      },
+      "facing": 1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -2
+      },
+      "contact": false
+    },
+    {
+      "id": "table",
+      "stage": "messy1",
+      "rotation": 0,
+      "species": "bun",
+      "standing": {
+        "tx": 4,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "dust",
+      "phase": "action",
+      "localGaze": {
+        "x": 14.399999999999991,
+        "y": -5.399999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "table",
+      "stage": "messy1",
+      "rotation": 1,
+      "species": "bun",
+      "standing": {
+        "tx": 2,
+        "ty": 4
+      },
+      "facing": 1,
+      "action": "dust",
+      "phase": "action",
+      "localGaze": {
+        "x": -14.399999999999991,
+        "y": -5.399999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "table",
+      "stage": "messy2",
+      "rotation": 0,
+      "species": "sprout",
+      "standing": {
+        "tx": 4,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "dust",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -21.799999999999997
+      },
+      "contact": false
+    },
+    {
+      "id": "table",
+      "stage": "messy2",
+      "rotation": 1,
+      "species": "sprout",
+      "standing": {
+        "tx": 2,
+        "ty": 4
+      },
+      "facing": 1,
+      "action": "dust",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -21.799999999999997
+      },
+      "contact": false
+    },
+    {
+      "id": "trash",
+      "stage": "clean",
+      "rotation": 0,
+      "species": "mochi",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -13.25
+      },
+      "contact": false
+    },
+    {
+      "id": "trash",
+      "stage": "clean",
+      "rotation": 1,
+      "species": "mochi",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -13.25
+      },
+      "contact": false
+    },
+    {
+      "id": "trash",
+      "stage": "messy1",
+      "rotation": 0,
+      "species": "bun",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 1,
+        "y": -15
+      },
+      "contact": false
+    },
+    {
+      "id": "trash",
+      "stage": "messy1",
+      "rotation": 1,
+      "species": "bun",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -1,
+        "y": -15
+      },
+      "contact": false
+    },
+    {
+      "id": "trash",
+      "stage": "messy2",
+      "rotation": 0,
+      "species": "sprout",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 6,
+        "y": -17
+      },
+      "contact": false
+    },
+    {
+      "id": "trash",
+      "stage": "messy2",
+      "rotation": 1,
+      "species": "sprout",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -6,
+        "y": -17
+      },
+      "contact": false
+    },
+    {
+      "id": "recycling",
+      "stage": "clean",
+      "rotation": 0,
+      "species": "mochi",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": 11.719999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "recycling",
+      "stage": "clean",
+      "rotation": 1,
+      "species": "mochi",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": 11.719999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "recycling",
+      "stage": "messy1",
+      "rotation": 0,
+      "species": "bun",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": 11.719999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "recycling",
+      "stage": "messy1",
+      "rotation": 1,
+      "species": "bun",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": 11.719999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "recycling",
+      "stage": "messy2",
+      "rotation": 0,
+      "species": "sprout",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": 11.719999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "recycling",
+      "stage": "messy2",
+      "rotation": 1,
+      "species": "sprout",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": 11.719999999999999
+      },
+      "contact": false
+    }
+  ],
+  "sourceSha256": {
+    "src/pet/obstacles.ts": "88b74b0d6816f01bbac28e13da3f8641e84d7969a164b4d84132d0f7ec42b62c",
+    "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7",
+    "src/pet/behaviour.ts": "4bed9fcf40912fba2733ed5cdb17d302af59a1e42f7ebfeca78e7c17f5fbd472",
+    "src/pet/activityMotion.ts": "6401e236e3a3d71d6cba8d30f66986f3e40a0ba05f35c26b057d59139518452a",
+    "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+    "src/character/motion.ts": "c5728645139ddfdf5c73296fc07dc1fbca12ae6a98e3640d269862166c240091",
+    "src/room/Room.tsx": "10e3faba9fe3419d4b88427d55a0468da6e39c402c7ed3cbee0338d258137a8a",
+    "src/room/objects/dishwasher.tsx": "25fae69638c1536013f53cf8a157a86b032dff5dea825827aa04623fb45f8589",
+    "src/room/objects/diningTable.tsx": "1505ceab911ef9ce1b8f6fef58bae097c7243cc99294f758b455cc0ac21910b6",
+    "src/room/objects/table.tsx": "debbdc8a5a1e2fdc48a26e390cbef977354980636f4ab4cea2d71159f21afc03",
+    "src/room/objects/trash.tsx": "343ad908d17650d8e931942b4316415e47882785ad5f74c517a1c9528bc40477",
+    "src/room/objects/recycling.tsx": "f4255bc166e8282e755b7436a57f4a5625075dbca6317f9c8d77e59c602da6a3",
+    "src/room/objects/kitchenParts.tsx": "5d2095951ca47384f3b30072074f23352ddd801e8bc862094bc263acd6e8bb1f",
+    "src/room/objects/shapes3.tsx": "073f5eb139e09f9b94d0c06bcc74eb095ea1abf5a974277169e9c032b948a04c",
+    "src/room/objects/mess.tsx": "490389adab426507fcbc3a1b09612471e6df49bf76dfd9092bb9fa6afc6a8dc5",
+    "src/room/objects/tableware.tsx": "953797710131f3ca9340abe6fa9302fb023315e8ef425420f33d1b53f60e1f3c",
+    "src/room/objects/batch2-parts.tsx": "d497f69a9af9709597667668293ef3627f383db7105033c0873a3b2ee7a08d54",
+    "docs/audits/2026-10-12-character-polish/capture-catalog.mjs": "f92fd0241c49fd5f970869560637fb045bea83dcfa329c8b9f75d44dde1fe60e"
+  }
+}

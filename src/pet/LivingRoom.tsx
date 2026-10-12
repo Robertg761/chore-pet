@@ -8,9 +8,10 @@ import type { NeglectLevel } from '../domain/neglect'
 import type { ChoreStatus } from '../domain/schedule'
 import type { Chore, MessStage, Mood, Pet, PlacedObject, Room as RoomRow } from '../domain/types'
 import { objectOverdue } from '../room/cuePlan'
-import { footprintOf, freeTile, overlaps, tilesOf, type Footprint } from '../room/grid'
+import { footprintOf, freeTile, overlaps, tilesOf } from '../room/grid'
 import { Room } from '../room/Room'
 import { SceneContext } from '../room/sceneContext'
+import { petObstacles } from './obstacles'
 import { PET_STROKE_SCALE, ROOM_WIDTH, petTransform } from '../room/shell/geometry'
 import { play } from '../audio/sfx'
 import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sortTile, step, tap, type PetState, type Tile, type World } from './behaviour'
@@ -133,14 +134,7 @@ interface Said {
 
 export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, chores, statuses, celebrate, onCelebrated, initialTile, onPosition, overlay }: LivingRoomProps) {
   const scene = useContext(SceneContext)
-  const solid = useMemo<Footprint[]>(
-    () =>
-      objects.flatMap((o) => {
-        const e = catalogEntry(o.catalogId)
-        return e && e.layer === 'solid' ? [footprintOf(o, e)] : []
-      }),
-    [objects],
-  )
+  const solid = useMemo(() => petObstacles(objects, stages), [objects, stages])
   const messiest = messiestObject(chores, statuses)
   const messObject = messiest && objects.find((o) => o.id === messiest.objectId)
   const messEntry = messObject && catalogEntry(messObject.catalogId)

@@ -177,6 +177,41 @@ describe('environmental profiles', () => {
     }
   })
 
+  it.each([
+    ['dishwasher', 'clean', 21.12, -2.65, 'inspect'],
+    ['dishwasher', 'messy1', 3.7, -29.5, 'smell'],
+    ['dishwasher', 'messy2', 23.92, 10.21, 'smell'],
+    ['dining-table', 'clean', -5, -31, 'inspect'],
+    ['dining-table', 'messy1', -16.64, -17.32, 'dust'],
+    ['dining-table', 'messy2', 0, -3.5, 'dust'],
+    ['table', 'clean', 0, -2, 'inspect'],
+    ['table', 'messy1', 14.4, -5.4, 'dust'],
+    ['table', 'messy2', 0, -21.8, 'dust'],
+    ['trash', 'clean', 0, -13.25, 'inspect'],
+    ['trash', 'messy1', 1, -15, 'smell'],
+    ['trash', 'messy2', 6, -17, 'smell'],
+    ['recycling', 'clean', 0, 11.72, 'inspect'],
+    ['recycling', 'messy1', 0, 11.72, 'smell'],
+    ['recycling', 'messy2', 0, 11.72, 'smell'],
+  ] as const)('follows the rendered %s detail in %s without contact', (id, stage, x, y, action) => {
+    // Independent SVG points derived from actual circles/plate centres,
+    // the flower tip, tabletop height, and retained badge; no profile imports.
+    for (const rotation of [0, 1, 2, 3] as const) {
+      const objects = [object(id, { rotation })]
+      const free = room(objects)
+      const targets = interactionTargets(objects, free, { object: stage })
+      expect(targets.length).toBeGreaterThan(0)
+      for (const target of targets) {
+        const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+        expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+        expect((tx + ty) * 16).toBeCloseTo(y)
+        expect(target.action).toBe(action)
+        expect(target.contact).toBe(false)
+        expect(free(target.tile)).toBe(true)
+      }
+    }
+  })
+
   it('changes signatures when catalog, position, rotation, or stage changes', () => {
     const base = object('plant')
     const signature = (o: PlacedObject, stages: Record<string, MessStage> = {}) =>

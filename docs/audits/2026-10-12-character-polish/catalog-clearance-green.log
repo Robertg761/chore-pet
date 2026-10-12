@@ -1,0 +1,40 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/obstacles.test.ts src/pet/interactions.test.ts src/content/petLines.test.ts src/pet/PetIntegration.test.tsx src/pet/behaviour.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (64 tests | 2 failed) 1576ms
+   × keeps the resident route and resting position clear of the open dishwasher at rotation 0 89ms
+   × keeps the resident route and resting position clear of the open dishwasher at rotation 1 150ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps the resident route and resting position clear of the open dishwasher at rotation 0
+ FAIL  src/pet/PetIntegration.test.tsx > keeps the resident route and resting position clear of the open dishwasher at rotation 1
+AssertionError: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/pet/PetIntegration.test.tsx:360:66
+    358|   const entersFront = () => onPosition.mock.calls.some(([at]) => Math.…
+    359|   expect(entersFront()).toBe(false)
+    360|   expect(ui.container.querySelector('.pet-bubble')?.textContent).toBeT…
+       |                                                                  ^
+    361|   onPosition.mockClear()
+    362|   ui.rerender(<LivingRoom {...props} objects={[object]} stages={{ plan…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  2 failed | 240 passed (242)
+   Start at  16:31:22
+   Duration  3.37s (tests 62%, transform 22%, environment 9%, import 6%, worker 1%)
+
+    Isolate  5 workers spawned · ~138ms startup each (spawn + environment, per file)
+             at least ~551ms faster with isolate: false — reuses workers across files instead of one per file
+

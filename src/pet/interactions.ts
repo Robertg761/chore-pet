@@ -56,6 +56,25 @@ const PROFILES: ReadonlyMap<string, Profile> = new Map([
   ['counter', { action: 'inspect', gaze: { tx: 0.62, ty: 1.52, z: 36 }, gazeByStage: {
     messy2: { tx: 0.56, ty: 1.5, z: 47 },
   } }],
+  // Middle blue control; upper counter plate, then the tilted rack plate.
+  ['dishwasher', { action: 'inspect', gaze: { tx: 1, ty: 0.34, z: 24.09 }, gazeByStage: {
+    messy1: { tx: 0.55 + 0.5 / 64, ty: 0.45 - 0.5 / 64, z: 45.5 },
+    messy2: { tx: 1.2475, ty: 0.5, z: 17.75 },
+  } }],
+  // Pink flower tip, first place-setting plate, then the raised stack.
+  ['dining-table', { action: 'inspect', gaze: { tx: 1 - 5 / 64, ty: 1 + 5 / 64, z: 63 }, gazeByStage: {
+    messy1: { tx: 0.48, ty: 1, z: 41 }, messy2: { tx: 1.5, ty: 1.5, z: 51.5 },
+  } }],
+  ['table', { action: 'inspect', gaze: { tx: 1, ty: 1, z: 34 }, gazeByStage: {
+    messy1: { tx: 1.15, ty: 0.7, z: 35 }, messy2: { tx: 0.85, ty: 0.85, z: 49 },
+  } }],
+  // Lid-handle centre; exposed bag, then the blue overflow bag.
+  ['trash', { action: 'inspect', gaze: { tx: 0.5, ty: 0.5, z: 29.25 }, gazeByStage: {
+    messy1: { tx: 0.5 + 1 / 64, ty: 0.5 - 1 / 64, z: 31 },
+    messy2: { tx: 0.5 + 6 / 64, ty: 0.5 - 6 / 64, z: 33 },
+  } }],
+  // The green front badge remains exposed beneath every recycling pile.
+  ['recycling', { action: 'inspect', gaze: { tx: 0.71, ty: 0.71, z: 11 } }],
   ['plant', { action: 'wave', gaze: { tx: 0, ty: 0, z: 28 } }], // leaves around SVG (0,-28)
   ['fish-tank', { action: 'wave', gaze: { tx: 0.92, ty: 0.5, z: 40 } }], // front glass
   ['bookshelf', { action: 'inspect', gaze: { tx: 0.62, ty: 0.5, z: 42 } }], // open upper shelf
