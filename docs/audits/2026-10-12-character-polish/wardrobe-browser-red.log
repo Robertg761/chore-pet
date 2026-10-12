@@ -1,0 +1,29 @@
+✖ wardrobe finite previews stay usable and preserve the outfit at 320x568 (1168.035202ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (1449.161241ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (1477.848861ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (1550.707426ms)
+✔ wardrobe live reduced motion settles the preview and does not restart when restored (1357.081944ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7435.21216
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-motion.test.mjs:28:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 320x568 (1168.035202ms)
+  AssertionError [ERR_ASSERTION]: preview needs readable height: {"width":320,"height":568,"scroll":320,"art":{"x":27,"y":51.59375,"w":266,"h":76.828125,"right":293,"bottom":128.421875},"controls":[{"x":33,"y":140.421875,"w":60.5,"h":44,"right":93.5,"bottom":184.421875},{"x":97.5,"y":140.421875,"w":60.5,"h":44,"right":158,"bottom":184.421875},{"x":162,"y":140.421875,"w":60.5,"h":44,"right":222.5,"bottom":184.421875},{"x":226.5,"y":140.421875,"w":60.5,"h":44,"right":287,"bottom":184.421875},{"x":58.09375,"y":196.421875,"w":99.8125,"h":44,"right":157.90625,"bottom":240.421875},{"x":165.90625,"y":196.421875,"w":96,"h":44,"right":261.90625,"bottom":240.421875}]}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:49:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

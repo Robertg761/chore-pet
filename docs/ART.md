@@ -146,3 +146,5 @@ Open `/?art` in the dev server for the art gallery (`src/dev/ArtGallery.tsx`): e
 The deterministic motion panel uses the production sampler and renderer. Compare 200px, 60px, and 25px previews, play at 1×/0.5×/0.25×, and scrub exact milliseconds or choose a key frame. Ground line and ground-anchor overlays are optional. Furniture contact overlay is unavailable because the standalone panel supplies no contact geometry. Review settings stay local to the panel; the system reduced-motion preference remains authoritative over its local override.
 
 Use playback and real-room checks to judge grounding, clipping, interrupted motion, and gaze. Numeric continuity and SVG attachment tests support that review but do not establish visual quality by themselves.
+
+The wardrobe main preview uses the sampled renderer at rest and offers finite Wave and Hop controls. The active control becomes its Stop button; other movements wait. Pose selection stops playback. Live reduced motion settles before paint and does not replay when restored. Item grids and outfit thumbnails retain their static renderers, and frame updates stay inside the preview. Previewing never saves pet changes.

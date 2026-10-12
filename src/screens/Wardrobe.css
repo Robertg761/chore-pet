@@ -21,6 +21,9 @@
 }
 .wd-preview { flex: 1 1 0; min-height: 0; width: 100%; display: block; }
 .wd-poses { align-self: stretch; }
+.wd-motion { display: flex; justify-content: center; gap: 8px; flex: none; }
+.wd-motion .btn { min-width: 96px; }
+.wd-motion-note { max-width: 32ch; text-align: center; }
 .wd-tabs .seg-btn { white-space: nowrap; }
 .wd-poses .seg-btn { padding: 0 2px; font-size: 0.875rem; }
 
@@ -39,6 +42,9 @@
 
 .wd-panel { max-height: 224px; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 8px; padding: 5px; margin: -5px; }
 .wd-grid { list-style: none; margin: 0; padding: 0; display: grid; align-content: start; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+@media (max-width: 359px) {
+  .wd-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 .wd-grid > li { display: flex; min-width: 0; }
 .wd-tile {
   flex: 1;
@@ -116,7 +122,7 @@ button.wd-tile:active, .wd-outfit-try:active { transform: scale(0.97); }
 
 /* Short phones: a little less panel so the pet keeps room. */
 @media (max-height: 640px) {
-  .wd-panel { max-height: 206px; }
+  .wd-panel { max-height: 180px; }
 }
 
 /* Tablets standing up: the pet stays a sensible size and the panel gets the rest. */

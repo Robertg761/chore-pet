@@ -1,0 +1,420 @@
+diff --git i/scripts/browser/README.md w/scripts/browser/README.md
+index 2d8506b..e275755 100644
+--- i/scripts/browser/README.md
++++ w/scripts/browser/README.md
+@@ -10,6 +10,9 @@ npm run test:browser
+ Uses Node's test runner and the existing playwright-core dependency. On Linux CI,
+ `npx playwright-core install --with-deps chromium` also installs system libraries.
+ Set `CHROME=/absolute/path/to/chrome` to use an existing browser binary.
++Use `node --test --test-concurrency=1 scripts/browser/*.test.mjs` when keeping
++browser processes sequential. Node can also run under a bounded heap with
++`NODE_OPTIONS=--max-old-space-size=768`.
+ 
+ Each test gets an isolated browser context and a production Vite preview on an
+ OS-assigned port. The helper reads the deployment base from dist/index.html, so
+@@ -36,3 +39,8 @@ The navigation bundle adds draft retention and Save/Cancel checks, screen and
+ sheet Back/Forward, reload/deep links, landing sign-in without a temporary home,
+ and stale-edit handling. Its fast React tests use jsdom through Vitest. Auth
+ requests are simulated in those tests; live email/Google delivery is not tested.
++
++The wardrobe motion bundle checks finite wave/hop previews, real outfit changes,
++focus, saved-data stability, live reduced motion, and phone/desktop layout. It
++writes no artifacts by default. Set `CHORE_PET_CAPTURE_DIR` to an existing output
++directory to save its four production screenshots and layout measurements.
+diff --git i/src/screens/Wardrobe.css w/src/screens/Wardrobe.css
+index dfde5a1..8d413b7 100644
+--- i/src/screens/Wardrobe.css
++++ w/src/screens/Wardrobe.css
+@@ -21,6 +21,9 @@
+ }
+ .wd-preview { flex: 1 1 0; min-height: 0; width: 100%; display: block; }
+ .wd-poses { align-self: stretch; }
++.wd-motion { display: flex; justify-content: center; gap: 8px; flex: none; }
++.wd-motion .btn { min-width: 96px; }
++.wd-motion-note { max-width: 32ch; text-align: center; }
+ .wd-tabs .seg-btn { white-space: nowrap; }
+ .wd-poses .seg-btn { padding: 0 2px; font-size: 0.875rem; }
+ 
+@@ -39,6 +42,9 @@
+ 
+ .wd-panel { max-height: 224px; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 8px; padding: 5px; margin: -5px; }
+ .wd-grid { list-style: none; margin: 0; padding: 0; display: grid; align-content: start; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
++@media (max-width: 359px) {
++  .wd-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
++}
+ .wd-grid > li { display: flex; min-width: 0; }
+ .wd-tile {
+   flex: 1;
+@@ -116,7 +122,7 @@ button.wd-tile:active, .wd-outfit-try:active { transform: scale(0.97); }
+ 
+ /* Short phones: a little less panel so the pet keeps room. */
+ @media (max-height: 640px) {
+-  .wd-panel { max-height: 206px; }
++  .wd-panel { max-height: 180px; }
+ }
+ 
+ /* Tablets standing up: the pet stays a sensible size and the panel gets the rest. */
+diff --git i/src/screens/Wardrobe.tsx w/src/screens/Wardrobe.tsx
+index 9b3ab49..be89fa6 100644
+--- i/src/screens/Wardrobe.tsx
++++ w/src/screens/Wardrobe.tsx
+@@ -8,17 +8,16 @@ import { GiftSilhouette } from './RewardArt'
+ import { ScreenHeader } from '../shell/ScreenHeader'
+ import { SegThumb } from '../shell/SegThumb'
+ import { useWide } from '../shell/useViewport'
++import { WardrobePreview } from './WardrobePreview'
+ import './Wardrobe.css'
+ import {
+   MAX_OUTFIT_NAME,
+   MAX_OUTFITS,
+-  WARDROBE_POSES,
+   WARDROBE_SLOTS,
+   activeOutfit,
+   addOutfit,
+   clearSlot,
+   defaultOutfitName,
+-  describeOutfit,
+   isEmptyOutfit,
+   isFull,
+   itemsForSlot,
+@@ -74,7 +73,6 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
+   const equipped = pet.equipped
+   const wide = useWide()
+   const [picked, setPicked] = useState<Section>('head')
+-  const [pose, setPose] = useState<PoseName>('idle')
+   const [naming, setNaming] = useState(false)
+   const [name, setName] = useState('')
+   const [removing, setRemoving] = useState<string | null>(null)
+@@ -235,17 +233,7 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
+       <ScreenHeader id={`${uid}-title`} title={`Dress up ${pet.name}`} />
+ 
+       <div className="wd-body">
+-        <div className="wd-stage">
+-          <PetArt className="wd-preview" pet={pet} equipped={equipped} pose={pose} label={`${pet.name} wearing ${describeOutfit(equipped)}`} />
+-          <div className="wd-poses seg" role="group" aria-label="Pose">
+-            <SegThumb />
+-            {WARDROBE_POSES.map((p) => (
+-              <button key={p.pose} type="button" className="seg-btn" aria-pressed={pose === p.pose} onClick={() => setPose(p.pose)}>
+-                {p.label}
+-              </button>
+-            ))}
+-          </div>
+-        </div>
++        <WardrobePreview pet={pet} />
+ 
+         <div className="wd-side">
+           <div className="wd-tabs seg" role="tablist" aria-label="Where it goes">
+--- /dev/null
++++ b/src/screens/WardrobePreview.tsx
+@@ -0,0 +1,61 @@
++import { useLayoutEffect, useState } from 'react'
++import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
++import { ACTION_MS, sampleMotion } from '../character/motion'
++import type { PoseName } from '../character/poses'
++import type { Pet } from '../domain/types'
++import { usePetMotion } from '../pet/usePetMotion'
++import { SegThumb } from '../shell/SegThumb'
++import { describeOutfit, WARDROBE_POSES } from './wardrobeModel'
++
++type PreviewAction = 'greet' | 'celebrate'
++interface PreviewRun { action: PreviewAction; start: number }
++
++/** One finite, on-demand clock, isolated from the wardrobe's item grid. */
++export function WardrobePreview({ pet }: { pet: Pet }) {
++  const [pose, setPose] = useState<PoseName>('idle')
++  const [run, setRun] = useState<PreviewRun | null>(null)
++  const [elapsed, setElapsed] = useState(0)
++  const { reducedMotion } = usePetMotion((now, reduced) => {
++    if (!run) return
++    const time = Math.max(0, now - run.start)
++    if (reduced || time >= ACTION_MS[run.action]) setRun(null)
++    else setElapsed(time)
++  }, run !== null)
++  useLayoutEffect(() => {
++    if (reducedMotion) setRun(null)
++  }, [reducedMotion])
++  const active = reducedMotion ? null : run
++  const frame = sampleMotion({ species: pet.species, mood: pose === 'sick' ? 'sick' : 'happy',
++    action: active?.action ?? 'idle', elapsedMs: active ? elapsed : 0, distance: 0,
++    durationMs: active ? ACTION_MS[active.action] : ACTION_MS.idle, reducedMotion: reducedMotion || !active })
++
++  function stop() { setRun(null) }
++  function toggle(action: PreviewAction) {
++    if (reducedMotion) return
++    if (run?.action === action) { stop(); return }
++    if (run) return
++    const next = { action, start: performance.now() }
++    setPose('idle')
++    setElapsed(0)
++    setRun(next)
++  }
++
++  return <div className="wd-stage">
++    <svg className="wd-preview" viewBox="0 0 200 200" role="img" aria-label={`${pet.name} wearing ${describeOutfit(pet.equipped)}`} focusable="false">
++      <AnimatedCharacterArt species={pet.species} mood={pose === 'sick' ? 'sick' : 'happy'} pose={pose}
++        bodyColour={pet.bodyColour} equipped={pet.equipped} look={{ eyes: pet.eyes, cheeks: pet.cheeks }} frame={frame} />
++    </svg>
++    <div className="wd-poses seg" role="group" aria-label="Pose">
++      <SegThumb />
++      {WARDROBE_POSES.map(choice => <button key={choice.pose} type="button" className="seg-btn" aria-pressed={pose === choice.pose}
++        onClick={() => { stop(); setPose(choice.pose) }}>{choice.label}</button>)}
++    </div>
++    <div className="wd-motion" role="group" aria-label="Movement preview">
++      <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'greet')}
++        onClick={() => toggle('greet')}>{active?.action === 'greet' ? 'Stop wave' : 'Wave'}</button>
++      <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'celebrate')}
++        onClick={() => toggle('celebrate')}>{active?.action === 'celebrate' ? 'Stop hop' : 'Hop'}</button>
++    </div>
++    {reducedMotion && <p className="wd-note wd-motion-note">Motion previews are off while reduced motion is on.</p>}
++  </div>
++}
+--- /dev/null
++++ b/src/screens/Wardrobe.test.tsx
+@@ -0,0 +1,148 @@
++// @vitest-environment jsdom
++import { act, StrictMode } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import type { Pet } from '../domain/types'
++import { click, render } from '../test/react'
++import * as model from './wardrobeModel'
++import { Wardrobe, type WardrobeProps } from './Wardrobe'
++
++const pet: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#ffcfda', equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } }
++let ui: ReturnType<typeof render>
++let now: number, serial: number, hidden: boolean
++let frames: Map<number, FrameRequestCallback>
++let media: MediaQueryList
++let changed: ReturnType<typeof vi.fn<WardrobeProps['onChange']>>
++
++beforeEach(() => {
++  now = 0; serial = 0; hidden = false; frames = new Map(); changed = vi.fn()
++  vi.spyOn(performance, 'now').mockImplementation(() => now)
++  vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden)
++  media = Object.assign(new EventTarget(), { matches: false, media: '(prefers-reduced-motion: reduce)' }) as MediaQueryList
++  const narrow = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  vi.stubGlobal('matchMedia', (query: string) => query.includes('prefers-reduced-motion') ? media : narrow)
++  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
++  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
++  vi.spyOn(model, 'itemsForSlot')
++  ui = render(<StrictMode><Wardrobe pet={pet} progress={null} onChange={changed} /></StrictMode>)
++})
++afterEach(() => { ui.unmount(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++function button(name: string) {
++  const node = [...ui.container.querySelectorAll('button')].find(node => node.textContent === name)
++  expect(node, `button ${name}`).toBeTruthy()
++  return node!
++}
++function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
++function preference(matches: boolean) { act(() => { Object.defineProperty(media, 'matches', { value: matches, configurable: true }); media.dispatchEvent(new Event('change')) }) }
++function visibility(value: boolean) { act(() => { hidden = value; document.dispatchEvent(new Event('visibilitychange')) }) }
++function preview() { return ui.container.querySelector('.wd-preview')! }
++function body() { return preview().querySelector('[data-character-body]')!.getAttribute('transform') }
++
++it('plays a finite wave on demand without redrawing the item grid or changing saved data', () => {
++  const write = vi.spyOn(Storage.prototype, 'setItem')
++  const art = preview().querySelector('.ch-animated')
++  expect(art).not.toBeNull()
++  expect(frames.size).toBe(0)
++  expect(ui.container.querySelector('.wd-tile-art .ch-animated')).toBeNull()
++  click(button('Sleepy'))
++  expect(preview().querySelector('[data-character-pose="sleeping"]')).not.toBeNull()
++  click(button('Wave'))
++  expect(button('Happy').getAttribute('aria-pressed')).toBe('true')
++  expect(frames.size).toBe(1)
++  const gridRenders = vi.mocked(model.itemsForSlot).mock.calls.length
++  const neutral = body()
++  frame(420)
++  expect(body()).not.toBe(neutral)
++  expect(preview().querySelector('[data-slot="head"]')).not.toBeNull()
++  expect(preview().querySelector('[data-slot="face"]')).not.toBeNull()
++  frame(1199)
++  expect(button('Stop wave')).toBeTruthy()
++  frame(1200)
++  expect(button('Wave')).toBeTruthy()
++  expect(body()).toBe(neutral)
++  expect(frames.size).toBe(0)
++  expect(preview().querySelector('.ch-animated')).toBe(art)
++  expect(model.itemsForSlot).toHaveBeenCalledTimes(gridRenders)
++  expect(changed).not.toHaveBeenCalled()
++  expect(write).not.toHaveBeenCalled()
++})
++
++it('shows a grounded small hop, bounds rapid activation and keeps the same focused control for stopping', () => {
++  const control = button('Hop')
++  act(() => control.focus())
++  click(control)
++  expect(button('Wave').disabled).toBe(true)
++  click(button('Wave'))
++  frame(756)
++  expect(body()).toMatch(/^translate\(0 -/)
++  expect(preview().querySelector('[data-character-ground]')!.getAttribute('transform')).toMatch(/^translate\(100 186\)/)
++  expect(button('Stop hop')).toBe(control)
++  expect(document.activeElement).toBe(control)
++  expect(frames.size).toBe(1)
++  click(control)
++  expect(frames.size).toBe(0)
++  expect(body()).toMatch(/^translate\(0 0\)/)
++  click(control)
++  frame(2556)
++  expect(frames.size).toBe(0)
++  expect(button('Hop')).toBe(control)
++})
++
++it('updates worn layers during playback without restarting its deadline', () => {
++  click(button('Hop'))
++  frame(500)
++  ui.rerender(<StrictMode><Wardrobe pet={{ ...pet, equipped: { neck: 'scarf', outfit: 'overalls', back: 'backpack' } }} progress={null} onChange={changed} /></StrictMode>)
++  expect(preview().getAttribute('aria-label')).toContain('Scarf')
++  expect(preview().querySelector('[data-slot="head"]')).toBeNull()
++  for (const slot of ['neck', 'outfit', 'back']) expect(preview().querySelector(`[data-slot="${slot}"]`)).not.toBeNull()
++  frame(1800)
++  expect(frames.size).toBe(0)
++  expect(button('Hop')).toBeTruthy()
++})
++
++it('pose selection stops the preview and retains the special pose wardrobe rules', () => {
++  click(button('Wave'))
++  frame(300)
++  click(button('Poorly'))
++  expect(frames.size).toBe(0)
++  expect(preview().querySelector('[data-character-pose="sick"]')).not.toBeNull()
++  expect(preview().querySelector('[data-slot="head"]')).not.toBeNull()
++  for (const slot of ['neck', 'outfit', 'back']) expect(preview().querySelector(`[data-slot="${slot}"]`)).toBeNull()
++  click(button('Cheer'))
++  expect(preview().querySelector('[data-character-pose="cheering"]')).not.toBeNull()
++  expect(preview().querySelector('[data-slot="head"]')).not.toBeNull()
++  expect(frames.size).toBe(0)
++})
++
++it('cancels immediately on live reduced motion and never replays when the preference clears', () => {
++  click(button('Hop'))
++  frame(756)
++  preference(true)
++  expect(frames.size).toBe(0)
++  expect(body()).toMatch(/^translate\(0 0\)/)
++  expect(button('Wave').disabled).toBe(true)
++  expect(button('Hop').disabled).toBe(true)
++  expect(ui.container.textContent).toContain('Motion previews are off while reduced motion is on.')
++  preference(false)
++  expect(button('Wave').disabled).toBe(false)
++  expect(frames.size).toBe(0)
++})
++
++it('suspends while hidden, settles past its deadline on return and cleans up stale frames', () => {
++  click(button('Wave'))
++  frame(300)
++  const stale = [...frames.values()][0]
++  visibility(true)
++  expect(frames.size).toBe(0)
++  now = 2000
++  visibility(false)
++  expect(frames.size).toBe(1)
++  frame(now)
++  expect(frames.size).toBe(0)
++  expect(button('Wave')).toBeTruthy()
++  click(button('Hop'))
++  expect(frames.size).toBe(1)
++  ui.unmount()
++  expect(frames.size).toBe(0)
++  act(() => stale(5000))
++  expect(frames.size).toBe(0)
++})
+--- /dev/null
++++ b/scripts/browser/wardrobe-motion.test.mjs
+@@ -0,0 +1,96 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, seedProgress, snapshot } from './helpers.mjs'
++
++const out = process.env.CHORE_PET_CAPTURE_DIR
++async function reducedMotion(page, value) {
++  await page.evaluate(() => {
++    window.__wardrobeReduction = new Promise(resolve => matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', () => resolve(), { once: true }))
++  })
++  await page.emulateMedia({ reducedMotion: value })
++  let timeout
++  await Promise.race([
++    page.evaluate(() => window.__wardrobeReduction),
++    new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('motion preference event not delivered within 4s')), 4000) }),
++  ]).finally(() => clearTimeout(timeout))
++}
++async function wardrobeApp(t, options = {}) {
++  const page = await browserApp(t, { reducedMotion: 'no-preference', ...options })
++  await seedProgress(page, { unlockedItems: ['item:beanie-red', 'item:glasses', 'item:scarf', 'item:backpack'] })
++  await page.getByRole('button', { name: 'Wardrobe', exact: true }).click()
++  await page.getByRole('heading', { name: 'Dress up Mochi' }).waitFor()
++  for (const [slot, name] of [['Head', 'Red beanie'], ['Face', 'Round glasses'], ['Neck', 'Scarf'], ['Outfit', 'Overalls'], ['On back', 'Backpack']]) {
++    await page.getByRole('tab', { name: slot, exact: true }).click()
++    await page.getByRole('button', { name, exact: true }).click()
++  }
++  await page.clock.install()
++  await page.clock.pauseAt(Date.now() + 1000)
++  return page
++}
++
++for (const [width, height] of [[320, 568], [390, 664], [844, 390], [1280, 800]]) {
++  test(`wardrobe finite previews stay usable and preserve the outfit at ${width}x${height}`, { timeout: 20000 }, async t => {
++    const page = await wardrobeApp(t, { viewport: { width, height } })
++    const before = (await snapshot(page)).tables.pets
++    const preview = page.locator('.wd-preview')
++    for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) assert.equal(await preview.locator(`[data-slot="${slot}"]`).count(), 1)
++    const art = await preview.locator('.ch-animated').elementHandle()
++    const grid = await page.locator('.wd-grid').elementHandle()
++    const wave = page.getByRole('button', { name: 'Wave', exact: true })
++    await wave.focus()
++    await page.keyboard.press('Enter')
++    await page.clock.runFor(420)
++    assert.equal(await page.getByRole('button', { name: 'Stop wave', exact: true }).evaluate(node => node === document.activeElement), true)
++    assert.equal(await page.getByRole('button', { name: 'Hop', exact: true }).isDisabled(), true)
++    assert.notEqual(await preview.locator('[data-character-body]').getAttribute('transform'), 'translate(0 0) rotate(0 100 181) translate(100 181) scale(1 1) translate(-100 -181)')
++    assert.equal(await page.locator('.wd-grid').evaluate((node, original) => node === original, grid), true)
++    assert.equal(await preview.locator('.ch-animated').evaluate((node, original) => node === original, art), true)
++    const geometry = await page.evaluate(() => {
++      const box = node => { const r = node.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height, right: r.right, bottom: r.bottom } }
++      return { width: innerWidth, height: innerHeight, scroll: document.documentElement.scrollWidth,
++        art: box(document.querySelector('.wd-preview')), controls: [...document.querySelectorAll('.wd-motion button, .wd-poses button')].map(box) }
++    })
++    assert.ok(geometry.scroll <= width, `horizontal overflow: ${JSON.stringify(geometry)}`)
++    assert.ok(geometry.art.h >= 80, `preview needs readable height: ${JSON.stringify(geometry)}`)
++    assert.ok((await page.getByText('Backpack', { exact: true }).boundingBox()).height <= 18, 'item names must fit without breaking a short word across lines')
++    for (const control of geometry.controls) {
++      assert.ok(control.w >= 44 && control.h >= 44, `minimum input target: ${JSON.stringify(control)}`)
++      assert.ok(control.x >= 0 && control.right <= width && control.y >= 0 && control.bottom <= height, `visible input target: ${JSON.stringify(control)}`)
++    }
++    assert.ok((await preview.locator('.ch-eye').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).animationName))).every(name => name === 'none'), 'sampled preview owns its eye motion')
++    if (out) {
++      await page.screenshot({ path: join(out, `wardrobe-${width}x${height}.png`) })
++      await writeFile(join(out, `wardrobe-${width}x${height}.json`), JSON.stringify({ width, height, geometry, browser: page.context().browser().version(), method: 'Isolated offline production wardrobe at wave 420ms; actual CSS layout.' }, null, 2) + '\n')
++    }
++    await page.clock.runFor(800)
++    await page.getByRole('button', { name: 'Wave', exact: true }).waitFor()
++    await page.getByRole('button', { name: 'Hop', exact: true }).click()
++    await page.clock.runFor(756)
++    assert.match(await preview.locator('[data-character-body]').getAttribute('transform'), /^translate\(0 -/)
++    await page.getByRole('button', { name: 'Poorly', exact: true }).click()
++    assert.equal(await preview.locator('[data-character-pose="sick"]').count(), 1)
++    assert.equal(await page.getByRole('button', { name: 'Hop', exact: true }).isEnabled(), true)
++    assert.deepEqual((await snapshot(page)).tables.pets, before, 'preview and pose selection must not save pet changes')
++  })
++}
++
++test('wardrobe live reduced motion settles the preview and does not restart when restored', { timeout: 15000 }, async t => {
++  const page = await wardrobeApp(t, { viewport: { width: 320, height: 568 } })
++  const preview = page.locator('.wd-preview')
++  await page.getByRole('button', { name: 'Hop', exact: true }).click()
++  await page.clock.runFor(756)
++  await reducedMotion(page, 'reduce')
++  assert.equal(await page.getByRole('button', { name: 'Hop', exact: true }).isDisabled(), true)
++  assert.ok((await preview.boundingBox()).height >= 60, 'short-phone reduced-motion preview retains the character art\'s 60px reading size')
++  assert.match(await preview.locator('[data-character-body]').getAttribute('transform'), /^translate\(0 0\)/)
++  const still = await preview.innerHTML()
++  await page.clock.runFor(2000)
++  assert.equal(await preview.innerHTML(), still)
++  await reducedMotion(page, 'no-preference')
++  await page.getByRole('button', { name: 'Wave', exact: true }).waitFor()
++  assert.equal(await page.getByRole('button', { name: 'Wave', exact: true }).isEnabled(), true)
++  await page.clock.runFor(500)
++  assert.equal(await preview.innerHTML(), still)
++})

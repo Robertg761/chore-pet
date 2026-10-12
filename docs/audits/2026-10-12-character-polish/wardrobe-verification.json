@@ -1,0 +1,71 @@
+{
+  "baseCommit": "5ae7d1834fcca378d935d38c86d748b90ea01937",
+  "checks": [
+    {
+      "name": "focused-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/screens/Wardrobe.test.tsx src/screens/wardrobeModel.test.ts",
+      "log": "wardrobe-green-final.log",
+      "exitCode": 0,
+      "result": "26 pass"
+    },
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "wardrobe-unit.log",
+      "exitCode": 0,
+      "result": "1887 tests,84 files pass; subsequent changes were test mock typing and CSS covered by build/focused/browser checks"
+    },
+    {
+      "name": "build",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "wardrobe-build.log",
+      "exitCode": 0,
+      "result": "TypeScript and production build pass; existing chunk advisory"
+    },
+    {
+      "name": "lint",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "wardrobe-lint.log",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "name": "production-motion-browser",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium CHORE_PET_CAPTURE_DIR=docs/audits/2026-10-12-character-polish nice -n 10 node --test --test-concurrency=1 scripts/browser/wardrobe-motion.test.mjs scripts/browser/pet-motion.test.mjs",
+      "log": "wardrobe-browser.log",
+      "exitCode": 0,
+      "result": "13 pass; one isolated browser at a time"
+    }
+  ],
+  "sourceSha256": {
+    "src/screens/Wardrobe.tsx": "97a3e3da1d1f3451f937a74aed619f67c9703f0895d46494fc73809ab274ed5c",
+    "src/screens/WardrobePreview.tsx": "1f17a4c9d4ae4f8a9bade59e3ac0d22436458622e2f312ab6e52005ce24fb732",
+    "src/screens/Wardrobe.css": "2ce5875d17c2f78590afb6f0de522579f83e4d6ab53b0663801631f89ad1e2a4",
+    "src/screens/Wardrobe.test.tsx": "6c5f1cf776afd28234ab237438019e1362889a8bbee85d5d9de70498f947cac9",
+    "scripts/browser/wardrobe-motion.test.mjs": "b5cb3ddc23bb2c870b52286b4b04e8ae394f5b412ebba477b2f3ea426bdd18da",
+    "src/character/motion.ts": "5e1f316efcb2612a6b0a2d53009785892ee3ad999580bf910fea5c39a67e4e8b",
+    "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+    "src/character/species/animatedBody.tsx": "e338788eeb57e5c7f651d198f8ecfd85925ce33c9e0cd7528f45575cf8b79212"
+  },
+  "captures": [
+    {
+      "file": "wardrobe-1280x800.png",
+      "sha256": "03ff5920b0bf398144a48d83b61d8c4c36d7ed057d4c6839715884a4ab391d97"
+    },
+    {
+      "file": "wardrobe-320x568.png",
+      "sha256": "4cf190816bbdcbd4f826d3b36a52eb62bcd25652b833d3694bbed418acd724e2"
+    },
+    {
+      "file": "wardrobe-390x664.png",
+      "sha256": "254565faaa06ddfa5b7139ce9d7560b05685e3947512ab1114bc57229b932ffa"
+    },
+    {
+      "file": "wardrobe-844x390.png",
+      "sha256": "6c8ddc683d5253c3bf4c387ea847c84352262ad09d7413ea819e4f01f681ba2a"
+    }
+  ],
+  "limitations": [
+    "Four production layout stills inspected; no human temporal playback acceptance. Browser captures are opt-in; default regression runs write no artifacts."
+  ]
+}

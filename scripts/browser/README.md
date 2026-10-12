@@ -10,6 +10,9 @@ npm run test:browser
 Uses Node's test runner and the existing playwright-core dependency. On Linux CI,
 `npx playwright-core install --with-deps chromium` also installs system libraries.
 Set `CHROME=/absolute/path/to/chrome` to use an existing browser binary.
+Use `node --test --test-concurrency=1 scripts/browser/*.test.mjs` when keeping
+browser processes sequential. Node can also run under a bounded heap with
+`NODE_OPTIONS=--max-old-space-size=768`.
 
 Each test gets an isolated browser context and a production Vite preview on an
 OS-assigned port. The helper reads the deployment base from dist/index.html, so
@@ -36,3 +39,8 @@ The navigation bundle adds draft retention and Save/Cancel checks, screen and
 sheet Back/Forward, reload/deep links, landing sign-in without a temporary home,
 and stale-edit handling. Its fast React tests use jsdom through Vitest. Auth
 requests are simulated in those tests; live email/Google delivery is not tested.
+
+The wardrobe motion bundle checks finite wave/hop previews, real outfit changes,
+focus, saved-data stability, live reduced motion, and phone/desktop layout. It
+writes no artifacts by default. Set `CHORE_PET_CAPTURE_DIR` to an existing output
+directory to save its four production screenshots and layout measurements.

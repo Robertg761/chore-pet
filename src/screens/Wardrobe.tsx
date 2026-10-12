@@ -8,17 +8,16 @@ import { GiftSilhouette } from './RewardArt'
 import { ScreenHeader } from '../shell/ScreenHeader'
 import { SegThumb } from '../shell/SegThumb'
 import { useWide } from '../shell/useViewport'
+import { WardrobePreview } from './WardrobePreview'
 import './Wardrobe.css'
 import {
   MAX_OUTFIT_NAME,
   MAX_OUTFITS,
-  WARDROBE_POSES,
   WARDROBE_SLOTS,
   activeOutfit,
   addOutfit,
   clearSlot,
   defaultOutfitName,
-  describeOutfit,
   isEmptyOutfit,
   isFull,
   itemsForSlot,
@@ -74,7 +73,6 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
   const equipped = pet.equipped
   const wide = useWide()
   const [picked, setPicked] = useState<Section>('head')
-  const [pose, setPose] = useState<PoseName>('idle')
   const [naming, setNaming] = useState(false)
   const [name, setName] = useState('')
   const [removing, setRemoving] = useState<string | null>(null)
@@ -235,17 +233,7 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
       <ScreenHeader id={`${uid}-title`} title={`Dress up ${pet.name}`} />
 
       <div className="wd-body">
-        <div className="wd-stage">
-          <PetArt className="wd-preview" pet={pet} equipped={equipped} pose={pose} label={`${pet.name} wearing ${describeOutfit(equipped)}`} />
-          <div className="wd-poses seg" role="group" aria-label="Pose">
-            <SegThumb />
-            {WARDROBE_POSES.map((p) => (
-              <button key={p.pose} type="button" className="seg-btn" aria-pressed={pose === p.pose} onClick={() => setPose(p.pose)}>
-                {p.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <WardrobePreview pet={pet} />
 
         <div className="wd-side">
           <div className="wd-tabs seg" role="tablist" aria-label="Where it goes">

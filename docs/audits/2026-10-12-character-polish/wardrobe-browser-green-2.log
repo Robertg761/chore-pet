@@ -1,0 +1,13 @@
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (2344.975881ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (2332.228959ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (2451.375255ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (2382.912663ms)
+✔ wardrobe live reduced motion settles the preview and does not restart when restored (1852.2486ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11745.789652

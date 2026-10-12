@@ -1,0 +1,8 @@
+npm notice run chore-pet@0.0.0 build
+npm notice run tsc -b && vite build
+src/screens/Wardrobe.test.tsx(26,63): error TS2322: Type 'Mock<Procedure | Constructable>' is not assignable to type '(patch: Partial<Pick<Pet, "equipped" | "outfits">>) => void'.
+  Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '(patch: Partial<Pick<Pet, "equipped" | "outfits">>) => void'.
+    Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' provides no match for the signature '(patch: Partial<Pick<Pet, "equipped" | "outfits">>): void'.
+src/screens/Wardrobe.test.tsx(93,137): error TS2322: Type 'Mock<Procedure | Constructable>' is not assignable to type '(patch: Partial<Pick<Pet, "equipped" | "outfits">>) => void'.
+  Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' is not assignable to type '(patch: Partial<Pick<Pet, "equipped" | "outfits">>) => void'.
+    Type 'MockInstance<Procedure | Constructable> & (new (...args: any[]) => any) & {}' provides no match for the signature '(patch: Partial<Pick<Pet, "equipped" | "outfits">>): void'.

@@ -1,0 +1,32 @@
+✔ keyboard Enter reaches and activates the resident without moving its world position (1141.095911ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (1064.064081ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (3027.771796ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.0140 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1177.240473ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.0740 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (1851.215746ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (969.341221ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1376.968633ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (1442.094682ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 544ms; lift sampled at 1300ms; landing at 1720ms
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (2882.984317ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (2815.064798ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (2516.443534ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (2358.547715ms)
+✔ wardrobe live reduced motion settles the preview and does not restart when restored (1851.295627ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 25285.781613

@@ -1,0 +1,179 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/screens/Wardrobe.test.tsx src/screens/wardrobeModel.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+stderr | src/screens/Wardrobe.test.tsx > pose selection stops the preview and retains the special pose wardrobe rules
+g: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)
+
+ ❯ src/screens/Wardrobe.test.tsx (6 tests | 1 failed) 432ms
+   × pose selection stops the preview and retains the special pose wardrobe rules 62ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/Wardrobe.test.tsx > pose selection stops the preview and retains the special pose wardrobe rules
+AssertionError: expected SVGGElement{ …(2), [Symbol(impl)]: SVGGElementImpl{ …(33), …(2) } } to be null
+
+- Expected:
+null
+
++ Received:
+<g
+  data-slot="head"
+>
+  <g
+    transform="translate(103.4 86.5) rotate(8) scale(0.88)"
+  >
+    <g
+      stroke="#2B1E2F"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="4"
+    >
+      <path
+        d="M-52 11 C-52 -31 -28.6 -27 0 -27 C28.6 -27 52 -31 52 11 Z"
+        fill="#E86A4A"
+      />
+      <path
+        d="M-49.77402827993236 -0.40000000000000036 Q0 4.6 49.77402827993236 -0.40000000000000036"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M-41.84827124754322 -11.8 Q0 -6.800000000000001 41.84827124754322 -11.8"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M-56 8 Q0 16 56 8 L56 21 Q0 29 -56 21 Z"
+        fill="#f09b81"
+      />
+      <path
+        d="M-49 11.4375 V19.4375"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M-42 12.25 V20.25"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M-35 12.9375 V20.9375"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M-28 13.5 V21.5"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M-21 13.9375 V21.9375"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M-14 14.25 V22.25"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M-7 14.4375 V22.4375"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M0 14.5 V22.5"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M7 14.4375 V22.4375"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M14 14.25 V22.25"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M21 13.9375 V21.9375"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M28 13.5 V21.5"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M35 12.9375 V20.9375"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M42 12.25 V20.25"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <path
+        d="M49 11.4375 V19.4375"
+        fill="none"
+        stroke="#c65c45"
+        stroke-width="2.5"
+      />
+      <g
+        transform="translate(0 -29)"
+      >
+        <circle
+          fill="#FFF6E6"
+          r="9.5"
+        />
+        <path
+          d="M-5.2250000000000005 -0.9500000000000001 Q-1.9000000000000001 -5.7 2.85 -5.2250000000000005"
+          fill="none"
+          stroke="#EBDCC6"
+          stroke-width="2.5"
+        />
+      </g>
+    </g>
+  </g>
+</g>
+
+ ❯ src/screens/Wardrobe.test.tsx:108:57
+    106|   expect(frames.size).toBe(0)
+    107|   expect(preview().querySelector('[data-character-pose="sick"]')).not.…
+    108|   expect(preview().querySelector('[data-slot="head"]')).toBeNull()
+       |                                                         ^
+    109|   click(button('Cheer'))
+    110|   expect(preview().querySelector('[data-character-pose="cheering"]')).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 25 passed (26)
+   Start at  15:20:44
+   Duration  2.08s (transform 47%, tests 24%, environment 21%, import 8%)
+
+    Isolate  2 workers spawned · ~287ms startup each (spawn + environment, per file)
+             at least ~287ms faster with isolate: false — reuses workers across files instead of one per file
+
