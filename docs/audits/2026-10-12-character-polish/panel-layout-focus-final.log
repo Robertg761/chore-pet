@@ -1,0 +1,12 @@
+✔ player rows stay balanced and readable with default text in narrow panels (1542.787372ms)
+ℹ Chromium 152.0.7977.82; 6layouts; rows1/2/4, readable targets and focus, unchanged saved tables.
+✔ player rows stay balanced and readable with 200% text in narrow panels (1193.504076ms)
+ℹ Chromium 152.0.7977.82; 3layouts; rows1/2/4, readable targets and focus, unchanged saved tables.
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3127.697184

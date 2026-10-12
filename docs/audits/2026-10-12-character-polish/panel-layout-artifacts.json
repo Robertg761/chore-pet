@@ -1,0 +1,25 @@
+{
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures/panel-100.json": "6c1ef3fd52fb4b3c7cf58548e3ba89c9f76bc584fd5e3bd7fd8f8873f346d548",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures/panel-1280-100.png": "4c25e62ae3eed00df5165419edc1c2848d67ab623a193542fa51fba168a2c601",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures/panel-1280-200.png": "11e0fa7401a1f2b45149a310e3f53328ab58dea06af455050fe4e0581bc90a78",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures/panel-200.json": "21937583d8ca75ff6e58b46ea64122f2dc0f95c1a968c05b489931a327bc87ee",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures/panel-320-100.png": "2cacc3711ac31f2f282959da3c036c4e0b0d59b90d7388d1bdc676178abb2a55",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures/panel-320-200.png": "ec764c106f8f4fdc0b9d7461d77c45569f462044b4b46bedb889c2090d4cb74b",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures/panel-375-100.png": "bc16d566a58b208cd2ffc313f9ab83c6f7635a2d1d80cee8f4e461b79de4a44b",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures/panel-844-100.png": "45f260b8298fc2a26b83f832664f78ee4a04f5c0537255b6749b8e8770893510",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures/panel-844-200.png": "142f1d32f023ae0d2cc9adad283786eaf4b2b3aa4ede7a162928066efbc93b5f"
+  },
+  "historicalCandidate": {
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures-first/panel-100.json": "ea24641cfc8d7825f8907bc13c2cf0229844edc53f077ac7b2c899f30eb44bbe",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures-first/panel-1280-100.png": "fe79c932aaf66c3095391e53692f325a37969a75cfbd5a19414851ae0181da72",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures-first/panel-1280-200.png": "2ae73f8ad44e8dba66ce4b88b3335da7449fdbbea08da35b66fe5309eaf16638",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures-first/panel-200.json": "d9f87953edf2ba6f66f8b471d7d426d248ec5c8fcca4c71b285b11b8665c43f0",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures-first/panel-320-100.png": "41f57e2c5911894b02ce4aa7c83d010fa36dd0ec12e09df828a0bea5d78f2879",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures-first/panel-320-200.png": "5a102b46d0372670681ec1eca6832af9f247945382a1aefa488d2e9b8a2e1cbd",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures-first/panel-375-100.png": "e04529300948898f465a65f9e4769c34b15909aaa4465088e65d1afd5f953972",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures-first/panel-844-100.png": "928f58f4056a5e81aaf1c0bdac41890faf42ba4396d9037a0b9ff0b2c6c66802",
+    "docs/audits/2026-10-12-character-polish/panel-layout-captures-first/panel-844-200.png": "0f78131234f7ffd6a06ed16ace91ee7a9fb91c04d8709bf3a00bac2dfeddf61e"
+  },
+  "scope": "Seven final keyboard-focus PNGs and two9-layout total sample JSONs. Historical first7PNGs/2JSON used programmatic focus without keyboard modality, not visible-ring certification. Normal six layouts include320/375/844/900/1024/1280; large three320/844/1280. Root-font200% is panel-only text enlargement, not browser zoom/whole-app accessibility/performance acceptance."
+}

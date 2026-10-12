@@ -1,0 +1,89 @@
+{
+  "freeze": {
+    "baseCommit": "721ba246d1b3f522452ab796fd78ddb663bb219b",
+    "sources": {
+      "src/pet/PetPlay.css": "c1cac5cef7290d8f7698485e306a60b1e54022481de9f68318d4cdbbcf35eaa0",
+      "scripts/browser/pet-play.test.mjs": "2e36bc55a65fb6b717435bedd539db4a2ea3dd192bca74ef56c4bc37fd275827",
+      "scripts/browser/pet-play-layout.test.mjs": "c6e6e57156fdea26a7d742677a41e70b96017668adb96d34aaf5441ce4a4ab5e",
+      "docs/ART.md": "1d743863afa0bafbce5e701d00dbc7c7e8b75355b17bfcbd0507f02cfedb440e"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/panel-layout-source.diff",
+      "sha256": "6a0c9b9479295081e6b028c95c69687a4eec171fa4b568f1877da1b80aab4c3a"
+    },
+    "scope": "One runtime CSS file, two native test files and ART. Named inline-size container; text-relative1/2/4columns; heading wrap. No JS/state/clock/sampler/store changes. Legacy fallback preserved."
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/panel-layout-artifacts.json",
+    "sha256": "685cecf069437f8c30188ee7035bc3d68755e6aa4cb44576bf8f2b6ff3bc843c"
+  },
+  "checks": [
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/panel-layout-browser.log",
+      "logSha256": "adcc7bf5e764fdd25e8cc7e6376f1ff145a691bff1e929b5ed24f5ebfd3679be",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/panel-layout-browser.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/panel-layout-build.log",
+      "logSha256": "2af19f24a0e1263ead0bc8f271cd7007dc0bd2d69e22311bfc933602801140b6",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/panel-layout-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focus-final",
+      "log": "docs/audits/2026-10-12-character-polish/panel-layout-focus-final.log",
+      "logSha256": "0e22e60d4ce4c1e7e912f2c53f42cfc85ef79eb01343e650473e52b9bdd93134",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/panel-layout-focus-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint-final",
+      "log": "docs/audits/2026-10-12-character-polish/panel-layout-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/panel-layout-lint-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/panel-layout-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/panel-layout-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/panel-layout-red.log",
+      "logSha256": "ca3407c1f0c646b547d746de2b338b39d2480783924bdca73aa201b1ef03c2d2",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/panel-layout-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "result": "Initial2red reproduces3+1 and enlarged-label overflow. Production type/build, final lint,21native43.185s pass; enhanced2layoutcases3.128s pass with true keyboard Tab order/focus-visible/ring clearance.21unique native cases (two layout probes repeat strengthened);9bounded layout samples. Prior2196full belongs to Batch30 before CSS-only change; no full unit rerun claimed.",
+  "status": "Verified with independent static/still approval;4sources/patch/9final+9historical artifacts/6rawcheckpairs/report rechecked by root.",
+  "limits": "Panel-only root-font enlargement, isolated Chromium152; no physical device/human playback/assistive technology/whole-app text enlargement claim. Enlarged nav labels outside this patch can wrap; queued separately if needed.",
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/panel-layout-review.md",
+    "sha256": "870665ace33dc76246cadd37046272b4519c6e2ca78cb8776afa7f9be1ae470a"
+  }
+}

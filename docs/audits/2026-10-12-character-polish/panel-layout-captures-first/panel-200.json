@@ -1,0 +1,215 @@
+{
+  "samples": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 640
+      },
+      "textPercent": 200,
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "boxes": [
+        {
+          "label": "Spend time together",
+          "x": 16,
+          "y": 160.78125,
+          "width": 288,
+          "height": 98,
+          "textFits": true
+        },
+        {
+          "label": "Show room",
+          "x": 122.125,
+          "y": 262.78125,
+          "width": 181.875,
+          "height": 60,
+          "textFits": true
+        },
+        {
+          "label": "Wave",
+          "x": 31,
+          "y": 345.78125,
+          "width": 258,
+          "height": 56,
+          "textFits": true
+        },
+        {
+          "label": "Gentle pats",
+          "x": 31,
+          "y": 411.78125,
+          "width": 258,
+          "height": 56,
+          "textFits": true
+        },
+        {
+          "label": "Happy hop",
+          "x": 31,
+          "y": 477.78125,
+          "width": 258,
+          "height": 56,
+          "textFits": true
+        },
+        {
+          "label": "Stretch together",
+          "x": 31,
+          "y": 543.78125,
+          "width": 258,
+          "height": 56,
+          "textFits": true
+        }
+      ],
+      "width": 288,
+      "heading": {
+        "x": 16,
+        "right": 304
+      },
+      "scrollWidth": 288,
+      "clientWidth": 288
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "textPercent": 200,
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "boxes": [
+        {
+          "label": "Spend time together",
+          "x": 534,
+          "y": 180.390625,
+          "width": 290,
+          "height": 98,
+          "textFits": true
+        },
+        {
+          "label": "Show room",
+          "x": 642.125,
+          "y": 282.390625,
+          "width": 181.875,
+          "height": 60,
+          "textFits": true
+        },
+        {
+          "label": "Wave",
+          "x": 549,
+          "y": 365.390625,
+          "width": 260,
+          "height": 56,
+          "textFits": true
+        },
+        {
+          "label": "Gentle pats",
+          "x": 549,
+          "y": 431.390625,
+          "width": 260,
+          "height": 56,
+          "textFits": true
+        },
+        {
+          "label": "Happy hop",
+          "x": 549,
+          "y": 497.390625,
+          "width": 260,
+          "height": 56,
+          "textFits": true
+        },
+        {
+          "label": "Stretch together",
+          "x": 549,
+          "y": 563.390625,
+          "width": 260,
+          "height": 56,
+          "textFits": true
+        }
+      ],
+      "width": 290,
+      "heading": {
+        "x": 534,
+        "right": 824
+      },
+      "scrollWidth": 290,
+      "clientWidth": 290
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "textPercent": 200,
+      "rows": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "boxes": [
+        {
+          "label": "Spend time together",
+          "x": 834,
+          "y": 352.390625,
+          "width": 304.75,
+          "height": 60,
+          "textFits": true
+        },
+        {
+          "label": "Show room",
+          "x": 1066.125,
+          "y": 416.390625,
+          "width": 181.875,
+          "height": 60,
+          "textFits": true
+        },
+        {
+          "label": "Wave",
+          "x": 849,
+          "y": 499.390625,
+          "width": 384,
+          "height": 56,
+          "textFits": true
+        },
+        {
+          "label": "Gentle pats",
+          "x": 849,
+          "y": 565.390625,
+          "width": 384,
+          "height": 56,
+          "textFits": true
+        },
+        {
+          "label": "Happy hop",
+          "x": 849,
+          "y": 631.390625,
+          "width": 384,
+          "height": 56,
+          "textFits": true
+        },
+        {
+          "label": "Stretch together",
+          "x": 849,
+          "y": 697.390625,
+          "width": 384,
+          "height": 56,
+          "textFits": true
+        }
+      ],
+      "width": 414,
+      "heading": {
+        "x": 834,
+        "right": 1248
+      },
+      "scrollWidth": 414,
+      "clientWidth": 414
+    }
+  ],
+  "scope": "Native player panel rows, actual label rectangles, target and focus bounds; large text changes root font size, not browser zoom or whole-app accessibility certification."
+}

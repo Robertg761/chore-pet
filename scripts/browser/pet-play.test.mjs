@@ -102,16 +102,16 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 361, height: 664 }
       })
       assert.equal(textFits, true, 'all labels must fit their targets')
     }
-    if (viewport.width <= 374) {
+    if (viewport.width <= 390 || viewport.width === 640 || viewport.width === 844) {
       const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
       assert.ok(Math.abs(boxes[0].y - boxes[1].y) < .5)
       assert.ok(Math.abs(boxes[2].y - boxes[3].y) < .5)
-      assert.ok(boxes[2].y >= boxes[0].y + boxes[0].height + 8, 'narrow phones use two balanced control rows')
+      assert.ok(boxes[2].y >= boxes[0].y + boxes[0].height + 8, 'narrow player panels use two balanced control rows')
       assert.ok(Math.abs(boxes[0].width - boxes[2].width) < .5)
     }
-    if (viewport.width === 375) {
+    if (viewport.width === 1280) {
       const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
-      assert.ok(boxes.every(box => Math.abs(box.y - boxes[0].y) < .5), 'the wider boundary fits all four controls in one row')
+      assert.ok(boxes.every(box => Math.abs(box.y - boxes[0].y) < .5), 'the wide player panel fits all four controls in one row')
     }
     const room = await page.locator('.home-scene .home-room').boundingBox()
     assert.ok(room.height >= originalRoom.height - .5, 'expanded player choices must preserve room size')

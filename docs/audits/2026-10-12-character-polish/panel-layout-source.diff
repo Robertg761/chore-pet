@@ -1,0 +1,142 @@
+diff --git i/docs/ART.md w/docs/ART.md
+index 3fdbb24..4ebce0c 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -181,3 +181,5 @@ Environmental gaze starts at the actual drawn eye centre, including tired-eye of
+ Happy hop uses a separate transient player reaction with play dialogue and the existing1800ms celebration geometry. Chore cheers can preempt it; a hop cannot replace an active response or alter tap alternation/progress. Reduced motion stays still, offscreen expiry samples before return, and all three native choices share the same resident clock. Compact wrapping buttons preserve44px+targets and scene visibility on narrow phones.
+ 
+ When Spend time together is expanded, Show room brings the scene into view and focuses the resident. It preserves the current gesture, dialogue, camera zoom and pan, room selection and saved data. Viewing is available while the pet rests in the focused room. It is disabled during travel or while a blocked route leaves the resident in another room; the control explains how to find them. Use native instant scrolling and the existing pet focus target; successful viewing adds no announcement, timer or animation. Offscreen responses resume only while their original deadline remains active.
++
++Gesture buttons use the width of their own panel, including narrow landscape side panels. In browsers with container queries, use equal one-, two- or four-column rows, with text-relative thresholds so enlarged labels can keep their room. The disclosure and Show room heading may wrap; keyboard order and native targets stay unchanged. Retain the existing flex/phone fallback when container queries are unavailable. Native checks cover the player panel at200%root text; this is not whole-app zoom or assistive-technology certification.
+diff --git i/scripts/browser/pet-play.test.mjs w/scripts/browser/pet-play.test.mjs
+index d24e0c6..48d935d 100644
+--- i/scripts/browser/pet-play.test.mjs
++++ w/scripts/browser/pet-play.test.mjs
+@@ -102,16 +102,16 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 361, height: 664 }
+       })
+       assert.equal(textFits, true, 'all labels must fit their targets')
+     }
+-    if (viewport.width <= 374) {
++    if (viewport.width <= 390 || viewport.width === 640 || viewport.width === 844) {
+       const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
+       assert.ok(Math.abs(boxes[0].y - boxes[1].y) < .5)
+       assert.ok(Math.abs(boxes[2].y - boxes[3].y) < .5)
+-      assert.ok(boxes[2].y >= boxes[0].y + boxes[0].height + 8, 'narrow phones use two balanced control rows')
++      assert.ok(boxes[2].y >= boxes[0].y + boxes[0].height + 8, 'narrow player panels use two balanced control rows')
+       assert.ok(Math.abs(boxes[0].width - boxes[2].width) < .5)
+     }
+-    if (viewport.width === 375) {
++    if (viewport.width === 1280) {
+       const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
+-      assert.ok(boxes.every(box => Math.abs(box.y - boxes[0].y) < .5), 'the wider boundary fits all four controls in one row')
++      assert.ok(boxes.every(box => Math.abs(box.y - boxes[0].y) < .5), 'the wide player panel fits all four controls in one row')
+     }
+     const room = await page.locator('.home-scene .home-room').boundingBox()
+     assert.ok(room.height >= originalRoom.height - .5, 'expanded player choices must preserve room size')
+diff --git i/src/pet/PetPlay.css w/src/pet/PetPlay.css
+index 2c4136a..8e830ef 100644
+--- i/src/pet/PetPlay.css
++++ w/src/pet/PetPlay.css
+@@ -1,8 +1,8 @@
+ .pet-play { flex: none; width: 100%; min-width: 0; }
+ .pet-play button { scroll-margin-block: 10px; }
+-.pet-play-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+-.pet-play-toggle { min-height: 44px; padding: 8px 12px; font-size: 0.875rem; }
+-.pet-play-show { flex: none; min-height: 44px; min-width: 44px; padding: 8px 12px; font-size: 0.875rem; white-space: nowrap; }
++.pet-play-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 8px; min-width: 0; }
++.pet-play-toggle { min-width: 0; max-width: 100%; min-height: 44px; padding: 8px 12px; font-size: 0.875rem; }
++.pet-play-show { flex: none; margin-inline-start: auto; min-height: 44px; min-width: 44px; padding: 8px 12px; font-size: 0.875rem; white-space: nowrap; }
+ .pet-play-panel { margin-top: 8px; padding: 12px; border: var(--outline); border-radius: var(--radius); background: var(--card); }
+ .pet-play-panel[hidden] { display: none; }
+ .pet-play-actions { display: flex; flex-wrap: wrap; gap: 10px; min-width: 0; }
+@@ -13,3 +13,15 @@
+ @media (max-width: 374px) {
+   .pet-play-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+ }
++/* The chores panel can be narrow inside a wide landscape viewport. Relative
++   thresholds also leave room when text is enlarged, without a resize listener. */
++@supports (container-type: inline-size) {
++  .pet-play { container: pet-play / inline-size; }
++  .pet-play-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
++  @container pet-play (min-width: 14rem) {
++    .pet-play-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
++  }
++  @container pet-play (min-width: 24rem) {
++    .pet-play-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
++  }
++}
+diff --git 1/scripts/browser/pet-play-layout.test.mjs 2/scripts/browser/pet-play-layout.test.mjs
+new file mode 100644
+index 0000000..092dc9a
+--- /dev/null
++++ 2/scripts/browser/pet-play-layout.test.mjs
+@@ -0,0 +1,69 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, snapshot } from './helpers.mjs'
++
++for (const large of [false, true]) test(`player rows stay balanced and readable with ${large ? '200%' : 'default'} text in narrow panels`, async t => {
++  const page = await browserApp(t, { viewport: { width: 1280, height: 800 } })
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  await page.keyboard.press('Tab')
++  if (large) await page.evaluate(() => { document.documentElement.style.fontSize = '200%' })
++  const saved = (await snapshot(page)).tables, samples = []
++  const viewports = large ? [{ width: 320, height: 640 }, { width: 844, height: 390 }, { width: 1280, height: 800 }]
++    : [{ width: 320, height: 640 }, { width: 375, height: 664 }, { width: 844, height: 390 }, { width: 900, height: 800 }, { width: 1024, height: 800 }, { width: 1280, height: 800 }]
++  for (const viewport of viewports) {
++    await page.setViewportSize(viewport)
++    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
++    const show = page.getByRole('button', { name: 'Show room with Mochi', exact: true })
++    await show.focus()
++    const layout = await page.locator('.pet-play').evaluate(node => {
++      const boxes = [...node.querySelectorAll('button')].map(button => {
++        const box = button.getBoundingClientRect(), range = document.createRange()
++        range.selectNodeContents(button)
++        const text = range.getBoundingClientRect()
++        return { label: button.textContent, x: box.x, y: box.y, width: box.width, height: box.height,
++          textFits: text.left >= box.left && text.right <= box.right && text.top >= box.top && text.bottom <= box.bottom }
++      })
++      const panel = node.getBoundingClientRect(), heading = node.querySelector('.pet-play-heading').getBoundingClientRect()
++      return { boxes, width: panel.width, heading: { x: heading.x, right: heading.right }, scrollWidth: node.scrollWidth, clientWidth: node.clientWidth }
++    })
++    const actions = layout.boxes.slice(2), rows = []
++    for (const box of actions) {
++      const row = rows.find(row => Math.abs(row.y - box.y) < .5)
++      if (row) row.count++; else rows.push({ y: box.y, count: 1 })
++    }
++    assert.ok(['1,1,1,1', '2,2', '4'].includes(rows.map(row => row.count).join(',')), `balanced rows at${viewport.width}px/${large ? 200 : 100}%: ${rows.map(row => row.count)}`)
++    for (const box of layout.boxes) {
++      assert.ok(box.width >= 44 && box.height >= 44, `${box.label} retains a44px target`)
++      assert.ok(box.textFits, `${box.label} text fits at${viewport.width}px/${large ? 200 : 100}%`)
++      assert.ok(box.x >= layout.heading.x - .5 && box.x + box.width <= layout.heading.right + .5, `${box.label} stays in its own panel`)
++    }
++    assert.ok(layout.scrollWidth <= layout.clientWidth + 1, 'the player panel has no horizontal overflow')
++    if (!large) assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
++    for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together']) {
++      const control = page.getByRole('button', { name: label, exact: true })
++      await page.keyboard.press('Tab')
++      assert.equal(await control.evaluate(node => node === document.activeElement && node.matches(':focus-visible')), true, 'native tab order retains a visible focus ring')
++      const visibleFocus = await control.evaluate(node => {
++        const box = node.getBoundingClientRect(), style = getComputedStyle(node), ring = parseFloat(style.outlineWidth) + Math.max(0, parseFloat(style.outlineOffset))
++        let top = 0, bottom = innerHeight
++        for (let parent = node.parentElement; parent; parent = parent.parentElement) {
++          if (/(auto|scroll|hidden|clip)/.test(getComputedStyle(parent).overflowY)) {
++            const clip = parent.getBoundingClientRect(); top = Math.max(top, clip.top + parent.clientTop); bottom = Math.min(bottom, clip.top + parent.clientTop + parent.clientHeight)
++          }
++        }
++        return box.top - ring >= top - .5 && box.bottom + ring <= bottom + .5
++      })
++      assert.equal(visibleFocus, true, `${label} focus is visible at${viewport.width}px/${large ? 200 : 100}%`)
++    }
++    samples.push({ viewport, textPercent: large ? 200 : 100, rows: rows.map(row => row.count), ...layout })
++    if (process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR && [320, 375, 844, 1280].includes(viewport.width)) {
++      await mkdir(process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR, { recursive: true })
++      await page.screenshot({ path: join(process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR, `panel-${viewport.width}-${large ? 200 : 100}.png`), fullPage: false })
++    }
++  }
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  if (process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR) await writeFile(join(process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR, `panel-${large ? 200 : 100}.json`), JSON.stringify({ samples, scope: 'Native player panel rows, actual label rectangles, target and focus bounds; large text changes root font size, not browser zoom or whole-app accessibility certification.' }, null, 2) + '\n')
++  t.diagnostic(`Chromium ${page.context().browser().version()}; ${samples.length}layouts; rows1/2/4, readable targets and focus, unchanged saved tables.`)
++})
