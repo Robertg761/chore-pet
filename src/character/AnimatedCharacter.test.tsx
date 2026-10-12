@@ -466,12 +466,13 @@ describe('AnimatedCharacterArt', () => {
   })
 
   it('keeps projected uphill feet inside the unchanged art box on both axes and facings', () => {
+    // These path-only art renders do not need a system-font scan per sample.
     for (const [species, stride] of [['bun', 0.72], ['mochi', 0.9], ['sprout', 0.82]] as const) {
       for (const dx of [64, -64]) for (const facing of [1, -1] as const) {
         const groundPath = [{ distance: 0, x: 0, y: 0 }, { distance: 4, x: dx * 4, y: -128 }]
         const distance = 0.49 * stride
         const frame = sampleMotion({ species, mood: 'happy', action: 'walk', elapsedMs: distance * 420, durationMs: 1680, blinkMs: 0, distance, groundPath, facing, reducedMotion: false })
-        const { pixels } = new Resvg(renderToStaticMarkup(<svg xmlns="http://www.w3.org/2000/svg" width={240} height={240} viewBox="-20 -20 240 240"><g transform={facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined}><AnimatedCharacterArt species={species} mood="happy" bodyColour={PALETTE.petDefault} frame={frame} strokeScale={1.6} /></g></svg>)).render()
+        const { pixels } = new Resvg(renderToStaticMarkup(<svg xmlns="http://www.w3.org/2000/svg" width={240} height={240} viewBox="-20 -20 240 240"><g transform={facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined}><AnimatedCharacterArt species={species} mood="happy" bodyColour={PALETTE.petDefault} frame={frame} strokeScale={1.6} /></g></svg>), { font: { loadSystemFonts: false } }).render()
         let outside = 0
         for (let y = 0; y < 240; y++) for (let x = 0; x < 240; x++) {
           if ((x < 20 || x >= 220 || y < 20 || y >= 220) && pixels[(y * 240 + x) * 4 + 3] > 5) outside++
@@ -516,7 +517,7 @@ describe('AnimatedCharacterArt', () => {
         const groundPath = [{ distance: 0, x: 0, y: 0 }, { distance: 0.31, x: dx * 0.31, y: -9.92 }, { distance: 1.13, x: dx * -0.51, y: -36.16 }]
         for (const distance of [stride * 0.25, 1.12]) {
           const frame = sampleMotion({ species, mood, action: 'walk', elapsedMs: distance / 1.13 * 270, durationMs: 270, blinkMs: 0, distance, groundPath, facing, reducedMotion: false })
-          const { pixels } = new Resvg(renderToStaticMarkup(<svg xmlns="http://www.w3.org/2000/svg" width={240} height={240} viewBox="-20 -20 240 240"><g transform={facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined}><AnimatedCharacterArt species={species} mood={mood} bodyColour={PALETTE.petDefault} equipped={outfit} frame={frame} strokeScale={1.6} /></g></svg>)).render()
+          const { pixels } = new Resvg(renderToStaticMarkup(<svg xmlns="http://www.w3.org/2000/svg" width={240} height={240} viewBox="-20 -20 240 240"><g transform={facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined}><AnimatedCharacterArt species={species} mood={mood} bodyColour={PALETTE.petDefault} equipped={outfit} frame={frame} strokeScale={1.6} /></g></svg>), { font: { loadSystemFonts: false } }).render()
           let outside = 0
           for (let y = 0; y < 240; y++) for (let x = 0; x < 240; x++) {
             if ((x < 20 || x >= 220 || y < 20 || y >= 220) && pixels[(y * 240 + x) * 4 + 3] > 5) outside++
