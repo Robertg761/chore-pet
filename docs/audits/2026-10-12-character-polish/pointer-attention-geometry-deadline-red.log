@@ -1,0 +1,39 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/playerAttention.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/playerAttention.test.ts (9 tests | 1 failed) 12ms
+   × updates moving face geometry through the original easing deadline 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/playerAttention.test.ts > updates moving face geometry through the original easing deadline
+AssertionError: expected { x: 1, y: -0.5 } to deeply equal { x: 1.1, y: -0.55 }
+
+- Expected
++ Received
+
+  {
+-   "x": 1.1,
+-   "y": -0.55,
++   "x": 1,
++   "y": -0.5,
+  }
+
+ ❯ src/pet/playerAttention.test.ts:36:22
+     34|   const start = sampleAttention(null, { x: 2, y: -1 }, 100)
+     35|   const half = sampleAttention(start, { x: 2.2, y: -1.1 }, 160, false,…
+     36|   expect(half.value).toEqual({ x: 1.1, y: -.55 })
+       |                      ^
+     37|   expect(half.start).toBe(100)
+     38|   const end = sampleAttention(half, { x: 2.4, y: -1.2 }, 220, false, f…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  17:50:34
+   Duration  239ms (transform 71%, import 18%, tests 8%, worker 2%)
+

@@ -19,7 +19,7 @@ import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sor
 import { motionFor } from './activityMotion'
 import { interactionTargets } from './interactions'
 import { usePetMotion } from './usePetMotion'
-import { pointerAttention, sampleAttention, type AttentionPoint, type AttentionSample } from './playerAttention'
+import { faceAttention, pointerPosition, sampleAttention, type AttentionPoint, type AttentionSample } from './playerAttention'
 import { bubbleSpot, bubbleStyle, objectBoxes, type Box, type BubbleSize } from './bubble'
 import './LivingRoom.css'
 
@@ -97,6 +97,7 @@ function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
 }) {
   const [sample, setSample] = useState(() => ({ state: live.current.state, now: performance.now(), attention: { x: 0, y: 0 } }))
   const gaze = useRef<AttentionSample | null>(null)
+  const attentionSource = useRef<AttentionPoint | 'focus' | null>(null)
   const finite = (sample.state.activity.kind === 'react' && sample.now < sample.state.activity.until)
     || (sample.state.noticeStart !== undefined && sample.now < sample.state.noticeStart + ACTION_MS.notice)
   const blending = sample.state.transition && blendProgress(sample.state.transition.start, sample.now) < 1
@@ -108,11 +109,17 @@ function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
     const still = reducedMotion || away || mood === 'sick' || attention.current.reset
     const idle = state.activity.kind === 'idle' && (!state.transition || blendProgress(state.transition.start, now) >= 1)
     if (still || !idle) attention.current.pointer = null
-    const target = !still && idle ? attention.current.pointer ?? (attention.current.focused ? { x: 0, y: -1.5 } : null) : null
-    gaze.current = sampleAttention(gaze.current, target, now, still)
+    const source = !still && idle ? attention.current.pointer ?? (attention.current.focused ? 'focus' : null) : null
+    const localTarget = source === 'focus' ? { x: 0, y: -1.5 } : source
+      ? faceAttention(source, pet.species, mood, motionFor(state, now, pet.species, mood, false).frame, state.facing) : null
+    // Keep the easing snapshot in the outer x-axis. A facing change during
+    // release must not reflect an outgoing cue to the other side of the room.
+    const target = localTarget ? { x: localTarget.x * state.facing, y: localTarget.y } : null
+    gaze.current = sampleAttention(gaze.current, target, now, still, source !== attentionSource.current)
+    attentionSource.current = source
     attention.current.reset = false
     setSample({ state, now, attention: gaze.current.value })
-  }, reduced: reducedMotion }), [reducedMotion, away, mood, attention])
+  }, reduced: reducedMotion }), [reducedMotion, away, mood, pet.species, attention])
   useLayoutEffect(() => {
     // Preference and suppression changes apply before paint, including while hidden.
     tick(performance.now(), reducedMotion)
@@ -371,7 +378,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
           attention: {
             onPointerMove: (event) => {
               if (event.pointerType === 'touch') return
-              attention.current.pointer = pointerAttention(event.clientX, event.clientY, event.currentTarget.getScreenCTM?.() ?? null)
+              attention.current.pointer = pointerPosition(event.clientX, event.clientY, event.currentTarget.getScreenCTM?.() ?? null)
             },
             onPointerLeave: () => { attention.current.pointer = null },
             onPointerCancel: () => { attention.current.pointer = null },

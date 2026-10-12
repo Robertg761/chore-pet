@@ -1,0 +1,134 @@
+{
+  "freeze": {
+    "baseCommit": "afad803",
+    "sources": {
+      "src/pet/LivingRoom.tsx": "55278ecccf07622ad95ad4a93f0c0d975f43dca75216263d206d62cf46e687a3",
+      "src/pet/playerAttention.ts": "06b7d8559968218fb3770743c7cc0d007af021bc60ded0da9088cfde673c5536",
+      "src/pet/playerAttention.test.ts": "5fba17d57ff050aecbb7de893d66c54a9364b54471b8ba65d906e43204b66e5a",
+      "src/pet/PetIntegration.test.tsx": "12b2bdd498612234121c450056459dacdd146b673c126a4a4772aa260e6f4c4a",
+      "docs/ART.md": "dc2a2f0085eaf3fe00e9191f6dc000dcd04d2a274e7010e032ab5b9c5089c31f",
+      "src/pet/playerFaceAttention.test.tsx": "a30390869a164401fcc0d1f1409cd50665e3d9f46482954c456cfc5fbbeccfe1",
+      "scripts/browser/pet-pointer-attention.test.mjs": "daf5a88c802af91ad5267d274eb3f5c81985f3ebcb6958f5031684f058e2750c",
+      "docs/audits/2026-10-12-character-polish/capture-pointer-attention.mjs": "d9dc0146c80cf5025ce2cac23736139203df9e92bcb41dfd72a33a60f56b70f5"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/pointer-attention-source.diff",
+      "sha256": "37f3dcf2176dfbecd5f66eb68340bdea92ed30d4384edf75f2cad2cd9a67694f"
+    },
+    "artifacts": {
+      "docs/audits/2026-10-12-character-polish/pointer-attention-before.png": "4c768d814cf9240af9bec9087ecc6b628d24faa1cea7937480ab5be5e7ae09e1",
+      "docs/audits/2026-10-12-character-polish/pointer-attention-after.png": "e8675139c69fde3c6ce725ba0886d20031bdcc0282b36468fbef07436877cb53",
+      "docs/audits/2026-10-12-character-polish/pointer-attention-before.json": "c8d0d6999de63429b8cb7b5f52315f0fe9112d0a9d71d70dd64ba4f3db949cac",
+      "docs/audits/2026-10-12-character-polish/pointer-attention-after.json": "9b09af24faf3720da7415f460f3e401a6d3097f715a947de7277cbb164a2034f",
+      "docs/audits/2026-10-12-character-polish/pointer-attention-baseline.ts.txt": "1097cf8467bf7b8b4f089a585639cda21550aca403bdf9d645ecdf827d48202e"
+    },
+    "scope": "8file pointer geometry/easing change. Static/still review;root execution separate. Root inspected both72size-view sheets. No human temporal or AT playback claim."
+  },
+  "checks": [
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-red.log",
+      "logSha256": "dcb8c64364b158e1915f5bd3f18698bac7e0dc97eabd405d97f0bbb8b482a130",
+      "exitCode": 1,
+      "result": "5missing-export failures;initial test draft outside src until batch17checkpoint"
+    },
+    {
+      "name": "green",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-green.log",
+      "logSha256": "afdf0a24a191624b20cd5a7c08e56c9517b7edcf7f5be365ecf36a8efe505f29",
+      "exitCode": 1,
+      "result": "2obsolete3x2independentclamp assertions fail/91pass"
+    },
+    {
+      "name": "geometry-deadline-red",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-geometry-deadline-red.log",
+      "logSha256": "a7dd41e94cd07c25205620cc8e29bff21cbee0f68ed03f5fd11582ecb7a1ac50",
+      "exitCode": 1,
+      "result": "geometry retarget resets original deadline"
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-focused.log",
+      "logSha256": "d372a305d8f8dd2620b2c23aead92b5cd8c99f78d450f113a8e7f7281f20a6d0",
+      "exitCode": 0,
+      "result": "94pass/3files3.93s;beforeturnregression"
+    },
+    {
+      "name": "turn-red",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-turn-red.log",
+      "logSha256": "3068c43a701ef50e557a3188dfcf599a7ea8ee6685ee91f63bf56fdb26950334",
+      "exitCode": 1,
+      "result": "1fail/80pass;outgoingpointerx flips1.0984roomunits"
+    },
+    {
+      "name": "focused-final",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-focused-final.log",
+      "logSha256": "c7983eed3695cad500e05880d12038adbd776476c2f83af2544469338460aab3",
+      "exitCode": 0,
+      "result": "95pass/3files3.85s"
+    },
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-browser-red.log",
+      "logSha256": "cda8b938c4a89856c2b61825df81c18a8f724ad9f782a3bb9701997182a4a1f9",
+      "exitCode": 1,
+      "result": "3actualdirectionfailures0.0215\u20130.0233CSSpx oldartifact"
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-build.log",
+      "logSha256": "1214652134374ab8cd00223d40c1b354d9847b08056ce2ea0715003d297103ad",
+      "exitCode": 0,
+      "result": "TypeScript/production build"
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "zero warnings"
+    },
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-capture-before.log",
+      "logSha256": "cdd152b9e7ca1720e13be0d74f8cf40334629612928b7ee1e2838753586fc24d",
+      "exitCode": 0,
+      "result": "72views/24samplecells;exact stored prior module"
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-capture-after.log",
+      "logSha256": "6118fd6ee727eedb3554c45be29bd07065dcb9a04f78f4d50cbba3200b588c5f",
+      "exitCode": 0,
+      "result": "72views/24samplecells;current module"
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-browser.log",
+      "logSha256": "0ee559529e5bb9f6c129e8c5f23f336c3e7c3d15d14f687e2e4ab55d827e3960",
+      "exitCode": 0,
+      "result": "21pass30.1005s;3nativepointer+resident/player/regression"
+    },
+    {
+      "name": "full",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n10 npm test -- --maxWorkers=1",
+      "log": "docs/audits/2026-10-12-character-polish/pointer-attention-full.log",
+      "logSha256": "c21043930827e71430c94521680b29cc9021eb4e9f0a89144c82f116804c7917",
+      "exitCode": 0,
+      "result": "2093pass/96files60.94s"
+    }
+  ],
+  "commands": "NODE_OPTIONS=--max-old-space-size=768 nice -n10;unit npm test -- --maxWorkers=1;build npm run build;lint npm run lint;capture node docs/audits/2026-10-12-character-polish/capture-pointer-attention.mjs before|after;browser CHROME=/usr/bin/chromium node --test --test-concurrency=1 scripts/browser/pet-pointer-attention.test.mjs scripts/browser/pet-motion.test.mjs scripts/browser/pet-idle-clock.test.mjs scripts/browser/pet-play.test.mjs. Focused paths/root commands preserved in corresponding logs.",
+  "limits": [
+    "24dressed samples with200/60/25px views per sheet establish sampled static art only.",
+    "Actual pointer checks use3species/3directions,openeyes and CSSpxperpendicular tolerance. Pure drawn-eye checks cover4upright moods/2facings andnear/far/centredtargets.",
+    "No CPU/battery savings measurement or human temporal/ATplayback."
+  ],
+  "resources": "Heavyworksequential,oneVitestworker/oneChromium. RAMavailable6.8GB,/tmp4.1GBfree;lastaccount13%used,ordinaryusageallowed.",
+  "pending": [],
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/pointer-attention-review.md",
+    "sha256": "d600e09213227c8267d29272b1524325e738f5b55a5d5c6b79ba9d9a1338eeb8",
+    "scope": "Exact8-file static/still approval;root execution separately recorded."
+  }
+}

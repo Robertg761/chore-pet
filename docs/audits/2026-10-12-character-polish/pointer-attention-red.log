@@ -1,0 +1,58 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/playerFaceAttention.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/playerFaceAttention.test.tsx (5 tests | 5 failed) 59ms
+   × retains the exact input point through scale, rotation, shear and translation 3ms
+   × rejects nonfinite and singular input geometry 0ms
+   × mochi aims from its actual drawn eyes through both mirrors and every upright mood 32ms
+   × bun aims from its actual drawn eyes through both mirrors and every upright mood 13ms
+   × sprout aims from its actual drawn eyes through both mirrors and every upright mood 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/playerFaceAttention.test.tsx > retains the exact input point through scale, rotation, shear and translation
+TypeError: pointerPosition is not a function
+ ❯ src/pet/playerFaceAttention.test.tsx:40:18
+     38|     { a: 0, b: 2, c: -2, d: 0, e: 410, f: 20 }, { a: 2, b: .5, c: 1, d…
+     39|     for (const p of [{ x: 100, y: 124 }, { x: 170, y: 56 }, { x: -1000…
+     40|       const at = pointerPosition(matrix.a * p.x + matrix.c * p.y + mat…
+       |                  ^
+     41|       expect(at.x).toBeCloseTo(p.x, 10)
+     42|       expect(at.y).toBeCloseTo(p.y, 10)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/pet/playerFaceAttention.test.tsx > rejects nonfinite and singular input geometry
+TypeError: pointerPosition is not a function
+ ❯ src/pet/playerFaceAttention.test.tsx:48:10
+     46|
+     47| it('rejects nonfinite and singular input geometry', () => {
+     48|   expect(pointerPosition(0, 0, null)).toBeNull()
+       |          ^
+     49|   expect(pointerPosition(0, 0, { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 })…
+     50|   expect(pointerPosition(Infinity, 0, { a: 1, b: 0, c: 0, d: 1, e: 0, …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/pet/playerFaceAttention.test.tsx > mochi aims from its actual drawn eyes through both mirrors and every upright mood
+ FAIL  src/pet/playerFaceAttention.test.tsx > bun aims from its actual drawn eyes through both mirrors and every upright mood
+ FAIL  src/pet/playerFaceAttention.test.tsx > sprout aims from its actual drawn eyes through both mirrors and every upright mood
+TypeError: faceAttention is not a function
+ ❯ src/pet/playerFaceAttention.test.tsx:61:20
+     59|     for (const [dx, dy] of [[20, 0], [0, 10], [-70, -40], [1000, 800],…
+     60|       const target = { x: origin.x + dx, y: origin.y + dy }
+     61|       const gaze = faceAttention(target, species, mood, frame, facing)
+       |                    ^
+     62|       expect(Math.hypot(gaze.x / 3, gaze.y / 2)).toBeLessThanOrEqual(1…
+     63|       const actual = eyes(species, mood, facing, { ...frame, gazeX: ga…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  17:41:58
+   Duration  656ms (environment 51%, transform 29%, tests 11%, import 8%, worker 1%)
+

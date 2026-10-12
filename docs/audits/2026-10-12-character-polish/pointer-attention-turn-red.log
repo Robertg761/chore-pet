@@ -1,0 +1,28 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (81 tests | 1 failed) 1782ms
+   × keeps the outgoing pointer cue in the same world direction when an invitation turns left 24ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps the outgoing pointer cue in the same world direction when an invitation turns left
+AssertionError: expected -0.5491995236510832 to be close to 0.5491995236511116, received difference is 1.0983990473021947, but expected 5e-11
+ ❯ src/pet/PetIntegration.test.tsx:342:20
+    340|   expect(resident.querySelector('[transform="translate(200 0) scale(-1…
+    341|   const after = direction()
+    342|   expect(after[0]).toBeCloseTo(before[0], 10)
+       |                    ^
+    343|   expect(after[1]).toBeCloseTo(before[1], 10)
+    344| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 80 passed (81)
+   Start at  17:51:56
+   Duration  2.81s (tests 66%, transform 21%, environment 10%, import 4%)
+

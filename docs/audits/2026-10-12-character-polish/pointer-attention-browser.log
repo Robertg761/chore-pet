@@ -1,0 +1,52 @@
+✔ the reduced resident stops idle frames but completes an explicit response (1280.518348ms)
+ℹ Chromium 152.0.7977.82; reduced:0 idle frames,1 finite clock,0 after response
+✔ the sick resident stops idle frames but completes an explicit response (934.981734ms)
+ℹ Chromium 152.0.7977.82; sick:0 idle frames,1 finite clock,0 after response
+✔ the away resident stops idle frames but completes an explicit response (907.94801ms)
+ℹ Chromium 152.0.7977.82; away:0 idle frames,1 finite clock,0 after response
+✔ keyboard Enter reaches and activates the resident without moving its world position (1030.997537ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (967.278496ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (2920.259055ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.0140 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1100.889769ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.0740 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (1732.476932ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (907.352336ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1229.585619ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (1276.376499ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 513ms; lift sampled at 1269ms; landing at 1689ms
+✔ native player choices stay still and fit 320px (1622.025172ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (1725.387942ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (1567.883645ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (1557.329759ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (1554.951382ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (887.343464ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2252.749973ms)
+ℹ Chromium 152.0.7977.82; join0.2253roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ mochi follows horizontal and vertical pointers from its actual drawn eyes (1071.690905ms)
+ℹ Chromium 152.0.7977.82; actual eye ink;3pointer directions; no saved changes
+✔ bun follows horizontal and vertical pointers from its actual drawn eyes (1055.644424ms)
+ℹ Chromium 152.0.7977.82; actual eye ink;3pointer directions; no saved changes
+✔ sprout follows horizontal and vertical pointers from its actual drawn eyes (1004.893404ms)
+ℹ Chromium 152.0.7977.82; actual eye ink;3pointer directions; no saved changes
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30100.542381

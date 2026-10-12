@@ -1,0 +1,25 @@
+{
+  "baseCommit": "afad803",
+  "sources": {
+    "src/pet/LivingRoom.tsx": "55278ecccf07622ad95ad4a93f0c0d975f43dca75216263d206d62cf46e687a3",
+    "src/pet/playerAttention.ts": "06b7d8559968218fb3770743c7cc0d007af021bc60ded0da9088cfde673c5536",
+    "src/pet/playerAttention.test.ts": "5fba17d57ff050aecbb7de893d66c54a9364b54471b8ba65d906e43204b66e5a",
+    "src/pet/PetIntegration.test.tsx": "12b2bdd498612234121c450056459dacdd146b673c126a4a4772aa260e6f4c4a",
+    "docs/ART.md": "dc2a2f0085eaf3fe00e9191f6dc000dcd04d2a274e7010e032ab5b9c5089c31f",
+    "src/pet/playerFaceAttention.test.tsx": "a30390869a164401fcc0d1f1409cd50665e3d9f46482954c456cfc5fbbeccfe1",
+    "scripts/browser/pet-pointer-attention.test.mjs": "daf5a88c802af91ad5267d274eb3f5c81985f3ebcb6958f5031684f058e2750c",
+    "docs/audits/2026-10-12-character-polish/capture-pointer-attention.mjs": "d9dc0146c80cf5025ce2cac23736139203df9e92bcb41dfd72a33a60f56b70f5"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/pointer-attention-source.diff",
+    "sha256": "37f3dcf2176dfbecd5f66eb68340bdea92ed30d4384edf75f2cad2cd9a67694f"
+  },
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/pointer-attention-before.png": "4c768d814cf9240af9bec9087ecc6b628d24faa1cea7937480ab5be5e7ae09e1",
+    "docs/audits/2026-10-12-character-polish/pointer-attention-after.png": "e8675139c69fde3c6ce725ba0886d20031bdcc0282b36468fbef07436877cb53",
+    "docs/audits/2026-10-12-character-polish/pointer-attention-before.json": "c8d0d6999de63429b8cb7b5f52315f0fe9112d0a9d71d70dd64ba4f3db949cac",
+    "docs/audits/2026-10-12-character-polish/pointer-attention-after.json": "9b09af24faf3720da7415f460f3e401a6d3097f715a947de7277cbb164a2034f",
+    "docs/audits/2026-10-12-character-polish/pointer-attention-baseline.ts.txt": "1097cf8467bf7b8b4f089a585639cda21550aca403bdf9d645ecdf827d48202e"
+  },
+  "scope": "8file pointer geometry/easing change. Static/still review;root execution separate. Root inspected both72size-view sheets. No human temporal or AT playback claim."
+}

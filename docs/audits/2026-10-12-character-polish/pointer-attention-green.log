@@ -1,0 +1,52 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/playerFaceAttention.test.tsx src/pet/playerAttention.test.ts src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (80 tests | 2 failed) 1726ms
+   × eases idle eyes toward a pointer, releases them smoothly and keeps one clock without room redraws 22ms
+   × ignores touch pointer movement and clears stale hover after hiding 20ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > eases idle eyes toward a pointer, releases them smoothly and keeps one clock without room redraws
+AssertionError: expected 'translate(0.8320517951612192 -0.83204…' to be 'translate(1.5 -1)' // Object.is equality
+
+Expected: "translate(1.5 -1)"
+Received: "translate(0.8320517951612192 -0.8320496273043634)"
+
+ ❯ src/pet/PetIntegration.test.tsx:260:30
+    258|   expect(gaze(ui.container)).toBe('translate(0 0)')
+    259|   frame(76)
+    260|   expect(gaze(ui.container)).toBe('translate(1.5 -1)')
+       |                              ^
+    261|   frame(136)
+    262|   expect(gaze(ui.container)).toBe('translate(3 -2)')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > ignores touch pointer movement and clears stale hover after hiding
+AssertionError: expected 'translate(1.6643702190899305 -1.66398…' to be 'translate(3 -2)' // Object.is equality
+
+Expected: "translate(3 -2)"
+Received: "translate(1.6643702190899305 -1.663980738911834)"
+
+ ❯ src/pet/PetIntegration.test.tsx:307:30
+    305|   pointerAt(resident, 170, 56, 'pen')
+    306|   frame(152); frame(272)
+    307|   expect(gaze(ui.container)).toBe('translate(3 -2)')
+       |                              ^
+    308|   visibility(true)
+    309|   expect(frames.size).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 91 passed (93)
+   Start at  17:49:36
+   Duration  4.00s (tests 65%, transform 16%, environment 14%, import 5%)
+
+    Isolate  3 workers spawned · ~261ms startup each (spawn + environment, per file)
+             at least ~521ms faster with isolate: false — reuses workers across files instead of one per file
+

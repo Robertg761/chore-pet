@@ -14,6 +14,7 @@ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
 import { initialPet, positionAt, step, type PetState } from './behaviour'
 import { motionFor } from './activityMotion'
 import { PET_SCALE, roomPoint } from '../room/shell/geometry'
+import { faceAttention } from './playerAttention'
 
 const roomRenders = vi.hoisted(() => ({ count: 0 }))
 vi.mock('../room/Room', async (importOriginal) => {
@@ -60,6 +61,13 @@ function pointerAt(node: Element, x: number, y: number, pointerType = 'mouse') {
 
 function gaze(container: Element) {
   return container.querySelector('[data-eye-gaze]')!.getAttribute('transform')
+}
+function expectPointerGaze(container: Element, at: number, fraction = 1) {
+  const base = motionFor(initialPet(props.initialTile!, 0), at, 'bun', 'happy', false).frame
+  const target = faceAttention({ x: 170, y: 56 }, 'bun', 'happy', base, 1)
+  const values = gaze(container)!.slice('translate('.length, -1).split(' ').map(Number)
+  expect(values[0]).toBeCloseTo(target.x * fraction, 10)
+  expect(values[1]).toBeCloseTo(target.y * fraction, 10)
 }
 
 it('uses no reduced idle frames, responds to invitations, and clocks only a finite greeting', () => {
@@ -257,12 +265,13 @@ it('eases idle eyes toward a pointer, releases them smoothly and keeps one clock
   frame(16)
   expect(gaze(ui.container)).toBe('translate(0 0)')
   frame(76)
-  expect(gaze(ui.container)).toBe('translate(1.5 -1)')
+  expectPointerGaze(ui.container, 76, .5)
   frame(136)
-  expect(gaze(ui.container)).toBe('translate(3 -2)')
+  expectPointerGaze(ui.container, 136)
+  const held = gaze(ui.container)
   act(() => resident.dispatchEvent(new MouseEvent('pointerout', { bubbles: true })))
   frame(152)
-  expect(gaze(ui.container)).toBe('translate(3 -2)')
+  expect(gaze(ui.container)).toBe(held)
   frame(272)
   expect(gaze(ui.container)).toBe('translate(0 0)')
   expect(roomRenders.count).toBe(renderedRooms)
@@ -304,13 +313,34 @@ it('ignores touch pointer movement and clears stale hover after hiding', () => {
   expect(gaze(ui.container)).toBe('translate(0 0)')
   pointerAt(resident, 170, 56, 'pen')
   frame(152); frame(272)
-  expect(gaze(ui.container)).toBe('translate(3 -2)')
+  expectPointerGaze(ui.container, 272)
   visibility(true)
   expect(frames.size).toBe(0)
   visibility(false)
   frame(288)
   expect(gaze(ui.container)).toBe('translate(0 0)')
   expect(frames.size).toBe(1)
+})
+
+it('keeps the outgoing pointer cue in the same world direction when an invitation turns left', () => {
+  const control = createRef<LivingRoomControl>()
+  const ui = mount(<LivingRoom {...props} mood="happy" objects={[{ ...plant, tileX: 0, tileY: 2 }]} control={control} />)
+  const resident = ui.container.querySelector('.room-pet')!
+  Object.defineProperty(resident, 'getScreenCTM', { value: () => ({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }) })
+  pointerAt(resident, 170, 56)
+  frame(16); frame(136)
+  const direction = () => {
+    const eye = ui.container.querySelector('[data-eye-gaze]')!
+    const origin = worldPoint(eye.parentElement!, 0, 0), shifted = worldPoint(eye, 0, 0)
+    return [shifted[0] - origin[0], shifted[1] - origin[1]]
+  }
+  const before = direction()
+  expect(before[0]).toBeGreaterThan(0)
+  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
+  expect(resident.querySelector('[transform="translate(200 0) scale(-1 1)"]')).not.toBeNull()
+  const after = direction()
+  expect(after[0]).toBeCloseTo(before[0], 10)
+  expect(after[1]).toBeCloseTo(before[1], 10)
 })
 
 function expectEyeScale(container: Element, expected: number) {

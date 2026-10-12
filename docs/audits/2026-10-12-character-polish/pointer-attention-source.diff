@@ -1,0 +1,486 @@
+diff --git i/docs/ART.md w/docs/ART.md
+index 7ea2a15..4b571d2 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -138,7 +138,7 @@ Every pose defines all six anchors (`src/character/slots.ts`). Items are drawn c
+ - Idle appendages follow the existing four-second breath with a small species-specific delay; they settle to neutral position and zero velocity at the loop boundary. Feet, body position and shadow stay fixed. Primary140ms blinks keep their lifetime phase across actions; every other primary blink has a second140ms blink after60ms fully open. Sleeping and sick art retain their existing static geometry.
+ - Environmental profiles live in `src/pet/interactions.ts`. They choose reachable adjacent standing tiles and gaze points from the rotated object footprint. Kitchen profiles gaze at the rendered basin/plate stacks, pot knob/raised lid, retained freezer magnet, and tomato/takeout opening. Bathroom profiles follow the shower-head underside/water spot/steam smiley, toilet flush button/lid smudge/stained water line, and washer window/laundry/open-door fabric. Points follow the current condition. The remaining catalog profiles follow dishwasher controls/plate stacks, dining-table flower/place settings, coffee-table top/plates, trash handle/bags and retained recycling badge. The resident reserves additional front clearance for the folded messy2 dishwasher door, mirrored with its art; placement footprints remain fixed. Resident and multi-room routes share the same condition-aware pet obstacles. A clearance change replans travel from its current drawn position; closed fixtures restore their original routes. This changes pet navigation without changing placement footprints. Current profiles use contact-free gestures; no paw-to-furniture contact geometry is verified. Do not depict chores being completed or sitting on furniture without dedicated anchors and occlusion rules.
+ - Clean-object interactions use two calm observations for each of the24 catalog/decor entries, including reward decor. Select by the held interaction beat so turns, action and settling keep one line. Unmapped objects use calm mood content; dirty objects retain condition dialogue. Player responses take priority, and ambient observations remain silent in the live region.
+-- Idle resident attention eases toward mouse/pen input or keyboard focus over 120 ms on the existing room clock. Map through the outer pet group's screen transform, then compensate horizontal gaze for facing. Real actions take priority. Reduced motion, sick/away states, and hidden hover reset suppress the cue; touch movement does not activate it.
++- Idle resident attention eases toward mouse/pen input or keyboard focus over 120 ms on the existing room clock. Retain the input point through the outer pet group's screen transform, then aim from the actual species/mood eyes through the current torso and facing. A single scalar caps eye travel while preserving direction. Breathing updates geometry through the original easing deadline; only a new input source restarts it. Store the easing's horizontal cue in the outer axis so an outgoing cue keeps its world direction during a left/right turn. Real actions take priority. Reduced motion, sick/away states, and hidden hover reset suppress the cue; touch movement does not activate it.
+ - Dark body colors use small cream backdrops behind the shared eyes, brows, and mouth when facial ink would lose contrast. Keep the selected body color and existing facial paths; light colors retain their original treatment. Check static and sampled open, blinking, pleased, sleeping, and tired expressions with glasses.
+ 
+ ## Reviewing art
+diff --git i/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index c7f2ca6..6355e97 100644
+--- i/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -19,7 +19,7 @@ import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sor
+ import { motionFor } from './activityMotion'
+ import { interactionTargets } from './interactions'
+ import { usePetMotion } from './usePetMotion'
+-import { pointerAttention, sampleAttention, type AttentionPoint, type AttentionSample } from './playerAttention'
++import { faceAttention, pointerPosition, sampleAttention, type AttentionPoint, type AttentionSample } from './playerAttention'
+ import { bubbleSpot, bubbleStyle, objectBoxes, type Box, type BubbleSize } from './bubble'
+ import './LivingRoom.css'
+ 
+@@ -97,6 +97,7 @@ function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
+ }) {
+   const [sample, setSample] = useState(() => ({ state: live.current.state, now: performance.now(), attention: { x: 0, y: 0 } }))
+   const gaze = useRef<AttentionSample | null>(null)
++  const attentionSource = useRef<AttentionPoint | 'focus' | null>(null)
+   const finite = (sample.state.activity.kind === 'react' && sample.now < sample.state.activity.until)
+     || (sample.state.noticeStart !== undefined && sample.now < sample.state.noticeStart + ACTION_MS.notice)
+   const blending = sample.state.transition && blendProgress(sample.state.transition.start, sample.now) < 1
+@@ -108,11 +109,17 @@ function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
+     const still = reducedMotion || away || mood === 'sick' || attention.current.reset
+     const idle = state.activity.kind === 'idle' && (!state.transition || blendProgress(state.transition.start, now) >= 1)
+     if (still || !idle) attention.current.pointer = null
+-    const target = !still && idle ? attention.current.pointer ?? (attention.current.focused ? { x: 0, y: -1.5 } : null) : null
+-    gaze.current = sampleAttention(gaze.current, target, now, still)
++    const source = !still && idle ? attention.current.pointer ?? (attention.current.focused ? 'focus' : null) : null
++    const localTarget = source === 'focus' ? { x: 0, y: -1.5 } : source
++      ? faceAttention(source, pet.species, mood, motionFor(state, now, pet.species, mood, false).frame, state.facing) : null
++    // Keep the easing snapshot in the outer x-axis. A facing change during
++    // release must not reflect an outgoing cue to the other side of the room.
++    const target = localTarget ? { x: localTarget.x * state.facing, y: localTarget.y } : null
++    gaze.current = sampleAttention(gaze.current, target, now, still, source !== attentionSource.current)
++    attentionSource.current = source
+     attention.current.reset = false
+     setSample({ state, now, attention: gaze.current.value })
+-  }, reduced: reducedMotion }), [reducedMotion, away, mood, attention])
++  }, reduced: reducedMotion }), [reducedMotion, away, mood, pet.species, attention])
+   useLayoutEffect(() => {
+     // Preference and suppression changes apply before paint, including while hidden.
+     tick(performance.now(), reducedMotion)
+@@ -371,7 +378,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+           attention: {
+             onPointerMove: (event) => {
+               if (event.pointerType === 'touch') return
+-              attention.current.pointer = pointerAttention(event.clientX, event.clientY, event.currentTarget.getScreenCTM?.() ?? null)
++              attention.current.pointer = pointerPosition(event.clientX, event.clientY, event.currentTarget.getScreenCTM?.() ?? null)
+             },
+             onPointerLeave: () => { attention.current.pointer = null },
+             onPointerCancel: () => { attention.current.pointer = null },
+diff --git i/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index a22dddc..0c1c016 100644
+--- i/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -14,6 +14,7 @@ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+ import { initialPet, positionAt, step, type PetState } from './behaviour'
+ import { motionFor } from './activityMotion'
+ import { PET_SCALE, roomPoint } from '../room/shell/geometry'
++import { faceAttention } from './playerAttention'
+ 
+ const roomRenders = vi.hoisted(() => ({ count: 0 }))
+ vi.mock('../room/Room', async (importOriginal) => {
+@@ -61,6 +62,13 @@ function pointerAt(node: Element, x: number, y: number, pointerType = 'mouse') {
+ function gaze(container: Element) {
+   return container.querySelector('[data-eye-gaze]')!.getAttribute('transform')
+ }
++function expectPointerGaze(container: Element, at: number, fraction = 1) {
++  const base = motionFor(initialPet(props.initialTile!, 0), at, 'bun', 'happy', false).frame
++  const target = faceAttention({ x: 170, y: 56 }, 'bun', 'happy', base, 1)
++  const values = gaze(container)!.slice('translate('.length, -1).split(' ').map(Number)
++  expect(values[0]).toBeCloseTo(target.x * fraction, 10)
++  expect(values[1]).toBeCloseTo(target.y * fraction, 10)
++}
+ 
+ it('uses no reduced idle frames, responds to invitations, and clocks only a finite greeting', () => {
+   Object.defineProperty(media, 'matches', { value: true, configurable: true })
+@@ -257,12 +265,13 @@ it('eases idle eyes toward a pointer, releases them smoothly and keeps one clock
+   frame(16)
+   expect(gaze(ui.container)).toBe('translate(0 0)')
+   frame(76)
+-  expect(gaze(ui.container)).toBe('translate(1.5 -1)')
++  expectPointerGaze(ui.container, 76, .5)
+   frame(136)
+-  expect(gaze(ui.container)).toBe('translate(3 -2)')
++  expectPointerGaze(ui.container, 136)
++  const held = gaze(ui.container)
+   act(() => resident.dispatchEvent(new MouseEvent('pointerout', { bubbles: true })))
+   frame(152)
+-  expect(gaze(ui.container)).toBe('translate(3 -2)')
++  expect(gaze(ui.container)).toBe(held)
+   frame(272)
+   expect(gaze(ui.container)).toBe('translate(0 0)')
+   expect(roomRenders.count).toBe(renderedRooms)
+@@ -304,7 +313,7 @@ it('ignores touch pointer movement and clears stale hover after hiding', () => {
+   expect(gaze(ui.container)).toBe('translate(0 0)')
+   pointerAt(resident, 170, 56, 'pen')
+   frame(152); frame(272)
+-  expect(gaze(ui.container)).toBe('translate(3 -2)')
++  expectPointerGaze(ui.container, 272)
+   visibility(true)
+   expect(frames.size).toBe(0)
+   visibility(false)
+@@ -313,6 +322,27 @@ it('ignores touch pointer movement and clears stale hover after hiding', () => {
+   expect(frames.size).toBe(1)
+ })
+ 
++it('keeps the outgoing pointer cue in the same world direction when an invitation turns left', () => {
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" objects={[{ ...plant, tileX: 0, tileY: 2 }]} control={control} />)
++  const resident = ui.container.querySelector('.room-pet')!
++  Object.defineProperty(resident, 'getScreenCTM', { value: () => ({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }) })
++  pointerAt(resident, 170, 56)
++  frame(16); frame(136)
++  const direction = () => {
++    const eye = ui.container.querySelector('[data-eye-gaze]')!
++    const origin = worldPoint(eye.parentElement!, 0, 0), shifted = worldPoint(eye, 0, 0)
++    return [shifted[0] - origin[0], shifted[1] - origin[1]]
++  }
++  const before = direction()
++  expect(before[0]).toBeGreaterThan(0)
++  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
++  expect(resident.querySelector('[transform="translate(200 0) scale(-1 1)"]')).not.toBeNull()
++  const after = direction()
++  expect(after[0]).toBeCloseTo(before[0], 10)
++  expect(after[1]).toBeCloseTo(before[1], 10)
++})
++
+ function expectEyeScale(container: Element, expected: number) {
+   const eyes = container.querySelectorAll('[data-eye-open]')
+   expect(eyes).toHaveLength(2)
+diff --git i/src/pet/playerAttention.test.ts w/src/pet/playerAttention.test.ts
+index da3faa3..4069805 100644
+--- i/src/pet/playerAttention.test.ts
++++ w/src/pet/playerAttention.test.ts
+@@ -1,22 +1,23 @@
+ import { expect, it } from 'vitest'
+-import { pointerAttention, sampleAttention } from './playerAttention'
++import { pointerPosition, sampleAttention } from './playerAttention'
+ 
+ it.each([
+   { matrix: { a: 2, b: 0, c: 0, d: 2, e: 10, f: 20 }, client: [350, 132] },
+   { matrix: { a: 0, b: 2, c: -2, d: 0, e: 410, f: 20 }, client: [298, 360] },
+ ])('maps a screen pointer through the actual SVG transform', ({ matrix, client }) => {
+-  expect(pointerAttention(client[0], client[1], matrix)).toEqual({ x: 3, y: -2 })
++  expect(pointerPosition(client[0], client[1], matrix)).toEqual({ x: 170, y: 56 })
+ })
+ 
+-it('centers the gaze under a sheared, translated scene', () => {
+-  expect(pointerAttention(336, 322, { a: 2, b: 0.5, c: 1, d: 2, e: 10, f: 20 })).toEqual({ x: 0, y: 0 })
++it('retains the point under a sheared, translated scene', () => {
++  expect(pointerPosition(336, 322, { a: 2, b: 0.5, c: 1, d: 2, e: 10, f: 20 })).toEqual({ x: 100, y: 126 })
+ })
+ 
+ it('rejects absent, singular and nonfinite geometry', () => {
+-  expect(pointerAttention(0, 0, null)).toBeNull()
+-  expect(pointerAttention(0, 0, { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 })).toBeNull()
+-  expect(pointerAttention(Infinity, 0, { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 })).toBeNull()
+-  expect(pointerAttention(0, 0, { a: 1, b: 0, c: 0, d: 1, e: NaN, f: 0 })).toBeNull()
++  expect(pointerPosition(0, 0, null)).toBeNull()
++  expect(pointerPosition(0, 0, { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 })).toBeNull()
++  expect(pointerPosition(Infinity, 0, { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 })).toBeNull()
++  expect(pointerPosition(0, 0, { a: 1, b: 0, c: 0, d: 1, e: NaN, f: 0 })).toBeNull()
++  expect(pointerPosition(0, 0, { a: 1e308, b: 0, c: 0, d: 1e308, e: 0, f: 0 })).toBeNull()
+ })
+ 
+ it('eases to the bounded gaze in 120ms independently of sampling frequency', () => {
+@@ -29,6 +30,16 @@ it('eases to the bounded gaze in 120ms independently of sampling frequency', ()
+   expect(sampleAttention(start, { x: 3, y: -2 }, 220).value).toEqual(end.value)
+ })
+ 
++it('updates moving face geometry through the original easing deadline', () => {
++  const start = sampleAttention(null, { x: 2, y: -1 }, 100)
++  const half = sampleAttention(start, { x: 2.2, y: -1.1 }, 160, false, false)
++  expect(half.value).toEqual({ x: 1.1, y: -.55 })
++  expect(half.start).toBe(100)
++  const end = sampleAttention(half, { x: 2.4, y: -1.2 }, 220, false, false)
++  expect(end.value).toEqual({ x: 2.4, y: -1.2 })
++  expect(end.start).toBe(100)
++})
++
+ it('retargets from the current value without a jump and leaves the previous snapshot intact', () => {
+   const first = sampleAttention(null, { x: 3, y: -2 }, 100)
+   const original = structuredClone(first)
+diff --git i/src/pet/playerAttention.ts w/src/pet/playerAttention.ts
+index 8cb1982..23880c6 100644
+--- i/src/pet/playerAttention.ts
++++ w/src/pet/playerAttention.ts
+@@ -1,3 +1,8 @@
++import type { Mood, Species } from '../domain/types'
++import type { MotionFrame } from '../character/motion'
++import { poseNameFor } from '../character/poses'
++import { articulatedFaceDelta } from '../character/species/animatedBody'
++
+ export interface AttentionPoint { x: number; y: number }
+ type ScreenMatrix = Pick<DOMMatrix, 'a' | 'b' | 'c' | 'd' | 'e' | 'f'>
+ export interface AttentionSample {
+@@ -9,25 +14,43 @@ export interface AttentionSample {
+ 
+ const bounded = (value: number, limit: number) => Number.isFinite(value) ? Math.max(-limit, Math.min(limit, value)) : 0
+ 
+-/** Convert screen input into the unmirrored 200-unit character space. */
+-export function pointerAttention(clientX: number, clientY: number, matrix: ScreenMatrix | null): AttentionPoint | null {
++/** Retain screen input in the outer, unmirrored 200-unit character container. */
++export function pointerPosition(clientX: number, clientY: number, matrix: ScreenMatrix | null): AttentionPoint | null {
+   if (!matrix || ![clientX, clientY, matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f].every(Number.isFinite)) return null
+   const determinant = matrix.a * matrix.d - matrix.b * matrix.c
+-  if (Math.abs(determinant) < 1e-8) return null
++  if (!Number.isFinite(determinant) || Math.abs(determinant) < 1e-8) return null
+   const dx = clientX - matrix.e, dy = clientY - matrix.f
+   const x = (matrix.d * dx - matrix.c * dy) / determinant
+   const y = (matrix.a * dy - matrix.b * dx) / determinant
+-  return { x: bounded((x - 100) / 70 * 3, 3), y: bounded((y - 126) / 70 * 2, 2) }
++  return Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null
++}
++
++/** Aim from the current drawn eyes; one scalar preserves local face direction. */
++export function faceAttention(point: AttentionPoint, species: Species, mood: Mood, frame: MotionFrame, facing: 1 | -1): AttentionPoint {
++  if (![point.x, point.y].every(Number.isFinite)) return { x: 0, y: 0 }
++  const delta = articulatedFaceDelta(species, frame, poseNameFor(mood), { x: 100 + (point.x - 100) * facing, y: point.y })
++  // Gentle nearby travel reaches three units at70horizontal units. An
++  // elliptical cap keeps both actual eye limits without distorting direction.
++  const length = Math.max(70 / 3, Math.hypot(delta.x / 3, delta.y / 2))
++  return { x: delta.x / length, y: delta.y / length }
+ }
+ 
+ /** Absolute-time easing on the room's clock, with continuous retargeting. */
+-export function sampleAttention(previous: AttentionSample | null, target: AttentionPoint | null, now: number, still = false): AttentionSample {
++export function sampleAttention(previous: AttentionSample | null, target: AttentionPoint | null, now: number, still = false, retarget = true): AttentionSample {
+   const at = Number.isFinite(now) ? now : previous?.start ?? 0
+   const next = { x: still ? 0 : bounded(target?.x ?? 0, 3), y: still ? 0 : bounded(target?.y ?? 0, 2) }
+   const zero = { x: 0, y: 0 }
+   if (still || !previous) return { from: zero, target: next, start: at, value: zero }
+   const progress = Math.max(0, Math.min(1, (at - previous.start) / 120))
+   const eased = progress * progress * (3 - 2 * progress)
++  if (!retarget) {
++    // The same input point follows breathing geometry without restarting its
++    // deadline. A new pointer/focus source still retargets continuously below.
++    return { ...previous, target: next, value: {
++      x: previous.from.x + (next.x - previous.from.x) * eased,
++      y: previous.from.y + (next.y - previous.from.y) * eased,
++    } }
++  }
+   const value = {
+     x: previous.from.x + (previous.target.x - previous.from.x) * eased,
+     y: previous.from.y + (previous.target.y - previous.from.y) * eased,
+diff --git 1/src/pet/playerFaceAttention.test.tsx 2/src/pet/playerFaceAttention.test.tsx
+new file mode 100644
+index 0000000..d3d188f
+--- /dev/null
++++ 2/src/pet/playerFaceAttention.test.tsx
+@@ -0,0 +1,74 @@
++// @vitest-environment jsdom
++import { expect, it } from 'vitest'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
++import { sampleMotion, type MotionFrame } from '../character/motion'
++import type { Mood, Species } from '../domain/types'
++import { faceAttention, pointerPosition } from './playerAttention'
++
++// Forward SVG evaluation is independent of the production inverse face helper.
++function pointAt(node: Element, x: number, y: number) {
++  for (let el: Element | null = node; el; el = el.parentElement) {
++    for (const [, op, args] of [...(el.getAttribute('transform') ?? '').matchAll(/(translate|scale|rotate)\(([^)]+)\)/g)].reverse()) {
++      const v = args.split(/[ ,]+/).map(Number)
++      if (op === 'translate') { x += v[0]; y += v[1] ?? 0 }
++      if (op === 'scale') { x *= v[0]; y *= v[1] ?? v[0] }
++      if (op === 'rotate') {
++        const a = v[0] * Math.PI / 180, cx = v[1] ?? 0, cy = v[2] ?? 0
++        ;[x, y] = [cx + (x - cx) * Math.cos(a) - (y - cy) * Math.sin(a), cy + (x - cx) * Math.sin(a) + (y - cy) * Math.cos(a)]
++      }
++    }
++  }
++  return { x, y }
++}
++
++function eyes(species: Species, mood: Mood, facing: 1 | -1, frame: MotionFrame) {
++  const container = document.createElement('div')
++  container.innerHTML = renderToStaticMarkup(<svg><g transform={facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined}>
++    <AnimatedCharacterArt species={species} mood={mood} bodyColour="#FFB6C1" equipped={{ face: 'glasses' }} frame={frame} />
++  </g></svg>)
++  const points = [...container.querySelectorAll('[data-eye-gaze] ellipse')].map(node =>
++    pointAt(node, +node.getAttribute('cx')!, +node.getAttribute('cy')!))
++  expect(points).toHaveLength(2)
++  return { x: (points[0].x + points[1].x) / 2, y: (points[0].y + points[1].y) / 2 }
++}
++
++it('retains the exact input point through scale, rotation, shear and translation', () => {
++  for (const matrix of [{ a: 2, b: 0, c: 0, d: 2, e: 10, f: 20 },
++    { a: 0, b: 2, c: -2, d: 0, e: 410, f: 20 }, { a: 2, b: .5, c: 1, d: 2, e: 10, f: 20 }]) {
++    for (const p of [{ x: 100, y: 124 }, { x: 170, y: 56 }, { x: -1000, y: 3000 }]) {
++      const at = pointerPosition(matrix.a * p.x + matrix.c * p.y + matrix.e, matrix.b * p.x + matrix.d * p.y + matrix.f, matrix)!
++      expect(at.x).toBeCloseTo(p.x, 10)
++      expect(at.y).toBeCloseTo(p.y, 10)
++    }
++  }
++})
++
++it('rejects nonfinite and singular input geometry', () => {
++  expect(pointerPosition(0, 0, null)).toBeNull()
++  expect(pointerPosition(0, 0, { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 })).toBeNull()
++  expect(pointerPosition(Infinity, 0, { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 })).toBeNull()
++  expect(pointerPosition(0, 0, { a: 1, b: 0, c: 0, d: 1, e: NaN, f: 0 })).toBeNull()
++})
++
++it.each(['mochi', 'bun', 'sprout'] as const)('%s aims from its actual drawn eyes through both mirrors and every upright mood', species => {
++  for (const mood of ['happy', 'content', 'meh', 'scruffy'] as const) for (const facing of [1, -1] as const) {
++    const frame = { ...sampleMotion({ species, mood, action: 'idle', elapsedMs: 800, distance: 0, durationMs: 4000, reducedMotion: false }),
++      bodyX: 3, bodyY: -2, lean: 8, scaleX: 1.06, scaleY: .94, gazeX: 0, gazeY: 0, eyeOpen: 1 }
++    const origin = eyes(species, mood, facing, frame)
++    for (const [dx, dy] of [[20, 0], [0, 10], [-70, -40], [1000, 800], [-.1, 0], [0, 0]]) {
++      const target = { x: origin.x + dx, y: origin.y + dy }
++      const gaze = faceAttention(target, species, mood, frame, facing)
++      expect(Math.hypot(gaze.x / 3, gaze.y / 2)).toBeLessThanOrEqual(1 + 1e-12)
++      const actual = eyes(species, mood, facing, { ...frame, gazeX: gaze.x, gazeY: gaze.y })
++      const shift = { x: actual.x - origin.x, y: actual.y - origin.y }
++      if (!dx && !dy) {
++        expect(shift.x).toBeCloseTo(0, 10)
++        expect(shift.y).toBeCloseTo(0, 10)
++      } else {
++        expect(shift.x * dx + shift.y * dy).toBeGreaterThan(0)
++        expect(Math.abs(shift.x * dy - shift.y * dx) / Math.hypot(dx, dy)).toBeLessThan(1e-9)
++      }
++    }
++  }
++})
+diff --git 1/scripts/browser/pet-pointer-attention.test.mjs 2/scripts/browser/pet-pointer-attention.test.mjs
+new file mode 100644
+index 0000000..bdc72c9
+--- /dev/null
++++ 2/scripts/browser/pet-pointer-attention.test.mjs
+@@ -0,0 +1,69 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { browserApp, snapshot } from './helpers.mjs'
++
++async function chooseSpecies(page, species) {
++  await page.evaluate(species => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
++      const read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, pet = Object.values(saved.tables.pets)[0]
++        pet.species = species
++        pet.equipped = { face: 'glasses' }
++        saved.outbox = {}
++        store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), species)
++}
++
++function eyesAt(node) {
++  const eyes = [...node.querySelectorAll('[data-eye-gaze] ellipse')]
++  const centre = shifted => {
++    const points = eyes.map(eye => {
++      const gaze = eye.closest('[data-eye-gaze]')
++      return new DOMPoint(+eye.getAttribute('cx'), +eye.getAttribute('cy'))
++        .matrixTransform((shifted ? gaze : gaze.parentElement).getScreenCTM())
++    })
++    return { x: (points[0].x + points[1].x) / 2, y: (points[0].y + points[1].y) / 2 }
++  }
++  return { origin: centre(false), pupil: centre(true),
++    open: [...node.querySelectorAll('[data-eye-open]')].every(eye => +eye.dataset.eyeOpen === 1) }
++}
++
++for (const species of ['mochi', 'bun', 'sprout']) {
++  test(`${species} follows horizontal and vertical pointers from its actual drawn eyes`, async t => {
++    const page = await browserApp(t, { reducedMotion: 'no-preference' })
++    await chooseSpecies(page, species)
++    await page.clock.install()
++    await page.clock.pauseAt(Date.now() + 1000)
++    await page.addInitScript(() => { Math.random = () => .2 })
++    await page.reload()
++    const resident = page.locator('.room-pet')
++    await resident.waitFor()
++    await page.clock.runFor(32)
++    const saved = (await snapshot(page)).tables
++    const position = await resident.getAttribute('transform')
++    for (const [dx, dy] of [[3, 0], [0, 2], [-3, -1]]) {
++      const before = await resident.evaluate(eyesAt)
++      const target = { x: before.origin.x + dx, y: before.origin.y + dy }
++      await page.mouse.move(target.x, target.y)
++      await page.clock.runFor(320)
++      const at = await resident.evaluate(eyesAt)
++      assert.ok(at.open, 'pointer samples need visible eye ink')
++      const gaze = { x: at.pupil.x - at.origin.x, y: at.pupil.y - at.origin.y }
++      const aim = { x: target.x - at.origin.x, y: target.y - at.origin.y }
++      assert.ok(gaze.x * aim.x + gaze.y * aim.y > 0, 'actual pupil ink must move toward the pointer')
++      const perpendicular = Math.abs(gaze.x * aim.y - gaze.y * aim.x) / Math.hypot(aim.x, aim.y)
++      assert.ok(perpendicular < .015, `pointer gaze perpendicular error:${perpendicular}px`)
++      assert.equal(await resident.getAttribute('transform'), position, 'attention must leave the resident in place')
++    }
++    assert.deepEqual((await snapshot(page)).tables, saved)
++    t.diagnostic(`Chromium ${page.context().browser().version()}; actual eye ink;3pointer directions; no saved changes`)
++  })
++}
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-pointer-attention.mjs 2/docs/audits/2026-10-12-character-polish/capture-pointer-attention.mjs
+new file mode 100644
+index 0000000..8e9d989
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-pointer-attention.mjs
+@@ -0,0 +1,66 @@
++// Offline, bounded before/after comparison using the production SVG renderer.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { JSDOM } from 'jsdom'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const label = process.argv[2], out = 'docs/audits/2026-10-12-character-polish'
++if (!['before', 'after'].includes(label)) throw new Error('Expected before or after')
++const baseline = await readFile(`${out}/pointer-attention-baseline.ts.txt`, 'utf8')
++const server = await createServer({ plugins: [{ name: 'pointer-baseline', enforce: 'pre', transform(code, id) {
++  if (label === 'before' && id.split('?')[0] === `${process.cwd()}/src/pet/playerAttention.ts`) return { code: baseline, map: null }
++} }], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++const dom = new JSDOM('<div></div>'), container = dom.window.document.querySelector('div')
++function pointAt(node, x, y) {
++  for (let el = node; el; el = el.parentElement) {
++    for (const [, op, args] of [...(el.getAttribute('transform') ?? '').matchAll(/(translate|scale|rotate)\(([^)]+)\)/g)].reverse()) {
++      const v = args.split(/[ ,]+/).map(Number)
++      if (op === 'translate') { x += v[0]; y += v[1] ?? 0 }
++      if (op === 'scale') { x *= v[0]; y *= v[1] ?? v[0] }
++      if (op === 'rotate') {
++        const a = v[0] * Math.PI / 180, cx = v[1] ?? 0, cy = v[2] ?? 0
++        ;[x, y] = [cx + (x - cx) * Math.cos(a) - (y - cy) * Math.sin(a), cy + (x - cx) * Math.sin(a) + (y - cy) * Math.cos(a)]
++      }
++    }
++  }
++  return { x, y }
++}
++try {
++  const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++  const { sampleMotion } = await server.ssrLoadModule('/src/character/motion.ts')
++  const { pointerAttention, faceAttention } = await server.ssrLoadModule('/src/pet/playerAttention.ts')
++  const { SPECIES_COLOUR, PALETTE } = await server.ssrLoadModule('/src/art/palette.ts')
++  const { PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++  const h = React.createElement, cells = [], samples = []
++  const equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++  for (const species of ['mochi', 'bun', 'sprout']) for (const mood of ['happy', 'content', 'meh', 'scruffy']) for (const facing of [1, -1]) {
++    const frame = { ...sampleMotion({ species, mood, action: 'idle', elapsedMs: 800, blinkMs: 800, distance: 0, durationMs: 4000, reducedMotion: false }), eyeOpen: 1 }
++    const mirror = facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined
++    const draw = (input, strokeScale = 1) => h('g', { transform: mirror }, h(AnimatedCharacterArt, { species, mood, frame: input, equipped, bodyColour: SPECIES_COLOUR[species], strokeScale }))
++    container.innerHTML = renderToStaticMarkup(h('svg', null, draw({ ...frame, gazeX: 0, gazeY: 0 })))
++    const points = [...container.querySelectorAll('[data-eye-gaze] ellipse')].map(node => pointAt(node, +node.getAttribute('cx'), +node.getAttribute('cy')))
++    if (points.length !== 2) throw new Error('Expected two open drawn eyes')
++    const origin = { x: (points[0].x + points[1].x) / 2, y: (points[0].y + points[1].y) / 2 }
++    const target = { x: origin.x + 30, y: origin.y }
++    const old = label === 'before' ? pointerAttention(target.x, target.y, { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }) : null
++    const gaze = old ? { x: old.x * facing, y: old.y } : faceAttention(target, species, mood, frame, facing)
++    const aimed = { ...frame, gazeX: frame.gazeX + gaze.x, gazeY: frame.gazeY + gaze.y }
++    const views = [200, 60, 25].map((size, i) => h('g', { key: size, transform: `translate(${[0, 205, 280][i]} ${100 - size / 2}) scale(${size / 200})` },
++      draw(aimed, size === 25 ? PET_STROKE_SCALE : 1),
++      h('path', { d: `M${target.x - 3} ${target.y} h6 M${target.x} ${target.y - 3} v6`, stroke: PALETTE.accent, strokeWidth: 1.2, fill: 'none' })))
++    cells.push(h('g', { key: cells.length, transform: `translate(${cells.length % 4 * 330} ${Math.floor(cells.length / 4) * 230})` }, views,
++      h('text', { x: 8, y: 220, fontSize: 11, fill: PALETTE.ink }, `${species} ${mood} facing${facing};200/60/25px`)))
++    samples.push({ species, mood, facing, origin, target, gaze })
++  }
++  const markup = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width: 1320, height: 1380 }, h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), cells))
++  const file = `${out}/pointer-attention-${label}.png`
++  await writeFile(file, new Resvg(markup).render().asPng())
++  const paths = ['src/pet/playerAttention.ts', 'src/character/AnimatedCharacter.tsx', 'src/character/motion.ts', 'src/character/species/animatedBody.tsx', 'src/character/parts.tsx', 'src/character/eyeGeometry.ts', `${out}/capture-pointer-attention.mjs`]
++  const hash = bytes => createHash('sha256').update(bytes).digest('hex')
++  await writeFile(`${out}/pointer-attention-${label}.json`, JSON.stringify({ method: '24dressed species/mood/mirror samples,each200/60/25px. Pointer cross is30characterunits right of the actual drawn eye centre. Static settled attention only;no temporal playback. Baseline uses exact stored96df2f3pointer helper and the then-current facing multiplication.', samples,
++    sourceSha256: Object.fromEntries(await Promise.all(paths.map(async path => [path, hash(label === 'before' && path === 'src/pet/playerAttention.ts' ? baseline : await readFile(path))]))),
++    captureSha256: hash(await readFile(file)) }, null, 2) + '\n')
++  console.log(`Wrote ${label}:24samples with72size views`)
++} finally { dom.window.close(); await server.close() }
