@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { besideTiles, findPath, initialPet, needsRender, positionAt, poseFor, sortTile, step, tap, react, TIMING, type PetState, type Tile, type World } from './behaviour'
 import { ROOM_SIZE } from '../room/grid'
+import { PET_SCALE, roomPoint } from '../room/shell/geometry'
 
 const blocked = (tiles: Tile[]) => {
   const set = new Set(tiles.map((t) => `${t.tx},${t.ty}`))
@@ -9,6 +10,65 @@ const blocked = (tiles: Tile[]) => {
 const world = (over: Partial<World> = {}): World => ({ free: () => true, mood: 'happy', away: false, mess: null, ...over })
 /** A random source that always returns the same value. */
 const always = (v: number) => () => v
+
+describe('immutable projected route history', () => {
+  it('retains a new route and its completed corners in walk and interruption snapshots', () => {
+    const origin = { tx: 2, ty: 2 }
+    const target = { objectId: 'decor', signature: 'decor:0', tile: { tx: 4, ty: 3 },
+      gaze: { tx: 5, ty: 3 }, action: 'inspect' as const, contact: false }
+    const w = world({ interactions: [target] })
+    const started = step(initialPet(origin, 0), w, 2000, always(0))
+    expect(started.activity.kind).toBe('walk')
+    if (started.activity.kind !== 'walk') throw new Error('expected walk')
+    const history = started.activity.groundPath!
+    expect(history).toHaveLength(started.activity.path.length + 1)
+    const points = [origin, ...started.activity.path]
+    expect(history).toEqual(points.map((tile, distance) => {
+      const point = roomPoint(tile.tx + 0.5, tile.ty + 0.5)
+      return { distance, x: point.x / PET_SCALE, y: point.y / PET_SCALE }
+    }))
+    history.forEach(Object.freeze)
+    Object.freeze(history)
+    const advanced = step(started, w, 2900, always(0))
+    expect(advanced.activity.kind).toBe('walk')
+    if (advanced.activity.kind !== 'walk') throw new Error('expected walk')
+    expect(advanced.activity.path).toHaveLength(1)
+    expect(advanced.activity.groundPath).toBe(history)
+    const interrupted = tap(advanced, 2937)
+    const snapshot = interrupted.transition!.layers.at(-1)!.snapshot
+    expect(snapshot.activity).toMatchObject({ groundPath: history })
+    if (snapshot.activity.kind !== 'walk') throw new Error('expected walk snapshot')
+    expect(snapshot.activity.groundPath).toBe(history)
+    expect(positionAt(interrupted, 2937)).toEqual(positionAt(advanced, 2937))
+  })
+
+  it('materializes an old walk before truncating its route', () => {
+    const legacy: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), activity: {
+      kind: 'walk', path: [{ tx: 3, ty: 2 }, { tx: 3, ty: 3 }, { tx: 3, ty: 4 }], stepStart: 0, then: 'idle',
+    } }
+    const advanced = step(legacy, world(), 500, always(0.9))
+    if (advanced.activity.kind !== 'walk') throw new Error('expected walk')
+    expect(advanced.activity.groundPath?.map((point) => point.distance)).toEqual([0, 1, 2, 3])
+    expect(legacy.activity).not.toHaveProperty('groundPath')
+    const later = step(advanced, world(), 900, always(0.9))
+    if (later.activity.kind !== 'walk') throw new Error('expected walk')
+    expect(later.activity.groundPath).toBe(advanced.activity.groundPath)
+  })
+
+  it('retains the original legacy origin and full history in the completion snapshot', () => {
+    const origin = { tx: 2, ty: 2 }
+    const legacy: PetState = { ...initialPet(origin, 0), activity: {
+      kind: 'walk', path: [{ tx: 3, ty: 2 }, { tx: 3, ty: 3 }], stepStart: 0, then: 'idle',
+    } }
+    const arrived = step(legacy, world(), 840, always(0.9))
+    const snapshot = arrived.transition!.layers.at(-1)!.snapshot
+    expect(snapshot.activity).toMatchObject({ kind: 'walk', origin })
+    if (snapshot.activity.kind !== 'walk') throw new Error('expected walk snapshot')
+    expect(snapshot.activity.groundPath?.map((point) => point.distance)).toEqual([0, 1, 2])
+    const projected = roomPoint(2.5, 2.5)
+    expect(snapshot.activity.groundPath?.[0]).toEqual({ distance: 0, x: projected.x / PET_SCALE, y: projected.y / PET_SCALE })
+  })
+})
 
 describe('paths', () => {
   it('walks around things', () => {
@@ -272,6 +332,56 @@ describe('interruptible sequencing', () => {
 
 
 describe('route and recovery boundaries', () => {
+  it('validates every retained corner snapshot and frozen release without mutating full history or clocks', () => {
+    const pet: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), activity: {
+      kind: 'walk', stepStart: 0, then: 'idle',
+      path: [{ tx: 3, ty: 2 }, { tx: 3, ty: 3 }, { tx: 3, ty: 4 }],
+    } }
+    const turning = step(pet, world(), 830, always(0.9))
+    const original = turning.transition!.layers[0].snapshot
+    const before = structuredClone(turning)
+    Object.freeze(original)
+    Object.freeze(turning.transition!.layers[0])
+    Object.freeze(turning.transition!.layers)
+    const stopped = step(turning, world({ free: blocked([{ tx: 3, ty: 3 }]) }), 841, always(0.9))
+    expect(turning).toEqual(before)
+    expect(stopped.transition!.start).toBe(841)
+    expect(stopped.transition!.layers.map((layer) => layer.snapshot.at)).toEqual([830, 841])
+    expect(stopped.transition!.layers[1].snapshot.walkAt).toBe(420)
+    expect(stopped).not.toHaveProperty('groundPosition')
+    const release = stopped.transition!.groundReleases![0]
+    const snapshots = [...stopped.transition!.layers.map((layer) => layer.snapshot), release.to,
+      ...release.from.map((layer) => layer.snapshot)]
+    for (const snapshot of snapshots) {
+      expect(snapshot).toMatchObject({ groundPosition: { tx: 3, ty: 2 } })
+      if (snapshot.activity.kind !== 'walk') throw new Error('expected walk snapshot')
+      expect(snapshot.activity.groundPath?.map((point) => point.distance)).toEqual([0, 1, 2, 3])
+    }
+    expect(stopped.transition!.layers[0].snapshot.activity).toBe(original.activity)
+    expect(release.from[0].snapshot).toBe(stopped.transition!.layers[0].snapshot)
+    expect(release.to).toBe(stopped.transition!.layers[1].snapshot)
+    expect(original).not.toHaveProperty('groundPosition')
+  })
+
+  it.each([
+    { blockedTx: 3, now: 630, validAt: 0, safeTx: 2 },
+    { blockedTx: 4, now: 1000, validAt: 420, safeTx: 3 },
+  ])('captures validated route time $validAt separately from the delayed clock $now', ({ blockedTx, now, validAt, safeTx }) => {
+    for (const over of [{}, { away: true }, { mood: 'sick' as const }]) {
+      const pet = walking()
+      const stopped = step(pet, world({ ...over, free: blocked([{ tx: blockedTx, ty: 2 }]) }), now, always(0.9))
+      const snapshot = stopped.transition!.layers.at(-1)!.snapshot
+      expect(stopped.transition!.start).toBe(now)
+      expect(snapshot.at).toBe(now)
+      expect(snapshot.walkAt).toBe(validAt)
+      expect(positionAt(pet, snapshot.walkAt!)).toEqual({ tx: safeTx, ty: 2 })
+      expect(positionAt(stopped, now)).toEqual({ tx: safeTx, ty: 2 })
+      expect(stopped).not.toHaveProperty('walkAt')
+      if (snapshot.activity.kind !== 'walk') throw new Error('expected walk snapshot')
+      expect(snapshot.activity.groundPath?.map((point) => point.distance)).toEqual([0, 1, 2])
+    }
+  })
+
   it.each([{ away: true }, { mood: 'sick' as const }])('validates elapsed route segments before suppression for %j', (over) => {
     const changed = world({ ...over, free: blocked([{ tx: 3, ty: 2 }]) })
     const suppressed = step(walking(), changed, 630, always(0.9))

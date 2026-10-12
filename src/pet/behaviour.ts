@@ -1,7 +1,8 @@
 import type { Mood } from '../domain/types'
 import type { PoseName } from '../character/poses'
-import { ACTION_MS, type MotionAction } from '../character/motion'
+import { ACTION_MS, type GroundPoint, type MotionAction } from '../character/motion'
 import { ROOM_SIZE } from '../room/grid'
+import { PET_SCALE, roomPoint } from '../room/shell/geometry'
 import { chooseInteraction, type InteractionTarget } from './interactions'
 import { besideTiles, findPath, type Tile } from './pathfinding'
 
@@ -18,6 +19,8 @@ export type Walk = {
   journeyStart?: number
   distance?: number
   durationMs?: number
+  /** Whole journey in unmirrored SVG units; retain completed corners. */
+  groundPath?: readonly GroundPoint[]
   /** A route turn overlays compression without pausing placement or resetting gait. */
   turnStart?: number
   target?: InteractionTarget
@@ -39,6 +42,18 @@ export interface MotionSnapshot {
   position?: Tile
   noticeStart?: number
   at: number
+  /** Validated route clock when a collision rejects elapsed traversal. */
+  walkAt?: number
+  /** Safe contact origin after rejected traversal, including retained layers. */
+  groundPosition?: Tile
+}
+type MotionLayer = { snapshot: MotionSnapshot; weight: number }
+/** Frozen shared-helper release terms, flat rather than nested transition trees. */
+interface GroundRelease {
+  from: readonly MotionLayer[]
+  to: MotionSnapshot
+  progress: number
+  weight: number
 }
 export interface PetState {
   tile: Tile
@@ -54,7 +69,7 @@ export interface PetState {
   position?: Tile
   /** Only the endpoints of the interrupted segment are safe reconnection goals. */
   resume?: { from: Tile; to: Tile }
-  transition?: { start: number; layers: { snapshot: MotionSnapshot; weight: number }[] }
+  transition?: { start: number; layers: MotionLayer[]; groundReleases?: GroundRelease[] }
 }
 export interface World {
   free: (t: Tile) => boolean
@@ -83,19 +98,50 @@ export function blendProgress(start: number, now: number): number {
   const t = Math.max(0, Math.min(1, (now - start) / TIMING.blendMs))
   return t * t * (3 - 2 * t)
 }
-function change(state: PetState, activity: Activity, now: number): PetState {
+function change(state: PetState, activity: Activity, now: number, walkAt?: number): PetState {
   const layers: NonNullable<PetState['transition']>['layers'] = []
+  const groundReleases: GroundRelease[] = []
   const progress = state.transition ? blendProgress(state.transition.start, now) : 1
   if (state.transition && progress < 1) for (const layer of state.transition.layers) {
     const weight = layer.weight * (1 - progress)
     if (weight > 1e-9) layers.push({ ...layer, weight })
   }
-  const a = state.activity
-  if (progress > 0) layers.push({ weight: progress, snapshot: {
-    tile: state.tile, facing: state.facing, activity: a, position: state.position,
+  const snapshot: MotionSnapshot = {
+    tile: state.tile, facing: state.facing, activity: state.activity.kind === 'walk'
+      ? { ...state.activity, groundPath: groundPathFor(state) } : state.activity, position: state.position,
     noticeStart: state.noticeStart, at: now,
-  } })
-  return { ...state, activity, beat: state.beat + 1, transition: layers.length ? { start: now, layers } : undefined }
+  }
+  if (walkAt !== undefined && walkAt !== now) snapshot.walkAt = walkAt
+  if (progress > 0) layers.push({ weight: progress, snapshot })
+  if (state.transition && progress < 1) {
+    for (const release of state.transition.groundReleases ?? []) {
+      const weight = release.weight * (1 - progress)
+      if (weight > 1e-9) groundReleases.push({ ...release, weight })
+    }
+    if (progress > 0) groundReleases.push({ from: state.transition.layers, to: snapshot, progress, weight: 1 })
+  }
+  if (walkAt !== undefined && walkAt < now) {
+    // A delayed collision can rewind past an unfinished turn. Discard rejected
+    // contact placement in every frozen reference, not just the newest pose.
+    // Preserve pose clocks/history and share immutable copies across releases.
+    const groundPosition = positionAt(state, walkAt)
+    const validated = new Map<MotionSnapshot, MotionSnapshot>()
+    const validate = (old: MotionSnapshot): MotionSnapshot => {
+      let safe = validated.get(old)
+      if (!safe) {
+        safe = { ...old, groundPosition }
+        validated.set(old, safe)
+      }
+      return safe
+    }
+    for (const layer of layers) layer.snapshot = validate(layer.snapshot)
+    for (const release of groundReleases) {
+      release.to = validate(release.to)
+      release.from = release.from.map((layer) => ({ ...layer, snapshot: validate(layer.snapshot) }))
+    }
+  }
+  return { ...state, activity, beat: state.beat + 1, transition: layers.length
+    ? { start: now, layers, ...(groundReleases.length ? { groundReleases } : {}) } : undefined }
 }
 function facingFor(a: Tile, b: Tile, current: 1 | -1): 1 | -1 {
   const dx = b.tx - a.tx - (b.ty - a.ty)
@@ -157,6 +203,26 @@ export function routeAt(state: Pick<PetState, 'tile' | 'activity'>, now: number)
 export function positionAt(state: PetState, now: number): Tile {
   return state.activity.kind === 'walk' ? routeAt(state, now).position : state.position ?? state.tile
 }
+function projectedPath(origin: Tile, path: readonly Tile[], travelled: number): readonly GroundPoint[] {
+  const project = (tile: Tile, distance: number): GroundPoint => {
+    const point = roomPoint(tile.tx + 0.5, tile.ty + 0.5)
+    return { distance, x: point.x / PET_SCALE, y: point.y / PET_SCALE }
+  }
+  const points = [project(origin, travelled)]
+  let previous = origin
+  for (const tile of path) {
+    const length = distance(previous, tile)
+    travelled += length
+    if (length > 0) points.push(project(tile, travelled))
+    previous = tile
+  }
+  return points
+}
+/** Legacy walks derive their known route once, before any completed tiles are dropped. */
+export function groundPathFor(state: Pick<PetState, 'tile' | 'activity'>): readonly GroundPoint[] | undefined {
+  const a = state.activity
+  return a.kind === 'walk' ? a.groundPath ?? projectedPath(a.origin ?? state.tile, a.path, a.distance ?? 0) : undefined
+}
 function freeze(state: PetState, now: number): PetState {
   if (state.activity.kind !== 'walk') return state
   const route = routeAt(state, now)
@@ -168,7 +234,8 @@ function startWalk(state: PetState, path: Tile[], now: number, then: Walk['then'
   let durationMs = 0
   let previous = origin
   for (const tile of path) { durationMs += distance(previous, tile) * TIMING.stepMs; previous = tile }
-  const next = change(state, { kind: 'walk', path, origin, segment: state.resume, stepStart: now, journeyStart: now, distance: 0, durationMs, then, target }, now)
+  const next = change(state, { kind: 'walk', path, origin, segment: state.resume, stepStart: now, journeyStart: now,
+    distance: 0, durationMs, groundPath: projectedPath(origin, path, 0), then, target }, now)
   return { ...next, facing: path.length ? facingFor(origin, path[0], state.facing) : state.facing, position: undefined, resume: undefined }
 }
 function reconnect(state: PetState, world: World, now: number): PetState | null {
@@ -217,14 +284,17 @@ function targetValid(target: InteractionTarget, world: World): boolean {
   return world.free(target.tile) && !!world.interactions?.some((current) =>
     current.objectId === target.objectId && current.signature === target.signature && key(current.tile) === key(target.tile))
 }
-function cancel(state: PetState, now: number, rand: () => number): PetState {
+function cancel(state: PetState, now: number, rand: () => number, walkAt?: number): PetState {
   // Capture outgoing motion before freezing, so the transition samples the moving pose.
-  const next = change(state, idle(now, rand), now)
+  const next = change(state, idle(now, rand), now, walkAt)
   const frozen = freeze(state, now)
   return { ...next, tile: frozen.tile, position: frozen.position ?? positionAt(state, now), resume: frozen.resume }
 }
 /** Shared by ordinary walking and suppression, before either can commit elapsed travel. */
-function blockedRoute(state: PetState, world: World, now: number): Pick<PetState, 'tile' | 'position' | 'resume'> | null {
+function blockedRoute(state: PetState, world: World, now: number): {
+  frozen: Pick<PetState, 'tile' | 'position' | 'resume'>
+  walkAt: number
+} | null {
   const a = state.activity
   if (a.kind !== 'walk') return null
   let origin = a.origin ?? state.tile
@@ -234,8 +304,13 @@ function blockedRoute(state: PetState, world: World, now: number): Pick<PetState
   for (const tile of a.path) {
     const end = deadline + distance(origin, tile) * TIMING.stepMs
     if (!world.free(tile)) return {
-      tile: safeTile, position: now < end ? positionAt(state, now) : origin,
-      resume: segment ?? { from: safeTile, to: tile },
+      frozen: {
+        tile: safeTile, position: now < end ? positionAt(state, now) : origin,
+        resume: segment ?? { from: safeTile, to: tile },
+      },
+      // Placement and frozen ground contacts must use the same accepted route.
+      // Keep the application clock at now for the new blend and lifetime blink.
+      walkAt: now < end ? now : deadline,
     }
     if (now < end) break
     origin = tile
@@ -253,11 +328,11 @@ export function step(state: PetState, world: World, now: number, rand: () => num
   const suppressed = world.away ? 'sleep' : world.mood === 'sick' ? 'sick' : null
   if (suppressed) {
     if (state.activity.kind === suppressed) return state
-    const next = change(state, { kind: suppressed }, now)
-    const frozen = blocked ?? freeze(state, now)
+    const next = change(state, { kind: suppressed }, now, blocked?.walkAt)
+    const frozen = blocked?.frozen ?? freeze(state, now)
     return { ...next, tile: frozen.tile, position: frozen.position, resume: frozen.resume, pendingTap: false, noticeStart: undefined }
   }
-  if (blocked) return { ...cancel(state, now, rand), ...blocked }
+  if (blocked) return { ...cancel(state, now, rand, blocked.walkAt), ...blocked.frozen }
   if (state.activity.kind === 'interact' && !targetValid(state.activity.target, world)) return cancel(state, now, rand)
   // Preserve the legacy relocation when furniture lands directly on a stationary grid tile.
   if (!state.position && state.activity.kind !== 'walk' && !world.free(state.tile)) {
@@ -298,12 +373,15 @@ export function step(state: PetState, world: World, now: number, rand: () => num
       const facing = route.path.length
         ? facingFor(route.origin, route.path[0], state.facing)
         : facingFor(finalFrom, route.position, state.facing)
-      const arrived = { ...state, tile: route.tile, facing, position: undefined }
+      const groundPath = groundPathFor(state)
+      const arrived = { ...state, tile: route.tile, facing, position: undefined,
+        activity: { ...a, origin: a.origin ?? state.tile, groundPath } }
       if (route.path.length) {
         const turning = facing !== state.facing
         const activity: Walk = {
           ...a, origin: route.origin, segment: route.segment, path: route.path, stepStart: route.stepStart, distance: route.travelled,
           journeyStart: a.journeyStart ?? a.stepStart,
+          groundPath,
           durationMs: a.durationMs ?? a.path.reduce((sum, tile, i) => sum + distance(i ? a.path[i - 1] : a.origin ?? state.tile, tile) * TIMING.stepMs, 0),
           turnStart: turning ? now : a.turnStart !== undefined && now < a.turnStart + ACTION_MS.turn ? a.turnStart : undefined,
         }
