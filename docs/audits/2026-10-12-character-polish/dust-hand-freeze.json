@@ -1,0 +1,18 @@
+{
+  "baseCommit": "e95d61716c421e15fd6f6a658d049ba541a75e0e",
+  "sources": {
+    "src/character/motion.ts": "b551fa03994d7689c27e3076e136c8457af29c5b30aa9a1dbd6b730191f077af",
+    "src/pet/LivingRoom.tsx": "7b4e09c9c29730a1c5ba68e7e71e92c0187a8c5c7dd84e4eb63676c05bcc5743",
+    "src/character/motion.dust.test.ts": "c890c72771f27736ee5e4d468eb57a62b9f91e85766f0d8046e23b607e42b663",
+    "src/pet/PetIntegration.test.tsx": "98d6676c5954773ff3f431af9c6a3348f967b61bc834bbe95e966c153b45ea6d",
+    "scripts/browser/pet-dust-hand.test.mjs": "1632d01d6ab4899f73a59512f2f13b4c2ff7f7ef83ca9b4d30e59d66436ac632",
+    "docs/ART.md": "16d1a776a8470302fa1b4bd5353f106cec46cffcbb8901062e3b4a1903bc77b0",
+    "docs/audits/2026-10-12-character-polish/capture-dust-hand.mjs": "a6e40755dc37a93a315733a528e6ed5e00b6fc68d906a2d94e4b39d124436090",
+    "docs/audits/2026-10-12-character-polish/compare-dust-hand.mjs": "05c16823389c3ecd8bd8b139f455b82d11c32ac59e0592cef22a9d37d2870a74"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/dust-hand-source.diff",
+    "sha256": "c4cf4f65df8e55e7ea29d12c34d87a1a2fe7b7f322deda9a8e004d26ddcf2073"
+  },
+  "scope": "Two runtime files: only normal dust rightArm sampler field, plus existing dialogue fallback for valid lightly neglected optional decor lacking condition/chore copy. Original durations, other sampler fields/actions, routes/contact=false, existing resident clock/speech lifetime retained. Two unit files,one native runner,two bounded diagnostic runners,ART."
+}

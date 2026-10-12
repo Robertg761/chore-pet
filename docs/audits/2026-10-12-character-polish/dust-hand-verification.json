@@ -1,0 +1,199 @@
+{
+  "freeze": {
+    "baseCommit": "e95d61716c421e15fd6f6a658d049ba541a75e0e",
+    "sources": {
+      "src/character/motion.ts": "b551fa03994d7689c27e3076e136c8457af29c5b30aa9a1dbd6b730191f077af",
+      "src/pet/LivingRoom.tsx": "7b4e09c9c29730a1c5ba68e7e71e92c0187a8c5c7dd84e4eb63676c05bcc5743",
+      "src/character/motion.dust.test.ts": "c890c72771f27736ee5e4d468eb57a62b9f91e85766f0d8046e23b607e42b663",
+      "src/pet/PetIntegration.test.tsx": "98d6676c5954773ff3f431af9c6a3348f967b61bc834bbe95e966c153b45ea6d",
+      "scripts/browser/pet-dust-hand.test.mjs": "1632d01d6ab4899f73a59512f2f13b4c2ff7f7ef83ca9b4d30e59d66436ac632",
+      "docs/ART.md": "16d1a776a8470302fa1b4bd5353f106cec46cffcbb8901062e3b4a1903bc77b0",
+      "docs/audits/2026-10-12-character-polish/capture-dust-hand.mjs": "a6e40755dc37a93a315733a528e6ed5e00b6fc68d906a2d94e4b39d124436090",
+      "docs/audits/2026-10-12-character-polish/compare-dust-hand.mjs": "05c16823389c3ecd8bd8b139f455b82d11c32ac59e0592cef22a9d37d2870a74"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/dust-hand-source.diff",
+      "sha256": "c4cf4f65df8e55e7ea29d12c34d87a1a2fe7b7f322deda9a8e004d26ddcf2073"
+    },
+    "scope": "Two runtime files: only normal dust rightArm sampler field, plus existing dialogue fallback for valid lightly neglected optional decor lacking condition/chore copy. Original durations, other sampler fields/actions, routes/contact=false, existing resident clock/speech lifetime retained. Two unit files,one native runner,two bounded diagnostic runners,ART."
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/dust-hand-artifacts.json",
+    "sha256": "9cf58150256296ad949ce7c888c5c64c43f9dc55a79f9c4dd3e9d1c0d7ce0a6e"
+  },
+  "checks": [
+    {
+      "name": "browser-hand-red",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-browser-hand-red.log",
+      "logSha256": "243384a92520aa8683052e5fcd518030095d6d944b5056a6ddd54497cfabd17b",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-browser-hand-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "browser-policy-red",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-browser-policy-red.log",
+      "logSha256": "d5f3ff4337a856fb45443b448a14e0998c492b39355f5a383ea510cb69c01209",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-browser-policy-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-browser-red.log",
+      "logSha256": "65799abf82039ca3b75323b2c2c7926b71e29d0f7cc63dd96e2a6c5ec255819d",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-browser-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-browser.log",
+      "logSha256": "51e5e427d981f801481f07975cd6615005d87d9bf7b2d8d9b048347410e6f974",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-browser.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-build.log",
+      "logSha256": "bfe3b18485a6ba5a0d6635cb5066990f7600d774f01fa48881da573852b343cb",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-capture-after.log",
+      "logSha256": "a9ceb246d04d21abd40c0af3fddffcffc9b6e264141249cc2f645b7022283740",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-capture-after.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-capture-before.log",
+      "logSha256": "37eec4fc70e5ab6b2617f06774479905d08235325445a35ca9bab393640a2e05",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-capture-before.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "dialogue-build",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-dialogue-build.log",
+      "logSha256": "e2a688f806f425afe70144aae61d435b0575fe964822d9187519f0f813ec5ac7",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-dialogue-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "dialogue-red",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-dialogue-red.log",
+      "logSha256": "1fc465dc0b7fc5c9b38a1879ccd3cb755c02ee09cac84a636925cc534e1806c3",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-dialogue-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "dialogue",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-dialogue.log",
+      "logSha256": "0c73abd154444fcb422a24473722bbeb9fb9ae6b622b57bc4aa88e4732087a61",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-dialogue.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "differential",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-differential.log",
+      "logSha256": "66ce4d6101deec2df0c3ff555a0dbef57e55442e5a1fe966d94304d18490a88e",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-differential.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-focused.log",
+      "logSha256": "1edeb11dc100c4b3918953935f31632699011e1108fc654f433142b87c365c4c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-full.log",
+      "logSha256": "3209e3117e4028e8fad6b3b2e99b5c313658d1ed1a63d029e67675c701aeab2f",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/dust-hand-red.log",
+      "logSha256": "a269c940642748942c0f8cea6ad2db6609e0b1fa9649531ddac29a86d828d359",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/dust-hand-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "status": "Complete local verification; root full2242/108files and independent source/still approval. Ready for local checkpoint.",
+  "result": "2242full/108files65.03s;374focused/8files13.43s;10final native12.517s (3dressed actual dusty hand,1reduced dusty fallback/lifetime,6existingExplore);typebuild/zero-warninglint/diff/captures/43200differential exits0.42390frames exact,810normal dust rightArm-only changes;all15otheractions/reduced/durations exact. Native71SVG samples/species,foot contact<.01localunits,oneclock,sameposition/node/speech/savedtables.",
+  "history": "Sampler6red/1reducedbaselinepass; first native clean fixture hit first-occurrence grace andfailed minimumlift; corrected overdue fixture exposed3silentarrivals. Six integration cases reproduce2level1normal/reducedfail/4highercopybaselinepass. Dialogue fallback fixed first; subsequent3native cases then fail actualhand speed before sampler edit. All raw failures retained.",
+  "limits": "Root inspected6sampled PNGs plus3native room PNGs;stills/curves do not establish human temporal,physical-device,assistive-technology or CPU/battery acceptance. Heavychecks sequential/oneworker/oneChromium/768MBcap.",
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/dust-hand-review-input.json",
+    "sha256": "b08dc30a81e62c637b4987c357462f2d9b285b368aa234a8390d6e59782d5b7c"
+  },
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/dust-hand-review.md",
+    "sha256": "b623c01a8ff578b6de1aa1a9a3bad5d4fe9a2589ea4ab19c2b96cd321ac0360f",
+    "verdict": "Independent source/still approval; no findings. Immutable 15-check input reviewed; root separately verifies 16-check metadata including full suite."
+  }
+}

@@ -1,0 +1,97 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/motion.dust.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/motion.dust.test.ts (7 tests | 6 failed) 25ms
+   ❯ deliberate environmental dust hand reaction (7)
+     × keeps mochi hand motion readable without rapid flutter 9ms
+     × keeps bun hand motion readable without rapid flutter 3ms
+     × keeps sprout hand motion readable without rapid flutter 1ms
+     × mochi uses a few deliberate hand changes across finite durations 7ms
+     × bun uses a few deliberate hand changes across finite durations 1ms
+     × sprout uses a few deliberate hand changes across finite durations 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/motion.dust.test.ts > deliberate environmental dust hand reaction > keeps mochi hand motion readable without rapid flutter
+AssertionError: expected 189.63965697013663 to be less than 105
+ ❯ src/character/motion.dust.test.ts:16:35
+     14|     const angles = Array.from({ length: ACTION_MS.dust + 1 }, (_, ms) …
+     15|     const velocity = angles.slice(1).map((angle, i) => Math.abs(angle …
+     16|     expect(Math.max(...velocity)).toBeLessThan(speed)
+       |                                   ^
+     17|     expect(Math.max(...angles.map(Math.abs))).toBeLessThan(peak)
+     18|     expect(Math.max(...angles.map(Math.abs))).toBeGreaterThan(10)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/character/motion.dust.test.ts > deliberate environmental dust hand reaction > keeps bun hand motion readable without rapid flutter
+AssertionError: expected 231.26787435382568 to be less than 140
+ ❯ src/character/motion.dust.test.ts:16:35
+     14|     const angles = Array.from({ length: ACTION_MS.dust + 1 }, (_, ms) …
+     15|     const velocity = angles.slice(1).map((angle, i) => Math.abs(angle …
+     16|     expect(Math.max(...velocity)).toBeLessThan(speed)
+       |                                   ^
+     17|     expect(Math.max(...angles.map(Math.abs))).toBeLessThan(peak)
+     18|     expect(Math.max(...angles.map(Math.abs))).toBeGreaterThan(10)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/character/motion.dust.test.ts > deliberate environmental dust hand reaction > keeps sprout hand motion readable without rapid flutter
+AssertionError: expected 166.51286953475443 to be less than 90
+ ❯ src/character/motion.dust.test.ts:16:35
+     14|     const angles = Array.from({ length: ACTION_MS.dust + 1 }, (_, ms) …
+     15|     const velocity = angles.slice(1).map((angle, i) => Math.abs(angle …
+     16|     expect(Math.max(...velocity)).toBeLessThan(speed)
+       |                                   ^
+     17|     expect(Math.max(...angles.map(Math.abs))).toBeLessThan(peak)
+     18|     expect(Math.max(...angles.map(Math.abs))).toBeGreaterThan(10)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/character/motion.dust.test.ts > deliberate environmental dust hand reaction > mochi uses a few deliberate hand changes across finite durations
+ FAIL  src/character/motion.dust.test.ts > deliberate environmental dust hand reaction > sprout uses a few deliberate hand changes across finite durations
+AssertionError: expected [ 1, -1, 1, -1, 1, -1, 1 ] to have a length of 1 but got 7
+
+- Expected
++ Received
+
+- 1
++ 7
+
+ ❯ src/character/motion.dust.test.ts:30:73
+     28|       const angles = Array.from({ length: 1401 }, (_, phase) => at(spe…
+     29|       const signs = angles.slice(1).map((angle, i) => angle - angles[i…
+     30|       expect(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1])…
+       |                                                                         ^
+     31|     }
+     32|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/character/motion.dust.test.ts > deliberate environmental dust hand reaction > bun uses a few deliberate hand changes across finite durations
+AssertionError: expected [ 1, -1, 1, -1, 1, -1, 1 ] to have a length of 3 but got 7
+
+- Expected
++ Received
+
+- 3
++ 7
+
+ ❯ src/character/motion.dust.test.ts:30:73
+     28|       const angles = Array.from({ length: 1401 }, (_, phase) => at(spe…
+     29|       const signs = angles.slice(1).map((angle, i) => angle - angles[i…
+     30|       expect(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1])…
+       |                                                                         ^
+     31|     }
+     32|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  20:55:34
+   Duration  187ms (transform 44%, tests 35%, import 15%, worker 5%)
+

@@ -1,0 +1,54 @@
+{
+  "method": "43200exact frame comparisons across3species/5moods/16actions/3durations/2policies/2facings/15phases. Only normal dust rightArm may differ;allotherfields/actions/reduced/durations exact. Metrics use1ms happy samples;static/numeric,not temporal acceptance.",
+  "samples": 43200,
+  "unchanged": 42390,
+  "changed": 810,
+  "changes": {
+    "mochi": 270,
+    "bun": 270,
+    "sprout": 270
+  },
+  "metrics": {
+    "mochi": {
+      "before": {
+        "peakDegrees": 23.779999999999998,
+        "speedDegreesPerSecond": 189.63965697013663,
+        "directionChanges": 7
+      },
+      "after": {
+        "peakDegrees": 21.32,
+        "speedDegreesPerSecond": 99.00337460241815,
+        "directionChanges": 1
+      }
+    },
+    "bun": {
+      "before": {
+        "peakDegrees": 29,
+        "speedDegreesPerSecond": 231.26787435382568,
+        "directionChanges": 7
+      },
+      "after": {
+        "peakDegrees": 26.999929502944035,
+        "speedDegreesPerSecond": 132.66417819878916,
+        "directionChanges": 3
+      }
+    },
+    "sprout": {
+      "before": {
+        "peakDegrees": 20.88,
+        "speedDegreesPerSecond": 166.51286953475443,
+        "directionChanges": 7
+      },
+      "after": {
+        "peakDegrees": 18,
+        "speedDegreesPerSecond": 85.61785789628118,
+        "directionChanges": 1
+      }
+    }
+  },
+  "sourceSha256": {
+    "baseline": "27af4dbddb2f7ace9672447a9aa10040d755f10b17a0f3508eb27edd88a1d2db",
+    "current": "b551fa03994d7689c27e3076e136c8457af29c5b30aa9a1dbd6b730191f077af",
+    "runner": "05c16823389c3ecd8bd8b139f455b82d11c32ac59e0592cef22a9d37d2870a74"
+  }
+}

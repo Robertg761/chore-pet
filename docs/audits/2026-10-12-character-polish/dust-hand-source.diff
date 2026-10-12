@@ -1,0 +1,396 @@
+diff --git c/docs/ART.md w/docs/ART.md
+index f33bc97..44bc4bf 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -187,3 +187,7 @@ When Spend time together is expanded, Show room brings the scene into view and f
+ Gesture buttons use the width of their own panel, including narrow landscape side panels. In browsers with container queries, use equal one-, two- or four-column rows, with text-relative thresholds so enlarged labels can keep their room. The disclosure and Show room heading may wrap; keyboard order and native targets stay unchanged. Retain the existing flex/phone fallback when container queries are unavailable. Native checks cover the player panel at200%root text; this is not whole-app zoom or assistive-technology certification.
+ 
+ Environmental rest beside beds, couches, bean bags and rugs uses one small delayed appendage sway. Mochi, Bun and Sprout retain25%,30%and25%of their energetic finite follow strength, with smooth finite joins and existing species lag. Preserve the2400ms timing, grounded body/feet, arms, gaze, blink, mood expression, shadow, outfits and safe approaches; no furniture contact is introduced. Reduced rest and all other actions retain their existing samples.
++
++Dust reactions use smaller, slower right-hand sweeps. Mochi and Sprout make one deliberate lift and return; Bun keeps a second small beat. Preserve the original 1400ms envelope and deadline, body lean, grounded feet, gaze, appendages, expressions, shadow, outfit attachment and safe approaches. Only the normal-motion dust hand changes; reduced art and other actions retain their samples. The gesture implies no contact with the furnishing.
++
++For valid furnishing invitations, condition and chore-specific dialogue keep priority. Optional decor with light neglect may have neither kind of copy; fall back to its existing calm observation, then the existing content-mood line, so an arrival still has an observation. Stronger condition copy stays intact. Normal motion announces once at arrival; reduced motion answers from the current position. Reuse the existing speech lifetime and resident clock.
+diff --git c/src/character/motion.ts w/src/character/motion.ts
+index 12bf03d..9727087 100644
+--- c/src/character/motion.ts
++++ w/src/character/motion.ts
+@@ -97,6 +97,13 @@ const HAND_WAVE: Record<'greet' | 'wave', Record<Species, { lift: number; arc: n
+   },
+ }
+ 
++// Smaller, slower dust hand sweeps retain Bun's livelier response.
++const DUST_HAND: Record<Species, { arc: number; cycles: number }> = {
++  mochi: { arc: 6, cycles: 2 },
++  bun: { arc: 7, cycles: 3 },
++  sprout: { arc: 5, cycles: 2 },
++}
++
+ function waveArm(species: Species, action: 'greet' | 'wave', phase: number): number {
+   const { lift, arc, cycles } = HAND_WAVE[action][species]
+   return -(lift + arc * Math.sin((phase - 0.35) * Math.PI * (cycles * 2)))
+@@ -341,12 +348,14 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+         frame.rightArm = 14 * gesture
+         frame.gazeY = 2 * attention
+         break
+-      case 'dust':
++      case 'dust': {
++        const { arc, cycles } = DUST_HAND[species]
+         frame.lean = -7 * gesture
+-        frame.rightArm = -(20 + 9 * Math.sin(t * Math.PI * 10)) * gesture
++        frame.rightArm = -(20 + arc * Math.sin((t - 0.35) * Math.PI * 2 * cycles)) * gesture
+         frame.gazeX = 2 * attention
+         frame.gazeY = 1.5 * attention
+         break
++      }
+       case 'smell':
+         frame.lean = -10 * gesture
+         frame.bodyX = -2 * gesture
+diff --git c/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index 8ed3f6f..f438f90 100644
+--- c/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -83,7 +83,8 @@ function objectDialogue({ objects, stages, neglect, chores }: Pick<LivingRoomPro
+   const level = neglect?.[target.id] ?? 0
+   const stage = Object.prototype.hasOwnProperty.call(stages, target.id) ? stages[target.id] ?? 'clean' : 'clean'
+   return level > 0 || stage !== 'clean'
+-    ? messLine(entry.mess, level, seed) || objectLine(entry.id, chore?.name ?? '', seed) || null
++    ? messLine(entry.mess, level, seed) || objectLine(entry.id, chore?.name ?? '', seed)
++      || calmObjectLine(entry.id, seed) || pickLine(MOOD_LINES.content, seed)
+     : calmObjectLine(entry.id, seed) || pickLine(MOOD_LINES.content, seed)
+ }
+ 
+diff --git c/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index 64e8fcc..c12859a 100644
+--- c/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -270,6 +270,41 @@ it('answers an invitation from its current position in reduced motion', () => {
+   expect(frames.size).toBe(0)
+ })
+ 
++it.each([1, 2, 3] as const)('retains an arrival observation for a level-%s dusty decor object without chore copy', level => {
++  const shelf: PlacedObject = { ...plant, id: 'shelf', catalogId: 'bookshelf', tileX: 5, tileY: 4 }
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" objects={[shelf]} stages={{ shelf: level === 1 ? 'messy1' : 'messy2' }}
++    neglect={{ shelf: level }} control={control} />)
++  const original = art(ui.container)
++  act(() => { expect(control.current!.lookAt('shelf')).toBe('started') })
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
++  frame(2100)
++  const heard = ui.container.querySelector('[aria-live]')!.textContent
++  const expected = level === 1 ? petLines.CALM_OBJECT_LINES.bookshelf : KIND_LINES.dust[level]
++  expect(expected).toContain(heard)
++  frame(2460); frame(2700)
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
++  expect(art(ui.container)).toBe(original)
++  expect(frames.size).toBe(1)
++})
++
++it.each([1, 2, 3] as const)('answers a level-%s dusty decor invitation still without losing condition-specific copy', level => {
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const shelf: PlacedObject = { ...plant, id: 'shelf', catalogId: 'bookshelf', tileX: 5, tileY: 4 }
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" objects={[shelf]} stages={{ shelf: level === 1 ? 'messy1' : 'messy2' }}
++    neglect={{ shelf: level }} control={control} />)
++  const resident = ui.container.querySelector('.room-pet')!, position = resident.getAttribute('transform')
++  act(() => { expect(control.current!.lookAt('shelf')).toBe('still') })
++  const heard = ui.container.querySelector('[aria-live]')!.textContent
++  const expected = level === 1 ? petLines.CALM_OBJECT_LINES.bookshelf : KIND_LINES.dust[level]
++  expect(expected).toContain(heard)
++  frame(2000)
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
++  expect(resident.getAttribute('transform')).toBe(position)
++  expect(frames.size).toBe(0)
++})
++
+ it('validates changed room occupancy before paint while the reduced resident clock is paused', () => {
+   Object.defineProperty(media, 'matches', { value: true, configurable: true })
+   const onPosition = vi.fn()
+diff --git 1/src/character/motion.dust.test.ts 2/src/character/motion.dust.test.ts
+new file mode 100644
+index 0000000..e81dfc4
+--- /dev/null
++++ 2/src/character/motion.dust.test.ts
+@@ -0,0 +1,43 @@
++import { describe, expect, it } from 'vitest'
++import { ACTION_MS, sampleMotion } from './motion'
++import type { Species } from '../domain/types'
++
++const at = (species: Species, elapsedMs: number, durationMs = ACTION_MS.dust, reducedMotion = false) =>
++  sampleMotion({ species, mood: 'happy', action: 'dust', elapsedMs, durationMs, reducedMotion, distance: 0 })
++
++describe('deliberate environmental dust hand reaction', () => {
++  it.each([
++    { species: 'mochi', speed: 105, peak: 22 },
++    { species: 'bun', speed: 140, peak: 28 },
++    { species: 'sprout', speed: 90, peak: 19 },
++  ] as const)('keeps $species hand motion readable without rapid flutter', ({ species, speed, peak }) => {
++    const angles = Array.from({ length: ACTION_MS.dust + 1 }, (_, ms) => at(species, ms).rightArm)
++    const velocity = angles.slice(1).map((angle, i) => Math.abs(angle - angles[i]) * 1000)
++    expect(Math.max(...velocity)).toBeLessThan(speed)
++    expect(Math.max(...angles.map(Math.abs))).toBeLessThan(peak)
++    expect(Math.max(...angles.map(Math.abs))).toBeGreaterThan(10)
++    expect(angles[0]).toBe(0)
++    expect(angles.at(-1)).toBe(0)
++    expect(velocity[0]).toBe(0)
++    expect(velocity.at(-1)).toBe(0)
++  })
++  it.each([
++    { species: 'mochi', reversals: 1 }, { species: 'bun', reversals: 3 }, { species: 'sprout', reversals: 1 },
++  ] as const)('$species uses a few deliberate hand changes across finite durations', ({ species, reversals }) => {
++    for (const duration of [700, 1400, 2800]) {
++      const angles = Array.from({ length: 1401 }, (_, phase) => at(species, phase / 1400 * duration, duration).rightArm)
++      const signs = angles.slice(1).map((angle, i) => angle - angles[i]).filter(delta => Math.abs(delta) > 1e-5).map(Math.sign)
++      expect(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1])).toHaveLength(reversals)
++    }
++  })
++  it('retains the1400ms deadline and still reduced reaction', () => {
++    expect(ACTION_MS.dust).toBe(1400)
++    for (const species of ['mochi', 'bun', 'sprout'] as const) for (const ms of [0, 140, 350, 700, 1200, 1399, 1400, 1500]) {
++      const frame = at(species, ms, ACTION_MS.dust, true)
++      expect(frame.rightArm).toBe(0)
++      expect(frame.leftArm).toBe(0)
++      expect(frame.leftFoot).toBe(0)
++      expect(frame.rightFoot).toBe(0)
++    }
++  })
++})
+diff --git 1/scripts/browser/pet-dust-hand.test.mjs 2/scripts/browser/pet-dust-hand.test.mjs
+new file mode 100644
+index 0000000..bf04b03
+--- /dev/null
++++ 2/scripts/browser/pet-dust-hand.test.mjs
+@@ -0,0 +1,123 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, snapshot } from './helpers.mjs'
++
++function read(node) {
++  const arm = node.querySelector('[data-arm="right"]').transform.baseVal.consolidate().matrix
++  return {
++    time: window.__dustTime,
++    angle: Math.atan2(arm.b, arm.a) * 180 / Math.PI,
++    position: node.getAttribute('transform'),
++    frames: window.__dustFrames.size,
++    feet: ['left', 'right'].map(side => {
++      const foot = node.querySelector(`[data-foot="${side}"] ellipse`)
++      const point = new DOMPoint(+foot.getAttribute('cx'), +foot.getAttribute('cy'))
++        .matrixTransform(foot.getScreenCTM()).matrixTransform(node.getScreenCTM().inverse())
++      return { x: point.x, y: point.y }
++    }),
++  }
++}
++
++for (const { species, speed, peak, minimum, reversals, reduced = false } of [
++  { species: 'mochi', speed: 105, peak: 22, minimum: 18, reversals: 1 },
++  { species: 'bun', speed: 140, peak: 28, minimum: 24, reversals: 3 },
++  { species: 'sprout', speed: 90, peak: 19, minimum: 15.5, reversals: 1 },
++  { species: 'mochi', reduced: true },
++]) test(`${species} reacts to an actually dusty bookshelf${reduced ? ' without moving in reduced motion' : ' with a grounded deliberate hand gesture'}`, async t => {
++  const page = await browserApp(t, { reducedMotion: reduced ? 'reduce' : 'no-preference', viewport: { width: 1280, height: 800 } })
++  await page.evaluate(species => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), load = store.get('snapshot')
++      load.onsuccess = () => {
++        const saved = load.result, pet = Object.values(saved.tables.pets)[0], room = Object.values(saved.tables.rooms)[0]
++        // A brand-new chore's first occurrence has one grace day. Two days
++        // back makes this daily task one day late, with actual dusty art.
++        const created = new Date(); created.setDate(created.getDate() - 2)
++        const date = `${created.getFullYear()}-${String(created.getMonth() + 1).padStart(2, '0')}-${String(created.getDate()).padStart(2, '0')}`
++        pet.species = species
++        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++        saved.tables.placed_objects = { 'dust-shelf': { id: 'dust-shelf', roomId: room.id, catalogId: 'bookshelf', tileX: 5, tileY: 5, rotation: 0 } }
++        saved.tables.chores = { 'dust-task': { id: 'dust-task', homeId: room.homeId, objectId: 'dust-shelf', name: 'Dust the bookshelf', schedule: { kind: 'daily' }, createdOn: date, photoProof: false } }
++        saved.tables.completions = {}; saved.outbox = {}
++        store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), species)
++  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
++  await page.addInitScript(() => {
++    Math.random = () => .99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__dustFrames = new Set(); window.__dustTime = 0
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__dustFrames.delete(id); window.__dustTime = now; callback(now) })
++      window.__dustFrames.add(id); return id
++    }
++    window.cancelAnimationFrame = id => { window.__dustFrames.delete(id); cancel(id) }
++  })
++  await page.reload()
++  const resident = page.locator('.room-pet'); await resident.waitFor()
++  await page.getByText('1 day late', { exact: true }).waitFor()
++  const saved = (await snapshot(page)).tables
++  const initial = await resident.evaluate(read), body = await resident.locator('[data-character-body]').innerHTML()
++  await resident.evaluate(node => { window.__dustPet = node })
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  await page.getByLabel(/^Show /).selectOption('dust-shelf')
++  await page.getByRole('button', { name: 'Look together', exact: true }).click()
++  const live = page.locator('.living-room [aria-live="polite"]')
++  const observations = ['So many colours on those shelves.', 'I wonder what is in that red book.']
++  if (reduced) {
++    const heard = (await live.textContent()).trim()
++    assert.ok(observations.includes(heard), 'lightly dusty decor still receives its existing observation')
++    const box = await resident.locator('[data-character-body]').boundingBox()
++    assert.ok(box.x >= 0 && box.y >= 0 && box.x + box.width <= 1280 && box.y + box.height <= 800)
++    assert.equal(await page.evaluate(() => document.hidden), false)
++    assert.equal((await resident.evaluate(read)).frames, 0)
++    await page.clock.runFor(2000)
++    assert.equal((await resident.evaluate(read)).position, initial.position)
++    assert.equal(await resident.locator('[data-character-body]').innerHTML(), body)
++    assert.equal((await live.textContent()).trim(), heard)
++    await page.clock.runFor(1600)
++    assert.equal((await live.textContent()).trim(), '')
++    assert.equal((await resident.evaluate(read)).frames, 0)
++    assert.deepEqual((await snapshot(page)).tables, saved)
++    t.diagnostic('Visible reduced-motion dusty invitation: same position/body,existing3600ms speech lifetime,0resident frames,unchanged saved tables.')
++    return
++  }
++  let heard = ''
++  for (let i = 0; i < 150 && !heard; i++) { await page.clock.runFor(100); heard = (await live.textContent()).trim() }
++  assert.ok(observations.includes(heard), 'the selected dusty furnishing must receive its invited observation')
++  // Arrival polling overshoots by at most100ms. Sample after orientation and
++  // its blend, before recovery can hand back to the next activity.
++  await page.clock.runFor(360 + 120)
++  const first = await resident.evaluate(read), samples = []
++  for (let elapsed = 120; elapsed <= 1240; elapsed += 16) {
++    const sample = await resident.evaluate(read)
++    if (!samples.length || sample.time !== samples.at(-1).time) samples.push(sample)
++    assert.equal(sample.frames, 1)
++    assert.equal(sample.position, first.position)
++    for (let i = 0; i < 2; i++) assert.ok(Math.hypot(sample.feet[i].x - first.feet[i].x, sample.feet[i].y - first.feet[i].y) < .01, 'actual dust reaction feet stay planted')
++    if (elapsed === 600 && process.env.CHORE_DUST_HAND_CAPTURE_DIR) {
++      await mkdir(process.env.CHORE_DUST_HAND_CAPTURE_DIR, { recursive: true })
++      await page.screenshot({ path: join(process.env.CHORE_DUST_HAND_CAPTURE_DIR, `dust-hand-room-${species}.png`), fullPage: false })
++    }
++    await page.clock.runFor(16)
++  }
++  const angles = samples.map(sample => sample.angle), changes = samples.slice(1).map((sample, i) => ({ delta: sample.angle - angles[i], ms: sample.time - samples[i].time }))
++  const observedSpeed = Math.max(...changes.map(({ delta, ms }) => Math.abs(delta) / ms * 1000)), observedPeak = Math.max(...angles.map(Math.abs))
++  t.diagnostic(`Actual ${species} hand peak${observedPeak.toFixed(3)}deg;speed${observedSpeed.toFixed(3)}deg/s`)
++  assert.ok(observedSpeed < speed, 'the actual hand must not flutter rapidly')
++  assert.ok(observedPeak < peak)
++  assert.ok(observedPeak > minimum, 'a dusty response must retain its recognizable hand lift rather than a smaller clean inspection')
++  const signs = changes.filter(({ delta }) => Math.abs(delta) > 1e-5).map(({ delta }) => Math.sign(delta))
++  assert.equal(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1]).length, reversals)
++  assert.equal(await resident.evaluate(node => node === window.__dustPet), true)
++  assert.equal((await live.textContent()).trim(), heard)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  t.diagnostic(`Chromium ${page.context().browser().version()}; ${samples.length} actual SVG hand/timestamp samples; dusty linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables`)
++})
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-dust-hand.mjs 2/docs/audits/2026-10-12-character-polish/capture-dust-hand.mjs
+new file mode 100644
+index 0000000..d1dd7bf
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-dust-hand.mjs
+@@ -0,0 +1,58 @@
++// Bounded static production art and numeric hand curves; no live motion clock.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const label = process.argv[2], out = 'docs/audits/2026-10-12-character-polish'
++if (!['before', 'after'].includes(label)) throw new Error('Expected before or after')
++const baseline = await readFile(`${out}/dust-hand-baseline.ts.txt`, 'utf8')
++const server = await createServer({ plugins: [{ name: 'dust-hand-baseline', enforce: 'pre', transform(code, id) {
++  if (label === 'before' && id.split('?')[0] === `${process.cwd()}/src/character/motion.ts`) return { code: baseline, map: null }
++} }], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++  const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++  const { sampleMotion, ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts')
++  const { SPECIES_COLOUR, PALETTE } = await server.ssrLoadModule('/src/art/palette.ts')
++  const { PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++  const h = React.createElement, speciesList = ['mochi', 'bun', 'sprout'], samples = [], files = []
++  const equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++  const at = (species, elapsedMs, mood = 'happy') => sampleMotion({ species, action: 'dust', mood, elapsedMs, blinkMs: elapsedMs, distance: 0, durationMs: ACTION_MS.dust, reducedMotion: false })
++  async function png(name, width, height, children) {
++    const markup = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width, height }, h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), children))
++    await writeFile(`${out}/${name}`, new Resvg(markup).render().asPng()); files.push(name)
++  }
++  for (const variant of ['light', 'dark']) {
++    const cells = [], mood = variant === 'light' ? 'happy' : 'scruffy'
++    for (const species of speciesList) for (const facing of [1, -1]) for (const phase of [.24, .42, .6, .76]) {
++      const frame = at(species, ACTION_MS.dust * phase, mood)
++      const draw = size => h('g', { transform: facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined }, h(AnimatedCharacterArt,
++        { species, mood, frame, equipped, bodyColour: variant === 'dark' ? PALETTE.ink : SPECIES_COLOUR[species], strokeScale: size === 25 ? PET_STROKE_SCALE : 1 }))
++      const views = [200, 60, 25].map((size, i) => h('g', { key: size, transform: `translate(${[0, 205, 280][i]} ${100 - size / 2}) scale(${size / 200})` }, draw(size)))
++      cells.push(h('g', { key: cells.length, transform: `translate(${cells.length % 4 * 330} ${Math.floor(cells.length / 4) * 230})` }, views,
++        h('text', { x: 8, y: 220, fontSize: 11, fill: PALETTE.ink }, `${species} dust f${facing} ${phase * 100}%;200/60/25px`)))
++      samples.push({ variant, mood, species, facing, phase, frame })
++    }
++    await png(`dust-hand-${label}-${variant}-sizes.png`, 1320, 1380, cells)
++  }
++  const colours = { mochi: '#ca6080', bun: '#397dbb', sprout: '#568747' }, curveSamples = []
++  const x0 = 54, y0 = 50, width = 430, height = 200, duration = ACTION_MS.dust
++  const curves = speciesList.map(species => {
++    const points = Array.from({ length: 701 }, (_, n) => { const ms = duration * n / 700; return { ms, angle: at(species, ms).rightArm } })
++    curveSamples.push({ species, points })
++    return h('path', { key: species, d: points.map((p, n) => `${n ? 'L' : 'M'}${(x0 + p.ms / duration * width).toFixed(3)} ${(y0 - p.angle / 32 * height).toFixed(3)}`).join(' '), fill: 'none', stroke: colours[species], strokeWidth: 1.8 })
++  })
++  await png(`dust-hand-${label}-curves.png`, 520, 290, h('g', null,
++    h('text', { x: x0, y: 20, fontSize: 14, fill: PALETTE.ink }, `dust:right hand angle over ${duration}ms`),
++    speciesList.map((species, n) => h('text', { key: species, x: x0 + n * 130, y: 39, fontSize: 12, fill: colours[species] }, species)),
++    [0, -8, -16, -24, -32].map(angle => h('g', { key: angle }, h('path', { d: `M${x0} ${y0 - angle / 32 * height} h${width}`, stroke: '#d8d0c4', fill: 'none' }),
++      h('text', { x: 12, y: y0 - angle / 32 * height + 4, fontSize: 11, fill: PALETTE.ink }, `${angle}°`))), curves,
++    [0, duration / 2, duration].map(ms => h('text', { key: ms, x: x0 + ms / duration * width, y: 275, textAnchor: 'middle', fontSize: 11, fill: PALETTE.ink }, `${ms}ms`))))
++  const hash = bytes => createHash('sha256').update(bytes).digest('hex')
++  const sources = ['src/character/motion.ts', 'src/character/AnimatedCharacter.tsx', 'src/character/species/animatedBody.tsx', 'src/character/parts.tsx', 'src/character/Character.tsx', 'src/art/palette.ts', 'src/room/shell/geometry.ts', `${out}/capture-dust-hand.mjs`]
++  await writeFile(`${out}/dust-hand-${label}.json`, JSON.stringify({ method: '48dressed species/mirror/phase/light-happy-or-dark-scruffy samples,144views at200/60/25px,and three right-hand angle/time curves. Static/numeric only;no human temporal playback. Exacte95d617 sampler baseline.', samples, curveSamples,
++    sourceSha256: Object.fromEntries(await Promise.all(sources.map(async path => [path, hash(label === 'before' && path === 'src/character/motion.ts' ? baseline : await readFile(path))]))),
++    captureSha256: Object.fromEntries(await Promise.all(files.map(async file => [file, hash(await readFile(`${out}/${file}`))]))) }, null, 2) + '\n')
++  console.log(`Wrote ${label}:144sizeviews and3hand curves`)
++} finally { await server.close() }
+diff --git 1/docs/audits/2026-10-12-character-polish/compare-dust-hand.mjs 2/docs/audits/2026-10-12-character-polish/compare-dust-hand.mjs
+new file mode 100644
+index 0000000..9d0975a
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/compare-dust-hand.mjs
+@@ -0,0 +1,41 @@
++import assert from 'node:assert/strict'
++import ts from 'typescript'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const out = 'docs/audits/2026-10-12-character-polish'
++const baseline = await readFile(`${out}/dust-hand-baseline.ts.txt`, 'utf8'), current = await readFile('src/character/motion.ts', 'utf8')
++async function load(source) {
++  const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText
++  return import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`)
++}
++const before = await load(baseline), after = await load(current)
++assert.deepEqual(after.ACTION_MS, before.ACTION_MS)
++const phases = [0, .1, .18, .24, .3, .35, .42, .5, .6, .64, .76, .9, .92, 1, 2]
++let samples = 0, unchanged = 0, changed = 0
++const changes = {}
++for (const species of ['mochi', 'bun', 'sprout']) for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick']) {
++  for (const action of Object.keys(before.ACTION_MS)) for (const factor of [.5, 1, 2]) for (const reducedMotion of [false, true]) for (const facing of [1, -1]) for (const phase of phases) {
++    const durationMs = before.ACTION_MS[action] * factor
++    const input = { species, mood, action, durationMs, elapsedMs: phase * durationMs, blinkMs: 9250 + phase * durationMs, distance: phase * 3, facing, reducedMotion }
++    const a = before.sampleMotion(input), b = after.sampleMotion(input)
++    if (!reducedMotion && action === 'dust') {
++      const { rightArm: oldHand, ...oldRest } = a, { rightArm: newHand, ...newRest } = b
++      assert.deepEqual(newRest, oldRest, `${species}/${mood}/${factor}/${phase}: only dust rightArm may differ`)
++      if (oldHand !== newHand) { changed++; changes[species] = (changes[species] ?? 0) + 1 } else unchanged++
++    } else { assert.deepEqual(b, a, `${species}/${mood}/${action}/${factor}/${phase}/${reducedMotion}: exact preservation`); unchanged++ }
++    samples++
++  }
++}
++assert.deepEqual(Object.keys(changes).sort(), ['bun', 'mochi', 'sprout'])
++const metrics = {}
++for (const species of Object.keys(changes)) {
++  const measure = module => {
++    const angles = Array.from({ length: 1401 }, (_, elapsedMs) => module.sampleMotion({ species, mood: 'happy', action: 'dust', elapsedMs, durationMs: 1400, distance: 0, reducedMotion: false }).rightArm)
++    const deltas = angles.slice(1).map((value, i) => value - angles[i]), signs = deltas.filter(value => Math.abs(value) > 1e-5).map(Math.sign)
++    return { peakDegrees: Math.max(...angles.map(Math.abs)), speedDegreesPerSecond: Math.max(...deltas.map(Math.abs)) * 1000, directionChanges: signs.filter((sign, i) => i > 0 && sign !== signs[i - 1]).length }
++  }
++  metrics[species] = { before: measure(before), after: measure(after) }
++}
++const sha256 = text => createHash('sha256').update(text).digest('hex')
++await writeFile(`${out}/dust-hand-differential.json`, JSON.stringify({ method: '43200exact frame comparisons across3species/5moods/16actions/3durations/2policies/2facings/15phases. Only normal dust rightArm may differ;allotherfields/actions/reduced/durations exact. Metrics use1ms happy samples;static/numeric,not temporal acceptance.', samples, unchanged, changed, changes, metrics, sourceSha256: { baseline: sha256(baseline), current: sha256(current), runner: sha256(await readFile(new URL(import.meta.url))) } }, null, 2) + '\n')
++console.log(`Compared ${samples} frames;${unchanged} exact;${changed} normal dust hand-only changes`)

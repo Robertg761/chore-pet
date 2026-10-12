@@ -270,6 +270,41 @@ it('answers an invitation from its current position in reduced motion', () => {
   expect(frames.size).toBe(0)
 })
 
+it.each([1, 2, 3] as const)('retains an arrival observation for a level-%s dusty decor object without chore copy', level => {
+  const shelf: PlacedObject = { ...plant, id: 'shelf', catalogId: 'bookshelf', tileX: 5, tileY: 4 }
+  const control = createRef<LivingRoomControl>()
+  const ui = mount(<LivingRoom {...props} mood="happy" objects={[shelf]} stages={{ shelf: level === 1 ? 'messy1' : 'messy2' }}
+    neglect={{ shelf: level }} control={control} />)
+  const original = art(ui.container)
+  act(() => { expect(control.current!.lookAt('shelf')).toBe('started') })
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
+  frame(2100)
+  const heard = ui.container.querySelector('[aria-live]')!.textContent
+  const expected = level === 1 ? petLines.CALM_OBJECT_LINES.bookshelf : KIND_LINES.dust[level]
+  expect(expected).toContain(heard)
+  frame(2460); frame(2700)
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
+  expect(art(ui.container)).toBe(original)
+  expect(frames.size).toBe(1)
+})
+
+it.each([1, 2, 3] as const)('answers a level-%s dusty decor invitation still without losing condition-specific copy', level => {
+  Object.defineProperty(media, 'matches', { value: true, configurable: true })
+  const shelf: PlacedObject = { ...plant, id: 'shelf', catalogId: 'bookshelf', tileX: 5, tileY: 4 }
+  const control = createRef<LivingRoomControl>()
+  const ui = mount(<LivingRoom {...props} mood="happy" objects={[shelf]} stages={{ shelf: level === 1 ? 'messy1' : 'messy2' }}
+    neglect={{ shelf: level }} control={control} />)
+  const resident = ui.container.querySelector('.room-pet')!, position = resident.getAttribute('transform')
+  act(() => { expect(control.current!.lookAt('shelf')).toBe('still') })
+  const heard = ui.container.querySelector('[aria-live]')!.textContent
+  const expected = level === 1 ? petLines.CALM_OBJECT_LINES.bookshelf : KIND_LINES.dust[level]
+  expect(expected).toContain(heard)
+  frame(2000)
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
+  expect(resident.getAttribute('transform')).toBe(position)
+  expect(frames.size).toBe(0)
+})
+
 it('validates changed room occupancy before paint while the reduced resident clock is paused', () => {
   Object.defineProperty(media, 'matches', { value: true, configurable: true })
   const onPosition = vi.fn()

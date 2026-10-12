@@ -97,6 +97,13 @@ const HAND_WAVE: Record<'greet' | 'wave', Record<Species, { lift: number; arc: n
   },
 }
 
+// Smaller, slower dust hand sweeps retain Bun's livelier response.
+const DUST_HAND: Record<Species, { arc: number; cycles: number }> = {
+  mochi: { arc: 6, cycles: 2 },
+  bun: { arc: 7, cycles: 3 },
+  sprout: { arc: 5, cycles: 2 },
+}
+
 function waveArm(species: Species, action: 'greet' | 'wave', phase: number): number {
   const { lift, arc, cycles } = HAND_WAVE[action][species]
   return -(lift + arc * Math.sin((phase - 0.35) * Math.PI * (cycles * 2)))
@@ -341,12 +348,14 @@ export function sampleMotion(input: MotionInput): MotionFrame {
         frame.rightArm = 14 * gesture
         frame.gazeY = 2 * attention
         break
-      case 'dust':
+      case 'dust': {
+        const { arc, cycles } = DUST_HAND[species]
         frame.lean = -7 * gesture
-        frame.rightArm = -(20 + 9 * Math.sin(t * Math.PI * 10)) * gesture
+        frame.rightArm = -(20 + arc * Math.sin((t - 0.35) * Math.PI * 2 * cycles)) * gesture
         frame.gazeX = 2 * attention
         frame.gazeY = 1.5 * attention
         break
+      }
       case 'smell':
         frame.lean = -10 * gesture
         frame.bodyX = -2 * gesture

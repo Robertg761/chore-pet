@@ -83,7 +83,8 @@ function objectDialogue({ objects, stages, neglect, chores }: Pick<LivingRoomPro
   const level = neglect?.[target.id] ?? 0
   const stage = Object.prototype.hasOwnProperty.call(stages, target.id) ? stages[target.id] ?? 'clean' : 'clean'
   return level > 0 || stage !== 'clean'
-    ? messLine(entry.mess, level, seed) || objectLine(entry.id, chore?.name ?? '', seed) || null
+    ? messLine(entry.mess, level, seed) || objectLine(entry.id, chore?.name ?? '', seed)
+      || calmObjectLine(entry.id, seed) || pickLine(MOOD_LINES.content, seed)
     : calmObjectLine(entry.id, seed) || pickLine(MOOD_LINES.content, seed)
 }
 

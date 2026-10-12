@@ -1,0 +1,18 @@
+{
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/dust-hand-baseline.ts.txt": "27af4dbddb2f7ace9672447a9aa10040d755f10b17a0f3508eb27edd88a1d2db",
+    "docs/audits/2026-10-12-character-polish/dust-hand-before-light-sizes.png": "5c13339616200fae2dd18292bcde69659b598eae423ca25dfdb8abc65fe65622",
+    "docs/audits/2026-10-12-character-polish/dust-hand-before-dark-sizes.png": "12d61a5ae9468afc72374e79bbce2f195790d946bf885b833e25e6822fb70a16",
+    "docs/audits/2026-10-12-character-polish/dust-hand-before-curves.png": "875eeab5881ce31cf19c0e3cd21787558b170bebafee1f482d6b91ed3e7c2141",
+    "docs/audits/2026-10-12-character-polish/dust-hand-after-light-sizes.png": "3a5c034d0fc2edfbe9de3e66aa9d4ea42ae37033be62d42d6b52d9fd71a38af1",
+    "docs/audits/2026-10-12-character-polish/dust-hand-after-dark-sizes.png": "ab827198b27bcf05e3777394b03bfd39adf28c9fa562078cc66178432f9e0e4f",
+    "docs/audits/2026-10-12-character-polish/dust-hand-after-curves.png": "3cecb7f3a798ad4cd798f6767a16c211eb5e5a08a96bcc1722fc4409792c83a4",
+    "docs/audits/2026-10-12-character-polish/dust-hand-before.json": "168323ee71b729508469d1294258d60f5c052b3f7aab82dc1e6cddb65b582bf1",
+    "docs/audits/2026-10-12-character-polish/dust-hand-after.json": "f02f1eead42c72f07abf51323b4fae921025389a58ddd33f8ae11f7d8ea3e457",
+    "docs/audits/2026-10-12-character-polish/dust-hand-differential.json": "2e45a8d1c6f1dec2a8eb09c0ade821e6cdf3981ae561e2d9270409f0330281f4",
+    "docs/audits/2026-10-12-character-polish/dust-hand-room/dust-hand-room-bun.png": "f5a94b1052e302feef654d26f965ff73d8a3cdfa2b29d104763515d9317e5e70",
+    "docs/audits/2026-10-12-character-polish/dust-hand-room/dust-hand-room-mochi.png": "7274de313f2ca86bda0dcb08d67d967e1aae6c8817eeb991099c39b4d11a77e7",
+    "docs/audits/2026-10-12-character-polish/dust-hand-room/dust-hand-room-sprout.png": "0261fc1af9682b4591bd5d8177a389e40e060adaa9790727a8729217338f301d"
+  },
+  "scope": "Exacte95d617 sampler baseline; before/after48dressed happy/light or scruffy/dark samples each144views,3hand curves each;43200frame differential;3actual dressed dusty-bookcase native room stills. Static/numeric/isolated Chromium evidence only."
+}
