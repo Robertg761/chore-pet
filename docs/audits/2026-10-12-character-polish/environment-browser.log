@@ -1,0 +1,27 @@
+✔ keyboard Enter reaches and activates the resident without moving its world position (1598.651133ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (1106.45698ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (3055.534317ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.0421 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1272.756355ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.0740 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (2010.630061ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (985.690862ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1520.358372ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (1334.694683ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 610ms; lift sampled at 1366ms; landing at 1786ms
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13319.531387

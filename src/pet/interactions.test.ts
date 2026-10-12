@@ -102,6 +102,36 @@ describe('environmental profiles', () => {
     expect((tx + ty) * 16).toBeCloseTo(y)
   })
 
+  it.each([
+    ['sink', 'clean', 2.56, -16.72],
+    ['sink', 'messy1', 3.56, -21.22],
+    ['sink', 'messy2', 2.56, -31.72],
+    ['stove', 'clean', 0, -39.04],
+    ['stove', 'messy1', 0, -39.04],
+    ['stove', 'messy2', 0, -42.04],
+    ['fridge', 'clean', 22.4, -49.72],
+    ['fridge', 'messy1', 22.4, -49.72],
+    ['fridge', 'messy2', 22.4, -49.72],
+    ['counter', 'clean', -28.8, -1.76],
+    ['counter', 'messy1', -28.8, -1.76],
+    ['counter', 'messy2', -30.08, -14.04],
+  ] as const)('looks at a rendered %s detail in %s, mirrored with the object', (id, stage, x, y) => {
+    // Hand-derived from basin/plate centres, the stove lid knob, the retained
+    // red freezer magnet, and the tomato or takeout opening on the worktop.
+    // They are SVG screen points, independent of the profile's tile conversion.
+    for (const rotation of [0, 1, 2, 3] as const) {
+      const objects = [object(id, { rotation })]
+      const targets = interactionTargets(objects, room(objects), { object: stage })
+      expect(targets.length).toBeGreaterThan(0)
+      for (const target of targets) {
+        const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+        expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+        expect((tx + ty) * 16).toBeCloseTo(y)
+        expect(target.contact).toBe(false)
+      }
+    }
+  })
+
   it('returns only free, in-bounds perimeter tiles for every catalog footprint and orientation', () => {
     for (const entry of ALL_ENTRIES) for (const rotation of [0, 1, 2, 3] as const) {
       for (const [tileX, tileY] of [[0, 0], [ROOM_SIZE - 1, ROOM_SIZE - 1], [2, 2]]) {

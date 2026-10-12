@@ -1,0 +1,59 @@
+{
+  "baseCommit": "727d4a99a8df91c8e71356e7451a48679de08d38",
+  "checks": [
+    {
+      "name": "focused-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/pet/interactions.test.ts src/pet/activityMotion.test.ts src/pet/behaviour.test.ts",
+      "log": "environment-green.log",
+      "exitCode": 0,
+      "result": "169 pass"
+    },
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "environment-unit.log",
+      "exitCode": 0,
+      "result": "1899 pass in84 files,55.85s"
+    },
+    {
+      "name": "build",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "environment-build.log",
+      "exitCode": 0,
+      "result": "TypeScript and production build pass; existing chunk advisory"
+    },
+    {
+      "name": "lint",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "environment-lint.log",
+      "exitCode": 0,
+      "result": "exit0; existing intentional wardrobe preference-cancellation set-state-in-effect warning"
+    },
+    {
+      "name": "captures",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 node docs/audits/2026-10-12-character-polish/capture-environment.mjs",
+      "log": "environment-captures.log",
+      "exitCode": 0,
+      "result": "24 annotated object details,24 Room SVG stills"
+    },
+    {
+      "name": "production-motion-browser",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium nice -n 10 node --test --test-concurrency=1 scripts/browser/pet-motion.test.mjs",
+      "log": "environment-browser.log",
+      "exitCode": 0,
+      "result": "8 pass; sequential isolated Chromium"
+    },
+    {
+      "name": "review-correction-focused",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/pet/interactions.test.ts src/pet/activityMotion.test.ts src/pet/behaviour.test.ts",
+      "log": "environment-review-green.log",
+      "exitCode": 0,
+      "result": "169 pass after the one-unit messy1 upper-plate offset correction"
+    }
+  ],
+  "sourceHashes": "environment-captures.json",
+  "limitations": [
+    "Room stills use real behavior step and production SVG, separate from live LivingRoom timing and human temporal playback.",
+    "Full-unit/build/browser pass preceded the one-unit plate correction; focused169 and regenerated24+24 stills verify the correction. The next creator batch will recheck the production build and motion integration with this correction included."
+  ]
+}

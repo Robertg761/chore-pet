@@ -20,11 +20,28 @@ interface Profile {
   action: MotionAction
   /** Object-local iso point. z is in SVG art units, as in room/iso.ts. */
   gaze?: Tile & { z: number }
+  /** Follow visible piles/openings when the clean detail is covered. */
+  gazeByStage?: Partial<Record<MessStage, Tile & { z: number }>>
 }
 
 // These gaze points follow the existing art, without importing its React renderers.
 // No profile has verified paw/contact anchors, so none emits reach or contact.
 const PROFILES: ReadonlyMap<string, Profile> = new Map([
+  // Basin centre and the upper plate centres in sink.tsx.
+  ['sink', { action: 'inspect', gaze: { tx: 0.58, ty: 0.5, z: 34 }, gazeByStage: {
+    // The second plate is nudged one SVG unit right: keep projected y fixed.
+    messy1: { tx: 0.58 + 1 / 64, ty: 0.5 - 1 / 64, z: 38.5 }, messy2: { tx: 0.58, ty: 0.5, z: 49 },
+  } }],
+  // Pot knob: hob height 34, base +1, knob -15; messy2 raises the lid by 3.
+  ['stove', { action: 'inspect', gaze: { tx: 0.28, ty: 0.28, z: 48 }, gazeByStage: {
+    messy2: { tx: 0.28, ty: 0.28, z: 51 },
+  } }],
+  // Retained red freezer magnet at rightFace(82)(.3,.14), in every stage.
+  ['fridge', { action: 'inspect', gaze: { tx: 1, ty: 0.3, z: 70.52 } }],
+  // Tomato on the board; a takeout opening covers it in messy2.
+  ['counter', { action: 'inspect', gaze: { tx: 0.62, ty: 1.52, z: 36 }, gazeByStage: {
+    messy2: { tx: 0.56, ty: 1.5, z: 47 },
+  } }],
   ['plant', { action: 'wave', gaze: { tx: 0, ty: 0, z: 28 } }], // leaves around SVG (0,-28)
   ['fish-tank', { action: 'wave', gaze: { tx: 0.92, ty: 0.5, z: 40 } }], // front glass
   ['bookshelf', { action: 'inspect', gaze: { tx: 0.62, ty: 0.5, z: 42 } }], // open upper shelf
@@ -64,7 +81,7 @@ export function interactionTargets(
     const stage = Object.prototype.hasOwnProperty.call(stages, object.id) ? stages[object.id] ?? 'clean' : 'clean'
     const action = stage === 'clean' ? profile.action : CONDITION_ACTION[entry.mess]
     const signature = JSON.stringify([object.id, entry.id, object.tileX, object.tileY, object.rotation, stage, action])
-    const local = profile.gaze ?? { tx: entry.footprint.w / 2, ty: entry.footprint.d / 2, z: 0 }
+    const local = profile.gazeByStage?.[stage] ?? profile.gaze ?? { tx: entry.footprint.w / 2, ty: entry.footprint.d / 2, z: 0 }
     // Inverse iso: raising a visual point by z subtracts z/TILE_H from both
     // tile axes. Mirroring the renderer's screen x swaps tx and ty.
     const lift = local.z / TILE_H

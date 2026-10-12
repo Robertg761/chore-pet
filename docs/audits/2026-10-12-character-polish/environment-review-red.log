@@ -1,0 +1,29 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/interactions.test.ts -t sink detail in messy1
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/interactions.test.ts (55 tests | 1 failed | 54 skipped) 7ms
+   ❯ environmental profiles (46)
+     × looks at a rendered sink detail in messy1, mirrored with the object 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered sink detail in messy1, mirrored with the object
+AssertionError: expected 2.5600000000000023 to be close to 3.56, received difference is 0.9999999999999978, but expected 0.005
+ ❯ src/pet/interactions.test.ts:128:32
+    126|       for (const target of targets) {
+    127|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    128|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    129|         expect((tx + ty) * 16).toBeCloseTo(y)
+    130|         expect(target.contact).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 54 skipped (55)
+   Start at  15:35:31
+   Duration  215ms (transform 75%, import 15%, tests 6%, worker 3%)
+

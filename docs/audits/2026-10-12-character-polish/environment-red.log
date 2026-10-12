@@ -1,0 +1,106 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/interactions.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/interactions.test.ts (55 tests | 12 failed) 50ms
+   ❯ environmental profiles (46)
+     × looks at a rendered sink detail in clean, mirrored with the object 4ms
+     × looks at a rendered sink detail in messy1, mirrored with the object 1ms
+     × looks at a rendered sink detail in messy2, mirrored with the object 0ms
+     × looks at a rendered stove detail in clean, mirrored with the object 1ms
+     × looks at a rendered stove detail in messy1, mirrored with the object 0ms
+     × looks at a rendered stove detail in messy2, mirrored with the object 4ms
+     × looks at a rendered fridge detail in clean, mirrored with the object 0ms
+     × looks at a rendered fridge detail in messy1, mirrored with the object 0ms
+     × looks at a rendered fridge detail in messy2, mirrored with the object 0ms
+     × looks at a rendered counter detail in clean, mirrored with the object 0ms
+     × looks at a rendered counter detail in messy1, mirrored with the object 0ms
+     × looks at a rendered counter detail in messy2, mirrored with the object 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered sink detail in clean, mirrored with the object
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered sink detail in messy1, mirrored with the object
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered sink detail in messy2, mirrored with the object
+AssertionError: expected +0 to be close to 2.56, received difference is 2.56, but expected 0.005
+ ❯ src/pet/interactions.test.ts:128:32
+    126|       for (const target of targets) {
+    127|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    128|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    129|         expect((tx + ty) * 16).toBeCloseTo(y)
+    130|         expect(target.contact).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered stove detail in clean, mirrored with the object
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered stove detail in messy1, mirrored with the object
+AssertionError: expected 16 to be close to -39.04, received difference is 55.04, but expected 0.005
+ ❯ src/pet/interactions.test.ts:129:32
+    127|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    128|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+    129|         expect((tx + ty) * 16).toBeCloseTo(y)
+       |                                ^
+    130|         expect(target.contact).toBe(false)
+    131|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered stove detail in messy2, mirrored with the object
+AssertionError: expected 16 to be close to -42.04, received difference is 58.04, but expected 0.005
+ ❯ src/pet/interactions.test.ts:129:32
+    127|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    128|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+    129|         expect((tx + ty) * 16).toBeCloseTo(y)
+       |                                ^
+    130|         expect(target.contact).toBe(false)
+    131|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered fridge detail in clean, mirrored with the object
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered fridge detail in messy1, mirrored with the object
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered fridge detail in messy2, mirrored with the object
+AssertionError: expected +0 to be close to 22.4, received difference is 22.4, but expected 0.005
+ ❯ src/pet/interactions.test.ts:128:32
+    126|       for (const target of targets) {
+    127|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    128|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    129|         expect((tx + ty) * 16).toBeCloseTo(y)
+    130|         expect(target.contact).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered counter detail in clean, mirrored with the object
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered counter detail in messy1, mirrored with the object
+AssertionError: expected -16 to be close to -28.8, received difference is 12.8, but expected 0.005
+ ❯ src/pet/interactions.test.ts:128:32
+    126|       for (const target of targets) {
+    127|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    128|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    129|         expect((tx + ty) * 16).toBeCloseTo(y)
+    130|         expect(target.contact).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/pet/interactions.test.ts > environmental profiles > looks at a rendered counter detail in messy2, mirrored with the object
+AssertionError: expected -16 to be close to -30.08, received difference is 14.079999999999998, but expected 0.005
+ ❯ src/pet/interactions.test.ts:128:32
+    126|       for (const target of targets) {
+    127|         const tx = target.gaze.tx - 2, ty = target.gaze.ty - 2
+    128|         expect((tx - ty) * 32).toBeCloseTo(rotation % 2 ? -x : x)
+       |                                ^
+    129|         expect((tx + ty) * 16).toBeCloseTo(y)
+    130|         expect(target.contact).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  12 failed | 43 passed (55)
+   Start at  15:28:41
+   Duration  308ms (transform 59%, tests 28%, import 11%, worker 2%)
+

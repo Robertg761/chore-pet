@@ -1,0 +1,452 @@
+{
+  "method": "24 annotated production object details and24 Room SVG stills. Real initialPet/step transitions choose orientation/action from an adjacent tile, then motionFor samples42% through the action. Glasses on all species. Separate from a live LivingRoom clock or human temporal playback.",
+  "samples": [
+    {
+      "id": "sink",
+      "stage": "clean",
+      "rotation": 0,
+      "species": "mochi",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 2.5600000000000023,
+        "y": -16.72
+      },
+      "contact": false
+    },
+    {
+      "id": "sink",
+      "stage": "clean",
+      "rotation": 1,
+      "species": "mochi",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": -2.5600000000000023,
+        "y": -16.72
+      },
+      "contact": false
+    },
+    {
+      "id": "sink",
+      "stage": "messy1",
+      "rotation": 0,
+      "species": "bun",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 3.5600000000000023,
+        "y": -21.22
+      },
+      "contact": false
+    },
+    {
+      "id": "sink",
+      "stage": "messy1",
+      "rotation": 1,
+      "species": "bun",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -3.5600000000000023,
+        "y": -21.22
+      },
+      "contact": false
+    },
+    {
+      "id": "sink",
+      "stage": "messy2",
+      "rotation": 0,
+      "species": "sprout",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 2.5600000000000023,
+        "y": -31.72
+      },
+      "contact": false
+    },
+    {
+      "id": "sink",
+      "stage": "messy2",
+      "rotation": 1,
+      "species": "sprout",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -2.5600000000000023,
+        "y": -31.72
+      },
+      "contact": false
+    },
+    {
+      "id": "stove",
+      "stage": "clean",
+      "rotation": 0,
+      "species": "mochi",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -39.03999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "stove",
+      "stage": "clean",
+      "rotation": 1,
+      "species": "mochi",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -39.03999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "stove",
+      "stage": "messy1",
+      "rotation": 0,
+      "species": "bun",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -39.03999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "stove",
+      "stage": "messy1",
+      "rotation": 1,
+      "species": "bun",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -39.03999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "stove",
+      "stage": "messy2",
+      "rotation": 0,
+      "species": "sprout",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -42.03999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "stove",
+      "stage": "messy2",
+      "rotation": 1,
+      "species": "sprout",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 0,
+        "y": -42.03999999999999
+      },
+      "contact": false
+    },
+    {
+      "id": "fridge",
+      "stage": "clean",
+      "rotation": 0,
+      "species": "mochi",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 22.400000000000006,
+        "y": -49.72
+      },
+      "contact": false
+    },
+    {
+      "id": "fridge",
+      "stage": "clean",
+      "rotation": 1,
+      "species": "mochi",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": -22.400000000000006,
+        "y": -49.72
+      },
+      "contact": false
+    },
+    {
+      "id": "fridge",
+      "stage": "messy1",
+      "rotation": 0,
+      "species": "bun",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 22.400000000000006,
+        "y": -49.72
+      },
+      "contact": false
+    },
+    {
+      "id": "fridge",
+      "stage": "messy1",
+      "rotation": 1,
+      "species": "bun",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -22.400000000000006,
+        "y": -49.72
+      },
+      "contact": false
+    },
+    {
+      "id": "fridge",
+      "stage": "messy2",
+      "rotation": 0,
+      "species": "sprout",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 22.400000000000006,
+        "y": -49.72
+      },
+      "contact": false
+    },
+    {
+      "id": "fridge",
+      "stage": "messy2",
+      "rotation": 1,
+      "species": "sprout",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -22.400000000000006,
+        "y": -49.72
+      },
+      "contact": false
+    },
+    {
+      "id": "counter",
+      "stage": "clean",
+      "rotation": 0,
+      "species": "mochi",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": -28.799999999999997,
+        "y": -1.759999999999998
+      },
+      "contact": false
+    },
+    {
+      "id": "counter",
+      "stage": "clean",
+      "rotation": 1,
+      "species": "mochi",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "inspect",
+      "phase": "action",
+      "localGaze": {
+        "x": 28.799999999999997,
+        "y": -1.759999999999998
+      },
+      "contact": false
+    },
+    {
+      "id": "counter",
+      "stage": "messy1",
+      "rotation": 0,
+      "species": "bun",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -28.799999999999997,
+        "y": -1.759999999999998
+      },
+      "contact": false
+    },
+    {
+      "id": "counter",
+      "stage": "messy1",
+      "rotation": 1,
+      "species": "bun",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 28.799999999999997,
+        "y": -1.759999999999998
+      },
+      "contact": false
+    },
+    {
+      "id": "counter",
+      "stage": "messy2",
+      "rotation": 0,
+      "species": "sprout",
+      "standing": {
+        "tx": 3,
+        "ty": 2
+      },
+      "facing": -1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": -30.08,
+        "y": -14.04
+      },
+      "contact": false
+    },
+    {
+      "id": "counter",
+      "stage": "messy2",
+      "rotation": 1,
+      "species": "sprout",
+      "standing": {
+        "tx": 2,
+        "ty": 3
+      },
+      "facing": 1,
+      "action": "smell",
+      "phase": "action",
+      "localGaze": {
+        "x": 30.08,
+        "y": -14.04
+      },
+      "contact": false
+    }
+  ],
+  "sourceSha256": {
+    "src/pet/interactions.ts": "da4417bf00df0d7d34358ee474067ae075435c13a03f600787defecd1f3ebaaa",
+    "src/pet/behaviour.ts": "4bed9fcf40912fba2733ed5cdb17d302af59a1e42f7ebfeca78e7c17f5fbd472",
+    "src/pet/activityMotion.ts": "6401e236e3a3d71d6cba8d30f66986f3e40a0ba05f35c26b057d59139518452a",
+    "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+    "src/character/motion.ts": "5e1f316efcb2612a6b0a2d53009785892ee3ad999580bf910fea5c39a67e4e8b",
+    "src/room/Room.tsx": "10e3faba9fe3419d4b88427d55a0468da6e39c402c7ed3cbee0338d258137a8a",
+    "src/room/objects/sink.tsx": "25e80fc576ce2c1e14d1278ffebf827e0b93cd0570548b157ed8fca59bafea8f",
+    "src/room/objects/stove.tsx": "65c7af2bc43ec3a52ab428654c61df7932b042db057cdb1e9afc4805a3f3a7b9",
+    "src/room/objects/fridge.tsx": "882890be0b1556eb72f069d322278a815b563a8e80d81eec0532987f5f0e521f",
+    "src/room/objects/counter.tsx": "142a33ab47f1604d5ee1b3093ad26bc5fbdec0a40bd9dce5345c2905d897236a",
+    "src/room/objects/kitchenParts.tsx": "5d2095951ca47384f3b30072074f23352ddd801e8bc862094bc263acd6e8bb1f",
+    "src/room/objects/mess.tsx": "490389adab426507fcbc3a1b09612471e6df49bf76dfd9092bb9fa6afc6a8dc5",
+    "docs/audits/2026-10-12-character-polish/capture-environment.mjs": "f873d226b1571f55c7bc57db8cab02179d401157ea352a75a61d159b4529b11a"
+  }
+}
