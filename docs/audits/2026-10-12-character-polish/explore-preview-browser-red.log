@@ -1,0 +1,48 @@
+✖ native keyboard can identify and invite the second repeated furnishing (967.143831ms)
+✖ native furnishing previews preserve the current fractional walk and its one pending frame (1132.174519ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2490.598776
+
+✖ failing tests:
+
+test at scripts/browser/pet-explore-names.test.mjs:55:1
+✖ native keyboard can identify and invite the second repeated furnishing (967.143831ms)
+  AssertionError [ERR_ASSERTION]: the selected second plant must have its own room marker
+  
+  0 !== 1
+  
+      at assertTwinMarker (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore-names.test.mjs:48:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore-names.test.mjs:69:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-explore-names.test.mjs:85:1
+✖ native furnishing previews preserve the current fractional walk and its one pending frame (1132.174519ms)
+  AssertionError [ERR_ASSERTION]: the selected second plant must have its own room marker
+  
+  0 !== 1
+  
+      at assertTwinMarker (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore-names.test.mjs:48:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore-names.test.mjs:105:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

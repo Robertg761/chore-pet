@@ -1081,3 +1081,47 @@ it('expires an offscreen hop before return without invisible frames or stale che
   expect(frames.size).toBe(0)
   expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
 })
+
+it('previews a furnishing without changing a live fractional walk, pose, speech, or clock', () => {
+  const control = createRef<LivingRoomControl>()
+  const farPlant = { ...plant, tileX: 6, tileY: 6 }
+  const ui = mount(<LivingRoom {...props} objects={[farPlant]} mood="happy" control={control} />)
+  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
+  frame(100)
+  const resident = ui.container.querySelector('.room-pet')!
+  const position = resident.getAttribute('transform'), body = resident.querySelector('[data-character-body]')!.outerHTML
+  const speech = ui.container.querySelector('[aria-live="polite"]')!.textContent
+  const pending = [...frames.keys()]
+  expect(pending).toHaveLength(1)
+  act(() => control.current!.preview('plant'))
+  const marker = ui.container.querySelector('[data-selection-object="plant"]')!
+  expect(marker).not.toBeNull()
+  expect(marker.getAttribute('aria-hidden')).toBe('true')
+  expect(marker.querySelector('.room-chevron')).toBeNull()
+  expect(ui.container.querySelector('.room-pet')).toBe(resident)
+  expect(resident.getAttribute('transform')).toBe(position)
+  expect(resident.querySelector('[data-character-body]')!.outerHTML).toBe(body)
+  expect(ui.container.querySelector('[aria-live="polite"]')!.textContent).toBe(speech)
+  expect([...frames.keys()]).toEqual(pending)
+  act(() => control.current!.preview(null))
+  expect(ui.container.querySelector('.room-selection')).toBeNull()
+  expect([...frames.keys()]).toEqual(pending)
+})
+
+it('keeps preview selection decorative, ignores unknown IDs, and removes unavailable targets', () => {
+  Object.defineProperty(media, 'matches', { configurable: true, value: true })
+  const control = createRef<LivingRoomControl>()
+  const ui = mount(<LivingRoom {...props} objects={[plant]} mood="happy" control={control} />)
+  act(() => control.current!.preview('missing'))
+  expect(ui.container.querySelector('.room-selection')).toBeNull()
+  act(() => control.current!.preview('plant'))
+  expect(ui.container.querySelector('[data-selection-object="plant"]')).not.toBeNull()
+  expect(frames.size).toBe(0)
+  ui.rerender(<LivingRoom {...props} objects={[plant]} mood="sick" control={control} />)
+  expect(ui.container.querySelector('.room-selection')).toBeNull()
+  ui.rerender(<LivingRoom {...props} objects={[plant]} mood="happy" away control={control} />)
+  expect(ui.container.querySelector('.room-selection')).toBeNull()
+  ui.rerender(<LivingRoom {...props} objects={[]} mood="happy" control={control} />)
+  expect(ui.container.querySelector('.room-selection')).toBeNull()
+  expect(frames.size).toBe(0)
+})

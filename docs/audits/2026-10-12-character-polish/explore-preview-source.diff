@@ -1,0 +1,442 @@
+diff --git c/docs/ART.md w/docs/ART.md
+index f0d5eff..ba804e6 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -161,6 +161,8 @@ The creator preview uses a finite 1800ms sampled celebration for species and col
+ 
+ Explore together offers explicit player invitations to a chosen furnishing. Keep its disclosure and native selector below the scene on phones and beside it in the desktop chores panel, preserving scene size. Reuse the current condition-aware approach and existing orient/action/settle sequence; fractional interruption origins reconnect through known clear segment endpoints. Same-target invitations coalesce. Taps and chore cheers retain priority and cancel pending invitation dialogue. Announce one invited observation at arrival; automatic exploration stays quiet. Reduced motion answers from the current position without beginning a route. Invitations remain local, with no saved pet/chore changes or new animation clock. Repeated furnishings use the builder's numbered names in both the selector and invitation feedback, preserving the selected object ID when counts change.
+ 
++While Explore together is open and available, mark its selected furnishing with a stationary footprint outline and chevron. Changing or removing the choice updates the marker; collapse, blocked exploration, room changes and unmount clear it. Reuse build selection geometry in preview mode without its floor wash or bobbing animation. Previewing stays decorative: preserve the pet's current position, pose, speech, activity, and clock, with no visit, audio, or saved-data changes. The marker is hidden from assistive technology and never intercepts input.
++
+ The resident clock pauses when reduced-motion art is settled or the pet is resting asleep/sick. Finite player reactions/notices keep the same single clock until their deadline; normal-motion suppression completes its existing120ms blend before pausing. Healthy normal-motion residents retain breathing, lifetime blinks and exploration. World/preference changes still validate and paint before display even with no pending frames. Initial sleeping/sick residents start in their resting activity, without blending from an unshown idle frame. Existing Boolean usePetMotion consumers keep their prior scheduling policy; the resident supplies separate normal/reduced activity flags. No new timer, clock or saved preference is introduced.
+ 
+ One native IntersectionObserver pauses that same clock when the resident's SVG is completely outside the viewport or scroll clipping. Any positive visible area keeps it active. Exact edge contact also stays active because the native default threshold may omit the following positive-area notification. Returning into view samples current world deadlines before paint and clears stale hover. Offscreen responses request no frames; returning resumes a finite response only while its deadline remains active. Missing observation support retains the existing clock policy. Observer cleanup ignores queued callbacks; no polling or additional animation clock is used.
+diff --git c/scripts/browser/pet-explore-names.test.mjs w/scripts/browser/pet-explore-names.test.mjs
+index 64ae2b4..a9f6f7c 100644
+--- c/scripts/browser/pet-explore-names.test.mjs
++++ w/scripts/browser/pet-explore-names.test.mjs
+@@ -25,9 +25,37 @@ async function secondPlant(page) {
+   await page.reload()
+ }
+ 
++async function instrument(page) {
++  await page.clock.install()
++  await page.clock.pauseAt(Date.now() + 1000)
++  await page.addInitScript(() => {
++    Math.random = () => .99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__exploreFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__exploreFrames.delete(id); callback(now) })
++      window.__exploreFrames.add(id)
++      return id
++    }
++    window.cancelAnimationFrame = id => { window.__exploreFrames.delete(id); cancel(id) }
++  })
++  await page.reload()
++  await page.locator('.room-pet').waitFor()
++}
++
++async function assertTwinMarker(page) {
++  const marker = page.locator('.room-selection[data-selection-object="plant-twin"]')
++  assert.equal(await marker.count(), 1, 'the selected second plant must have its own room marker')
++  assert.equal(await marker.getAttribute('aria-hidden'), 'true')
++  assert.equal(await marker.evaluate(node => getComputedStyle(node).pointerEvents), 'none')
++  assert.equal(await marker.evaluate(node => node.getAnimations({ subtree: true }).length), 0)
++  assert.equal(await marker.locator('polygon').first().getAttribute('points'), '46.25,204.38 67.5,215 46.25,225.63 25,215')
++}
++
+ test('native keyboard can identify and invite the second repeated furnishing', async t => {
+   const page = await browserApp(t, { viewport: { width: 320, height: 640 } })
+   await secondPlant(page)
++  await instrument(page)
+   const saved = (await snapshot(page)).tables
+   const toggle = page.getByRole('button', { name: 'Explore together', exact: true })
+   await toggle.focus(); await page.keyboard.press('Enter'); await page.keyboard.press('Tab')
+@@ -38,6 +66,8 @@ test('native keyboard can identify and invite the second repeated furnishing', a
+   await page.keyboard.press('End')
+   assert.equal(await select.inputValue(), 'plant-twin')
+   assert.equal(await select.evaluate(node => node.selectedOptions[0].text), 'Potted plant 2')
++  await assertTwinMarker(page)
++  assert.equal(await page.evaluate(() => window.__exploreFrames.size), 0)
+   const resident = page.locator('.room-pet'), position = await resident.getAttribute('transform')
+   await page.keyboard.press('Tab'); await page.keyboard.press('Enter')
+   assert.match(await page.locator('.pet-explore [role="status"]').textContent(), /potted plant 2 from here/)
+@@ -46,5 +76,56 @@ test('native keyboard can identify and invite the second repeated furnishing', a
+   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
+   const out = process.env.CHORE_EXPLORE_NAMES_CAPTURE_DIR
+   if (out) { await mkdir(out, { recursive: true }); await page.screenshot({ path: join(out, 'explore-second-plant-320.png') }) }
++  const marker = page.locator('.room-selection[data-selection-object="plant-twin"]')
++  await marker.scrollIntoViewIfNeeded()
++  // SVG geometry bounds omit the stroke; leave breathing room above the arrow.
++  const scrollTarget = await page.evaluate(() => ({
++    innerAtOldPoint: Boolean(document.elementFromPoint(160, 100)?.closest('.home-scene-viewport')),
++    innerAtOuterPoint: Boolean(document.elementFromPoint(300, 200)?.closest('.home-scene-viewport')),
++  }))
++  t.diagnostic(`Phone scroll targets:${JSON.stringify(scrollTarget)}`)
++  assert.equal(scrollTarget.innerAtOuterPoint, false, 'scroll outside the scene, whose overscroll is contained')
++  await page.mouse.move(300, 200)
++  await page.mouse.wheel(0, -80)
++  await page.waitForFunction(() => document.querySelector('.room-selection').getBoundingClientRect().top >= 16)
++  const bounds = await marker.boundingBox()
++  assert.ok(bounds.y >= 16 && bounds.y + bounds.height <= 624, 'the phone can show the entire stationary marker with its outline clear of viewport edges')
++  assert.equal(await page.evaluate(() => window.__exploreFrames.size), 0)
++  if (out) await page.screenshot({ path: join(out, 'explore-second-plant-marker-320.png') })
++  await toggle.click()
++  assert.equal(await page.locator('.room-selection').count(), 0)
++  assert.equal(await page.evaluate(() => window.__exploreFrames.size), 0)
+   t.diagnostic(`Chromium ${page.context().browser().version()};native keyboard;unique names;unchanged saved tables`)
+ })
++
++test('native furnishing previews preserve the current fractional walk and its one pending frame', async t => {
++  const page = await browserApp(t, { reducedMotion: 'no-preference', viewport: { width: 1280, height: 800 } })
++  await secondPlant(page)
++  await instrument(page)
++  const saved = (await snapshot(page)).tables
++  const resident = page.locator('.room-pet')
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  const start = await resident.getAttribute('transform')
++  let moved = false
++  for (let i = 0; i < 100; i++) {
++    await page.clock.runFor(32)
++    if (await resident.getAttribute('transform') !== start) { moved = true; break }
++  }
++  assert.equal(moved, true, 'the fixture must reach a genuine moving step')
++  await resident.evaluate(node => { window.__previewPet = node })
++  const before = await resident.evaluate(node => ({ at: node.getAttribute('transform'), body: node.querySelector('[data-character-body]').outerHTML }))
++  const pending = await page.evaluate(() => [...window.__exploreFrames])
++  assert.equal(pending.length, 1)
++  await page.getByLabel(/^Show /).focus()
++  await page.keyboard.press('End')
++  await assertTwinMarker(page)
++  assert.equal(await resident.evaluate(node => node === window.__previewPet), true)
++  assert.deepEqual(await resident.evaluate(node => ({ at: node.getAttribute('transform'), body: node.querySelector('[data-character-body]').outerHTML })), before)
++  assert.deepEqual(await page.evaluate(() => [...window.__exploreFrames]), pending)
++  const out = process.env.CHORE_EXPLORE_NAMES_CAPTURE_DIR
++  if (out) { await mkdir(out, { recursive: true }); await page.screenshot({ path: join(out, 'explore-preview-walk-1280.png') }) }
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  assert.equal(await page.locator('.room-selection').count(), 0)
++  assert.deepEqual(await page.evaluate(() => [...window.__exploreFrames]), pending)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
+diff --git c/scripts/browser/pet-play.test.mjs w/scripts/browser/pet-play.test.mjs
+index cc17213..8428031 100644
+--- c/scripts/browser/pet-play.test.mjs
++++ w/scripts/browser/pet-play.test.mjs
+@@ -178,12 +178,14 @@ test('room changes remove the previous furnishing choices and reset player-time
+   const explore = page.getByRole('button', { name: 'Explore together', exact: true })
+   const play = page.getByRole('button', { name: 'Spend time together', exact: true })
+   await explore.click()
++  assert.equal(await page.locator('.room-selection').count(), 1)
+   await play.click()
+   await page.getByLabel(/^Focused room/).selectOption('second')
+   assert.equal(await explore.count(), 1)
+   assert.equal(await play.count(), 1)
+   assert.equal(await explore.getAttribute('aria-expanded'), 'false')
+   assert.equal(await play.getAttribute('aria-expanded'), 'false')
++  assert.equal(await page.locator('.room-selection').count(), 0)
+   assert.deepEqual(await page.locator('.pet-explore option').evaluateAll(nodes => nodes.map(node => node.value)), ['second-object'])
+   await page.getByLabel(/^Focused room/).selectOption('empty')
+   assert.equal(await explore.count(), 0)
+diff --git c/src/App.tsx w/src/App.tsx
+index 25789e5..0e6ce44 100644
+--- c/src/App.tsx
++++ w/src/App.tsx
+@@ -1,4 +1,4 @@
+-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
++import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+ import { catalogEntry } from './catalog/objects'
+ import { canSkip, choreActiveOn, choreRetiredBy, choreStatus, skippedOn } from './domain/schedule'
+ import type { CatalogEntry } from './catalog/types'
+@@ -189,6 +189,7 @@ export default function App() {
+   }, [data.chores, data.completions, today, data.home?.vacations])
+   const travel = useHomePet(data.home?.id, focusedRoomId, layout, connections, data.objects, roomNames(rooms), data.pet?.name ?? 'Your pet', view.name, stages)
+   const residentControl = useRef<LivingRoomControl | null>(null)
++  const previewExplore = useCallback((objectId: string | null) => residentControl.current?.preview(objectId), [])
+   /** Change screen with a short slide: forward when going deeper, back when returning. */
+   const setView = (next: View) => {
+     if (next.name === view.name) { setViewNow(next); return }
+@@ -983,6 +984,7 @@ export default function App() {
+ 
+       <div className="home-chores">
+         {room && roomObjects.length > 0 && <PetExplore key={`${home.id}:${room.id}`} objects={roomObjects} petName={pet.name}
++          onPreview={previewExplore}
+           blocked={away ? 'away' : condition.mood === 'sick' ? 'sick' : travel.journey || resident?.id !== room.id ? 'travel' : undefined}
+           onLook={objectId => !travel.journey && resident?.id === room.id
+             ? residentControl.current?.lookAt(objectId) ?? 'unavailable' : 'unavailable'} />}
+diff --git c/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index 5ebc41c..f33c6a8 100644
+--- c/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -69,6 +69,8 @@ export type PlayerResponseResult = 'started' | 'busy' | 'resting' | 'unavailable
+ export interface LivingRoomControl {
+   lookAt: (objectId: string) => VisitResult
+   respond: (action: PlayerGesture) => PlayerResponseResult
++  /** Show a stationary furnishing marker without changing pet activity. */
++  preview: (objectId: string | null) => void
+ }
+ 
+ const PLAYER_LINES: Record<PlayerGesture, string[]> = { greet: GREETING_LINES, affection: AFFECTION_LINES, hop: HOP_LINES }
+@@ -196,6 +198,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+     return { state, pos: state.tile }
+   })
+   const [said, setSaid] = useState<Said | null>(null)
++  const [previewId, setPreviewId] = useState<string | null>(null)
+ 
+   // The live state, ahead of `shown` while the pet walks.
+   const live = useRef<Shown>(shown)
+@@ -248,7 +251,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+     advance(advanceState(live.current.state, world, now, reduced), now)
+   }, [advance, world])
+ 
+-  useImperativeHandle(control, () => ({ respond: action => {
++  useImperativeHandle(control, () => ({ preview: setPreviewId, respond: action => {
+     if (away || mood === 'sick') return 'resting'
+     const now = performance.now()
+     const current = advanceState(live.current.state, world, now, motion.current?.reduced ?? false)
+@@ -373,6 +376,8 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+         stages={stages}
+         neglect={neglect}
+         overdue={overdue}
++        selectedId={away || mood === 'sick' ? null : previewId}
++        selectionMode="preview"
+         className="home-room"
+         overlay={overlay}
+         pet={{
+diff --git c/src/pet/PetExplore.test.tsx w/src/pet/PetExplore.test.tsx
+index 86d132c..d030678 100644
+--- c/src/pet/PetExplore.test.tsx
++++ w/src/pet/PetExplore.test.tsx
+@@ -97,3 +97,35 @@ it.each(['__proto__', 'constructor', 'toString'])('keeps repeated choice IDs and
+   expect(ui.props.onLook).toHaveBeenCalledExactlyOnceWith(id)
+   expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('potted plant 1')
+ })
++
++it('previews only the active available furnishing and clears the marker on collapse and unmount', () => {
++  const preview = vi.fn()
++  const ui = mount({ onPreview: preview })
++  expect(preview).toHaveBeenLastCalledWith(null)
++  const trigger = button(ui.container, 'Explore together')
++  click(trigger)
++  expect(preview).toHaveBeenLastCalledWith('plant-id')
++  const select = ui.container.querySelector('select')!
++  act(() => { select.value = 'bear-id'; select.dispatchEvent(new Event('change', { bubbles: true })) })
++  expect(preview).toHaveBeenLastCalledWith('bear-id')
++  expect(ui.props.onLook).not.toHaveBeenCalled()
++  ui.rerender(<PetExplore {...ui.props} objects={[objects[0]]} />)
++  expect(preview).toHaveBeenLastCalledWith('plant-id')
++  click(trigger)
++  expect(preview).toHaveBeenLastCalledWith(null)
++  click(trigger)
++  expect(preview).toHaveBeenLastCalledWith('plant-id')
++  ui.unmount()
++  expect(preview).toHaveBeenLastCalledWith(null)
++})
++
++it.each(['travel', 'away', 'sick'] as const)('clears an open furnishing preview when %s blocks exploration', blocked => {
++  const preview = vi.fn()
++  const ui = mount({ onPreview: preview })
++  click(button(ui.container, 'Explore together'))
++  expect(preview).toHaveBeenLastCalledWith('plant-id')
++  ui.rerender(<PetExplore {...ui.props} blocked={blocked} />)
++  expect(preview).toHaveBeenLastCalledWith(null)
++  ui.rerender(<PetExplore {...ui.props} objects={[]} />)
++  expect(preview).toHaveBeenLastCalledWith(null)
++})
+diff --git c/src/pet/PetExplore.tsx w/src/pet/PetExplore.tsx
+index 14f8de7..309048c 100644
+--- c/src/pet/PetExplore.tsx
++++ w/src/pet/PetExplore.tsx
+@@ -1,4 +1,4 @@
+-import { useId, useState } from 'react'
++import { useId, useLayoutEffect, useState } from 'react'
+ import { catalogEntry } from '../catalog/objects'
+ import type { PlacedObject } from '../domain/types'
+ import { objectNames } from '../room/roomSummary'
+@@ -10,10 +10,12 @@ export interface PetExploreProps {
+   petName: string
+   blocked?: 'travel' | 'away' | 'sick'
+   onLook: (objectId: string) => VisitResult
++  /** Decorative room marker only; previewing never starts a visit. */
++  onPreview?: (objectId: string | null) => void
+ }
+ 
+ /** Optional room play. Selection and feedback belong to this room visit only. */
+-export function PetExplore({ objects, petName, blocked, onLook }: PetExploreProps) {
++export function PetExplore({ objects, petName, blocked, onLook, onPreview }: PetExploreProps) {
+   const id = useId()
+   const [open, setOpen] = useState(false)
+   const [selectedId, setSelectedId] = useState('')
+@@ -24,6 +26,11 @@ export function PetExplore({ objects, petName, blocked, onLook }: PetExploreProp
+     return entry ? [{ object, name: names[object.id] }] : []
+   })
+   const selected = choices.find(choice => choice.object.id === selectedId) ?? choices[0]
++  const previewId = open && !blocked ? selected?.object.id ?? null : null
++  useLayoutEffect(() => {
++    onPreview?.(previewId)
++    return () => onPreview?.(null)
++  }, [onPreview, previewId])
+   const disabled = Boolean(blocked || !selected)
+   const note = blocked === 'travel' ? `${petName} is on the way.`
+     : blocked === 'away' ? `${petName} is resting while you're away.`
+diff --git c/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index ba6946c..4b38085 100644
+--- c/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -1081,3 +1081,47 @@ it('expires an offscreen hop before return without invisible frames or stale che
+   expect(frames.size).toBe(0)
+   expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
+ })
++
++it('previews a furnishing without changing a live fractional walk, pose, speech, or clock', () => {
++  const control = createRef<LivingRoomControl>()
++  const farPlant = { ...plant, tileX: 6, tileY: 6 }
++  const ui = mount(<LivingRoom {...props} objects={[farPlant]} mood="happy" control={control} />)
++  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
++  frame(100)
++  const resident = ui.container.querySelector('.room-pet')!
++  const position = resident.getAttribute('transform'), body = resident.querySelector('[data-character-body]')!.outerHTML
++  const speech = ui.container.querySelector('[aria-live="polite"]')!.textContent
++  const pending = [...frames.keys()]
++  expect(pending).toHaveLength(1)
++  act(() => control.current!.preview('plant'))
++  const marker = ui.container.querySelector('[data-selection-object="plant"]')!
++  expect(marker).not.toBeNull()
++  expect(marker.getAttribute('aria-hidden')).toBe('true')
++  expect(marker.querySelector('.room-chevron')).toBeNull()
++  expect(ui.container.querySelector('.room-pet')).toBe(resident)
++  expect(resident.getAttribute('transform')).toBe(position)
++  expect(resident.querySelector('[data-character-body]')!.outerHTML).toBe(body)
++  expect(ui.container.querySelector('[aria-live="polite"]')!.textContent).toBe(speech)
++  expect([...frames.keys()]).toEqual(pending)
++  act(() => control.current!.preview(null))
++  expect(ui.container.querySelector('.room-selection')).toBeNull()
++  expect([...frames.keys()]).toEqual(pending)
++})
++
++it('keeps preview selection decorative, ignores unknown IDs, and removes unavailable targets', () => {
++  Object.defineProperty(media, 'matches', { configurable: true, value: true })
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} objects={[plant]} mood="happy" control={control} />)
++  act(() => control.current!.preview('missing'))
++  expect(ui.container.querySelector('.room-selection')).toBeNull()
++  act(() => control.current!.preview('plant'))
++  expect(ui.container.querySelector('[data-selection-object="plant"]')).not.toBeNull()
++  expect(frames.size).toBe(0)
++  ui.rerender(<LivingRoom {...props} objects={[plant]} mood="sick" control={control} />)
++  expect(ui.container.querySelector('.room-selection')).toBeNull()
++  ui.rerender(<LivingRoom {...props} objects={[plant]} mood="happy" away control={control} />)
++  expect(ui.container.querySelector('.room-selection')).toBeNull()
++  ui.rerender(<LivingRoom {...props} objects={[]} mood="happy" control={control} />)
++  expect(ui.container.querySelector('.room-selection')).toBeNull()
++  expect(frames.size).toBe(0)
++})
+diff --git c/src/room/Room.tsx w/src/room/Room.tsx
+index b874ccd..99819b6 100644
+--- c/src/room/Room.tsx
++++ w/src/room/Room.tsx
+@@ -65,6 +65,8 @@ export interface RoomProps {
+   /** Days late per placed object id (objectOverdue() in ./cuePlan): breaks ties when choosing which cues show in full. */
+   overdue?: Record<string, number>
+   selectedId?: string | null
++  /** Preview uses the same outline/chevron, stationary and without build floor fill. */
++  selectionMode?: 'build' | 'preview'
+   /** A new or moving object's preview: drawn see-through with a green or red footprint. */
+   ghost?: Ghost | null
+   /** Hide this placed object (it is being dragged, the ghost stands in for it). */
+@@ -132,13 +134,13 @@ function footprintPolygon(f: Footprint, fill: string, opacity: number, dashed =
+ }
+ 
+ /** The selected object: an accent outline round its footprint and a bobbing chevron over it, drawn over everything. */
+-function Selection({ footprint, top }: { footprint: Footprint; top: { x: number; y: number } }) {
++function Selection({ footprint, top, objectId, still }: { footprint: Footprint; top: { x: number; y: number }; objectId: string; still: boolean }) {
+   return (
+-    <g className="room-selection" style={{ pointerEvents: 'none' }} aria-hidden="true">
++    <g className="room-selection" data-selection-object={objectId} style={{ pointerEvents: 'none' }} aria-hidden="true">
+       <polygon points={footprintCorners(footprint)} fill="none" stroke={white} strokeWidth={5} strokeOpacity={0.7} />
+       <polygon points={footprintCorners(footprint)} fill="none" stroke={accent} strokeWidth={3} strokeDasharray="7 5" />
+       <g transform={`translate(${top.x} ${top.y - 6})`}>
+-        <g className="room-chevron">
++        <g className={still ? undefined : 'room-chevron'}>
+           <polygon points="-8,-12 0,-5 8,-12 8,-6 0,1 -8,-6" fill={accent} stroke={ink} strokeWidth={ROOM_INK * 0.9} />
+         </g>
+       </g>
+@@ -178,7 +180,7 @@ const PET_HIT = 64
+ const NO_STAGES: Record<string, MessStage> = {}
+ const NO_NEGLECT: Record<string, NeglectLevel> = {}
+ 
+-export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, overdue, selectedId, ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
++export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, overdue, selectedId, selectionMode = 'build', ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
+   const scene = useContext(SceneContext)
+   const items: Item[] = []
+   const justPlaced = useJustPlaced(objects)
+@@ -286,7 +288,7 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT,
+       summary={summary}
+       svgProps={pet?.onTap ? { role: 'group', ...svgProps } : svgProps}
+     >
+-      {selected && selectedEntry && footprintPolygon(footprintOf(selected, selectedEntry), accent, 0.3)}
++      {selected && selectedEntry && selectionMode === 'build' && footprintPolygon(footprintOf(selected, selectedEntry), accent, 0.3)}
+       {ghost && footprintPolygon(footprintOf(ghost.placement, ghost.entry), ghost.ok ? FITS : BLOCKED, 0.4, true)}
+       {depthOrder(items).map((i) => i.draw())}
+       {cues.map((c) => (
+@@ -294,7 +296,7 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT,
+           <NeglectCue kind={c.kind} level={c.level} still={!c.animate} />
+         </g>
+       ))}
+-      {selected && selectedEntry && <Selection footprint={footprintOf(selected, selectedEntry)} top={objectTop(selectedEntry, selected)} />}
++      {selected && selectedEntry && <Selection footprint={footprintOf(selected, selectedEntry)} top={objectTop(selectedEntry, selected)} objectId={selected.id} still={selectionMode === 'preview'} />}
+       {overlay}
+     </RoomShell>
+   )
+diff --git 1/src/room/Room.selection.test.tsx 2/src/room/Room.selection.test.tsx
+new file mode 100644
+index 0000000..bf8bdf7
+--- /dev/null
++++ 2/src/room/Room.selection.test.tsx
+@@ -0,0 +1,46 @@
++// @vitest-environment jsdom
++import { afterEach, expect, it } from 'vitest'
++import { PALETTE } from '../art/palette'
++import type { PlacedObject } from '../domain/types'
++import { render } from '../test/react'
++import { Room } from './Room'
++
++const bed: PlacedObject = { id: 'bed-id', roomId: 'room', catalogId: 'bed', tileX: 1, tileY: 2, rotation: 0 }
++const props = { room: { floorStyle: 'wood', wallStyle: 'cream' } as const, objects: [bed], selectedId: bed.id }
++const cleanups: (() => void)[] = []
++afterEach(() => cleanups.splice(0).forEach(cleanup => cleanup()))
++
++function mount(content: Parameters<typeof render>[0]) {
++  const ui = render(content)
++  cleanups.push(ui.unmount)
++  return ui
++}
++
++it('preserves the builder selection default and its floor wash', () => {
++  const ui = mount(<Room {...props} />)
++  expect(ui.container.querySelector('.room-selection .room-chevron')).not.toBeNull()
++  expect(ui.container.querySelectorAll(`polygon[fill="${PALETTE.accent}"][fill-opacity="0.3"]`)).toHaveLength(1)
++  expect(ui.container.querySelector('.room-selection polygon')!.getAttribute('points'))
++    .toBe('173.75,161.88 237.5,193.75 195,215 131.25,183.13')
++})
++
++it.each([
++  [0, '173.75,161.88 237.5,193.75 195,215 131.25,183.13'],
++  [1, '173.75,161.88 216.25,183.13 152.5,215 110,193.75'],
++] as const)('renders a stationary preview with the correct rotation%s footprint', (rotation, points) => {
++  const ui = mount(<Room {...props} objects={[{ ...bed, rotation }]} selectionMode="preview" />)
++  const marker = ui.container.querySelector('.room-selection')!
++  expect(Boolean(marker.querySelector('.room-chevron'))).toBe(false)
++  expect(marker.getAttribute('data-selection-object')).toBe(bed.id)
++  expect(marker.getAttribute('aria-hidden')).toBe('true')
++  expect((marker as SVGElement).style.pointerEvents).toBe('none')
++  expect(marker.querySelector('polygon')!.getAttribute('points')).toBe(points)
++  expect(ui.container.querySelectorAll(`polygon[fill="${PALETTE.accent}"][fill-opacity="0.3"]`)).toHaveLength(0)
++})
++
++it('does not mark unknown or hidden preview objects', () => {
++  const ui = mount(<Room {...props} selectedId="missing" selectionMode="preview" />)
++  expect(ui.container.querySelector('.room-selection')).toBeNull()
++  ui.rerender(<Room {...props} hiddenId={bed.id} selectionMode="preview" />)
++  expect(ui.container.querySelector('.room-selection')).toBeNull()
++})

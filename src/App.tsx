@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { catalogEntry } from './catalog/objects'
 import { canSkip, choreActiveOn, choreRetiredBy, choreStatus, skippedOn } from './domain/schedule'
 import type { CatalogEntry } from './catalog/types'
@@ -189,6 +189,7 @@ export default function App() {
   }, [data.chores, data.completions, today, data.home?.vacations])
   const travel = useHomePet(data.home?.id, focusedRoomId, layout, connections, data.objects, roomNames(rooms), data.pet?.name ?? 'Your pet', view.name, stages)
   const residentControl = useRef<LivingRoomControl | null>(null)
+  const previewExplore = useCallback((objectId: string | null) => residentControl.current?.preview(objectId), [])
   /** Change screen with a short slide: forward when going deeper, back when returning. */
   const setView = (next: View) => {
     if (next.name === view.name) { setViewNow(next); return }
@@ -983,6 +984,7 @@ export default function App() {
 
       <div className="home-chores">
         {room && roomObjects.length > 0 && <PetExplore key={`${home.id}:${room.id}`} objects={roomObjects} petName={pet.name}
+          onPreview={previewExplore}
           blocked={away ? 'away' : condition.mood === 'sick' ? 'sick' : travel.journey || resident?.id !== room.id ? 'travel' : undefined}
           onLook={objectId => !travel.journey && resident?.id === room.id
             ? residentControl.current?.lookAt(objectId) ?? 'unavailable' : 'unavailable'} />}

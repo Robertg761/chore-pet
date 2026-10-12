@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useId, useLayoutEffect, useState } from 'react'
 import { catalogEntry } from '../catalog/objects'
 import type { PlacedObject } from '../domain/types'
 import { objectNames } from '../room/roomSummary'
@@ -10,10 +10,12 @@ export interface PetExploreProps {
   petName: string
   blocked?: 'travel' | 'away' | 'sick'
   onLook: (objectId: string) => VisitResult
+  /** Decorative room marker only; previewing never starts a visit. */
+  onPreview?: (objectId: string | null) => void
 }
 
 /** Optional room play. Selection and feedback belong to this room visit only. */
-export function PetExplore({ objects, petName, blocked, onLook }: PetExploreProps) {
+export function PetExplore({ objects, petName, blocked, onLook, onPreview }: PetExploreProps) {
   const id = useId()
   const [open, setOpen] = useState(false)
   const [selectedId, setSelectedId] = useState('')
@@ -24,6 +26,11 @@ export function PetExplore({ objects, petName, blocked, onLook }: PetExploreProp
     return entry ? [{ object, name: names[object.id] }] : []
   })
   const selected = choices.find(choice => choice.object.id === selectedId) ?? choices[0]
+  const previewId = open && !blocked ? selected?.object.id ?? null : null
+  useLayoutEffect(() => {
+    onPreview?.(previewId)
+    return () => onPreview?.(null)
+  }, [onPreview, previewId])
   const disabled = Boolean(blocked || !selected)
   const note = blocked === 'travel' ? `${petName} is on the way.`
     : blocked === 'away' ? `${petName} is resting while you're away.`

@@ -1,0 +1,12 @@
+✔ native keyboard can identify and invite the second repeated furnishing (1301.152925ms)
+ℹ Phone scroll targets:{"innerAtOldPoint":true,"innerAtOuterPoint":false}
+ℹ Chromium 152.0.7977.82;native keyboard;unique names;unchanged saved tables
+✔ native furnishing previews preserve the current fractional walk and its one pending frame (1334.611795ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3021.521834

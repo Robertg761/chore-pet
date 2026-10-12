@@ -65,6 +65,8 @@ export interface RoomProps {
   /** Days late per placed object id (objectOverdue() in ./cuePlan): breaks ties when choosing which cues show in full. */
   overdue?: Record<string, number>
   selectedId?: string | null
+  /** Preview uses the same outline/chevron, stationary and without build floor fill. */
+  selectionMode?: 'build' | 'preview'
   /** A new or moving object's preview: drawn see-through with a green or red footprint. */
   ghost?: Ghost | null
   /** Hide this placed object (it is being dragged, the ghost stands in for it). */
@@ -132,13 +134,13 @@ function footprintPolygon(f: Footprint, fill: string, opacity: number, dashed = 
 }
 
 /** The selected object: an accent outline round its footprint and a bobbing chevron over it, drawn over everything. */
-function Selection({ footprint, top }: { footprint: Footprint; top: { x: number; y: number } }) {
+function Selection({ footprint, top, objectId, still }: { footprint: Footprint; top: { x: number; y: number }; objectId: string; still: boolean }) {
   return (
-    <g className="room-selection" style={{ pointerEvents: 'none' }} aria-hidden="true">
+    <g className="room-selection" data-selection-object={objectId} style={{ pointerEvents: 'none' }} aria-hidden="true">
       <polygon points={footprintCorners(footprint)} fill="none" stroke={white} strokeWidth={5} strokeOpacity={0.7} />
       <polygon points={footprintCorners(footprint)} fill="none" stroke={accent} strokeWidth={3} strokeDasharray="7 5" />
       <g transform={`translate(${top.x} ${top.y - 6})`}>
-        <g className="room-chevron">
+        <g className={still ? undefined : 'room-chevron'}>
           <polygon points="-8,-12 0,-5 8,-12 8,-6 0,1 -8,-6" fill={accent} stroke={ink} strokeWidth={ROOM_INK * 0.9} />
         </g>
       </g>
@@ -178,7 +180,7 @@ const PET_HIT = 64
 const NO_STAGES: Record<string, MessStage> = {}
 const NO_NEGLECT: Record<string, NeglectLevel> = {}
 
-export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, overdue, selectedId, ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
+export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, overdue, selectedId, selectionMode = 'build', ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
   const scene = useContext(SceneContext)
   const items: Item[] = []
   const justPlaced = useJustPlaced(objects)
@@ -286,7 +288,7 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, 
       summary={summary}
       svgProps={pet?.onTap ? { role: 'group', ...svgProps } : svgProps}
     >
-      {selected && selectedEntry && footprintPolygon(footprintOf(selected, selectedEntry), accent, 0.3)}
+      {selected && selectedEntry && selectionMode === 'build' && footprintPolygon(footprintOf(selected, selectedEntry), accent, 0.3)}
       {ghost && footprintPolygon(footprintOf(ghost.placement, ghost.entry), ghost.ok ? FITS : BLOCKED, 0.4, true)}
       {depthOrder(items).map((i) => i.draw())}
       {cues.map((c) => (
@@ -294,7 +296,7 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, 
           <NeglectCue kind={c.kind} level={c.level} still={!c.animate} />
         </g>
       ))}
-      {selected && selectedEntry && <Selection footprint={footprintOf(selected, selectedEntry)} top={objectTop(selectedEntry, selected)} />}
+      {selected && selectedEntry && <Selection footprint={footprintOf(selected, selectedEntry)} top={objectTop(selectedEntry, selected)} objectId={selected.id} still={selectionMode === 'preview'} />}
       {overlay}
     </RoomShell>
   )

@@ -1,0 +1,37 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/room/Room.selection.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/room/Room.selection.test.tsx (4 tests | 2 failed) 99ms
+   × renders a stationary preview with the correct rotation0 footprint 22ms
+   × renders a stationary preview with the correct rotation1 footprint 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/room/Room.selection.test.tsx > renders a stationary preview with the correct rotation0 footprint
+ FAIL  src/room/Room.selection.test.tsx > renders a stationary preview with the correct rotation1 footprint
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/room/Room.selection.test.tsx:33:58
+     31|   const ui = mount(<Room {...props} objects={[{ ...bed, rotation }]} s…
+     32|   const marker = ui.container.querySelector('.room-selection')!
+     33|   expect(Boolean(marker.querySelector('.room-chevron'))).toBe(false)
+       |                                                          ^
+     34|   expect(marker.getAttribute('data-selection-object')).toBe(bed.id)
+     35|   expect(marker.getAttribute('aria-hidden')).toBe('true')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  19:02:58
+   Duration  831ms (transform 40%, environment 36%, tests 14%, import 10%)
+

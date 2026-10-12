@@ -1,0 +1,20 @@
+{
+  "baseCommit": "dfd47547be5e29040a4ad9f550bc7385891e24ce",
+  "sources": {
+    "src/App.tsx": "a97f333acd3ca63e91e35c3a28e1cf6099d0a57437cdd28a2084a60ceb7e3893",
+    "src/pet/LivingRoom.tsx": "f47d69e86cffd51953a62ff106d2ed2f4a7c30035b10083ded2ff08820e61a80",
+    "src/pet/PetExplore.tsx": "0dcbcf2e560b0ee00b2f9b5bdf53e65953ea6172b94fa95389b080c8a8f26eb3",
+    "src/room/Room.tsx": "5e510f57280b00a93eac37fcb624106c88371ca9e40e39fe54c7757ac0b07e40",
+    "src/pet/PetExplore.test.tsx": "c18dbf4fb281be5c2b66f2b5b7c0263e01c0ba01ab7c4728b206fab32b951db4",
+    "src/pet/PetIntegration.test.tsx": "3ff2c82c783b3028534623d3ba117677290774cbf09eec0c018dac0b2166475b",
+    "src/room/Room.selection.test.tsx": "49b4c8c6e8620f8121a01821294c01b4ceb5029821f009e132b6a180554068b1",
+    "scripts/browser/pet-explore-names.test.mjs": "c10278a787bac1b7704ab3776aa40b3ddf495b08606644f20eeed3750efaca21",
+    "scripts/browser/pet-play.test.mjs": "7f773e46154b380f5785e588eef18af056773283f60481875e35489dbf2a858d",
+    "docs/ART.md": "19b08b11b1bad2e70521f55f130658e8eb942da32ddee7ec585991ec0ba69488"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/explore-preview-source.diff",
+    "sha256": "66ef8c4bde1c45d9016967625fafa2b9168571eb2108d95fa7663125d4da7bbf"
+  },
+  "scope": "Ten paths: optional onPreview callback and local resident decoration state, stable App ref callback, existing Room selection geometry in stationary preview mode without builder floorwash, tests/docs. No path/activity/gaze/speech/audio/sampler/clock/saveddata changes. Builder default selection retained."
+}

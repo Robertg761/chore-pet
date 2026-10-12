@@ -1,0 +1,97 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetExplore.test.tsx src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (92 tests | 2 failed) 2038ms
+   × previews a furnishing without changing a live fractional walk, pose, speech, or clock 14ms
+   × keeps preview selection decorative, ignores unknown IDs, and removes unavailable targets 12ms
+ ❯ src/pet/PetExplore.test.tsx (18 tests | 4 failed) 105ms
+   × previews only the active available furnishing and clears the marker on collapse and unmount 6ms
+   × clears an open furnishing preview when travel blocks exploration 6ms
+   × clears an open furnishing preview when away blocks exploration 3ms
+   × clears an open furnishing preview when sick blocks exploration 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetExplore.test.tsx > previews only the active available furnishing and clears the marker on collapse and unmount
+AssertionError: expected last "vi.fn()" call to have been called with [ null ]
+
+- Expected:
+[
+  null,
+]
+
++ Received:
+undefined
+
+ ❯ src/pet/PetExplore.test.tsx:104:19
+    102|   const preview = vi.fn()
+    103|   const ui = mount({ onPreview: preview })
+    104|   expect(preview).toHaveBeenLastCalledWith(null)
+       |                   ^
+    105|   const trigger = button(ui.container, 'Explore together')
+    106|   click(trigger)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/pet/PetExplore.test.tsx > clears an open furnishing preview when travel blocks exploration
+ FAIL  src/pet/PetExplore.test.tsx > clears an open furnishing preview when away blocks exploration
+ FAIL  src/pet/PetExplore.test.tsx > clears an open furnishing preview when sick blocks exploration
+AssertionError: expected last "vi.fn()" call to have been called with [ 'plant-id' ]
+
+- Expected:
+[
+  "plant-id",
+]
+
++ Received:
+undefined
+
+ ❯ src/pet/PetExplore.test.tsx:126:19
+    124|   const ui = mount({ onPreview: preview })
+    125|   click(button(ui.container, 'Explore together'))
+    126|   expect(preview).toHaveBeenLastCalledWith('plant-id')
+       |                   ^
+    127|   ui.rerender(<PetExplore {...ui.props} blocked={blocked} />)
+    128|   expect(preview).toHaveBeenLastCalledWith(null)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > previews a furnishing without changing a live fractional walk, pose, speech, or clock
+TypeError: control.current.preview is not a function
+ ❯ src/pet/PetIntegration.test.tsx:1096:30
+    1094|   const pending = [...frames.keys()]
+    1095|   expect(pending).toHaveLength(1)
+    1096|   act(() => control.current!.preview('plant'))
+       |                              ^
+    1097|   const marker = ui.container.querySelector('[data-selection-object="p…
+    1098|   expect(marker).not.toBeNull()
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/react/cjs/react.development.js:890:22
+ ❯ src/pet/PetIntegration.test.tsx:1096:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps preview selection decorative, ignores unknown IDs, and removes unavailable targets
+TypeError: control.current.preview is not a function
+ ❯ src/pet/PetIntegration.test.tsx:1115:30
+    1113|   const control = createRef<LivingRoomControl>()
+    1114|   const ui = mount(<LivingRoom {...props} objects={[plant]} mood="happ…
+    1115|   act(() => control.current!.preview('missing'))
+       |                              ^
+    1116|   expect(ui.container.querySelector('.room-selection')).toBeNull()
+    1117|   act(() => control.current!.preview('plant'))
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/react/cjs/react.development.js:890:22
+ ❯ src/pet/PetIntegration.test.tsx:1115:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  6 failed | 104 passed (110)
+   Start at  19:01:05
+   Duration  3.82s (tests 60%, transform 20%, environment 15%, import 5%)
+
+    Isolate  2 workers spawned · ~378ms startup each (spawn + environment, per file)
+             at least ~378ms faster with isolate: false — reuses workers across files instead of one per file
+

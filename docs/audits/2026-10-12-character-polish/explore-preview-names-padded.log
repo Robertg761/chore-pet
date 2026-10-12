@@ -1,0 +1,20 @@
+✖ native keyboard can identify and invite the second repeated furnishing (5148.432699ms)
+✔ native furnishing previews preserve the current fractional walk and its one pending frame (1274.174488ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6805.778429
+
+✖ failing tests:
+
+test at scripts/browser/pet-explore-names.test.mjs:55:1
+✖ native keyboard can identify and invite the second repeated furnishing (5148.432699ms)
+  page.waitForFunction: Timeout 4000ms exceeded.
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore-names.test.mjs:84:14) {
+    name: 'TimeoutError',
+    log: []
+  }

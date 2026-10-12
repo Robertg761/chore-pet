@@ -1,0 +1,154 @@
+{
+  "freeze": {
+    "baseCommit": "dfd47547be5e29040a4ad9f550bc7385891e24ce",
+    "sources": {
+      "src/App.tsx": "a97f333acd3ca63e91e35c3a28e1cf6099d0a57437cdd28a2084a60ceb7e3893",
+      "src/pet/LivingRoom.tsx": "f47d69e86cffd51953a62ff106d2ed2f4a7c30035b10083ded2ff08820e61a80",
+      "src/pet/PetExplore.tsx": "0dcbcf2e560b0ee00b2f9b5bdf53e65953ea6172b94fa95389b080c8a8f26eb3",
+      "src/room/Room.tsx": "5e510f57280b00a93eac37fcb624106c88371ca9e40e39fe54c7757ac0b07e40",
+      "src/pet/PetExplore.test.tsx": "c18dbf4fb281be5c2b66f2b5b7c0263e01c0ba01ab7c4728b206fab32b951db4",
+      "src/pet/PetIntegration.test.tsx": "3ff2c82c783b3028534623d3ba117677290774cbf09eec0c018dac0b2166475b",
+      "src/room/Room.selection.test.tsx": "49b4c8c6e8620f8121a01821294c01b4ceb5029821f009e132b6a180554068b1",
+      "scripts/browser/pet-explore-names.test.mjs": "c10278a787bac1b7704ab3776aa40b3ddf495b08606644f20eeed3750efaca21",
+      "scripts/browser/pet-play.test.mjs": "7f773e46154b380f5785e588eef18af056773283f60481875e35489dbf2a858d",
+      "docs/ART.md": "19b08b11b1bad2e70521f55f130658e8eb942da32ddee7ec585991ec0ba69488"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/explore-preview-source.diff",
+      "sha256": "66ef8c4bde1c45d9016967625fafa2b9168571eb2108d95fa7663125d4da7bbf"
+    },
+    "scope": "Ten paths: optional onPreview callback and local resident decoration state, stable App ref callback, existing Room selection geometry in stationary preview mode without builder floorwash, tests/docs. No path/activity/gaze/speech/audio/sampler/clock/saveddata changes. Builder default selection retained."
+  },
+  "checks": [
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-red.log",
+      "logSha256": "08501166222efc8a0724e792619ffbc01aaae534dbc9c9fb42bdb88f7b18d752",
+      "exitCode": 1,
+      "result": "6 expected missing-preview failures;104 prior passes."
+    },
+    {
+      "name": "room-red",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-room-red.log",
+      "logSha256": "7ebbde606dd20d4a61c77edb3d6360f1a825831ad8c08b6706ad31127d10298a",
+      "exitCode": 1,
+      "result": "Initial fixture failures include an incorrect rounding expectation and unhelpful DOM serialization; not clean product-red evidence."
+    },
+    {
+      "name": "room-red-final",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-room-red-final.log",
+      "logSha256": "34dd9bcc555f5ec9d4f7caa70ef8dc488bbe9d6464f93b6f3316c1938a426c80",
+      "exitCode": 1,
+      "result": "2 clear missing-preview failures;2 prior builder cases pass."
+    },
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-browser-red.log",
+      "logSha256": "307fecde1d69181060f11279036a7ad93d4ef49f40e8fb0e7eb1887617749652",
+      "exitCode": 1,
+      "result": "Both native selected-marker cases fail missing-marker assertion before implementation."
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-focused.log",
+      "logSha256": "56f53798f94007a7c0085e332f303bcb277abc004f7efd1a7e80b35bd9fe9086",
+      "exitCode": 0,
+      "result": "123 tests/4 files,5.88s; final runtime, before native fixture refinements."
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-build.log",
+      "logSha256": "2e50ef21c4baafb6cc0adcfbfa08ff1ca6fae6d588b95ed83cb36f65e819169f",
+      "exitCode": 0,
+      "result": "TypeScript and production build; final runtime. Bundle-size advisory retained."
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Clean before two added room-change assertions."
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-browser.log",
+      "logSha256": "3c38f133c86bbbb983c4c15f68af54badad72a37bede046b68a3d8ced636b9c2",
+      "exitCode": 0,
+      "result": "8 Explore cases,9.384305s; before final phone capture refinement."
+    },
+    {
+      "name": "room-browser",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-room-browser.log",
+      "logSha256": "b393c9cdb29985d41fbdcdaabee16562f83ba0fa376289b36afdce767213a6b0",
+      "exitCode": 0,
+      "result": "2 native room-change/builder-keyboard cases,2.683687s."
+    },
+    {
+      "name": "lint-final",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Clean before padding hit trace."
+    },
+    {
+      "name": "names-final",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-names-final.log",
+      "logSha256": "cdd168a814b93abc05651e2dece258fd0203438b5cb9d7f7a01ae7046e8a32ec",
+      "exitCode": 0,
+      "result": "2 named cases,2.966974s; initial geometry-only phone bound."
+    },
+    {
+      "name": "names-padded",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-names-padded.log",
+      "logSha256": "1a6b9d9331d7d58002ef3c2d67b6253c8a068a86421fa8e34186313b333b07a5",
+      "exitCode": 1,
+      "result": "1 phone fixture scroll timeout;1 normal-motion case pass,6.805778s. Nested scene contains overscroll; no runtime fault inferred."
+    },
+    {
+      "name": "lint-padded",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-lint-padded.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Clean."
+    },
+    {
+      "name": "names-outer-scroll",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-names-outer-scroll.log",
+      "logSha256": "b6f015c1484daf0766e9c55da2090ba7cd88d9b346347be5600206132444e3c5",
+      "exitCode": 0,
+      "result": "2 final named cases,3.021522s; outer pointer hit trace,16px phone marker clearance,0 reduced frames and preserved normal frame IDs."
+    },
+    {
+      "name": "lint-outer-scroll",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-lint-outer-scroll.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Clean on final ten frozen paths."
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/explore-preview-full.log",
+      "logSha256": "0775aeb7d33da91138b36120d3f57d8c6c3863f6f3fda2c41c828791d54b8722",
+      "exitCode": 0,
+      "result": "2146 tests/99 files,62.36s on final ten frozen paths; observed session completion exit0."
+    }
+  ],
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/explore-preview-layout/explore-preview-walk-1280.png": "1cb1e4b10735d3147417e6d9a3cb77b9218f17425be2bdb2888bdd54c0f9ee84",
+    "docs/audits/2026-10-12-character-polish/explore-preview-layout/explore-second-plant-320.png": "4d047b3a0045504cf15fd8a4c364528331e6cd69acafa8eac2fbb58de20b8a52",
+    "docs/audits/2026-10-12-character-polish/explore-preview-layout/explore-second-plant-marker-320.png": "9fbb3231e7f08874192aee601f3c491e57e35b23c71cfda4bff215e64102aa5f"
+  },
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/explore-preview-review.md",
+    "sha256": "64032d798aa0a2a211662c487915cd0202e9e1974bf59c45566b679988794da2",
+    "result": "Mendel independently approves exact ten-path static/still scope; no actionable findings. Execution evidence remains root-owned."
+  },
+  "verificationScope": "Root reverified ten frozen sources, patch, three PNGs, all raw log hashes and final review. All final product checks exit0. Ten unique native cases covered across applicable final setups: six unchanged Explore cases in browser log, two final named cases in outer-scroll log, two room/builder cases. No claim of a single ten-case run.",
+  "resources": "One heavy process at a time, one unit worker/Chromium, nice10 and 768MB Node heap. Available RAM minimum observed4.76GB during full,6.66GB after; /tmp4.1GB free.",
+  "limits": [
+    "Native assertions and stills do not establish human temporal, assistive-technology, physical-device, CPU or battery acceptance.",
+    "Phone controls and marker have separate captures; no simultaneous full scene visibility claim.",
+    "All furnishing previews are decorative, contact-free and local; no activity, route, gaze, speech, saved-data or clock change."
+  ],
+  "pending": []
+}

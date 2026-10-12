@@ -69,6 +69,8 @@ export type PlayerResponseResult = 'started' | 'busy' | 'resting' | 'unavailable
 export interface LivingRoomControl {
   lookAt: (objectId: string) => VisitResult
   respond: (action: PlayerGesture) => PlayerResponseResult
+  /** Show a stationary furnishing marker without changing pet activity. */
+  preview: (objectId: string | null) => void
 }
 
 const PLAYER_LINES: Record<PlayerGesture, string[]> = { greet: GREETING_LINES, affection: AFFECTION_LINES, hop: HOP_LINES }
@@ -196,6 +198,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     return { state, pos: state.tile }
   })
   const [said, setSaid] = useState<Said | null>(null)
+  const [previewId, setPreviewId] = useState<string | null>(null)
 
   // The live state, ahead of `shown` while the pet walks.
   const live = useRef<Shown>(shown)
@@ -248,7 +251,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     advance(advanceState(live.current.state, world, now, reduced), now)
   }, [advance, world])
 
-  useImperativeHandle(control, () => ({ respond: action => {
+  useImperativeHandle(control, () => ({ preview: setPreviewId, respond: action => {
     if (away || mood === 'sick') return 'resting'
     const now = performance.now()
     const current = advanceState(live.current.state, world, now, motion.current?.reduced ?? false)
@@ -373,6 +376,8 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
         stages={stages}
         neglect={neglect}
         overdue={overdue}
+        selectedId={away || mood === 'sick' ? null : previewId}
+        selectionMode="preview"
         className="home-room"
         overlay={overlay}
         pet={{
