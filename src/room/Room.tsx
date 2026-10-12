@@ -45,6 +45,8 @@ export interface RoomPet {
   label?: string
   /** Makes the pet a button (with a 44 px hit area and a focus ring). */
   onTap?: () => void
+  /** Optional quiet attention input; activation and keyboard handling stay here. */
+  attention?: Pick<SVGProps<SVGGElement>, 'onPointerMove' | 'onPointerLeave' | 'onPointerCancel' | 'onFocus' | 'onBlur'>
   /**
    * The pet's positioned <g>. The living room moves the pet by writing its
    * `transform` (petTransform() in ./shell/geometry) every frame, without
@@ -225,6 +227,7 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, 
           className={pet.onTap ? 'room-pet' : undefined}
           style={{ pointerEvents: pet.onTap ? 'auto' : 'none', cursor: pet.onTap ? 'pointer' : undefined }}
           {...(pet.onTap && {
+            ...pet.attention,
             role: 'button',
             tabIndex: 0,
             'aria-label': pet.label ?? 'Your pet',

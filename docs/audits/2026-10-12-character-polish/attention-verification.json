@@ -1,0 +1,50 @@
+{
+  "baseCommit": "5d26378dcf12c6471e35164b4717e8d980a495ec",
+  "checks": [
+    {
+      "name": "focused-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/pet/playerAttention.test.ts src/pet/PetIntegration.test.tsx",
+      "log": "attention-green-3.log",
+      "exitCode": 0,
+      "result": "67 pass"
+    },
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "attention-unit.log",
+      "exitCode": 0,
+      "result": "1881 pass in 83 files"
+    },
+    {
+      "name": "build",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "attention-build.log",
+      "exitCode": 0,
+      "result": "TypeScript and production build pass; existing chunk-size advisory"
+    },
+    {
+      "name": "lint",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "attention-lint.log",
+      "exitCode": 0,
+      "result": "pass"
+    },
+    {
+      "name": "production-motion-browser",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium nice -n 10 node --test --test-concurrency=1 scripts/browser/pet-motion.test.mjs",
+      "log": "attention-browser-green.log",
+      "exitCode": 0,
+      "result": "8 pass; one browser at a time"
+    },
+    {
+      "name": "SVG-captures",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 node docs/audits/2026-10-12-character-polish/capture-attention.mjs",
+      "log": "attention-captures.log",
+      "exitCode": 0,
+      "result": "24 settled sheet poses; 240 padded rasters; zero outside pixels at alpha >5"
+    }
+  ],
+  "limitations": [
+    "No human temporal playback acceptance; source sampler/SVG stills and isolated production regressions are separate evidence."
+  ]
+}

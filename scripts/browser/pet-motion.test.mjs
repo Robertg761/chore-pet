@@ -213,6 +213,39 @@ async function assertReducedStill(page) {
   return reduced
 }
 
+test('idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion', async (t) => {
+  const page = await motionApp(t)
+  const pet = page.locator('.room-pet')
+  const eyes = pet.locator('[data-eye-gaze]').first()
+  const point = await pet.evaluate((node) => {
+    const screen = new DOMPoint(140, 100).matrixTransform(node.getScreenCTM())
+    return { x: screen.x, y: screen.y }
+  })
+  await page.mouse.move(point.x, point.y)
+  await page.clock.runFor(160)
+  const screenShift = await eyes.evaluate((node) => {
+    const before = new DOMPoint(0, 0).matrixTransform(node.parentElement.getScreenCTM())
+    const after = new DOMPoint(0, 0).matrixTransform(node.getScreenCTM())
+    return { x: after.x - before.x, y: after.y - before.y }
+  })
+  assert.ok(screenShift.x > 0.1, 'pupils should move toward the pointer in actual screen coordinates')
+  assert.ok(screenShift.y < -0.02, 'the elevated pointer should lift the gaze')
+  const before = await current(page)
+  await page.mouse.move(2, 2)
+  await page.clock.runFor(160)
+  assert.equal(await eyes.getAttribute('transform'), 'translate(0 0)')
+  await pet.focus()
+  await page.clock.runFor(160)
+  assert.equal(await eyes.getAttribute('transform'), 'translate(0 -1.5)')
+  const focused = await current(page)
+  assert.equal(focused.x, before.x, 'attention must not move the pet through the room')
+  assert.equal(focused.y, before.y)
+  await changeReducedMotion(page, 'reduce')
+  await page.clock.runFor(32)
+  assert.equal(await eyes.getAttribute('transform'), 'translate(0 0)')
+  assert.equal(await page.locator('.living-room [aria-live="polite"]').textContent(), '')
+})
+
 test('changing reduced motion during a walk settles articulation and can restore motion live', async (t) => {
   const page = await motionApp(t)
   await movingFraction(page)

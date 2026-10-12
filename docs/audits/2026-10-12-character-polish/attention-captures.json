@@ -1,0 +1,17 @@
+{
+  "method": "Production attention helper plus production sampler/SVG. Static settled-target samples, not temporal playback or full Room integration.",
+  "sheetSamples": 24,
+  "rasterSamples": 240,
+  "outside": 0,
+  "alphaThreshold": 5,
+  "strokeScale": 1.6,
+  "sourceSha256": {
+    "src/pet/playerAttention.ts": "1097cf8467bf7b8b4f089a585639cda21550aca403bdf9d645ecdf827d48202e",
+    "src/pet/LivingRoom.tsx": "bad68b70b277e1f78a853cdaeb64f911d9ea76a6d9cb7d67b80d3b6c06e4182c",
+    "src/room/Room.tsx": "10e3faba9fe3419d4b88427d55a0468da6e39c402c7ed3cbee0338d258137a8a",
+    "src/character/motion.ts": "5e1f316efcb2612a6b0a2d53009785892ee3ad999580bf910fea5c39a67e4e8b",
+    "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+    "src/character/species/animatedBody.tsx": "e338788eeb57e5c7f651d198f8ecfd85925ce33c9e0cd7528f45575cf8b79212",
+    "docs/audits/2026-10-12-character-polish/capture-attention.mjs": "ce83ac363d2fede020542370c5887b271f1a431fe52506e8f4fc0fa4179d2461"
+  }
+}

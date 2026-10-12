@@ -51,6 +51,81 @@ function visibility(value: boolean) { act(() => { hidden = value; document.dispa
 function click(element: Element) { act(() => element.dispatchEvent(new MouseEvent('click', { bubbles: true }))) }
 function art(container: Element) { return container.querySelector('.ch-animated')! }
 
+function pointerAt(node: Element, x: number, y: number, pointerType = 'mouse') {
+  const event = new MouseEvent('pointermove', { bubbles: true, clientX: x, clientY: y })
+  Object.defineProperty(event, 'pointerType', { value: pointerType })
+  act(() => node.dispatchEvent(event))
+}
+
+function gaze(container: Element) {
+  return container.querySelector('[data-eye-gaze]')!.getAttribute('transform')
+}
+
+it('eases idle eyes toward a pointer, releases them smoothly and keeps one clock without room redraws', () => {
+  const ui = mount(<LivingRoom {...props} mood="happy" />)
+  const resident = ui.container.querySelector('.room-pet')!
+  Object.defineProperty(resident, 'getScreenCTM', { value: () => ({ a: 2, b: 0, c: 0, d: 2, e: 10, f: 20 }) })
+  const renderedRooms = roomRenders.count
+  pointerAt(resident, 350, 132)
+  frame(16)
+  expect(gaze(ui.container)).toBe('translate(0 0)')
+  frame(76)
+  expect(gaze(ui.container)).toBe('translate(1.5 -1)')
+  frame(136)
+  expect(gaze(ui.container)).toBe('translate(3 -2)')
+  act(() => resident.dispatchEvent(new MouseEvent('pointerout', { bubbles: true })))
+  frame(152)
+  expect(gaze(ui.container)).toBe('translate(3 -2)')
+  frame(272)
+  expect(gaze(ui.container)).toBe('translate(0 0)')
+  expect(roomRenders.count).toBe(renderedRooms)
+  expect(frames.size).toBe(1)
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
+})
+
+it('gives keyboard focus a quiet gaze, yields smoothly to reactions and honors live reduction', () => {
+  const ui = mount(<LivingRoom {...props} mood="happy" />)
+  const resident = ui.container.querySelector('.room-pet')!
+  act(() => resident.dispatchEvent(new FocusEvent('focusin', { bubbles: true })))
+  frame(16); frame(136)
+  expect(gaze(ui.container)).toBe('translate(0 -1.5)')
+  click(resident)
+  expect(gaze(ui.container)).toBe('translate(0 -1.5)')
+  frame(256)
+  // Greetings intentionally close the eyes. Attention must yield to that face.
+  expect(ui.container.querySelector('[data-expression="cheering"]')).not.toBeNull()
+  frame(1400); frame(1520)
+  expect(gaze(ui.container)).toBe('translate(0 0)')
+  frame(1640)
+  expect(gaze(ui.container)).toBe('translate(0 -1.5)')
+  preference(true)
+  expect(gaze(ui.container)).toBe('translate(0 0)')
+  frame(1760)
+  expect(gaze(ui.container)).toBe('translate(0 0)')
+  act(() => resident.dispatchEvent(new FocusEvent('focusout', { bubbles: true })))
+  preference(false)
+  frame(1880)
+  expect(gaze(ui.container)).toBe('translate(0 0)')
+})
+
+it('ignores touch pointer movement and clears stale hover after hiding', () => {
+  const ui = mount(<LivingRoom {...props} mood="happy" />)
+  const resident = ui.container.querySelector('.room-pet')!
+  Object.defineProperty(resident, 'getScreenCTM', { value: () => ({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }) })
+  pointerAt(resident, 170, 56, 'touch')
+  frame(16); frame(136)
+  expect(gaze(ui.container)).toBe('translate(0 0)')
+  pointerAt(resident, 170, 56, 'pen')
+  frame(152); frame(272)
+  expect(gaze(ui.container)).toBe('translate(3 -2)')
+  visibility(true)
+  expect(frames.size).toBe(0)
+  visibility(false)
+  frame(288)
+  expect(gaze(ui.container)).toBe('translate(0 0)')
+  expect(frames.size).toBe(1)
+})
+
 function expectEyeScale(container: Element, expected: number) {
   const eyes = container.querySelectorAll('[data-eye-open]')
   expect(eyes).toHaveLength(2)

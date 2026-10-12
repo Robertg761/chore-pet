@@ -1,0 +1,29 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/playerAttention.test.ts src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (59 tests | 1 failed) 1365ms
+   × gives keyboard focus a quiet gaze, yields smoothly to reactions and honors live reduction 48ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > gives keyboard focus a quiet gaze, yields smoothly to reactions and honors live reduction
+TypeError: Cannot read properties of null (reading 'getAttribute')
+ ❯ gaze src/pet/PetIntegration.test.tsx:61:52
+     59|
+     60| function gaze(container: Element) {
+     61|   return container.querySelector('[data-eye-gaze]')!.getAttribute('tra…
+       |                                                    ^
+     62| }
+     63|
+ ❯ src/pet/PetIntegration.test.tsx:96:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 66 passed (67)
+   Start at  15:09:29
+   Duration  2.61s (tests 57%, transform 26%, environment 11%, import 5%)
+

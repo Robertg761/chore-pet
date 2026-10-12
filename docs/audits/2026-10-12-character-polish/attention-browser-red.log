@@ -1,0 +1,26 @@
+✖ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (1224.005124ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1680.923872
+
+✖ failing tests:
+
+test at scripts/browser/pet-motion.test.mjs:216:1
+✖ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (1224.005124ms)
+  AssertionError [ERR_ASSERTION]: pupils should move toward the pointer in actual screen coordinates
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-motion.test.mjs:231:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

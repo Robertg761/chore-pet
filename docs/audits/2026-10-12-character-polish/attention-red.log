@@ -1,0 +1,84 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/playerAttention.test.ts src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (59 tests | 3 failed) 1555ms
+   × eases idle eyes toward a pointer, releases them smoothly and keeps one clock without room redraws 82ms
+   × gives keyboard focus a quiet gaze, yields smoothly to reactions and honors live reduction 35ms
+   × ignores touch pointer movement and clears stale hover after hiding 43ms
+ ❯ src/pet/playerAttention.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/playerAttention.test.ts [ src/pet/playerAttention.test.ts ]
+Error: Cannot find module './playerAttention' imported from /home/robert/.codex/worktrees/4511/chore-pet/src/pet/playerAttention.test.ts
+ ❯ src/pet/playerAttention.test.ts:2:1
+      1| import { expect, it } from 'vitest'
+      2| import { pointerAttention, sampleAttention } from './playerAttention'
+       | ^
+      3|
+      4| it.each([
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > eases idle eyes toward a pointer, releases them smoothly and keeps one clock without room redraws
+AssertionError: expected 'translate(0 0)' to be 'translate(1.5 -1)' // Object.is equality
+
+Expected: "translate(1.5 -1)"
+Received: "translate(0 0)"
+
+ ❯ src/pet/PetIntegration.test.tsx:73:30
+     71|   expect(gaze(ui.container)).toBe('translate(0 0)')
+     72|   frame(76)
+     73|   expect(gaze(ui.container)).toBe('translate(1.5 -1)')
+       |                              ^
+     74|   frame(136)
+     75|   expect(gaze(ui.container)).toBe('translate(3 -2)')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > gives keyboard focus a quiet gaze, yields smoothly to reactions and honors live reduction
+AssertionError: expected 'translate(0 0)' to be 'translate(0 -1.5)' // Object.is equality
+
+Expected: "translate(0 -1.5)"
+Received: "translate(0 0)"
+
+ ❯ src/pet/PetIntegration.test.tsx:91:30
+     89|   act(() => resident.dispatchEvent(new FocusEvent('focusin', { bubbles…
+     90|   frame(16); frame(136)
+     91|   expect(gaze(ui.container)).toBe('translate(0 -1.5)')
+       |                              ^
+     92|   click(resident)
+     93|   expect(gaze(ui.container)).toBe('translate(0 -1.5)')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > ignores touch pointer movement and clears stale hover after hiding
+AssertionError: expected 'translate(0 0)' to be 'translate(3 -2)' // Object.is equality
+
+Expected: "translate(3 -2)"
+Received: "translate(0 0)"
+
+ ❯ src/pet/PetIntegration.test.tsx:117:30
+    115|   pointerAt(resident, 170, 56, 'pen')
+    116|   frame(152); frame(272)
+    117|   expect(gaze(ui.container)).toBe('translate(3 -2)')
+       |                              ^
+    118|   visibility(true)
+    119|   expect(frames.size).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 56 passed (59)
+   Start at  15:08:01
+   Duration  3.01s (tests 59%, transform 25%, environment 12%, import 5%)
+
+    Isolate  2 workers spawned · ~268ms startup each (spawn + environment, per file)
+             at least ~268ms faster with isolate: false — reuses workers across files instead of one per file
+

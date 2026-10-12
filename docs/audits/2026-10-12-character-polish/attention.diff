@@ -1,0 +1,350 @@
+diff --git i/scripts/browser/pet-motion.test.mjs w/scripts/browser/pet-motion.test.mjs
+index f2e0064..0f6a520 100644
+--- i/scripts/browser/pet-motion.test.mjs
++++ w/scripts/browser/pet-motion.test.mjs
+@@ -213,6 +213,39 @@ async function assertReducedStill(page) {
+   return reduced
+ }
+ 
++test('idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion', async (t) => {
++  const page = await motionApp(t)
++  const pet = page.locator('.room-pet')
++  const eyes = pet.locator('[data-eye-gaze]').first()
++  const point = await pet.evaluate((node) => {
++    const screen = new DOMPoint(140, 100).matrixTransform(node.getScreenCTM())
++    return { x: screen.x, y: screen.y }
++  })
++  await page.mouse.move(point.x, point.y)
++  await page.clock.runFor(160)
++  const screenShift = await eyes.evaluate((node) => {
++    const before = new DOMPoint(0, 0).matrixTransform(node.parentElement.getScreenCTM())
++    const after = new DOMPoint(0, 0).matrixTransform(node.getScreenCTM())
++    return { x: after.x - before.x, y: after.y - before.y }
++  })
++  assert.ok(screenShift.x > 0.1, 'pupils should move toward the pointer in actual screen coordinates')
++  assert.ok(screenShift.y < -0.02, 'the elevated pointer should lift the gaze')
++  const before = await current(page)
++  await page.mouse.move(2, 2)
++  await page.clock.runFor(160)
++  assert.equal(await eyes.getAttribute('transform'), 'translate(0 0)')
++  await pet.focus()
++  await page.clock.runFor(160)
++  assert.equal(await eyes.getAttribute('transform'), 'translate(0 -1.5)')
++  const focused = await current(page)
++  assert.equal(focused.x, before.x, 'attention must not move the pet through the room')
++  assert.equal(focused.y, before.y)
++  await changeReducedMotion(page, 'reduce')
++  await page.clock.runFor(32)
++  assert.equal(await eyes.getAttribute('transform'), 'translate(0 0)')
++  assert.equal(await page.locator('.living-room [aria-live="polite"]').textContent(), '')
++})
++
+ test('changing reduced motion during a walk settles articulation and can restore motion live', async (t) => {
+   const page = await motionApp(t)
+   await movingFraction(page)
+diff --git i/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index 7fcd529..c4747d9 100644
+--- i/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -13,10 +13,11 @@ import { Room } from '../room/Room'
+ import { SceneContext } from '../room/sceneContext'
+ import { PET_STROKE_SCALE, ROOM_WIDTH, petTransform } from '../room/shell/geometry'
+ import { play } from '../audio/sfx'
+-import { initialPet, needsRender, positionAt, react, routeAt, sortTile, step, tap, type PetState, type Tile, type World } from './behaviour'
++import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sortTile, step, tap, type PetState, type Tile, type World } from './behaviour'
+ import { motionFor } from './activityMotion'
+ import { interactionTargets } from './interactions'
+ import { usePetMotion } from './usePetMotion'
++import { pointerAttention, sampleAttention, type AttentionPoint, type AttentionSample } from './playerAttention'
+ import { bubbleSpot, bubbleStyle, objectBoxes, type Box, type BubbleSize } from './bubble'
+ import './LivingRoom.css'
+ 
+@@ -61,22 +62,35 @@ export interface LivingRoomProps {
+ const LINE_MS = 3600
+ 
+ interface MotionControl { paint: (state: PetState, now: number) => void; reduced: boolean }
++interface PlayerAttention { pointer: AttentionPoint | null; focused: boolean; reset: boolean }
+ 
+ /** Only this subtree redraws for breathing, gait and finite reaction frames. */
+-function RoomPetArt({ pet, mood, away, live, tick, control }: {
++function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
+   pet: Pet; mood: Mood; away: boolean
+   live: RefObject<Shown>
+   tick: (now: number, reduced: boolean) => void
+   control: RefObject<MotionControl | null>
++  attention: RefObject<PlayerAttention>
+ }) {
+-  const [sample, setSample] = useState(() => ({ state: live.current.state, now: performance.now() }))
++  const [sample, setSample] = useState(() => ({ state: live.current.state, now: performance.now(), attention: { x: 0, y: 0 } }))
++  const gaze = useRef<AttentionSample | null>(null)
+   const { reducedMotion } = usePetMotion(tick, true)
+-  useImperativeHandle(control, () => ({ paint: (state, now) => setSample({ state, now }), reduced: reducedMotion }), [reducedMotion])
++  useImperativeHandle(control, () => ({ paint: (state, now) => {
++    const still = reducedMotion || away || mood === 'sick' || attention.current.reset
++    const idle = state.activity.kind === 'idle' && (!state.transition || blendProgress(state.transition.start, now) >= 1)
++    if (still || !idle) attention.current.pointer = null
++    const target = !still && idle ? attention.current.pointer ?? (attention.current.focused ? { x: 0, y: -1.5 } : null) : null
++    gaze.current = sampleAttention(gaze.current, target, now, still)
++    attention.current.reset = false
++    setSample({ state, now, attention: gaze.current.value })
++  }, reduced: reducedMotion }), [reducedMotion, away, mood, attention])
+   useLayoutEffect(() => {
+     // Preference and suppression changes apply before paint, including while hidden.
+     tick(performance.now(), reducedMotion)
+   }, [tick, reducedMotion])
+   const frame = motionFor(sample.state, sample.now, pet.species, mood, reducedMotion).frame
++  frame.gazeX += sample.attention.x * sample.state.facing
++  frame.gazeY += sample.attention.y
+   return <AnimatedCharacterArt species={pet.species} mood={mood} pose={away ? 'sleeping' : undefined}
+     frame={frame} bodyColour={pet.bodyColour} equipped={pet.equipped}
+     look={{ eyes: pet.eyes, cheeks: pet.cheeks }} strokeScale={PET_STROKE_SCALE} />
+@@ -149,11 +163,22 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+   // The live state, ahead of `shown` while the pet walks.
+   const live = useRef<Shown>(shown)
+   const motion = useRef<MotionControl | null>(null)
++  const attention = useRef<PlayerAttention>({ pointer: null, focused: false, reset: false })
+   const petNode = useRef<SVGGElement>(null)
+   const bubbleNode = useRef<HTMLParagraphElement>(null)
+   const reportPosition = useRef(onPosition)
+   useEffect(() => { reportPosition.current = onPosition }, [onPosition])
+   const roomNode = useRef<HTMLDivElement>(null)
++  useEffect(() => {
++    const hide = () => {
++      if (document.hidden) {
++        attention.current.pointer = null
++        attention.current.reset = true
++      }
++    }
++    document.addEventListener('visibilitychange', hide)
++    return () => document.removeEventListener('visibilitychange', hide)
++  }, [])
+   // What the bubble steers clear of, and how big it is (room px), so it can sit off the furniture.
+   const boxes = useMemo<Box[]>(() => objectBoxes(objects), [objects])
+   const bubbleBoxes = useRef(boxes)
+@@ -268,8 +293,18 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+           facing: state.facing,
+           label: `${pet.name}, feeling ${mood}. Tap to say hi.`,
+           onTap,
++          attention: {
++            onPointerMove: (event) => {
++              if (event.pointerType === 'touch') return
++              attention.current.pointer = pointerAttention(event.clientX, event.clientY, event.currentTarget.getScreenCTM?.() ?? null)
++            },
++            onPointerLeave: () => { attention.current.pointer = null },
++            onPointerCancel: () => { attention.current.pointer = null },
++            onFocus: () => { attention.current.focused = true },
++            onBlur: () => { attention.current.focused = false },
++          },
+           nodeRef: petNode,
+-          art: <RoomPetArt pet={pet} mood={mood} away={away} live={live} tick={tick} control={motion} />,
++          art: <RoomPetArt pet={pet} mood={mood} away={away} live={live} tick={tick} control={motion} attention={attention} />,
+         }}
+       />
+       {line && (scene?.bubbleContainer ? createPortal(
+diff --git i/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index d0dad89..e146789 100644
+--- i/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -51,6 +51,81 @@ function visibility(value: boolean) { act(() => { hidden = value; document.dispa
+ function click(element: Element) { act(() => element.dispatchEvent(new MouseEvent('click', { bubbles: true }))) }
+ function art(container: Element) { return container.querySelector('.ch-animated')! }
+ 
++function pointerAt(node: Element, x: number, y: number, pointerType = 'mouse') {
++  const event = new MouseEvent('pointermove', { bubbles: true, clientX: x, clientY: y })
++  Object.defineProperty(event, 'pointerType', { value: pointerType })
++  act(() => node.dispatchEvent(event))
++}
++
++function gaze(container: Element) {
++  return container.querySelector('[data-eye-gaze]')!.getAttribute('transform')
++}
++
++it('eases idle eyes toward a pointer, releases them smoothly and keeps one clock without room redraws', () => {
++  const ui = mount(<LivingRoom {...props} mood="happy" />)
++  const resident = ui.container.querySelector('.room-pet')!
++  Object.defineProperty(resident, 'getScreenCTM', { value: () => ({ a: 2, b: 0, c: 0, d: 2, e: 10, f: 20 }) })
++  const renderedRooms = roomRenders.count
++  pointerAt(resident, 350, 132)
++  frame(16)
++  expect(gaze(ui.container)).toBe('translate(0 0)')
++  frame(76)
++  expect(gaze(ui.container)).toBe('translate(1.5 -1)')
++  frame(136)
++  expect(gaze(ui.container)).toBe('translate(3 -2)')
++  act(() => resident.dispatchEvent(new MouseEvent('pointerout', { bubbles: true })))
++  frame(152)
++  expect(gaze(ui.container)).toBe('translate(3 -2)')
++  frame(272)
++  expect(gaze(ui.container)).toBe('translate(0 0)')
++  expect(roomRenders.count).toBe(renderedRooms)
++  expect(frames.size).toBe(1)
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
++})
++
++it('gives keyboard focus a quiet gaze, yields smoothly to reactions and honors live reduction', () => {
++  const ui = mount(<LivingRoom {...props} mood="happy" />)
++  const resident = ui.container.querySelector('.room-pet')!
++  act(() => resident.dispatchEvent(new FocusEvent('focusin', { bubbles: true })))
++  frame(16); frame(136)
++  expect(gaze(ui.container)).toBe('translate(0 -1.5)')
++  click(resident)
++  expect(gaze(ui.container)).toBe('translate(0 -1.5)')
++  frame(256)
++  // Greetings intentionally close the eyes. Attention must yield to that face.
++  expect(ui.container.querySelector('[data-expression="cheering"]')).not.toBeNull()
++  frame(1400); frame(1520)
++  expect(gaze(ui.container)).toBe('translate(0 0)')
++  frame(1640)
++  expect(gaze(ui.container)).toBe('translate(0 -1.5)')
++  preference(true)
++  expect(gaze(ui.container)).toBe('translate(0 0)')
++  frame(1760)
++  expect(gaze(ui.container)).toBe('translate(0 0)')
++  act(() => resident.dispatchEvent(new FocusEvent('focusout', { bubbles: true })))
++  preference(false)
++  frame(1880)
++  expect(gaze(ui.container)).toBe('translate(0 0)')
++})
++
++it('ignores touch pointer movement and clears stale hover after hiding', () => {
++  const ui = mount(<LivingRoom {...props} mood="happy" />)
++  const resident = ui.container.querySelector('.room-pet')!
++  Object.defineProperty(resident, 'getScreenCTM', { value: () => ({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }) })
++  pointerAt(resident, 170, 56, 'touch')
++  frame(16); frame(136)
++  expect(gaze(ui.container)).toBe('translate(0 0)')
++  pointerAt(resident, 170, 56, 'pen')
++  frame(152); frame(272)
++  expect(gaze(ui.container)).toBe('translate(3 -2)')
++  visibility(true)
++  expect(frames.size).toBe(0)
++  visibility(false)
++  frame(288)
++  expect(gaze(ui.container)).toBe('translate(0 0)')
++  expect(frames.size).toBe(1)
++})
++
+ function expectEyeScale(container: Element, expected: number) {
+   const eyes = container.querySelectorAll('[data-eye-open]')
+   expect(eyes).toHaveLength(2)
+diff --git i/src/room/Room.tsx w/src/room/Room.tsx
+index 98a593a..b874ccd 100644
+--- i/src/room/Room.tsx
++++ w/src/room/Room.tsx
+@@ -45,6 +45,8 @@ export interface RoomPet {
+   label?: string
+   /** Makes the pet a button (with a 44 px hit area and a focus ring). */
+   onTap?: () => void
++  /** Optional quiet attention input; activation and keyboard handling stay here. */
++  attention?: Pick<SVGProps<SVGGElement>, 'onPointerMove' | 'onPointerLeave' | 'onPointerCancel' | 'onFocus' | 'onBlur'>
+   /**
+    * The pet's positioned <g>. The living room moves the pet by writing its
+    * `transform` (petTransform() in ./shell/geometry) every frame, without
+@@ -225,6 +227,7 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT,
+           className={pet.onTap ? 'room-pet' : undefined}
+           style={{ pointerEvents: pet.onTap ? 'auto' : 'none', cursor: pet.onTap ? 'pointer' : undefined }}
+           {...(pet.onTap && {
++            ...pet.attention,
+             role: 'button',
+             tabIndex: 0,
+             'aria-label': pet.label ?? 'Your pet',
+--- /dev/null
++++ b/src/pet/playerAttention.ts
+@@ -0,0 +1,38 @@
++export interface AttentionPoint { x: number; y: number }
++type ScreenMatrix = Pick<DOMMatrix, 'a' | 'b' | 'c' | 'd' | 'e' | 'f'>
++export interface AttentionSample {
++  from: AttentionPoint
++  target: AttentionPoint
++  start: number
++  value: AttentionPoint
++}
++
++const bounded = (value: number, limit: number) => Number.isFinite(value) ? Math.max(-limit, Math.min(limit, value)) : 0
++
++/** Convert screen input into the unmirrored 200-unit character space. */
++export function pointerAttention(clientX: number, clientY: number, matrix: ScreenMatrix | null): AttentionPoint | null {
++  if (!matrix || ![clientX, clientY, matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f].every(Number.isFinite)) return null
++  const determinant = matrix.a * matrix.d - matrix.b * matrix.c
++  if (Math.abs(determinant) < 1e-8) return null
++  const dx = clientX - matrix.e, dy = clientY - matrix.f
++  const x = (matrix.d * dx - matrix.c * dy) / determinant
++  const y = (matrix.a * dy - matrix.b * dx) / determinant
++  return { x: bounded((x - 100) / 70 * 3, 3), y: bounded((y - 126) / 70 * 2, 2) }
++}
++
++/** Absolute-time easing on the room's clock, with continuous retargeting. */
++export function sampleAttention(previous: AttentionSample | null, target: AttentionPoint | null, now: number, still = false): AttentionSample {
++  const at = Number.isFinite(now) ? now : previous?.start ?? 0
++  const next = { x: still ? 0 : bounded(target?.x ?? 0, 3), y: still ? 0 : bounded(target?.y ?? 0, 2) }
++  const zero = { x: 0, y: 0 }
++  if (still || !previous) return { from: zero, target: next, start: at, value: zero }
++  const progress = Math.max(0, Math.min(1, (at - previous.start) / 120))
++  const eased = progress * progress * (3 - 2 * progress)
++  const value = {
++    x: previous.from.x + (previous.target.x - previous.from.x) * eased,
++    y: previous.from.y + (previous.target.y - previous.from.y) * eased,
++  }
++  return next.x === previous.target.x && next.y === previous.target.y
++    ? { ...previous, value }
++    : { from: value, target: next, start: at, value }
++}
+--- /dev/null
++++ b/src/pet/playerAttention.test.ts
+@@ -0,0 +1,56 @@
++import { expect, it } from 'vitest'
++import { pointerAttention, sampleAttention } from './playerAttention'
++
++it.each([
++  { matrix: { a: 2, b: 0, c: 0, d: 2, e: 10, f: 20 }, client: [350, 132] },
++  { matrix: { a: 0, b: 2, c: -2, d: 0, e: 410, f: 20 }, client: [298, 360] },
++])('maps a screen pointer through the actual SVG transform', ({ matrix, client }) => {
++  expect(pointerAttention(client[0], client[1], matrix)).toEqual({ x: 3, y: -2 })
++})
++
++it('centers the gaze under a sheared, translated scene', () => {
++  expect(pointerAttention(336, 322, { a: 2, b: 0.5, c: 1, d: 2, e: 10, f: 20 })).toEqual({ x: 0, y: 0 })
++})
++
++it('rejects absent, singular and nonfinite geometry', () => {
++  expect(pointerAttention(0, 0, null)).toBeNull()
++  expect(pointerAttention(0, 0, { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 })).toBeNull()
++  expect(pointerAttention(Infinity, 0, { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 })).toBeNull()
++  expect(pointerAttention(0, 0, { a: 1, b: 0, c: 0, d: 1, e: NaN, f: 0 })).toBeNull()
++})
++
++it('eases to the bounded gaze in 120ms independently of sampling frequency', () => {
++  const start = sampleAttention(null, { x: 3, y: -2 }, 100)
++  expect(start.value).toEqual({ x: 0, y: 0 })
++  const half = sampleAttention(start, { x: 3, y: -2 }, 160)
++  expect(half.value).toEqual({ x: 1.5, y: -1 })
++  const end = sampleAttention(half, { x: 3, y: -2 }, 220)
++  expect(end.value).toEqual({ x: 3, y: -2 })
++  expect(sampleAttention(start, { x: 3, y: -2 }, 220).value).toEqual(end.value)
++})
++
++it('retargets from the current value without a jump and leaves the previous snapshot intact', () => {
++  const first = sampleAttention(null, { x: 3, y: -2 }, 100)
++  const original = structuredClone(first)
++  const changed = sampleAttention(first, { x: -3, y: 2 }, 160)
++  expect(changed.value).toEqual({ x: 1.5, y: -1 })
++  expect(sampleAttention(changed, { x: -3, y: 2 }, 220).value).toEqual({ x: -0.75, y: 0.5 })
++  expect(sampleAttention(changed, { x: -3, y: 2 }, 280).value).toEqual({ x: -3, y: 2 })
++  expect(first).toEqual(original)
++})
++
++it('returns exactly to neutral after release and immediately under suppression', () => {
++  const start = sampleAttention(null, { x: 3, y: -2 }, 100)
++  const released = sampleAttention(start, null, 220)
++  expect(released.value).toEqual({ x: 3, y: -2 })
++  expect(sampleAttention(released, null, 280).value).toEqual({ x: 1.5, y: -1 })
++  expect(sampleAttention(released, null, 340).value).toEqual({ x: 0, y: 0 })
++  expect(sampleAttention(start, { x: 3, y: -2 }, 160, true).value).toEqual({ x: 0, y: 0 })
++})
++
++it('keeps malformed targets and backwards time finite and bounded', () => {
++  const start = sampleAttention(null, { x: 300, y: -200 }, 100)
++  expect(sampleAttention(start, { x: 300, y: -200 }, 220).value).toEqual({ x: 3, y: -2 })
++  expect(sampleAttention(start, { x: 300, y: -200 }, 90).value).toEqual({ x: 0, y: 0 })
++  expect(sampleAttention(null, { x: NaN, y: Infinity }, NaN).value).toEqual({ x: 0, y: 0 })
++})

@@ -1,0 +1,31 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/playerAttention.test.ts src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (59 tests | 1 failed) 1574ms
+   × gives keyboard focus a quiet gaze, yields smoothly to reactions and honors live reduction 51ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > gives keyboard focus a quiet gaze, yields smoothly to reactions and honors live reduction
+AssertionError: expected null not to be null
+ ❯ src/pet/PetIntegration.test.tsx:93:74
+     91|   expect(gaze(ui.container)).toBe('translate(0 -1.5)')
+     92|   click(resident)
+     93|   expect(ui.container.querySelector('[data-expression="cheering"]')).n…
+       |                                                                          ^
+     94|   frame(256)
+     95|   // Greetings intentionally close the eyes. Attention must yield to t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 66 passed (67)
+   Start at  15:10:37
+   Duration  3.12s (tests 55%, transform 28%, environment 11%, import 5%)
+
+    Isolate  2 workers spawned · ~271ms startup each (spawn + environment, per file)
+             at least ~271ms faster with isolate: false — reuses workers across files instead of one per file
+

@@ -13,10 +13,11 @@ import { Room } from '../room/Room'
 import { SceneContext } from '../room/sceneContext'
 import { PET_STROKE_SCALE, ROOM_WIDTH, petTransform } from '../room/shell/geometry'
 import { play } from '../audio/sfx'
-import { initialPet, needsRender, positionAt, react, routeAt, sortTile, step, tap, type PetState, type Tile, type World } from './behaviour'
+import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sortTile, step, tap, type PetState, type Tile, type World } from './behaviour'
 import { motionFor } from './activityMotion'
 import { interactionTargets } from './interactions'
 import { usePetMotion } from './usePetMotion'
+import { pointerAttention, sampleAttention, type AttentionPoint, type AttentionSample } from './playerAttention'
 import { bubbleSpot, bubbleStyle, objectBoxes, type Box, type BubbleSize } from './bubble'
 import './LivingRoom.css'
 
@@ -61,22 +62,35 @@ export interface LivingRoomProps {
 const LINE_MS = 3600
 
 interface MotionControl { paint: (state: PetState, now: number) => void; reduced: boolean }
+interface PlayerAttention { pointer: AttentionPoint | null; focused: boolean; reset: boolean }
 
 /** Only this subtree redraws for breathing, gait and finite reaction frames. */
-function RoomPetArt({ pet, mood, away, live, tick, control }: {
+function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
   pet: Pet; mood: Mood; away: boolean
   live: RefObject<Shown>
   tick: (now: number, reduced: boolean) => void
   control: RefObject<MotionControl | null>
+  attention: RefObject<PlayerAttention>
 }) {
-  const [sample, setSample] = useState(() => ({ state: live.current.state, now: performance.now() }))
+  const [sample, setSample] = useState(() => ({ state: live.current.state, now: performance.now(), attention: { x: 0, y: 0 } }))
+  const gaze = useRef<AttentionSample | null>(null)
   const { reducedMotion } = usePetMotion(tick, true)
-  useImperativeHandle(control, () => ({ paint: (state, now) => setSample({ state, now }), reduced: reducedMotion }), [reducedMotion])
+  useImperativeHandle(control, () => ({ paint: (state, now) => {
+    const still = reducedMotion || away || mood === 'sick' || attention.current.reset
+    const idle = state.activity.kind === 'idle' && (!state.transition || blendProgress(state.transition.start, now) >= 1)
+    if (still || !idle) attention.current.pointer = null
+    const target = !still && idle ? attention.current.pointer ?? (attention.current.focused ? { x: 0, y: -1.5 } : null) : null
+    gaze.current = sampleAttention(gaze.current, target, now, still)
+    attention.current.reset = false
+    setSample({ state, now, attention: gaze.current.value })
+  }, reduced: reducedMotion }), [reducedMotion, away, mood, attention])
   useLayoutEffect(() => {
     // Preference and suppression changes apply before paint, including while hidden.
     tick(performance.now(), reducedMotion)
   }, [tick, reducedMotion])
   const frame = motionFor(sample.state, sample.now, pet.species, mood, reducedMotion).frame
+  frame.gazeX += sample.attention.x * sample.state.facing
+  frame.gazeY += sample.attention.y
   return <AnimatedCharacterArt species={pet.species} mood={mood} pose={away ? 'sleeping' : undefined}
     frame={frame} bodyColour={pet.bodyColour} equipped={pet.equipped}
     look={{ eyes: pet.eyes, cheeks: pet.cheeks }} strokeScale={PET_STROKE_SCALE} />
@@ -149,11 +163,22 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
   // The live state, ahead of `shown` while the pet walks.
   const live = useRef<Shown>(shown)
   const motion = useRef<MotionControl | null>(null)
+  const attention = useRef<PlayerAttention>({ pointer: null, focused: false, reset: false })
   const petNode = useRef<SVGGElement>(null)
   const bubbleNode = useRef<HTMLParagraphElement>(null)
   const reportPosition = useRef(onPosition)
   useEffect(() => { reportPosition.current = onPosition }, [onPosition])
   const roomNode = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const hide = () => {
+      if (document.hidden) {
+        attention.current.pointer = null
+        attention.current.reset = true
+      }
+    }
+    document.addEventListener('visibilitychange', hide)
+    return () => document.removeEventListener('visibilitychange', hide)
+  }, [])
   // What the bubble steers clear of, and how big it is (room px), so it can sit off the furniture.
   const boxes = useMemo<Box[]>(() => objectBoxes(objects), [objects])
   const bubbleBoxes = useRef(boxes)
@@ -268,8 +293,18 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
           facing: state.facing,
           label: `${pet.name}, feeling ${mood}. Tap to say hi.`,
           onTap,
+          attention: {
+            onPointerMove: (event) => {
+              if (event.pointerType === 'touch') return
+              attention.current.pointer = pointerAttention(event.clientX, event.clientY, event.currentTarget.getScreenCTM?.() ?? null)
+            },
+            onPointerLeave: () => { attention.current.pointer = null },
+            onPointerCancel: () => { attention.current.pointer = null },
+            onFocus: () => { attention.current.focused = true },
+            onBlur: () => { attention.current.focused = false },
+          },
           nodeRef: petNode,
-          art: <RoomPetArt pet={pet} mood={mood} away={away} live={live} tick={tick} control={motion} />,
+          art: <RoomPetArt pet={pet} mood={mood} away={away} live={live} tick={tick} control={motion} attention={attention} />,
         }}
       />
       {line && (scene?.bubbleContainer ? createPortal(
