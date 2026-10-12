@@ -1,0 +1,53 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (96 tests | 4 failed) 2047ms
+   × plays a grounded mochi stretch from a fractional invitation and lets chores preempt it 17ms
+   × plays a grounded bun stretch from a fractional invitation and lets chores preempt it 16ms
+   × plays a grounded sprout stretch from a fractional invitation and lets chores preempt it 11ms
+   × keeps a reduced stretch still for2400ms and expires it offscreen without replay 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > plays a grounded mochi stretch from a fractional invitation and lets chores preempt it
+ FAIL  src/pet/PetIntegration.test.tsx > plays a grounded bun stretch from a fractional invitation and lets chores preempt it
+ FAIL  src/pet/PetIntegration.test.tsx > plays a grounded sprout stretch from a fractional invitation and lets chores preempt it
+TypeError: Cannot read properties of undefined (reading 'filter')
+ ❯ pickLine src/content/petLines.ts:342:40
+    340|   const raw = vars.chore?.trim()
+    341|   const chore = raw && raw.length > 1 && raw[1] === raw[1].toLowerCase…
+    342|   const usable = chore ? lines : lines.filter((line) => !line.includes…
+       |                                        ^
+    343|   if (usable.length === 0) return ''
+    344|
+ ❯ Object.respond src/pet/LivingRoom.tsx:264:21
+ ❯ src/pet/PetIntegration.test.tsx:1078:39
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/react/cjs/react.development.js:890:22
+ ❯ src/pet/PetIntegration.test.tsx:1078:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps a reduced stretch still for2400ms and expires it offscreen without replay
+TypeError: Cannot read properties of undefined (reading 'filter')
+ ❯ pickLine src/content/petLines.ts:342:40
+    340|   const raw = vars.chore?.trim()
+    341|   const chore = raw && raw.length > 1 && raw[1] === raw[1].toLowerCase…
+    342|   const usable = chore ? lines : lines.filter((line) => !line.includes…
+       |                                        ^
+    343|   if (usable.length === 0) return ''
+    344|
+ ❯ Object.respond src/pet/LivingRoom.tsx:264:21
+ ❯ src/pet/PetIntegration.test.tsx:1102:39
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/react/cjs/react.development.js:890:22
+ ❯ src/pet/PetIntegration.test.tsx:1102:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 92 passed (96)
+   Start at  19:51:18
+   Duration  3.24s (tests 65%, transform 23%, environment 8%, import 4%)
+

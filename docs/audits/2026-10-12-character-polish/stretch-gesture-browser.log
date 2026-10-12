@@ -1,0 +1,30 @@
+✔ native player choices stay still and fit 320px (2819.863015ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2733.969986ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2763.802491ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2697.982408ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2720.141555ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (925.606354ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2301.92803ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1784.169415ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ mochi holds one grounded stretch on the resident clock (2055.183289ms)
+ℹ Chromium 152.0.7977.82; held arms;actual footcontacts<.01local SVGunits;oneclock;unchanged wardrobe/node/position/saved tables
+✔ bun holds one grounded stretch on the resident clock (1979.621815ms)
+ℹ Chromium 152.0.7977.82; held arms;actual footcontacts<.01local SVGunits;oneclock;unchanged wardrobe/node/position/saved tables
+✔ sprout holds one grounded stretch on the resident clock (1953.628668ms)
+ℹ Chromium 152.0.7977.82; held arms;actual footcontacts<.01local SVGunits;oneclock;unchanged wardrobe/node/position/saved tables
+✔ live reduced motion keeps a chosen stretch still and releases its finite clock (1496.112323ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 27067.821093

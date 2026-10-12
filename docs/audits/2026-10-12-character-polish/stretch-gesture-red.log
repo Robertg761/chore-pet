@@ -1,0 +1,206 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/motion.stretch.test.ts src/pet/behaviour.stretch.test.ts src/pet/PetPlay.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetPlay.test.tsx (6 tests | 1 failed) 58ms
+   × offers an explicit stretch without scheduling or duplicating a successful announcement 33ms
+ ❯ src/character/motion.stretch.test.ts (7 tests | 7 failed) 13ms
+   ❯ grounded stretch (7)
+     × has its own finite lifetime 6ms
+     × mochi raises and holds both arms once with restrained secondary motion 1ms
+     × bun raises and holds both arms once with restrained secondary motion 1ms
+     × sprout raises and holds both arms once with restrained secondary motion 1ms
+     × mochi retains still reactions and neutral completion under reduced motion 2ms
+     × bun retains still reactions and neutral completion under reduced motion 1ms
+     × sprout retains still reactions and neutral completion under reduced motion 1ms
+ ❯ src/pet/behaviour.stretch.test.ts (2 tests | 2 failed) 13ms
+   × starts a finite stretch at the drawn position without changing tap alternation 9ms
+   × expires a hidden stretch without replay and resumes normal tap alternation 3ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/motion.stretch.test.ts > grounded stretch > has its own finite lifetime
+AssertionError: expected undefined to be 2400 // Object.is equality
+
+- Expected:
+2400
+
++ Received:
+undefined
+
+ ❯ src/character/motion.stretch.test.ts:14:72
+     12| })
+     13| describe('grounded stretch', () => {
+     14|   it('has its own finite lifetime', () => { expect(ACTION_MS[stretch])…
+       |                                                                        ^
+     15|   it.each(['mochi', 'bun', 'sprout'] as const)('%s raises and holds bo…
+     16|     const budget = budgets[species], peak = at(species, 1200)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/character/motion.stretch.test.ts > grounded stretch > mochi raises and holds both arms once with restrained secondary motion
+AssertionError: expected +0 to be close to 37.72, received difference is 37.72, but expected 5e-11
+ ❯ src/character/motion.stretch.test.ts:17:26
+     15|   it.each(['mochi', 'bun', 'sprout'] as const)('%s raises and holds bo…
+     16|     const budget = budgets[species], peak = at(species, 1200)
+     17|     expect(peak.leftArm).toBeCloseTo(budget.arm, 10)
+       |                          ^
+     18|     expect(peak.rightArm).toBeCloseTo(-budget.arm, 10)
+     19|     expect(peak.scaleY).toBeGreaterThan(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/character/motion.stretch.test.ts > grounded stretch > bun raises and holds both arms once with restrained secondary motion
+AssertionError: expected +0 to be close to 58, received difference is 58, but expected 5e-11
+ ❯ src/character/motion.stretch.test.ts:17:26
+     15|   it.each(['mochi', 'bun', 'sprout'] as const)('%s raises and holds bo…
+     16|     const budget = budgets[species], peak = at(species, 1200)
+     17|     expect(peak.leftArm).toBeCloseTo(budget.arm, 10)
+       |                          ^
+     18|     expect(peak.rightArm).toBeCloseTo(-budget.arm, 10)
+     19|     expect(peak.scaleY).toBeGreaterThan(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/character/motion.stretch.test.ts > grounded stretch > sprout raises and holds both arms once with restrained secondary motion
+AssertionError: expected +0 to be close to 28.799999999999997, received difference is 28.799999999999997, but expected 5e-11
+ ❯ src/character/motion.stretch.test.ts:17:26
+     15|   it.each(['mochi', 'bun', 'sprout'] as const)('%s raises and holds bo…
+     16|     const budget = budgets[species], peak = at(species, 1200)
+     17|     expect(peak.leftArm).toBeCloseTo(budget.arm, 10)
+       |                          ^
+     18|     expect(peak.rightArm).toBeCloseTo(-budget.arm, 10)
+     19|     expect(peak.scaleY).toBeGreaterThan(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/character/motion.stretch.test.ts > grounded stretch > mochi retains still reactions and neutral completion under reduced motion
+ FAIL  src/character/motion.stretch.test.ts > grounded stretch > bun retains still reactions and neutral completion under reduced motion
+ FAIL  src/character/motion.stretch.test.ts > grounded stretch > sprout retains still reactions and neutral completion under reduced motion
+AssertionError: expected 'mood' to be 'pleased' // Object.is equality
+
+Expected: "pleased"
+Received: "mood"
+
+ ❯ src/character/motion.stretch.test.ts:44:32
+     42|       const early = at(species, 100, true, mood), late = at(species, 2…
+     43|       expect(early).toEqual(late)
+     44|       expect(early.expression).toBe(mood === 'sick' ? 'mood' : 'please…
+       |                                ^
+     45|       expect(early.pleasedWeight).toBe(mood === 'sick' ? 0 : 1)
+     46|       expect({ ...early, expression: 'mood', pleasedWeight: 0 }).toEqu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > offers an explicit stretch without scheduling or duplicating a successful announcement
+AssertionError: expected undefined to be defined
+ ❯ src/pet/PetPlay.test.tsx:20:19
+     18|   click(button(ui.container, 'Spend time together'))
+     19|   const stretch = button(ui.container, 'Stretch together')
+     20|   expect(stretch).toBeDefined()
+       |                   ^
+     21|   click(stretch)
+     22|   expect(ui.props.onReact).toHaveBeenCalledExactlyOnceWith('stretch')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  src/pet/behaviour.stretch.test.ts > starts a finite stretch at the drawn position without changing tap alternation
+AssertionError: expected { kind: 'react', …(3) } to match object { kind: 'react', …(3) }
+
+- Expected
++ Received
+
+  {
+    "action": "stretch",
+    "kind": "react",
+    "start": 137,
+-   "until": 2537,
++   "until": NaN,
+  }
+
+ ❯ src/pet/behaviour.stretch.test.ts:11:28
+      9|   } }
+     10|   const started = react(moving, 137, stretch)
+     11|   expect(started.activity).toMatchObject({ kind: 'react', action: 'str…
+       |                            ^
+     12|   expect(positionAt(started, 137)).toEqual(positionAt(moving, 137))
+     13|   expect(started.reactions).toBe(3)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  src/pet/behaviour.stretch.test.ts > expires a hidden stretch without replay and resumes normal tap alternation
+AssertionError: expected { tile: { tx: 2, ty: 2 }, …(9) } to be { tile: { tx: 2, ty: 2 }, …(9) } // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,13 +1,12 @@
+  {
+    "activity": {
+-     "action": "stretch",
+-     "kind": "react",
+-     "start": 100,
+-     "until": NaN,
++     "kind": "idle",
++     "start": 2499,
++     "until": 7669,
+    },
+-   "beat": 1,
++   "beat": 2,
+    "facing": 1,
+    "noticeStart": undefined,
+    "pendingTap": false,
+    "position": undefined,
+    "reactions": 0,
+@@ -19,15 +18,16 @@
+    "transition": {
+      "layers": [
+        {
+          "snapshot": {
+            "activity": {
+-             "kind": "idle",
+-             "start": 0,
+-             "until": 1500,
++             "action": "stretch",
++             "kind": "react",
++             "start": 100,
++             "until": NaN,
+            },
+-           "at": 100,
++           "at": 2499,
+            "facing": 1,
+            "noticeStart": undefined,
+            "position": undefined,
+            "tile": {
+              "tx": 2,
+@@ -35,8 +35,8 @@
+            },
+          },
+          "weight": 1,
+        },
+      ],
+-     "start": 100,
++     "start": 2499,
+    },
+  }
+
+ ❯ src/pet/behaviour.stretch.test.ts:24:49
+     22| it('expires a hidden stretch without replay and resumes normal tap alt…
+     23|   const started = react(initialPet({ tx: 2, ty: 2 }, 0), 100, stretch)
+     24|   expect(step(started, world, 2499, () => .99)).toBe(started)
+       |                                                 ^
+     25|   const settled = step(started, world, 10000, () => .99)
+     26|   expect(settled.activity.kind).toBe('idle')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  10 failed | 5 passed (15)
+   Start at  19:50:31
+   Duration  826ms (environment 50%, transform 21%, tests 16%, import 12%, worker 2%)
+
+    Isolate  3 workers spawned · ~172ms startup each (spawn + environment, per file)
+             at least ~344ms faster with isolate: false — reuses workers across files instead of one per file
+

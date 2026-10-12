@@ -1,0 +1,48 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/motion.stretch.test.ts src/pet/behaviour.stretch.test.ts src/pet/PetPlay.test.tsx src/pet/PetIntegration.test.tsx src/character/motion.test.ts src/pet/activityMotion.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/motion.test.ts (30 tests | 1 failed) 442ms
+   ❯ motion vocabulary (7)
+     × provides every action duration and the agreed player reaction timing 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/motion.test.ts > motion vocabulary > provides every action duration and the agreed player reaction timing
+AssertionError: expected [ 'affection', 'celebrate', …(14) ] to deeply equal [ 'affection', 'celebrate', …(13) ]
+
+- Expected
++ Received
+
+@@ -9,9 +9,10 @@
+    "inspect",
+    "notice",
+    "reach",
+    "rest",
+    "smell",
++   "stretch",
+    "turn",
+    "walk",
+    "wave",
+  ]
+
+ ❯ src/character/motion.test.ts:25:43
+     23| describe('motion vocabulary', () => {
+     24|   it('provides every action duration and the agreed player reaction ti…
+     25|     expect(Object.keys(ACTION_MS).sort()).toEqual([...actions].sort())
+       |                                           ^
+     26|     expect(ACTION_MS).toMatchObject({ greet: 1200, affection: 1600, ce…
+     27|     expect(Object.values(ACTION_MS).every((ms) => Number.isFinite(ms) …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  1 failed | 207 passed (208)
+   Start at  19:52:24
+   Duration  5.26s (tests 65%, transform 18%, environment 12%, import 5%)
+
+    Isolate  6 workers spawned · ~178ms startup each (spawn + environment, per file)
+             at least ~888ms faster with isolate: false — reuses workers across files instead of one per file
+

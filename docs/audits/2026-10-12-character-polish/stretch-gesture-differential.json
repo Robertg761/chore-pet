@@ -1,0 +1,10 @@
+{
+  "method": "Exact sampled frames across3species/5moods/15actions/3durations/2motionpolicies/2facings/15phases. All15prioractions,fields,reducedstillsanddurations exact;newstretchduration2400ms onlyextraaction. Static numeric checks,not temporal acceptance.",
+  "samples": 40500,
+  "unchanged": 40500,
+  "sourceSha256": {
+    "baseline": "a7506e91f0260cb628a348716eec7eb772f5b46de371a41cbf44a5d42439dd00",
+    "current": "4f337fb3c7d69d02cc7476d0e262b35e8f92daae67d9578b8f3c26140a96b60d",
+    "runner": "93e592e83ef8b9a8d1cf49f6a67a9c23ccc74f9c6cc0902d0cb6fb5493a95242"
+  }
+}

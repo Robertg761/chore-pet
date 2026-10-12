@@ -78,6 +78,14 @@ it('starts paused, samples exact scrubbed milliseconds and stays still', () => {
   expect(control<HTMLInputElement>('Time scrubber').value).toBe('317')
 })
 
+it('exposes the full stretch timeline without starting another clock', () => {
+  select('Action', 'stretch')
+  expect(control<HTMLInputElement>('Time scrubber').max).toBe('2400')
+  input(control('Elapsed milliseconds'), '1200')
+  expect(currentSample()).toMatchObject({ action: 'stretch', elapsedMs: 1200, durationMs: 2400 })
+  expect(frames.size).toBe(0)
+})
+
 it('plays from the selected time, pauses without a jump, and resumes without counting paused time', () => {
   input(control('Elapsed milliseconds'), '317')
   click(button('Play'))

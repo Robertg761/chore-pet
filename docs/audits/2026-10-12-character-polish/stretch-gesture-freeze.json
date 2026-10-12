@@ -1,0 +1,29 @@
+{
+  "baseCommit": "790d01b1010fc6769405c9d0e74a373c2a820a51",
+  "sources": {
+    "src/character/motion.ts": "4f337fb3c7d69d02cc7476d0e262b35e8f92daae67d9578b8f3c26140a96b60d",
+    "src/pet/behaviour.ts": "fc713b18836e7597195dad30cc6b11dedc167549ff807e78795ac577e9226d9d",
+    "src/pet/PetPlay.tsx": "7e8825e6de283013b773d6136b7ce0a40198a6cc606e9a6e3a5baff689360812",
+    "src/pet/PetPlay.css": "e5afa01c634ef73fb2db13b145a1016c8af0ab10bb2a4d8e057378434e456a04",
+    "src/content/petLines.ts": "a3d9ebc3d2c1fb83fdcd267e4969ebc087267a507920dca5b6c8de18a7b593d1",
+    "src/pet/LivingRoom.tsx": "5100675e09ed679ef1473f70e80e4878f47f855764ea27879b60da4930992e02",
+    "src/character/motion.stretch.test.ts": "3f3110c0af78c0899626341bbef95b5ac4db152b4da0f9721956e3d9c4d588e0",
+    "src/pet/behaviour.stretch.test.ts": "cfbabc6aa84e5bde1a132deacde63f036892e0a173a72ece97f2768ee0ce06a8",
+    "src/pet/PetPlay.test.tsx": "dd83a620069522ae15ff593a45542a3541a72ab027b76509ed56f3242e043e7b",
+    "src/pet/PetIntegration.test.tsx": "e7e3e820399c66df8117e7ebb098b0cd7da109b2547756a71150f07d3d8c7ae0",
+    "src/character/motion.test.ts": "7228a47251cbc492413045317f97fb66c1c0fa7ae453c35bd3726647edcfdd61",
+    "src/character/expressionBlend.test.tsx": "f7a091c0dae9279f3559cc9d675495946b21fa52bee79761f48a4463e3fb65a4",
+    "src/dev/MotionReview.test.tsx": "19589a077a905df4c03c0c63f280c3c1cd890aaa2f446a8c16efb2caf54592c1",
+    "scripts/browser/pet-stretch.test.mjs": "ae50f61fd169f6ac0ada38195c76b7d29c6ba07f463c0a3c7164f3cb34d7454a",
+    "scripts/browser/pet-play.test.mjs": "acb6ea582da9fc14976a2742ab0ab16f7259785f6afe129b5d107fe50f78bcb1",
+    "docs/ART.md": "f75a78af15a52b6a26fff7d8057db090c971d6422ae1f8b85d54f3165db3b765",
+    "docs/audits/2026-10-12-character-polish/capture-stretch-gesture.mjs": "294a1ade90a10873680d716d1798d12308198ece9d7ef721db365b379fd62891",
+    "docs/audits/2026-10-12-character-polish/compare-stretch-gesture.mjs": "93e592e83ef8b9a8d1cf49f6a67a9c23ccc74f9c6cc0902d0cb6fb5493a95242",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-layout-boundary.test.mjs": "56ed20743d626017680ab4438946858d1a2606dc3d5e09fff8859629b015b688"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-source.diff",
+    "sha256": "6df21ae29c1e8d1c60de0e20853c84efd9dad4aac1d28db1a282a229a95c28c7"
+  },
+  "scope": "19paths:2400ms explicit groundedstretch with species-sized heldarms/torsoextension/restrainedonecyclefollow;existinggeneric priority/clock/selector reused;fourthplayerbutton/lines;max374pxbalanced2x2controls;unit/native checks,ART,three bounded diagnostics. No newstate/timer/savedfields/reward/audio/furnitureprofile changes."
+}

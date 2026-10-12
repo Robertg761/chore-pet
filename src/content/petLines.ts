@@ -210,6 +210,11 @@ export const HOP_LINES: string[] = [
   'A little hop for you.',
   'Ta-da! That was fun.',
 ]
+export const STRETCH_LINES: string[] = [
+  "Let's stretch together.",
+  'A slow stretch feels lovely.',
+  'A little stretch, then a breather.',
+]
 
 /** Celebrations when a chore gets done. Lines starting with {chore} are capitalised. */
 export const DONE_LINES: string[] = [

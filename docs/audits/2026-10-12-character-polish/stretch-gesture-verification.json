@@ -1,0 +1,256 @@
+{
+  "freeze": {
+    "baseCommit": "790d01b1010fc6769405c9d0e74a373c2a820a51",
+    "sources": {
+      "src/character/motion.ts": "4f337fb3c7d69d02cc7476d0e262b35e8f92daae67d9578b8f3c26140a96b60d",
+      "src/pet/behaviour.ts": "fc713b18836e7597195dad30cc6b11dedc167549ff807e78795ac577e9226d9d",
+      "src/pet/PetPlay.tsx": "7e8825e6de283013b773d6136b7ce0a40198a6cc606e9a6e3a5baff689360812",
+      "src/pet/PetPlay.css": "e5afa01c634ef73fb2db13b145a1016c8af0ab10bb2a4d8e057378434e456a04",
+      "src/content/petLines.ts": "a3d9ebc3d2c1fb83fdcd267e4969ebc087267a507920dca5b6c8de18a7b593d1",
+      "src/pet/LivingRoom.tsx": "5100675e09ed679ef1473f70e80e4878f47f855764ea27879b60da4930992e02",
+      "src/character/motion.stretch.test.ts": "3f3110c0af78c0899626341bbef95b5ac4db152b4da0f9721956e3d9c4d588e0",
+      "src/pet/behaviour.stretch.test.ts": "cfbabc6aa84e5bde1a132deacde63f036892e0a173a72ece97f2768ee0ce06a8",
+      "src/pet/PetPlay.test.tsx": "dd83a620069522ae15ff593a45542a3541a72ab027b76509ed56f3242e043e7b",
+      "src/pet/PetIntegration.test.tsx": "e7e3e820399c66df8117e7ebb098b0cd7da109b2547756a71150f07d3d8c7ae0",
+      "src/character/motion.test.ts": "7228a47251cbc492413045317f97fb66c1c0fa7ae453c35bd3726647edcfdd61",
+      "src/character/expressionBlend.test.tsx": "f7a091c0dae9279f3559cc9d675495946b21fa52bee79761f48a4463e3fb65a4",
+      "src/dev/MotionReview.test.tsx": "19589a077a905df4c03c0c63f280c3c1cd890aaa2f446a8c16efb2caf54592c1",
+      "scripts/browser/pet-stretch.test.mjs": "ae50f61fd169f6ac0ada38195c76b7d29c6ba07f463c0a3c7164f3cb34d7454a",
+      "scripts/browser/pet-play.test.mjs": "acb6ea582da9fc14976a2742ab0ab16f7259785f6afe129b5d107fe50f78bcb1",
+      "docs/ART.md": "f75a78af15a52b6a26fff7d8057db090c971d6422ae1f8b85d54f3165db3b765",
+      "docs/audits/2026-10-12-character-polish/capture-stretch-gesture.mjs": "294a1ade90a10873680d716d1798d12308198ece9d7ef721db365b379fd62891",
+      "docs/audits/2026-10-12-character-polish/compare-stretch-gesture.mjs": "93e592e83ef8b9a8d1cf49f6a67a9c23ccc74f9c6cc0902d0cb6fb5493a95242",
+      "docs/audits/2026-10-12-character-polish/stretch-gesture-layout-boundary.test.mjs": "56ed20743d626017680ab4438946858d1a2606dc3d5e09fff8859629b015b688"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-source.diff",
+      "sha256": "6df21ae29c1e8d1c60de0e20853c84efd9dad4aac1d28db1a282a229a95c28c7"
+    },
+    "scope": "19paths:2400ms explicit groundedstretch with species-sized heldarms/torsoextension/restrainedonecyclefollow;existinggeneric priority/clock/selector reused;fourthplayerbutton/lines;max374pxbalanced2x2controls;unit/native checks,ART,three bounded diagnostics. No newstate/timer/savedfields/reward/audio/furnitureprofile changes."
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-artifacts.json",
+    "sha256": "0ba0424783ed7b31be990805b0194858a4e17c602ecfcf4e0fdf2cfc86dc1130"
+  },
+  "checks": [
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-red.log",
+      "logSha256": "187f87da03e58848ad6fe2639a450ffa71fa1d62b8a8b30ae945514814afdd92",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "10newfail/5priorpass826ms beforeimplementation: action/lifetime/UI absent."
+    },
+    {
+      "name": "integration-red",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-integration-red.log",
+      "logSha256": "2384a058a52e8f4ad82d726a8051254ca292ce2b7ce15126e41abcebd903bc51",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-integration-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "4missingdialoguefail/92priorpass3.24s beforeimplementation."
+    },
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-browser-red.log",
+      "logSha256": "796a5f613b5a15ba85110d0154733ee408e296febc9fb643e82848725a1a4bbc",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-browser-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "4missingbutton actualproduction regressions beforeimplementation."
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-focused.log",
+      "logSha256": "20688fd38e43871aec326d4372e008b15190188240cb3375d8048eff1639c589",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-focused.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "207pass/1old15actionvocabularyfixturefail5.26s;newfeaturechecks pass."
+    },
+    {
+      "name": "focused-final",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-focused-final.log",
+      "logSha256": "04275a902d9c72dc2d3656ed77f41361a2a99a4fb7f2de4e084e503f1f7df0f3",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-focused-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "241/8files8.18s0. FinalJS/runtime/unitpaths; predatesCSS-onlylayout refinement andnative-onlyboundaryasserts."
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-build.log",
+      "logSha256": "c55908d3d46879031ff682bc0abe0eb062053bcaf1c3abf915971c4590f0fa17",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Typebuild0, firstfeature beforephoneCSS;existingbundleadvisory."
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Lint0 beforelaterCSS/labelboundary/native edits."
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-browser.log",
+      "logSha256": "6fea06cd0921f0e82a8552cc4211e3009dcee9e67966799c5d9fc731a6c50387",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-browser.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "12cases27.068s0;firstfour-buttonlayout before2x2CSS."
+    },
+    {
+      "name": "capture",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-capture.log",
+      "logSha256": "a6b47b8acc959d9c2eafdbd4434c0e6300157f3715b078b58837dbe897445ec7",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-capture.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "36dressed/108views0;finalruntime/runner hashes still match. No CSS in isolated SVG capture."
+    },
+    {
+      "name": "layout-red",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-layout-red.log",
+      "logSha256": "5531dee3ca3b03a9bc44d0cd6f7eb9fe96e95a192eca601a1affad2c594892ef",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-layout-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "3202x2geometryregression1fail beforeCSS refinement."
+    },
+    {
+      "name": "build-final",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-build-final.log",
+      "logSha256": "f32a81d8e3d20b50d535825d58e6e66dd5c92fec71b7864492ca8df55ed5efc3",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-build-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Typebuild0 withmax360phonegrid;beforebreakpointextension."
+    },
+    {
+      "name": "lint-final",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-lint-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Lint0 withmax360phonegrid;beforebreakpoint extension."
+    },
+    {
+      "name": "browser-final",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-browser-final.log",
+      "logSha256": "ef65d606ab7c60e914ca01863d05e1eac77b18f47eafe7e8b28ecaa203b414a2",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-browser-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "16cases33.039s0 withmax360grid:12player/stretch+4offscreen."
+    },
+    {
+      "name": "layout-boundary",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-layout-boundary.log",
+      "logSha256": "690d0e5cef36372ec201748f2ba8009c500e0dcca6c05e2a198dd2dd15c226a3",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-layout-boundary.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "1read-onlyprobe1.423s0: prior360leaves361\u20133703+1;candidate374balanced. FirstJSONretained;replayexplicitpriorinjection."
+    },
+    {
+      "name": "build-boundary",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-build-boundary.log",
+      "logSha256": "0ee7b8ec2c873b73a89fe11c5bfcd2a2c6359ae202cce074fcbe447ee086d082",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-build-boundary.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Finaltypebuild0,max374CSS;existingbundleadvisory. OnlyARTwording amendedafterbuild."
+    },
+    {
+      "name": "lint-boundary",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-lint-boundary.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-lint-boundary.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Finalzero-warninglint0,frozen19sourcepaths;onlyARTwordingafterlint."
+    },
+    {
+      "name": "browser-boundary",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-browser-boundary.log",
+      "logSha256": "12b9815b09580222f0c2c928575d082015f65da06da4c5cc288799c16bc1f3ef",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-browser-boundary.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Final19cases39.747s0:18selectednative including7viewports320/361/375/390/640/844/1280,3species/live reduction/offscreen;1read-only9widthprobe."
+    },
+    {
+      "name": "differential",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-differential.log",
+      "logSha256": "acee305cf2379b4cd9427ba078e502fd15f2ad03b938a12253c007bcafc17a5a",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-differential.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Final40500samples exact for all15prioractions/fields/moods/durations/facings/policies;newstretch2400ms."
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/stretch-gesture-full.log",
+      "logSha256": "0e159f9afec97a2cc9ec63c24f2e2d518465eb50ecbeb80810fede07303748dc",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Final2184tests/103files0;timing in rawlog."
+    }
+  ],
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/stretch-gesture-review.md",
+    "sha256": "667b2b7bf6f8e817363bbbcd6db3708bcea9f092026b61dd91aca4e063b5ad4d"
+  },
+  "planAtCheckpoint": {
+    "usedPercent": 18,
+    "ordinaryUsageAllowed": true,
+    "spendControlReached": false
+  },
+  "root": "Allbindings rechecked afterfinal execution. Sequentialheavy jobs,768MBNodeheap/oneVitestworker/oneChromium/nice10. AvailableRAM sampled6.4\u20137.3GB,tmp4.1GBfree;notcontinuouspeak/CPU/batterymeasurement. Static/numeric/native evidence;humanplayback/assistive-technology/physicaldevice acceptance deferred. Portraitfocus may scrollupperroom;petbody/focusvisibility tested,notwhole-roomvisibility."
+}

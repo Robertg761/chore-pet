@@ -1,7 +1,7 @@
 import type { Mood, Species } from '../domain/types'
 
 export type MotionAction =
-  | 'idle' | 'walk' | 'turn' | 'greet' | 'affection' | 'celebrate' | 'celebrate-big'
+  | 'idle' | 'walk' | 'turn' | 'greet' | 'affection' | 'stretch' | 'celebrate' | 'celebrate-big'
   | 'notice' | 'inspect' | 'wave' | 'reach' | 'rest' | 'dust' | 'smell' | 'concern'
 
 /** Projected route point in unmirrored character SVG units, including past corners. */
@@ -58,7 +58,7 @@ export interface MotionFrame {
 }
 
 export const ACTION_MS: Record<MotionAction, number> = {
-  idle: 4000, walk: 900, turn: 360, greet: 1200, affection: 1600,
+  idle: 4000, walk: 900, turn: 360, greet: 1200, affection: 1600, stretch: 2400,
   celebrate: 1800, 'celebrate-big': 2200, notice: 600, inspect: 1800,
   wave: 1400, reach: 1600, rest: 2400, dust: 1400, smell: 1600, concern: 1800,
 }
@@ -73,6 +73,12 @@ const PERSONALITY: Record<Species, { amplitude: number; squash: number; stride: 
 
 // Pats settle with a smaller, slower sway than energetic finite gestures.
 const AFFECTION_FOLLOW: Record<Species, number> = { mochi: 0.45, bun: 0.55, sprout: 0.5 }
+
+const STRETCH: Record<Species, { arms: number; extension: number; follow: number }> = {
+  mochi: { arms: 46, extension: 0.022, follow: 0.2 },
+  bun: { arms: 58, extension: 0.032, follow: 0.25 },
+  sprout: { arms: 40, extension: 0.026, follow: 0.2 },
+}
 
 // The shared gesture envelope raises/lowers the hand. These held sweeps give
 // Mochi a slower wave and Sprout a smaller one, retaining Bun's lively timing.
@@ -117,7 +123,7 @@ function expressionFor(action: MotionAction, mood: Mood): MotionFrame['expressio
   // The resting face keeps its sick art; alert only lets notice gaze reach it.
   if (mood === 'sick') return action === 'notice' ? 'alert' : 'mood'
   switch (action) {
-    case 'greet': case 'affection': case 'celebrate': case 'celebrate-big': case 'wave':
+    case 'greet': case 'affection': case 'stretch': case 'celebrate': case 'celebrate-big': case 'wave':
       return 'pleased'
     case 'notice': case 'inspect': case 'reach': case 'dust': case 'smell': case 'concern':
       return 'alert'
@@ -281,6 +287,15 @@ export function sampleMotion(input: MotionInput): MotionFrame {
         frame.gazeY = -1.5 * attention
         frame.accentOpacity = mood === 'sick' ? 0 : gesture
         break
+      case 'stretch': {
+        const held = envelope(t, 0, 0.28, 0.7, 1)
+        compression = anticipation * 0.012
+        extension = STRETCH[species].extension * held
+        frame.leftArm = STRETCH[species].arms * held
+        frame.rightArm = -frame.leftArm
+        frame.gazeY = -1.2 * attention
+        break
+      }
       case 'celebrate': case 'celebrate-big': {
         const big = action === 'celebrate-big'
         const lift = envelope(t, 0.18, 0.42, 0.42, 0.68)
@@ -356,11 +371,11 @@ export function sampleMotion(input: MotionInput): MotionFrame {
     frame.scaleX += compression * personality.squash * energy - extension * amplitude
     frame.scaleY += extension * amplitude - compression * personality.squash * energy
     // A delayed settling envelope stays active after the main gesture lowers.
-    const follow = envelope(t, 0.1, 0.42, 0.8, 1)
+    const follow = action === 'stretch' ? envelope(t, 0.14, 0.45, 0.76, 1) : envelope(t, 0.1, 0.42, 0.8, 1)
     // Advance the gentle stroke so inherited lag cannot add a tiny initial
     // counter-movement after the follow envelope first becomes visible.
-    const sway = action === 'affection'
-      ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * AFFECTION_FOLLOW[species] * energy
+    const sway = action === 'affection' || action === 'stretch'
+      ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * (action === 'stretch' ? STRETCH[species].follow : AFFECTION_FOLLOW[species]) * energy
       : Math.sin(t * Math.PI * 4 - personality.lag) * follow * personality.follow * energy
     frame.leftAppendage = sway
     frame.rightAppendage = sway * (species === 'sprout' ? -0.75 : 0.8)

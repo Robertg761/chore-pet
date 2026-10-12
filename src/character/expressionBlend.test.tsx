@@ -30,7 +30,7 @@ function tree(frame: MotionFrame, mood: Mood = 'happy', species: Species = 'bun'
 
 describe('pleased expression transitions', () => {
   it.each(['mochi', 'bun', 'sprout'] as const)('%s warms and settles its finite smile without changing reduced stills', species => {
-    for (const action of ['greet', 'affection', 'celebrate', 'celebrate-big', 'wave'] satisfies MotionAction[]) {
+    for (const action of ['greet', 'affection', 'stretch', 'celebrate', 'celebrate-big', 'wave'] satisfies MotionAction[]) {
       const at = (phase: number, reducedMotion = false) => sampleMotion({ species, mood: 'happy', action,
         elapsedMs: ACTION_MS[action] * phase, durationMs: ACTION_MS[action], distance: 0, reducedMotion })
       expect(weight(at(0))).toBe(0)

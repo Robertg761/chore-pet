@@ -1,0 +1,21 @@
+{
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-baseline-motion.ts.txt": "a7506e91f0260cb628a348716eec7eb772f5b46de371a41cbf44a5d42439dd00",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture.png": "abbed7efa36b0d77ebd4165ff530b1bdd1e97fca7c9957b7bfb0baf3dfc11773",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture.json": "55d28ee97288f31d453f902735e356d5a39a01604ae9d95ba5e9a13bfa115ef3",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-differential.json": "2183736634e54205e95f3899b94841b7b3097e4cfc443fcea81324581ccaf333",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-layout-boundary.json": "276055860962938d0dd45a4952302a1f2ba9bf1d7cdf47af14916702535f8874",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-layout/stretch-1280.png": "8953aa4cf0b0904bb8504d2b68cae3cb14afefb6bc13d3533de54bf53596d072",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-layout/stretch-320.png": "d481f0b44a7f335eacceb41578f02b8469236f7dc05ee0d9dc47d149afb39df3",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-layout/stretch-361.png": "21c397800ef2754740389c1a33d78765e01a8bb18f8eac660630ff85d7731407",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-layout/stretch-375.png": "dc674ef70433846b13d82fdd94fe4dae7ff8785d88c9933c74902d96bd6b504a",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-layout/stretch-390.png": "0c1f4c7d1cf176a00ae02d9dc3b588b81b25c9e439aea94dd2870d2e274ce302",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-layout/stretch-640.png": "95ed80b6c26dcdac5195299395f0e9377f3b185e93b454dff97726db9efd732c",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-layout/stretch-844.png": "96b311294162fbdf9b58cb1cecb97f428b442dad101090c205796ca1c59e3ead"
+  },
+  "historicalCandidate": {
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-first-320.png": "648f1368fce9283a1d3b27e5e1ce9d69575fdab50a15105ca2c7fc0d9b6de6cb",
+    "docs/audits/2026-10-12-character-polish/stretch-gesture-layout-boundary-first.json": "37961a40f1946021b7c817da142ae78b464866b3aac977cb1df842ee6e06a4c3"
+  },
+  "scope": "Final12artifacts: baseline motion,36dressed/108view sheet+JSON,40500frame differential,9width native probeJSON,7final stretch-focus layouts. Historical first320/firstprobe retained separately with pre-refinement CSS; not final-source bindings. Other8own redundant transient screenshots discarded. Phone focus can scroll upper room; no whole-room-visibility or human temporal acceptance claim."
+}

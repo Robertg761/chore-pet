@@ -1067,6 +1067,56 @@ it('keeps a reduced hop still and releases its only frame at the original deadli
   expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
 })
 
+it.each(['mochi', 'bun', 'sprout'] as const)('plays a grounded %s stretch from a fractional invitation and lets chores preempt it', species => {
+  const control = createRef<LivingRoomControl>()
+  const stretch = 'stretch' as Parameters<LivingRoomControl['respond']>[0]
+  const scene = { ...props, pet: { ...pet, species }, mood: 'happy' as const, objects: [plant], control, initialTile: { tx: 7, ty: 7 } }
+  const ui = mount(<LivingRoom {...scene} />)
+  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
+  frame(137)
+  const resident = ui.container.querySelector('.room-pet')!, node = art(ui.container), position = resident.getAttribute('transform')
+  act(() => { expect(control.current!.respond(stretch)).toBe('started') })
+  expect(resident.getAttribute('transform')).toBe(position)
+  const heard = ui.container.querySelector('[aria-live]')!.textContent
+  expect(heard).toMatch(/stretch/i)
+  frame(973)
+  expect(resident.getAttribute('transform')).toBe(position)
+  expect(node.querySelector('[data-character-body]')!.getAttribute('transform')).toMatch(/^translate\(0 0\)/)
+  const left = Number(node.querySelector('[data-arm="left"]')!.getAttribute('transform')!.match(/rotate\(([^ ]+)/)![1])
+  expect(left).toBeCloseTo({ mochi: 46 * .82, bun: 58, sprout: 40 * .72 }[species], 8)
+  for (let n = 0; n < 10; n++) act(() => { expect(control.current!.respond(stretch)).toBe('busy') })
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
+  expect(frames.size).toBe(1)
+  ui.rerender(<LivingRoom {...scene} celebrate={{ key: 401, choreName: 'Water plant' }} />)
+  expect(ui.container.querySelector('[aria-live]')!.textContent).not.toBe(heard)
+  act(() => { expect(control.current!.respond(stretch)).toBe('busy') })
+  expect(art(ui.container)).toBe(node)
+})
+
+it('keeps a reduced stretch still for2400ms and expires it offscreen without replay', () => {
+  const visibility = observeResident()
+  Object.defineProperty(media, 'matches', { value: true, configurable: true })
+  const control = createRef<LivingRoomControl>()
+  const stretch = 'stretch' as Parameters<LivingRoomControl['respond']>[0]
+  const ui = mount(<LivingRoom {...props} mood="happy" control={control} />)
+  act(() => { expect(control.current!.respond(stretch)).toBe('started') })
+  frame(100)
+  const still = art(ui.container).querySelector('[data-character-body]')!.innerHTML
+  frame(2399)
+  expect(art(ui.container).querySelector('[data-character-body]')!.innerHTML).toBe(still)
+  expect(frames.size).toBe(1)
+  frame(2400)
+  expect(frames.size).toBe(0)
+  expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
+  visibility.show(false)
+  act(() => { expect(control.current!.respond(stretch)).toBe('started') })
+  expect(frames.size).toBe(0)
+  now = 4900
+  visibility.show(true)
+  expect(frames.size).toBe(0)
+  expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
+})
+
 it('expires an offscreen hop before return without invisible frames or stale cheer', () => {
   const visibility = observeResident()
   Object.defineProperty(media, 'matches', { value: true, configurable: true })

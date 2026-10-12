@@ -8,3 +8,6 @@
 .pet-play-note, .pet-play-feedback { margin: 8px 0 0; font-size: 0.875rem; font-weight: 700; overflow-wrap: anywhere; }
 .pet-play-note { color: var(--ink-soft); }
 .pet-play-feedback:empty { margin: 0; }
+@media (max-width: 374px) {
+  .pet-play-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

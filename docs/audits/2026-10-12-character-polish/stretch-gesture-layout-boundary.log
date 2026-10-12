@@ -1,0 +1,10 @@
+✔ measure the narrow player-control wrapping boundary (984.482141ms)
+ℹ [{"label":"prior360","width":360,"rows":[2,2]},{"label":"prior360","width":361,"rows":[3,1]},{"label":"prior360","width":366,"rows":[3,1]},{"label":"prior360","width":370,"rows":[3,1]},{"label":"prior360","width":372,"rows":[4]},{"label":"prior360","width":374,"rows":[4]},{"label":"prior360","width":375,"rows":[4]},{"label":"prior360","width":380,"rows":[4]},{"label":"prior360","width":390,"rows":[4]},{"label":"candidate374","width":360,"rows":[2,2]},{"label":"candidate374","width":361,"rows":[2,2]},{"label":"candidate374","width":366,"rows":[2,2]},{"label":"candidate374","width":370,"rows":[2,2]},{"label":"candidate374","width":372,"rows":[2,2]},{"label":"candidate374","width":374,"rows":[2,2]},{"label":"candidate374","width":375,"rows":[4]},{"label":"candidate374","width":380,"rows":[4]},{"label":"candidate374","width":390,"rows":[4]}]
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1423.336172

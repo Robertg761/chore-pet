@@ -49,7 +49,7 @@ async function assertPetVisible(resident) {
   assert.ok(visible >= .95, `the character must stay visible while choosing a response: ${visible}`)
 }
 
-for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }, { width: 1280, height: 800 }, { width: 640, height: 360 }, { width: 844, height: 390 }]) {
+for (const viewport of [{ width: 320, height: 640 }, { width: 361, height: 664 }, { width: 375, height: 664 }, { width: 390, height: 664 }, { width: 1280, height: 800 }, { width: 640, height: 360 }, { width: 844, height: 390 }]) {
   test(`native player choices stay still and fit ${viewport.width}px`, async t => {
     const page = await browserApp(t, { viewport })
     await instrument(page)
@@ -67,7 +67,9 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
     const wave = page.getByRole('button', { name: 'Wave', exact: true })
     const pats = page.getByRole('button', { name: 'Gentle pats', exact: true })
     const hop = page.getByRole('button', { name: 'Happy hop', exact: true })
+    const stretch = page.getByRole('button', { name: 'Stretch together', exact: true })
     assert.equal(await hop.count(), 1)
+    assert.equal(await stretch.count(), 1)
     assert.equal(await wave.evaluate(node => node === document.activeElement), true)
     await page.keyboard.press('Enter')
     await assertPetVisible(resident)
@@ -85,10 +87,27 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
     assert.notEqual((await live.textContent()).trim(), hello)
     await page.clock.runFor(800)
     assert.equal(await resident.getAttribute('transform'), position)
-    for (const control of [toggle, wave, pats, hop]) {
+    for (const control of [toggle, wave, pats, hop, stretch]) {
       const bounds = await control.boundingBox()
       assert.ok(bounds.height >= 44 && bounds.width >= 44)
       assert.ok(bounds.x >= -1 && bounds.x + bounds.width <= viewport.width + 1)
+      const textFits = await control.evaluate(node => {
+        const range = document.createRange(); range.selectNodeContents(node)
+        const text = range.getBoundingClientRect(), box = node.getBoundingClientRect()
+        return text.left >= box.left && text.right <= box.right && text.top >= box.top && text.bottom <= box.bottom
+      })
+      assert.equal(textFits, true, 'all labels must fit their targets')
+    }
+    if (viewport.width <= 374) {
+      const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
+      assert.ok(Math.abs(boxes[0].y - boxes[1].y) < .5)
+      assert.ok(Math.abs(boxes[2].y - boxes[3].y) < .5)
+      assert.ok(boxes[2].y >= boxes[0].y + boxes[0].height + 8, 'narrow phones use two balanced control rows')
+      assert.ok(Math.abs(boxes[0].width - boxes[2].width) < .5)
+    }
+    if (viewport.width === 375) {
+      const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
+      assert.ok(boxes.every(box => Math.abs(box.y - boxes[0].y) < .5), 'the wider boundary fits all four controls in one row')
     }
     const room = await page.locator('.home-scene .home-room').boundingBox()
     assert.ok(room.height >= originalRoom.height - .5, 'expanded player choices must preserve room size')
@@ -120,6 +139,30 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
     await capture(page, `play-${viewport.width}.png`)
     await page.clock.runFor(1000)
+    assert.equal(await page.evaluate(() => window.__playFrames.size), 0)
+    await page.keyboard.press('Tab')
+    assert.equal(await stretch.evaluate(node => node === document.activeElement), true)
+    await page.keyboard.press('Enter')
+    await assertPetVisible(resident)
+    await page.clock.runFor(1200)
+    assert.equal(await resident.locator('[data-character-body]').getAttribute('transform'), stillBody)
+    assert.equal(await resident.getAttribute('transform'), position)
+    assert.equal(await page.evaluate(() => window.__playFrames.size), 1)
+    const stretchClearance = await stretch.evaluate(node => {
+      const bounds = node.getBoundingClientRect(), style = getComputedStyle(node)
+      const ring = parseFloat(style.outlineWidth) + Math.max(0, parseFloat(style.outlineOffset))
+      let bottom = innerHeight
+      for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+        if (/(auto|scroll|hidden|clip)/.test(getComputedStyle(parent).overflowY)) {
+          const clip = parent.getBoundingClientRect()
+          bottom = Math.min(bottom, clip.top + parent.clientTop + parent.clientHeight)
+        }
+      }
+      return bottom - bounds.bottom - ring
+    })
+    assert.ok(stretchClearance >= -.5, `focused stretch outline must clear scroll clipping: ${stretchClearance}px`)
+    await capture(page, `stretch-${viewport.width}.png`)
+    await page.clock.runFor(1300)
     assert.equal(await page.evaluate(() => window.__playFrames.size), 0)
     assert.deepEqual((await snapshot(page)).tables, saved)
     t.diagnostic(`Chromium ${page.context().browser().version()}; native keyboard,reduced still,finite single clock,44px,unchanged saved tables`)

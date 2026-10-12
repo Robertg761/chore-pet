@@ -12,6 +12,18 @@ function mount(patch: Partial<PetPlayProps> = {}) {
 }
 function button(container: Element, label: string) { return [...container.querySelectorAll('button')].find(node => node.textContent === label)! }
 
+it('offers an explicit stretch without scheduling or duplicating a successful announcement', () => {
+  vi.stubGlobal('requestAnimationFrame', vi.fn())
+  const ui = mount()
+  click(button(ui.container, 'Spend time together'))
+  const stretch = button(ui.container, 'Stretch together')
+  expect(stretch).toBeDefined()
+  click(stretch)
+  expect(ui.props.onReact).toHaveBeenCalledExactlyOnceWith('stretch')
+  expect(requestAnimationFrame).not.toHaveBeenCalled()
+  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
+})
+
 it('starts collapsed and sends only explicit choices without creating scheduling work', () => {
   vi.stubGlobal('requestAnimationFrame', vi.fn())
   const ui = mount()
@@ -35,7 +47,7 @@ it('starts collapsed and sends only explicit choices without creating scheduling
 it.each(['travel', 'away', 'sick'] as const)('explains and blocks play while %s', blocked => {
   const ui = mount({ blocked })
   click(button(ui.container, 'Spend time together'))
-  for (const label of ['Wave', 'Gentle pats', 'Happy hop']) {
+  for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together']) {
     expect((button(ui.container, label) as HTMLButtonElement).disabled).toBe(true)
     click(button(ui.container, label))
   }

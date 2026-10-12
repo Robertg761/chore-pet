@@ -1,0 +1,741 @@
+diff --git c/docs/ART.md w/docs/ART.md
+index 4d595a5..522d6c6 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -135,7 +135,7 @@ Every pose defines all six anchors (`src/character/slots.ts`). Items are drawn c
+ - Walking phase follows accumulated route distance across tile boundaries. Departure fades in over 120ms and arrival fades out over 180ms across the whole journey. Do not restart the gait on each tile. Body lift stays within 24 SVG units; sampled scale stays within `[0.85,1.15]`.
+ - Greeting, affection, celebration, and big celebration last 1200, 1600, 1800, and 2200ms. Finite actions recover to their mood pose. Interruptions preserve the visible fractional world position and blend from the outgoing sampled pose. Rapid taps allow one pending response and reuse the same decorative accent nodes.
+ - Sampled reaction marks emerge at their own anchors on the existing finite opacity envelope. The heart grows from 82% and rises 2 SVG units; the star grows from 70% and rises 4. Peak geometry and static cheering art remain exact. The marks settle back as they fade; they add no clock, state, or nodes and remain suppressed for resting poses and reduced motion.
+-- Healthy pleased faces ease in over the first18% of a greeting, pats, hop, cheer or environmental wave, and settle over the last18%. Intermediate frames narrow the outgoing eyes with their current blink before crossfading the existing shapes; content/meh mouths crossfade, while the happy mouth stays single. One cream contrast backing follows the expression on dark bodies. The numeric expression weight also carries an interrupted smile through the existing120ms activity blend. Rest, full smiles, legacy omitted weights, sleeping and unwell art retain their existing geometry; reduced motion retains the full finite still reaction. No extra clock or saved state.
++- Healthy pleased faces ease in over the first 18% of a greeting, pats, stretch, hop, cheer or environmental wave, and settle over the last 18%. Intermediate frames narrow the outgoing eyes with their current blink before crossfading the existing shapes; content/meh mouths crossfade, while the happy mouth stays single. One cream contrast backing follows the expression on dark bodies. The numeric expression weight also carries an interrupted smile through the existing 120 ms activity blend. Rest, full smiles, legacy omitted weights, sleeping and unwell art retain their existing geometry; reduced motion retains the full finite still reaction. No extra clock or saved state.
+ - Greeting and wardrobe waves use species-specific held hand sweeps. Bun retains its lively cadence, Mochi sweeps more slowly, and Sprout uses a smaller, slower wave. Preserve action durations, gesture envelopes, torso/feet/appendages, gaze, wardrobe attachment and reduced-motion stills.
+ - Sampled art owns breathing, blinks, limb motion, and accents. Disable independent CSS breathing and blinking inside it. Reduced motion removes sampled displacement, gait, breathing, secondary sway, blinks, and animated accents while retaining still mood/reaction expressions. System preference changes apply during the session.
+ - Idle appendages follow the existing four-second breath with a small species-specific delay; they settle to neutral position and zero velocity at the loop boundary. Feet, body position and shadow stay fixed. Primary140ms blinks keep their lifetime phase across actions; every other primary blink has a second140ms blink after60ms fully open. Sleeping and sick art retain their existing static geometry.
+@@ -170,7 +170,9 @@ The resident clock pauses when reduced-motion art is settled or the pet is resti
+ 
+ One native IntersectionObserver pauses that same clock when the resident's SVG is completely outside the viewport or scroll clipping. Any positive visible area keeps it active. Exact edge contact also stays active because the native default threshold may omit the following positive-area notification. Returning into view samples current world deadlines before paint and clears stale hover. Offscreen responses request no frames; returning resumes a finite response only while its deadline remains active. Missing observation support retains the existing clock policy. Observer cleanup ignores queued callbacks; no polling or additional animation clock is used.
+ 
+-Spend time together follows the home chore list and offers explicit Wave, Gentle pats and Happy hop choices. They use the resident's existing finite greeting/affection/celebration samplers, retaining its fractional position and outgoing pose. Busy requests do not queue or extend a reaction; chore cheers keep priority. The resident owns the single successful spoken line, and the controls explain resting/travel without waking or moving the pet. Reduced motion keeps a still pose and returns to zero pending frames when the response ends. Controls remain optional, with no saved changes or separate clock.
++Spend time together follows the home chore list and offers Wave, Gentle pats, Happy hop and Stretch together. Each choice uses a finite resident animation, retaining its fractional position and outgoing pose. Busy requests do not queue or extend a reaction; chore cheers keep priority. The resident owns the single successful spoken line, and the controls explain resting/travel without waking or moving the pet. Reduced motion keeps a still pose and returns to zero pending frames when the response ends. Controls remain optional, with no saved changes or separate clock.
++
++Stretch together adds a calm 2400 ms player moment to the same controls and clock. Both arms rise once, hold and lower; small torso extension stays anchored to the feet, with a restrained delayed appendage sway. Bun reaches farther than Mochi and Sprout. Feet, world position and shadow stay grounded, and no reaction marks appear. Busy, resting, travel, chore priority, tap alternation, live reduced motion and offscreen expiry retain the existing rules. The review panel exposes the full timeline through its action selector.
+ 
+ Gentle pats use one slow, delayed appendage sway. Mochi's knot, Bun's ears and Sprout's leaves move at 45%, 55% and 50% of their usual finite-gesture strength, with their existing phase lag and smooth return. This affects only affection appendages; the body, hands, heart, grounded feet, 1600ms duration and other actions retain their geometry and timing. Reduced motion leaves appendages still.
+ 
+diff --git c/scripts/browser/pet-play.test.mjs w/scripts/browser/pet-play.test.mjs
+index ff1d081..e8456b4 100644
+--- c/scripts/browser/pet-play.test.mjs
++++ w/scripts/browser/pet-play.test.mjs
+@@ -49,7 +49,7 @@ async function assertPetVisible(resident) {
+   assert.ok(visible >= .95, `the character must stay visible while choosing a response: ${visible}`)
+ }
+ 
+-for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }, { width: 1280, height: 800 }, { width: 640, height: 360 }, { width: 844, height: 390 }]) {
++for (const viewport of [{ width: 320, height: 640 }, { width: 361, height: 664 }, { width: 375, height: 664 }, { width: 390, height: 664 }, { width: 1280, height: 800 }, { width: 640, height: 360 }, { width: 844, height: 390 }]) {
+   test(`native player choices stay still and fit ${viewport.width}px`, async t => {
+     const page = await browserApp(t, { viewport })
+     await instrument(page)
+@@ -67,7 +67,9 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
+     const wave = page.getByRole('button', { name: 'Wave', exact: true })
+     const pats = page.getByRole('button', { name: 'Gentle pats', exact: true })
+     const hop = page.getByRole('button', { name: 'Happy hop', exact: true })
++    const stretch = page.getByRole('button', { name: 'Stretch together', exact: true })
+     assert.equal(await hop.count(), 1)
++    assert.equal(await stretch.count(), 1)
+     assert.equal(await wave.evaluate(node => node === document.activeElement), true)
+     await page.keyboard.press('Enter')
+     await assertPetVisible(resident)
+@@ -85,10 +87,27 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
+     assert.notEqual((await live.textContent()).trim(), hello)
+     await page.clock.runFor(800)
+     assert.equal(await resident.getAttribute('transform'), position)
+-    for (const control of [toggle, wave, pats, hop]) {
++    for (const control of [toggle, wave, pats, hop, stretch]) {
+       const bounds = await control.boundingBox()
+       assert.ok(bounds.height >= 44 && bounds.width >= 44)
+       assert.ok(bounds.x >= -1 && bounds.x + bounds.width <= viewport.width + 1)
++      const textFits = await control.evaluate(node => {
++        const range = document.createRange(); range.selectNodeContents(node)
++        const text = range.getBoundingClientRect(), box = node.getBoundingClientRect()
++        return text.left >= box.left && text.right <= box.right && text.top >= box.top && text.bottom <= box.bottom
++      })
++      assert.equal(textFits, true, 'all labels must fit their targets')
++    }
++    if (viewport.width <= 374) {
++      const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
++      assert.ok(Math.abs(boxes[0].y - boxes[1].y) < .5)
++      assert.ok(Math.abs(boxes[2].y - boxes[3].y) < .5)
++      assert.ok(boxes[2].y >= boxes[0].y + boxes[0].height + 8, 'narrow phones use two balanced control rows')
++      assert.ok(Math.abs(boxes[0].width - boxes[2].width) < .5)
++    }
++    if (viewport.width === 375) {
++      const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
++      assert.ok(boxes.every(box => Math.abs(box.y - boxes[0].y) < .5), 'the wider boundary fits all four controls in one row')
+     }
+     const room = await page.locator('.home-scene .home-room').boundingBox()
+     assert.ok(room.height >= originalRoom.height - .5, 'expanded player choices must preserve room size')
+@@ -121,6 +140,30 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
+     await capture(page, `play-${viewport.width}.png`)
+     await page.clock.runFor(1000)
+     assert.equal(await page.evaluate(() => window.__playFrames.size), 0)
++    await page.keyboard.press('Tab')
++    assert.equal(await stretch.evaluate(node => node === document.activeElement), true)
++    await page.keyboard.press('Enter')
++    await assertPetVisible(resident)
++    await page.clock.runFor(1200)
++    assert.equal(await resident.locator('[data-character-body]').getAttribute('transform'), stillBody)
++    assert.equal(await resident.getAttribute('transform'), position)
++    assert.equal(await page.evaluate(() => window.__playFrames.size), 1)
++    const stretchClearance = await stretch.evaluate(node => {
++      const bounds = node.getBoundingClientRect(), style = getComputedStyle(node)
++      const ring = parseFloat(style.outlineWidth) + Math.max(0, parseFloat(style.outlineOffset))
++      let bottom = innerHeight
++      for (let parent = node.parentElement; parent; parent = parent.parentElement) {
++        if (/(auto|scroll|hidden|clip)/.test(getComputedStyle(parent).overflowY)) {
++          const clip = parent.getBoundingClientRect()
++          bottom = Math.min(bottom, clip.top + parent.clientTop + parent.clientHeight)
++        }
++      }
++      return bottom - bounds.bottom - ring
++    })
++    assert.ok(stretchClearance >= -.5, `focused stretch outline must clear scroll clipping: ${stretchClearance}px`)
++    await capture(page, `stretch-${viewport.width}.png`)
++    await page.clock.runFor(1300)
++    assert.equal(await page.evaluate(() => window.__playFrames.size), 0)
+     assert.deepEqual((await snapshot(page)).tables, saved)
+     t.diagnostic(`Chromium ${page.context().browser().version()}; native keyboard,reduced still,finite single clock,44px,unchanged saved tables`)
+   })
+diff --git c/src/character/expressionBlend.test.tsx w/src/character/expressionBlend.test.tsx
+index edc46f3..287632d 100644
+--- c/src/character/expressionBlend.test.tsx
++++ w/src/character/expressionBlend.test.tsx
+@@ -30,7 +30,7 @@ function tree(frame: MotionFrame, mood: Mood = 'happy', species: Species = 'bun'
+ 
+ describe('pleased expression transitions', () => {
+   it.each(['mochi', 'bun', 'sprout'] as const)('%s warms and settles its finite smile without changing reduced stills', species => {
+-    for (const action of ['greet', 'affection', 'celebrate', 'celebrate-big', 'wave'] satisfies MotionAction[]) {
++    for (const action of ['greet', 'affection', 'stretch', 'celebrate', 'celebrate-big', 'wave'] satisfies MotionAction[]) {
+       const at = (phase: number, reducedMotion = false) => sampleMotion({ species, mood: 'happy', action,
+         elapsedMs: ACTION_MS[action] * phase, durationMs: ACTION_MS[action], distance: 0, reducedMotion })
+       expect(weight(at(0))).toBe(0)
+diff --git c/src/character/motion.test.ts w/src/character/motion.test.ts
+index 2c3f978..d2d30a4 100644
+--- c/src/character/motion.test.ts
++++ w/src/character/motion.test.ts
+@@ -3,7 +3,7 @@ import { SPECIES, type Mood } from '../domain/types'
+ import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionAction, type MotionFrame, type MotionInput } from './motion'
+ 
+ const actions: MotionAction[] = [
+-  'idle', 'walk', 'turn', 'greet', 'affection', 'celebrate', 'celebrate-big',
++  'idle', 'walk', 'turn', 'greet', 'affection', 'stretch', 'celebrate', 'celebrate-big',
+   'notice', 'inspect', 'wave', 'reach', 'rest', 'dust', 'smell', 'concern',
+ ]
+ const moods: Mood[] = ['happy', 'content', 'meh', 'scruffy', 'sick']
+@@ -23,7 +23,7 @@ const numbers = (frame: MotionFrame): number[] => Object.values(frame).filter((v
+ describe('motion vocabulary', () => {
+   it('provides every action duration and the agreed player reaction timing', () => {
+     expect(Object.keys(ACTION_MS).sort()).toEqual([...actions].sort())
+-    expect(ACTION_MS).toMatchObject({ greet: 1200, affection: 1600, celebrate: 1800, 'celebrate-big': 2200 })
++    expect(ACTION_MS).toMatchObject({ greet: 1200, affection: 1600, stretch: 2400, celebrate: 1800, 'celebrate-big': 2200 })
+     expect(Object.values(ACTION_MS).every((ms) => Number.isFinite(ms) && ms > 0)).toBe(true)
+   })
+ 
+diff --git c/src/character/motion.ts w/src/character/motion.ts
+index 7a28dba..7f956fa 100644
+--- c/src/character/motion.ts
++++ w/src/character/motion.ts
+@@ -1,7 +1,7 @@
+ import type { Mood, Species } from '../domain/types'
+ 
+ export type MotionAction =
+-  | 'idle' | 'walk' | 'turn' | 'greet' | 'affection' | 'celebrate' | 'celebrate-big'
++  | 'idle' | 'walk' | 'turn' | 'greet' | 'affection' | 'stretch' | 'celebrate' | 'celebrate-big'
+   | 'notice' | 'inspect' | 'wave' | 'reach' | 'rest' | 'dust' | 'smell' | 'concern'
+ 
+ /** Projected route point in unmirrored character SVG units, including past corners. */
+@@ -58,7 +58,7 @@ export interface MotionFrame {
+ }
+ 
+ export const ACTION_MS: Record<MotionAction, number> = {
+-  idle: 4000, walk: 900, turn: 360, greet: 1200, affection: 1600,
++  idle: 4000, walk: 900, turn: 360, greet: 1200, affection: 1600, stretch: 2400,
+   celebrate: 1800, 'celebrate-big': 2200, notice: 600, inspect: 1800,
+   wave: 1400, reach: 1600, rest: 2400, dust: 1400, smell: 1600, concern: 1800,
+ }
+@@ -74,6 +74,12 @@ const PERSONALITY: Record<Species, { amplitude: number; squash: number; stride:
+ // Pats settle with a smaller, slower sway than energetic finite gestures.
+ const AFFECTION_FOLLOW: Record<Species, number> = { mochi: 0.45, bun: 0.55, sprout: 0.5 }
+ 
++const STRETCH: Record<Species, { arms: number; extension: number; follow: number }> = {
++  mochi: { arms: 46, extension: 0.022, follow: 0.2 },
++  bun: { arms: 58, extension: 0.032, follow: 0.25 },
++  sprout: { arms: 40, extension: 0.026, follow: 0.2 },
++}
++
+ // The shared gesture envelope raises/lowers the hand. These held sweeps give
+ // Mochi a slower wave and Sprout a smaller one, retaining Bun's lively timing.
+ const HAND_WAVE: Record<'greet' | 'wave', Record<Species, { lift: number; arc: number; cycles: number }>> = {
+@@ -117,7 +123,7 @@ function expressionFor(action: MotionAction, mood: Mood): MotionFrame['expressio
+   // The resting face keeps its sick art; alert only lets notice gaze reach it.
+   if (mood === 'sick') return action === 'notice' ? 'alert' : 'mood'
+   switch (action) {
+-    case 'greet': case 'affection': case 'celebrate': case 'celebrate-big': case 'wave':
++    case 'greet': case 'affection': case 'stretch': case 'celebrate': case 'celebrate-big': case 'wave':
+       return 'pleased'
+     case 'notice': case 'inspect': case 'reach': case 'dust': case 'smell': case 'concern':
+       return 'alert'
+@@ -281,6 +287,15 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+         frame.gazeY = -1.5 * attention
+         frame.accentOpacity = mood === 'sick' ? 0 : gesture
+         break
++      case 'stretch': {
++        const held = envelope(t, 0, 0.28, 0.7, 1)
++        compression = anticipation * 0.012
++        extension = STRETCH[species].extension * held
++        frame.leftArm = STRETCH[species].arms * held
++        frame.rightArm = -frame.leftArm
++        frame.gazeY = -1.2 * attention
++        break
++      }
+       case 'celebrate': case 'celebrate-big': {
+         const big = action === 'celebrate-big'
+         const lift = envelope(t, 0.18, 0.42, 0.42, 0.68)
+@@ -356,11 +371,11 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+     frame.scaleX += compression * personality.squash * energy - extension * amplitude
+     frame.scaleY += extension * amplitude - compression * personality.squash * energy
+     // A delayed settling envelope stays active after the main gesture lowers.
+-    const follow = envelope(t, 0.1, 0.42, 0.8, 1)
++    const follow = action === 'stretch' ? envelope(t, 0.14, 0.45, 0.76, 1) : envelope(t, 0.1, 0.42, 0.8, 1)
+     // Advance the gentle stroke so inherited lag cannot add a tiny initial
+     // counter-movement after the follow envelope first becomes visible.
+-    const sway = action === 'affection'
+-      ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * AFFECTION_FOLLOW[species] * energy
++    const sway = action === 'affection' || action === 'stretch'
++      ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * (action === 'stretch' ? STRETCH[species].follow : AFFECTION_FOLLOW[species]) * energy
+       : Math.sin(t * Math.PI * 4 - personality.lag) * follow * personality.follow * energy
+     frame.leftAppendage = sway
+     frame.rightAppendage = sway * (species === 'sprout' ? -0.75 : 0.8)
+diff --git c/src/content/petLines.ts w/src/content/petLines.ts
+index 47b574a..7101773 100644
+--- c/src/content/petLines.ts
++++ w/src/content/petLines.ts
+@@ -210,6 +210,11 @@ export const HOP_LINES: string[] = [
+   'A little hop for you.',
+   'Ta-da! That was fun.',
+ ]
++export const STRETCH_LINES: string[] = [
++  "Let's stretch together.",
++  'A slow stretch feels lovely.',
++  'A little stretch, then a breather.',
++]
+ 
+ /** Celebrations when a chore gets done. Lines starting with {chore} are capitalised. */
+ export const DONE_LINES: string[] = [
+diff --git c/src/dev/MotionReview.test.tsx w/src/dev/MotionReview.test.tsx
+index a3f1e8c..b9e8320 100644
+--- c/src/dev/MotionReview.test.tsx
++++ w/src/dev/MotionReview.test.tsx
+@@ -78,6 +78,14 @@ it('starts paused, samples exact scrubbed milliseconds and stays still', () => {
+   expect(control<HTMLInputElement>('Time scrubber').value).toBe('317')
+ })
+ 
++it('exposes the full stretch timeline without starting another clock', () => {
++  select('Action', 'stretch')
++  expect(control<HTMLInputElement>('Time scrubber').max).toBe('2400')
++  input(control('Elapsed milliseconds'), '1200')
++  expect(currentSample()).toMatchObject({ action: 'stretch', elapsedMs: 1200, durationMs: 2400 })
++  expect(frames.size).toBe(0)
++})
++
+ it('plays from the selected time, pauses without a jump, and resumes without counting paused time', () => {
+   input(control('Elapsed milliseconds'), '317')
+   click(button('Play'))
+diff --git c/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index f33c6a8..8ed3f6f 100644
+--- c/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
+ import { catalogEntry } from '../catalog/objects'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+ import { ACTION_MS } from '../character/motion'
+-import { AFFECTION_LINES, CAUGHT_UP_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
++import { AFFECTION_LINES, CAUGHT_UP_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, STRETCH_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
+ import { messiestObject } from '../domain/mess'
+ import type { NeglectLevel } from '../domain/neglect'
+ import type { ChoreStatus } from '../domain/schedule'
+@@ -73,7 +73,7 @@ export interface LivingRoomControl {
+   preview: (objectId: string | null) => void
+ }
+ 
+-const PLAYER_LINES: Record<PlayerGesture, string[]> = { greet: GREETING_LINES, affection: AFFECTION_LINES, hop: HOP_LINES }
++const PLAYER_LINES: Record<PlayerGesture, string[]> = { greet: GREETING_LINES, affection: AFFECTION_LINES, hop: HOP_LINES, stretch: STRETCH_LINES }
+ 
+ function objectDialogue({ objects, stages, neglect, chores }: Pick<LivingRoomProps, 'objects' | 'stages' | 'neglect' | 'chores'>, objectId: string, seed: number): string | null {
+   const target = objects.find(object => object.id === objectId)
+diff --git c/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index 4b38085..64e8fcc 100644
+--- c/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -1067,6 +1067,56 @@ it('keeps a reduced hop still and releases its only frame at the original deadli
+   expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
+ })
+ 
++it.each(['mochi', 'bun', 'sprout'] as const)('plays a grounded %s stretch from a fractional invitation and lets chores preempt it', species => {
++  const control = createRef<LivingRoomControl>()
++  const stretch = 'stretch' as Parameters<LivingRoomControl['respond']>[0]
++  const scene = { ...props, pet: { ...pet, species }, mood: 'happy' as const, objects: [plant], control, initialTile: { tx: 7, ty: 7 } }
++  const ui = mount(<LivingRoom {...scene} />)
++  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
++  frame(137)
++  const resident = ui.container.querySelector('.room-pet')!, node = art(ui.container), position = resident.getAttribute('transform')
++  act(() => { expect(control.current!.respond(stretch)).toBe('started') })
++  expect(resident.getAttribute('transform')).toBe(position)
++  const heard = ui.container.querySelector('[aria-live]')!.textContent
++  expect(heard).toMatch(/stretch/i)
++  frame(973)
++  expect(resident.getAttribute('transform')).toBe(position)
++  expect(node.querySelector('[data-character-body]')!.getAttribute('transform')).toMatch(/^translate\(0 0\)/)
++  const left = Number(node.querySelector('[data-arm="left"]')!.getAttribute('transform')!.match(/rotate\(([^ ]+)/)![1])
++  expect(left).toBeCloseTo({ mochi: 46 * .82, bun: 58, sprout: 40 * .72 }[species], 8)
++  for (let n = 0; n < 10; n++) act(() => { expect(control.current!.respond(stretch)).toBe('busy') })
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
++  expect(frames.size).toBe(1)
++  ui.rerender(<LivingRoom {...scene} celebrate={{ key: 401, choreName: 'Water plant' }} />)
++  expect(ui.container.querySelector('[aria-live]')!.textContent).not.toBe(heard)
++  act(() => { expect(control.current!.respond(stretch)).toBe('busy') })
++  expect(art(ui.container)).toBe(node)
++})
++
++it('keeps a reduced stretch still for2400ms and expires it offscreen without replay', () => {
++  const visibility = observeResident()
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const control = createRef<LivingRoomControl>()
++  const stretch = 'stretch' as Parameters<LivingRoomControl['respond']>[0]
++  const ui = mount(<LivingRoom {...props} mood="happy" control={control} />)
++  act(() => { expect(control.current!.respond(stretch)).toBe('started') })
++  frame(100)
++  const still = art(ui.container).querySelector('[data-character-body]')!.innerHTML
++  frame(2399)
++  expect(art(ui.container).querySelector('[data-character-body]')!.innerHTML).toBe(still)
++  expect(frames.size).toBe(1)
++  frame(2400)
++  expect(frames.size).toBe(0)
++  expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
++  visibility.show(false)
++  act(() => { expect(control.current!.respond(stretch)).toBe('started') })
++  expect(frames.size).toBe(0)
++  now = 4900
++  visibility.show(true)
++  expect(frames.size).toBe(0)
++  expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
++})
++
+ it('expires an offscreen hop before return without invisible frames or stale cheer', () => {
+   const visibility = observeResident()
+   Object.defineProperty(media, 'matches', { value: true, configurable: true })
+diff --git c/src/pet/PetPlay.css w/src/pet/PetPlay.css
+index 63dffe2..c9a2d3e 100644
+--- c/src/pet/PetPlay.css
++++ w/src/pet/PetPlay.css
+@@ -8,3 +8,6 @@
+ .pet-play-note, .pet-play-feedback { margin: 8px 0 0; font-size: 0.875rem; font-weight: 700; overflow-wrap: anywhere; }
+ .pet-play-note { color: var(--ink-soft); }
+ .pet-play-feedback:empty { margin: 0; }
++@media (max-width: 374px) {
++  .pet-play-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
++}
+diff --git c/src/pet/PetPlay.test.tsx w/src/pet/PetPlay.test.tsx
+index 3b5fb1f..5d482e0 100644
+--- c/src/pet/PetPlay.test.tsx
++++ w/src/pet/PetPlay.test.tsx
+@@ -12,6 +12,18 @@ function mount(patch: Partial<PetPlayProps> = {}) {
+ }
+ function button(container: Element, label: string) { return [...container.querySelectorAll('button')].find(node => node.textContent === label)! }
+ 
++it('offers an explicit stretch without scheduling or duplicating a successful announcement', () => {
++  vi.stubGlobal('requestAnimationFrame', vi.fn())
++  const ui = mount()
++  click(button(ui.container, 'Spend time together'))
++  const stretch = button(ui.container, 'Stretch together')
++  expect(stretch).toBeDefined()
++  click(stretch)
++  expect(ui.props.onReact).toHaveBeenCalledExactlyOnceWith('stretch')
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
++})
++
+ it('starts collapsed and sends only explicit choices without creating scheduling work', () => {
+   vi.stubGlobal('requestAnimationFrame', vi.fn())
+   const ui = mount()
+@@ -35,7 +47,7 @@ it('starts collapsed and sends only explicit choices without creating scheduling
+ it.each(['travel', 'away', 'sick'] as const)('explains and blocks play while %s', blocked => {
+   const ui = mount({ blocked })
+   click(button(ui.container, 'Spend time together'))
+-  for (const label of ['Wave', 'Gentle pats', 'Happy hop']) {
++  for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together']) {
+     expect((button(ui.container, label) as HTMLButtonElement).disabled).toBe(true)
+     click(button(ui.container, label))
+   }
+diff --git c/src/pet/PetPlay.tsx w/src/pet/PetPlay.tsx
+index a1055cd..095bdab 100644
+--- c/src/pet/PetPlay.tsx
++++ w/src/pet/PetPlay.tsx
+@@ -34,6 +34,8 @@ export function PetPlay({ petName, blocked, onReact }: PetPlayProps) {
+           onClick={() => choose('affection')}>Gentle pats</button>
+         <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
+           onClick={() => choose('hop')}>Happy hop</button>
++        <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
++          onClick={() => choose('stretch')}>Stretch together</button>
+       </div>
+       {note && <p id={`${id}-note`} className="pet-play-note">{note}</p>}
+       {/* The resident announces successful choices; only unavailable/busy needs another status. */}
+diff --git c/src/pet/behaviour.ts w/src/pet/behaviour.ts
+index 3c1c32b..3ccce6f 100644
+--- c/src/pet/behaviour.ts
++++ w/src/pet/behaviour.ts
+@@ -8,7 +8,7 @@ import { besideTiles, findPath, type Tile } from './pathfinding'
+ 
+ // Keep the old public pathfinding imports valid without a behaviour/interaction cycle.
+ export { besideTiles, findPath, type Tile } from './pathfinding'
+-export type PlayerGesture = 'greet' | 'affection' | 'hop'
++export type PlayerGesture = 'greet' | 'affection' | 'hop' | 'stretch'
+ export type ReactionKind = 'tap' | PlayerGesture | 'celebrate' | 'celebrate-big'
+ type ReactionAction = PlayerGesture | 'celebrate' | 'celebrate-big'
+ export type Walk = {
+diff --git 1/src/character/motion.stretch.test.ts 2/src/character/motion.stretch.test.ts
+new file mode 100644
+index 0000000..33f8783
+--- /dev/null
++++ 2/src/character/motion.stretch.test.ts
+@@ -0,0 +1,50 @@
++import { describe, expect, it } from 'vitest'
++import { ACTION_MS, sampleMotion, type MotionAction } from './motion'
++import type { Mood, Species } from '../domain/types'
++
++// Cast permits a regression against the pre-feature action union.
++const stretch = 'stretch' as MotionAction
++const budgets = { mochi: { arm: 46 * .82, speed: 88, follow: 1, followSpeed: 8 },
++  bun: { arm: 58, speed: 135, follow: 3, followSpeed: 20 },
++  sprout: { arm: 40 * .72, speed: 68, follow: 1.8, followSpeed: 12 } }
++const at = (species: Species, elapsedMs: number, reducedMotion = false, mood: Mood = 'happy') => sampleMotion({
++  species, mood, action: stretch, elapsedMs, blinkMs: elapsedMs, durationMs: 2400, distance: 0, reducedMotion,
++})
++describe('grounded stretch', () => {
++  it('has its own finite lifetime', () => { expect(ACTION_MS[stretch]).toBe(2400) })
++  it.each(['mochi', 'bun', 'sprout'] as const)('%s raises and holds both arms once with restrained secondary motion', species => {
++    const budget = budgets[species], peak = at(species, 1200)
++    expect(peak.leftArm).toBeCloseTo(budget.arm, 10)
++    expect(peak.rightArm).toBeCloseTo(-budget.arm, 10)
++    expect(peak.scaleY).toBeGreaterThan(1)
++    expect(peak.scaleY).toBeLessThanOrEqual(1.033)
++    expect(at(species, 960).leftArm).toBe(at(species, 1440).leftArm)
++    let previous = at(species, 0), lastSign = 0, reversals = 0
++    for (let ms = 1; ms <= 2400; ms++) {
++      const frame = at(species, ms)
++      for (const field of ['bodyX', 'bodyY', 'leftFoot', 'rightFoot', 'leftGroundX', 'leftGroundY', 'rightGroundX', 'rightGroundY', 'accentOpacity'] as const) expect(frame[field]).toBe(0)
++      expect(frame.shadowScale).toBe(1)
++      expect(frame.shadowOpacity).toBe(1)
++      expect(Math.abs(frame.leftArm)).toBeLessThanOrEqual(budget.arm + 1e-10)
++      expect(Math.abs(frame.leftArm - previous.leftArm) * 1000).toBeLessThan(budget.speed)
++      expect(Math.abs(frame.leftAppendage)).toBeLessThanOrEqual(budget.follow + 1e-10)
++      expect(Math.abs(frame.leftAppendage - previous.leftAppendage) * 1000).toBeLessThan(budget.followSpeed)
++      const sign = Math.sign(frame.leftAppendage)
++      if (sign && lastSign && sign !== lastSign) reversals++
++      if (sign) lastSign = sign
++      previous = frame
++    }
++    expect(reversals).toBe(1)
++    expect(at(species, 2400)).toEqual(at(species, 0))
++  })
++  it.each(['mochi', 'bun', 'sprout'] as const)('%s retains still reactions and neutral completion under reduced motion', species => {
++    for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick'] as const) {
++      const early = at(species, 100, true, mood), late = at(species, 2300, true, mood)
++      expect(early).toEqual(late)
++      expect(early.expression).toBe(mood === 'sick' ? 'mood' : 'pleased')
++      expect(early.pleasedWeight).toBe(mood === 'sick' ? 0 : 1)
++      expect({ ...early, expression: 'mood', pleasedWeight: 0 }).toEqual(at(species, 0, true, mood))
++    }
++    for (const time of [-1, NaN, Infinity, 2400, 4800]) expect(at(species, time)).toEqual(at(species, 0))
++  })
++})
+diff --git 1/src/pet/behaviour.stretch.test.ts 2/src/pet/behaviour.stretch.test.ts
+new file mode 100644
+index 0000000..d1cef9f
+--- /dev/null
++++ 2/src/pet/behaviour.stretch.test.ts
+@@ -0,0 +1,29 @@
++import { expect, it } from 'vitest'
++import { initialPet, positionAt, react, step, tap, type PetState, type ReactionKind, type World } from './behaviour'
++const stretch = 'stretch' as ReactionKind
++const world: World = { free: () => true, mood: 'happy', away: false, mess: null }
++
++it('starts a finite stretch at the drawn position without changing tap alternation', () => {
++  const moving: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), reactions: 3, activity: {
++    kind: 'walk', origin: { tx: 2, ty: 2 }, path: [{ tx: 3, ty: 2 }], stepStart: 0, then: 'idle',
++  } }
++  const started = react(moving, 137, stretch)
++  expect(started.activity).toMatchObject({ kind: 'react', action: 'stretch', start: 137, until: 2537 })
++  expect(positionAt(started, 137)).toEqual(positionAt(moving, 137))
++  expect(started.reactions).toBe(3)
++  expect(started.pendingTap).toBe(false)
++  expect(react(started, 200, stretch)).toBe(started)
++  expect(react(started, 200, 'greet')).toBe(started)
++  const cheer = react(started, 300, 'celebrate')
++  expect(cheer.activity).toMatchObject({ kind: 'react', action: 'celebrate' })
++  expect(react(cheer, 400, stretch)).toBe(cheer)
++})
++
++it('expires a hidden stretch without replay and resumes normal tap alternation', () => {
++  const started = react(initialPet({ tx: 2, ty: 2 }, 0), 100, stretch)
++  expect(step(started, world, 2499, () => .99)).toBe(started)
++  const settled = step(started, world, 10000, () => .99)
++  expect(settled.activity.kind).toBe('idle')
++  expect(settled.pendingTap).toBe(false)
++  expect(tap(settled, 10100).activity).toMatchObject({ kind: 'react', action: 'greet' })
++})
+diff --git 1/scripts/browser/pet-stretch.test.mjs 2/scripts/browser/pet-stretch.test.mjs
+new file mode 100644
+index 0000000..a9fcff4
+--- /dev/null
++++ 2/scripts/browser/pet-stretch.test.mjs
+@@ -0,0 +1,109 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
++
++async function setup(t, species = 'mochi') {
++  const page = await browserApp(t, { reducedMotion: 'no-preference', viewport: { width: 1280, height: 800 } })
++  await page.evaluate(species => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
++      const read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, pet = Object.values(saved.tables.pets)[0]
++        pet.species = species
++        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++        saved.outbox = {}
++        store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), species)
++  await page.clock.install()
++  await page.clock.pauseAt(Date.now() + 1000)
++  await page.addInitScript(() => {
++    Math.random = () => .99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__stretchFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__stretchFrames.delete(id); callback(now) })
++      window.__stretchFrames.add(id)
++      return id
++    }
++    window.cancelAnimationFrame = id => { window.__stretchFrames.delete(id); cancel(id) }
++  })
++  await page.reload()
++  await page.locator('.room-pet').waitFor()
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  return page
++}
++
++const read = node => {
++  const arm = side => Number(node.querySelector(`[data-arm="${side}"]`).getAttribute('transform').match(/rotate\(([^ ]+)/)[1])
++  const feet = ['left', 'right'].map(side => {
++    const ellipse = node.querySelector(`[data-foot="${side}"] ellipse`)
++    const point = new DOMPoint(+ellipse.getAttribute('cx'), +ellipse.getAttribute('cy'))
++      .matrixTransform(ellipse.getScreenCTM()).matrixTransform(node.getScreenCTM().inverse())
++    return { x: point.x, y: point.y }
++  })
++  return { leftArm: arm('left'), rightArm: arm('right'), feet, body: node.querySelector('[data-character-body]').getAttribute('transform') }
++}
++function feetStay(a, b) {
++  for (let i = 0; i < 2; i++) assert.ok(Math.hypot(a[i].x - b[i].x, a[i].y - b[i].y) < .01, 'actual rendered foot contact must stay grounded')
++}
++for (const species of ['mochi', 'bun', 'sprout']) test(`${species} holds one grounded stretch on the resident clock`, async t => {
++  const page = await setup(t, species), resident = page.locator('.room-pet')
++  const choice = page.getByRole('button', { name: 'Stretch together', exact: true })
++  assert.equal(await choice.count(), 1)
++  const saved = (await snapshot(page)).tables, before = await resident.evaluate(read), position = await resident.getAttribute('transform')
++  assert.equal(await resident.locator('[data-expression]').getAttribute('data-expression'), 'content')
++  await resident.evaluate(node => { window.__stretchPet = node })
++  await choice.click()
++  const live = page.locator('.living-room [aria-live="polite"]'), heard = await live.textContent()
++  assert.match(heard, /stretch/i)
++  await page.clock.runFor(900)
++  const peak = await resident.evaluate(read)
++  assert.ok(Math.abs(peak.leftArm - { mochi: 46 * .82, bun: 58, sprout: 40 * .72 }[species] * .9) < 1e-8, 'sample home content energy retains the species-sized held arm')
++  assert.equal(peak.rightArm, -peak.leftArm)
++  assert.match(peak.body, /^translate\(0 0\)/)
++  feetStay(before.feet, peak.feet)
++  assert.equal(await resident.getAttribute('transform'), position)
++  assert.equal(await resident.locator('[data-character-accents]').getAttribute('opacity'), '0')
++  assert.equal(await page.evaluate(() => window.__stretchFrames.size), 1)
++  for (let i = 0; i < 10; i++) await choice.click()
++  assert.equal(await live.textContent(), heard)
++  await page.clock.runFor(600)
++  const held = await resident.evaluate(read)
++  assert.equal(held.leftArm, peak.leftArm)
++  feetStay(before.feet, held.feet)
++  await page.clock.runFor(1000)
++  assert.equal(await resident.locator('[data-expression-layer]').count(), 0)
++  feetStay(before.feet, (await resident.evaluate(read)).feet)
++  assert.equal(await resident.getAttribute('transform'), position)
++  assert.equal(await resident.evaluate(node => node === window.__stretchPet), true)
++  for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) assert.equal(await resident.locator(`[data-slot="${slot}"]`).count(), 1)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  await changeReducedMotion(page, 'reduce')
++  await page.clock.runFor(120)
++  assert.equal(await page.evaluate(() => window.__stretchFrames.size), 0)
++  t.diagnostic(`Chromium ${page.context().browser().version()}; held arms;actual footcontacts<.01local SVGunits;oneclock;unchanged wardrobe/node/position/saved tables`)
++})
++
++test('live reduced motion keeps a chosen stretch still and releases its finite clock', async t => {
++  const page = await setup(t), resident = page.locator('.room-pet')
++  const choice = page.getByRole('button', { name: 'Stretch together', exact: true })
++  assert.equal(await choice.count(), 1)
++  await choice.click()
++  await page.clock.runFor(128)
++  await changeReducedMotion(page, 'reduce')
++  assert.equal(await resident.locator('[data-expression="cheering"]').count(), 1)
++  const still = await resident.locator('[data-character-body]').innerHTML()
++  await page.clock.runFor(600)
++  assert.equal(await resident.locator('[data-character-body]').innerHTML(), still)
++  assert.equal(await page.evaluate(() => window.__stretchFrames.size), 1)
++  await page.clock.runFor(2000)
++  assert.equal(await page.evaluate(() => window.__stretchFrames.size), 0)
++  assert.equal(await resident.locator('[data-expression-layer]').count(), 0)
++})
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-stretch-gesture.mjs 2/docs/audits/2026-10-12-character-polish/capture-stretch-gesture.mjs
+new file mode 100644
+index 0000000..344b23d
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-stretch-gesture.mjs
+@@ -0,0 +1,41 @@
++// Bounded dressed views of the new grounded stretch at early, held and recovery phases.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const out = 'docs/audits/2026-10-12-character-polish'
++const server = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++  const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++  const { sampleMotion, ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts')
++  const { SPECIES_COLOUR, PALETTE } = await server.ssrLoadModule('/src/art/palette.ts')
++  const { PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++  const h = React.createElement, cells = [], samples = []
++  for (const species of ['mochi', 'bun', 'sprout']) for (const mood of ['happy', 'scruffy']) for (const facing of [1, -1]) for (const phase of [.1, .42, .85]) {
++    const dark = mood === 'scruffy'
++    const bodyColour = dark ? '#38243b' : SPECIES_COLOUR[species], look = { eyes: dark ? 'lashes' : 'classic' }
++    const frame = sampleMotion({ species, mood, action: 'stretch', elapsedMs: ACTION_MS.stretch * phase,
++      blinkMs: ACTION_MS.stretch * phase, durationMs: ACTION_MS.stretch, facing, distance: 0, reducedMotion: false })
++    const views = [200, 60, 25].map((size, i) => h('g', { key: size,
++      transform: `translate(${[0, 205, 280][i]} ${100 - size / 2}) scale(${size / 200})` },
++      h('g', { transform: facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined }, h(AnimatedCharacterArt, { species, mood, frame, bodyColour, look, strokeScale: size === 25 ? PET_STROKE_SCALE : 1,
++        equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } }))))
++    cells.push(h('g', { key: cells.length, transform: `translate(${cells.length % 4 * 330} ${Math.floor(cells.length / 4) * 230})` }, views,
++      h('text', { x: 8, y: 220, fontSize: 11, fill: PALETTE.ink }, `${species} ${mood} f${facing} ${phase * 100}%;200/60/25px`)))
++    samples.push({ species, mood, facing, phase, bodyColour, look, frame })
++  }
++  const png = `${out}/stretch-gesture.png`
++  const markup = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width: 1320, height: 2070 },
++    h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), cells))
++  await writeFile(png, new Resvg(markup).render().asPng())
++  const hash = bytes => createHash('sha256').update(bytes).digest('hex')
++  const sources = ['src/character/motion.ts', 'src/character/parts.tsx', 'src/character/species/animatedBody.tsx',
++    'src/character/AnimatedCharacter.tsx', 'src/character/Character.tsx', `${out}/capture-stretch-gesture.mjs`]
++  await writeFile(`${out}/stretch-gesture.json`, JSON.stringify({ method:
++    '36 dressed stretch samples,108views200/60/25px.3species/2moods-and-looks/2facings/3phases. Happy/light/classic,scruffy/dark/lashes. Static pose/wardrobe review,not temporal acceptance.',
++    samples, sourceSha256: Object.fromEntries(await Promise.all(sources.map(async path => [path, hash(await readFile(path))]))),
++    captureSha256: { [png]: hash(await readFile(png)) } }, null, 2) + '\n')
++  console.log('Wrote36stretch samples/108sizeviews')
++} finally { await server.close() }
+diff --git 1/docs/audits/2026-10-12-character-polish/compare-stretch-gesture.mjs 2/docs/audits/2026-10-12-character-polish/compare-stretch-gesture.mjs
+new file mode 100644
+index 0000000..0a189ef
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/compare-stretch-gesture.mjs
+@@ -0,0 +1,31 @@
++// Exact sampler differential, isolated from live playback and browser clocks.
++import assert from 'node:assert/strict'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++import ts from 'typescript'
++const out = 'docs/audits/2026-10-12-character-polish'
++const baseline = await readFile(`${out}/stretch-gesture-baseline-motion.ts.txt`, 'utf8')
++const current = await readFile('src/character/motion.ts', 'utf8')
++async function load(source) {
++  const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText
++  return import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`)
++}
++const before = await load(baseline), after = await load(current)
++const { stretch, ...oldDurations } = after.ACTION_MS
++assert.equal(stretch, 2400)
++assert.deepEqual(oldDurations, before.ACTION_MS)
++const phases = [0, .1, .18, .3, .35, .4, .48, .5, .56, .64, .75, .9, .92, 1, 2]
++let samples = 0, unchanged = 0
++for (const species of ['mochi', 'bun', 'sprout']) for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick']) {
++  for (const action of Object.keys(before.ACTION_MS)) for (const factor of [.5, 1, 2]) for (const reducedMotion of [false, true]) for (const facing of [1, -1]) for (const phase of phases) {
++    const durationMs = before.ACTION_MS[action] * factor
++    const input = { species, mood, action, durationMs, elapsedMs: phase * durationMs, blinkMs: 9250 + phase * durationMs, distance: phase * 3, facing, reducedMotion }
++    const a = before.sampleMotion(input), b = after.sampleMotion(input)
++    assert.deepEqual(b, a, `${species}/${mood}/${action}/${factor}/${phase}/${reducedMotion}: prior action exact`)
++    unchanged++
++    samples++
++  }
++}
++const sha256 = text => createHash('sha256').update(text).digest('hex')
++await writeFile(`${out}/stretch-gesture-differential.json`, JSON.stringify({ method: 'Exact sampled frames across3species/5moods/15actions/3durations/2motionpolicies/2facings/15phases. All15prioractions,fields,reducedstillsanddurations exact;newstretchduration2400ms onlyextraaction. Static numeric checks,not temporal acceptance.', samples, unchanged, sourceSha256: { baseline: sha256(baseline), current: sha256(current), runner: sha256(await readFile(new URL(import.meta.url))) } }, null, 2) + '\n')
++console.log(`Compared ${samples} frames;${unchanged} exact;newstretch2400ms`)
+diff --git 1/docs/audits/2026-10-12-character-polish/stretch-gesture-layout-boundary.test.mjs 2/docs/audits/2026-10-12-character-polish/stretch-gesture-layout-boundary.test.mjs
+new file mode 100644
+index 0000000..231ff35
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/stretch-gesture-layout-boundary.test.mjs
+@@ -0,0 +1,41 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++import { browserApp } from '../../../scripts/browser/helpers.mjs'
++test('measure the narrow player-control wrapping boundary', async t => {
++  const page = await browserApp(t)
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  // Explicit prior candidate makes the diagnostic replayable after the final CSS.
++  const prior = await page.addStyleTag({ content: '.pet-play-actions{display:flex}@media(max-width:360px){.pet-play-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}' })
++  const samples = []
++  async function measure(label) {
++    for (const width of [360, 361, 366, 370, 372, 374, 375, 380, 390]) {
++      await page.setViewportSize({ width, height: 664 })
++      const boxes = await page.locator('.pet-play-actions button').evaluateAll(nodes => nodes.map(node => {
++        const rect = node.getBoundingClientRect()
++        return { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
++      }))
++      const rows = []
++      for (const box of boxes) {
++        const index = rows.findIndex(row => Math.abs(row.y - box.y) < .5)
++        if (index === -1) rows.push({ y: box.y, count: 1 }); else rows[index].count++
++        assert.ok(box.width >= 44 && box.height >= 44)
++      }
++      samples.push({ label, width, rows: rows.map(row => row.count), boxes })
++    }
++  }
++  await measure('prior360')
++  await prior.evaluate(node => node.remove())
++  const candidate = await page.addStyleTag({ content: '@media(max-width:374px){.pet-play-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}' })
++  await measure('candidate374')
++  assert.ok(samples.some(sample => sample.label === 'prior360' && sample.rows.join(',') === '3,1'))
++  assert.ok(samples.filter(sample => sample.label === 'candidate374').every(sample => ['2,2', '4'].includes(sample.rows.join(','))))
++  await candidate.evaluate(node => node.remove())
++  const hash = bytes => createHash('sha256').update(bytes).digest('hex')
++  await writeFile('docs/audits/2026-10-12-character-polish/stretch-gesture-layout-boundary.json', JSON.stringify({
++    method: 'Read-only native CSS probe at9phone widths; explicit prior360 breakpoint and candidate374 injection. No app data changes. Measurements only,not final keyboard/focus certification.', samples,
++    sourceSha256: { 'src/pet/PetPlay.css': hash(await readFile('src/pet/PetPlay.css')), runner: hash(await readFile(new URL(import.meta.url))) },
++  }, null, 2) + '\n')
++  t.diagnostic(JSON.stringify(samples.map(({ label, width, rows }) => ({ label, width, rows }))))
++})
