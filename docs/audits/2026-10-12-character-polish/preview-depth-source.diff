@@ -1,0 +1,333 @@
+diff --git c/src/room/Room.tsx w/src/room/Room.tsx
+index 99819b6..767385c 100644
+--- c/src/room/Room.tsx
++++ w/src/room/Room.tsx
+@@ -133,14 +133,20 @@ function footprintPolygon(f: Footprint, fill: string, opacity: number, dashed =
+   )
+ }
+ 
+-/** The selected object: an accent outline round its footprint and a bobbing chevron over it, drawn over everything. */
+-function Selection({ footprint, top, objectId, still }: { footprint: Footprint; top: { x: number; y: number }; objectId: string; still: boolean }) {
++function selectionOutline(footprint: Footprint) {
++  return <>
++    <polygon points={footprintCorners(footprint)} fill="none" stroke={white} strokeWidth={5} strokeOpacity={0.7} />
++    <polygon points={footprintCorners(footprint)} fill="none" stroke={accent} strokeWidth={3} strokeDasharray="7 5" />
++  </>
++}
++
++/** Preview outlines sit on the floor; their stationary arrow stays above the furniture. */
++function Selection({ footprint, top, objectId, preview }: { footprint: Footprint; top: { x: number; y: number }; objectId: string; preview: boolean }) {
+   return (
+     <g className="room-selection" data-selection-object={objectId} style={{ pointerEvents: 'none' }} aria-hidden="true">
+-      <polygon points={footprintCorners(footprint)} fill="none" stroke={white} strokeWidth={5} strokeOpacity={0.7} />
+-      <polygon points={footprintCorners(footprint)} fill="none" stroke={accent} strokeWidth={3} strokeDasharray="7 5" />
++      {!preview && selectionOutline(footprint)}
+       <g transform={`translate(${top.x} ${top.y - 6})`}>
+-        <g className={still ? undefined : 'room-chevron'}>
++        <g className={preview ? undefined : 'room-chevron'}>
+           <polygon points="-8,-12 0,-5 8,-12 8,-6 0,1 -8,-6" fill={accent} stroke={ink} strokeWidth={ROOM_INK * 0.9} />
+         </g>
+       </g>
+@@ -290,13 +296,18 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT,
+     >
+       {selected && selectedEntry && selectionMode === 'build' && footprintPolygon(footprintOf(selected, selectedEntry), accent, 0.3)}
+       {ghost && footprintPolygon(footprintOf(ghost.placement, ghost.entry), ghost.ok ? FITS : BLOCKED, 0.4, true)}
++      {selected && selectedEntry && selectionMode === 'preview' && (
++        <g className="room-selection-floor" data-selection-floor={selected.id} style={{ pointerEvents: 'none' }} aria-hidden="true">
++          {selectionOutline(footprintOf(selected, selectedEntry))}
++        </g>
++      )}
+       {depthOrder(items).map((i) => i.draw())}
+       {cues.map((c) => (
+         <g key={`neglect-${c.id}`} transform={`translate(${c.x} ${c.y}) scale(${TILE_SCALE})`} stroke="none" style={{ pointerEvents: 'none' }}>
+           <NeglectCue kind={c.kind} level={c.level} still={!c.animate} />
+         </g>
+       ))}
+-      {selected && selectedEntry && <Selection footprint={footprintOf(selected, selectedEntry)} top={objectTop(selectedEntry, selected)} objectId={selected.id} still={selectionMode === 'preview'} />}
++      {selected && selectedEntry && <Selection footprint={footprintOf(selected, selectedEntry)} top={objectTop(selectedEntry, selected)} objectId={selected.id} preview={selectionMode === 'preview'} />}
+       {overlay}
+     </RoomShell>
+   )
+diff --git c/src/room/Room.selection.test.tsx w/src/room/Room.selection.test.tsx
+index bf8bdf7..2478004 100644
+--- c/src/room/Room.selection.test.tsx
++++ w/src/room/Room.selection.test.tsx
+@@ -22,6 +22,7 @@ it('preserves the builder selection default and its floor wash', () => {
+   expect(ui.container.querySelectorAll(`polygon[fill="${PALETTE.accent}"][fill-opacity="0.3"]`)).toHaveLength(1)
+   expect(ui.container.querySelector('.room-selection polygon')!.getAttribute('points'))
+     .toBe('173.75,161.88 237.5,193.75 195,215 131.25,183.13')
++  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
+ })
+ 
+ it.each([
+@@ -34,13 +35,24 @@ it.each([
+   expect(marker.getAttribute('data-selection-object')).toBe(bed.id)
+   expect(marker.getAttribute('aria-hidden')).toBe('true')
+   expect((marker as SVGElement).style.pointerEvents).toBe('none')
+-  expect(marker.querySelector('polygon')!.getAttribute('points')).toBe(points)
++  const floor = ui.container.querySelector('.room-selection-floor')!
++  expect(floor.getAttribute('data-selection-floor')).toBe(bed.id)
++  expect(floor.getAttribute('aria-hidden')).toBe('true')
++  expect((floor as SVGElement).style.pointerEvents).toBe('none')
++  expect(floor.querySelectorAll('polygon')).toHaveLength(2)
++  expect(floor.querySelector('polygon')!.getAttribute('points')).toBe(points)
++  expect(marker.querySelectorAll('polygon')).toHaveLength(1)
+   expect(ui.container.querySelectorAll(`polygon[fill="${PALETTE.accent}"][fill-opacity="0.3"]`)).toHaveLength(0)
+ })
+ 
+ it('does not mark unknown or hidden preview objects', () => {
+   const ui = mount(<Room {...props} selectedId="missing" selectionMode="preview" />)
+   expect(ui.container.querySelector('.room-selection')).toBeNull()
++  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
+   ui.rerender(<Room {...props} hiddenId={bed.id} selectionMode="preview" />)
+   expect(ui.container.querySelector('.room-selection')).toBeNull()
++  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
++  ui.rerender(<Room {...props} objects={[{ ...bed, catalogId: 'missing-art' }]} selectionMode="preview" />)
++  expect(ui.container.querySelector('.room-selection')).toBeNull()
++  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
+ })
+diff --git 1/src/room/Room.selection-output.test.tsx 2/src/room/Room.selection-output.test.tsx
+new file mode 100644
+index 0000000..a7d4385
+--- /dev/null
++++ 2/src/room/Room.selection-output.test.tsx
+@@ -0,0 +1,56 @@
++// @vitest-environment jsdom
++import { Resvg } from '@resvg/resvg-js'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { expect, it } from 'vitest'
++import { PALETTE } from '../art/palette'
++import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
++import { sampleMotion } from '../character/motion'
++import { Room } from './Room'
++import { PET_STROKE_SCALE } from './shell/geometry'
++
++// Compare real painted output, excluding translucent shadows and antialiased
++// silhouette edges. A floor invitation must never paint across an opaque pet.
++for (const species of ['mochi', 'bun', 'sprout'] as const) {
++  for (const facing of [1, -1] as const) {
++    for (const tile of [{ tx: 6, ty: 5 }, { tx: 5, ty: 6 }]) {
++      it(`keeps the selected floor outline behind dressed ${species}, facing ${facing}, at ${tile.tx},${tile.ty}`, () => {
++        const frame = sampleMotion({ species, mood: 'happy', action: 'dust', elapsedMs: 650, durationMs: 1400, distance: 0, reducedMotion: false })
++        const art = <g data-selection-art=""><AnimatedCharacterArt species={species} mood="happy" bodyColour={PALETTE.petDefault}
++          strokeScale={PET_STROKE_SCALE} frame={frame}
++          equipped={{ head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }} /></g>
++        const props = { room: { floorStyle: 'wood', wallStyle: 'cream' } as const,
++          objects: [{ id: 'shelf', roomId: 'room', catalogId: 'bookshelf', tileX: 5, tileY: 5, rotation: 0 as const }],
++          stages: { shelf: 'messy1' } as const, width: 780, selectionMode: 'preview' as const, pet: { tile, facing, art } }
++        const withNS = (svg: string) => /<svg\b[^>]*xmlns=/.test(svg) ? svg : svg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"')
++        const plain = withNS(renderToStaticMarkup(<Room {...props} />))
++        const selected = withNS(renderToStaticMarkup(<Room {...props} selectedId="shelf" />))
++        const document = new DOMParser().parseFromString(plain, 'image/svg+xml')
++        const root = document.documentElement
++        const mask = root.cloneNode(false) as Element
++        const pet = root.querySelector('[data-selection-art]')!.parentElement!.parentElement!.cloneNode(true) as Element
++        pet.querySelector('[data-character-ground]')?.remove()
++        pet.querySelector('[data-character-accents]')?.remove()
++        mask.append(pet)
++        const original = new Resvg(plain).render()
++        const marked = new Resvg(selected).render()
++        const silhouette = new Resvg(mask.outerHTML).render()
++        expect([marked.width, marked.height, silhouette.width, silhouette.height]).toEqual([original.width, original.height, original.width, original.height])
++        // Cache the native pixel getters once; never copy a buffer per pixel.
++        const originalPixels = original.pixels, markedPixels = marked.pixels, maskPixels = silhouette.pixels
++        let opaque = 0, overpainted = 0
++        for (let y = 1; y < original.height - 1; y++) for (let x = 1; x < original.width - 1; x++) {
++          let inside = true
++          for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
++            if (maskPixels[((y + dy) * original.width + x + dx) * 4 + 3] !== 255) inside = false
++          }
++          if (!inside) continue
++          opaque++
++          const i = (y * original.width + x) * 4
++          if ([0, 1, 2].some(c => Math.abs(originalPixels[i + c] - markedPixels[i + c]) > 1)) overpainted++
++        }
++        expect(opaque).toBeGreaterThan(3000)
++        expect(overpainted, `${overpainted} of ${opaque} opaque interior pixels covered by the selection`).toBe(0)
++      })
++    }
++  }
++}
+diff --git c/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index c12859a..8276407 100644
+--- c/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -1183,6 +1183,7 @@ it('previews a furnishing without changing a live fractional walk, pose, speech,
+   expect(marker).not.toBeNull()
+   expect(marker.getAttribute('aria-hidden')).toBe('true')
+   expect(marker.querySelector('.room-chevron')).toBeNull()
++  expect(ui.container.querySelector('[data-selection-floor="plant"]')).not.toBeNull()
+   expect(ui.container.querySelector('.room-pet')).toBe(resident)
+   expect(resident.getAttribute('transform')).toBe(position)
+   expect(resident.querySelector('[data-character-body]')!.outerHTML).toBe(body)
+@@ -1190,6 +1191,7 @@ it('previews a furnishing without changing a live fractional walk, pose, speech,
+   expect([...frames.keys()]).toEqual(pending)
+   act(() => control.current!.preview(null))
+   expect(ui.container.querySelector('.room-selection')).toBeNull()
++  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
+   expect([...frames.keys()]).toEqual(pending)
+ })
+ 
+@@ -1199,14 +1201,19 @@ it('keeps preview selection decorative, ignores unknown IDs, and removes unavail
+   const ui = mount(<LivingRoom {...props} objects={[plant]} mood="happy" control={control} />)
+   act(() => control.current!.preview('missing'))
+   expect(ui.container.querySelector('.room-selection')).toBeNull()
++  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
+   act(() => control.current!.preview('plant'))
+   expect(ui.container.querySelector('[data-selection-object="plant"]')).not.toBeNull()
++  expect(ui.container.querySelector('[data-selection-floor="plant"]')).not.toBeNull()
+   expect(frames.size).toBe(0)
+   ui.rerender(<LivingRoom {...props} objects={[plant]} mood="sick" control={control} />)
+   expect(ui.container.querySelector('.room-selection')).toBeNull()
++  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
+   ui.rerender(<LivingRoom {...props} objects={[plant]} mood="happy" away control={control} />)
+   expect(ui.container.querySelector('.room-selection')).toBeNull()
++  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
+   ui.rerender(<LivingRoom {...props} objects={[]} mood="happy" control={control} />)
+   expect(ui.container.querySelector('.room-selection')).toBeNull()
++  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
+   expect(frames.size).toBe(0)
+ })
+diff --git c/scripts/browser/pet-explore-names.test.mjs w/scripts/browser/pet-explore-names.test.mjs
+index a9f6f7c..bff5476 100644
+--- c/scripts/browser/pet-explore-names.test.mjs
++++ w/scripts/browser/pet-explore-names.test.mjs
+@@ -49,7 +49,20 @@ async function assertTwinMarker(page) {
+   assert.equal(await marker.getAttribute('aria-hidden'), 'true')
+   assert.equal(await marker.evaluate(node => getComputedStyle(node).pointerEvents), 'none')
+   assert.equal(await marker.evaluate(node => node.getAnimations({ subtree: true }).length), 0)
+-  assert.equal(await marker.locator('polygon').first().getAttribute('points'), '46.25,204.38 67.5,215 46.25,225.63 25,215')
++  assert.equal(await marker.locator('polygon').count(), 1, 'only the direction arrow floats above the scene')
++  const floor = page.locator('.room-selection-floor[data-selection-floor="plant-twin"]')
++  assert.equal(await floor.count(), 1)
++  assert.equal(await floor.getAttribute('aria-hidden'), 'true')
++  assert.equal(await floor.evaluate(node => getComputedStyle(node).pointerEvents), 'none')
++  assert.equal(await floor.evaluate(node => node.getAnimations({ subtree: true }).length), 0)
++  assert.equal(await floor.locator('polygon').count(), 2)
++  assert.equal(await floor.locator('polygon').first().getAttribute('points'), '46.25,204.38 67.5,215 46.25,225.63 25,215')
++  assert.equal(await floor.evaluate(node => [...node.ownerSVGElement.querySelectorAll('[data-object-id], .room-pet')]
++    .every(item => Boolean(node.compareDocumentPosition(item) & Node.DOCUMENT_POSITION_FOLLOWING))), true,
++  'the preview footprint is painted below every furnishing and the resident')
++  assert.equal(await marker.evaluate(node => [...node.ownerSVGElement.querySelectorAll('[data-object-id], .room-pet')]
++    .every(item => Boolean(item.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING))), true,
++  'the stationary direction arrow remains above the scene')
+ }
+ 
+ test('native keyboard can identify and invite the second repeated furnishing', async t => {
+@@ -79,21 +92,25 @@ test('native keyboard can identify and invite the second repeated furnishing', a
+   const marker = page.locator('.room-selection[data-selection-object="plant-twin"]')
+   await marker.scrollIntoViewIfNeeded()
+   // SVG geometry bounds omit the stroke; leave breathing room above the arrow.
+-  const scrollTarget = await page.evaluate(() => ({
+-    innerAtOldPoint: Boolean(document.elementFromPoint(160, 100)?.closest('.home-scene-viewport')),
+-    innerAtOuterPoint: Boolean(document.elementFromPoint(300, 200)?.closest('.home-scene-viewport')),
+-  }))
+-  t.diagnostic(`Phone scroll targets:${JSON.stringify(scrollTarget)}`)
+-  assert.equal(scrollTarget.innerAtOuterPoint, false, 'scroll outside the scene, whose overscroll is contained')
+-  await page.mouse.move(300, 200)
++  const scrollTarget = await page.evaluate(() => {
++    for (const y of [100, 16, innerHeight / 2, innerHeight - 80]) for (const x of [innerWidth / 2, 8, innerWidth - 8]) {
++      const node = document.elementFromPoint(x, y)
++      if (node && !node.closest('.home-scene-viewport, .app-nav')) return { x, y }
++    }
++    return null
++  })
++  assert.ok(scrollTarget, 'find an actual page scroll target outside the scene and fixed navigation')
++  t.diagnostic(`Phone page scroll target:${JSON.stringify(scrollTarget)}`)
++  await page.mouse.move(scrollTarget.x, scrollTarget.y)
+   await page.mouse.wheel(0, -80)
+   await page.waitForFunction(() => document.querySelector('.room-selection').getBoundingClientRect().top >= 16)
+   const bounds = await marker.boundingBox()
+-  assert.ok(bounds.y >= 16 && bounds.y + bounds.height <= 624, 'the phone can show the entire stationary marker with its outline clear of viewport edges')
++  assert.ok(bounds.y >= 16 && bounds.y + bounds.height <= 624, 'the phone can show the stationary direction arrow clear of viewport edges')
+   assert.equal(await page.evaluate(() => window.__exploreFrames.size), 0)
+   if (out) await page.screenshot({ path: join(out, 'explore-second-plant-marker-320.png') })
+   await toggle.click()
+   assert.equal(await page.locator('.room-selection').count(), 0)
++  assert.equal(await page.locator('.room-selection-floor').count(), 0)
+   assert.equal(await page.evaluate(() => window.__exploreFrames.size), 0)
+   t.diagnostic(`Chromium ${page.context().browser().version()};native keyboard;unique names;unchanged saved tables`)
+ })
+@@ -126,6 +143,7 @@ test('native furnishing previews preserve the current fractional walk and its on
+   if (out) { await mkdir(out, { recursive: true }); await page.screenshot({ path: join(out, 'explore-preview-walk-1280.png') }) }
+   await page.getByRole('button', { name: 'Explore together', exact: true }).click()
+   assert.equal(await page.locator('.room-selection').count(), 0)
++  assert.equal(await page.locator('.room-selection-floor').count(), 0)
+   assert.deepEqual(await page.evaluate(() => [...window.__exploreFrames]), pending)
+   assert.deepEqual((await snapshot(page)).tables, saved)
+ })
+diff --git c/docs/ART.md w/docs/ART.md
+index 44bc4bf..31ceaba 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -164,7 +164,7 @@ The creator preview uses a finite 1800ms sampled celebration for species and col
+ 
+ Explore together offers explicit player invitations to a chosen furnishing. Keep its disclosure and native selector below the scene on phones and beside it in the desktop chores panel, preserving scene size. Reuse the current condition-aware approach and existing orient/action/settle sequence; fractional interruption origins reconnect through known clear segment endpoints. Same-target invitations coalesce. Taps and chore cheers retain priority and cancel pending invitation dialogue. Announce one invited observation at arrival; automatic exploration stays quiet. Reduced motion answers from the current position without beginning a route. Invitations remain local, with no saved pet/chore changes or new animation clock. Repeated furnishings use the builder's numbered names in both the selector and invitation feedback, preserving the selected object ID when counts change.
+ 
+-While Explore together is open and available, mark its selected furnishing with a stationary footprint outline and chevron. Changing or removing the choice updates the marker; collapse, blocked exploration, room changes and unmount clear it. Reuse build selection geometry in preview mode without its floor wash or bobbing animation. Previewing stays decorative: preserve the pet's current position, pose, speech, activity, and clock, with no visit, audio, or saved-data changes. The marker is hidden from assistive technology and never intercepts input.
++While Explore together is open and available, mark its selected furnishing with a stationary footprint outline and chevron. Changing or removing the choice updates the marker; collapse, blocked exploration, room changes and unmount clear it. Reuse build selection geometry in preview mode without its floor wash or bobbing animation. Paint the preview footprint below furnishings and the resident so it cannot cross their artwork; retain the stationary direction arrow above the scene. Previewing stays decorative: preserve the pet's current position, pose, speech, activity, and clock, with no visit, audio, or saved-data changes. The marker is hidden from assistive technology and never intercepts input.
+ 
+ The resident clock pauses when reduced-motion art is settled or the pet is resting asleep/sick. Finite player reactions/notices keep the same single clock until their deadline; normal-motion suppression completes its existing120ms blend before pausing. Healthy normal-motion residents retain breathing, lifetime blinks and exploration. World/preference changes still validate and paint before display even with no pending frames. Initial sleeping/sick residents start in their resting activity, without blending from an unshown idle frame. Existing Boolean usePetMotion consumers keep their prior scheduling policy; the resident supplies separate normal/reduced activity flags. This lifecycle adds no timer or clock.
+ 
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-preview-depth.mjs 2/docs/audits/2026-10-12-character-polish/capture-preview-depth.mjs
+new file mode 100644
+index 0000000..6e469d7
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-preview-depth.mjs
+@@ -0,0 +1,56 @@
++import { createRequire } from 'node:module'
++import { createHash } from 'node:crypto'
++import { readFile, writeFile, mkdir } from 'node:fs/promises'
++import { join } from 'node:path'
++const require = createRequire(`${process.cwd()}/package.json`)
++const { createServer } = await import(require.resolve('vite'))
++const React = require('react'), { renderToStaticMarkup } = require('react-dom/server'), { Resvg } = require('@resvg/resvg-js'), { JSDOM } = require('jsdom')
++const [label, out] = process.argv.slice(2)
++if (!['before','after'].includes(label) || !out) throw new Error('usage: runner before|after directory')
++await mkdir(out,{recursive:true})
++const hash = value => createHash('sha256').update(value).digest('hex')
++const server = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++ const { Room } = await server.ssrLoadModule('/src/room/Room.tsx')
++ const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++ const { sampleMotion } = await server.ssrLoadModule('/src/character/motion.ts')
++ const { PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++ const h=React.createElement, object={id:'shelf',roomId:'room',catalogId:'bookshelf',tileX:5,tileY:5,rotation:0}, cases=[], cells=[]
++ const withNS=text=>/<svg\b[^>]*xmlns=/.test(text)?text:text.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg"')
++ let index=0
++ for(const tile of [{tx:6,ty:5},{tx:5,ty:6}])for(const facing of [1,-1])for(const species of ['mochi','bun','sprout']){
++  const frame=sampleMotion({species,mood:'happy',action:'dust',elapsedMs:650,durationMs:1400,distance:0,reducedMotion:false})
++  const art=h('g',{'data-probe-art':''},h(AnimatedCharacterArt,{species,mood:'happy',bodyColour:'#F7A8BA',strokeScale:PET_STROKE_SCALE,frame,equipped:{head:'beanie-red',face:'glasses',neck:'scarf',outfit:'overalls',back:'backpack'}}))
++  const props={room:{floorStyle:'wood',wallStyle:'cream'},objects:[object],stages:{shelf:'messy1'},width:780,selectionMode:'preview',pet:{tile,facing,art}}
++  const plain=withNS(renderToStaticMarkup(h(Room,props))), selected=withNS(renderToStaticMarkup(h(Room,{...props,selectedId:'shelf'})))
++  const document=new JSDOM(plain,{contentType:'image/svg+xml'}).window.document
++  const root=document.documentElement, mask=root.cloneNode(false), pet=root.querySelector('[data-probe-art]').parentElement.parentElement.cloneNode(true)
++  pet.querySelector('[data-character-ground]')?.remove();pet.querySelector('[data-character-accents]')?.remove();mask.append(pet)
++  const a=new Resvg(plain).render(),b=new Resvg(selected).render(),m=new Resvg(mask.outerHTML).render(),ap=a.pixels,bp=b.pixels,mp=m.pixels
++  if(a.width!==m.width||a.height!==m.height)throw new Error('mask dimensions differ')
++  let opaque=0, changed=0
++  for(let y=1;y<a.height-1;y++)for(let x=1;x<a.width-1;x++){
++   let inside=true
++   for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(mp[((y+dy)*a.width+x+dx)*4+3]!==255)inside=false
++   if(!inside)continue
++   opaque++;const i=(y*a.width+x)*4
++   if([0,1,2].some(c=>Math.abs(ap[i+c]-bp[i+c])>1))changed++
++  }
++  cases.push({species,facing,tile,opaquePetInteriorPixels:opaque,overpaintedPetInteriorPixels:changed})
++  const crop=new JSDOM(selected,{contentType:'image/svg+xml'}).window.document.documentElement
++  crop.setAttribute('viewBox','130 148 130 130');crop.setAttribute('width','260');crop.setAttribute('height','260')
++  const png=new Resvg(crop.outerHTML).render().asPng()
++  const x=10+(index%3)*280,y=50+Math.floor(index/3)*300
++  cells.push(`<g transform="translate(${x} ${y})"><rect width="270" height="290" rx="8" fill="#fff"/><text x="8" y="18" font-size="12" fill="#33263c">${species}, facing ${facing}, tile ${tile.tx},${tile.ty}</text><image x="5" y="26" width="260" height="260" href="data:image/png;base64,${png.toString('base64')}"/></g>`)
++  index++
++ }
++ const png=new Resvg(`<svg xmlns="http://www.w3.org/2000/svg" width="850" height="1250"><rect width="850" height="1250" fill="#eee6ef"/><text x="18" y="30" font-size="18" fill="#33263c">Preview floor depth: ${label}</text>${cells.join('')}</svg>`).render().asPng()
++ const imagePath=join(out,`preview-depth-${label}.png`);await writeFile(imagePath,png)
++ // The default builder is compared byte for byte across this preview-only change.
++ const builder=renderToStaticMarkup(h(Room,{room:{floorStyle:'wood',wallStyle:'cream'},objects:[object],selectedId:'shelf',width:780}))
++ const sources=['src/room/Room.tsx','src/room/shell/RoomShell.tsx','src/room/shell/geometry.ts','src/character/AnimatedCharacter.tsx','src/character/Character.tsx','src/character/motion.ts']
++ const sourceSha256=Object.fromEntries(await Promise.all(sources.map(async p=>[p,hash(await readFile(p))])))
++ const metadata={method:'12 dressed species/mirror/front-axis production room crops; opaque eroded pet-mask comparison excludes shadow/accents. Static raster evidence only.',cases,builderSha256:hash(builder),sourceSha256,png:{path:imagePath,sha256:hash(png)}}
++ await writeFile(join(out,`preview-depth-${label}.json`),JSON.stringify(metadata,null,2)+'\n')
++ console.log(JSON.stringify({cases:cases.length,overpaintedPixels:cases.map(c=>c.overpaintedPetInteriorPixels),builderSha256:metadata.builderSha256}))
++}finally{await server.close()}

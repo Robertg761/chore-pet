@@ -133,14 +133,20 @@ function footprintPolygon(f: Footprint, fill: string, opacity: number, dashed = 
   )
 }
 
-/** The selected object: an accent outline round its footprint and a bobbing chevron over it, drawn over everything. */
-function Selection({ footprint, top, objectId, still }: { footprint: Footprint; top: { x: number; y: number }; objectId: string; still: boolean }) {
+function selectionOutline(footprint: Footprint) {
+  return <>
+    <polygon points={footprintCorners(footprint)} fill="none" stroke={white} strokeWidth={5} strokeOpacity={0.7} />
+    <polygon points={footprintCorners(footprint)} fill="none" stroke={accent} strokeWidth={3} strokeDasharray="7 5" />
+  </>
+}
+
+/** Preview outlines sit on the floor; their stationary arrow stays above the furniture. */
+function Selection({ footprint, top, objectId, preview }: { footprint: Footprint; top: { x: number; y: number }; objectId: string; preview: boolean }) {
   return (
     <g className="room-selection" data-selection-object={objectId} style={{ pointerEvents: 'none' }} aria-hidden="true">
-      <polygon points={footprintCorners(footprint)} fill="none" stroke={white} strokeWidth={5} strokeOpacity={0.7} />
-      <polygon points={footprintCorners(footprint)} fill="none" stroke={accent} strokeWidth={3} strokeDasharray="7 5" />
+      {!preview && selectionOutline(footprint)}
       <g transform={`translate(${top.x} ${top.y - 6})`}>
-        <g className={still ? undefined : 'room-chevron'}>
+        <g className={preview ? undefined : 'room-chevron'}>
           <polygon points="-8,-12 0,-5 8,-12 8,-6 0,1 -8,-6" fill={accent} stroke={ink} strokeWidth={ROOM_INK * 0.9} />
         </g>
       </g>
@@ -290,13 +296,18 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, 
     >
       {selected && selectedEntry && selectionMode === 'build' && footprintPolygon(footprintOf(selected, selectedEntry), accent, 0.3)}
       {ghost && footprintPolygon(footprintOf(ghost.placement, ghost.entry), ghost.ok ? FITS : BLOCKED, 0.4, true)}
+      {selected && selectedEntry && selectionMode === 'preview' && (
+        <g className="room-selection-floor" data-selection-floor={selected.id} style={{ pointerEvents: 'none' }} aria-hidden="true">
+          {selectionOutline(footprintOf(selected, selectedEntry))}
+        </g>
+      )}
       {depthOrder(items).map((i) => i.draw())}
       {cues.map((c) => (
         <g key={`neglect-${c.id}`} transform={`translate(${c.x} ${c.y}) scale(${TILE_SCALE})`} stroke="none" style={{ pointerEvents: 'none' }}>
           <NeglectCue kind={c.kind} level={c.level} still={!c.animate} />
         </g>
       ))}
-      {selected && selectedEntry && <Selection footprint={footprintOf(selected, selectedEntry)} top={objectTop(selectedEntry, selected)} objectId={selected.id} still={selectionMode === 'preview'} />}
+      {selected && selectedEntry && <Selection footprint={footprintOf(selected, selectedEntry)} top={objectTop(selectedEntry, selected)} objectId={selected.id} preview={selectionMode === 'preview'} />}
       {overlay}
     </RoomShell>
   )

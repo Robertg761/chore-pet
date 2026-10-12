@@ -1,0 +1,255 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/room/Room.selection-output.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/room/Room.selection-output.test.tsx (12 tests | 12 failed) 8408ms
+   × keeps the selected floor outline behind dressed mochi, facing 1, at 6,5 788ms
+   × keeps the selected floor outline behind dressed mochi, facing 1, at 5,6 704ms
+   × keeps the selected floor outline behind dressed mochi, facing -1, at 6,5 705ms
+   × keeps the selected floor outline behind dressed mochi, facing -1, at 5,6 697ms
+   × keeps the selected floor outline behind dressed bun, facing 1, at 6,5 695ms
+   × keeps the selected floor outline behind dressed bun, facing 1, at 5,6 683ms
+   × keeps the selected floor outline behind dressed bun, facing -1, at 6,5 687ms
+   × keeps the selected floor outline behind dressed bun, facing -1, at 5,6 690ms
+   × keeps the selected floor outline behind dressed sprout, facing 1, at 6,5 684ms
+   × keeps the selected floor outline behind dressed sprout, facing 1, at 5,6 697ms
+   × keeps the selected floor outline behind dressed sprout, facing -1, at 6,5 696ms
+   × keeps the selected floor outline behind dressed sprout, facing -1, at 5,6 680ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/room/Room.selection-output.test.tsx > keeps the selected floor outline behind dressed mochi, facing 1, at 6,5
+AssertionError: 950 of 7027 opaque interior pixels covered by the selection: expected 950 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 950
+
+ ❯ src/room/Room.selection-output.test.tsx:52:108
+     50|         }
+     51|         expect(opaque).toBeGreaterThan(3000)
+     52|         expect(overpainted, `${overpainted} of ${opaque} opaque interi…
+       |                                                                                                            ^
+     53|       })
+     54|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/room/Room.selection-output.test.tsx > keeps the selected floor outline behind dressed mochi, facing 1, at 5,6
+AssertionError: 849 of 7027 opaque interior pixels covered by the selection: expected 849 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 849
+
+ ❯ src/room/Room.selection-output.test.tsx:52:108
+     50|         }
+     51|         expect(opaque).toBeGreaterThan(3000)
+     52|         expect(overpainted, `${overpainted} of ${opaque} opaque interi…
+       |                                                                                                            ^
+     53|       })
+     54|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/room/Room.selection-output.test.tsx > keeps the selected floor outline behind dressed mochi, facing -1, at 6,5
+AssertionError: 849 of 7026 opaque interior pixels covered by the selection: expected 849 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 849
+
+ ❯ src/room/Room.selection-output.test.tsx:52:108
+     50|         }
+     51|         expect(opaque).toBeGreaterThan(3000)
+     52|         expect(overpainted, `${overpainted} of ${opaque} opaque interi…
+       |                                                                                                            ^
+     53|       })
+     54|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/room/Room.selection-output.test.tsx > keeps the selected floor outline behind dressed mochi, facing -1, at 5,6
+AssertionError: 950 of 7026 opaque interior pixels covered by the selection: expected 950 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 950
+
+ ❯ src/room/Room.selection-output.test.tsx:52:108
+     50|         }
+     51|         expect(opaque).toBeGreaterThan(3000)
+     52|         expect(overpainted, `${overpainted} of ${opaque} opaque interi…
+       |                                                                                                            ^
+     53|       })
+     54|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/room/Room.selection-output.test.tsx > keeps the selected floor outline behind dressed bun, facing 1, at 6,5
+AssertionError: 827 of 6350 opaque interior pixels covered by the selection: expected 827 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 827
+
+ ❯ src/room/Room.selection-output.test.tsx:52:108
+     50|         }
+     51|         expect(opaque).toBeGreaterThan(3000)
+     52|         expect(overpainted, `${overpainted} of ${opaque} opaque interi…
+       |                                                                                                            ^
+     53|       })
+     54|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/room/Room.selection-output.test.tsx > keeps the selected floor outline behind dressed bun, facing 1, at 5,6
+AssertionError: 815 of 6350 opaque interior pixels covered by the selection: expected 815 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 815
+
+ ❯ src/room/Room.selection-output.test.tsx:52:108
+     50|         }
+     51|         expect(opaque).toBeGreaterThan(3000)
+     52|         expect(overpainted, `${overpainted} of ${opaque} opaque interi…
+       |                                                                                                            ^
+     53|       })
+     54|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  src/room/Room.selection-output.test.tsx > keeps the selected floor outline behind dressed bun, facing -1, at 6,5
+AssertionError: 816 of 6355 opaque interior pixels covered by the selection: expected 816 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 816
+
+ ❯ src/room/Room.selection-output.test.tsx:52:108
+     50|         }
+     51|         expect(opaque).toBeGreaterThan(3000)
+     52|         expect(overpainted, `${overpainted} of ${opaque} opaque interi…
+       |                                                                                                            ^
+     53|       })
+     54|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  src/room/Room.selection-output.test.tsx > keeps the selected floor outline behind dressed bun, facing -1, at 5,6
+AssertionError: 827 of 6355 opaque interior pixels covered by the selection: expected 827 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 827
+
+ ❯ src/room/Room.selection-output.test.tsx:52:108
+     50|         }
+     51|         expect(opaque).toBeGreaterThan(3000)
+     52|         expect(overpainted, `${overpainted} of ${opaque} opaque interi…
+       |                                                                                                            ^
+     53|       })
+     54|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+ FAIL  src/room/Room.selection-output.test.tsx > keeps the selected floor outline behind dressed sprout, facing 1, at 6,5
+AssertionError: 821 of 6208 opaque interior pixels covered by the selection: expected 821 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 821
+
+ ❯ src/room/Room.selection-output.test.tsx:52:108
+     50|         }
+     51|         expect(opaque).toBeGreaterThan(3000)
+     52|         expect(overpainted, `${overpainted} of ${opaque} opaque interi…
+       |                                                                                                            ^
+     53|       })
+     54|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/12]⎯
+
+ FAIL  src/room/Room.selection-output.test.tsx > keeps the selected floor outline behind dressed sprout, facing 1, at 5,6
+AssertionError: 773 of 6208 opaque interior pixels covered by the selection: expected 773 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 773
+
+ ❯ src/room/Room.selection-output.test.tsx:52:108
+     50|         }
+     51|         expect(opaque).toBeGreaterThan(3000)
+     52|         expect(overpainted, `${overpainted} of ${opaque} opaque interi…
+       |                                                                                                            ^
+     53|       })
+     54|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/12]⎯
+
+ FAIL  src/room/Room.selection-output.test.tsx > keeps the selected floor outline behind dressed sprout, facing -1, at 6,5
+AssertionError: 773 of 6206 opaque interior pixels covered by the selection: expected 773 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 773
+
+ ❯ src/room/Room.selection-output.test.tsx:52:108
+     50|         }
+     51|         expect(opaque).toBeGreaterThan(3000)
+     52|         expect(overpainted, `${overpainted} of ${opaque} opaque interi…
+       |                                                                                                            ^
+     53|       })
+     54|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/12]⎯
+
+ FAIL  src/room/Room.selection-output.test.tsx > keeps the selected floor outline behind dressed sprout, facing -1, at 5,6
+AssertionError: 821 of 6206 opaque interior pixels covered by the selection: expected 821 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 821
+
+ ❯ src/room/Room.selection-output.test.tsx:52:108
+     50|         }
+     51|         expect(opaque).toBeGreaterThan(3000)
+     52|         expect(overpainted, `${overpainted} of ${opaque} opaque interi…
+       |                                                                                                            ^
+     53|       })
+     54|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/12]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  12 failed (12)
+   Start at  21:12:58
+   Duration  9.22s (tests 92%, transform 4%, environment 3%, import 1%)
+

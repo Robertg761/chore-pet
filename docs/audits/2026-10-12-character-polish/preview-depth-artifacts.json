@@ -1,0 +1,10 @@
+{
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/preview-depth-Room-baseline.ts.txt": "5e510f57280b00a93eac37fcb624106c88371ca9e40e39fe54c7757ac0b07e40",
+    "docs/audits/2026-10-12-character-polish/preview-depth-before.json": "1c1e6ed0f0003c7694820d79b26c09a839cf4a8513703dbdf0110d4e35e09b3a",
+    "docs/audits/2026-10-12-character-polish/preview-depth-before.png": "2698928ea7e1cf4b6839172fde49eecaf115a79e03eecb910bfa4f1248872a1a",
+    "docs/audits/2026-10-12-character-polish/preview-depth-after.json": "70df727c44a1b4590337c6b7229ab2d2167e64c2ea779d102906ef4ff0372b77",
+    "docs/audits/2026-10-12-character-polish/preview-depth-after.png": "c3c2bb7b6e1f3420122ec50343513b7a02827c2a031663d398e7d441df06a1e0"
+  },
+  "scope": "Exact b65e174 Room baseline;12 dressed species/mirror/front-axis before/after crops, eroded opaque pet-mask pixel counts, default builder exact markup hash. Static raster evidence, not native pixel or temporal acceptance."
+}

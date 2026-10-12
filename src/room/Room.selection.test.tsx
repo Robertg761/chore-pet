@@ -22,6 +22,7 @@ it('preserves the builder selection default and its floor wash', () => {
   expect(ui.container.querySelectorAll(`polygon[fill="${PALETTE.accent}"][fill-opacity="0.3"]`)).toHaveLength(1)
   expect(ui.container.querySelector('.room-selection polygon')!.getAttribute('points'))
     .toBe('173.75,161.88 237.5,193.75 195,215 131.25,183.13')
+  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
 })
 
 it.each([
@@ -34,13 +35,24 @@ it.each([
   expect(marker.getAttribute('data-selection-object')).toBe(bed.id)
   expect(marker.getAttribute('aria-hidden')).toBe('true')
   expect((marker as SVGElement).style.pointerEvents).toBe('none')
-  expect(marker.querySelector('polygon')!.getAttribute('points')).toBe(points)
+  const floor = ui.container.querySelector('.room-selection-floor')!
+  expect(floor.getAttribute('data-selection-floor')).toBe(bed.id)
+  expect(floor.getAttribute('aria-hidden')).toBe('true')
+  expect((floor as SVGElement).style.pointerEvents).toBe('none')
+  expect(floor.querySelectorAll('polygon')).toHaveLength(2)
+  expect(floor.querySelector('polygon')!.getAttribute('points')).toBe(points)
+  expect(marker.querySelectorAll('polygon')).toHaveLength(1)
   expect(ui.container.querySelectorAll(`polygon[fill="${PALETTE.accent}"][fill-opacity="0.3"]`)).toHaveLength(0)
 })
 
 it('does not mark unknown or hidden preview objects', () => {
   const ui = mount(<Room {...props} selectedId="missing" selectionMode="preview" />)
   expect(ui.container.querySelector('.room-selection')).toBeNull()
+  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
   ui.rerender(<Room {...props} hiddenId={bed.id} selectionMode="preview" />)
   expect(ui.container.querySelector('.room-selection')).toBeNull()
+  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
+  ui.rerender(<Room {...props} objects={[{ ...bed, catalogId: 'missing-art' }]} selectionMode="preview" />)
+  expect(ui.container.querySelector('.room-selection')).toBeNull()
+  expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
 })

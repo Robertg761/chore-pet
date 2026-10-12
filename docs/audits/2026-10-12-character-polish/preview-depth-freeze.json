@@ -1,0 +1,17 @@
+{
+  "baseCommit": "b65e174f67aa70b34869064046f7e5224cbef21e",
+  "sources": {
+    "src/room/Room.tsx": "af8fd5fca4a9de53c508e2d31b935f7bd75ef750c15b8e4df1cca8b98e7e6d98",
+    "src/room/Room.selection.test.tsx": "98ae4c6ccaf8001d1aa650e71c19347a459b1b196c9c5e9504243a3fbc3c64c7",
+    "src/room/Room.selection-output.test.tsx": "adbd211cceafdaeb94ce179e9f3c23c2bd7539daa38fd45b388d21e69450522a",
+    "src/pet/PetIntegration.test.tsx": "d7390fbd809f3c4d9fb34b3fa5a2c58cb3f29dc0b7e341af909fd460f537a67d",
+    "scripts/browser/pet-explore-names.test.mjs": "53726818bb04cca88e5b0fb6826cfd14945aadcd34d8ba506f68966f87ee8102",
+    "docs/ART.md": "9f76fc550ed61a2d750c38a9c985384171a82ba91618ba2ccbb3c69dde71e737",
+    "docs/audits/2026-10-12-character-polish/capture-preview-depth.mjs": "0ec517cc1c2191cf71a55876d8d90a8e3eaa67fae3ec4cd713d07824bf1e544a"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/preview-depth-source.diff",
+    "sha256": "b650b0c81cdf5d33cfc9fb8020d3175ffd31b6a4f9a22bb6502f69d22d37a458"
+  },
+  "scope": "One runtime file: paint preview footprint beneath depth-sorted furnishings/resident and retain foreground stationary arrow. Builder geometry/markup unchanged; no state, motion, routing or input behavior. Four regression files, one bounded capture runner and ART."
+}

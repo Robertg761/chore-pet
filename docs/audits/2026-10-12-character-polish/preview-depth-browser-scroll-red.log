@@ -1,0 +1,53 @@
+✔ mochi reacts to an actually dusty bookshelf with a grounded deliberate hand gesture (2105.278996ms)
+ℹ Actual mochi hand peak21.320deg;speed98.825deg/s
+ℹ Chromium 152.0.7977.82; 71 actual SVG hand/timestamp samples; dusty linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ bun reacts to an actually dusty bookshelf with a grounded deliberate hand gesture (1669.88866ms)
+ℹ Actual bun hand peak26.972deg;speed132.159deg/s
+ℹ Chromium 152.0.7977.82; 71 actual SVG hand/timestamp samples; dusty linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ sprout reacts to an actually dusty bookshelf with a grounded deliberate hand gesture (1781.134574ms)
+ℹ Actual sprout hand peak18.000deg;speed85.251deg/s
+ℹ Chromium 152.0.7977.82; 71 actual SVG hand/timestamp samples; dusty linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ mochi reacts to an actually dusty bookshelf without moving in reduced motion (1119.983182ms)
+ℹ Visible reduced-motion dusty invitation: same position/body,existing3600ms speech lifetime,0resident frames,unchanged saved tables.
+✖ native keyboard can identify and invite the second repeated furnishing (1520.656869ms)
+ℹ Phone scroll targets:{"innerAtOldPoint":false,"innerAtOuterPoint":true}
+✔ native furnishing previews preserve the current fractional walk and its one pending frame (1806.155601ms)
+✔ keyboard exploration stays still and fits 320px (882.459174ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 390px (728.094565ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 1280px (770.17945ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 640px (825.272932ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 844px (837.263082ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ an invitation joins a live step, reaches the chosen detail, coalesces repeats, and respects live reduction (2103.013708ms)
+ℹ Chromium 152.0.7977.82; pose join 0.2253 room SVG units; one application rAF
+ℹ tests 12
+ℹ suites 0
+ℹ pass 11
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17531.958129
+
+✖ failing tests:
+
+test at scripts/browser/pet-explore-names.test.mjs:68:1
+✖ native keyboard can identify and invite the second repeated furnishing (1520.656869ms)
+  AssertionError [ERR_ASSERTION]: scroll outside the scene, whose overscroll is contained
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore-names.test.mjs:100:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

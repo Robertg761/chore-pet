@@ -49,7 +49,20 @@ async function assertTwinMarker(page) {
   assert.equal(await marker.getAttribute('aria-hidden'), 'true')
   assert.equal(await marker.evaluate(node => getComputedStyle(node).pointerEvents), 'none')
   assert.equal(await marker.evaluate(node => node.getAnimations({ subtree: true }).length), 0)
-  assert.equal(await marker.locator('polygon').first().getAttribute('points'), '46.25,204.38 67.5,215 46.25,225.63 25,215')
+  assert.equal(await marker.locator('polygon').count(), 1, 'only the direction arrow floats above the scene')
+  const floor = page.locator('.room-selection-floor[data-selection-floor="plant-twin"]')
+  assert.equal(await floor.count(), 1)
+  assert.equal(await floor.getAttribute('aria-hidden'), 'true')
+  assert.equal(await floor.evaluate(node => getComputedStyle(node).pointerEvents), 'none')
+  assert.equal(await floor.evaluate(node => node.getAnimations({ subtree: true }).length), 0)
+  assert.equal(await floor.locator('polygon').count(), 2)
+  assert.equal(await floor.locator('polygon').first().getAttribute('points'), '46.25,204.38 67.5,215 46.25,225.63 25,215')
+  assert.equal(await floor.evaluate(node => [...node.ownerSVGElement.querySelectorAll('[data-object-id], .room-pet')]
+    .every(item => Boolean(node.compareDocumentPosition(item) & Node.DOCUMENT_POSITION_FOLLOWING))), true,
+  'the preview footprint is painted below every furnishing and the resident')
+  assert.equal(await marker.evaluate(node => [...node.ownerSVGElement.querySelectorAll('[data-object-id], .room-pet')]
+    .every(item => Boolean(item.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING))), true,
+  'the stationary direction arrow remains above the scene')
 }
 
 test('native keyboard can identify and invite the second repeated furnishing', async t => {
@@ -79,21 +92,25 @@ test('native keyboard can identify and invite the second repeated furnishing', a
   const marker = page.locator('.room-selection[data-selection-object="plant-twin"]')
   await marker.scrollIntoViewIfNeeded()
   // SVG geometry bounds omit the stroke; leave breathing room above the arrow.
-  const scrollTarget = await page.evaluate(() => ({
-    innerAtOldPoint: Boolean(document.elementFromPoint(160, 100)?.closest('.home-scene-viewport')),
-    innerAtOuterPoint: Boolean(document.elementFromPoint(300, 200)?.closest('.home-scene-viewport')),
-  }))
-  t.diagnostic(`Phone scroll targets:${JSON.stringify(scrollTarget)}`)
-  assert.equal(scrollTarget.innerAtOuterPoint, false, 'scroll outside the scene, whose overscroll is contained')
-  await page.mouse.move(300, 200)
+  const scrollTarget = await page.evaluate(() => {
+    for (const y of [100, 16, innerHeight / 2, innerHeight - 80]) for (const x of [innerWidth / 2, 8, innerWidth - 8]) {
+      const node = document.elementFromPoint(x, y)
+      if (node && !node.closest('.home-scene-viewport, .app-nav')) return { x, y }
+    }
+    return null
+  })
+  assert.ok(scrollTarget, 'find an actual page scroll target outside the scene and fixed navigation')
+  t.diagnostic(`Phone page scroll target:${JSON.stringify(scrollTarget)}`)
+  await page.mouse.move(scrollTarget.x, scrollTarget.y)
   await page.mouse.wheel(0, -80)
   await page.waitForFunction(() => document.querySelector('.room-selection').getBoundingClientRect().top >= 16)
   const bounds = await marker.boundingBox()
-  assert.ok(bounds.y >= 16 && bounds.y + bounds.height <= 624, 'the phone can show the entire stationary marker with its outline clear of viewport edges')
+  assert.ok(bounds.y >= 16 && bounds.y + bounds.height <= 624, 'the phone can show the stationary direction arrow clear of viewport edges')
   assert.equal(await page.evaluate(() => window.__exploreFrames.size), 0)
   if (out) await page.screenshot({ path: join(out, 'explore-second-plant-marker-320.png') })
   await toggle.click()
   assert.equal(await page.locator('.room-selection').count(), 0)
+  assert.equal(await page.locator('.room-selection-floor').count(), 0)
   assert.equal(await page.evaluate(() => window.__exploreFrames.size), 0)
   t.diagnostic(`Chromium ${page.context().browser().version()};native keyboard;unique names;unchanged saved tables`)
 })
@@ -126,6 +143,7 @@ test('native furnishing previews preserve the current fractional walk and its on
   if (out) { await mkdir(out, { recursive: true }); await page.screenshot({ path: join(out, 'explore-preview-walk-1280.png') }) }
   await page.getByRole('button', { name: 'Explore together', exact: true }).click()
   assert.equal(await page.locator('.room-selection').count(), 0)
+  assert.equal(await page.locator('.room-selection-floor').count(), 0)
   assert.deepEqual(await page.evaluate(() => [...window.__exploreFrames]), pending)
   assert.deepEqual((await snapshot(page)).tables, saved)
 })

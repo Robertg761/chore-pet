@@ -1,0 +1,14 @@
+npm notice run chore-pet@0.0.0 build
+npm notice run tsc -b && vite build
+src/room/Room.selection-output.test.tsx(25,52): error TS2322: Type '{ room: { readonly floorStyle: "wood"; readonly wallStyle: "cream"; }; objects: { id: string; roomId: string; catalogId: string; tileX: number; tileY: number; rotation: number; }[]; stages: { readonly shelf: "messy1"; }; width: number; selectionMode: "preview"; pet: { ...; }; }' is not assignable to type 'RoomProps'.
+  Types of property 'objects' are incompatible.
+    Type '{ id: string; roomId: string; catalogId: string; tileX: number; tileY: number; rotation: number; }[]' is not assignable to type 'PlacedObject[]'.
+      Type '{ id: string; roomId: string; catalogId: string; tileX: number; tileY: number; rotation: number; }' is not assignable to type 'PlacedObject'.
+        Types of property 'rotation' are incompatible.
+          Type 'number' is not assignable to type '0 | 1 | 2 | 3'.
+src/room/Room.selection-output.test.tsx(26,55): error TS2322: Type '{ selectedId: string; room: { readonly floorStyle: "wood"; readonly wallStyle: "cream"; }; objects: { id: string; roomId: string; catalogId: string; tileX: number; tileY: number; rotation: number; }[]; stages: { ...; }; width: number; selectionMode: "preview"; pet: { ...; }; }' is not assignable to type 'RoomProps'.
+  Types of property 'objects' are incompatible.
+    Type '{ id: string; roomId: string; catalogId: string; tileX: number; tileY: number; rotation: number; }[]' is not assignable to type 'PlacedObject[]'.
+      Type '{ id: string; roomId: string; catalogId: string; tileX: number; tileY: number; rotation: number; }' is not assignable to type 'PlacedObject'.
+        Types of property 'rotation' are incompatible.
+          Type 'number' is not assignable to type '0 | 1 | 2 | 3'.

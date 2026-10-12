@@ -1,0 +1,138 @@
+{
+  "method": "12 dressed species/mirror/front-axis production room crops; opaque eroded pet-mask comparison excludes shadow/accents. Static raster evidence only.",
+  "cases": [
+    {
+      "species": "mochi",
+      "facing": 1,
+      "tile": {
+        "tx": 6,
+        "ty": 5
+      },
+      "opaquePetInteriorPixels": 7027,
+      "overpaintedPetInteriorPixels": 0
+    },
+    {
+      "species": "bun",
+      "facing": 1,
+      "tile": {
+        "tx": 6,
+        "ty": 5
+      },
+      "opaquePetInteriorPixels": 6350,
+      "overpaintedPetInteriorPixels": 0
+    },
+    {
+      "species": "sprout",
+      "facing": 1,
+      "tile": {
+        "tx": 6,
+        "ty": 5
+      },
+      "opaquePetInteriorPixels": 6208,
+      "overpaintedPetInteriorPixels": 0
+    },
+    {
+      "species": "mochi",
+      "facing": -1,
+      "tile": {
+        "tx": 6,
+        "ty": 5
+      },
+      "opaquePetInteriorPixels": 7026,
+      "overpaintedPetInteriorPixels": 0
+    },
+    {
+      "species": "bun",
+      "facing": -1,
+      "tile": {
+        "tx": 6,
+        "ty": 5
+      },
+      "opaquePetInteriorPixels": 6355,
+      "overpaintedPetInteriorPixels": 0
+    },
+    {
+      "species": "sprout",
+      "facing": -1,
+      "tile": {
+        "tx": 6,
+        "ty": 5
+      },
+      "opaquePetInteriorPixels": 6206,
+      "overpaintedPetInteriorPixels": 0
+    },
+    {
+      "species": "mochi",
+      "facing": 1,
+      "tile": {
+        "tx": 5,
+        "ty": 6
+      },
+      "opaquePetInteriorPixels": 7027,
+      "overpaintedPetInteriorPixels": 0
+    },
+    {
+      "species": "bun",
+      "facing": 1,
+      "tile": {
+        "tx": 5,
+        "ty": 6
+      },
+      "opaquePetInteriorPixels": 6350,
+      "overpaintedPetInteriorPixels": 0
+    },
+    {
+      "species": "sprout",
+      "facing": 1,
+      "tile": {
+        "tx": 5,
+        "ty": 6
+      },
+      "opaquePetInteriorPixels": 6208,
+      "overpaintedPetInteriorPixels": 0
+    },
+    {
+      "species": "mochi",
+      "facing": -1,
+      "tile": {
+        "tx": 5,
+        "ty": 6
+      },
+      "opaquePetInteriorPixels": 7026,
+      "overpaintedPetInteriorPixels": 0
+    },
+    {
+      "species": "bun",
+      "facing": -1,
+      "tile": {
+        "tx": 5,
+        "ty": 6
+      },
+      "opaquePetInteriorPixels": 6355,
+      "overpaintedPetInteriorPixels": 0
+    },
+    {
+      "species": "sprout",
+      "facing": -1,
+      "tile": {
+        "tx": 5,
+        "ty": 6
+      },
+      "opaquePetInteriorPixels": 6206,
+      "overpaintedPetInteriorPixels": 0
+    }
+  ],
+  "builderSha256": "0f509f41d9d19677b1546cd5a6f37c002932c2b33172545df63bd8a4225831d6",
+  "sourceSha256": {
+    "src/room/Room.tsx": "af8fd5fca4a9de53c508e2d31b935f7bd75ef750c15b8e4df1cca8b98e7e6d98",
+    "src/room/shell/RoomShell.tsx": "b52ab3bfdb807bdfbcee035390bd89fe6628b986b4e5ed32fe42f84b6abcb66f",
+    "src/room/shell/geometry.ts": "967f73de056add3298520e580aa172a720132b49b11dd5bcab4a8f1a4b4fd027",
+    "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+    "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+    "src/character/motion.ts": "b551fa03994d7689c27e3076e136c8457af29c5b30aa9a1dbd6b730191f077af"
+  },
+  "png": {
+    "path": "docs/audits/2026-10-12-character-polish/preview-depth-after.png",
+    "sha256": "c3c2bb7b6e1f3420122ec50343513b7a02827c2a031663d398e7d441df06a1e0"
+  }
+}

@@ -1,0 +1,11 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/room/Room.selection-output.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  21:14:26
+   Duration  9.16s (tests 92%, transform 4%, environment 3%, import 1%)
+
