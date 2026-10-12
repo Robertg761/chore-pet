@@ -1,0 +1,171 @@
+// @vitest-environment jsdom
+import { act } from 'react'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import { click, input, render } from '../test/react'
+import * as motion from '../character/motion'
+import { CHARACTER_SLOTS } from '../domain/types'
+import { ITEMS } from '../character/items'
+import MotionReview from './MotionReview'
+
+let ui: ReturnType<typeof render>
+let frames: Map<number, FrameRequestCallback>
+let nextFrame: number
+
+beforeEach(() => {
+  frames = new Map()
+  nextFrame = 0
+  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+    frames.set(++nextFrame, callback)
+    return nextFrame
+  })
+  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
+  vi.spyOn(motion, 'sampleMotion')
+  ui = render(<MotionReview />)
+})
+
+afterEach(() => {
+  ui.unmount()
+  vi.restoreAllMocks()
+  vi.unstubAllGlobals()
+})
+
+function control<T extends HTMLElement>(label: string): T {
+  const node = [...ui.container.querySelectorAll('label')].find((el) => el.textContent?.startsWith(label))
+    ?.querySelector('input, select')
+  expect(node, `Control labeled ${label}`).toBeTruthy()
+  return node as T
+}
+
+function button(name: string) {
+  const node = [...ui.container.querySelectorAll('button')].find((el) => el.textContent === name)
+  expect(node, `Button ${name}`).toBeTruthy()
+  return node!
+}
+
+function select(label: string, value: string) {
+  act(() => {
+    const el = control<HTMLSelectElement>(label)
+    el.value = value
+    el.dispatchEvent(new Event('change', { bubbles: true }))
+  })
+}
+
+function frame(now: number) {
+  const pending = [...frames.values()]
+  frames.clear()
+  act(() => pending.forEach((callback) => callback(now)))
+}
+
+function currentSample() {
+  return vi.mocked(motion.sampleMotion).mock.calls.findLast(([value]) => value.elapsedMs === Number(control<HTMLInputElement>('Time scrubber').value))?.[0]
+}
+
+it('starts paused, samples exact scrubbed milliseconds and stays still', () => {
+  expect(frames.size).toBe(0)
+  input(control('Time scrubber'), '317')
+  expect(control<HTMLInputElement>('Elapsed milliseconds').value).toBe('317')
+  expect(currentSample()).toMatchObject({ elapsedMs: 317, durationMs: 1200, action: 'greet' })
+  frame(5000)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('317')
+})
+
+it('plays from the selected time, pauses without a jump, and resumes without counting paused time', () => {
+  input(control('Elapsed milliseconds'), '317')
+  click(button('Play'))
+  frame(1000)
+  frame(1100)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('417')
+  click(button('Pause'))
+  expect(frames.size).toBe(0)
+  frame(9000)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('417')
+  click(button('Play'))
+  frame(10000)
+  frame(10025)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('442')
+})
+
+it('scrubbing during playback pauses and restart resets exactly to zero', () => {
+  click(button('Play'))
+  frame(1000)
+  frame(1200)
+  input(control('Time scrubber'), '511')
+  expect(button('Play')).toBeTruthy()
+  expect(frames.size).toBe(0)
+  click(button('Restart'))
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('0')
+  expect(currentSample()?.elapsedMs).toBe(0)
+})
+
+it('clamps action changes and numeric input to the new duration', () => {
+  select('Action', 'rest')
+  input(control('Elapsed milliseconds'), '2100')
+  select('Action', 'turn')
+  expect(control<HTMLInputElement>('Time scrubber').max).toBe('360')
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('360')
+  expect(ui.container.textContent).toContain('Action duration: 360 ms')
+  input(control('Elapsed milliseconds'), '-12')
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('0')
+  input(control('Elapsed milliseconds'), '9999')
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('360')
+})
+
+it('stops on the exact final frame instead of running beyond the scrubber', () => {
+  click(button('Play'))
+  frame(10)
+  frame(2000)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('1200')
+  expect(button('Play')).toBeTruthy()
+  expect(frames.size).toBe(0)
+})
+
+it('labels every control and offers each wardrobe slot and its existing items', () => {
+  for (const label of ['Species', 'Mood', 'Action', 'Body color', 'Eyes', 'Cheeks', 'Time scrubber', 'Elapsed milliseconds', 'Ground line', 'Ground anchor', 'Contact target', 'Reduced motion']) {
+    expect(control(label)).toBeTruthy()
+  }
+  for (const slot of CHARACTER_SLOTS) {
+    const el = control<HTMLSelectElement>(`${slot} slot`)
+    for (const item of ITEMS.filter((item) => item.slot === slot)) {
+      expect([...el.options].some((option) => option.value === item.id)).toBe(true)
+    }
+  }
+  expect([...control<HTMLSelectElement>('Body color').options].some((option) => option.textContent?.includes('Dark'))).toBe(true)
+  expect(control<HTMLInputElement>('Time scrubber').step).toBe('1')
+})
+
+it('passes selected species, mood, action, and reduced motion to the production sampler', () => {
+  select('Species', 'bun')
+  select('Mood', 'sick')
+  select('Action', 'walk')
+  click(control('Reduced motion'))
+  input(control('Time scrubber'), '321')
+  expect(currentSample()).toMatchObject({ species: 'bun', mood: 'sick', action: 'walk', elapsedMs: 321, reducedMotion: true })
+  expect(currentSample()!.distance).toBeGreaterThan(0)
+})
+
+it('renders actual 200px, 60px, and 25px previews plus selectable key frames', () => {
+  for (const size of [200, 60, 25]) {
+    expect(ui.container.querySelector(`svg[width="${size}"][height="${size}"]`)).toBeTruthy()
+  }
+  const keys = ui.container.querySelectorAll('.motion-review-keyframes button')
+  expect(keys.length).toBeGreaterThanOrEqual(4)
+  click(keys[1])
+  expect(Number(control<HTMLInputElement>('Time scrubber').value)).toBeGreaterThan(0)
+  expect(frames.size).toBe(0)
+})
+
+it('keeps overlays optional and does not invent a furniture contact target or write saved pet data', () => {
+  const write = vi.spyOn(Storage.prototype, 'setItem')
+  expect(ui.container.querySelector('[data-review-overlay]')).toBeNull()
+  expect(control<HTMLInputElement>('Contact target').disabled).toBe(true)
+  expect(ui.container.textContent).toContain('No furniture contact target')
+  click(control('Ground line'))
+  click(control('Ground anchor'))
+  expect(ui.container.querySelector('[data-review-overlay="ground"]')).toBeTruthy()
+  expect(ui.container.querySelector('[data-review-overlay="anchor"]')).toBeTruthy()
+  select('Species', 'sprout')
+  select('head slot', 'crown')
+  select('Body color', 'dark')
+  input(control('Time scrubber'), '315')
+  expect(write).not.toHaveBeenCalled()
+})

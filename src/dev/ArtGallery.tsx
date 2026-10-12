@@ -24,6 +24,7 @@ import type { PlacedObject } from '../domain/types'
 import { WeekView } from '../screens/WeekView'
 import { play, type Sound } from '../audio/sfx'
 import type { Chore, Completion } from '../domain/types'
+import MotionReview from './MotionReview'
 
 // Dev-only review sheet (open /?art). Every species in every mood, items on
 // every pose, objects in every mess stage. Use it to check new art against
@@ -51,6 +52,8 @@ export default function ArtGallery() {
   return (
     <main className="gallery">
       <h1>Art gallery</h1>
+
+      <MotionReview />
 
       <h2>Close-up</h2>
       <section className="gallery-row">

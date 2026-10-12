@@ -1,0 +1,102 @@
+.motion-review {
+  padding: 20px;
+  margin: 16px 0 32px;
+  border: 2px solid var(--ink, #2b1e2f);
+  border-radius: 16px;
+  background: var(--cream, #fff6e6);
+  color: var(--ink, #2b1e2f);
+}
+
+.motion-review fieldset {
+  min-width: 0;
+  margin: 16px 0;
+  padding: 12px;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+}
+
+.motion-review-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: 12px;
+}
+
+.motion-review label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.motion-review select,
+.motion-review input[type='number'] {
+  min-height: 44px;
+  max-width: 100%;
+  font: inherit;
+}
+
+.motion-review input[type='range'] {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  accent-color: var(--accent, #6f5cf0);
+}
+
+.motion-review button {
+  min-height: 44px;
+  min-width: 80px;
+  font: inherit;
+}
+
+.motion-review :is(button, input, select):focus-visible {
+  outline: 3px solid var(--accent, #6f5cf0);
+  outline-offset: 3px;
+}
+
+.motion-review-buttons,
+.motion-review-overlays,
+.motion-review-previews,
+.motion-review-keyframes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.motion-review-overlays label {
+  flex-direction: row;
+  align-items: center;
+  min-height: 44px;
+}
+
+.motion-review figure {
+  margin: 0;
+  text-align: center;
+}
+
+.motion-review-stage {
+  min-height: 210px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 8px;
+  background: var(--ground, #efe9ff);
+  border-radius: 8px;
+}
+
+.motion-review svg {
+  display: block;
+  flex-shrink: 0;
+  max-width: none;
+}
+
+.motion-review-keyframes button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  gap: 4px;
+}
+
+@media (max-width: 400px) {
+  .motion-review { padding: 10px; }
+}
