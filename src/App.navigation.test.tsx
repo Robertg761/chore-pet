@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import { act } from 'react'
 import { click, input, render } from './test/react'
 import { emptySnapshot, selectHome, change } from './data/state'
 import { sampleHome } from './content/sampleHome'
@@ -104,4 +105,67 @@ it('invites the resident to explore without changing chores or saved pet data', 
   expect(ui.container.querySelector('.pet-explore [role="status"]')!.textContent).toContain('You invited Mochi')
   expect(ui.container.querySelector('.room-pet')).toBe(resident)
   expect(fixture.apply).not.toHaveBeenCalled()
+})
+
+
+it('offers player time in an empty room without saving changes', () => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date('2026-10-07T12:00:00'))
+  vi.spyOn(performance, 'now').mockReturnValue(0)
+  vi.stubGlobal('requestAnimationFrame', () => 1)
+  vi.stubGlobal('cancelAnimationFrame', () => {})
+  recovered()
+  fixture.state.snapshot.tables.placed_objects = {}
+  fixture.state.snapshot.tables.chores = {}
+  const ui = render(<App />); cleanups.push(ui.unmount)
+  const toggle = [...ui.container.querySelectorAll('button')].find(node => node.textContent === 'Spend time together')
+  expect(toggle).toBeDefined()
+  click(toggle!)
+  click([...ui.container.querySelectorAll('button')].find(node => node.textContent === 'Gentle pats')!)
+  expect(ui.container.querySelector('.living-room [aria-live]')!.textContent).not.toBe('')
+  expect(fixture.apply).not.toHaveBeenCalled()
+})
+
+it.each(['another furnished room', 'an empty room'] as const)('replaces optional controls when focusing %s', destination => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date('2026-10-07T12:00:00'))
+  vi.stubGlobal('requestAnimationFrame', () => 1)
+  vi.stubGlobal('cancelAnimationFrame', () => {})
+  recovered()
+  const tables = fixture.state.snapshot.tables
+  const first = Object.values(tables.rooms)[0]
+  const second = { ...first, id: 'second-room', type: 'bedroom' as const }
+  tables.rooms[second.id] = second
+  if (destination === 'another furnished room') {
+    const object = Object.values(tables.placed_objects)[0]
+    tables.placed_objects['second-object'] = { ...object, id: 'second-object', roomId: second.id }
+  }
+  const ui = render(<App />); cleanups.push(ui.unmount)
+  click(ui.container.querySelector('.pet-explore-toggle')!)
+  click(ui.container.querySelector('.pet-play-toggle')!)
+  const select = ui.container.querySelector<HTMLSelectElement>('.room-controls-focus select')!
+  act(() => { select.value = second.id; select.dispatchEvent(new Event('change', { bubbles: true })) })
+  expect(ui.container.querySelectorAll('.pet-explore-toggle')).toHaveLength(destination === 'an empty room' ? 0 : 1)
+  expect(ui.container.querySelectorAll('.pet-play-toggle')).toHaveLength(1)
+  expect(ui.container.querySelector('.pet-play-toggle')!.getAttribute('aria-expanded')).toBe('false')
+  if (destination === 'another furnished room') {
+    const choices = ui.container.querySelector<HTMLSelectElement>('.pet-explore select')!
+    expect([...choices.options].map(option => option.value)).toEqual(['second-object'])
+    expect(ui.container.querySelector('.pet-explore-toggle')!.getAttribute('aria-expanded')).toBe('false')
+  }
+})
+
+it('removes Explore when the last furnishing disappears while Home stays mounted', () => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date('2026-10-07T12:00:00'))
+  vi.stubGlobal('requestAnimationFrame', () => 1)
+  vi.stubGlobal('cancelAnimationFrame', () => {})
+  recovered()
+  const ui = render(<App />); cleanups.push(ui.unmount)
+  click(ui.container.querySelector('.pet-explore-toggle')!)
+  fixture.state = { ...fixture.state, snapshot: { ...fixture.state.snapshot,
+    tables: { ...fixture.state.snapshot.tables, placed_objects: {} } } }
+  ui.rerender(<App />)
+  expect(ui.container.querySelectorAll('.pet-explore-toggle')).toHaveLength(0)
+  expect(ui.container.querySelectorAll('.pet-play-toggle')).toHaveLength(1)
 })

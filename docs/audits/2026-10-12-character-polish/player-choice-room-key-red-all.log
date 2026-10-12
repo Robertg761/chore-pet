@@ -1,0 +1,89 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/App.navigation.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+stderr | src/App.navigation.test.tsx > replaces optional controls when focusing another furnished room
+Encountered two children with the same key, `0eadf6e7-84ec-4bf6-9be3-570adc9d6edc:dc7ca7dd-8fe7-44d9-9aa1-0404898fc34d`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+Encountered two children with the same key, `0eadf6e7-84ec-4bf6-9be3-570adc9d6edc:dc7ca7dd-8fe7-44d9-9aa1-0404898fc34d`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+Encountered two children with the same key, `0eadf6e7-84ec-4bf6-9be3-570adc9d6edc:second-room`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+Encountered two children with the same key, `0eadf6e7-84ec-4bf6-9be3-570adc9d6edc:second-room`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+
+stderr | src/App.navigation.test.tsx > replaces optional controls when focusing an empty room
+Encountered two children with the same key, `70a567c8-2986-46ea-930c-69e1ab16c524:7b2f8bde-1a33-4318-b449-42c730d546cd`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+Encountered two children with the same key, `70a567c8-2986-46ea-930c-69e1ab16c524:7b2f8bde-1a33-4318-b449-42c730d546cd`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+
+stderr | src/App.navigation.test.tsx > removes Explore when the last furnishing disappears while Home stays mounted
+Encountered two children with the same key, `81e925ae-7bb0-480c-9d68-bcee91824a47:28da81bd-4224-461d-94de-f80813822aff`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+Encountered two children with the same key, `81e925ae-7bb0-480c-9d68-bcee91824a47:28da81bd-4224-461d-94de-f80813822aff`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+
+ ❯ src/App.navigation.test.tsx (9 tests | 3 failed) 949ms
+   × replaces optional controls when focusing another furnished room 117ms
+   × replaces optional controls when focusing an empty room 92ms
+   × removes Explore when the last furnishing disappears while Home stays mounted 61ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.navigation.test.tsx > replaces optional controls when focusing another furnished room
+AssertionError: expected …(2) to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/App.navigation.test.tsx:148:64
+    146|   const select = ui.container.querySelector<HTMLSelectElement>('.room-…
+    147|   act(() => { select.value = second.id; select.dispatchEvent(new Event…
+    148|   expect(ui.container.querySelectorAll('.pet-explore-toggle')).toHaveL…
+       |                                                                ^
+    149|   expect(ui.container.querySelectorAll('.pet-play-toggle')).toHaveLeng…
+    150|   expect(ui.container.querySelector('.pet-play-toggle')!.getAttribute(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/App.navigation.test.tsx > replaces optional controls when focusing an empty room
+AssertionError: expected <button type="button" …(3)></button> to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/App.navigation.test.tsx:148:64
+    146|   const select = ui.container.querySelector<HTMLSelectElement>('.room-…
+    147|   act(() => { select.value = second.id; select.dispatchEvent(new Event…
+    148|   expect(ui.container.querySelectorAll('.pet-explore-toggle')).toHaveL…
+       |                                                                ^
+    149|   expect(ui.container.querySelectorAll('.pet-play-toggle')).toHaveLeng…
+    150|   expect(ui.container.querySelector('.pet-play-toggle')!.getAttribute(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/App.navigation.test.tsx > removes Explore when the last furnishing disappears while Home stays mounted
+AssertionError: expected <button type="button" …(3)></button> to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/App.navigation.test.tsx:169:64
+    167|     tables: { ...fixture.state.snapshot.tables, placed_objects: {} } }…
+    168|   ui.rerender(<App />)
+    169|   expect(ui.container.querySelectorAll('.pet-explore-toggle')).toHaveL…
+       |                                                                ^
+    170|   expect(ui.container.querySelectorAll('.pet-play-toggle')).toHaveLeng…
+    171| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 6 passed (9)
+   Start at  17:43:46
+   Duration  2.42s (tests 41%, transform 41%, environment 11%, import 7%)
+

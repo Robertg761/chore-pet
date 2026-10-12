@@ -1,0 +1,118 @@
+✖ native player choices stay still and fit 320px (798.285796ms)
+✖ native player choices stay still and fit 390px (738.95051ms)
+✖ native player choices stay still and fit 1280px (950.546222ms)
+✖ native player choices stay still and fit 640px (804.288237ms)
+✖ native player choices stay still and fit 844px (790.459171ms)
+✖ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (747.524716ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 0
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5203.218463
+
+✖ failing tests:
+
+test at scripts/browser/pet-play.test.mjs:32:3
+✖ native player choices stay still and fit 320px (798.285796ms)
+  AssertionError [ERR_ASSERTION]: home must offer optional player choices
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:39:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-play.test.mjs:32:3
+✖ native player choices stay still and fit 390px (738.95051ms)
+  AssertionError [ERR_ASSERTION]: home must offer optional player choices
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:39:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-play.test.mjs:32:3
+✖ native player choices stay still and fit 1280px (950.546222ms)
+  AssertionError [ERR_ASSERTION]: home must offer optional player choices
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:39:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-play.test.mjs:32:3
+✖ native player choices stay still and fit 640px (804.288237ms)
+  AssertionError [ERR_ASSERTION]: home must offer optional player choices
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:39:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-play.test.mjs:32:3
+✖ native player choices stay still and fit 844px (790.459171ms)
+  AssertionError [ERR_ASSERTION]: home must offer optional player choices
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:39:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-play.test.mjs:103:1
+✖ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (747.524716ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:109:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

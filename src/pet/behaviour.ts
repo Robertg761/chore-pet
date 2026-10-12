@@ -8,7 +8,8 @@ import { besideTiles, findPath, type Tile } from './pathfinding'
 
 // Keep the old public pathfinding imports valid without a behaviour/interaction cycle.
 export { besideTiles, findPath, type Tile } from './pathfinding'
-export type ReactionKind = 'tap' | 'celebrate' | 'celebrate-big'
+export type PlayerGesture = 'greet' | 'affection'
+export type ReactionKind = 'tap' | PlayerGesture | 'celebrate' | 'celebrate-big'
 type ReactionAction = 'greet' | 'affection' | 'celebrate' | 'celebrate-big'
 export type Walk = {
   kind: 'walk'; path: Tile[]; stepStart: number; then: 'idle' | 'look'
@@ -441,7 +442,7 @@ export function react(state: PetState, now: number, kind: ReactionKind): PetStat
   const action: ReactionAction = kind === 'tap' ? count % 2 ? 'greet' : 'affection' : kind
   const next = change(state, { kind: 'react', action, start: now, until: now + ACTION_MS[action] }, now)
   const frozen = freeze(state, now)
-  return { ...next, tile: frozen.tile, position: frozen.position, resume: frozen.resume, reactions: count, pendingTap: kind === 'tap' ? false : pendingTap, noticeStart: undefined }
+  return { ...next, tile: frozen.tile, position: frozen.position, resume: frozen.resume, reactions: count, pendingTap: kind === 'tap' || kind === 'greet' || kind === 'affection' ? false : pendingTap, noticeStart: undefined }
 }
 export function tap(state: PetState, now: number): PetState { return react(state, now, 'tap') }
 export function needsRender(prev: PetState, next: PetState): boolean {

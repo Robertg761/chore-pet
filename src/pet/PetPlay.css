@@ -1,0 +1,10 @@
+.pet-play { flex: none; width: 100%; min-width: 0; }
+.pet-play button { scroll-margin-block: 10px; }
+.pet-play-toggle { min-height: 44px; padding: 8px 12px; font-size: 0.875rem; }
+.pet-play-panel { margin-top: 8px; padding: 12px; border: var(--outline); border-radius: var(--radius); background: var(--card); }
+.pet-play-panel[hidden] { display: none; }
+.pet-play-actions { display: flex; flex-wrap: wrap; gap: 10px; min-width: 0; }
+.pet-play-actions .btn { flex: 1 1 120px; min-height: 48px; }
+.pet-play-note, .pet-play-feedback { margin: 8px 0 0; font-size: 0.875rem; font-weight: 700; overflow-wrap: anywhere; }
+.pet-play-note { color: var(--ink-soft); }
+.pet-play-feedback:empty { margin: 0; }

@@ -55,6 +55,7 @@ import { checkPlacement, turned } from './room/grid'
 import { lookup } from './room/placement'
 import { LivingRoom, type Celebration, type LivingRoomControl } from './pet/LivingRoom'
 import { PetExplore } from './pet/PetExplore'
+import { PetPlay } from './pet/PetPlay'
 import { CatalogTray } from './screens/CatalogTray'
 import { CharacterCreator } from './screens/CharacterCreator'
 import { ChoreEditor } from './screens/ChoreEditor'
@@ -992,6 +993,10 @@ export default function App() {
           dueChore: hasDueChore(chores, completions, today, home.vacations),
         }) && <FirstDoneHint onClose={() => flag(hintKey(home.id))} />}
         {choreList(!wide)}
+        {room && <PetPlay key={`play:${home.id}:${room.id}`} petName={pet.name}
+          blocked={away ? 'away' : condition.mood === 'sick' ? 'sick' : travel.journey || resident?.id !== room.id ? 'travel' : undefined}
+          onReact={action => !travel.journey && resident?.id === room.id
+            ? residentControl.current?.respond(action) ?? 'unavailable' : 'unavailable'} />}
       </div>
 
       {!syncNote && (

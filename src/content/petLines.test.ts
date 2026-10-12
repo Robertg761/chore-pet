@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { ALL_ENTRIES, CATALOG } from '../catalog/objects'
 import {
   BIG_DONE_LINES,
+  GREETING_LINES,
+  AFFECTION_LINES,
   CALM_OBJECT_LINES,
   calmObjectLine,
   doneLine,
@@ -38,6 +40,8 @@ const ALL_LISTS: Record<string, string[]> = {
   ...Object.fromEntries(Object.entries(CALM_OBJECT_LINES).map(([id, l]) => [`CALM_OBJECT_LINES.${id}`, l])),
   CHORE_LINES,
   TAP_LINES,
+  GREETING_LINES,
+  AFFECTION_LINES,
   DONE_LINES,
   VACATION_LINES,
   WELCOME_LINES,
@@ -60,6 +64,10 @@ describe('line lists', () => {
     for (const lines of Object.values(OBJECT_LINES)) {
       expect(lines.length).toBeGreaterThanOrEqual(2)
       expect(lines.length).toBeLessThanOrEqual(3)
+    }
+    for (const lines of [GREETING_LINES, AFFECTION_LINES]) {
+      expect(lines.length).toBeGreaterThanOrEqual(3)
+      expect(lines.length).toBeLessThanOrEqual(4)
     }
     expect(CHORE_LINES.length).toBeGreaterThan(0)
     expect(TAP_LINES.length).toBeGreaterThanOrEqual(6)

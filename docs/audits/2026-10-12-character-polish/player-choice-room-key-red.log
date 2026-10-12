@@ -1,0 +1,65 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/App.navigation.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+stderr | src/App.navigation.test.tsx > replaces optional controls when focusing another furnished room
+Encountered two children with the same key, `9a827f1a-c884-48c1-adc1-42c8c5505df3:c754888f-cecf-4882-b0b0-e71fde2f2b94`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+Encountered two children with the same key, `9a827f1a-c884-48c1-adc1-42c8c5505df3:c754888f-cecf-4882-b0b0-e71fde2f2b94`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+Encountered two children with the same key, `9a827f1a-c884-48c1-adc1-42c8c5505df3:second-room`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+Encountered two children with the same key, `9a827f1a-c884-48c1-adc1-42c8c5505df3:second-room`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+
+stderr | src/App.navigation.test.tsx > replaces optional controls when focusing an empty room
+Encountered two children with the same key, `73380b82-de8d-4937-8849-aaf3b10e7b70:47963f74-e1e4-4076-a335-c731dc844d57`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+Encountered two children with the same key, `73380b82-de8d-4937-8849-aaf3b10e7b70:47963f74-e1e4-4076-a335-c731dc844d57`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+
+ ❯ src/App.navigation.test.tsx (8 tests | 2 failed) 887ms
+   × replaces optional controls when focusing another furnished room 117ms
+   × replaces optional controls when focusing an empty room 99ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.navigation.test.tsx > replaces optional controls when focusing another furnished room
+AssertionError: expected …(2) to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/App.navigation.test.tsx:148:64
+    146|   const select = ui.container.querySelector<HTMLSelectElement>('.room-…
+    147|   act(() => { select.value = second.id; select.dispatchEvent(new Event…
+    148|   expect(ui.container.querySelectorAll('.pet-explore-toggle')).toHaveL…
+       |                                                                ^
+    149|   expect(ui.container.querySelectorAll('.pet-play-toggle')).toHaveLeng…
+    150|   expect(ui.container.querySelector('.pet-play-toggle')!.getAttribute(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/App.navigation.test.tsx > replaces optional controls when focusing an empty room
+AssertionError: expected <button type="button" …(3)></button> to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/App.navigation.test.tsx:148:64
+    146|   const select = ui.container.querySelector<HTMLSelectElement>('.room-…
+    147|   act(() => { select.value = second.id; select.dispatchEvent(new Event…
+    148|   expect(ui.container.querySelectorAll('.pet-explore-toggle')).toHaveL…
+       |                                                                ^
+    149|   expect(ui.container.querySelectorAll('.pet-play-toggle')).toHaveLeng…
+    150|   expect(ui.container.querySelector('.pet-play-toggle')!.getAttribute(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 6 passed (8)
+   Start at  17:42:28
+   Duration  2.33s (tests 41%, transform 38%, environment 13%, import 8%)
+

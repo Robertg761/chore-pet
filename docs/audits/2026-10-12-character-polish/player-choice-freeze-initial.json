@@ -1,0 +1,30 @@
+{
+  "base": "96df2f3",
+  "sources": {
+    "src/App.tsx": "5bfdc3733a1eaf55e9ba699e3c61d370ac37fbb8d46d36090a6eab2014d99eaa",
+    "src/App.navigation.test.tsx": "5edd66426310fe8f24b597c5a84aba42ff0970d3a592ee66d1be157f3956fd2a",
+    "src/content/petLines.ts": "7ee56cb2e7d26be2caf438d4ce42b232b77450f4b878f18f8cffd61bc52f31cc",
+    "src/content/petLines.test.ts": "b2bf42518e2b56297bd19d71e0e45fbd82592ddccb7dfc3b8c84c10b08fdf605",
+    "src/pet/LivingRoom.tsx": "1bd1a91d633324e7d7e5e8403869de14f3714e1f313a52ab9e6381c977eb9850",
+    "src/pet/PetIntegration.test.tsx": "4a58225a8a6fa96e16b84c7463c83971270e42c74aa8f763148b2232ba6c8f1a",
+    "src/pet/behaviour.ts": "c9eafc68f5c898f4a68573c2a44169ea7a54c01a27f8ec83a3852e435a5fed4f",
+    "docs/ART.md": "7c0de6ea1235ca82b8fa9b8ff9d31bd4126d5dc3b40807b44514b1e6a93a4613",
+    "src/pet/PetPlay.tsx": "8d7bc1ea01a9db27652f431283102776bb277e817555f48dfc071b38923a9275",
+    "src/pet/PetPlay.css": "70c2f887a192ced26c237f9bc9d7f1f5263594c0104a1544f69a78b8e7648bf1",
+    "src/pet/PetPlay.test.tsx": "db7835b372e66ba2a0f3f1ab036fced7d37163ca7934decfa8d5f11d84a98540",
+    "src/pet/playerChoices.test.ts": "acc313a7c907fb4bfe9f21f7a8bd93ccd920aa3937f9b190495a20d5d6ac0bd2",
+    "scripts/browser/pet-play.test.mjs": "2976d676f10cf4b55567685ba4f71308336123409f8a3f4e7079ec2faa4e186b"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/player-choice-source.diff",
+    "sha256": "d140b7231fae658e2f58d0026d62f9d7501835d0559e33b9158315aeb9f62a51"
+  },
+  "captures": {
+    "docs/audits/2026-10-12-character-polish/player-choice-captures/play-1280.png": "8e342be3821c9845a2308075ea4c3e1e029d5a1506bc95dd496b1b84eb5b4429",
+    "docs/audits/2026-10-12-character-polish/player-choice-captures/play-320.png": "c8bab88e02029751936b384945631854f40faf962182f72787b003044590b62a",
+    "docs/audits/2026-10-12-character-polish/player-choice-captures/play-390.png": "43fd1f4b5a08714b3f12178025880ac9c3736b06e62eb323c69512efaefab6f8",
+    "docs/audits/2026-10-12-character-polish/player-choice-captures/play-640.png": "ac6a896642ccd244734f9f27160ca4e6fdf3d1212f5f2184481d7bc9633c259c",
+    "docs/audits/2026-10-12-character-polish/player-choice-captures/play-844.png": "8608e58e8781405fcc175194914a617d411c8d9b761a4c1b539a5e8a5c92a66c"
+  },
+  "scope": "Static review of the frozen player choice feature and captures. Root process verification recorded separately; human temporal and assistive technology playback remain open."
+}

@@ -1,0 +1,107 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/playerChoices.test.ts src/pet/PetPlay.test.tsx src/pet/PetIntegration.test.tsx src/App.navigation.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (80 tests | 3 failed) 1680ms
+   × accepts chosen player responses, coalesces busy requests and cancels an invited observation 15ms
+   × keeps a reduced player choice still, then returns to zero pending frames 7ms
+   × declines player choices during a chore cheer or rest without replacing dialogue 8ms
+ ❯ src/App.navigation.test.tsx (6 tests | 1 failed) 688ms
+   × offers player time in an empty room without saving changes 29ms
+ ❯ src/pet/PetPlay.test.tsx (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetPlay.test.tsx [ src/pet/PetPlay.test.tsx ]
+Error: Failed to resolve import "./PetPlay" from "src/pet/PetPlay.test.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /home/robert/.codex/worktrees/4511/chore-pet/src/pet/PetPlay.test.tsx:4:43
+  2  |  import { afterEach, expect, it, vi } from "vitest";
+  3  |  import { click, render } from "../test/react";
+  4  |  import { PetPlay } from "./PetPlay";
+     |                           ^
+  5  |  var _jsxFileName = "/home/robert/.codex/worktrees/4511/chore-pet/src/pet/PetPlay.test.tsx";
+  6  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
+ ❯ TransformPluginContext._formatLog node_modules/vite/dist/node/chunks/node.js:8766:39
+ ❯ TransformPluginContext.error node_modules/vite/dist/node/chunks/node.js:8763:14
+ ❯ normalizeUrl node_modules/vite/dist/node/chunks/node.js:26593:18
+ ❯ node_modules/vite/dist/node/chunks/node.js:26663:30
+ ❯ TransformPluginContext.transform node_modules/vite/dist/node/chunks/node.js:26629:4
+ ❯ EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/node.js:8545:14
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/node.js:20157:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.navigation.test.tsx > offers player time in an empty room without saving changes
+AssertionError: expected undefined to be defined
+ ❯ src/App.navigation.test.tsx:121:18
+    119|   const ui = render(<App />); cleanups.push(ui.unmount)
+    120|   const toggle = [...ui.container.querySelectorAll('button')].find(nod…
+    121|   expect(toggle).toBeDefined()
+       |                  ^
+    122|   click(toggle!)
+    123|   click([...ui.container.querySelectorAll('button')].find(node => node…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > accepts chosen player responses, coalesces busy requests and cancels an invited observation
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ src/pet/PetIntegration.test.tsx:854:43
+    852|   frame(210)
+    853|   const position = ui.container.querySelector('.room-pet')!.getAttribu…
+    854|   expect(typeof control.current!.respond).toBe('function')
+       |                                           ^
+    855|   act(() => { expect(control.current!.respond('affection')).toBe('star…
+    856|   expect(ui.container.querySelector('.room-pet')!.getAttribute('transf…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps a reduced player choice still, then returns to zero pending frames
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ src/pet/PetIntegration.test.tsx:874:43
+    872|   const control = createRef<LivingRoomControl>()
+    873|   const ui = mount(<LivingRoom {...props} mood="happy" control={contro…
+    874|   expect(typeof control.current!.respond).toBe('function')
+       |                                           ^
+    875|   const still = art(ui.container).querySelector('[data-character-body]…
+    876|   act(() => { expect(control.current!.respond('greet')).toBe('started'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > declines player choices during a chore cheer or rest without replacing dialogue
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ src/pet/PetIntegration.test.tsx:889:43
+    887|   const control = createRef<LivingRoomControl>()
+    888|   const ui = mount(<LivingRoom {...props} control={control} celebrate=…
+    889|   expect(typeof control.current!.respond).toBe('function')
+       |                                           ^
+    890|   const cheer = ui.container.querySelector('[aria-live]')!.textContent
+    891|   act(() => { expect(control.current!.respond('affection')).toBe('busy…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  3 failed | 1 passed (4)
+      Tests  4 failed | 87 passed (91)
+   Start at  17:30:37
+   Duration  4.90s (tests 53%, transform 24%, environment 17%, import 6%)
+
+    Isolate  4 workers spawned · ~268ms startup each (spawn + environment, per file)
+             at least ~805ms faster with isolate: false — reuses workers across files instead of one per file
+

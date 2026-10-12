@@ -1,0 +1,186 @@
+{
+  "baseCommit": "96df2f3",
+  "resources": "Heavy work sequential;NODE_OPTIONS=--max-old-space-size=768;nice -n10;one Vitest worker/one Chromium. About7GBavailableRAM,4.1GB/tmpfree. Account12%used,ordinary usage allowed;no spending beyond plan.",
+  "freeze": {
+    "base": "96df2f3",
+    "sources": {
+      "src/App.tsx": "28f584a15d7438e04f4164cdf9d1d3e6515e1fc423d3d0015d1bd105123387f0",
+      "src/App.navigation.test.tsx": "dc4e1b4961ad37755e67cb810429c2b79ec2c0daae51a798cb861639165bd5cc",
+      "src/content/petLines.ts": "7ee56cb2e7d26be2caf438d4ce42b232b77450f4b878f18f8cffd61bc52f31cc",
+      "src/content/petLines.test.ts": "b2bf42518e2b56297bd19d71e0e45fbd82592ddccb7dfc3b8c84c10b08fdf605",
+      "src/pet/LivingRoom.tsx": "1bd1a91d633324e7d7e5e8403869de14f3714e1f313a52ab9e6381c977eb9850",
+      "src/pet/PetIntegration.test.tsx": "4a58225a8a6fa96e16b84c7463c83971270e42c74aa8f763148b2232ba6c8f1a",
+      "src/pet/behaviour.ts": "c9eafc68f5c898f4a68573c2a44169ea7a54c01a27f8ec83a3852e435a5fed4f",
+      "docs/ART.md": "7c0de6ea1235ca82b8fa9b8ff9d31bd4126d5dc3b40807b44514b1e6a93a4613",
+      "src/pet/PetPlay.tsx": "8d7bc1ea01a9db27652f431283102776bb277e817555f48dfc071b38923a9275",
+      "src/pet/PetPlay.css": "70c2f887a192ced26c237f9bc9d7f1f5263594c0104a1544f69a78b8e7648bf1",
+      "src/pet/PetPlay.test.tsx": "db7835b372e66ba2a0f3f1ab036fced7d37163ca7934decfa8d5f11d84a98540",
+      "src/pet/playerChoices.test.ts": "acc313a7c907fb4bfe9f21f7a8bd93ccd920aa3937f9b190495a20d5d6ac0bd2",
+      "scripts/browser/pet-play.test.mjs": "f5bbeb4105d4ac71da49df7142ed7db432eaf15ed9b0a6d2f7cd9cf336aa6f99"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/player-choice-source.diff",
+      "sha256": "e519aa00b23ab48ba45465833bb7d94cb2fe4ac0d11c648b92321d4780f4638d"
+    },
+    "captures": {
+      "docs/audits/2026-10-12-character-polish/player-choice-captures/play-1280.png": "bdfb6d9561f69a7576a8f630aa40039ba73ad8dbcc2d6c8550c9a5ea4c98536e",
+      "docs/audits/2026-10-12-character-polish/player-choice-captures/play-320.png": "c8bab88e02029751936b384945631854f40faf962182f72787b003044590b62a",
+      "docs/audits/2026-10-12-character-polish/player-choice-captures/play-390.png": "43fd1f4b5a08714b3f12178025880ac9c3736b06e62eb323c69512efaefab6f8",
+      "docs/audits/2026-10-12-character-polish/player-choice-captures/play-640.png": "ac6a896642ccd244734f9f27160ca4e6fdf3d1212f5f2184481d7bc9633c259c",
+      "docs/audits/2026-10-12-character-polish/player-choice-captures/play-844.png": "8608e58e8781405fcc175194914a617d411c8d9b761a4c1b539a5e8a5c92a66c"
+    },
+    "scope": "Static review of the frozen player choice feature and captures. Root process verification recorded separately; human temporal and assistive technology playback remain open.",
+    "revision": "Distinct player-time key;three unit transition regressions and one native production room transition. Initial manifest/patch preserved with -initial suffix. Fresh capture regeneration:4PNGbytes identical;1280changed and root inspected final image. Final capture hashes recorded here."
+  },
+  "checks": [
+    {
+      "name": "red",
+      "command": "npm test -- --maxWorkers=1 src/pet/playerChoices.test.ts src/pet/PetPlay.test.tsx src/pet/PetIntegration.test.tsx src/App.navigation.test.tsx",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-red.log",
+      "logSha256": "68d4a62cb788c41496194ddbe0415f2731d0c866ff37ec41082c94eef3879f0b",
+      "exitCode": 1,
+      "result": "4failed tests plus missing PetPlay collection;87pass. Core choice behavior already passes baseline."
+    },
+    {
+      "name": "green",
+      "command": "npm test -- --maxWorkers=1 src/pet/playerChoices.test.ts src/pet/PetPlay.test.tsx src/pet/PetIntegration.test.tsx src/App.navigation.test.tsx src/content/petLines.test.ts",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-green.log",
+      "logSha256": "c669741c50ea619e20b317b0baa592c8660d83af50b03c3a0d6ffb076380f49b",
+      "exitCode": 0,
+      "result": "134pass/5files5.51s"
+    },
+    {
+      "name": "browser-red",
+      "command": "CHROME=/usr/bin/chromium node --test --test-concurrency=1 scripts/browser/pet-play.test.mjs",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-browser-red.log",
+      "logSha256": "03f00f969f734fa180e98154aa20c07e6955e27238832772e069f891f562e2d1",
+      "exitCode": 1,
+      "result": "6fail on prior production artifact; missing Spend time together"
+    },
+    {
+      "name": "build",
+      "command": "npm run build",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-build.log",
+      "logSha256": "009d853ea81d5e2c1fb49f0d0baa906d8392c16d9fbcbe45e8609b53b5c390fa",
+      "exitCode": 0,
+      "result": "TypeScript and production build; product sources unchanged afterward"
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "zero warnings"
+    },
+    {
+      "name": "browser-first",
+      "command": "CHROME=/usr/bin/chromium node --test --test-concurrency=1 scripts/browser/pet-play.test.mjs",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-browser-first.log",
+      "logSha256": "36f09814ca3b67f4db7ed60d1861bb77989b1efe8d304c11b9b77e4ceb34d895",
+      "exitCode": 0,
+      "result": "6pass10.66s; before added character visibility assertion"
+    },
+    {
+      "name": "browser-visibility",
+      "command": "CHROME=/usr/bin/chromium node --test --test-concurrency=1 scripts/browser/pet-play.test.mjs",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-browser-visibility.log",
+      "logSha256": "ab95df35fbdb751f0116893f918d27f59f33bfd0d289cefaa2d1048a128ef3f6",
+      "exitCode": 0,
+      "result": "6pass10.76s; includes95%character visible area through clipping ancestors at both choices"
+    },
+    {
+      "name": "full",
+      "command": "npm test -- --maxWorkers=1",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-full.log",
+      "logSha256": "1b569d899584692f20ad7703491d95047ee65cbb0f32d36ebe4105d25d7d97e8",
+      "exitCode": 0,
+      "result": "2083pass/95files60.44s"
+    },
+    {
+      "name": "browser-final",
+      "command": "CHROME=/usr/bin/chromium node --test --test-concurrency=1 scripts/browser/pet-play.test.mjs scripts/browser/pet-explore.test.mjs scripts/browser/pet-motion.test.mjs scripts/browser/pet-idle-clock.test.mjs scripts/browser/pet-environment-attention.test.mjs scripts/browser/rooms.test.mjs",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-browser-final.log",
+      "logSha256": "ddf1d8c529e88b8d7c0743fd49dfedddfccdad88cb8671dee5a0468684ffd5e5",
+      "exitCode": 0,
+      "result": "32\n\u2139 suites 0\n\u2139 pass 32\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 46442.543902"
+    },
+    {
+      "name": "room-key-red",
+      "command": "npm test -- --maxWorkers=1 src/App.navigation.test.tsx",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-room-key-red.log",
+      "logSha256": "df473870ba14bea59dfc6fb6681d3bc02f64ce478b8018d0eb43c0d1d1c16a1e",
+      "exitCode": 1,
+      "result": "2fail/6pass; stale Explore after furnished/empty room changes"
+    },
+    {
+      "name": "room-key-red-all",
+      "command": "npm test -- --maxWorkers=1 src/App.navigation.test.tsx",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-room-key-red-all.log",
+      "logSha256": "7278a6d8ebab10c5b9e986e8797f10e945daf3821273cba1c18f62269ffec863",
+      "exitCode": 1,
+      "result": "3fail/6pass; adds last-furnishing disappearance"
+    },
+    {
+      "name": "room-key-browser-red",
+      "command": "CHROME=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='room changes' scripts/browser/pet-play.test.mjs",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-room-key-browser-red.log",
+      "logSha256": "076b9fac7192c4a3278e33438220ddc23e62d85ae2ccf3e65fdf84d98cef3d99",
+      "exitCode": 1,
+      "result": "Fixture error: exact room accessible label did not match;locator timeout,not product reproduction"
+    },
+    {
+      "name": "room-key-browser-red-corrected",
+      "command": "CHROME=/usr/bin/chromium node --test --test-concurrency=1 --test-name-pattern='room changes' scripts/browser/pet-play.test.mjs",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-room-key-browser-red-corrected.log",
+      "logSha256": "d7e0cbfc1f4164a44acf9a7162b80bf1d3ece5c7f146993b640a661615c83ffa",
+      "exitCode": 1,
+      "result": "Actual product reproduction:2Explore controls instead of1"
+    },
+    {
+      "name": "green-final",
+      "command": "npm test -- --maxWorkers=1 src/pet/playerChoices.test.ts src/pet/PetPlay.test.tsx src/pet/PetIntegration.test.tsx src/App.navigation.test.tsx src/content/petLines.test.ts",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-green-final.log",
+      "logSha256": "9b8cab125e073a4dabb119f359e36a976a25c41f694b21d33a6e2b03f0f48bc9",
+      "exitCode": 0,
+      "result": "137pass/5files5.45s; includes three key-cleanup transitions"
+    },
+    {
+      "name": "build-final",
+      "command": "npm run build",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-build-final.log",
+      "logSha256": "93a0a305d20978f990e776c1dd4988036d29cc86f8fdafe2b36a7daf58a2dc36",
+      "exitCode": 0,
+      "result": "Final corrected key,TypeScript/production build"
+    },
+    {
+      "name": "lint-final",
+      "command": "npm run lint",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Final zero warnings"
+    },
+    {
+      "name": "browser-key-final",
+      "command": "CHORE_PLAY_CAPTURE_DIR=docs/audits/2026-10-12-character-polish/player-choice-captures CHROME=/usr/bin/chromium node --test --test-concurrency=1 scripts/browser/pet-play.test.mjs",
+      "log": "docs/audits/2026-10-12-character-polish/player-choice-browser-key-final.log",
+      "logSha256": "e0962deed57e6fd1aa557f7fe9263e66d6da235d7ffe371c195788391783605e",
+      "exitCode": 0,
+      "result": "7pass0fail11.7899s;4capture bytes identical,1280changed/final root inspected"
+    }
+  ],
+  "limits": [
+    "Root inspected320/640viewport stills;independent reviewer inspects all5.",
+    "Static/native SVG and scheduling checks do not establish human temporal or assistive technology playback.",
+    "No CPU or battery savings measurement."
+  ],
+  "pending": [],
+  "verificationScope": "Full2083unit and32browser results predate only the distinct PetPlay sibling key and its additional cleanup tests. Final137focused/build/lint bind the corrected key; final7browser exit0. Next-batch missing-export unit test was preserved as pointer-attention-red-test.tsx.txt outside src after its expected5failure red run; it is not part of batch17.",
+  "captureCorrection": "Root prematurely told reviewer all5capture hashes matched before inspecting comparison result. Immediately corrected:only1280changed. Root inspected final1280;current final hashes frozen separately from preserved initialmanifest.",
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/player-choice-review.md",
+    "sha256": "42bf643b6f7ecbe17509b3d9c23b8cc4ca6f750032f112b417e4751a49ed1cb2",
+    "result": "Revised13-file static/still approval;P2sibling-key closed. Originalfinding/historypreserved. Root execution separate."
+  }
+}

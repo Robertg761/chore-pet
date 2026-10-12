@@ -1,0 +1,22 @@
+✖ room changes remove the previous furnishing choices and reset player-time controls (4802.023751ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5442.682283
+
+✖ failing tests:
+
+test at scripts/browser/pet-play.test.mjs:126:1
+✖ room changes remove the previous furnishing choices and reset player-time controls (4802.023751ms)
+  locator.selectOption: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByLabel('Focused room', { exact: true })[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:151:58) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByLabel('Focused room', { exact: true })" ]
+  }

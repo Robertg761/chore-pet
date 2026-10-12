@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { catalogEntry } from '../catalog/objects'
 import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
 import { ACTION_MS } from '../character/motion'
-import { CAUGHT_UP_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
+import { AFFECTION_LINES, CAUGHT_UP_LINES, GREETING_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
 import { messiestObject } from '../domain/mess'
 import type { NeglectLevel } from '../domain/neglect'
 import type { ChoreStatus } from '../domain/schedule'
@@ -15,7 +15,7 @@ import { SceneContext } from '../room/sceneContext'
 import { petObstacles } from './obstacles'
 import { PET_STROKE_SCALE, ROOM_WIDTH, petTransform } from '../room/shell/geometry'
 import { play } from '../audio/sfx'
-import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sortTile, step, tap, visitObject, type PetState, type Tile, type World } from './behaviour'
+import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sortTile, step, tap, visitObject, type PetState, type PlayerGesture, type Tile, type World } from './behaviour'
 import { motionFor } from './activityMotion'
 import { interactionTargets } from './interactions'
 import { usePetMotion } from './usePetMotion'
@@ -64,7 +64,11 @@ export interface LivingRoomProps {
 }
 
 export type VisitResult = 'started' | 'still' | 'busy' | 'resting' | 'unreachable' | 'unavailable'
-export interface LivingRoomControl { lookAt: (objectId: string) => VisitResult }
+export type PlayerResponseResult = 'started' | 'busy' | 'resting' | 'unavailable'
+export interface LivingRoomControl {
+  lookAt: (objectId: string) => VisitResult
+  respond: (action: PlayerGesture) => PlayerResponseResult
+}
 
 function objectDialogue({ objects, stages, neglect, chores }: Pick<LivingRoomProps, 'objects' | 'stages' | 'neglect' | 'chores'>, objectId: string, seed: number): string | null {
   const target = objects.find(object => object.id === objectId)
@@ -232,7 +236,19 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     advance(advanceState(live.current.state, world, now, reduced), now)
   }, [advance, world])
 
-  useImperativeHandle(control, () => ({ lookAt: objectId => {
+  useImperativeHandle(control, () => ({ respond: action => {
+    if (away || mood === 'sick') return 'resting'
+    const now = performance.now()
+    const current = advanceState(live.current.state, world, now, motion.current?.reduced ?? false)
+    if (current.activity.kind === 'react' && now < current.activity.until) return 'busy'
+    invitation.current = null
+    attention.current.pointer = null
+    const next = react(current, now, action)
+    advance(next, now)
+    play('chirp')
+    setSaid({ text: pickLine(action === 'greet' ? GREETING_LINES : AFFECTION_LINES, next.beat), heard: true })
+    return 'started'
+  }, lookAt: objectId => {
     if (away || mood === 'sick') return 'resting'
     if (!objects.some(object => object.id === objectId && catalogEntry(object.catalogId))) return 'unreachable'
     const now = performance.now(), reduced = motion.current?.reduced ?? false
