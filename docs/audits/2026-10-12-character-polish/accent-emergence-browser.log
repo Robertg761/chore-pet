@@ -1,0 +1,51 @@
+✔ creator previews the actual character while keeping face choices visible at 320x568 (4018.229186ms)
+✔ creator previews the actual character while keeping face choices visible at 844x390 (3356.677506ms)
+✔ creator previews the actual character while keeping face choices visible at 1280x800 (3392.528252ms)
+✔ creator settles live reduction and initial reduction keeps look choices available (3806.042422ms)
+✔ keyboard Enter reaches and activates the resident without moving its world position (1022.295893ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (1181.648758ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (2921.26188ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.0140 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1079.885526ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.2153 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (1807.201614ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (876.751741ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1252.403215ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (1302.65431ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 496ms; lift sampled at 1252ms; landing at 1672ms
+✔ native player choices stay still and fit 320px (2087.725488ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2013.522159ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2065.115951ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2005.685155ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2031.190568ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (900.928473ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2322.667521ms)
+ℹ Chromium 152.0.7977.82; join0.2253roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1777.704496ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (2231.158265ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (2164.424532ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (2204.542558ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (2200.501266ms)
+✔ wardrobe live reduced motion settles the preview and does not restart when restored (2013.098366ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 53591.429436

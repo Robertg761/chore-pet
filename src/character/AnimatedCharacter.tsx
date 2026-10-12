@@ -27,7 +27,7 @@ export function AnimatedCharacterArt({ species, mood, pose, frame: input, ...pro
       </g>
       <g data-character-accents="" aria-hidden="true" pointerEvents="none" opacity={resting ? 0 : frame.accentOpacity}>
         <StrokeScaleContext.Provider value={props.strokeScale ?? 1}>
-          <CheerMarks heart={[24, 66, 18]} star={[176, 54, 16]} />
+          <CheerMarks heart={[24, 66, 18]} star={[176, 54, 16]} emergence={resting ? undefined : frame.accentOpacity} />
         </StrokeScaleContext.Provider>
       </g>
     </g>

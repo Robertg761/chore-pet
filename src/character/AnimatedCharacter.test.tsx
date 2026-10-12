@@ -6,6 +6,7 @@ import { render } from '../test/react'
 import { PALETTE } from '../art/palette'
 import type { Species } from '../domain/types'
 import { AnimatedCharacterArt } from './AnimatedCharacter'
+import { CheerMarks } from './accent'
 import { Character, CharacterArt } from './Character'
 import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionFrame } from './motion'
 import { articulatedFaceDelta, articulatedPose } from './species/animatedBody'
@@ -619,5 +620,50 @@ describe('AnimatedCharacterArt', () => {
         }
       }
     }
+  })
+})
+
+describe('reaction accent emergence', () => {
+  it('preserves static cheering markup and the exact animated peak', () => {
+    const marks = { heart: [24, 66, 18] as [number, number, number], star: [176, 54, 16] as [number, number, number] }
+    const staticArt = renderToStaticMarkup(<svg><CheerMarks {...marks} /></svg>)
+    expect(renderToStaticMarkup(<svg><CheerMarks {...marks} emergence={1} /></svg>)).toBe(staticArt)
+    expect(staticArt).toContain('translate(24 66) rotate(-12)')
+    expect(staticArt).toContain('translate(176 54) rotate(10)')
+    expect(staticArt).not.toContain('scale(')
+  })
+
+  it.each(speciesList)('grows the %s marks at their own anchors without moving the dressed body', species => {
+    const ui = mount(art(species))
+    const body = ui.container.querySelector('[data-character-body]')!.outerHTML
+    const ground = ui.container.querySelector('[data-character-ground]')!.outerHTML
+    const measure = (strength: number) => {
+      ui.rerender(art(species, { ...neutral, accentOpacity: strength }))
+      const group = ui.container.querySelector('[data-character-accents]')!
+      expect(group.getAttribute('opacity')).toBe(String(strength))
+      expect(group.getAttribute('pointer-events')).toBe('none')
+      expect(ui.container.querySelector('[data-character-body]')!.outerHTML).toBe(body)
+      expect(ui.container.querySelector('[data-character-ground]')!.outerHTML).toBe(ground)
+      const paths = [...group.querySelectorAll('path')]
+      expect(paths).toHaveLength(2)
+      return paths.map(path => {
+        const centre = worldPoint(path, 0, 0), edge = worldPoint(path, 1, 0)
+        return { centre, scale: Math.hypot(edge[0] - centre[0], edge[1] - centre[1]) }
+      })
+    }
+    const early = measure(.25), late = measure(.75), peak = measure(1)
+    for (let i = 0; i < 2; i++) {
+      expect(early[i].scale).toBeLessThan(late[i].scale)
+      expect(late[i].scale).toBeLessThan(peak[i].scale)
+      expect(early[i].scale).toBeGreaterThanOrEqual(.7)
+      expect(peak[i].scale).toBeCloseTo(1)
+      expect(early[i].centre[1]).toBeGreaterThan(late[i].centre[1])
+      expect(late[i].centre[1]).toBeGreaterThan(peak[i].centre[1])
+      expect(early[i].centre[0]).toBeCloseTo(peak[i].centre[0])
+      expect(early[i].centre[1] - peak[i].centre[1]).toBeLessThanOrEqual(4)
+    }
+    expect(peak.map(mark => mark.centre)).toEqual([[24, 66], [176, 54]])
+    expect(measure(.25)).toEqual(early)
+    measure(0)
   })
 })

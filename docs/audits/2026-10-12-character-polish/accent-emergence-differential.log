@@ -1,0 +1,3 @@
+/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/compare-accent-emergence.py:19: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for index, (a, b) in enumerate(zip(old.getdata(), new.getdata())):
+Compared36frames/108views:12peak cells exact,24nonpeak cells changed only near marks;9648changed pixels

@@ -1,0 +1,4 @@
+npm notice run chore-pet@0.0.0 lint
+npm notice run oxlint
+docs/audits/2026-10-12-character-polish/review-visibility-gallery-diagnostic.mjs:10:82: warning eslint(no-useless-escape): Unnecessary escape character '"' help: Replace `\"` with `"`.
+docs/audits/2026-10-12-character-polish/review-visibility-gallery-diagnostic.mjs:10:104: warning eslint(no-useless-escape): Unnecessary escape character '"' help: Replace `\"` with `"`.

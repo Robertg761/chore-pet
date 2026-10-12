@@ -7,7 +7,7 @@ test('diagnose gallery review control and preview geometry', async t => {
   await review.getByRole('heading',{name:'Deterministic motion review'}).waitFor()
   await page.clock.install(); await page.clock.pauseAt(Date.now()+1000)
   await review.getByRole('button',{name:'Play',exact:true}).click()
-  const measure=()=>page.evaluate(()=>({time:document.querySelector('[aria-label=\"Elapsed milliseconds\"]')?.value, previews:(()=>{const r=document.querySelector('.motion-review-previews').getBoundingClientRect();return {top:r.top,bottom:r.bottom,viewport:innerHeight}})(),status:document.querySelector('.motion-review fieldset p')?.textContent}))
+  const measure=()=>page.evaluate(()=>({time:document.querySelector('[aria-label="Elapsed milliseconds"]')?.value, previews:(()=>{const r=document.querySelector('.motion-review-previews').getBoundingClientRect();return {top:r.top,bottom:r.bottom,viewport:innerHeight}})(),status:document.querySelector('.motion-review fieldset p')?.textContent}))
   t.diagnostic(JSON.stringify({afterPlay:await measure()}))
   await page.clock.runFor(128)
   t.diagnostic(JSON.stringify({beforeScroll:await measure()}))

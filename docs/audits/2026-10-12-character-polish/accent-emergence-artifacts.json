@@ -1,0 +1,10 @@
+{
+  "docs/audits/2026-10-12-character-polish/accent-emergence-before-sizes.png": "4c7766209ce7c783d5b731620ee79183cf164fe718e4f619fed18030600458bc",
+  "docs/audits/2026-10-12-character-polish/accent-emergence-after-sizes.png": "ac1fc52f4846c2e3476bfdaf24384505d8f717a931f7658bd05bfb54780bcb2e",
+  "docs/audits/2026-10-12-character-polish/accent-emergence-before.json": "17ed388e798f864872e44f87975bb4e6a9bfadacfa0fb29658f03a1efe101a18",
+  "docs/audits/2026-10-12-character-polish/accent-emergence-after.json": "fb5893deb75cbbb5d42a4718c1d95e476185b398302395fe16c8db0608b59798",
+  "docs/audits/2026-10-12-character-polish/accent-emergence-differential.json": "3d7d8d8c00c25eff685ac1d565592373dba51268c20ffe33818012fbf0bfb630",
+  "docs/audits/2026-10-12-character-polish/accent-emergence-baseline-accent.tsx.txt": "31fc364708c971fca8141ab58d7ac6194521875acd025806f6556e46c673072a",
+  "docs/audits/2026-10-12-character-polish/accent-emergence-baseline-AnimatedCharacter.tsx.txt": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+  "docs/audits/2026-10-12-character-polish/accent-emergence-prior-diagnostic.mjs.txt": "c77dbbd0196d5bef0b0d2d562e4a21a04dd2bf77a7117301079b6cbd91ff2027"
+}

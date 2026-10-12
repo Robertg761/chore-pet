@@ -1,0 +1,300 @@
+diff --git c/docs/ART.md w/docs/ART.md
+index 56586de..f0d5eff 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -134,6 +134,7 @@ Every pose defines all six anchors (`src/character/slots.ts`). Items are drawn c
+ - Body outline, outfit clip, and wardrobe anchors share the same torso geometry and transform. Keep the slot order above, including front backpack straps. Preserve sick-bed and sleeping art and their hidden-slot rules during gentle notices.
+ - Walking phase follows accumulated route distance across tile boundaries. Departure fades in over 120ms and arrival fades out over 180ms across the whole journey. Do not restart the gait on each tile. Body lift stays within 24 SVG units; sampled scale stays within `[0.85,1.15]`.
+ - Greeting, affection, celebration, and big celebration last 1200, 1600, 1800, and 2200ms. Finite actions recover to their mood pose. Interruptions preserve the visible fractional world position and blend from the outgoing sampled pose. Rapid taps allow one pending response and reuse the same decorative accent nodes.
++- Sampled reaction marks emerge at their own anchors on the existing finite opacity envelope. The heart grows from 82% and rises 2 SVG units; the star grows from 70% and rises 4. Peak geometry and static cheering art remain exact. The marks settle back as they fade; they add no clock, state, or nodes and remain suppressed for resting poses and reduced motion.
+ - Greeting and wardrobe waves use species-specific held hand sweeps. Bun retains its lively cadence, Mochi sweeps more slowly, and Sprout uses a smaller, slower wave. Preserve action durations, gesture envelopes, torso/feet/appendages, gaze, wardrobe attachment and reduced-motion stills.
+ - Sampled art owns breathing, blinks, limb motion, and accents. Disable independent CSS breathing and blinking inside it. Reduced motion removes sampled displacement, gait, breathing, secondary sway, blinks, and animated accents while retaining still mood/reaction expressions. System preference changes apply during the session.
+ - Idle appendages follow the existing four-second breath with a small species-specific delay; they settle to neutral position and zero velocity at the loop boundary. Feet, body position and shadow stay fixed. Primary140ms blinks keep their lifetime phase across actions; every other primary blink has a second140ms blink after60ms fully open. Sleeping and sick art retain their existing static geometry.
+diff --git c/docs/audits/2026-10-12-character-polish/review-visibility-gallery-diagnostic.mjs w/docs/audits/2026-10-12-character-polish/review-visibility-gallery-diagnostic.mjs
+index 702eae3..9226f62 100644
+--- c/docs/audits/2026-10-12-character-polish/review-visibility-gallery-diagnostic.mjs
++++ w/docs/audits/2026-10-12-character-polish/review-visibility-gallery-diagnostic.mjs
+@@ -7,7 +7,7 @@ test('diagnose gallery review control and preview geometry', async t => {
+   await review.getByRole('heading',{name:'Deterministic motion review'}).waitFor()
+   await page.clock.install(); await page.clock.pauseAt(Date.now()+1000)
+   await review.getByRole('button',{name:'Play',exact:true}).click()
+-  const measure=()=>page.evaluate(()=>({time:document.querySelector('[aria-label=\"Elapsed milliseconds\"]')?.value, previews:(()=>{const r=document.querySelector('.motion-review-previews').getBoundingClientRect();return {top:r.top,bottom:r.bottom,viewport:innerHeight}})(),status:document.querySelector('.motion-review fieldset p')?.textContent}))
++  const measure=()=>page.evaluate(()=>({time:document.querySelector('[aria-label="Elapsed milliseconds"]')?.value, previews:(()=>{const r=document.querySelector('.motion-review-previews').getBoundingClientRect();return {top:r.top,bottom:r.bottom,viewport:innerHeight}})(),status:document.querySelector('.motion-review fieldset p')?.textContent}))
+   t.diagnostic(JSON.stringify({afterPlay:await measure()}))
+   await page.clock.runFor(128)
+   t.diagnostic(JSON.stringify({beforeScroll:await measure()}))
+diff --git c/scripts/browser/pet-play.test.mjs w/scripts/browser/pet-play.test.mjs
+index 0d9674e..cc17213 100644
+--- c/scripts/browser/pet-play.test.mjs
++++ w/scripts/browser/pet-play.test.mjs
+@@ -137,6 +137,23 @@ function readPet(node) {
+     }) }
+ }
+ 
++function readAccentMarks(node) {
++  return [...node.querySelectorAll('[data-character-accents] path')].map(path => {
++    const matrix = path.getCTM()
++    return { x: matrix.e, y: matrix.f, scale: Math.hypot(matrix.a, matrix.b) }
++  })
++}
++
++function assertAccentEmergence(early, peak) {
++  assert.equal(early.length, 2)
++  assert.equal(peak.length, 2)
++  for (let i = 0; i < early.length; i++) {
++    assert.ok(peak[i].scale > early[i].scale, 'each accent must emerge at its own anchor')
++    assert.ok(peak[i].y < early[i].y, 'each accent must rise gently into its peak')
++    assert.ok(Math.abs(peak[i].x - early[i].x) < .001, 'emergence must preserve horizontal placement')
++  }
++}
++
+ test('room changes remove the previous furnishing choices and reset player-time controls', async t => {
+   const page = await browserApp(t)
+   await page.evaluate(() => new Promise((resolve, reject) => {
+@@ -201,7 +218,10 @@ test('chosen affection joins a live step, ignores rapid busy choices, and honors
+   assert.equal(await resident.evaluate(node => node === window.__playPet), true)
+   const live = page.locator('.living-room [aria-live="polite"]')
+   const heard = await live.textContent()
+-  await page.clock.runFor(600)
++  await page.clock.runFor(384)
++  const earlyAccents = await resident.evaluate(readAccentMarks)
++  await page.clock.runFor(216)
++  assertAccentEmergence(earlyAccents, await resident.evaluate(readAccentMarks))
+   const active = await resident.evaluate(readPet)
+   for (let i = 0; i < 20; i++) await page.getByRole('button', { name: 'Wave', exact: true }).click()
+   const busy = await resident.evaluate(readPet)
+@@ -230,7 +250,10 @@ test('a chosen hop takes off and lands on the existing resident clock without ch
+   const before = await resident.evaluate(readPet)
+   const shadow = await resident.locator('[data-character-ground]').getAttribute('transform')
+   await page.getByRole('button', { name: 'Happy hop', exact: true }).click()
+-  await page.clock.runFor(756)
++  await page.clock.runFor(432)
++  const earlyAccents = await resident.evaluate(readAccentMarks)
++  await page.clock.runFor(324)
++  assertAccentEmergence(earlyAccents, await resident.evaluate(readAccentMarks))
+   const lifted = await resident.evaluate(readPet)
+   assert.equal(lifted.x, before.x)
+   assert.equal(lifted.y, before.y)
+diff --git c/src/character/AnimatedCharacter.test.tsx w/src/character/AnimatedCharacter.test.tsx
+index 32f1822..3da8390 100644
+--- c/src/character/AnimatedCharacter.test.tsx
++++ w/src/character/AnimatedCharacter.test.tsx
+@@ -6,6 +6,7 @@ import { render } from '../test/react'
+ import { PALETTE } from '../art/palette'
+ import type { Species } from '../domain/types'
+ import { AnimatedCharacterArt } from './AnimatedCharacter'
++import { CheerMarks } from './accent'
+ import { Character, CharacterArt } from './Character'
+ import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionFrame } from './motion'
+ import { articulatedFaceDelta, articulatedPose } from './species/animatedBody'
+@@ -621,3 +622,48 @@ describe('AnimatedCharacterArt', () => {
+     }
+   })
+ })
++
++describe('reaction accent emergence', () => {
++  it('preserves static cheering markup and the exact animated peak', () => {
++    const marks = { heart: [24, 66, 18] as [number, number, number], star: [176, 54, 16] as [number, number, number] }
++    const staticArt = renderToStaticMarkup(<svg><CheerMarks {...marks} /></svg>)
++    expect(renderToStaticMarkup(<svg><CheerMarks {...marks} emergence={1} /></svg>)).toBe(staticArt)
++    expect(staticArt).toContain('translate(24 66) rotate(-12)')
++    expect(staticArt).toContain('translate(176 54) rotate(10)')
++    expect(staticArt).not.toContain('scale(')
++  })
++
++  it.each(speciesList)('grows the %s marks at their own anchors without moving the dressed body', species => {
++    const ui = mount(art(species))
++    const body = ui.container.querySelector('[data-character-body]')!.outerHTML
++    const ground = ui.container.querySelector('[data-character-ground]')!.outerHTML
++    const measure = (strength: number) => {
++      ui.rerender(art(species, { ...neutral, accentOpacity: strength }))
++      const group = ui.container.querySelector('[data-character-accents]')!
++      expect(group.getAttribute('opacity')).toBe(String(strength))
++      expect(group.getAttribute('pointer-events')).toBe('none')
++      expect(ui.container.querySelector('[data-character-body]')!.outerHTML).toBe(body)
++      expect(ui.container.querySelector('[data-character-ground]')!.outerHTML).toBe(ground)
++      const paths = [...group.querySelectorAll('path')]
++      expect(paths).toHaveLength(2)
++      return paths.map(path => {
++        const centre = worldPoint(path, 0, 0), edge = worldPoint(path, 1, 0)
++        return { centre, scale: Math.hypot(edge[0] - centre[0], edge[1] - centre[1]) }
++      })
++    }
++    const early = measure(.25), late = measure(.75), peak = measure(1)
++    for (let i = 0; i < 2; i++) {
++      expect(early[i].scale).toBeLessThan(late[i].scale)
++      expect(late[i].scale).toBeLessThan(peak[i].scale)
++      expect(early[i].scale).toBeGreaterThanOrEqual(.7)
++      expect(peak[i].scale).toBeCloseTo(1)
++      expect(early[i].centre[1]).toBeGreaterThan(late[i].centre[1])
++      expect(late[i].centre[1]).toBeGreaterThan(peak[i].centre[1])
++      expect(early[i].centre[0]).toBeCloseTo(peak[i].centre[0])
++      expect(early[i].centre[1] - peak[i].centre[1]).toBeLessThanOrEqual(4)
++    }
++    expect(peak.map(mark => mark.centre)).toEqual([[24, 66], [176, 54]])
++    expect(measure(.25)).toEqual(early)
++    measure(0)
++  })
++})
+diff --git c/src/character/AnimatedCharacter.tsx w/src/character/AnimatedCharacter.tsx
+index a652ac0..65532ab 100644
+--- c/src/character/AnimatedCharacter.tsx
++++ w/src/character/AnimatedCharacter.tsx
+@@ -27,7 +27,7 @@ export function AnimatedCharacterArt({ species, mood, pose, frame: input, ...pro
+       </g>
+       <g data-character-accents="" aria-hidden="true" pointerEvents="none" opacity={resting ? 0 : frame.accentOpacity}>
+         <StrokeScaleContext.Provider value={props.strokeScale ?? 1}>
+-          <CheerMarks heart={[24, 66, 18]} star={[176, 54, 16]} />
++          <CheerMarks heart={[24, 66, 18]} star={[176, 54, 16]} emergence={resting ? undefined : frame.accentOpacity} />
+         </StrokeScaleContext.Provider>
+       </g>
+     </g>
+diff --git c/src/character/accent.tsx w/src/character/accent.tsx
+index 0743c0f..3470e7a 100644
+--- c/src/character/accent.tsx
++++ w/src/character/accent.tsx
+@@ -27,14 +27,18 @@ export function AccentMark({ kind, size, fill, ...rest }: { kind: 'heart' | 'sta
+ /** [x, y, size] for the heart and the star a cheering pose draws beside the pet. */
+ export type CheerSpots = { heart: [number, number, number]; star: [number, number, number] }
+ 
+-/** The accents of a cheering pose: a blush heart and a sunny star, the same in every species. */
+-export function CheerMarks({ heart, star }: CheerSpots) {
++/** Static cheers keep their original geometry. Sampled reactions can emerge at
++ * each mark's own anchor, using the existing finite gesture envelope. */
++export function CheerMarks({ heart, star, emergence }: CheerSpots & { emergence?: number }) {
++  const amount = emergence === undefined ? 1 : Number.isFinite(emergence) ? Math.max(0, Math.min(1, emergence)) : 0
++  const at = ([x, y]: [number, number, number], tilt: number, startScale: number, rise: number) =>
++    `translate(${x} ${y + rise * (1 - amount)}) rotate(${tilt})${amount === 1 ? '' : ` scale(${startScale + (1 - startScale) * amount})`}`
+   return (
+     <g aria-hidden="true">
+-      <g transform={`translate(${heart[0]} ${heart[1]}) rotate(-12)`}>
++      <g transform={at(heart, -12, 0.82, 2)}>
+         <AccentMark kind="heart" size={heart[2]} fill={blush} />
+       </g>
+-      <g transform={`translate(${star[0]} ${star[1]}) rotate(10)`}>
++      <g transform={at(star, 10, 0.7, 4)}>
+         <AccentMark kind="star" size={star[2]} fill={petDefault} />
+       </g>
+     </g>
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-accent-emergence.mjs 2/docs/audits/2026-10-12-character-polish/capture-accent-emergence.mjs
+new file mode 100644
+index 0000000..df8ce53
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-accent-emergence.mjs
+@@ -0,0 +1,51 @@
++// Bounded static production-art comparison; no browser or animation clock.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++
++const label = process.argv[2], out = 'docs/audits/2026-10-12-character-polish'
++if (!['before', 'after'].includes(label)) throw new Error('Expected before or after')
++const baselines = Object.fromEntries(await Promise.all(['accent.tsx', 'AnimatedCharacter.tsx'].map(async file =>
++  [`${process.cwd()}/src/character/${file}`, await readFile(`${out}/accent-emergence-baseline-${file}.txt`, 'utf8')])))
++const server = await createServer({ plugins: [{ name: 'accent-baseline', enforce: 'pre', transform(code, id) {
++  const source = baselines[id.split('?')[0]]
++  if (label === 'before' && source !== undefined) return { code: source, map: null }
++} }], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++  const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++  const { sampleMotion, ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts')
++  const { SPECIES_COLOUR, PALETTE } = await server.ssrLoadModule('/src/art/palette.ts')
++  const { PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++  const h = React.createElement, cells = [], samples = []
++  const equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++  for (const species of ['mochi', 'bun', 'sprout']) for (const action of ['affection', 'celebrate']) {
++    for (const facing of [1, -1]) for (const phase of [.24, .5, .8]) {
++      const frame = sampleMotion({ species, mood: 'happy', action, elapsedMs: ACTION_MS[action] * phase,
++        blinkMs: ACTION_MS[action] * phase, durationMs: ACTION_MS[action], distance: 0, facing, reducedMotion: false })
++      const views = [200, 60, 25].map((size, i) => h('g', { key: size,
++        transform: `translate(${[0, 205, 280][i]} ${100 - size / 2}) scale(${size / 200})` },
++      h('g', { transform: facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined },
++        h(AnimatedCharacterArt, { species, mood: 'happy', frame, equipped, bodyColour: SPECIES_COLOUR[species],
++          strokeScale: size === 25 ? PET_STROKE_SCALE : 1 }))))
++      cells.push(h('g', { key: cells.length, transform: `translate(${cells.length % 4 * 330} ${Math.floor(cells.length / 4) * 230})` },
++        views, h('text', { x: 8, y: 220, fontSize: 11, fill: PALETTE.ink }, `${species} ${action} f${facing} ${phase * 100}%;200/60/25px`)))
++      samples.push({ species, action, facing, phase, frame })
++    }
++  }
++  const markup = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width: 1320, height: 2070 },
++    h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), cells))
++  const png = `${out}/accent-emergence-${label}-sizes.png`
++  await writeFile(png, new Resvg(markup).render().asPng())
++  const hash = bytes => createHash('sha256').update(bytes).digest('hex')
++  const sources = ['src/character/accent.tsx', 'src/character/AnimatedCharacter.tsx', 'src/character/motion.ts',
++    'src/character/species/animatedBody.tsx', 'src/character/parts.tsx', `${out}/capture-accent-emergence.mjs`]
++  await writeFile(`${out}/accent-emergence-${label}.json`, JSON.stringify({ method:
++    '36 dressed samples:3species/2actions/2mirrors/3phases,108views200/60/25px. Baseline renderer/accent copies originate at597890d. Static comparison, not human temporal acceptance.',
++    samples, sourceSha256: Object.fromEntries(await Promise.all(sources.map(async path => [path,
++      hash(label === 'before' && baselines[`${process.cwd()}/${path}`] !== undefined ? baselines[`${process.cwd()}/${path}`] : await readFile(path))]))),
++    captureSha256: { [png]: hash(await readFile(png)) } }, null, 2) + '\n')
++  console.log(`Wrote ${label}:36dressed samples/108size views`)
++} finally { await server.close() }
+diff --git 1/docs/audits/2026-10-12-character-polish/compare-accent-emergence.py 2/docs/audits/2026-10-12-character-polish/compare-accent-emergence.py
+new file mode 100644
+index 0000000..9abf29c
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/compare-accent-emergence.py
+@@ -0,0 +1,59 @@
++"""Read captured PNGs and report exact pixel changes; never edit either image."""
++from pathlib import Path
++import hashlib
++import json
++from PIL import Image
++
++folder = Path(__file__).parent
++before = json.loads((folder / 'accent-emergence-before.json').read_text())
++after = json.loads((folder / 'accent-emergence-after.json').read_text())
++assert before['samples'] == after['samples'], 'Sampler frames must remain exact'
++for source in ['src/character/motion.ts', 'src/character/species/animatedBody.tsx', 'src/character/parts.tsx']:
++    assert before['sourceSha256'][source] == after['sourceSha256'][source], source
++
++old = Image.open(folder / 'accent-emergence-before-sizes.png').convert('RGBA')
++new = Image.open(folder / 'accent-emergence-after-sizes.png').convert('RGBA')
++assert old.size == new.size == (1320, 2070)
++counts = [0] * len(before['samples'])
++total = 0
++old_pixels, new_pixels = old.tobytes(), new.tobytes()
++for offset in range(0, len(old_pixels), 4):
++    if old_pixels[offset:offset + 4] == new_pixels[offset:offset + 4]:
++        continue
++    index = offset // 4
++    x, y = index % old.width, index // old.width
++    cell = x // 330 + y // 230 * 4
++    sample = before['samples'][cell]
++    assert sample['phase'] != .5, f'Peak geometry changed in cell {cell}'
++    local_x, local_y = x % 330 + .5, y % 230 + .5
++    permitted = False
++    for size, view_x in [(200, 0), (60, 205), (25, 280)]:
++        scale = size / 200
++        view_y = 100 - size / 2
++        for centre_x, centre_y in [(24, 66), (176, 54)]:
++            if sample['facing'] == -1:
++                centre_x = 200 - centre_x
++            if (abs(local_x - view_x - centre_x * scale) <= 14 * scale + 1.5
++                    and abs(local_y - view_y - centre_y * scale) <= 18 * scale + 1.5):
++                permitted = True
++    assert permitted, f'Unexpected pixel change outside accent regions: {x},{y}'
++    counts[cell] += 1
++    total += 1
++
++assert total > 0
++for sample, count in zip(before['samples'], counts):
++    assert (count == 0) == (sample['phase'] == .5), sample
++sha = lambda file: hashlib.sha256(file.read_bytes()).hexdigest()
++result = {
++    'method': 'Exact RGBA comparison of two 1320x2070 sheets. All changes must stay in conservative per-mark regions at each size and mirror. Peak cells are bitwise identical; all sampler frames match. This is static evidence, not human temporal acceptance.',
++    'unchangedSamplerFrames': len(before['samples']),
++    'unchangedPeakCells': counts.count(0),
++    'changedNonpeakCells': len(counts) - counts.count(0),
++    'changedPixels': total,
++    'cellChangedPixels': counts,
++    'artifactSha256': {str(file): sha(file) for file in [
++        folder / 'accent-emergence-before-sizes.png', folder / 'accent-emergence-after-sizes.png',
++        folder / 'accent-emergence-before.json', folder / 'accent-emergence-after.json', Path(__file__)]},
++}
++(folder / 'accent-emergence-differential.json').write_text(json.dumps(result, indent=2) + '\n')
++print(f"Compared36frames/108views:12peak cells exact,24nonpeak cells changed only near marks;{total}changed pixels")

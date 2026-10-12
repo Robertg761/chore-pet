@@ -27,14 +27,18 @@ export function AccentMark({ kind, size, fill, ...rest }: { kind: 'heart' | 'sta
 /** [x, y, size] for the heart and the star a cheering pose draws beside the pet. */
 export type CheerSpots = { heart: [number, number, number]; star: [number, number, number] }
 
-/** The accents of a cheering pose: a blush heart and a sunny star, the same in every species. */
-export function CheerMarks({ heart, star }: CheerSpots) {
+/** Static cheers keep their original geometry. Sampled reactions can emerge at
+ * each mark's own anchor, using the existing finite gesture envelope. */
+export function CheerMarks({ heart, star, emergence }: CheerSpots & { emergence?: number }) {
+  const amount = emergence === undefined ? 1 : Number.isFinite(emergence) ? Math.max(0, Math.min(1, emergence)) : 0
+  const at = ([x, y]: [number, number, number], tilt: number, startScale: number, rise: number) =>
+    `translate(${x} ${y + rise * (1 - amount)}) rotate(${tilt})${amount === 1 ? '' : ` scale(${startScale + (1 - startScale) * amount})`}`
   return (
     <g aria-hidden="true">
-      <g transform={`translate(${heart[0]} ${heart[1]}) rotate(-12)`}>
+      <g transform={at(heart, -12, 0.82, 2)}>
         <AccentMark kind="heart" size={heart[2]} fill={blush} />
       </g>
-      <g transform={`translate(${star[0]} ${star[1]}) rotate(10)`}>
+      <g transform={at(star, 10, 0.7, 4)}>
         <AccentMark kind="star" size={star[2]} fill={petDefault} />
       </g>
     </g>

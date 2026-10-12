@@ -1,0 +1,18 @@
+{
+  "baseCommit": "597890d457e2bda90b88902ee1f14ec811476364",
+  "sources": {
+    "src/character/accent.tsx": "97e78bfce8b045d60a905b7ca015b36df907f89699985882442f2c82d4d97cca",
+    "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+    "src/character/AnimatedCharacter.test.tsx": "60cfc1df12732f23475028773ed34f08622cd712242872e3fcf7c17c77a89e52",
+    "scripts/browser/pet-play.test.mjs": "6681978198ea7672a2e6fc79a66e8f8deaa5f8c7b234c3da1706c37651d24137",
+    "docs/ART.md": "84f5570b1555293c2d99405d8769fcf909343542a2951c157be9300075ef7856",
+    "docs/audits/2026-10-12-character-polish/review-visibility-gallery-diagnostic.mjs": "e4eef3a1a125d13067471fa3e6bb073f41e868f205ba64e9244534f908298b49",
+    "docs/audits/2026-10-12-character-polish/capture-accent-emergence.mjs": "90d8f235623be1706d56f50a8c09788bc614fd21bc6e755d70eb78a5e74dbe74",
+    "docs/audits/2026-10-12-character-polish/compare-accent-emergence.py": "27cbe5317bb8c7bef36b1d49cd21a3ca2b6fa2f69e099638bc14f5fe8583f731"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/accent-emergence-source.diff",
+    "sha256": "f81aaeb78a0fca3b531c79c325e9af91fe5192f8e29a844f3518d5185dd3fe0d"
+  },
+  "scope": "Eight paths: two production renderer files, geometry unit/native regression tests, ART, bounded capture/differential helpers, and removal of two useless escapes from a prior replayable diagnostic. Its original exact bytes are preserved separately; prior raw logs/manifests/reviews untouched. Reuse finite opacity envelope, preserve static/default/peak geometry, body/ground/sampler/wardrobe/deadlines/state/nodes/clock."
+}

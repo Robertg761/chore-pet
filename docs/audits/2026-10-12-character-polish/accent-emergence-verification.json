@@ -1,0 +1,129 @@
+{
+  "freeze": {
+    "baseCommit": "597890d457e2bda90b88902ee1f14ec811476364",
+    "sources": {
+      "src/character/accent.tsx": "97e78bfce8b045d60a905b7ca015b36df907f89699985882442f2c82d4d97cca",
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/AnimatedCharacter.test.tsx": "60cfc1df12732f23475028773ed34f08622cd712242872e3fcf7c17c77a89e52",
+      "scripts/browser/pet-play.test.mjs": "6681978198ea7672a2e6fc79a66e8f8deaa5f8c7b234c3da1706c37651d24137",
+      "docs/ART.md": "84f5570b1555293c2d99405d8769fcf909343542a2951c157be9300075ef7856",
+      "docs/audits/2026-10-12-character-polish/review-visibility-gallery-diagnostic.mjs": "e4eef3a1a125d13067471fa3e6bb073f41e868f205ba64e9244534f908298b49",
+      "docs/audits/2026-10-12-character-polish/capture-accent-emergence.mjs": "90d8f235623be1706d56f50a8c09788bc614fd21bc6e755d70eb78a5e74dbe74",
+      "docs/audits/2026-10-12-character-polish/compare-accent-emergence.py": "27cbe5317bb8c7bef36b1d49cd21a3ca2b6fa2f69e099638bc14f5fe8583f731"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/accent-emergence-source.diff",
+      "sha256": "f81aaeb78a0fca3b531c79c325e9af91fe5192f8e29a844f3518d5185dd3fe0d"
+    },
+    "scope": "Eight paths: two production renderer files, geometry unit/native regression tests, ART, bounded capture/differential helpers, and removal of two useless escapes from a prior replayable diagnostic. Its original exact bytes are preserved separately; prior raw logs/manifests/reviews untouched. Reuse finite opacity envelope, preserve static/default/peak geometry, body/ground/sampler/wardrobe/deadlines/state/nodes/clock."
+  },
+  "checks": [
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/accent-emergence-red.log",
+      "logSha256": "1234e782f0660652fd8a53b8fd2ab7fa254003684c687c5e204107e4ad31a437",
+      "exitCode": 1,
+      "result": "3newgeometryfail/54priorpass8.10s before art edit."
+    },
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/accent-emergence-browser-red.log",
+      "logSha256": "b1261fbda6811124658bcdbc0851d35c4b25d8843804c9dad245e63ee89c3a1c",
+      "exitCode": 1,
+      "result": "Actualpats/hop both fail missing local emergence before art edit;2.847s."
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/accent-emergence-focused.log",
+      "logSha256": "5dbf78752f30e754ccca626c0fefe75602f2b5b14dcce325c04453c1d825d4de",
+      "exitCode": 0,
+      "result": "174tests/5files9.35s;predates test-only simplification of tuple declarations."
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/accent-emergence-build.log",
+      "logSha256": "f926c82948ce96c6efa2fe961468f6bc4362cf6559bd51832993187cc30bcb5c",
+      "exitCode": 0,
+      "result": "TypeScript and production build; final product renderer and current tuple declarations included. Subsequent changes only to diagnostic/ART spacing/analysis helper."
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/accent-emergence-lint.log",
+      "logSha256": "590c0e0b667778a9f6e558c1cb639e1eea77ae2ee7ed576aa144198946a1a06f",
+      "exitCode": 0,
+      "result": "Initial lint surfaced2useless-escape warnings in prior diagnostic;corrected explicitly,original bytes preserved."
+    },
+    {
+      "name": "lint-final",
+      "log": "docs/audits/2026-10-12-character-polish/accent-emergence-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Finalzero warnings."
+    },
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/accent-emergence-capture-before.log",
+      "logSha256": "dafd0e8a463db7cffebd7676eb13ddc9946f40f8111b74fa2b25eef49c5b39b8",
+      "exitCode": 0,
+      "result": "36dressed samples/108sizeviews from exact baseline renderer/accent sources."
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/accent-emergence-capture-after.log",
+      "logSha256": "85ab20a17e003e0e06d896e178671e57f154a517fc05d679f5980c9305ec9e41",
+      "exitCode": 0,
+      "result": "36dressed samples/108sizeviews using final art."
+    },
+    {
+      "name": "differential",
+      "log": "docs/audits/2026-10-12-character-polish/accent-emergence-differential.log",
+      "logSha256": "376334582034647bf0b5de1cfe12156151344b94409f84b0bf70b969ae8519e5",
+      "exitCode": 0,
+      "result": "Originalnumeric RGBA pass9648pixels;Pillowgetdata deprecation prompted analysis-onlybyteiteration cleanup."
+    },
+    {
+      "name": "differential-final",
+      "log": "docs/audits/2026-10-12-character-polish/accent-emergence-differential-final.log",
+      "logSha256": "10197dd1a7240090676820be9158778a7adbb106f81986d65888ffc88abd94d4",
+      "exitCode": 0,
+      "result": "Cleanbyte-based comparison:36samplerframes exact,12peakcells exact,24nonpeakcellsonlymarkregions,9648changedpixels."
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/accent-emergence-full.log",
+      "logSha256": "2f6b6bd887fcc5e53135c7cc6323c07633727080dd8b2dc10a5a34042e50c434",
+      "exitCode": 0,
+      "result": "2136tests/98files60.75s after final8sourcefreeze."
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/accent-emergence-browser.log",
+      "logSha256": "10e00ad0fe139d3aabd89247c5e3fb1365c2bce470ceec0e44308583077917c8",
+      "exitCode": 0,
+      "result": "25native production cases53.591s;actualpats/hoplocalmatrixgrowth/rise,5playerlayouts,rapidbusy/finiteclocks/reduced/savedtables,wardrobe/creator/chore/tap regressions."
+    }
+  ],
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/accent-emergence-before-sizes.png": "4c7766209ce7c783d5b731620ee79183cf164fe718e4f619fed18030600458bc",
+    "docs/audits/2026-10-12-character-polish/accent-emergence-after-sizes.png": "ac1fc52f4846c2e3476bfdaf24384505d8f717a931f7658bd05bfb54780bcb2e",
+    "docs/audits/2026-10-12-character-polish/accent-emergence-before.json": "17ed388e798f864872e44f87975bb4e6a9bfadacfa0fb29658f03a1efe101a18",
+    "docs/audits/2026-10-12-character-polish/accent-emergence-after.json": "fb5893deb75cbbb5d42a4718c1d95e476185b398302395fe16c8db0608b59798",
+    "docs/audits/2026-10-12-character-polish/accent-emergence-differential.json": "3d7d8d8c00c25eff685ac1d565592373dba51268c20ffe33818012fbf0bfb630",
+    "docs/audits/2026-10-12-character-polish/accent-emergence-baseline-accent.tsx.txt": "31fc364708c971fca8141ab58d7ac6194521875acd025806f6556e46c673072a",
+    "docs/audits/2026-10-12-character-polish/accent-emergence-baseline-AnimatedCharacter.tsx.txt": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+    "docs/audits/2026-10-12-character-polish/accent-emergence-prior-diagnostic.mjs.txt": "c77dbbd0196d5bef0b0d2d562e4a21a04dd2bf77a7117301079b6cbd91ff2027"
+  },
+  "verificationScope": "Rootverified8frozenpaths/patch/8artifactbindings and observed all finalcheckexits. Two sheets inspected by root;numericstaticpixel comparison is separate from nativegesturegeometry and still does not certify human temporal quality. Nextbatchdrafttests in PetExplore.test.tsx,PetIntegration.test.tsx and Room.selection.test.tsx areexcluded andpostdatefull/build;no currentwholeworkspacepassclaim.",
+  "resources": "Oneheavyprocess/oneunitworker/browser,nice10,768MBNodeheap. AvailableRAM5.2\u20136.8GB,/tmp4.1GBfree;account15%usedordinaryusageallowed.",
+  "limits": [
+    "No human temporal/assistive technology/physicaldevice/CPU/battery claim.",
+    "Static sheets cover happy dressed art at3phases,2actions,3species,2facings and200/60/25px;existing unit andnative checks cover otherstates/consumers.",
+    "Historical diagnostic cleanup only removes2useless escapes;its exactoriginal is preserved as anartifact and at597890d. Earlier Batch23 cleanlint predates diagnostic creation."
+  ],
+  "pending": [],
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/accent-emergence-review.md",
+    "sha256": "7a915bfdcf0e7f23d089e4a02bc8689cb7ed48f315d0900e161bdfefc76c8c6c",
+    "result": "Peirce independentstatic/stillapproval;noactionablefindings;17frozenbindings/12rootloghashesverified. Finalexecutionattributedseparately."
+  }
+}

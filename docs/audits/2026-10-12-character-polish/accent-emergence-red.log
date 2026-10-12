@@ -1,0 +1,33 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/AnimatedCharacter.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/AnimatedCharacter.test.tsx (57 tests | 3 failed) 7334ms
+   ❯ reaction accent emergence (3)
+     × grows the bun marks at their own anchors without moving the dressed body 15ms
+     × grows the mochi marks at their own anchors without moving the dressed body 11ms
+     × grows the sprout marks at their own anchors without moving the dressed body 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > reaction accent emergence > grows the bun marks at their own anchors without moving the dressed body
+ FAIL  src/character/AnimatedCharacter.test.tsx > reaction accent emergence > grows the mochi marks at their own anchors without moving the dressed body
+ FAIL  src/character/AnimatedCharacter.test.tsx > reaction accent emergence > grows the sprout marks at their own anchors without moving the dressed body
+AssertionError: expected 0.9999999999999988 to be less than 0.9999999999999988
+ ❯ src/character/AnimatedCharacter.test.tsx:646:30
+    644|     const early = measure(.25), late = measure(.75), peak = measure(1)
+    645|     for (let i = 0; i < 2; i++) {
+    646|       expect(early[i].scale).toBeLessThan(late[i].scale)
+       |                              ^
+    647|       expect(late[i].scale).toBeLessThan(peak[i].scale)
+    648|       expect(early[i].scale).toBeGreaterThanOrEqual(.7)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 54 passed (57)
+   Start at  18:51:50
+   Duration  8.10s (tests 92%, transform 4%, environment 3%, import 1%)
+

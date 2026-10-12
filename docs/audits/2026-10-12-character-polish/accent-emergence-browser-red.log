@@ -1,0 +1,42 @@
+✖ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (1403.230112ms)
+✖ a chosen hop takes off and lands on the existing resident clock without changing progress (1055.936955ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2846.656936
+
+✖ failing tests:
+
+test at scripts/browser/pet-play.test.mjs:193:1
+✖ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (1403.230112ms)
+  AssertionError [ERR_ASSERTION]: each accent must emerge at its own anchor
+      at assertAccentEmergence (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:151:12)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:224:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-play.test.mjs:243:1
+✖ a chosen hop takes off and lands on the existing resident clock without changing progress (1055.936955ms)
+  AssertionError [ERR_ASSERTION]: each accent must emerge at its own anchor
+      at assertAccentEmergence (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:151:12)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:256:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

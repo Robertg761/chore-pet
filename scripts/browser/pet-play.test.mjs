@@ -137,6 +137,23 @@ function readPet(node) {
     }) }
 }
 
+function readAccentMarks(node) {
+  return [...node.querySelectorAll('[data-character-accents] path')].map(path => {
+    const matrix = path.getCTM()
+    return { x: matrix.e, y: matrix.f, scale: Math.hypot(matrix.a, matrix.b) }
+  })
+}
+
+function assertAccentEmergence(early, peak) {
+  assert.equal(early.length, 2)
+  assert.equal(peak.length, 2)
+  for (let i = 0; i < early.length; i++) {
+    assert.ok(peak[i].scale > early[i].scale, 'each accent must emerge at its own anchor')
+    assert.ok(peak[i].y < early[i].y, 'each accent must rise gently into its peak')
+    assert.ok(Math.abs(peak[i].x - early[i].x) < .001, 'emergence must preserve horizontal placement')
+  }
+}
+
 test('room changes remove the previous furnishing choices and reset player-time controls', async t => {
   const page = await browserApp(t)
   await page.evaluate(() => new Promise((resolve, reject) => {
@@ -201,7 +218,10 @@ test('chosen affection joins a live step, ignores rapid busy choices, and honors
   assert.equal(await resident.evaluate(node => node === window.__playPet), true)
   const live = page.locator('.living-room [aria-live="polite"]')
   const heard = await live.textContent()
-  await page.clock.runFor(600)
+  await page.clock.runFor(384)
+  const earlyAccents = await resident.evaluate(readAccentMarks)
+  await page.clock.runFor(216)
+  assertAccentEmergence(earlyAccents, await resident.evaluate(readAccentMarks))
   const active = await resident.evaluate(readPet)
   for (let i = 0; i < 20; i++) await page.getByRole('button', { name: 'Wave', exact: true }).click()
   const busy = await resident.evaluate(readPet)
@@ -230,7 +250,10 @@ test('a chosen hop takes off and lands on the existing resident clock without ch
   const before = await resident.evaluate(readPet)
   const shadow = await resident.locator('[data-character-ground]').getAttribute('transform')
   await page.getByRole('button', { name: 'Happy hop', exact: true }).click()
-  await page.clock.runFor(756)
+  await page.clock.runFor(432)
+  const earlyAccents = await resident.evaluate(readAccentMarks)
+  await page.clock.runFor(324)
+  assertAccentEmergence(earlyAccents, await resident.evaluate(readAccentMarks))
   const lifted = await resident.evaluate(readPet)
   assert.equal(lifted.x, before.x)
   assert.equal(lifted.y, before.y)
