@@ -1,0 +1,16 @@
+{
+  "baseCommit": "091d8c4",
+  "sources": {
+    "src/pet/LivingRoom.tsx": "53ca9e6d54db83e58f036e093b2b3e130724d088e3579b0b4f90dba101c44b48",
+    "src/pet/PetIntegration.test.tsx": "cae725e35f0ccd909e96093611aa06c03afbb37a9f119a957611d758e6328a66",
+    "docs/ART.md": "447096f393048b7c60db3ecf70e20119bfdc36b87ea71a10fc4a217842d85f88",
+    "src/pet/usePetVisibility.ts": "cfe222c7005341217e665b3fdb5434e3066f89cdca78757438bb1d15fb523ae6",
+    "src/pet/usePetVisibility.test.tsx": "ac8f53e644b90a1b98ad3a0ad82f4d67d1814d632b2893adaf0a6f4580522570",
+    "scripts/browser/pet-offscreen-clock.test.mjs": "3f234137affda50a17a2c716e7f4317d1078f9a26d51436fd6663d8b2f4912a8"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/offscreen-clock-source.diff",
+    "sha256": "63e04e154f4b2dc52f10b6cbce2f6fcf9c251722fead85b6c2c089c9e53f06e9"
+  },
+  "scope": "6file resident visibility/resource change,geometry unchanged. Native DOM/pending frame assertions,not CPU/battery or human playback claims. Rootexecution independent."
+}

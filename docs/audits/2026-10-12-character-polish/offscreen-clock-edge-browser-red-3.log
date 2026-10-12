@@ -1,0 +1,20 @@
+✖ native zero-area edge contact can continue into view without another observer entry (2916.814907ms)
+ℹ Native edge entries:[{"inside":true,"ratio":0.006198957562446594,"bottom":0.5083084106445312,"height":0.5083084106445312}]
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3294.424738
+
+✖ failing tests:
+
+test at scripts/browser/pet-offscreen-clock.test.mjs:81:1
+✖ native zero-area edge contact can continue into view without another observer entry (2916.814907ms)
+  page.waitForFunction: Timeout 2000ms exceeded.
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-offscreen-clock.test.mjs:104:16) {
+    name: 'TimeoutError',
+    log: []
+  }

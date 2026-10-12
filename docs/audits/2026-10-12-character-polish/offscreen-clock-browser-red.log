@@ -1,0 +1,19 @@
+✖ a completely scrolled-away resident pauses its single frame clock and resumes when visible (5026.715324ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5425.296722
+
+✖ failing tests:
+
+test at scripts/browser/pet-offscreen-clock.test.mjs:5:1
+✖ a completely scrolled-away resident pauses its single frame clock and resumes when visible (5026.715324ms)
+  page.waitForFunction: Timeout 4000ms exceeded.
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-offscreen-clock.test.mjs:29:14) {
+    name: 'TimeoutError',
+    log: []
+  }

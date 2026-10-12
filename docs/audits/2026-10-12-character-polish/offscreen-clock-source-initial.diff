@@ -1,0 +1,399 @@
+diff --git i/docs/ART.md w/docs/ART.md
+index 4b571d2..d098fea 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -161,6 +161,8 @@ Explore together offers explicit player invitations to a chosen furnishing. Keep
+ 
+ The resident clock pauses when reduced-motion art is settled or the pet is resting asleep/sick. Finite player reactions/notices keep the same single clock until their deadline; normal-motion suppression completes its existing120ms blend before pausing. Healthy normal-motion residents retain breathing, lifetime blinks and exploration. World/preference changes still validate and paint before display even with no pending frames. Initial sleeping/sick residents start in their resting activity, without blending from an unshown idle frame. Existing Boolean usePetMotion consumers keep their prior scheduling policy; the resident supplies separate normal/reduced activity flags. No new timer, clock or saved preference is introduced.
+ 
++One native IntersectionObserver pauses that same clock when the resident's SVG is completely outside the viewport or scroll clipping. Any positive visible area keeps it active. Returning into view samples current world deadlines before paint and clears stale hover. Offscreen responses request no frames; returning resumes a finite response only while its deadline remains active. Missing observation support retains the existing clock policy. Observer cleanup ignores queued callbacks; no polling or additional animation clock is used.
++
+ Spend time together follows the home chore list and offers explicit Wave and Gentle pats choices. Both use the resident's existing finite greeting/affection sampler, retaining its fractional position and outgoing pose. Busy requests do not queue or extend a reaction; chore cheers keep priority. The resident owns the single successful spoken line, and the controls explain resting/travel without waking or moving the pet. Reduced motion keeps a still pose and returns to zero pending frames when the response ends. Controls remain optional, with no saved changes or separate clock.
+ 
+ Environmental gaze starts at the actual drawn eye centre, including tired-eye offsets, species/mood torso geometry and facing. Convert the current detail through the inverse torso before bounding local eye travel to the renderer's three-by-two-unit limits. Inspection retains its forward tilt for low details and eases toward a small backward tilt for overhead details, using the existing finite gesture envelope. Keep feet grounded, clothing under the same torso transform and current safe approaches; no contact is implied.
+diff --git i/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index 6355e97..7f277cd 100644
+--- i/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -19,6 +19,7 @@ import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sor
+ import { motionFor } from './activityMotion'
+ import { interactionTargets } from './interactions'
+ import { usePetMotion } from './usePetMotion'
++import { usePetVisibility } from './usePetVisibility'
+ import { faceAttention, pointerPosition, sampleAttention, type AttentionPoint, type AttentionSample } from './playerAttention'
+ import { bubbleSpot, bubbleStyle, objectBoxes, type Box, type BubbleSize } from './bubble'
+ import './LivingRoom.css'
+@@ -88,13 +89,15 @@ interface MotionControl { paint: (state: PetState, now: number) => void; reduced
+ interface PlayerAttention { pointer: AttentionPoint | null; focused: boolean; reset: boolean }
+ 
+ /** Only this subtree redraws for breathing, gait and finite reaction frames. */
+-function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
++function RoomPetArt({ pet, mood, away, live, tick, control, attention, nodeRef }: {
+   pet: Pet; mood: Mood; away: boolean
+   live: RefObject<Shown>
+   tick: (now: number, reduced: boolean) => void
+   control: RefObject<MotionControl | null>
+   attention: RefObject<PlayerAttention>
++  nodeRef: RefObject<SVGGElement | null>
+ }) {
++  const inView = usePetVisibility(nodeRef)
+   const [sample, setSample] = useState(() => ({ state: live.current.state, now: performance.now(), attention: { x: 0, y: 0 } }))
+   const gaze = useRef<AttentionSample | null>(null)
+   const attentionSource = useRef<AttentionPoint | 'focus' | null>(null)
+@@ -102,11 +105,11 @@ function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
+     || (sample.state.noticeStart !== undefined && sample.now < sample.state.noticeStart + ACTION_MS.notice)
+   const blending = sample.state.transition && blendProgress(sample.state.transition.start, sample.now) < 1
+   const { reducedMotion } = usePetMotion(tick, {
+-    normal: (!away && mood !== 'sick') || finite || Boolean(blending),
+-    reduced: finite,
++    normal: inView && ((!away && mood !== 'sick') || finite || Boolean(blending)),
++    reduced: inView && finite,
+   })
+   useImperativeHandle(control, () => ({ paint: (state, now) => {
+-    const still = reducedMotion || away || mood === 'sick' || attention.current.reset
++    const still = !inView || reducedMotion || away || mood === 'sick' || attention.current.reset
+     const idle = state.activity.kind === 'idle' && (!state.transition || blendProgress(state.transition.start, now) >= 1)
+     if (still || !idle) attention.current.pointer = null
+     const source = !still && idle ? attention.current.pointer ?? (attention.current.focused ? 'focus' : null) : null
+@@ -119,11 +122,11 @@ function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
+     attentionSource.current = source
+     attention.current.reset = false
+     setSample({ state, now, attention: gaze.current.value })
+-  }, reduced: reducedMotion }), [reducedMotion, away, mood, pet.species, attention])
++  }, reduced: reducedMotion }), [reducedMotion, away, mood, pet.species, attention, inView])
+   useLayoutEffect(() => {
+     // Preference and suppression changes apply before paint, including while hidden.
+     tick(performance.now(), reducedMotion)
+-  }, [tick, reducedMotion])
++  }, [tick, reducedMotion, inView])
+   const frame = motionFor(sample.state, sample.now, pet.species, mood, reducedMotion).frame
+   frame.gazeX += sample.attention.x * sample.state.facing
+   frame.gazeY += sample.attention.y
+@@ -386,7 +389,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+             onBlur: () => { attention.current.focused = false },
+           },
+           nodeRef: petNode,
+-          art: <RoomPetArt pet={pet} mood={mood} away={away} live={live} tick={tick} control={motion} attention={attention} />,
++          art: <RoomPetArt pet={pet} mood={mood} away={away} live={live} tick={tick} control={motion} attention={attention} nodeRef={petNode} />,
+         }}
+       />
+       {line && (scene?.bubbleContainer ? createPortal(
+diff --git i/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index 0c1c016..a9343d3 100644
+--- i/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -70,6 +70,106 @@ function expectPointerGaze(container: Element, at: number, fraction = 1) {
+   expect(values[1]).toBeCloseTo(target.y * fraction, 10)
+ }
+ 
++function observeResident() {
++  const observers: { target: Element | null; callback: IntersectionObserverCallback; disconnect: ReturnType<typeof vi.fn> }[] = []
++  vi.stubGlobal('IntersectionObserver', class {
++    target: Element | null = null
++    callback: IntersectionObserverCallback
++    disconnect = vi.fn()
++    constructor(callback: IntersectionObserverCallback) { this.callback = callback; observers.push(this) }
++    observe(target: Element) { this.target = target }
++  })
++  return {
++    observers,
++    show(visible: boolean) {
++      expect(observers).toHaveLength(1)
++      const observer = observers[0]
++      act(() => observer.callback([{ target: observer.target!, isIntersecting: visible, intersectionRatio: visible ? 1 : 0 } as IntersectionObserverEntry], observer as unknown as IntersectionObserver))
++    },
++  }
++}
++
++it('pauses a scrolled-away resident, clears hover, and resumes without room frame redraws', () => {
++  const visibility = observeResident()
++  const ui = mount(<LivingRoom {...props} mood="happy" />)
++  const resident = ui.container.querySelector('.room-pet')!
++  Object.defineProperty(resident, 'getScreenCTM', { value: () => ({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }) })
++  pointerAt(resident, 170, 56)
++  frame(16); frame(136)
++  const position = resident.getAttribute('transform'), renders = roomRenders.count
++  expect(frames.size).toBe(1)
++  visibility.show(false)
++  expect(frames.size).toBe(0)
++  expect(gaze(ui.container)).toBe('translate(0 0)')
++  expect(roomRenders.count).toBe(renders)
++  now = 5000
++  visibility.show(true)
++  expect(frames.size).toBe(1)
++  expect(resident.getAttribute('transform')).toBe(position)
++  expect(gaze(ui.container)).toBe('translate(0 0)')
++  expect(visibility.observers[0].target).toBe(resident)
++})
++
++it('finishes a reduced player response against elapsed time without invisible frames', () => {
++  const visibility = observeResident()
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" control={control} />)
++  visibility.show(false)
++  act(() => { expect(control.current!.respond('greet')).toBe('started') })
++  expect(ui.container.querySelector('[aria-live="polite"]')!.textContent).not.toBe('')
++  expect(frames.size).toBe(0)
++  now = 1300
++  visibility.show(true)
++  expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
++  expect(frames.size).toBe(0)
++})
++
++it('samples a still-active reduced response at its elapsed phase when it returns into view', () => {
++  const visibility = observeResident()
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" control={control} />)
++  visibility.show(false)
++  act(() => { expect(control.current!.respond('greet')).toBe('started') })
++  now = 500
++  visibility.show(true)
++  expect(ui.container.querySelector('[data-expression="cheering"]')).not.toBeNull()
++  expect(frames.size).toBe(1)
++  frame(1200)
++  expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
++  expect(frames.size).toBe(0)
++})
++
++it.each(['sick', 'away'] as const)('lets an offscreen %s notice expire without waking an invisible clock', resting => {
++  const visibility = observeResident()
++  const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? 'sick' : 'happy'} away={resting === 'away'} />)
++  visibility.show(false)
++  click(ui.container.querySelector('.room-pet')!)
++  expect(frames.size).toBe(0)
++  now = 700
++  visibility.show(true)
++  expect(frames.size).toBe(0)
++  expect(ui.container.querySelector('[data-expression="sick"], [data-expression="sleeping"]')).not.toBeNull()
++})
++
++it('combines scroll and document visibility and ignores a queued observer callback after unmount', () => {
++  const watching = observeResident()
++  const ui = mount(<LivingRoom {...props} mood="happy" />)
++  watching.show(false)
++  visibility(true)
++  watching.show(true)
++  expect(frames.size).toBe(0)
++  visibility(false)
++  expect(frames.size).toBe(1)
++  watching.show(false)
++  expect(frames.size).toBe(0)
++  ui.unmount(); cleanups.pop()
++  expect(watching.observers[0].disconnect).toHaveBeenCalledOnce()
++  watching.show(true)
++  expect(frames.size).toBe(0)
++})
++
+ it('uses no reduced idle frames, responds to invitations, and clocks only a finite greeting', () => {
+   Object.defineProperty(media, 'matches', { value: true, configurable: true })
+   const control = createRef<LivingRoomControl>()
+diff --git 1/src/pet/usePetVisibility.ts 2/src/pet/usePetVisibility.ts
+new file mode 100644
+index 0000000..e9a8c82
+--- /dev/null
++++ 2/src/pet/usePetVisibility.ts
+@@ -0,0 +1,23 @@
++import { useEffect, useState, type RefObject } from 'react'
++
++/** Pause only completely clipped residents. Unsupported observation stays live. */
++export function usePetVisibility(nodeRef: RefObject<Element | null>): boolean {
++  const [observation, setObservation] = useState(() => ({ source: nodeRef, visible: true }))
++  useEffect(() => {
++    const node = nodeRef.current
++    if (!node || typeof IntersectionObserver !== 'function') return
++    let alive = true
++    const observer = new IntersectionObserver(entries => {
++      if (!alive) return
++      for (const entry of entries) {
++        if (entry.target !== node) continue
++        const visible = entry.isIntersecting && entry.intersectionRatio > 0
++        setObservation(previous => previous.source === nodeRef && previous.visible === visible
++          ? previous : { source: nodeRef, visible })
++      }
++    })
++    observer.observe(node)
++    return () => { alive = false; observer.disconnect() }
++  }, [nodeRef])
++  return observation.source === nodeRef ? observation.visible : true
++}
+diff --git 1/src/pet/usePetVisibility.test.tsx 2/src/pet/usePetVisibility.test.tsx
+new file mode 100644
+index 0000000..6ee9fe5
+--- /dev/null
++++ 2/src/pet/usePetVisibility.test.tsx
+@@ -0,0 +1,101 @@
++// @vitest-environment jsdom
++import { act, createRef, StrictMode, type RefObject } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import { render } from '../test/react'
++import { usePetVisibility } from './usePetVisibility'
++
++const instances: VisibilityObserver[] = [], cleanups: (() => void)[] = []
++class VisibilityObserver {
++  target: Element | null = null
++  callback: IntersectionObserverCallback
++  observe = vi.fn((node: Element) => { this.target = node })
++  disconnect = vi.fn()
++  constructor(callback: IntersectionObserverCallback) { this.callback = callback; instances.push(this) }
++  deliver(visible: boolean, ratio = visible ? 1 : 0, target = this.target!) {
++    this.callback([{ target, isIntersecting: visible, intersectionRatio: ratio } as IntersectionObserverEntry], this as unknown as IntersectionObserver)
++  }
++}
++function Probe({ nodeRef }: { nodeRef: RefObject<SVGGElement | null> }) {
++  const visible = usePetVisibility(nodeRef)
++  return <><svg><g ref={nodeRef} /></svg><output>{String(visible)}</output></>
++}
++beforeEach(() => { instances.length = 0; vi.stubGlobal('IntersectionObserver', VisibilityObserver) })
++afterEach(() => { cleanups.splice(0).forEach(fn => fn()); vi.unstubAllGlobals(); vi.restoreAllMocks() })
++function mount() {
++  const nodeRef = createRef<SVGGElement>(), ui = render(<Probe nodeRef={nodeRef} />)
++  cleanups.push(ui.unmount)
++  return { ...ui, nodeRef, visible: () => ui.container.querySelector('output')!.textContent }
++}
++
++it('uses one observer, leaves partially visible ink active, and stops at a zero-area edge', () => {
++  const ui = mount(), observer = instances[0]
++  expect(ui.visible()).toBe('true')
++  expect(observer.observe).toHaveBeenCalledExactlyOnceWith(ui.nodeRef.current)
++  act(() => { observer.deliver(false); observer.deliver(false) })
++  expect(ui.visible()).toBe('false')
++  act(() => observer.deliver(true, .001))
++  expect(ui.visible()).toBe('true')
++  act(() => observer.deliver(true, 0))
++  expect(ui.visible()).toBe('false')
++  act(() => observer.deliver(true, 1, document.createElement('div')))
++  expect(ui.visible()).toBe('false')
++  expect(instances).toHaveLength(1)
++})
++
++it('retains the existing visible policy when observation is unavailable', () => {
++  vi.stubGlobal('IntersectionObserver', undefined)
++  const ui = mount()
++  expect(ui.visible()).toBe('true')
++  expect(instances).toHaveLength(0)
++})
++
++it('disconnects and ignores already queued callbacks after cleanup', () => {
++  const ui = mount(), observer = instances[0]
++  const error = vi.spyOn(console, 'error')
++  ui.unmount(); cleanups.pop()
++  act(() => observer.deliver(false))
++  expect(observer.disconnect).toHaveBeenCalledOnce()
++  expect(error).not.toHaveBeenCalled()
++})
++
++it('keeps only the current observer active through development Strict Mode remounts', () => {
++  const nodeRef = createRef<SVGGElement>()
++  const ui = render(<StrictMode><Probe nodeRef={nodeRef} /></StrictMode>)
++  cleanups.push(ui.unmount)
++  expect(instances).toHaveLength(2)
++  expect(instances[0].disconnect).toHaveBeenCalledOnce()
++  expect(instances[1].disconnect).not.toHaveBeenCalled()
++  act(() => instances[0].deliver(false))
++  expect(ui.container.querySelector('output')!.textContent).toBe('true')
++  act(() => instances[1].deliver(false))
++  expect(ui.container.querySelector('output')!.textContent).toBe('false')
++  ui.unmount(); cleanups.pop()
++  expect(instances[1].disconnect).toHaveBeenCalledOnce()
++})
++
++it('disconnects the former ref and starts a new ref visible until its observation arrives', () => {
++  const ui = mount(), former = instances[0]
++  act(() => former.deliver(false))
++  const replacement = createRef<SVGGElement>()
++  ui.rerender(<Probe nodeRef={replacement} />)
++  expect(former.disconnect).toHaveBeenCalledOnce()
++  expect(ui.visible()).toBe('true')
++  expect(instances[1].observe).toHaveBeenCalledExactlyOnceWith(replacement.current)
++  act(() => former.deliver(false))
++  expect(ui.visible()).toBe('true')
++  act(() => instances[1].deliver(false))
++  expect(ui.visible()).toBe('false')
++})
++
++it('uses the last matching native entry without creating a frame or timer', () => {
++  vi.stubGlobal('requestAnimationFrame', vi.fn())
++  vi.stubGlobal('setInterval', vi.fn())
++  const ui = mount(), observer = instances[0]
++  act(() => observer.callback([
++    { target: ui.nodeRef.current!, isIntersecting: false, intersectionRatio: 0 },
++    { target: ui.nodeRef.current!, isIntersecting: true, intersectionRatio: .5 },
++  ] as unknown as IntersectionObserverEntry[], observer as unknown as IntersectionObserver))
++  expect(ui.visible()).toBe('true')
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++  expect(setInterval).not.toHaveBeenCalled()
++})
+diff --git 1/scripts/browser/pet-offscreen-clock.test.mjs 2/scripts/browser/pet-offscreen-clock.test.mjs
+new file mode 100644
+index 0000000..9979762
+--- /dev/null
++++ 2/scripts/browser/pet-offscreen-clock.test.mjs
+@@ -0,0 +1,66 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { browserApp } from './helpers.mjs'
++
++async function motionPage(t, observation = true) {
++  const page = await browserApp(t, { reducedMotion: 'no-preference', viewport: { width: 320, height: 640 } })
++  await page.addInitScript(observation => {
++    if (!observation) Object.defineProperty(window, 'IntersectionObserver', { value: undefined, configurable: true })
++    Math.random = () => .99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__offscreenFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__offscreenFrames.delete(id); callback(now) })
++      window.__offscreenFrames.add(id)
++      return id
++    }
++    window.cancelAnimationFrame = id => { window.__offscreenFrames.delete(id); cancel(id) }
++  }, observation)
++  await page.reload()
++  return page
++}
++
++async function scrollAway(page) {
++  const resident = page.locator('.room-pet')
++  await resident.waitFor()
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  // The real Home scroll container, with both optional panels expanded.
++  await page.mouse.move(300, 450)
++  await page.mouse.wheel(0, 3000)
++  await page.waitForFunction(() => document.querySelector('.room-pet').getBoundingClientRect().bottom < 0)
++  const offscreen = await resident.boundingBox()
++  assert.ok(offscreen.y + offscreen.height < 0, 'fixture must fully scroll the actual pet out of view')
++  return { resident, offscreen }
++}
++
++test('a scrolled-away resident pauses, lets an offscreen response expire, and resumes when partly visible', async t => {
++  const page = await motionPage(t)
++  const { resident, offscreen } = await scrollAway(page)
++  t.diagnostic(`Offscreen pending frames before pause:${await page.evaluate(() => window.__offscreenFrames.size)}`)
++  await page.waitForFunction(() => window.__offscreenFrames.size === 0, null, { timeout: 2000 })
++  assert.equal(await page.evaluate(() => window.__offscreenFrames.size), 0)
++  await page.getByRole('button', { name: 'Gentle pats', exact: true }).click()
++  assert.ok((await page.locator('.living-room [aria-live="polite"]').textContent()).trim())
++  assert.equal(await page.evaluate(() => window.__offscreenFrames.size), 0)
++  await page.waitForTimeout(1700)
++  assert.equal(await page.evaluate(() => window.__offscreenFrames.size), 0)
++  await page.mouse.move(300, 450)
++  await page.mouse.wheel(0, offscreen.y + offscreen.height - 4)
++  await page.waitForFunction(() => document.querySelector('.room-pet').getBoundingClientRect().bottom > 0)
++  const partial = await resident.boundingBox()
++  assert.ok(partial.y < 0 && partial.y + partial.height <= 10, 'fixture must expose only the bottom of the pet')
++  await page.waitForFunction(() => window.__offscreenFrames.size === 1)
++  assert.equal(await resident.locator('[data-expression="content"]').count(), 1, 'an expired response must restore the normal mood before returning')
++  await resident.scrollIntoViewIfNeeded()
++  await page.waitForFunction(() => window.__offscreenFrames.size === 1)
++  assert.equal(await page.evaluate(() => window.__offscreenFrames.size), 1)
++  t.diagnostic(`Chromium ${page.context().browser().version()}; real native scroll;0offscreen/1visible pending resident frame`)
++})
++
++test('missing native observation retains the existing resident clock', async t => {
++  const page = await motionPage(t, false)
++  await scrollAway(page)
++  assert.equal(await page.evaluate(() => typeof IntersectionObserver), 'undefined')
++  assert.equal(await page.evaluate(() => window.__offscreenFrames.size), 1)
++})

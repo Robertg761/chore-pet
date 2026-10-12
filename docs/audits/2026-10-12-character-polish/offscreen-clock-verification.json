@@ -1,0 +1,224 @@
+{
+  "freeze": {
+    "baseCommit": "091d8c4",
+    "sources": {
+      "src/pet/LivingRoom.tsx": "53ca9e6d54db83e58f036e093b2b3e130724d088e3579b0b4f90dba101c44b48",
+      "src/pet/PetIntegration.test.tsx": "cae725e35f0ccd909e96093611aa06c03afbb37a9f119a957611d758e6328a66",
+      "docs/ART.md": "bac617a950365ad08ba2c5d184a00991fb0a8e97102a1f83a8646d9a9209c633",
+      "src/pet/usePetVisibility.ts": "d322342a8b624b9a534e268299f26c539a171e9511854c7cc45582f166729134",
+      "src/pet/usePetVisibility.test.tsx": "756e8a1dfd4e1962614dea252ea5253b7fc88c6ffa52ed53a168798923313c86",
+      "scripts/browser/pet-offscreen-clock.test.mjs": "c97bb98767a77c40de3a7eedcd725adcc112e382981309916b8cc04bccbefdcf"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/offscreen-clock-source.diff",
+      "sha256": "18c4d1c7cf0829a0e7d0278f7dcace40c339378a8116e9e40103369207ba462f"
+    },
+    "scope": "6file resident visibility/resource change. Exact edge contact remains active to match native default-threshold delivery. Geometry unchanged. Native DOM/frame counts plus separate exact HTML edge-platform contract;not CPU/battery or human playback."
+  },
+  "checks": [
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-browser-red.log",
+      "logSha256": "878a5c8610b09b60feb732c3abb597d8f8600ed664a582ae7ddfa9dcd665a2a6",
+      "exitCode": 1,
+      "result": "Actual offscreen SVG assertion passed;timed out4000mswaitingzeroFrames. Optionswerearg2;correctedarg3explicit2000msinfinalfixture."
+    },
+    {
+      "name": "hook-red",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-hook-red.log",
+      "logSha256": "4cdf4e9c24ae473077265ee0a6efbd7d351faec11b9464d26a19a1323b4bddeb",
+      "exitCode": 1,
+      "result": "Missing hook collectionfailure"
+    },
+    {
+      "name": "resident-red",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-resident-red.log",
+      "logSha256": "cacc8ef3ae3faf44a78313db36731e3d213ea3dcc9acd6605c4da1365d99e0e3",
+      "exitCode": 1,
+      "result": "5fail/81pass before observergating"
+    },
+    {
+      "name": "green",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-green.log",
+      "logSha256": "49fc51ea0613f9cc7022a3c521442226374d30f1b51088dce098e1a92048b796",
+      "exitCode": 1,
+      "result": "1testfixture failure/109pass;expectedcheering atelapsed0 whichisneutral"
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-focused.log",
+      "logSha256": "cbff714513fbb340a1cd11842830654bc363802931e037f1445994467ab5d599",
+      "exitCode": 0,
+      "result": "111pass/3files3.72s;before derived observation state"
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-build.log",
+      "logSha256": "0d54c998aebf9000db748d819446d6cef33972f147a14ad2e407b1118025f742",
+      "exitCode": 2,
+      "result": "PartialfakeIntersectionObserverEntryarray cast typeerror"
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-lint.log",
+      "logSha256": "6633b06330f676c1720aee4b19655fce37edaf16ab98e586807b0c71154a6fd0",
+      "exitCode": 0,
+      "result": "1set-state-in-effectwarning"
+    },
+    {
+      "name": "focused-final",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-focused-final.log",
+      "logSha256": "f3db999178c8d3eee28772482e67a4bebcc6900206e1a630396e3036ba8ee87a",
+      "exitCode": 0,
+      "result": "111pass/3files3.95s;after keyed observation state"
+    },
+    {
+      "name": "lint-final",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "zero warnings"
+    },
+    {
+      "name": "build-final",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-build-final.log",
+      "logSha256": "e2a5b4d4713d48b3ec9a283af62966e5db68eb9e55ee7dd20d12bbbecaeb109f",
+      "exitCode": 0,
+      "result": "TypeScript/production buildfinalproduct"
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-browser.log",
+      "logSha256": "c21a1166309699f356024019094f2d1f481f4b37d343d0259445bdffd046be01",
+      "exitCode": 0,
+      "result": "23pass34.1407s;0offscreen/1partialvisible,responseexpiry/unsupportedfallback/priorresidenttests"
+    },
+    {
+      "name": "focused-strict",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-focused-strict.log",
+      "logSha256": "0e91fc16253af6d706479d9e2581ed15f4d40811678063464932123154d0c575",
+      "exitCode": 0,
+      "result": "112pass/3files3.74s;addsStrictModeobservercleanup"
+    },
+    {
+      "name": "type-strict",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-type-strict.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "result": "FinaltypecheckincludingStrictModefixture"
+    },
+    {
+      "name": "lint-strict",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-lint-strict.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Finalzero warnings"
+    },
+    {
+      "name": "full",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n10 npm test -- --maxWorkers=1",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-full.log",
+      "logSha256": "d80f384c1e85bbdd6ed209039d940c4cfda459784d7a912db3cdd4397f4241d3",
+      "exitCode": 0,
+      "result": "2105pass/97files61.04s"
+    },
+    {
+      "name": "edge-red",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-edge-red.log",
+      "logSha256": "e77ef4c544c70ba6e7ae9fb7692f3ad7be22ed5524b247f2109164d2a949014c",
+      "exitCode": 1,
+      "result": "Notification-filtering hook model reproduces paused positive-area return."
+    },
+    {
+      "name": "edge-browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-edge-browser-red.log",
+      "logSha256": "d08629d4d959cbe460a55cc3e94bc848dea83ada7091bf0555e8385aa0c245cc",
+      "exitCode": null,
+      "result": "First SVG exact-edge fixture timeout;process exit metadata lost on compaction. Not a product regression."
+    },
+    {
+      "name": "edge-browser-red-2",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-edge-browser-red-2.log",
+      "logSha256": "0106895e5b55b8af1d99b91ace74c8edd826403e5e867e2d232f434d3ca1aeed",
+      "exitCode": 1,
+      "result": "Exact SVG edge fixture timeout;native ancestor clipping case passes."
+    },
+    {
+      "name": "edge-browser-red-3",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-edge-browser-red-3.log",
+      "logSha256": "7b9094aa9feab19a4cb2d908e068e185bfa3ba3da97ebbdead7f20906d4d8147",
+      "exitCode": 1,
+      "result": "Exact SVG edge fixture timeout after transform lock."
+    },
+    {
+      "name": "edge-browser-red-4",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-edge-browser-red-4.log",
+      "logSha256": "74d7b78c7fa080f582e95e3696cce6c6975f4627a4fe6276616ea3844fdb1789",
+      "exitCode": 1,
+      "result": "Exact SVG edge fixture timeout with fixed descendant bounds."
+    },
+    {
+      "name": "edge-browser-red-5",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-edge-browser-red-5.log",
+      "logSha256": "bb7693b77a674740a1550f80891c7a58212948be5efaa27a4b39475a67d3318f",
+      "exitCode": 1,
+      "result": "Exact SVG edge fixture timeout after inherited stroke removal. SVG native bounds exceed DOM bounds;replace with separate exact HTML platform-contract fixture."
+    },
+    {
+      "name": "edge-focused",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-edge-focused.log",
+      "logSha256": "9b8c84f60f2b57300ea0fe14c8cabe14c5eddc6131805c27a5e99f6b327d2443",
+      "exitCode": 0,
+      "result": "113pass/3files3.90s after conservative edge policy."
+    },
+    {
+      "name": "edge-lint",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-edge-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Zero warnings after edge fix."
+    },
+    {
+      "name": "edge-build",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-edge-build.log",
+      "logSha256": "f6e5efecdde6a5bbab3ae6785d58a50e05a55b5ebe62b059f36eb66087424ba8",
+      "exitCode": 0,
+      "result": "Final TypeScript/production build after edge fix."
+    },
+    {
+      "name": "edge-browser",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-edge-browser.log",
+      "logSha256": "9052b3e31950159ae6848110b5692414e5a0483418533ed2512c157f02b1ea13",
+      "exitCode": 0,
+      "result": "25production/platform cases,37.8298s;edge HTML contract/real SVG scroll/ancestorclip/player/pointer/resting/motion."
+    },
+    {
+      "name": "edge-full",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-edge-full.log",
+      "logSha256": "a46e3bd8472a53675b3b8d80b23004488896d3633236107b313b40e14b36b6c5",
+      "exitCode": 130,
+      "result": "Accidental overlap with running browser check;root immediately interrupted full unit process. RAM available~6GB. No passing full-suite claim. Sequential rerun follows."
+    },
+    {
+      "name": "edge-full-final",
+      "log": "docs/audits/2026-10-12-character-polish/offscreen-clock-edge-full-final.log",
+      "logSha256": "a3b0cd4eb7b88fd6667e221fab9e85b0460f289d2c55023c9e5edee39d6c7288",
+      "exitCode": 0,
+      "result": "2106pass/97files60.78s sequential after observed browser completion."
+    }
+  ],
+  "commands": "NODE_OPTIONS=--max-old-space-size=768 nice -n10;focused npm test -- --maxWorkers=1 src/pet/usePetVisibility.test.tsx src/pet/PetIntegration.test.tsx src/pet/usePetMotion.test.tsx;build npm run build;lint npm run lint;type ./node_modules/.bin/tsc -b;browser CHROME=/usr/bin/chromium node --test --test-concurrency=1 scripts/browser/pet-offscreen-clock.test.mjs scripts/browser/pet-pointer-attention.test.mjs scripts/browser/pet-play.test.mjs scripts/browser/pet-idle-clock.test.mjs scripts/browser/pet-motion.test.mjs",
+  "verificationScope": "Final113focused/2106full/typebuild/zero-warninglint/25production-and-platform-browser exits0 bind revised6sources. Original results/failing fixtures/one interrupted overlap remain scoped. Root process observations separate from reviewer static approval.",
+  "resources": "One worker/Chromium;accidental heavy overlap detected andfullunitprocess interrupted exit130,RAM~6GBavailable. Sequential rerun. /tmp4.1GBfree;account14%used ordinaryusageallowed.",
+  "limits": [
+    "Pending/delivered frame counts do not measure CPU or battery savings.",
+    "Native visibility verified in Chromium;no otherengine/physicaldevice/human temporal/ATclaim.",
+    "SVG group native bounds conservatively include hit/focus/rendering geometry. Any positive area and exact edge contact retain the clock."
+  ],
+  "pending": [],
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/offscreen-clock-review.md",
+    "sha256": "61de6b22e3e6ac8ca2fe893084742ecc4d37c4f39c399ff9a9bbc26ad1509825",
+    "result": "Final amendment closes P2 and approves six frozen sourcefiles;original finding preserved. Executor completion independent."
+  }
+}

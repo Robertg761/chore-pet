@@ -1,0 +1,16 @@
+{
+  "baseCommit": "091d8c4",
+  "sources": {
+    "src/pet/LivingRoom.tsx": "53ca9e6d54db83e58f036e093b2b3e130724d088e3579b0b4f90dba101c44b48",
+    "src/pet/PetIntegration.test.tsx": "cae725e35f0ccd909e96093611aa06c03afbb37a9f119a957611d758e6328a66",
+    "docs/ART.md": "bac617a950365ad08ba2c5d184a00991fb0a8e97102a1f83a8646d9a9209c633",
+    "src/pet/usePetVisibility.ts": "d322342a8b624b9a534e268299f26c539a171e9511854c7cc45582f166729134",
+    "src/pet/usePetVisibility.test.tsx": "756e8a1dfd4e1962614dea252ea5253b7fc88c6ffa52ed53a168798923313c86",
+    "scripts/browser/pet-offscreen-clock.test.mjs": "c97bb98767a77c40de3a7eedcd725adcc112e382981309916b8cc04bccbefdcf"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/offscreen-clock-source.diff",
+    "sha256": "18c4d1c7cf0829a0e7d0278f7dcace40c339378a8116e9e40103369207ba462f"
+  },
+  "scope": "6file resident visibility/resource change. Exact edge contact remains active to match native default-threshold delivery. Geometry unchanged. Native DOM/frame counts plus separate exact HTML edge-platform contract;not CPU/battery or human playback."
+}

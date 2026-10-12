@@ -1,0 +1,60 @@
+✔ the reduced resident stops idle frames but completes an explicit response (1301.734955ms)
+ℹ Chromium 152.0.7977.82; reduced:0 idle frames,1 finite clock,0 after response
+✔ the sick resident stops idle frames but completes an explicit response (953.279996ms)
+ℹ Chromium 152.0.7977.82; sick:0 idle frames,1 finite clock,0 after response
+✔ the away resident stops idle frames but completes an explicit response (971.735214ms)
+ℹ Chromium 152.0.7977.82; away:0 idle frames,1 finite clock,0 after response
+✔ keyboard Enter reaches and activates the resident without moving its world position (1006.432471ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (1068.056852ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (2917.558749ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.0421 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1118.172698ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.0740 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (1747.093418ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (854.824268ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1230.528479ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (1340.603341ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 593ms; lift sampled at 1349ms; landing at 1769ms
+✔ a scrolled-away resident pauses, lets an offscreen response expire, and resumes when partly visible (2756.808686ms)
+ℹ Offscreen pending frames before pause:0
+ℹ Chromium 152.0.7977.82; real native scroll;0offscreen/1visible pending resident frame
+✔ missing native observation retains the existing resident clock (1098.66695ms)
+✔ native default observer emits edge contact without a second positive-area entry (1025.265586ms)
+ℹ Native default threshold contract matches the hook notification-filtering regression.
+✔ native ancestor clipping pauses a resident still inside the viewport (1061.290239ms)
+ℹ Native ancestor entries:[{"inside":false,"ratio":0,"bottom":434.37969970703125,"height":0}]
+✔ native player choices stay still and fit 320px (1883.792448ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (1788.098483ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (1743.185696ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (1588.481084ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (1558.747187ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (950.564133ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2530.61272ms)
+ℹ Chromium 152.0.7977.82; join0.1120roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ mochi follows horizontal and vertical pointers from its actual drawn eyes (1181.987697ms)
+ℹ Chromium 152.0.7977.82; actual eye ink;3pointer directions; no saved changes
+✔ bun follows horizontal and vertical pointers from its actual drawn eyes (1099.626131ms)
+ℹ Chromium 152.0.7977.82; actual eye ink;3pointer directions; no saved changes
+✔ sprout follows horizontal and vertical pointers from its actual drawn eyes (1034.767246ms)
+ℹ Chromium 152.0.7977.82; actual eye ink;3pointer directions; no saved changes
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37829.765342

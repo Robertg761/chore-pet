@@ -1,0 +1,31 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/usePetVisibility.test.tsx src/pet/PetIntegration.test.tsx src/pet/usePetMotion.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (86 tests | 1 failed) 1797ms
+   × finishes a reduced player response against elapsed time without invisible frames 41ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > finishes a reduced player response against elapsed time without invisible frames
+AssertionError: expected null not to be null
+ ❯ src/pet/PetIntegration.test.tsx:120:74
+    118|   visibility.show(false)
+    119|   act(() => { expect(control.current!.respond('greet')).toBe('started'…
+    120|   expect(ui.container.querySelector('[data-expression="cheering"]')).n…
+       |                                                                          ^
+    121|   expect(frames.size).toBe(0)
+    122|   now = 1300
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 109 passed (110)
+   Start at  18:00:54
+   Duration  3.64s (tests 56%, environment 23%, transform 15%, import 5%)
+
+    Isolate  3 workers spawned · ~343ms startup each (spawn + environment, per file)
+             at least ~685ms faster with isolate: false — reuses workers across files instead of one per file
+

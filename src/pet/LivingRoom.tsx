@@ -19,6 +19,7 @@ import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sor
 import { motionFor } from './activityMotion'
 import { interactionTargets } from './interactions'
 import { usePetMotion } from './usePetMotion'
+import { usePetVisibility } from './usePetVisibility'
 import { faceAttention, pointerPosition, sampleAttention, type AttentionPoint, type AttentionSample } from './playerAttention'
 import { bubbleSpot, bubbleStyle, objectBoxes, type Box, type BubbleSize } from './bubble'
 import './LivingRoom.css'
@@ -88,13 +89,15 @@ interface MotionControl { paint: (state: PetState, now: number) => void; reduced
 interface PlayerAttention { pointer: AttentionPoint | null; focused: boolean; reset: boolean }
 
 /** Only this subtree redraws for breathing, gait and finite reaction frames. */
-function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
+function RoomPetArt({ pet, mood, away, live, tick, control, attention, nodeRef }: {
   pet: Pet; mood: Mood; away: boolean
   live: RefObject<Shown>
   tick: (now: number, reduced: boolean) => void
   control: RefObject<MotionControl | null>
   attention: RefObject<PlayerAttention>
+  nodeRef: RefObject<SVGGElement | null>
 }) {
+  const inView = usePetVisibility(nodeRef)
   const [sample, setSample] = useState(() => ({ state: live.current.state, now: performance.now(), attention: { x: 0, y: 0 } }))
   const gaze = useRef<AttentionSample | null>(null)
   const attentionSource = useRef<AttentionPoint | 'focus' | null>(null)
@@ -102,11 +105,11 @@ function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
     || (sample.state.noticeStart !== undefined && sample.now < sample.state.noticeStart + ACTION_MS.notice)
   const blending = sample.state.transition && blendProgress(sample.state.transition.start, sample.now) < 1
   const { reducedMotion } = usePetMotion(tick, {
-    normal: (!away && mood !== 'sick') || finite || Boolean(blending),
-    reduced: finite,
+    normal: inView && ((!away && mood !== 'sick') || finite || Boolean(blending)),
+    reduced: inView && finite,
   })
   useImperativeHandle(control, () => ({ paint: (state, now) => {
-    const still = reducedMotion || away || mood === 'sick' || attention.current.reset
+    const still = !inView || reducedMotion || away || mood === 'sick' || attention.current.reset
     const idle = state.activity.kind === 'idle' && (!state.transition || blendProgress(state.transition.start, now) >= 1)
     if (still || !idle) attention.current.pointer = null
     const source = !still && idle ? attention.current.pointer ?? (attention.current.focused ? 'focus' : null) : null
@@ -119,11 +122,11 @@ function RoomPetArt({ pet, mood, away, live, tick, control, attention }: {
     attentionSource.current = source
     attention.current.reset = false
     setSample({ state, now, attention: gaze.current.value })
-  }, reduced: reducedMotion }), [reducedMotion, away, mood, pet.species, attention])
+  }, reduced: reducedMotion }), [reducedMotion, away, mood, pet.species, attention, inView])
   useLayoutEffect(() => {
     // Preference and suppression changes apply before paint, including while hidden.
     tick(performance.now(), reducedMotion)
-  }, [tick, reducedMotion])
+  }, [tick, reducedMotion, inView])
   const frame = motionFor(sample.state, sample.now, pet.species, mood, reducedMotion).frame
   frame.gazeX += sample.attention.x * sample.state.facing
   frame.gazeY += sample.attention.y
@@ -386,7 +389,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
             onBlur: () => { attention.current.focused = false },
           },
           nodeRef: petNode,
-          art: <RoomPetArt pet={pet} mood={mood} away={away} live={live} tick={tick} control={motion} attention={attention} />,
+          art: <RoomPetArt pet={pet} mood={mood} away={away} live={live} tick={tick} control={motion} attention={attention} nodeRef={petNode} />,
         }}
       />
       {line && (scene?.bubbleContainer ? createPortal(

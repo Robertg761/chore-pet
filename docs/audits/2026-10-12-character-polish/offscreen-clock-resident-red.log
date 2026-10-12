@@ -1,0 +1,81 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (86 tests | 5 failed) 1758ms
+   × pauses a scrolled-away resident, clears hover, and resumes without room frame redraws 79ms
+   × finishes a reduced player response against elapsed time without invisible frames 23ms
+   × lets an offscreen sick notice expire without waking an invisible clock 25ms
+   × lets an offscreen away notice expire without waking an invisible clock 19ms
+   × combines scroll and document visibility and ignores a queued observer callback after unmount 22ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > pauses a scrolled-away resident, clears hover, and resumes without room frame redraws
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ Object.show src/pet/PetIntegration.test.tsx:85:25
+
+ ❯ src/pet/PetIntegration.test.tsx:101:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > finishes a reduced player response against elapsed time without invisible frames
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ Object.show src/pet/PetIntegration.test.tsx:85:25
+
+ ❯ src/pet/PetIntegration.test.tsx:118:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > lets an offscreen sick notice expire without waking an invisible clock
+ FAIL  src/pet/PetIntegration.test.tsx > lets an offscreen away notice expire without waking an invisible clock
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ Object.show src/pet/PetIntegration.test.tsx:85:25
+
+ ❯ src/pet/PetIntegration.test.tsx:131:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > combines scroll and document visibility and ignores a queued observer callback after unmount
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ Object.show src/pet/PetIntegration.test.tsx:85:25
+
+ ❯ src/pet/PetIntegration.test.tsx:143:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 81 passed (86)
+   Start at  18:00:23
+   Duration  2.74s (tests 67%, transform 19%, environment 10%, import 4%)
+

@@ -1,0 +1,22 @@
+✖ native zero-area edge contact can continue into view without another observer entry (2906.300621ms)
+ℹ Native edge entries:[{"inside":true,"ratio":0.0061990502290427685,"bottom":0.5083160400390625,"height":0.5083160400390625},{"inside":false,"ratio":0,"bottom":-0.00962066650390625,"height":0}]
+✔ native ancestor clipping pauses a resident still inside the viewport (798.230937ms)
+ℹ Native ancestor entries:[{"inside":false,"ratio":0,"bottom":434.37969970703125,"height":0}]
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4100.642997
+
+✖ failing tests:
+
+test at scripts/browser/pet-offscreen-clock.test.mjs:81:1
+✖ native zero-area edge contact can continue into view without another observer entry (2906.300621ms)
+  page.waitForFunction: Timeout 2000ms exceeded.
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-offscreen-clock.test.mjs:103:16) {
+    name: 'TimeoutError',
+    log: []
+  }

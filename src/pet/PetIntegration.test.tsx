@@ -70,6 +70,106 @@ function expectPointerGaze(container: Element, at: number, fraction = 1) {
   expect(values[1]).toBeCloseTo(target.y * fraction, 10)
 }
 
+function observeResident() {
+  const observers: { target: Element | null; callback: IntersectionObserverCallback; disconnect: ReturnType<typeof vi.fn> }[] = []
+  vi.stubGlobal('IntersectionObserver', class {
+    target: Element | null = null
+    callback: IntersectionObserverCallback
+    disconnect = vi.fn()
+    constructor(callback: IntersectionObserverCallback) { this.callback = callback; observers.push(this) }
+    observe(target: Element) { this.target = target }
+  })
+  return {
+    observers,
+    show(visible: boolean) {
+      expect(observers).toHaveLength(1)
+      const observer = observers[0]
+      act(() => observer.callback([{ target: observer.target!, isIntersecting: visible, intersectionRatio: visible ? 1 : 0 } as IntersectionObserverEntry], observer as unknown as IntersectionObserver))
+    },
+  }
+}
+
+it('pauses a scrolled-away resident, clears hover, and resumes without room frame redraws', () => {
+  const visibility = observeResident()
+  const ui = mount(<LivingRoom {...props} mood="happy" />)
+  const resident = ui.container.querySelector('.room-pet')!
+  Object.defineProperty(resident, 'getScreenCTM', { value: () => ({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }) })
+  pointerAt(resident, 170, 56)
+  frame(16); frame(136)
+  const position = resident.getAttribute('transform'), renders = roomRenders.count
+  expect(frames.size).toBe(1)
+  visibility.show(false)
+  expect(frames.size).toBe(0)
+  expect(gaze(ui.container)).toBe('translate(0 0)')
+  expect(roomRenders.count).toBe(renders)
+  now = 5000
+  visibility.show(true)
+  expect(frames.size).toBe(1)
+  expect(resident.getAttribute('transform')).toBe(position)
+  expect(gaze(ui.container)).toBe('translate(0 0)')
+  expect(visibility.observers[0].target).toBe(resident)
+})
+
+it('finishes a reduced player response against elapsed time without invisible frames', () => {
+  const visibility = observeResident()
+  Object.defineProperty(media, 'matches', { value: true, configurable: true })
+  const control = createRef<LivingRoomControl>()
+  const ui = mount(<LivingRoom {...props} mood="happy" control={control} />)
+  visibility.show(false)
+  act(() => { expect(control.current!.respond('greet')).toBe('started') })
+  expect(ui.container.querySelector('[aria-live="polite"]')!.textContent).not.toBe('')
+  expect(frames.size).toBe(0)
+  now = 1300
+  visibility.show(true)
+  expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
+  expect(frames.size).toBe(0)
+})
+
+it('samples a still-active reduced response at its elapsed phase when it returns into view', () => {
+  const visibility = observeResident()
+  Object.defineProperty(media, 'matches', { value: true, configurable: true })
+  const control = createRef<LivingRoomControl>()
+  const ui = mount(<LivingRoom {...props} mood="happy" control={control} />)
+  visibility.show(false)
+  act(() => { expect(control.current!.respond('greet')).toBe('started') })
+  now = 500
+  visibility.show(true)
+  expect(ui.container.querySelector('[data-expression="cheering"]')).not.toBeNull()
+  expect(frames.size).toBe(1)
+  frame(1200)
+  expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
+  expect(frames.size).toBe(0)
+})
+
+it.each(['sick', 'away'] as const)('lets an offscreen %s notice expire without waking an invisible clock', resting => {
+  const visibility = observeResident()
+  const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? 'sick' : 'happy'} away={resting === 'away'} />)
+  visibility.show(false)
+  click(ui.container.querySelector('.room-pet')!)
+  expect(frames.size).toBe(0)
+  now = 700
+  visibility.show(true)
+  expect(frames.size).toBe(0)
+  expect(ui.container.querySelector('[data-expression="sick"], [data-expression="sleeping"]')).not.toBeNull()
+})
+
+it('combines scroll and document visibility and ignores a queued observer callback after unmount', () => {
+  const watching = observeResident()
+  const ui = mount(<LivingRoom {...props} mood="happy" />)
+  watching.show(false)
+  visibility(true)
+  watching.show(true)
+  expect(frames.size).toBe(0)
+  visibility(false)
+  expect(frames.size).toBe(1)
+  watching.show(false)
+  expect(frames.size).toBe(0)
+  ui.unmount(); cleanups.pop()
+  expect(watching.observers[0].disconnect).toHaveBeenCalledOnce()
+  watching.show(true)
+  expect(frames.size).toBe(0)
+})
+
 it('uses no reduced idle frames, responds to invitations, and clocks only a finite greeting', () => {
   Object.defineProperty(media, 'matches', { value: true, configurable: true })
   const control = createRef<LivingRoomControl>()

@@ -1,0 +1,32 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/usePetVisibility.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/usePetVisibility.test.tsx (7 tests | 1 failed) 49ms
+   × stays active when native edge contact becomes positive area without another notification 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/usePetVisibility.test.tsx > stays active when native edge contact becomes positive area without another notification
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ src/pet/usePetVisibility.test.tsx:69:24
+     67|   act(() => { expect(observer.sample(true, 0)).toBe(true) })
+     68|   act(() => { expect(observer.sample(true, .4)).toBe(false) })
+     69|   expect(ui.visible()).toBe('true')
+       |                        ^
+     70| })
+     71|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  18:12:02
+   Duration  511ms (environment 70%, tests 13%, transform 8%, import 8%, worker 1%)
+
