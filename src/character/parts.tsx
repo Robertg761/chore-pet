@@ -1,3 +1,4 @@
+import { eyeCentreOffset } from './eyeGeometry'
 import { createContext, useContext, useId, type ReactNode } from 'react'
 import { bodyShade, mix } from '../art/color'
 import { PALETTE } from '../art/palette'
@@ -230,14 +231,14 @@ function EyeShape({ x, y, mood, side, style, lashes, gaze, alert, eyeOpen }: { x
       return <OpenEye x={x} y={y} style={style} scale={alert ? 1.06 : 1} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
     case 'meh':
       // Still bright, a touch smaller: "hm, okay". No lids, so it never looks unimpressed.
-      return <OpenEye x={x} y={y + 1} scale={0.82} style={style} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
+      return <OpenEye x={x} y={y + eyeCentreOffset(mood)} scale={0.82} style={style} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
     case 'scruffy':
       // Tired and a bit sad, but hopeful: the same open eye as meh (smaller, glossy, no lid,
       // so never smug or cross) with its main highlight sunk lower, under worried brows.
       return (
         <g>
           <Brow x={x} y={y} side={side} />
-          <OpenEye x={x} y={y + 1.5} scale={0.78} drop={2.4} style={style} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
+          <OpenEye x={x} y={y + eyeCentreOffset(mood)} scale={0.78} drop={2.4} style={style} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
         </g>
       )
     case 'sick':

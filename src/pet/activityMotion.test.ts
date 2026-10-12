@@ -532,14 +532,14 @@ describe('activity motion', () => {
     }
   })
 
-  it('projects target gaze relative to the centre where the pet stands', () => {
+  it('looks down at a detail below its eye line but above the standing tile centre', () => {
     const pet: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), activity: {
       kind: 'interact', phase: 'action', start: 0, until: ACTION_MS.inspect,
       target: { objectId: 'decor', signature: 'decor:0', tile: { tx: 2, ty: 2 },
         gaze: { tx: 2.25, ty: 2.25 }, action: 'inspect', contact: false },
     } }
-    // This point is above the tile centre but below its back corner on screen.
-    expect(motion(pet, 900).frame.gazeY).toBeLessThan(0)
+    // This point is above the floor centre but below the rendered eye centre.
+    expect(motion(pet, 900).frame.gazeY).toBeGreaterThan(0)
   })
 
   it.each(['sick', 'sleep'] as const)('maps %s input to a gentle finite notice', (kind) => {

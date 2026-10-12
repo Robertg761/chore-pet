@@ -1,0 +1,94 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/AnimatedCharacter.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/AnimatedCharacter.test.tsx (54 tests | 6 failed) 7988ms
+   ❯ articulated face reference (6)
+     × aims the rendered bun eye displacement toward the actual room detail 46ms
+     × aims the rendered mochi eye displacement toward the actual room detail 12ms
+     × aims the rendered sprout eye displacement toward the actual room detail 11ms
+     × inverts bun actual rendered face placement through every upright posture 25ms
+     × inverts mochi actual rendered face placement through every upright posture 26ms
+     × inverts sprout actual rendered face placement through every upright posture 19ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > articulated face reference > aims the rendered bun eye displacement toward the actual room detail
+AssertionError: expected -0.001272265556305996 to be close to +0, received difference is 0.001272265556305996, but expected 5e-9
+ ❯ src/character/AnimatedCharacter.test.tsx:80:47
+     78|       const gaze = { x: shifted.x - origin.x, y: shifted.y - origin.y }
+     79|       expect(gaze.x * aim.x + gaze.y * aim.y).toBeGreaterThan(0)
+     80|       expect(gaze.x * aim.y - gaze.y * aim.x).toBeCloseTo(0, 8)
+       |                                               ^
+     81|     }
+     82|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > articulated face reference > aims the rendered mochi eye displacement toward the actual room detail
+AssertionError: expected -0.0012807546611401932 to be close to +0, received difference is 0.0012807546611401932, but expected 5e-9
+ ❯ src/character/AnimatedCharacter.test.tsx:80:47
+     78|       const gaze = { x: shifted.x - origin.x, y: shifted.y - origin.y }
+     79|       expect(gaze.x * aim.x + gaze.y * aim.y).toBeGreaterThan(0)
+     80|       expect(gaze.x * aim.y - gaze.y * aim.x).toBeCloseTo(0, 8)
+       |                                               ^
+     81|     }
+     82|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > articulated face reference > aims the rendered sprout eye displacement toward the actual room detail
+AssertionError: expected -0.0012648444695475547 to be close to +0, received difference is 0.0012648444695475547, but expected 5e-9
+ ❯ src/character/AnimatedCharacter.test.tsx:80:47
+     78|       const gaze = { x: shifted.x - origin.x, y: shifted.y - origin.y }
+     79|       expect(gaze.x * aim.x + gaze.y * aim.y).toBeGreaterThan(0)
+     80|       expect(gaze.x * aim.y - gaze.y * aim.x).toBeCloseTo(0, 8)
+       |                                               ^
+     81|     }
+     82|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > articulated face reference > inverts bun actual rendered face placement through every upright posture
+AssertionError: expected 19.93837015544707 to be close to 20, received difference is 0.06162984455292886, but expected 5e-11
+ ❯ src/character/AnimatedCharacter.test.tsx:94:26
+     92|         const delta = articulatedFaceDelta(species, frame, pose, targe…
+     93|         const point = worldPoint(eye, 100 + delta.x, eyeY + delta.y)
+     94|         expect(point[0]).toBeCloseTo(target.x, 10)
+       |                          ^
+     95|         expect(point[1]).toBeCloseTo(target.y, 10)
+     96|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > articulated face reference > inverts mochi actual rendered face placement through every upright posture
+AssertionError: expected 19.909593332119847 to be close to 20, received difference is 0.09040666788015272, but expected 5e-11
+ ❯ src/character/AnimatedCharacter.test.tsx:94:26
+     92|         const delta = articulatedFaceDelta(species, frame, pose, targe…
+     93|         const point = worldPoint(eye, 100 + delta.x, eyeY + delta.y)
+     94|         expect(point[0]).toBeCloseTo(target.x, 10)
+       |                          ^
+     95|         expect(point[1]).toBeCloseTo(target.y, 10)
+     96|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > articulated face reference > inverts sprout actual rendered face placement through every upright posture
+AssertionError: expected 19.92218735287489 to be close to 20, received difference is 0.0778126471251106, but expected 5e-11
+ ❯ src/character/AnimatedCharacter.test.tsx:94:26
+     92|         const delta = articulatedFaceDelta(species, frame, pose, targe…
+     93|         const point = worldPoint(eye, 100 + delta.x, eyeY + delta.y)
+     94|         expect(point[0]).toBeCloseTo(target.x, 10)
+       |                          ^
+     95|         expect(point[1]).toBeCloseTo(target.y, 10)
+     96|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 48 passed (54)
+   Start at  17:18:57
+   Duration  8.63s (tests 94%, environment 3%, transform 2%, import 1%)
+

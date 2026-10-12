@@ -1,0 +1,492 @@
+{
+  "baselineCommit": null,
+  "overriddenSources": [],
+  "method": "12 actual behavior-derived production Room stills and36 dressed character views at200/60/25px; poster/teddy, all3 species, both mirrors,42% inspect action. Static evidence only; no live clock or human playback. Source list covers direct sampled geometry/placement, not every transitive asset dependency.",
+  "samples": [
+    {
+      "species": "mochi",
+      "id": "poster",
+      "rotation": 0,
+      "facing": -1,
+      "standing": {
+        "tx": 1,
+        "ty": 4
+      },
+      "gaze": {
+        "tx": -2.625,
+        "ty": 1.875
+      },
+      "frame": {
+        "bodyX": 0,
+        "bodyY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "lean": -0.4520847678922262,
+        "leftFoot": 0,
+        "rightFoot": 0,
+        "leftGroundX": 0,
+        "leftGroundY": 0,
+        "rightGroundX": 0,
+        "rightGroundY": 0,
+        "leftArm": 0,
+        "rightArm": -9.84,
+        "leftAppendage": -4.9821543715254455,
+        "rightAppendage": -3.9857234972203566,
+        "gazeX": 1.1458393084381515,
+        "gazeY": -1.8483689241223795,
+        "eyeOpen": 1,
+        "shadowScale": 1,
+        "shadowOpacity": 1,
+        "accentOpacity": 0,
+        "expression": "alert"
+      },
+      "contact": false
+    },
+    {
+      "species": "mochi",
+      "id": "poster",
+      "rotation": 1,
+      "facing": 1,
+      "standing": {
+        "tx": 4,
+        "ty": 1
+      },
+      "gaze": {
+        "tx": 1.875,
+        "ty": -2.625
+      },
+      "frame": {
+        "bodyX": 0,
+        "bodyY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "lean": -0.4520847678922262,
+        "leftFoot": 0,
+        "rightFoot": 0,
+        "leftGroundX": 0,
+        "leftGroundY": 0,
+        "rightGroundX": 0,
+        "rightGroundY": 0,
+        "leftArm": 0,
+        "rightArm": -9.84,
+        "leftAppendage": -4.9821543715254455,
+        "rightAppendage": -3.9857234972203566,
+        "gazeX": 1.1458393084381515,
+        "gazeY": -1.8483689241223795,
+        "eyeOpen": 1,
+        "shadowScale": 1,
+        "shadowOpacity": 1,
+        "accentOpacity": 0,
+        "expression": "alert"
+      },
+      "contact": false
+    },
+    {
+      "species": "mochi",
+      "id": "teddy",
+      "rotation": 0,
+      "facing": 1,
+      "standing": {
+        "tx": 6,
+        "ty": 7
+      },
+      "gaze": {
+        "tx": 6.75,
+        "ty": 6.75
+      },
+      "frame": {
+        "bodyX": 0,
+        "bodyY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "lean": 6.56,
+        "leftFoot": 0,
+        "rightFoot": 0,
+        "leftGroundX": 0,
+        "leftGroundY": 0,
+        "rightGroundX": 0,
+        "rightGroundY": 0,
+        "leftArm": 0,
+        "rightArm": -9.84,
+        "leftAppendage": -4.9821543715254455,
+        "rightAppendage": -3.9857234972203566,
+        "gazeX": 2.3029744577362954,
+        "gazeY": 1.2817190968060943,
+        "eyeOpen": 1,
+        "shadowScale": 1,
+        "shadowOpacity": 1,
+        "accentOpacity": 0,
+        "expression": "alert"
+      },
+      "contact": false
+    },
+    {
+      "species": "mochi",
+      "id": "teddy",
+      "rotation": 1,
+      "facing": -1,
+      "standing": {
+        "tx": 7,
+        "ty": 6
+      },
+      "gaze": {
+        "tx": 6.75,
+        "ty": 6.75
+      },
+      "frame": {
+        "bodyX": 0,
+        "bodyY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "lean": 6.56,
+        "leftFoot": 0,
+        "rightFoot": 0,
+        "leftGroundX": 0,
+        "leftGroundY": 0,
+        "rightGroundX": 0,
+        "rightGroundY": 0,
+        "leftArm": 0,
+        "rightArm": -9.84,
+        "leftAppendage": -4.9821543715254455,
+        "rightAppendage": -3.9857234972203566,
+        "gazeX": 2.3029744577362954,
+        "gazeY": 1.2817190968060943,
+        "eyeOpen": 1,
+        "shadowScale": 1,
+        "shadowOpacity": 1,
+        "accentOpacity": 0,
+        "expression": "alert"
+      },
+      "contact": false
+    },
+    {
+      "species": "bun",
+      "id": "poster",
+      "rotation": 0,
+      "facing": -1,
+      "standing": {
+        "tx": 1,
+        "ty": 4
+      },
+      "gaze": {
+        "tx": -2.625,
+        "ty": 1.875
+      },
+      "frame": {
+        "bodyX": 0,
+        "bodyY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "lean": -0.5797779170210298,
+        "leftFoot": 0,
+        "rightFoot": 0,
+        "leftGroundX": 0,
+        "leftGroundY": 0,
+        "rightGroundX": 0,
+        "rightGroundY": 0,
+        "leftArm": 0,
+        "rightArm": -12,
+        "leftAppendage": -11.334842428654078,
+        "rightAppendage": -9.067873942923262,
+        "gazeX": 1.139691541534991,
+        "gazeY": -1.8500574393669929,
+        "eyeOpen": 1,
+        "shadowScale": 1,
+        "shadowOpacity": 1,
+        "accentOpacity": 0,
+        "expression": "alert"
+      },
+      "contact": false
+    },
+    {
+      "species": "bun",
+      "id": "poster",
+      "rotation": 1,
+      "facing": 1,
+      "standing": {
+        "tx": 4,
+        "ty": 1
+      },
+      "gaze": {
+        "tx": 1.875,
+        "ty": -2.625
+      },
+      "frame": {
+        "bodyX": 0,
+        "bodyY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "lean": -0.5797779170210298,
+        "leftFoot": 0,
+        "rightFoot": 0,
+        "leftGroundX": 0,
+        "leftGroundY": 0,
+        "rightGroundX": 0,
+        "rightGroundY": 0,
+        "leftArm": 0,
+        "rightArm": -12,
+        "leftAppendage": -11.334842428654078,
+        "rightAppendage": -9.067873942923262,
+        "gazeX": 1.139691541534991,
+        "gazeY": -1.8500574393669929,
+        "eyeOpen": 1,
+        "shadowScale": 1,
+        "shadowOpacity": 1,
+        "accentOpacity": 0,
+        "expression": "alert"
+      },
+      "contact": false
+    },
+    {
+      "species": "bun",
+      "id": "teddy",
+      "rotation": 0,
+      "facing": 1,
+      "standing": {
+        "tx": 6,
+        "ty": 7
+      },
+      "gaze": {
+        "tx": 6.75,
+        "ty": 6.75
+      },
+      "frame": {
+        "bodyX": 0,
+        "bodyY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "lean": 8,
+        "leftFoot": 0,
+        "rightFoot": 0,
+        "leftGroundX": 0,
+        "leftGroundY": 0,
+        "rightGroundX": 0,
+        "rightGroundY": 0,
+        "leftArm": 0,
+        "rightArm": -12,
+        "leftAppendage": -11.334842428654078,
+        "rightAppendage": -9.067873942923262,
+        "gazeX": 2.39289694966167,
+        "gazeY": 1.2062880047300062,
+        "eyeOpen": 1,
+        "shadowScale": 1,
+        "shadowOpacity": 1,
+        "accentOpacity": 0,
+        "expression": "alert"
+      },
+      "contact": false
+    },
+    {
+      "species": "bun",
+      "id": "teddy",
+      "rotation": 1,
+      "facing": -1,
+      "standing": {
+        "tx": 7,
+        "ty": 6
+      },
+      "gaze": {
+        "tx": 6.75,
+        "ty": 6.75
+      },
+      "frame": {
+        "bodyX": 0,
+        "bodyY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "lean": 8,
+        "leftFoot": 0,
+        "rightFoot": 0,
+        "leftGroundX": 0,
+        "leftGroundY": 0,
+        "rightGroundX": 0,
+        "rightGroundY": 0,
+        "leftArm": 0,
+        "rightArm": -12,
+        "leftAppendage": -11.334842428654078,
+        "rightAppendage": -9.067873942923262,
+        "gazeX": 2.39289694966167,
+        "gazeY": 1.2062880047300062,
+        "eyeOpen": 1,
+        "shadowScale": 1,
+        "shadowOpacity": 1,
+        "accentOpacity": 0,
+        "expression": "alert"
+      },
+      "contact": false
+    },
+    {
+      "species": "sprout",
+      "id": "poster",
+      "rotation": 0,
+      "facing": -1,
+      "standing": {
+        "tx": 1,
+        "ty": 4
+      },
+      "gaze": {
+        "tx": -2.625,
+        "ty": 1.875
+      },
+      "frame": {
+        "bodyX": 0,
+        "bodyY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "lean": -0.4174401002551414,
+        "leftFoot": 0,
+        "rightFoot": 0,
+        "leftGroundX": 0,
+        "leftGroundY": 0,
+        "rightGroundX": 0,
+        "rightGroundY": 0,
+        "leftArm": 0,
+        "rightArm": -8.64,
+        "leftAppendage": -7.744649900601859,
+        "rightAppendage": 5.8084874254513945,
+        "gazeX": 1.1319671166097656,
+        "gazeY": -1.8521639532556595,
+        "eyeOpen": 1,
+        "shadowScale": 1,
+        "shadowOpacity": 1,
+        "accentOpacity": 0,
+        "expression": "alert"
+      },
+      "contact": false
+    },
+    {
+      "species": "sprout",
+      "id": "poster",
+      "rotation": 1,
+      "facing": 1,
+      "standing": {
+        "tx": 4,
+        "ty": 1
+      },
+      "gaze": {
+        "tx": 1.875,
+        "ty": -2.625
+      },
+      "frame": {
+        "bodyX": 0,
+        "bodyY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "lean": -0.4174401002551414,
+        "leftFoot": 0,
+        "rightFoot": 0,
+        "leftGroundX": 0,
+        "leftGroundY": 0,
+        "rightGroundX": 0,
+        "rightGroundY": 0,
+        "leftArm": 0,
+        "rightArm": -8.64,
+        "leftAppendage": -7.744649900601859,
+        "rightAppendage": 5.8084874254513945,
+        "gazeX": 1.1319671166097656,
+        "gazeY": -1.8521639532556595,
+        "eyeOpen": 1,
+        "shadowScale": 1,
+        "shadowOpacity": 1,
+        "accentOpacity": 0,
+        "expression": "alert"
+      },
+      "contact": false
+    },
+    {
+      "species": "sprout",
+      "id": "teddy",
+      "rotation": 0,
+      "facing": 1,
+      "standing": {
+        "tx": 6,
+        "ty": 7
+      },
+      "gaze": {
+        "tx": 6.75,
+        "ty": 6.75
+      },
+      "frame": {
+        "bodyX": 0,
+        "bodyY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "lean": 5.76,
+        "leftFoot": 0,
+        "rightFoot": 0,
+        "leftGroundX": 0,
+        "leftGroundY": 0,
+        "rightGroundX": 0,
+        "rightGroundY": 0,
+        "leftArm": 0,
+        "rightArm": -8.64,
+        "leftAppendage": -7.744649900601859,
+        "rightAppendage": 5.8084874254513945,
+        "gazeX": 2.3384103172403456,
+        "gazeY": 1.2528788516805618,
+        "eyeOpen": 1,
+        "shadowScale": 1,
+        "shadowOpacity": 1,
+        "accentOpacity": 0,
+        "expression": "alert"
+      },
+      "contact": false
+    },
+    {
+      "species": "sprout",
+      "id": "teddy",
+      "rotation": 1,
+      "facing": -1,
+      "standing": {
+        "tx": 7,
+        "ty": 6
+      },
+      "gaze": {
+        "tx": 6.75,
+        "ty": 6.75
+      },
+      "frame": {
+        "bodyX": 0,
+        "bodyY": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "lean": 5.76,
+        "leftFoot": 0,
+        "rightFoot": 0,
+        "leftGroundX": 0,
+        "leftGroundY": 0,
+        "rightGroundX": 0,
+        "rightGroundY": 0,
+        "leftArm": 0,
+        "rightArm": -8.64,
+        "leftAppendage": -7.744649900601859,
+        "rightAppendage": 5.8084874254513945,
+        "gazeX": 2.3384103172403456,
+        "gazeY": 1.2528788516805618,
+        "eyeOpen": 1,
+        "shadowScale": 1,
+        "shadowOpacity": 1,
+        "accentOpacity": 0,
+        "expression": "alert"
+      },
+      "contact": false
+    }
+  ],
+  "sourceSha256": {
+    "src/pet/activityMotion.ts": "bc05961f19363d693378e1fd01cc04f9eec312f3b8000bd01e3ccd0c5762583b",
+    "src/pet/behaviour.ts": "abfaebf51a64be14f10c261735f462da28f7e0f487403de4081e27939c8e293e",
+    "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7",
+    "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+    "src/character/species/animatedBody.tsx": "524d6bd0f87b4851520743cb598c04b5077924a421dbb3cc61ab639a7185cbcb",
+    "src/character/motion.ts": "c5728645139ddfdf5c73296fc07dc1fbca12ae6a98e3640d269862166c240091",
+    "src/character/parts.tsx": "7f7f027722f54a96e79a49b3accca9863b68250c090c3bd4c1a889456c19d3a7",
+    "src/room/Room.tsx": "10e3faba9fe3419d4b88427d55a0468da6e39c402c7ed3cbee0338d258137a8a",
+    "src/room/shell/geometry.ts": "967f73de056add3298520e580aa172a720132b49b11dd5bcab4a8f1a4b4fd027",
+    "docs/audits/2026-10-12-character-polish/capture-eye-attention.mjs": "5e51c4934f36dca72f8f1c85680ca442f9f0bec400491bde6d1f750ede30abbe",
+    "src/character/eyeGeometry.ts": "b0a106858c8c8c88a2a27d0d85470a33fdffa8377b4c918943b2d40ea774b2ae"
+  },
+  "captureSha256": {
+    "eye-attention-after-rooms.png": "75b5aaebf545c01a1046a60477b1507c201c4d1c7d841ddc64912f76edd96f92",
+    "eye-attention-after-sizes.png": "c1bb5ec584e0c9a2064095615f0233d5a8ae15b52ee425e5c5ad5d59e316ae43"
+  }
+}

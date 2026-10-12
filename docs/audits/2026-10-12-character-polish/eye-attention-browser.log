@@ -1,0 +1,57 @@
+✔ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1838.247331ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1688.558309ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1750.278819ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1599.950964ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1624.313417ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1622.658989ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ keyboard exploration stays still and fits 320px (789.620142ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 390px (762.933896ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 1280px (743.93547ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 640px (856.595204ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 844px (883.211388ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ an invitation joins a live step, reaches the chosen detail, coalesces repeats, and respects live reduction (2102.530197ms)
+ℹ Chromium 152.0.7977.82; pose join 0.2253 room SVG units; one application rAF
+✔ the reduced resident stops idle frames but completes an explicit response (1215.863788ms)
+ℹ Chromium 152.0.7977.82; reduced:0 idle frames,1 finite clock,0 after response
+✔ the sick resident stops idle frames but completes an explicit response (906.960955ms)
+ℹ Chromium 152.0.7977.82; sick:0 idle frames,1 finite clock,0 after response
+✔ the away resident stops idle frames but completes an explicit response (910.025576ms)
+ℹ Chromium 152.0.7977.82; away:0 idle frames,1 finite clock,0 after response
+✔ keyboard Enter reaches and activates the resident without moving its world position (1027.854671ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (978.198066ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (2884.491561ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.0280 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1073.942911ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.0740 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (1700.747811ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (856.276389ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1226.346853ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (1275.065472ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 513ms; lift sampled at 1269ms; landing at 1689ms
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 31968.077573

@@ -1,0 +1,192 @@
+{
+  "baseCommit": "9b5b4f8",
+  "commandPrefix": "NODE_OPTIONS=--max-old-space-size=768 nice -n10; browser CHROME before nice; heavycheckssequential,oneworker/browser",
+  "checks": [
+    {
+      "name": "red",
+      "command": "npm test -- --maxWorkers=1 src/pet/environmentAttention.test.ts src/character/AnimatedCharacter.test.tsx",
+      "log": "eye-attention-red.log",
+      "exitCode": 1,
+      "result": "12fail/51pass; missing helper,low/high attention and signed-zero endpoint",
+      "logSha256": "6815a370c2265af675e2869ff5af7c303bcc1eec4acfa4810eeacaa2b6fe1ede"
+    },
+    {
+      "name": "initial-green",
+      "command": "npm test -- --maxWorkers=1 src/pet/environmentAttention.test.ts src/pet/activityMotion.test.ts src/character/AnimatedCharacter.test.tsx",
+      "log": "eye-attention-green.log",
+      "exitCode": 0,
+      "result": "127pass; before actualpupil/mood additions",
+      "logSha256": "dea4a60ca7eee381192b27d862e68941086dcc85a7d9ab2a513845082c93fb6c"
+    },
+    {
+      "name": "pupil-fixture-error",
+      "command": "npm test -- --maxWorkers=1 src/pet/environmentAttention.test.ts src/pet/activityMotion.test.ts src/character/AnimatedCharacter.test.tsx src/pet/PetIntegration.test.tsx",
+      "log": "eye-attention-focused.log",
+      "exitCode": 1,
+      "result": "3fail/204pass; gaze-group origin fixture was incorrect",
+      "logSha256": "693f14c7b0ca578dc1100c2a3c52a19af70e38689294ccb7863e1bba0b1c3a1c"
+    },
+    {
+      "name": "eye-offset-red",
+      "command": "npm test -- --maxWorkers=1 src/character/AnimatedCharacter.test.tsx",
+      "log": "eye-attention-eye-offset-red.log",
+      "exitCode": 1,
+      "result": "6fail/48pass:3direct tired-eye-centre inverse failures and3rounded-placement tolerance failures",
+      "logSha256": "e8b45474668a29cacbe78c5e0bc5bb19433d697a7f17babdcaceac56703c1843"
+    },
+    {
+      "name": "rounding-fixture-error",
+      "command": "npm test -- --maxWorkers=1 src/pet/environmentAttention.test.ts src/pet/activityMotion.test.ts src/character/AnimatedCharacter.test.tsx src/pet/PetIntegration.test.tsx",
+      "log": "eye-attention-focused-final.log",
+      "exitCode": 1,
+      "result": "3fail/204pass; literalzero crossproduct versus rounded placement; physicaldistance tolerance fixes fixture",
+      "logSha256": "97b40eec68623c76077bbef12c96d696379fa2fbf8f5c5b075928ad3f3ddb4f8"
+    },
+    {
+      "name": "focused",
+      "command": "npm test -- --maxWorkers=1 src/pet/environmentAttention.test.ts src/pet/activityMotion.test.ts src/character/AnimatedCharacter.test.tsx src/pet/PetIntegration.test.tsx",
+      "log": "eye-attention-focused-corrected.log",
+      "exitCode": 0,
+      "result": "207pass/4files11.74s",
+      "logSha256": "0abde1f86369627cf6a3b423c4b70062b17154c978ab07a08fb53d5d33aad73b"
+    },
+    {
+      "name": "browser-red",
+      "command": "CHROME=/usr/bin/chromium node --test --test-concurrency=1 scripts/browser/pet-environment-attention.test.mjs",
+      "log": "eye-attention-browser-red.log",
+      "exitCode": 1,
+      "result": "6lowgaze-directionfails oldproduction; about.42CSSpxperpendicular error",
+      "logSha256": "20ade12559f9b0a1622000d87f1f79c064fe8964ce286e91b288bf4e34dc87ee"
+    },
+    {
+      "name": "build",
+      "command": "npm run build",
+      "log": "eye-attention-build.log",
+      "exitCode": 0,
+      "result": "TypeScript/Vite/PWA pass; existingchunkadvisory",
+      "logSha256": "7d0ea72c8ecda6f1c1bb9787fe2a8c9706d4e6fed09f24f5c3f63c690cd3e9e2"
+    },
+    {
+      "name": "browser",
+      "command": "CHROME=/usr/bin/chromium node --test --test-concurrency=1 scripts/browser/pet-environment-attention.test.mjs scripts/browser/pet-motion.test.mjs scripts/browser/pet-idle-clock.test.mjs scripts/browser/pet-explore.test.mjs",
+      "log": "eye-attention-browser.log",
+      "exitCode": 0,
+      "result": "23pass31.97s; Chromium152.0.7977.82 offlineproduction/nativeSVGmatrices",
+      "logSha256": "852f1d2453b12557c78ef1b490176e4e96d7072e5239902b88942905e1cbb9dc",
+      "scope": "Predates only pure eyeCentreOffset module relocation; final focused/build/browser-module checks bind final imports."
+    },
+    {
+      "name": "full-unit",
+      "command": "npm test -- --maxWorkers=1",
+      "log": "eye-attention-full.log",
+      "exitCode": 0,
+      "result": "2069pass93files58.80s",
+      "logSha256": "7d9cf9b4ba2861754d48fadf6f076e21184d7b892e4f43a8fd0b86e0d3c9f22e",
+      "scope": "Predates only pure eyeCentreOffset module relocation; final focused/build/browser-module checks bind final imports."
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "log": "eye-attention-lint.log",
+      "exitCode": 0,
+      "result": "exit0 with1react/only-export-components warning; previous zero-warning description was incorrect",
+      "logSha256": "85f9c5fc18aba6a95c87ec35e51f0442cf3ea938814308bd73ea0121c6a828c3"
+    },
+    {
+      "name": "validated-before",
+      "command": "node docs/audits/2026-10-12-character-polish/capture-eye-attention.mjs before",
+      "log": "eye-attention-capture-before-validated.log",
+      "exitCode": 0,
+      "result": "12validRoom/36sizeviews; exactbaseline3blobs",
+      "logSha256": "9798c04093e09216ac867dcdb9ad0ae02466990384a674869bb1285772452076"
+    },
+    {
+      "name": "validated-after",
+      "command": "node docs/audits/2026-10-12-character-polish/capture-eye-attention.mjs after",
+      "log": "eye-attention-capture-after-validated.log",
+      "exitCode": 0,
+      "result": "12validRoom/36sizeviews; finalsource",
+      "logSha256": "3bc7544791257073e2274c61125c3d667fe9d774a081a70ef4e9c6eaedfc3065"
+    },
+    {
+      "name": "focused-module",
+      "command": "npm test -- --maxWorkers=1 src/pet/environmentAttention.test.ts src/pet/activityMotion.test.ts src/character/AnimatedCharacter.test.tsx src/pet/PetIntegration.test.tsx",
+      "log": "eye-attention-focused-module.log",
+      "exitCode": 0,
+      "result": "207pass4files12.17s",
+      "logSha256": "ef3b111857dfa96c7bc2484a258e38c995cfdea9bcb73cb315c5065cd4ddf694"
+    },
+    {
+      "name": "build-module",
+      "command": "npm run build",
+      "log": "eye-attention-build-module.log",
+      "exitCode": 0,
+      "result": "TypeScript/Vite/PWA pass; existingchunkadvisory",
+      "logSha256": "f7db2784c2123a477496ee66aa996554e0a8f3c20ae5984fc028f5d6f682cc8a"
+    },
+    {
+      "name": "lint-module",
+      "command": "npm run lint",
+      "log": "eye-attention-lint-module.log",
+      "exitCode": 0,
+      "result": "zero warnings",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68"
+    },
+    {
+      "name": "capture-before-module",
+      "command": "node docs/audits/2026-10-12-character-polish/capture-eye-attention.mjs before",
+      "log": "eye-attention-capture-before-module.log",
+      "exitCode": 0,
+      "result": "12rooms/36sizes; refreshed helper binding",
+      "logSha256": "ce62187199611aa40721f5861588d041a208c055dc735f16a88cefa650ee9b93"
+    },
+    {
+      "name": "capture-after-module",
+      "command": "node docs/audits/2026-10-12-character-polish/capture-eye-attention.mjs after",
+      "log": "eye-attention-capture-after-module.log",
+      "exitCode": 0,
+      "result": "12rooms/36sizes; exact4PNGbytes unchanged after helper relocation",
+      "logSha256": "3bc7544791257073e2274c61125c3d667fe9d774a081a70ef4e9c6eaedfc3065"
+    },
+    {
+      "name": "browser-module",
+      "command": "CHROME=/usr/bin/chromium node --test --test-concurrency=1 scripts/browser/pet-environment-attention.test.mjs",
+      "log": "eye-attention-browser-module.log",
+      "exitCode": 0,
+      "result": "6pass10.35s; finalbuiltmodule; Chromium152.0.7977.82; low/high allspecies/bothrotations",
+      "logSha256": "563f577ae1fac82cb69280912d5d6f863659e4d1487f4db8af37b4bfc29a47e5"
+    }
+  ],
+  "sourceSha256": {
+    "src/character/parts.tsx": "7f7f027722f54a96e79a49b3accca9863b68250c090c3bd4c1a889456c19d3a7",
+    "src/character/species/animatedBody.tsx": "524d6bd0f87b4851520743cb598c04b5077924a421dbb3cc61ab639a7185cbcb",
+    "src/character/AnimatedCharacter.test.tsx": "9f088e42cb654ec6cc261331198777f5a893dbcd89a2f527c2fb7abf3b902bee",
+    "src/pet/activityMotion.ts": "bc05961f19363d693378e1fd01cc04f9eec312f3b8000bd01e3ccd0c5762583b",
+    "src/pet/activityMotion.test.ts": "434f36f6c70abac2435f8a318306bca8d818b3919bce7a03e4b878ff85e4d834",
+    "src/pet/environmentAttention.test.ts": "d2a608675b48e951eb9340ea4f99d709f0b75a968012474e1c098a88234005c1",
+    "scripts/browser/pet-environment-attention.test.mjs": "201cba338f3eab4941da0e023bf302c2bed13e33f204b77d6b205bcc338c68e2",
+    "docs/audits/2026-10-12-character-polish/capture-eye-attention.mjs": "5e51c4934f36dca72f8f1c85680ca442f9f0bec400491bde6d1f750ede30abbe",
+    "src/character/eyeGeometry.ts": "b0a106858c8c8c88a2a27d0d85470a33fdffa8377b4c918943b2d40ea774b2ae"
+  },
+  "patchSha256": "74f38c6fd712deb1e6737581a0c5f1763ca43000640c3f59dd48a8db300dcb68",
+  "captureManifests": [
+    "eye-attention-before.json",
+    "eye-attention-after.json"
+  ],
+  "captureManifestSha256": {
+    "eye-attention-before.json": "56f814b19c09379d3a32be361a8bfc8de93df2975d52085a14b67d65db108345",
+    "eye-attention-after.json": "3309a94e24a1faf23dbab66f8067b0a2eff0664e11dec2529985f20e7ca150a9"
+  },
+  "historicalEvidence": {
+    "eye-attention-interior-samples": "Initial unchanged captures outsidewallplacementcontract, beforefinalrendererlimitcorrection; seeREADME.",
+    "eye-attention-capture-before-final.log": "Initial baseline childprocessspawn returnedEPERM; finalhelperreads exactstored Gitblobs.",
+    "eye-attention-capture-before.log": "First12/36capture exit0; interiorwallfixture.",
+    "eye-attention-capture-after.log": "First12/36aftercapture exit0; interiorwallfixture and earlier4x3eye limits."
+  },
+  "limitations": [
+    "Static samples include allspecies,bothmirrors,dressed200/60/25px; they are not temporalplayback.",
+    "Exactinverse and renderedpupil tests coverall4uprightmoods; productionbrowsercases usehappy samplehome.",
+    "Sourceoverride hashes bind actualbeforemodules; directsource list is not everytransitiveassetdependency.",
+    "Independentreview and root runtime exits are separate. Human temporal/ATacceptance remainsopen."
+  ]
+}

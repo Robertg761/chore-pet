@@ -1,0 +1,398 @@
+node:internal/child_process:1144
+    result.error = new ErrnoException(result.error, 'spawnSync ' + options.file);
+                   ^
+
+<ref *1> Error: spawnSync git EPERM
+    at Object.spawnSync (node:internal/child_process:1144:20)
+    at spawnSync (node:child_process:928:24)
+    at execFileSync (node:child_process:971:15)
+    at file:///home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/capture-eye-attention.mjs:13:165
+    at Array.map (<anonymous>)
+    at file:///home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/capture-eye-attention.mjs:13:146
+    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async node:internal/modules/esm/loader:650:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  errno: -1,
+  code: 'EPERM',
+  syscall: 'spawnSync git',
+  path: 'git',
+  spawnargs: [ 'show', '9b5b4f8:src/pet/activityMotion.ts' ],
+  error: [Circular *1],
+  status: 0,
+  signal: null,
+  output: [
+    null,
+    "import type { Mood, Species } from '../domain/types'\n" +
+      "import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionFrame, type MotionInput } from '../character/motion'\n" +
+      "import { poseFor, poseNameFor } from '../character/poses'\n" +
+      "import { iso } from '../room/iso'\n" +
+      "import { PET_SCALE, roomPoint } from '../room/shell/geometry'\n" +
+      "import { blendProgress, groundPathFor, positionAt, routeAt, TIMING, type MotionSnapshot, type PetState } from './behaviour'\n" +
+      '\n' +
+      '/**\n' +
+      ' * The base fields remain valid sampler inputs. Render `frame` to include target\n' +
+      ' * gaze and interruption blending, which the generic sampler cannot infer.\n' +
+      ' * Pass the application clock as `now`; blink phase must survive action restarts.\n' +
+      ' * Walk ground paths use accumulated tiles and room projection / PET_SCALE;\n' +
+      ' * facing is separate, because the sampler applies the outer SVG mirror.\n' +
+      ' */\n' +
+      'export interface ActivityMotionInput extends MotionInput { frame: MotionFrame }\n' +
+      "type SampleState = Pick<PetState, 'tile' | 'activity' | 'facing' | 'position' | 'noticeStart'> & Pick<MotionSnapshot, 'walkAt' | 'groundPosition'>\n" +
+      "type NumericField = Exclude<keyof MotionFrame, 'expression'>\n" +
+      'const MIRRORED_LIMBS: Partial<Record<NumericField, NumericField>> = {\n' +
+      "  leftFoot: 'rightFoot', rightFoot: 'leftFoot', leftArm: 'rightArm', rightArm: 'leftArm',\n" +
+      "  leftGroundX: 'rightGroundX', rightGroundX: 'leftGroundX',\n" +
+      "  leftGroundY: 'rightGroundY', rightGroundY: 'leftGroundY',\n" +
+      '}\n' +
+      'const MIRRORED_ROTATIONS = new Set<NumericField>([\n' +
+      "  'bodyX', 'lean', 'gazeX', 'leftArm', 'rightArm', 'leftAppendage', 'rightAppendage',\n" +
+      "  'leftGroundX', 'rightGroundX',\n" +
+      '])\n' +
+      'const ease = (value: number) => {\n' +
+      '  const t = Math.max(0, Math.min(1, value))\n' +
+      '  return t * t * (3 - 2 * t)\n' +
+      '}\n' +
+      'function inputFor(state: SampleState, now: number, species: Species, mood: Mood, reducedMotion: boolean): MotionInput {\n' +
+      "  let action: MotionInput['action'] = 'idle'\n" +
+      '  let start = now\n' +
+      '  let durationMs = ACTION_MS.idle\n' +
+      '  let distance = 0\n' +
+      '  let groundPath = groundPathFor(state)\n' +
+      '  const a = state.activity\n' +
+      '  switch (a.kind) {\n' +
+      "    case 'walk': {\n" +
+      "      action = 'walk'\n" +
+      '      start = a.journeyStart ?? a.stepStart\n' +
+      '      const route = routeAt(state, state.walkAt ?? now)\n' +
+      '      distance = route.travelled + Math.abs(route.position.tx - route.origin.tx) + Math.abs(route.position.ty - route.origin.ty)\n' +
+      '      if (state.walkAt !== undefined && groundPath) {\n' +
+      '        // Retain full snapshot history, but never plan a landing past the\n' +
+      '        // validated collision endpoint, including an anticipated stance lead.\n' +
+      '        const point = roomPoint(route.position.tx + 0.5, route.position.ty + 0.5)\n' +
+      '        groundPath = [...groundPath.filter((p) => p.distance < distance),\n' +
+      '          { distance, x: point.x / PET_SCALE, y: point.y / PET_SCALE }]\n' +
+      '      }\n' +
+      '      let previous = a.origin ?? state.tile\n' +
+      '      durationMs = a.durationMs ?? a.path.reduce((total, tile) => {\n' +
+      '        const length = Math.abs(tile.tx - previous.tx) + Math.abs(tile.ty - previous.ty)\n' +
+      '        previous = tile\n' +
+      '        return total + length * TIMING.stepMs\n' +
+      '      }, 0)\n' +
+      '      break\n' +
+      '    }\n' +
+      "    case 'react':\n" +
+      "      action = a.action ?? 'greet'\n" +
+      '      start = a.start ?? a.until - TIMING.reactMs\n' +
+      '      durationMs = a.until - start\n' +
+      '      break\n' +
+      "    case 'interact':\n" +
+      "      action = a.phase === 'orient' ? 'turn' : a.phase === 'action' ? a.target.action : 'idle'\n" +
+      "      start = a.phase === 'settle' ? now : a.start\n" +
+      '      durationMs = a.until - a.start\n' +
+      '      break\n' +
+      "    case 'look':\n" +
+      "      action = 'inspect'\n" +
+      '      start = a.start ?? a.until - TIMING.lookMs\n' +
+      '      durationMs = a.until - start\n' +
+      '      break\n' +
+      "    case 'idle': start = a.start ?? now; break\n" +
+      "    case 'sick': case 'sleep':\n" +
+      '      if (state.noticeStart !== undefined && now < state.noticeStart + ACTION_MS.notice) {\n' +
+      "        action = 'notice'; start = state.noticeStart; durationMs = ACTION_MS.notice\n" +
+      '      }\n' +
+      '      break\n' +
+      '  }\n' +
+      '  return { species, mood, action, elapsedMs: Math.max(0, now - start), blinkMs: now, distance, durationMs, reducedMotion,\n' +
+      '    groundPath, facing: state.facing }\n' +
+      '}\n' +
+      'function frameFor(state: SampleState, now: number, input: MotionInput): MotionFrame {\n' +
+      '  const frame = sampleMotion(input)\n' +
+      '  // Older/custom samplers may omit this optional field. Normalize before the\n' +
+      '  // generic numeric blend so absent eye openness cannot turn into NaN.\n' +
+      '  frame.eyeOpen ??= 1\n' +
+      '  frame.leftGroundX ??= 0\n' +
+      '  frame.leftGroundY ??= 0\n' +
+      '  frame.rightGroundX ??= 0\n' +
+      '  frame.rightGroundY ??= 0\n' +
+      '  if (state.groundPosition) {\n' +
+      '    // Rejected landings have no valid world contact to preserve. Anchor their\n' +
+      '    // replacement at the accepted container, retaining the sampled foot lift.\n' +
+      '    frame.leftGroundX = frame.rightGroundX = -frame.bodyX\n' +
+      '    frame.leftGroundY = frame.rightGroundY = 0\n' +
+      '  }\n' +
+      '  const a = state.activity\n' +
+      "  if (!input.reducedMotion && a.kind === 'walk' && a.turnStart !== undefined) {\n" +
+      "    const turn = sampleMotion({ ...input, action: 'turn', elapsedMs: now - a.turnStart, durationMs: ACTION_MS.turn })\n" +
+      '    frame.scaleX += turn.scaleX - 1\n' +
+      '    frame.scaleY += turn.scaleY - 1\n' +
+      '    frame.lean += turn.lean\n' +
+      '    frame.gazeX += turn.gazeX\n' +
+      '  }\n' +
+      "  if (input.reducedMotion || a.kind !== 'interact' || a.phase === 'settle') return frame\n" +
+      '  const t = input.durationMs > 0 ? input.elapsedMs / input.durationMs : 1\n' +
+      '  const attention = ease(t / 0.22) * (1 - ease((t - 0.68) / 0.32))\n' +
+      '  // Gaze targets already include art height. Project before taking direction;\n' +
+      '  // footprint centres incorrectly make elevated leaves and wall art look down.\n' +
+      '  const position = positionAt({ ...state, beat: 0 }, state.walkAt ?? now)\n' +
+      '  // Room pet placement adds half a tile on both axes; target gaze is already\n' +
+      '  // an absolute projected point and must not receive that standing offset.\n' +
+      '  const delta = iso(a.target.gaze.tx - position.tx - 0.5, a.target.gaze.ty - position.ty - 0.5)\n' +
+      '  const length = Math.max(1, Math.hypot(delta.x, delta.y))\n' +
+      '  frame.gazeX = delta.x / length * 4 * attention * state.facing\n' +
+      '  frame.gazeY = delta.y / length * 3 * attention\n' +
+      '  return frame\n' +
+      '}\n' +
+      'function snapshotFrame(snapshot: MotionSnapshot, input: MotionInput): MotionFrame {\n' +
+      '  const oldInput = inputFor(snapshot, snapshot.at, input.species, input.mood, input.reducedMotion)\n' +
+      '  return frameFor(snapshot, snapshot.at, oldInput)\n' +
+      '}\n' +
+      "type MotionLayers = NonNullable<PetState['transition']>['layers']\n" +
+      'function outgoingFrame(layers: readonly MotionLayers[number][], state: SampleState, now: number, input: MotionInput, current: MotionFrame): MotionFrame {\n' +
+      '  const frame = { ...current }\n' +
+      "  const fields = Object.keys(current).filter((field) => field !== 'expression') as NumericField[]\n" +
+      '  for (const field of fields) frame[field] = 0\n' +
+      '  const position = state.groundPosition ?? positionAt({ ...state, beat: 0 }, state.walkAt ?? now)\n' +
+      '  const point = roomPoint(position.tx + 0.5, position.ty + 0.5)\n' +
+      "  const postureLean = input.mood === 'sick' ? 0 : poseFor(input.species, poseNameFor(input.mood)).anchors.body.rotate ?? 0\n" +
+      '  for (const layer of layers) {\n' +
+      '    const previous = snapshotFrame(layer.snapshot, input)\n' +
+      '    const oldPosition = layer.snapshot.groundPosition ?? positionAt({ ...layer.snapshot, beat: 0 }, layer.snapshot.walkAt ?? layer.snapshot.at)\n' +
+      '    const oldPoint = roomPoint(oldPosition.tx + 0.5, oldPosition.ty + 0.5)\n' +
+      '    const dx = (oldPoint.x - point.x) / PET_SCALE * state.facing\n' +
+      '    const dy = (oldPoint.y - point.y) / PET_SCALE\n' +
+      '    const mirrored = layer.snapshot.facing !== state.facing\n' +
+      '    for (const field of fields) {\n' +
+      '      // Rebase contacts into the currently moving container after screen mirroring.\n' +
+      '      let source = mirrored ? MIRRORED_LIMBS[field] ?? field : field\n' +
+      "      if (mirrored && input.species === 'bun' && (field === 'leftAppendage' || field === 'rightAppendage')) {\n" +
+      "        source = field === 'leftAppendage' ? 'rightAppendage' : 'leftAppendage'\n" +
+      '      }\n' +
+      '      const mirror = mirrored && MIRRORED_ROTATIONS.has(field) ? -1 : 1\n' +
+      "      let value = (previous[source] ?? (field === 'eyeOpen' ? 1 : 0)) * mirror\n" +
+      '      // The renderer adds mood posture after sampling. Reflect the full torso\n' +
+      '      // angle so that adding the same posture again preserves its screen tilt.\n' +
+      "      if (mirrored && field === 'lean') value -= 2 * postureLean\n" +
+      "      if (field === 'leftGroundX' || field === 'rightGroundX') value += dx\n" +
+      "      if (field === 'leftGroundY' || field === 'rightGroundY') value += dy\n" +
+      '      frame[field] = (frame[field] ?? 0) + value * layer.weight\n' +
+      '    }\n' +
+      '    frame.expression = previous.expression\n' +
+      '  }\n' +
+      '  return frame\n' +
+      '}\n' +
+      'export function motionFor(state: PetState, now: number, species: Species, mood: Mood, reducedMotion: boolean): ActivityMotionInput {\n' +
+      '  const input = inputFor(state, now, species, mood, reducedMotion)\n' +
+      '  const current = frameFor(state, now, input)\n' +
+      '  if (reducedMotion || !state.transition) return { ...input, frame: current }\n' +
+      '  const progress = blendProgress(state.transition.start, now)\n' +
+      '  if (progress === 1) return { ...input, frame: current }\n' +
+      '  const frame = { ...current }\n' +
+      "  const fields = Object.keys(current).filter((field) => field !== 'expression') as NumericField[]\n" +
+      '  const previous = outgoingFrame(state.transition.layers, state, now, input, current)\n' +
+      '  // Shared contact blending adds a lift when a foot is replanted. Preserve that\n' +
+      '  // nonlinear part across another interruption without retaining state trees.\n' +
+      '  for (const release of state.transition.groundReleases ?? []) {\n' +
+      '    const to = snapshotFrame(release.to, input)\n' +
+      '    const from = outgoingFrame(release.from, release.to, release.to.at, input, to)\n' +
+      '    const lift = blendGroundFeet({ ...from, leftFoot: 0, rightFoot: 0 }, { ...to, leftFoot: 0, rightFoot: 0 }, release.progress)\n' +
+      '    const mirrored = release.to.facing !== state.facing\n' +
+      '    previous.leftFoot += (mirrored ? lift.rightFoot : lift.leftFoot) * release.weight\n' +
+      '    previous.rightFoot += (mirrored ? lift.leftFoot : lift.rightFoot) * release.weight\n' +
+      '  }\n' +
+      '  for (const field of fields) {\n' +
+      "    const fallback = field === 'eyeOpen' ? 1 : 0\n" +
+      '    const value = (current[field] ?? fallback) * progress + (previous[field] ?? fallback) * (1 - progress)\n' +
+      '    frame[field] = value === 0 ? 0 : value\n' +
+      '  }\n' +
+      '  Object'... 224 more characters,
+    ''
+  ],
+  pid: 44,
+  stdout: "import type { Mood, Species } from '../domain/types'\n" +
+    "import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionFrame, type MotionInput } from '../character/motion'\n" +
+    "import { poseFor, poseNameFor } from '../character/poses'\n" +
+    "import { iso } from '../room/iso'\n" +
+    "import { PET_SCALE, roomPoint } from '../room/shell/geometry'\n" +
+    "import { blendProgress, groundPathFor, positionAt, routeAt, TIMING, type MotionSnapshot, type PetState } from './behaviour'\n" +
+    '\n' +
+    '/**\n' +
+    ' * The base fields remain valid sampler inputs. Render `frame` to include target\n' +
+    ' * gaze and interruption blending, which the generic sampler cannot infer.\n' +
+    ' * Pass the application clock as `now`; blink phase must survive action restarts.\n' +
+    ' * Walk ground paths use accumulated tiles and room projection / PET_SCALE;\n' +
+    ' * facing is separate, because the sampler applies the outer SVG mirror.\n' +
+    ' */\n' +
+    'export interface ActivityMotionInput extends MotionInput { frame: MotionFrame }\n' +
+    "type SampleState = Pick<PetState, 'tile' | 'activity' | 'facing' | 'position' | 'noticeStart'> & Pick<MotionSnapshot, 'walkAt' | 'groundPosition'>\n" +
+    "type NumericField = Exclude<keyof MotionFrame, 'expression'>\n" +
+    'const MIRRORED_LIMBS: Partial<Record<NumericField, NumericField>> = {\n' +
+    "  leftFoot: 'rightFoot', rightFoot: 'leftFoot', leftArm: 'rightArm', rightArm: 'leftArm',\n" +
+    "  leftGroundX: 'rightGroundX', rightGroundX: 'leftGroundX',\n" +
+    "  leftGroundY: 'rightGroundY', rightGroundY: 'leftGroundY',\n" +
+    '}\n' +
+    'const MIRRORED_ROTATIONS = new Set<NumericField>([\n' +
+    "  'bodyX', 'lean', 'gazeX', 'leftArm', 'rightArm', 'leftAppendage', 'rightAppendage',\n" +
+    "  'leftGroundX', 'rightGroundX',\n" +
+    '])\n' +
+    'const ease = (value: number) => {\n' +
+    '  const t = Math.max(0, Math.min(1, value))\n' +
+    '  return t * t * (3 - 2 * t)\n' +
+    '}\n' +
+    'function inputFor(state: SampleState, now: number, species: Species, mood: Mood, reducedMotion: boolean): MotionInput {\n' +
+    "  let action: MotionInput['action'] = 'idle'\n" +
+    '  let start = now\n' +
+    '  let durationMs = ACTION_MS.idle\n' +
+    '  let distance = 0\n' +
+    '  let groundPath = groundPathFor(state)\n' +
+    '  const a = state.activity\n' +
+    '  switch (a.kind) {\n' +
+    "    case 'walk': {\n" +
+    "      action = 'walk'\n" +
+    '      start = a.journeyStart ?? a.stepStart\n' +
+    '      const route = routeAt(state, state.walkAt ?? now)\n' +
+    '      distance = route.travelled + Math.abs(route.position.tx - route.origin.tx) + Math.abs(route.position.ty - route.origin.ty)\n' +
+    '      if (state.walkAt !== undefined && groundPath) {\n' +
+    '        // Retain full snapshot history, but never plan a landing past the\n' +
+    '        // validated collision endpoint, including an anticipated stance lead.\n' +
+    '        const point = roomPoint(route.position.tx + 0.5, route.position.ty + 0.5)\n' +
+    '        groundPath = [...groundPath.filter((p) => p.distance < distance),\n' +
+    '          { distance, x: point.x / PET_SCALE, y: point.y / PET_SCALE }]\n' +
+    '      }\n' +
+    '      let previous = a.origin ?? state.tile\n' +
+    '      durationMs = a.durationMs ?? a.path.reduce((total, tile) => {\n' +
+    '        const length = Math.abs(tile.tx - previous.tx) + Math.abs(tile.ty - previous.ty)\n' +
+    '        previous = tile\n' +
+    '        return total + length * TIMING.stepMs\n' +
+    '      }, 0)\n' +
+    '      break\n' +
+    '    }\n' +
+    "    case 'react':\n" +
+    "      action = a.action ?? 'greet'\n" +
+    '      start = a.start ?? a.until - TIMING.reactMs\n' +
+    '      durationMs = a.until - start\n' +
+    '      break\n' +
+    "    case 'interact':\n" +
+    "      action = a.phase === 'orient' ? 'turn' : a.phase === 'action' ? a.target.action : 'idle'\n" +
+    "      start = a.phase === 'settle' ? now : a.start\n" +
+    '      durationMs = a.until - a.start\n' +
+    '      break\n' +
+    "    case 'look':\n" +
+    "      action = 'inspect'\n" +
+    '      start = a.start ?? a.until - TIMING.lookMs\n' +
+    '      durationMs = a.until - start\n' +
+    '      break\n' +
+    "    case 'idle': start = a.start ?? now; break\n" +
+    "    case 'sick': case 'sleep':\n" +
+    '      if (state.noticeStart !== undefined && now < state.noticeStart + ACTION_MS.notice) {\n' +
+    "        action = 'notice'; start = state.noticeStart; durationMs = ACTION_MS.notice\n" +
+    '      }\n' +
+    '      break\n' +
+    '  }\n' +
+    '  return { species, mood, action, elapsedMs: Math.max(0, now - start), blinkMs: now, distance, durationMs, reducedMotion,\n' +
+    '    groundPath, facing: state.facing }\n' +
+    '}\n' +
+    'function frameFor(state: SampleState, now: number, input: MotionInput): MotionFrame {\n' +
+    '  const frame = sampleMotion(input)\n' +
+    '  // Older/custom samplers may omit this optional field. Normalize before the\n' +
+    '  // generic numeric blend so absent eye openness cannot turn into NaN.\n' +
+    '  frame.eyeOpen ??= 1\n' +
+    '  frame.leftGroundX ??= 0\n' +
+    '  frame.leftGroundY ??= 0\n' +
+    '  frame.rightGroundX ??= 0\n' +
+    '  frame.rightGroundY ??= 0\n' +
+    '  if (state.groundPosition) {\n' +
+    '    // Rejected landings have no valid world contact to preserve. Anchor their\n' +
+    '    // replacement at the accepted container, retaining the sampled foot lift.\n' +
+    '    frame.leftGroundX = frame.rightGroundX = -frame.bodyX\n' +
+    '    frame.leftGroundY = frame.rightGroundY = 0\n' +
+    '  }\n' +
+    '  const a = state.activity\n' +
+    "  if (!input.reducedMotion && a.kind === 'walk' && a.turnStart !== undefined) {\n" +
+    "    const turn = sampleMotion({ ...input, action: 'turn', elapsedMs: now - a.turnStart, durationMs: ACTION_MS.turn })\n" +
+    '    frame.scaleX += turn.scaleX - 1\n' +
+    '    frame.scaleY += turn.scaleY - 1\n' +
+    '    frame.lean += turn.lean\n' +
+    '    frame.gazeX += turn.gazeX\n' +
+    '  }\n' +
+    "  if (input.reducedMotion || a.kind !== 'interact' || a.phase === 'settle') return frame\n" +
+    '  const t = input.durationMs > 0 ? input.elapsedMs / input.durationMs : 1\n' +
+    '  const attention = ease(t / 0.22) * (1 - ease((t - 0.68) / 0.32))\n' +
+    '  // Gaze targets already include art height. Project before taking direction;\n' +
+    '  // footprint centres incorrectly make elevated leaves and wall art look down.\n' +
+    '  const position = positionAt({ ...state, beat: 0 }, state.walkAt ?? now)\n' +
+    '  // Room pet placement adds half a tile on both axes; target gaze is already\n' +
+    '  // an absolute projected point and must not receive that standing offset.\n' +
+    '  const delta = iso(a.target.gaze.tx - position.tx - 0.5, a.target.gaze.ty - position.ty - 0.5)\n' +
+    '  const length = Math.max(1, Math.hypot(delta.x, delta.y))\n' +
+    '  frame.gazeX = delta.x / length * 4 * attention * state.facing\n' +
+    '  frame.gazeY = delta.y / length * 3 * attention\n' +
+    '  return frame\n' +
+    '}\n' +
+    'function snapshotFrame(snapshot: MotionSnapshot, input: MotionInput): MotionFrame {\n' +
+    '  const oldInput = inputFor(snapshot, snapshot.at, input.species, input.mood, input.reducedMotion)\n' +
+    '  return frameFor(snapshot, snapshot.at, oldInput)\n' +
+    '}\n' +
+    "type MotionLayers = NonNullable<PetState['transition']>['layers']\n" +
+    'function outgoingFrame(layers: readonly MotionLayers[number][], state: SampleState, now: number, input: MotionInput, current: MotionFrame): MotionFrame {\n' +
+    '  const frame = { ...current }\n' +
+    "  const fields = Object.keys(current).filter((field) => field !== 'expression') as NumericField[]\n" +
+    '  for (const field of fields) frame[field] = 0\n' +
+    '  const position = state.groundPosition ?? positionAt({ ...state, beat: 0 }, state.walkAt ?? now)\n' +
+    '  const point = roomPoint(position.tx + 0.5, position.ty + 0.5)\n' +
+    "  const postureLean = input.mood === 'sick' ? 0 : poseFor(input.species, poseNameFor(input.mood)).anchors.body.rotate ?? 0\n" +
+    '  for (const layer of layers) {\n' +
+    '    const previous = snapshotFrame(layer.snapshot, input)\n' +
+    '    const oldPosition = layer.snapshot.groundPosition ?? positionAt({ ...layer.snapshot, beat: 0 }, layer.snapshot.walkAt ?? layer.snapshot.at)\n' +
+    '    const oldPoint = roomPoint(oldPosition.tx + 0.5, oldPosition.ty + 0.5)\n' +
+    '    const dx = (oldPoint.x - point.x) / PET_SCALE * state.facing\n' +
+    '    const dy = (oldPoint.y - point.y) / PET_SCALE\n' +
+    '    const mirrored = layer.snapshot.facing !== state.facing\n' +
+    '    for (const field of fields) {\n' +
+    '      // Rebase contacts into the currently moving container after screen mirroring.\n' +
+    '      let source = mirrored ? MIRRORED_LIMBS[field] ?? field : field\n' +
+    "      if (mirrored && input.species === 'bun' && (field === 'leftAppendage' || field === 'rightAppendage')) {\n" +
+    "        source = field === 'leftAppendage' ? 'rightAppendage' : 'leftAppendage'\n" +
+    '      }\n' +
+    '      const mirror = mirrored && MIRRORED_ROTATIONS.has(field) ? -1 : 1\n' +
+    "      let value = (previous[source] ?? (field === 'eyeOpen' ? 1 : 0)) * mirror\n" +
+    '      // The renderer adds mood posture after sampling. Reflect the full torso\n' +
+    '      // angle so that adding the same posture again preserves its screen tilt.\n' +
+    "      if (mirrored && field === 'lean') value -= 2 * postureLean\n" +
+    "      if (field === 'leftGroundX' || field === 'rightGroundX') value += dx\n" +
+    "      if (field === 'leftGroundY' || field === 'rightGroundY') value += dy\n" +
+    '      frame[field] = (frame[field] ?? 0) + value * layer.weight\n' +
+    '    }\n' +
+    '    frame.expression = previous.expression\n' +
+    '  }\n' +
+    '  return frame\n' +
+    '}\n' +
+    'export function motionFor(state: PetState, now: number, species: Species, mood: Mood, reducedMotion: boolean): ActivityMotionInput {\n' +
+    '  const input = inputFor(state, now, species, mood, reducedMotion)\n' +
+    '  const current = frameFor(state, now, input)\n' +
+    '  if (reducedMotion || !state.transition) return { ...input, frame: current }\n' +
+    '  const progress = blendProgress(state.transition.start, now)\n' +
+    '  if (progress === 1) return { ...input, frame: current }\n' +
+    '  const frame = { ...current }\n' +
+    "  const fields = Object.keys(current).filter((field) => field !== 'expression') as NumericField[]\n" +
+    '  const previous = outgoingFrame(state.transition.layers, state, now, input, current)\n' +
+    '  // Shared contact blending adds a lift when a foot is replanted. Preserve that\n' +
+    '  // nonlinear part across another interruption without retaining state trees.\n' +
+    '  for (const release of state.transition.groundReleases ?? []) {\n' +
+    '    const to = snapshotFrame(release.to, input)\n' +
+    '    const from = outgoingFrame(release.from, release.to, release.to.at, input, to)\n' +
+    '    const lift = blendGroundFeet({ ...from, leftFoot: 0, rightFoot: 0 }, { ...to, leftFoot: 0, rightFoot: 0 }, release.progress)\n' +
+    '    const mirrored = release.to.facing !== state.facing\n' +
+    '    previous.leftFoot += (mirrored ? lift.rightFoot : lift.leftFoot) * release.weight\n' +
+    '    previous.rightFoot += (mirrored ? lift.leftFoot : lift.rightFoot) * release.weight\n' +
+    '  }\n' +
+    '  for (const field of fields) {\n' +
+    "    const fallback = field === 'eyeOpen' ? 1 : 0\n" +
+    '    const value = (current[field] ?? fallback) * progress + (previous[field] ?? fallback) * (1 - progress)\n' +
+    '    frame[field] = value === 0 ? 0 : value\n' +
+    '  }\n' +
+    '  Object'... 224 more characters,
+  stderr: ''
+}
+
+Node.js v26.8.1

@@ -1,7 +1,7 @@
 import type { Mood, Species } from '../domain/types'
 import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionFrame, type MotionInput } from '../character/motion'
 import { poseFor, poseNameFor } from '../character/poses'
-import { iso } from '../room/iso'
+import { articulatedFaceDelta } from '../character/species/animatedBody'
 import { PET_SCALE, roomPoint } from '../room/shell/geometry'
 import { blendProgress, groundPathFor, positionAt, routeAt, TIMING, type MotionSnapshot, type PetState } from './behaviour'
 
@@ -107,15 +107,28 @@ function frameFor(state: SampleState, now: number, input: MotionInput): MotionFr
   if (input.reducedMotion || a.kind !== 'interact' || a.phase === 'settle') return frame
   const t = input.durationMs > 0 ? input.elapsedMs / input.durationMs : 1
   const attention = ease(t / 0.22) * (1 - ease((t - 0.68) / 0.32))
-  // Gaze targets already include art height. Project before taking direction;
-  // footprint centres incorrectly make elevated leaves and wall art look down.
+  if (attention === 0) return frame
+  // The target and resident placement share room coordinates. Move the target
+  // into the unmirrored character container, then invert the actual torso.
   const position = positionAt({ ...state, beat: 0 }, state.walkAt ?? now)
-  // Room pet placement adds half a tile on both axes; target gaze is already
-  // an absolute projected point and must not receive that standing offset.
-  const delta = iso(a.target.gaze.tx - position.tx - 0.5, a.target.gaze.ty - position.ty - 0.5)
-  const length = Math.max(1, Math.hypot(delta.x, delta.y))
-  frame.gazeX = delta.x / length * 4 * attention * state.facing
-  frame.gazeY = delta.y / length * 3 * attention
+  const feet = roomPoint(position.tx + 0.5, position.ty + 0.5)
+  const point = roomPoint(a.target.gaze.tx, a.target.gaze.ty)
+  const target = { x: 100 + (point.x - feet.x) / PET_SCALE * state.facing,
+    y: 182 + (point.y - feet.y) / PET_SCALE }
+  const pose = poseNameFor(input.mood)
+  if (a.phase === 'action' && a.target.action === 'inspect') {
+    // Low details retain the forward inspection. Overhead details ease it
+    // toward a small backward tilt, without moving feet or changing the timing.
+    const fromEyes = articulatedFaceDelta(input.species, { ...frame, lean: 0 }, pose, target)
+    const up = Math.max(0, -fromEyes.y / Math.max(1, Math.hypot(fromEyes.x, fromEyes.y)))
+    frame.lean *= 1 - 1.25 * up
+  }
+  const delta = articulatedFaceDelta(input.species, frame, pose, target)
+  // One scalar preserves the local direction while bounding the eye travel
+  // to the rendered eye limits, three units horizontally and two vertically.
+  const length = Math.max(1, Math.hypot(delta.x / 3, delta.y / 2))
+  frame.gazeX = delta.x / length * attention
+  frame.gazeY = delta.y / length * attention
   return frame
 }
 function snapshotFrame(snapshot: MotionSnapshot, input: MotionInput): MotionFrame {

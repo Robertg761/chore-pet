@@ -1,0 +1,126 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/environmentAttention.test.ts src/character/AnimatedCharacter.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/AnimatedCharacter.test.tsx (51 tests | 3 failed) 7943ms
+   ❯ articulated face reference (3)
+     × inverts bun actual rendered face placement through every upright posture 41ms
+     × inverts mochi actual rendered face placement through every upright posture 10ms
+     × inverts sprout actual rendered face placement through every upright posture 7ms
+ ❯ src/pet/environmentAttention.test.ts (12 tests | 9 failed) 19ms
+   ❯ attention from the character eyes (12)
+     × mochi looks down at a low detail that is still above the floor 5ms
+     × bun looks down at a low detail that is still above the floor 0ms
+     × sprout looks down at a low detail that is still above the floor 0ms
+     × mochi eases back to inspect an overhead detail in either facing 0ms
+     × bun eases back to inspect an overhead detail in either facing 0ms
+     × sprout eases back to inspect an overhead detail in either facing 0ms
+     × mochi keeps target attention bounded and neutral at phase joins 4ms
+     × bun keeps target attention bounded and neutral at phase joins 1ms
+     × sprout keeps target attention bounded and neutral at phase joins 1ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > articulated face reference > inverts bun actual rendered face placement through every upright posture
+ FAIL  src/character/AnimatedCharacter.test.tsx > articulated face reference > inverts mochi actual rendered face placement through every upright posture
+ FAIL  src/character/AnimatedCharacter.test.tsx > articulated face reference > inverts sprout actual rendered face placement through every upright posture
+TypeError: articulatedFaceDelta is not a function
+ ❯ src/character/AnimatedCharacter.test.tsx:58:23
+     56|       const anchor = ui.container.querySelector('[data-slot="face"] > …
+     57|       for (const target of [{ x: 20, y: 35 }, { x: 140, y: 165 }, { x:…
+     58|         const delta = articulatedFaceDelta(species, frame, pose, targe…
+       |                       ^
+     59|         const point = worldPoint(anchor, delta.x, delta.y)
+     60|         expect(point[0]).toBeCloseTo(target.x, 10)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/pet/environmentAttention.test.ts > attention from the character eyes > mochi looks down at a low detail that is still above the floor
+ FAIL  src/pet/environmentAttention.test.ts > attention from the character eyes > bun looks down at a low detail that is still above the floor
+ FAIL  src/pet/environmentAttention.test.ts > attention from the character eyes > sprout looks down at a low detail that is still above the floor
+AssertionError: expected -0.9486832980505142 to be greater than 0
+ ❯ src/pet/environmentAttention.test.ts:25:27
+     23|     for (const mood of moods) for (const facing of [1, -1] as const) {
+     24|       const frame = motionFor(inspecting(24 * facing, -8, facing), 900…
+     25|       expect(frame.gazeY).toBeGreaterThan(0)
+       |                           ^
+     26|       expect(frame.gazeX).toBeGreaterThan(0)
+     27|       expect(frame.lean).toBeGreaterThan(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/pet/environmentAttention.test.ts > attention from the character eyes > mochi eases back to inspect an overhead detail in either facing
+AssertionError: expected 6.56 to be less than 0
+ ❯ src/pet/environmentAttention.test.ts:38:26
+     36|       const frame = motionFor(inspecting(12 * facing, -80, facing), 90…
+     37|       expect(frame.gazeY).toBeLessThan(0)
+     38|       expect(frame.lean).toBeLessThan(0)
+       |                          ^
+     39|       expect(frame.lean).toBeGreaterThanOrEqual(-2.01)
+     40|       expect(frame.bodyX).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/pet/environmentAttention.test.ts > attention from the character eyes > bun eases back to inspect an overhead detail in either facing
+AssertionError: expected 8 to be less than 0
+ ❯ src/pet/environmentAttention.test.ts:38:26
+     36|       const frame = motionFor(inspecting(12 * facing, -80, facing), 90…
+     37|       expect(frame.gazeY).toBeLessThan(0)
+     38|       expect(frame.lean).toBeLessThan(0)
+       |                          ^
+     39|       expect(frame.lean).toBeGreaterThanOrEqual(-2.01)
+     40|       expect(frame.bodyX).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/pet/environmentAttention.test.ts > attention from the character eyes > sprout eases back to inspect an overhead detail in either facing
+AssertionError: expected 5.76 to be less than 0
+ ❯ src/pet/environmentAttention.test.ts:38:26
+     36|       const frame = motionFor(inspecting(12 * facing, -80, facing), 90…
+     37|       expect(frame.gazeY).toBeLessThan(0)
+     38|       expect(frame.lean).toBeLessThan(0)
+       |                          ^
+     39|       expect(frame.lean).toBeGreaterThanOrEqual(-2.01)
+     40|       expect(frame.bodyX).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/pet/environmentAttention.test.ts > attention from the character eyes > mochi keeps target attention bounded and neutral at phase joins
+ FAIL  src/pet/environmentAttention.test.ts > attention from the character eyes > bun keeps target attention bounded and neutral at phase joins
+ FAIL  src/pet/environmentAttention.test.ts > attention from the character eyes > sprout keeps target attention bounded and neutral at phase joins
+AssertionError: expected { bodyX: +0, bodyY: +0, …(20) } to deeply equal { bodyX: +0, bodyY: +0, …(20) }
+
+- Expected
++ Received
+
+@@ -3,11 +3,11 @@
+    "bodyX": 0,
+    "bodyY": 0,
+    "expression": "mood",
+    "eyeOpen": 1,
+    "gazeX": 0,
+-   "gazeY": 0,
++   "gazeY": -0,
+    "lean": 0,
+    "leftAppendage": 0,
+    "leftArm": 0,
+    "leftFoot": 0,
+    "leftGroundX": 0,
+
+ ❯ src/pet/environmentAttention.test.ts:55:54
+     53|         expect(Math.hypot(frame.gazeX / 4, frame.gazeY / 3)).toBeLessT…
+     54|         expect(Math.abs(frame.lean)).toBeLessThanOrEqual(8)
+     55|         if (now === 0 || now === 1800) expect(frame).toEqual(sampleMot…
+       |                                                      ^
+     56|       }
+     57|       const still = motionFor(state, 900, species, mood, true)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  12 failed | 51 passed (63)
+   Start at  17:16:49
+   Duration  8.81s (tests 92%, transform 3%, environment 3%, import 1%)
+

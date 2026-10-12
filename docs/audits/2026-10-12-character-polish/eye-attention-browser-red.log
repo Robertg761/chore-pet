@@ -1,0 +1,102 @@
+✖ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1218.346544ms)
+✖ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1111.986757ms)
+✖ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1132.141293ms)
+✖ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1091.696544ms)
+✖ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1161.528094ms)
+✖ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1093.552963ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 0
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7204.748558
+
+✖ failing tests:
+
+test at scripts/browser/pet-environment-attention.test.mjs:54:3
+✖ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1218.346544ms)
+  AssertionError [ERR_ASSERTION]: low gaze must follow the actual screen direction; perpendicular error 0.42621041535646303px
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-environment-attention.test.mjs:85:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-environment-attention.test.mjs:54:3
+✖ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1111.986757ms)
+  AssertionError [ERR_ASSERTION]: low gaze must follow the actual screen direction; perpendicular error 0.42621038535180994px
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-environment-attention.test.mjs:85:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-environment-attention.test.mjs:54:3
+✖ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1132.141293ms)
+  AssertionError [ERR_ASSERTION]: low gaze must follow the actual screen direction; perpendicular error 0.4069765484748073px
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-environment-attention.test.mjs:85:14)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-environment-attention.test.mjs:54:3
+✖ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1091.696544ms)
+  AssertionError [ERR_ASSERTION]: low gaze must follow the actual screen direction; perpendicular error 0.4069765170894569px
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-environment-attention.test.mjs:85:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-environment-attention.test.mjs:54:3
+✖ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1161.528094ms)
+  AssertionError [ERR_ASSERTION]: low gaze must follow the actual screen direction; perpendicular error 0.41877619083328177px
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-environment-attention.test.mjs:85:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-environment-attention.test.mjs:54:3
+✖ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1093.552963ms)
+  AssertionError [ERR_ASSERTION]: low gaze must follow the actual screen direction; perpendicular error 0.41877616156192754px
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-environment-attention.test.mjs:85:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

@@ -8,11 +8,12 @@ import type { Species } from '../domain/types'
 import { AnimatedCharacterArt } from './AnimatedCharacter'
 import { Character, CharacterArt } from './Character'
 import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionFrame } from './motion'
-import { articulatedPose } from './species/animatedBody'
+import { articulatedFaceDelta, articulatedPose } from './species/animatedBody'
 import { poseFor } from './poses'
 import { ITEMS } from './items'
-import { initialPet, step } from '../pet/behaviour'
+import { initialPet, step, type PetState } from '../pet/behaviour'
 import { motionFor } from '../pet/activityMotion'
+import { petTransform } from '../room/shell/geometry'
 
 const speciesList: Species[] = ['bun', 'mochi', 'sprout']
 const outfit = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
@@ -46,6 +47,57 @@ function worldPoint(node: Element, x: number, y: number): [number, number] {
   }
   return [x, y]
 }
+
+describe('articulated face reference', () => {
+  it.each(speciesList)('aims the rendered %s eye displacement toward the actual room detail', species => {
+    for (const mood of ['happy', 'content', 'meh', 'scruffy'] as const) for (const facing of [1, -1] as const) for (const height of [-80, -8, 25]) {
+      const dx = 24 * facing
+      const target = { tx: 2.5 + dx / 42.5 + height / 21.25, ty: 2.5 - dx / 42.5 + height / 21.25 }
+      const state: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), facing, activity: {
+        kind: 'interact', phase: 'action', start: 0, until: 1800,
+        target: { objectId: 'detail', signature: 'detail:0', tile: { tx: 2, ty: 2 }, gaze: target, action: 'inspect', contact: false },
+      } }
+      const frame = motionFor(state, 900, species, mood, false).frame
+      const scene = (input: MotionFrame) => <svg><g transform={petTransform(state.tile)}>
+        <g transform={facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined}>
+          <AnimatedCharacterArt species={species} mood={mood} bodyColour={PALETTE.petDefault} frame={input} />
+        </g>
+      </g></svg>
+      const ui = mount(scene({ ...frame, gazeX: 0, gazeY: 0 }))
+      const centre = () => {
+        const eyes = [...ui.container.querySelectorAll('[data-eye-gaze] ellipse')].map(node =>
+          worldPoint(node, Number(node.getAttribute('cx')), Number(node.getAttribute('cy'))))
+        expect(eyes).toHaveLength(2)
+        return { x: (eyes[0][0] + eyes[1][0]) / 2, y: (eyes[0][1] + eyes[1][1]) / 2 }
+      }
+      const origin = centre()
+      ui.rerender(scene(frame))
+      const shifted = centre()
+      const aim = { x: 195 + (target.tx - target.ty) * 21.25 - origin.x,
+        y: 130 + (target.tx + target.ty) * 10.625 - origin.y }
+      const gaze = { x: shifted.x - origin.x, y: shifted.y - origin.y }
+      expect(gaze.x * aim.x + gaze.y * aim.y).toBeGreaterThan(0)
+      // Production placement rounds the container to0.01 room units.
+      expect(Math.abs(gaze.x * aim.y - gaze.y * aim.x) / Math.hypot(aim.x, aim.y)).toBeLessThan(.005)
+    }
+  })
+
+  it.each(speciesList)('inverts %s actual rendered face placement through every upright posture', species => {
+    for (const pose of ['idle', 'content', 'meh', 'scruffy'] as const) {
+      const frame = { ...moving, eyeOpen: 1, gazeX: 0, gazeY: 0 }
+      const ui = mount(<svg><AnimatedCharacterArt species={species} mood={pose === 'idle' ? 'happy' : pose}
+        bodyColour={PALETTE.petDefault} equipped={{ face: 'glasses' }} frame={frame} /></svg>)
+      const eye = ui.container.querySelector('[data-eye-gaze] ellipse')!
+      const eyeY = Number(eye.getAttribute('cy'))
+      for (const target of [{ x: 20, y: 35 }, { x: 140, y: 165 }, { x: 100, y: 125 }]) {
+        const delta = articulatedFaceDelta(species, frame, pose, target)
+        const point = worldPoint(eye, 100 + delta.x, eyeY + delta.y)
+        expect(point[0]).toBeCloseTo(target.x, 10)
+        expect(point[1]).toBeCloseTo(target.y, 10)
+      }
+    }
+  })
+})
 
 describe('AnimatedCharacterArt', () => {
   it('preserves both visible ear tips when idle follow-through turns into a leftward walk', () => {

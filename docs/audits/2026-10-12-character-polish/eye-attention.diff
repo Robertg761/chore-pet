@@ -1,0 +1,493 @@
+diff --git i/src/character/AnimatedCharacter.test.tsx w/src/character/AnimatedCharacter.test.tsx
+index dd39b45..32f1822 100644
+--- i/src/character/AnimatedCharacter.test.tsx
++++ w/src/character/AnimatedCharacter.test.tsx
+@@ -8,11 +8,12 @@ import type { Species } from '../domain/types'
+ import { AnimatedCharacterArt } from './AnimatedCharacter'
+ import { Character, CharacterArt } from './Character'
+ import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionFrame } from './motion'
+-import { articulatedPose } from './species/animatedBody'
++import { articulatedFaceDelta, articulatedPose } from './species/animatedBody'
+ import { poseFor } from './poses'
+ import { ITEMS } from './items'
+-import { initialPet, step } from '../pet/behaviour'
++import { initialPet, step, type PetState } from '../pet/behaviour'
+ import { motionFor } from '../pet/activityMotion'
++import { petTransform } from '../room/shell/geometry'
+ 
+ const speciesList: Species[] = ['bun', 'mochi', 'sprout']
+ const outfit = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
+@@ -47,6 +48,57 @@ function worldPoint(node: Element, x: number, y: number): [number, number] {
+   return [x, y]
+ }
+ 
++describe('articulated face reference', () => {
++  it.each(speciesList)('aims the rendered %s eye displacement toward the actual room detail', species => {
++    for (const mood of ['happy', 'content', 'meh', 'scruffy'] as const) for (const facing of [1, -1] as const) for (const height of [-80, -8, 25]) {
++      const dx = 24 * facing
++      const target = { tx: 2.5 + dx / 42.5 + height / 21.25, ty: 2.5 - dx / 42.5 + height / 21.25 }
++      const state: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), facing, activity: {
++        kind: 'interact', phase: 'action', start: 0, until: 1800,
++        target: { objectId: 'detail', signature: 'detail:0', tile: { tx: 2, ty: 2 }, gaze: target, action: 'inspect', contact: false },
++      } }
++      const frame = motionFor(state, 900, species, mood, false).frame
++      const scene = (input: MotionFrame) => <svg><g transform={petTransform(state.tile)}>
++        <g transform={facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined}>
++          <AnimatedCharacterArt species={species} mood={mood} bodyColour={PALETTE.petDefault} frame={input} />
++        </g>
++      </g></svg>
++      const ui = mount(scene({ ...frame, gazeX: 0, gazeY: 0 }))
++      const centre = () => {
++        const eyes = [...ui.container.querySelectorAll('[data-eye-gaze] ellipse')].map(node =>
++          worldPoint(node, Number(node.getAttribute('cx')), Number(node.getAttribute('cy'))))
++        expect(eyes).toHaveLength(2)
++        return { x: (eyes[0][0] + eyes[1][0]) / 2, y: (eyes[0][1] + eyes[1][1]) / 2 }
++      }
++      const origin = centre()
++      ui.rerender(scene(frame))
++      const shifted = centre()
++      const aim = { x: 195 + (target.tx - target.ty) * 21.25 - origin.x,
++        y: 130 + (target.tx + target.ty) * 10.625 - origin.y }
++      const gaze = { x: shifted.x - origin.x, y: shifted.y - origin.y }
++      expect(gaze.x * aim.x + gaze.y * aim.y).toBeGreaterThan(0)
++      // Production placement rounds the container to0.01 room units.
++      expect(Math.abs(gaze.x * aim.y - gaze.y * aim.x) / Math.hypot(aim.x, aim.y)).toBeLessThan(.005)
++    }
++  })
++
++  it.each(speciesList)('inverts %s actual rendered face placement through every upright posture', species => {
++    for (const pose of ['idle', 'content', 'meh', 'scruffy'] as const) {
++      const frame = { ...moving, eyeOpen: 1, gazeX: 0, gazeY: 0 }
++      const ui = mount(<svg><AnimatedCharacterArt species={species} mood={pose === 'idle' ? 'happy' : pose}
++        bodyColour={PALETTE.petDefault} equipped={{ face: 'glasses' }} frame={frame} /></svg>)
++      const eye = ui.container.querySelector('[data-eye-gaze] ellipse')!
++      const eyeY = Number(eye.getAttribute('cy'))
++      for (const target of [{ x: 20, y: 35 }, { x: 140, y: 165 }, { x: 100, y: 125 }]) {
++        const delta = articulatedFaceDelta(species, frame, pose, target)
++        const point = worldPoint(eye, 100 + delta.x, eyeY + delta.y)
++        expect(point[0]).toBeCloseTo(target.x, 10)
++        expect(point[1]).toBeCloseTo(target.y, 10)
++      }
++    }
++  })
++})
++
+ describe('AnimatedCharacterArt', () => {
+   it('preserves both visible ear tips when idle follow-through turns into a leftward walk', () => {
+     const before = initialPet({ tx: 2, ty: 2 }, 0)
+diff --git i/src/character/parts.tsx w/src/character/parts.tsx
+index 3842d09..199996b 100644
+--- i/src/character/parts.tsx
++++ w/src/character/parts.tsx
+@@ -1,3 +1,4 @@
++import { eyeCentreOffset } from './eyeGeometry'
+ import { createContext, useContext, useId, type ReactNode } from 'react'
+ import { bodyShade, mix } from '../art/color'
+ import { PALETTE } from '../art/palette'
+@@ -230,14 +231,14 @@ function EyeShape({ x, y, mood, side, style, lashes, gaze, alert, eyeOpen }: { x
+       return <OpenEye x={x} y={y} style={style} scale={alert ? 1.06 : 1} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
+     case 'meh':
+       // Still bright, a touch smaller: "hm, okay". No lids, so it never looks unimpressed.
+-      return <OpenEye x={x} y={y + 1} scale={0.82} style={style} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
++      return <OpenEye x={x} y={y + eyeCentreOffset(mood)} scale={0.82} style={style} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
+     case 'scruffy':
+       // Tired and a bit sad, but hopeful: the same open eye as meh (smaller, glossy, no lid,
+       // so never smug or cross) with its main highlight sunk lower, under worried brows.
+       return (
+         <g>
+           <Brow x={x} y={y} side={side} />
+-          <OpenEye x={x} y={y + 1.5} scale={0.78} drop={2.4} style={style} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
++          <OpenEye x={x} y={y + eyeCentreOffset(mood)} scale={0.78} drop={2.4} style={style} gaze={gaze} eyeOpen={eyeOpen}>{lashes}</OpenEye>
+         </g>
+       )
+     case 'sick':
+diff --git i/src/character/species/animatedBody.tsx w/src/character/species/animatedBody.tsx
+index 20db8b9..6ccf2dc 100644
+--- i/src/character/species/animatedBody.tsx
++++ w/src/character/species/animatedBody.tsx
+@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
+ import { PALETTE } from '../../art/palette'
+ import type { Species } from '../../domain/types'
+ import { Ink, Tube } from '../ink'
++import { eyeCentreOffset } from '../eyeGeometry'
+ import type { MotionFrame } from '../motion'
+ import { Body, Cheeks, Face, MoodTint, Nub } from '../parts'
+ import { poseFor, type PoseName } from '../poses'
+@@ -48,6 +49,28 @@ function torso(species: Species, frame: MotionFrame, pose: PoseName) {
+   return { sx: sx * frame.scaleX, sy: sy * frame.scaleY, tilt: tilt + frame.lean }
+ }
+ 
++function articulatedEyeY(species: Species, poseName: PoseName): number {
++  return species === 'bun' ? ({ idle: 126, content: 127, meh: 130, scruffy: 133 }[poseName as UprightPose] ?? 125)
++    : species === 'mochi' && poseName === 'scruffy' ? 128 : RIG[species].eyeY
++}
++
++/** Invert the rendered torso: target is in unmirrored character-container space,
++ * result is a vector from the unshifted eye centre in local face coordinates. */
++export function articulatedFaceDelta(species: Species, input: MotionFrame, pose: PoseName, target: { x: number; y: number }): { x: number; y: number } {
++  if (pose === 'sick' || pose === 'sleeping') {
++    const face = poseFor(species, pose).anchors.face
++    return { x: target.x - face.x, y: target.y - face.y }
++  }
++  const frame = finiteMotionFrame(input)
++  const { sx, sy, tilt } = torso(species, frame, pose)
++  const x = target.x - frame.bodyX - 100, y = target.y - frame.bodyY - 181
++  const angle = tilt * Math.PI / 180
++  return {
++    x: (x * Math.cos(angle) + y * Math.sin(angle)) / sx,
++    y: (-x * Math.sin(angle) + y * Math.cos(angle)) / sy + 181 - articulatedEyeY(species, pose) - eyeCentreOffset(pose === 'idle' ? 'happy' : pose),
++  }
++}
++
+ export function articulatedTransform(species: Species, input: MotionFrame, pose: PoseName): string {
+   const frame = finiteMotionFrame(input)
+   const { sx, sy, tilt } = torso(species, frame, pose)
+@@ -74,7 +97,7 @@ export function articulatedPose(species: Species, input: MotionFrame, poseName:
+   const frame = finiteMotionFrame(input)
+   const rig = RIG[species]
+   const low = poseName === 'meh' || poseName === 'scruffy'
+-  const eyeY = species === 'bun' ? ({ idle: 126, content: 127, meh: 130, scruffy: 133 }[poseName as UprightPose] ?? 125) : species === 'mochi' && poseName === 'scruffy' ? 128 : rig.eyeY
++  const eyeY = articulatedEyeY(species, poseName)
+   const mouthY = species === 'bun' ? ({ idle: 145, content: 146, meh: 148, scruffy: 151 }[poseName as UprightPose] ?? 145) : species === 'mochi' && poseName === 'scruffy' ? 142 : rig.mouthY
+   const armY = low ? poseName === 'scruffy' ? 160 : 156 : rig.armY
+   const anchors = { ...poseFor(species, 'idle').anchors, face: { x: 100, y: eyeY } }
+diff --git i/src/pet/activityMotion.test.ts w/src/pet/activityMotion.test.ts
+index 06c15df..198908e 100644
+--- i/src/pet/activityMotion.test.ts
++++ w/src/pet/activityMotion.test.ts
+@@ -532,14 +532,14 @@ describe('activity motion', () => {
+     }
+   })
+ 
+-  it('projects target gaze relative to the centre where the pet stands', () => {
++  it('looks down at a detail below its eye line but above the standing tile centre', () => {
+     const pet: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), activity: {
+       kind: 'interact', phase: 'action', start: 0, until: ACTION_MS.inspect,
+       target: { objectId: 'decor', signature: 'decor:0', tile: { tx: 2, ty: 2 },
+         gaze: { tx: 2.25, ty: 2.25 }, action: 'inspect', contact: false },
+     } }
+-    // This point is above the tile centre but below its back corner on screen.
+-    expect(motion(pet, 900).frame.gazeY).toBeLessThan(0)
++    // This point is above the floor centre but below the rendered eye centre.
++    expect(motion(pet, 900).frame.gazeY).toBeGreaterThan(0)
+   })
+ 
+   it.each(['sick', 'sleep'] as const)('maps %s input to a gentle finite notice', (kind) => {
+diff --git i/src/pet/activityMotion.ts w/src/pet/activityMotion.ts
+index 2519967..84f7031 100644
+--- i/src/pet/activityMotion.ts
++++ w/src/pet/activityMotion.ts
+@@ -1,7 +1,7 @@
+ import type { Mood, Species } from '../domain/types'
+ import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionFrame, type MotionInput } from '../character/motion'
+ import { poseFor, poseNameFor } from '../character/poses'
+-import { iso } from '../room/iso'
++import { articulatedFaceDelta } from '../character/species/animatedBody'
+ import { PET_SCALE, roomPoint } from '../room/shell/geometry'
+ import { blendProgress, groundPathFor, positionAt, routeAt, TIMING, type MotionSnapshot, type PetState } from './behaviour'
+ 
+@@ -107,15 +107,28 @@ function frameFor(state: SampleState, now: number, input: MotionInput): MotionFr
+   if (input.reducedMotion || a.kind !== 'interact' || a.phase === 'settle') return frame
+   const t = input.durationMs > 0 ? input.elapsedMs / input.durationMs : 1
+   const attention = ease(t / 0.22) * (1 - ease((t - 0.68) / 0.32))
+-  // Gaze targets already include art height. Project before taking direction;
+-  // footprint centres incorrectly make elevated leaves and wall art look down.
++  if (attention === 0) return frame
++  // The target and resident placement share room coordinates. Move the target
++  // into the unmirrored character container, then invert the actual torso.
+   const position = positionAt({ ...state, beat: 0 }, state.walkAt ?? now)
+-  // Room pet placement adds half a tile on both axes; target gaze is already
+-  // an absolute projected point and must not receive that standing offset.
+-  const delta = iso(a.target.gaze.tx - position.tx - 0.5, a.target.gaze.ty - position.ty - 0.5)
+-  const length = Math.max(1, Math.hypot(delta.x, delta.y))
+-  frame.gazeX = delta.x / length * 4 * attention * state.facing
+-  frame.gazeY = delta.y / length * 3 * attention
++  const feet = roomPoint(position.tx + 0.5, position.ty + 0.5)
++  const point = roomPoint(a.target.gaze.tx, a.target.gaze.ty)
++  const target = { x: 100 + (point.x - feet.x) / PET_SCALE * state.facing,
++    y: 182 + (point.y - feet.y) / PET_SCALE }
++  const pose = poseNameFor(input.mood)
++  if (a.phase === 'action' && a.target.action === 'inspect') {
++    // Low details retain the forward inspection. Overhead details ease it
++    // toward a small backward tilt, without moving feet or changing the timing.
++    const fromEyes = articulatedFaceDelta(input.species, { ...frame, lean: 0 }, pose, target)
++    const up = Math.max(0, -fromEyes.y / Math.max(1, Math.hypot(fromEyes.x, fromEyes.y)))
++    frame.lean *= 1 - 1.25 * up
++  }
++  const delta = articulatedFaceDelta(input.species, frame, pose, target)
++  // One scalar preserves the local direction while bounding the eye travel
++  // to the rendered eye limits, three units horizontally and two vertically.
++  const length = Math.max(1, Math.hypot(delta.x / 3, delta.y / 2))
++  frame.gazeX = delta.x / length * attention
++  frame.gazeY = delta.y / length * attention
+   return frame
+ }
+ function snapshotFrame(snapshot: MotionSnapshot, input: MotionInput): MotionFrame {
+diff --git 1/src/pet/environmentAttention.test.ts 2/src/pet/environmentAttention.test.ts
+new file mode 100644
+index 0000000..034fa06
+--- /dev/null
++++ 2/src/pet/environmentAttention.test.ts
+@@ -0,0 +1,74 @@
++import { describe, expect, it } from 'vitest'
++import type { Mood, Species } from '../domain/types'
++import { ACTION_MS, sampleMotion, type MotionFrame } from '../character/motion'
++import { motionFor } from './activityMotion'
++import { initialPet, react, type PetState } from './behaviour'
++
++const speciesList: Species[] = ['mochi', 'bun', 'sprout']
++const moods: Mood[] = ['happy', 'content', 'meh', 'scruffy']
++
++// Construct an absolute target from independent room-screen offsets from the
++// standing tile centre. One room tile projects to42.5x21.25 SVG units.
++function inspecting(dx: number, dy: number, facing: 1 | -1 = 1): PetState {
++  return { ...initialPet({ tx: 2, ty: 2 }, 0), facing, activity: {
++    kind: 'interact', phase: 'action', start: 0, until: ACTION_MS.inspect,
++    target: { objectId: 'detail', signature: 'detail:0', tile: { tx: 2, ty: 2 },
++      gaze: { tx: 2.5 + dx / 42.5 + dy / 21.25, ty: 2.5 - dx / 42.5 + dy / 21.25 },
++      action: 'inspect', contact: false },
++  } }
++}
++
++describe('attention from the character eyes', () => {
++  it.each(speciesList)('%s looks down at a low detail that is still above the floor', species => {
++    for (const mood of moods) for (const facing of [1, -1] as const) {
++      const frame = motionFor(inspecting(24 * facing, -8, facing), 900, species, mood, false).frame
++      expect(frame.gazeY).toBeGreaterThan(0)
++      expect(frame.gazeX).toBeGreaterThan(0)
++      expect(frame.lean).toBeGreaterThan(0)
++      expect(frame.leftFoot).toBe(0)
++      expect(frame.rightFoot).toBe(0)
++      expect(frame.shadowScale).toBe(1)
++    }
++  })
++
++  it.each(speciesList)('%s eases back to inspect an overhead detail in either facing', species => {
++    for (const facing of [1, -1] as const) {
++      const frame = motionFor(inspecting(12 * facing, -80, facing), 900, species, 'happy', false).frame
++      expect(frame.gazeY).toBeLessThan(0)
++      expect(frame.lean).toBeLessThan(0)
++      expect(frame.lean).toBeGreaterThanOrEqual(-2.01)
++      expect(frame.bodyX).toBe(0)
++      expect(frame.bodyY).toBe(0)
++    }
++  })
++
++  it.each(speciesList)('%s keeps target attention bounded and neutral at phase joins', species => {
++    for (const mood of moods) for (const facing of [1, -1] as const) for (const height of [-80, -8, 25]) {
++      const state = inspecting(24 * facing, height, facing)
++      for (const now of [0, .001, 16, 119, 400, 900, 1500, 1799.999, 1800]) {
++        const input = motionFor(state, now, species, mood, false)
++        const frame = input.frame
++        expect(Number.isFinite(frame.gazeX)).toBe(true)
++        expect(Number.isFinite(frame.gazeY)).toBe(true)
++        expect(Math.hypot(frame.gazeX / 3, frame.gazeY / 2)).toBeLessThanOrEqual(1 + 1e-12)
++        expect(Math.abs(frame.lean)).toBeLessThanOrEqual(8)
++        if (now === 0 || now === 1800) expect(frame).toEqual(sampleMotion(input))
++      }
++      const still = motionFor(state, 900, species, mood, true)
++      expect(still.frame).toEqual(sampleMotion(still))
++    }
++  })
++
++  it.each(speciesList)('preserves the outgoing %s environment pose when a player interrupts', species => {
++    for (const facing of [1, -1] as const) for (const height of [-80, -8]) {
++      const state = inspecting(24 * facing, height, facing)
++      const before = motionFor(state, 900, species, 'happy', false).frame
++      const next = react(state, 900, 'celebrate')
++      const after = motionFor(next, 900, species, 'happy', false).frame
++      for (const field of Object.keys(before) as (keyof MotionFrame)[]) {
++        if (field === 'expression') expect(after[field]).toBe(before[field])
++        else expect(after[field]).toBeCloseTo(before[field]!, 10)
++      }
++    }
++  })
++})
+diff --git 1/src/character/eyeGeometry.ts 2/src/character/eyeGeometry.ts
+new file mode 100644
+index 0000000..a4ef6f8
+--- /dev/null
++++ 2/src/character/eyeGeometry.ts
+@@ -0,0 +1,6 @@
++import type { Mood } from '../domain/types'
++
++/** The shared open-eye drawing sits slightly lower in tired expressions. */
++export function eyeCentreOffset(mood: Mood | 'sleeping' | 'cheering'): number {
++  return mood === 'meh' ? 1 : mood === 'scruffy' ? 1.5 : 0
++}
+diff --git 1/scripts/browser/pet-environment-attention.test.mjs 2/scripts/browser/pet-environment-attention.test.mjs
+new file mode 100644
+index 0000000..c292c6a
+--- /dev/null
++++ 2/scripts/browser/pet-environment-attention.test.mjs
+@@ -0,0 +1,91 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { browserApp, snapshot } from './helpers.mjs'
++
++async function attentionFixture(page, species, rotation) {
++  await page.evaluate(({ species, rotation }) => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
++      const read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, room = Object.values(saved.tables.rooms)[0], pet = Object.values(saved.tables.pets)[0]
++        pet.species = species
++        pet.equipped = { face: 'glasses' }
++        saved.tables.placed_objects = {
++          low: { id: 'low', roomId: room.id, catalogId: 'teddy', tileX: 7, tileY: 7, rotation },
++          high: { id: 'high', roomId: room.id, catalogId: 'poster', tileX: rotation ? 4 : 0, tileY: rotation ? 0 : 4, rotation },
++        }
++        saved.tables.chores = {}
++        saved.tables.completions = {}
++        saved.outbox = {}
++        store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), { species, rotation })
++}
++
++// Measure actual eye ink and its unshifted centre through native SVG matrices.
++// Target coordinates come from independently documented object-local iso points.
++function readAim(node, { tx, ty }) {
++  const eyes = [...node.querySelectorAll('[data-eye-gaze] ellipse')]
++  const centre = (shifted) => {
++    const points = eyes.map(eye => {
++      const gaze = eye.closest('[data-eye-gaze]')
++      return new DOMPoint(+eye.getAttribute('cx'), +eye.getAttribute('cy'))
++        .matrixTransform((shifted ? gaze : gaze.parentElement).getScreenCTM())
++    })
++    return { x: (points[0].x + points[1].x) / 2, y: (points[0].y + points[1].y) / 2 }
++  }
++  const origin = centre(false), shifted = centre(true)
++  const target = new DOMPoint(195 + (tx - ty) * 21.25, 130 + (tx + ty) * 10.625)
++    .matrixTransform(node.ownerSVGElement.getScreenCTM())
++  const aim = { x: target.x - origin.x, y: target.y - origin.y }
++  const gaze = { x: shifted.x - origin.x, y: shifted.y - origin.y }
++  return { dot: gaze.x * aim.x + gaze.y * aim.y,
++    perpendicular: Math.abs(gaze.x * aim.y - gaze.y * aim.x) / Math.hypot(aim.x, aim.y),
++    vertical: gaze.y, open: [...node.querySelectorAll('[data-eye-open]')].every(eye => +eye.dataset.eyeOpen === 1) }
++}
++
++for (const species of ['mochi', 'bun', 'sprout']) for (const rotation of [0, 1]) {
++  test(`${species} aims at low and high furnishings through actual mirrored SVG transforms, rotation ${rotation}`, async t => {
++    const page = await browserApp(t, { reducedMotion: 'no-preference' })
++    await attentionFixture(page, species, rotation)
++    await page.clock.install()
++    await page.clock.pauseAt(Date.now() + 1000)
++    await page.addInitScript(() => { Math.random = () => .99 })
++    await page.reload()
++    const resident = page.locator('.room-pet')
++    await resident.waitFor()
++    const before = (await snapshot(page)).tables
++    await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++    const live = page.locator('.living-room [aria-live="polite"]')
++    for (const id of ['low', 'high']) {
++      await page.getByLabel(/^Show /).selectOption(id)
++      await page.getByRole('button', { name: 'Look together', exact: true }).click()
++      let heard = ''
++      for (let i = 0; i < 150 && !heard; i++) {
++        await page.clock.runFor(100)
++        heard = (await live.textContent()).trim()
++      }
++      assert.ok(heard, 'invited resident must arrive and announce the selected furnishing')
++      await page.clock.runFor(360 + 750)
++      const target = id === 'low' ? { tx: 6.75, ty: 6.75 }
++        : rotation ? { tx: 1.875, ty: -2.625 } : { tx: -2.625, ty: 1.875 }
++      let aim = await resident.evaluate(readAim, target)
++      for (let i = 0; i < 12 && !aim.open; i++) {
++        await page.clock.runFor(16)
++        aim = await resident.evaluate(readAim, target)
++      }
++      assert.ok(aim.open, 'sample an open-eye moment within the finite inspection')
++      assert.ok(aim.dot > 0, 'eye ink must move toward the selected detail')
++      assert.ok(aim.perpendicular < .005, `${id} gaze must follow the actual screen direction; perpendicular error ${aim.perpendicular}px`)
++      assert.ok(id === 'low' ? aim.vertical > 0 : aim.vertical < 0, 'a low detail looks down; overhead wall art looks up')
++    }
++    assert.deepEqual((await snapshot(page)).tables, before)
++    t.diagnostic(`Chromium ${page.context().browser().version()}; actual eye ink/native SVG matrices; low and high; no saved changes`)
++  })
++}
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-eye-attention.mjs 2/docs/audits/2026-10-12-character-polish/capture-eye-attention.mjs
+new file mode 100644
+index 0000000..4ef3e2b
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-eye-attention.mjs
+@@ -0,0 +1,73 @@
++// Bounded production stills; run from repository root with before/after label.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const label = process.argv[2]
++if (!['before', 'after'].includes(label)) throw new Error('Expected before or after')
++const out = 'docs/audits/2026-10-12-character-polish'
++const baselineCommit = '9b5b4f8'
++const baseline = label === 'before' ? new Map(await Promise.all(['src/pet/activityMotion.ts', 'src/character/species/animatedBody.tsx', 'src/character/parts.tsx'].map(async path => [path, await readFile(`${out}/eye-attention-baseline/${path}.txt`, 'utf8')]))) : new Map()
++const server = await createServer({ plugins: [{ name: 'exact-baseline-sample', enforce: 'pre', transform(code, id) {
++  const source = baseline.get(id.split('?')[0].replace(`${process.cwd()}/`, ''))
++  if (source !== undefined) return { code: source, map: null }
++} }], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++  const load = path => server.ssrLoadModule(`/src/${path}`)
++  const { Room } = await load('room/Room.tsx')
++  const { AnimatedCharacterArt } = await load('character/AnimatedCharacter.tsx')
++  const { ACTION_MS } = await load('character/motion.ts')
++  const { SPECIES_COLOUR, PALETTE } = await load('art/palette.ts')
++  const { petObstacles } = await load('pet/obstacles.ts')
++  const { overlaps, checkPlacement } = await load('room/grid.ts')
++  const { catalogEntry } = await load('catalog/objects.ts')
++  const { interactionTargets } = await load('pet/interactions.ts')
++  const { initialPet, step, positionAt } = await load('pet/behaviour.ts')
++  const { motionFor } = await load('pet/activityMotion.ts')
++  const { PET_STROKE_SCALE, roomPoint } = await load('room/shell/geometry.ts')
++  const h = React.createElement, rooms = [], closeups = [], samples = []
++  const equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++  for (const species of ['mochi', 'bun', 'sprout']) for (const id of ['poster', 'teddy']) for (const rotation of [0, 1]) {
++    const object = { id: 'detail', roomId: 'room', catalogId: id, tileX: id === 'poster' ? rotation ? 4 : 0 : 7, tileY: id === 'poster' ? rotation ? 0 : 4 : 7, rotation }
++    if (!checkPlacement(catalogEntry(id), object, [], catalogEntry).ok) throw new Error(`Invalid placed fixture:${id}/${rotation}`)
++    const stages = { detail: 'clean' }, solid = petObstacles([object], stages)
++    const free = tile => tile.tx >= 0 && tile.ty >= 0 && tile.tx < 8 && tile.ty < 8 && !solid.some(box => overlaps(box, { ...tile, w: 1, d: 1 }))
++    const targets = interactionTargets([object], free, stages), target = targets[0]
++    const world = { free, mood: 'happy', away: false, mess: null, interactions: targets }
++    let state = initialPet(target.tile, 0)
++    state.activity.until = 0
++    state = step(state, world, 0, () => 0)
++    state = step(state, world, ACTION_MS.turn, () => 0)
++    const now = ACTION_MS.turn + ACTION_MS.inspect * .42
++    state = step(state, world, now, () => 0)
++    if (state.activity.kind !== 'interact' || state.activity.phase !== 'action') throw new Error('Expected actual inspect action')
++    const frame = motionFor(state, now, species, 'happy', false).frame
++    const draw = strokeScale => h(AnimatedCharacterArt, { species, mood: 'happy', bodyColour: SPECIES_COLOUR[species], equipped, frame, strokeScale })
++    const point = roomPoint(target.gaze.tx, target.gaze.ty)
++    const title = `${species} ${id}, mirror ${rotation}`
++    rooms.push({ title, art: h(Room, { room: { floorStyle: 'birch', wallStyle: 'sage' }, objects: [object], stages, width: 390,
++      pet: { tile: positionAt(state, now), facing: state.facing, art: draw(PET_STROKE_SCALE) },
++      overlay: h('g', { stroke: PALETTE.accent, fill: 'none', strokeWidth: 1 }, h('circle', { cx: point.x, cy: point.y, r: 3 })) }) })
++    for (const size of [200, 60, 25]) closeups.push({ title: `${title}, ${size}px`, art: h('g', { transform: `translate(8 6) scale(${size / 200})` },
++      h('g', { transform: state.facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined }, draw(size === 25 ? PET_STROKE_SCALE : 1))) })
++    samples.push({ species, id, rotation, facing: state.facing, standing: positionAt(state, now), gaze: target.gaze, frame, contact: target.contact })
++  }
++  async function sheet(cells, width, height, columns, name) {
++    const markup = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width: width * columns, height: height * Math.ceil(cells.length / columns) },
++      h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), cells.map((cell, i) => h('g', { key: i, transform: `translate(${i % columns * width} ${Math.floor(i / columns) * height})` }, cell.art,
++        h('text', { x: 8, y: height - 8, fontSize: 10, fill: PALETTE.ink }, cell.title)))))
++    await writeFile(`${out}/${name}`, new Resvg(markup).render().asPng())
++  }
++  await sheet(rooms, 390, 350, 3, `eye-attention-${label}-rooms.png`)
++  await sheet(closeups, 220, 235, 6, `eye-attention-${label}-sizes.png`)
++  const sources = ['src/pet/activityMotion.ts', 'src/pet/behaviour.ts', 'src/pet/interactions.ts', 'src/character/AnimatedCharacter.tsx', 'src/character/species/animatedBody.tsx', 'src/character/motion.ts', 'src/character/parts.tsx', 'src/room/Room.tsx', 'src/room/shell/geometry.ts', `${out}/capture-eye-attention.mjs`]
++  if (label === 'after') sources.push('src/character/eyeGeometry.ts')
++  const sha = async path => createHash('sha256').update(baseline.get(path) ?? await readFile(path)).digest('hex')
++  const captureFiles = [`eye-attention-${label}-rooms.png`, `eye-attention-${label}-sizes.png`]
++  await writeFile(`${out}/eye-attention-${label}.json`, JSON.stringify({ baselineCommit: label === 'before' ? baselineCommit : null, overriddenSources: [...baseline.keys()], method: '12 actual behavior-derived production Room stills and36 dressed character views at200/60/25px; poster/teddy, all3 species, both mirrors,42% inspect action. Static evidence only; no live clock or human playback. Source list covers direct sampled geometry/placement, not every transitive asset dependency.', samples,
++    sourceSha256: Object.fromEntries(await Promise.all(sources.map(async path => [path, await sha(path)]))),
++    captureSha256: Object.fromEntries(await Promise.all(captureFiles.map(async path => [path, await sha(`${out}/${path}`)]))) }, null, 2) + '\n')
++  console.log(`Wrote ${label}:12 Room stills and36 size views`)
++} finally { await server.close() }

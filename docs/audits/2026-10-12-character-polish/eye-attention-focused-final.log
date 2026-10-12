@@ -1,0 +1,58 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/environmentAttention.test.ts src/pet/activityMotion.test.ts src/character/AnimatedCharacter.test.tsx src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/AnimatedCharacter.test.tsx (54 tests | 3 failed) 8282ms
+   ❯ articulated face reference (6)
+     × aims the rendered bun eye displacement toward the actual room detail 48ms
+     × aims the rendered mochi eye displacement toward the actual room detail 10ms
+     × aims the rendered sprout eye displacement toward the actual room detail 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > articulated face reference > aims the rendered bun eye displacement toward the actual room detail
+AssertionError: expected -0.001272265556305996 to be close to +0, received difference is 0.001272265556305996, but expected 5e-9
+ ❯ src/character/AnimatedCharacter.test.tsx:80:47
+     78|       const gaze = { x: shifted.x - origin.x, y: shifted.y - origin.y }
+     79|       expect(gaze.x * aim.x + gaze.y * aim.y).toBeGreaterThan(0)
+     80|       expect(gaze.x * aim.y - gaze.y * aim.x).toBeCloseTo(0, 8)
+       |                                               ^
+     81|     }
+     82|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > articulated face reference > aims the rendered mochi eye displacement toward the actual room detail
+AssertionError: expected -0.0012807546611401932 to be close to +0, received difference is 0.0012807546611401932, but expected 5e-9
+ ❯ src/character/AnimatedCharacter.test.tsx:80:47
+     78|       const gaze = { x: shifted.x - origin.x, y: shifted.y - origin.y }
+     79|       expect(gaze.x * aim.x + gaze.y * aim.y).toBeGreaterThan(0)
+     80|       expect(gaze.x * aim.y - gaze.y * aim.x).toBeCloseTo(0, 8)
+       |                                               ^
+     81|     }
+     82|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > articulated face reference > aims the rendered sprout eye displacement toward the actual room detail
+AssertionError: expected -0.0012648444695475547 to be close to +0, received difference is 0.0012648444695475547, but expected 5e-9
+ ❯ src/character/AnimatedCharacter.test.tsx:80:47
+     78|       const gaze = { x: shifted.x - origin.x, y: shifted.y - origin.y }
+     79|       expect(gaze.x * aim.x + gaze.y * aim.y).toBeGreaterThan(0)
+     80|       expect(gaze.x * aim.y - gaze.y * aim.x).toBeCloseTo(0, 8)
+       |                                               ^
+     81|     }
+     82|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  3 failed | 204 passed (207)
+   Start at  17:19:41
+   Duration  11.81s (tests 88%, transform 6%, environment 4%, import 2%)
+
+    Isolate  4 workers spawned · ~205ms startup each (spawn + environment, per file)
+             at least ~615ms faster with isolate: false — reuses workers across files instead of one per file
+

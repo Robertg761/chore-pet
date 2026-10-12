@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { PALETTE } from '../../art/palette'
 import type { Species } from '../../domain/types'
 import { Ink, Tube } from '../ink'
+import { eyeCentreOffset } from '../eyeGeometry'
 import type { MotionFrame } from '../motion'
 import { Body, Cheeks, Face, MoodTint, Nub } from '../parts'
 import { poseFor, type PoseName } from '../poses'
@@ -48,6 +49,28 @@ function torso(species: Species, frame: MotionFrame, pose: PoseName) {
   return { sx: sx * frame.scaleX, sy: sy * frame.scaleY, tilt: tilt + frame.lean }
 }
 
+function articulatedEyeY(species: Species, poseName: PoseName): number {
+  return species === 'bun' ? ({ idle: 126, content: 127, meh: 130, scruffy: 133 }[poseName as UprightPose] ?? 125)
+    : species === 'mochi' && poseName === 'scruffy' ? 128 : RIG[species].eyeY
+}
+
+/** Invert the rendered torso: target is in unmirrored character-container space,
+ * result is a vector from the unshifted eye centre in local face coordinates. */
+export function articulatedFaceDelta(species: Species, input: MotionFrame, pose: PoseName, target: { x: number; y: number }): { x: number; y: number } {
+  if (pose === 'sick' || pose === 'sleeping') {
+    const face = poseFor(species, pose).anchors.face
+    return { x: target.x - face.x, y: target.y - face.y }
+  }
+  const frame = finiteMotionFrame(input)
+  const { sx, sy, tilt } = torso(species, frame, pose)
+  const x = target.x - frame.bodyX - 100, y = target.y - frame.bodyY - 181
+  const angle = tilt * Math.PI / 180
+  return {
+    x: (x * Math.cos(angle) + y * Math.sin(angle)) / sx,
+    y: (-x * Math.sin(angle) + y * Math.cos(angle)) / sy + 181 - articulatedEyeY(species, pose) - eyeCentreOffset(pose === 'idle' ? 'happy' : pose),
+  }
+}
+
 export function articulatedTransform(species: Species, input: MotionFrame, pose: PoseName): string {
   const frame = finiteMotionFrame(input)
   const { sx, sy, tilt } = torso(species, frame, pose)
@@ -74,7 +97,7 @@ export function articulatedPose(species: Species, input: MotionFrame, poseName: 
   const frame = finiteMotionFrame(input)
   const rig = RIG[species]
   const low = poseName === 'meh' || poseName === 'scruffy'
-  const eyeY = species === 'bun' ? ({ idle: 126, content: 127, meh: 130, scruffy: 133 }[poseName as UprightPose] ?? 125) : species === 'mochi' && poseName === 'scruffy' ? 128 : rig.eyeY
+  const eyeY = articulatedEyeY(species, poseName)
   const mouthY = species === 'bun' ? ({ idle: 145, content: 146, meh: 148, scruffy: 151 }[poseName as UprightPose] ?? 145) : species === 'mochi' && poseName === 'scruffy' ? 142 : rig.mouthY
   const armY = low ? poseName === 'scruffy' ? 160 : 156 : rig.armY
   const anchors = { ...poseFor(species, 'idle').anchors, face: { x: 100, y: eyeY } }
