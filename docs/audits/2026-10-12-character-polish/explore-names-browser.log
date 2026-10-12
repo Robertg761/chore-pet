@@ -1,0 +1,22 @@
+✔ native keyboard can identify and invite the second repeated furnishing (925.641669ms)
+ℹ Chromium 152.0.7977.82;native keyboard;unique names;unchanged saved tables
+✔ keyboard exploration stays still and fits 320px (780.995784ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 390px (744.43764ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 1280px (744.50192ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 640px (856.265281ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 844px (877.823605ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ an invitation joins a live step, reaches the chosen detail, coalesces repeats, and respects live reduction (2103.400954ms)
+ℹ Chromium 152.0.7977.82; pose join 0.1120 room SVG units; one application rAF
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7914.149711

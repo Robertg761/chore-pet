@@ -1,0 +1,146 @@
+diff --git c/docs/ART.md w/docs/ART.md
+index bf705b4..8c8dcf8 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -158,7 +158,7 @@ The wardrobe main preview uses the sampled renderer at rest and offers finite Wa
+ 
+ The creator preview uses a finite 1800ms sampled celebration for species and colour choices. Rapid choices share the original deadline; eye and cheek choices settle immediately so the selected face stays visible. The card stays still, clothing stays equipped, and frame updates stay inside the preview. Live reduced motion cancels the reaction without replaying it when restored. Choices remain a draft until Save.
+ 
+-Explore together offers explicit player invitations to a chosen furnishing. Keep its disclosure and native selector below the scene on phones and beside it in the desktop chores panel, preserving scene size. Reuse the current condition-aware approach and existing orient/action/settle sequence; fractional interruption origins reconnect through known clear segment endpoints. Same-target invitations coalesce. Taps and chore cheers retain priority and cancel pending invitation dialogue. Announce one invited observation at arrival; automatic exploration stays quiet. Reduced motion answers from the current position without beginning a route. Invitations remain local, with no saved pet/chore changes or new animation clock.
++Explore together offers explicit player invitations to a chosen furnishing. Keep its disclosure and native selector below the scene on phones and beside it in the desktop chores panel, preserving scene size. Reuse the current condition-aware approach and existing orient/action/settle sequence; fractional interruption origins reconnect through known clear segment endpoints. Same-target invitations coalesce. Taps and chore cheers retain priority and cancel pending invitation dialogue. Announce one invited observation at arrival; automatic exploration stays quiet. Reduced motion answers from the current position without beginning a route. Invitations remain local, with no saved pet/chore changes or new animation clock. Repeated furnishings use the builder's numbered names in both the selector and invitation feedback, preserving the selected object ID when counts change.
+ 
+ The resident clock pauses when reduced-motion art is settled or the pet is resting asleep/sick. Finite player reactions/notices keep the same single clock until their deadline; normal-motion suppression completes its existing120ms blend before pausing. Healthy normal-motion residents retain breathing, lifetime blinks and exploration. World/preference changes still validate and paint before display even with no pending frames. Initial sleeping/sick residents start in their resting activity, without blending from an unshown idle frame. Existing Boolean usePetMotion consumers keep their prior scheduling policy; the resident supplies separate normal/reduced activity flags. No new timer, clock or saved preference is introduced.
+ 
+diff --git c/src/pet/PetExplore.test.tsx w/src/pet/PetExplore.test.tsx
+index 41a12f7..86d132c 100644
+--- c/src/pet/PetExplore.test.tsx
++++ w/src/pet/PetExplore.test.tsx
+@@ -70,3 +70,30 @@ it('drops stale feedback and selects a remaining furnishing when the selected ob
+   expect((button(ui.container, 'Look together') as HTMLButtonElement).disabled).toBe(true)
+   expect(ui.container.querySelector('.pet-explore-note')!.textContent).toContain('furnishing')
+ })
++
++it('distinguishes repeated furnishings with the same numbered names as the builder', () => {
++  const repeated = [objects[0], { ...objects[0], id: 'second-plant', tileX: 6 }, objects[1]]
++  const ui = mount({ objects: repeated })
++  click(button(ui.container, 'Explore together'))
++  const select = ui.container.querySelector('select')!
++  expect([...select.options].map(option => option.text)).toEqual(['Potted plant 1', 'Potted plant 2', 'Teddy bear'])
++  act(() => { select.value = 'second-plant'; select.dispatchEvent(new Event('change', { bubbles: true })) })
++  click(button(ui.container, 'Look together'))
++  expect(ui.props.onLook).toHaveBeenCalledExactlyOnceWith('second-plant')
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('potted plant 2')
++  ui.rerender(<PetExplore {...ui.props} objects={[repeated[1], objects[1]]} />)
++  expect(select.value).toBe('second-plant')
++  expect(select.selectedOptions[0].text).toBe('Potted plant')
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('the potted plant.')
++})
++
++it.each(['__proto__', 'constructor', 'toString'])('keeps repeated choice IDs and feedback safe for %s', id => {
++  const repeated = [{ ...objects[0], id }, { ...objects[0], id: 'ordinary-id' }]
++  const ui = mount({ objects: repeated, onLook: vi.fn(() => 'still' as const) })
++  click(button(ui.container, 'Explore together'))
++  const select = ui.container.querySelector('select')!
++  expect(select.selectedOptions[0].text).toBe('Potted plant 1')
++  click(button(ui.container, 'Look together'))
++  expect(ui.props.onLook).toHaveBeenCalledExactlyOnceWith(id)
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('potted plant 1')
++})
+diff --git c/src/pet/PetExplore.tsx w/src/pet/PetExplore.tsx
+index f594402..14f8de7 100644
+--- c/src/pet/PetExplore.tsx
++++ w/src/pet/PetExplore.tsx
+@@ -1,6 +1,7 @@
+ import { useId, useState } from 'react'
+ import { catalogEntry } from '../catalog/objects'
+ import type { PlacedObject } from '../domain/types'
++import { objectNames } from '../room/roomSummary'
+ import type { VisitResult } from './LivingRoom'
+ import './PetExplore.css'
+ 
+@@ -17,9 +18,10 @@ export function PetExplore({ objects, petName, blocked, onLook }: PetExploreProp
+   const [open, setOpen] = useState(false)
+   const [selectedId, setSelectedId] = useState('')
+   const [feedback, setFeedback] = useState<{ objectId: string; result: VisitResult } | null>(null)
++  const names = objectNames(objects)
+   const choices = objects.flatMap(object => {
+     const entry = catalogEntry(object.catalogId)
+-    return entry ? [{ object, entry }] : []
++    return entry ? [{ object, name: names[object.id] }] : []
+   })
+   const selected = choices.find(choice => choice.object.id === selectedId) ?? choices[0]
+   const disabled = Boolean(blocked || !selected)
+@@ -28,7 +30,7 @@ export function PetExplore({ objects, petName, blocked, onLook }: PetExploreProp
+     : blocked === 'sick' ? `${petName} is resting today.`
+     : !selected ? 'Add a furnishing to explore together.' : ''
+   const result = feedback?.objectId === selected?.object.id ? feedback?.result : null
+-  const name = selected?.entry.name.toLowerCase()
++  const name = selected?.name.toLowerCase()
+   const message = result === 'started' ? `You invited ${petName} to look at the ${name}.`
+     : result === 'still' ? `${petName} noticed the ${name} from here.`
+     : result === 'busy' ? `${petName} is busy for a moment. Try again shortly.`
+@@ -46,7 +48,7 @@ export function PetExplore({ objects, petName, blocked, onLook }: PetExploreProp
+           <select id={`${id}-object`} className="field" disabled={disabled} value={selected?.object.id ?? ''}
+             aria-describedby={note ? `${id}-note` : undefined}
+             onChange={event => { setSelectedId(event.target.value); setFeedback(null) }}>
+-            {choices.map(({ object, entry }) => <option key={object.id} value={object.id}>{entry.name}</option>)}
++            {choices.map(({ object, name }) => <option key={object.id} value={object.id}>{name}</option>)}
+           </select>
+         </div>
+         <button type="button" className="btn" disabled={disabled} aria-describedby={note ? `${id}-note` : undefined}
+diff --git 1/scripts/browser/pet-explore-names.test.mjs 2/scripts/browser/pet-explore-names.test.mjs
+new file mode 100644
+index 0000000..64ae2b4
+--- /dev/null
++++ 2/scripts/browser/pet-explore-names.test.mjs
+@@ -0,0 +1,50 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, snapshot } from './helpers.mjs'
++
++async function secondPlant(page) {
++  await page.evaluate(() => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
++      const read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, plant = Object.values(saved.tables.placed_objects).find(object => object.catalogId === 'plant')
++        if (!plant) { tx.abort(); reject(new Error('sample fixture requires its existing plant')); return }
++        saved.tables.placed_objects['plant-twin'] = { ...plant, id: 'plant-twin', tileX: 0, tileY: 7 }
++        store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++      tx.onabort = () => { db.close(); reject(tx.error ?? new Error('fixture transaction aborted')) }
++    }
++  }))
++  await page.reload()
++}
++
++test('native keyboard can identify and invite the second repeated furnishing', async t => {
++  const page = await browserApp(t, { viewport: { width: 320, height: 640 } })
++  await secondPlant(page)
++  const saved = (await snapshot(page)).tables
++  const toggle = page.getByRole('button', { name: 'Explore together', exact: true })
++  await toggle.focus(); await page.keyboard.press('Enter'); await page.keyboard.press('Tab')
++  const select = page.getByLabel(/^Show /)
++  assert.equal(await select.evaluate(node => node === document.activeElement), true)
++  assert.equal(await select.getByRole('option', { name: 'Potted plant 1', exact: true }).count(), 1)
++  assert.equal(await select.getByRole('option', { name: 'Potted plant 2', exact: true }).count(), 1)
++  await page.keyboard.press('End')
++  assert.equal(await select.inputValue(), 'plant-twin')
++  assert.equal(await select.evaluate(node => node.selectedOptions[0].text), 'Potted plant 2')
++  const resident = page.locator('.room-pet'), position = await resident.getAttribute('transform')
++  await page.keyboard.press('Tab'); await page.keyboard.press('Enter')
++  assert.match(await page.locator('.pet-explore [role="status"]').textContent(), /potted plant 2 from here/)
++  assert.equal(await resident.getAttribute('transform'), position, 'reduced invitation keeps the resident still')
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
++  const out = process.env.CHORE_EXPLORE_NAMES_CAPTURE_DIR
++  if (out) { await mkdir(out, { recursive: true }); await page.screenshot({ path: join(out, 'explore-second-plant-320.png') }) }
++  t.diagnostic(`Chromium ${page.context().browser().version()};native keyboard;unique names;unchanged saved tables`)
++})

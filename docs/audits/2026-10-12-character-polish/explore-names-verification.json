@@ -1,0 +1,89 @@
+{
+  "freeze": {
+    "baseCommit": "9a40f74",
+    "sources": {
+      "src/pet/PetExplore.tsx": "e5459b0042817790e7c48b774f87fd503aa9ddd7f3eabe2fb0086f243d7b9273",
+      "src/pet/PetExplore.test.tsx": "fb7a04c3d9b014146ee5f2d7f57daeddca67f51909a1c395538f1866db8eb3d4",
+      "scripts/browser/pet-explore-names.test.mjs": "ff00ed58b386f7aa807454d4233dae197ee4d4de570b3210b33e565bb3b766a8",
+      "docs/ART.md": "e58e87e5f8b6d40f4a98281ec507b76adc7a66fb6e7fb904c7808ffc246e5cb8"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/explore-names-source.diff",
+      "sha256": "11f9defb4d30343356278b9feae04d371d7ad03ef0eefdc94745ac79dbd5f19f"
+    },
+    "scope": "4file label-onlyExplore polish,reusing existingbuilder objectNames,no newstate/clock/route/art/persistence."
+  },
+  "checks": [
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/explore-names-browser-red.log",
+      "logSha256": "a3e2c4b25e2a07d8444aaa22402002c5f91e3b7d1cf3dc41ed66ea7b9e0a4666",
+      "exitCode": 1,
+      "result": "0vs1missingnumberedplantoption."
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/explore-names-red.log",
+      "logSha256": "a017a79db2f423e14ab76590d9effa9d68859468800c5c511cba17e28c64d9e3",
+      "exitCode": 1,
+      "result": "4fail/10pass before label fix."
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/explore-names-focused.log",
+      "logSha256": "9c9c499d494def891f7b738804b0992984bc3d3fe6a5ea14202558283f0c1754",
+      "exitCode": 0,
+      "result": "22pass/2files674ms;App.test.tsx filterdidnotexist,soAppnavigationnotcovered. Predates asconstannotationonly."
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/explore-names-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Zero warnings before asconstannotation."
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/explore-names-build.log",
+      "logSha256": "3ecabd9f0716688069c6f9969ba421e22307f3eab104f15046c7f4e28fe615ec",
+      "exitCode": 0,
+      "result": "Final TypeScript/productionbuild."
+    },
+    {
+      "name": "focused-final",
+      "log": "docs/audits/2026-10-12-character-polish/explore-names-focused-final.log",
+      "logSha256": "d5d4e4896d27948948901ff4f022f62ae785a3110d485a5ae91b0831f3fa1e41",
+      "exitCode": 0,
+      "result": "31pass/3files3.21s includingcorrectApp.navigation.test.tsx path and finalannotation."
+    },
+    {
+      "name": "lint-final",
+      "log": "docs/audits/2026-10-12-character-polish/explore-names-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Finalzero warnings."
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/explore-names-browser.log",
+      "logSha256": "b9fd84c4ce904caf36183cc7bf2a759880d1b7b09ac02c6de14f1baf90f883ce",
+      "exitCode": 0,
+      "result": "7nativeproductioncases7.9141s:secondplantkeyboard/savedtables,5layouts/livefractionalroute.1capture."
+    }
+  ],
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/explore-names-layout/explore-second-plant-320.png": "d74c4fde67f621658dc1df8cd9097f692fc750798237cc32f041f1854820f9da"
+  },
+  "verificationScope": "Final31focused/typebuild/zero-warninglint/7nativebrowser exits0 bind4sources. No repeatedfullsuite forboundedlabelchange;prior2125full predates4newcases. Rootinspected1phoneclosedselector/feedbackstill;nativegeometry/keyboard/assertionsindependent. Subsequentreview-clockdrafttestsareoutside4frozenpathsandexcludedfromthischeckpoint;buildexecutionpredatesthoseintentionalnextbatchreds.",
+  "resources": "Singleheavyprocess/oneworker/browser;RAM~7.5GBavailable,/tmp4.1GBfree;account15%usedordinaryusageallowed.",
+  "limits": [
+    "No humanAT/temporal/physicaldevice/CPU/batteryclaim.",
+    "One320PNGcoversnumberedclosedselector;existing5nativeviewportcheckscoverlayout."
+  ],
+  "pending": [],
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/explore-names-review.md",
+    "sha256": "4093d213d1f8a48cefae7d019dcbf0b984f4359bfd7a0e5b6cbb7427cba20d83",
+    "result": "Independentstatic/stillapproval,noactionablefindings."
+  }
+}

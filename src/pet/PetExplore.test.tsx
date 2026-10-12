@@ -70,3 +70,30 @@ it('drops stale feedback and selects a remaining furnishing when the selected ob
   expect((button(ui.container, 'Look together') as HTMLButtonElement).disabled).toBe(true)
   expect(ui.container.querySelector('.pet-explore-note')!.textContent).toContain('furnishing')
 })
+
+it('distinguishes repeated furnishings with the same numbered names as the builder', () => {
+  const repeated = [objects[0], { ...objects[0], id: 'second-plant', tileX: 6 }, objects[1]]
+  const ui = mount({ objects: repeated })
+  click(button(ui.container, 'Explore together'))
+  const select = ui.container.querySelector('select')!
+  expect([...select.options].map(option => option.text)).toEqual(['Potted plant 1', 'Potted plant 2', 'Teddy bear'])
+  act(() => { select.value = 'second-plant'; select.dispatchEvent(new Event('change', { bubbles: true })) })
+  click(button(ui.container, 'Look together'))
+  expect(ui.props.onLook).toHaveBeenCalledExactlyOnceWith('second-plant')
+  expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('potted plant 2')
+  ui.rerender(<PetExplore {...ui.props} objects={[repeated[1], objects[1]]} />)
+  expect(select.value).toBe('second-plant')
+  expect(select.selectedOptions[0].text).toBe('Potted plant')
+  expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('the potted plant.')
+})
+
+it.each(['__proto__', 'constructor', 'toString'])('keeps repeated choice IDs and feedback safe for %s', id => {
+  const repeated = [{ ...objects[0], id }, { ...objects[0], id: 'ordinary-id' }]
+  const ui = mount({ objects: repeated, onLook: vi.fn(() => 'still' as const) })
+  click(button(ui.container, 'Explore together'))
+  const select = ui.container.querySelector('select')!
+  expect(select.selectedOptions[0].text).toBe('Potted plant 1')
+  click(button(ui.container, 'Look together'))
+  expect(ui.props.onLook).toHaveBeenCalledExactlyOnceWith(id)
+  expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('potted plant 1')
+})

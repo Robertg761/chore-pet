@@ -1,0 +1,14 @@
+{
+  "baseCommit": "9a40f74",
+  "sources": {
+    "src/pet/PetExplore.tsx": "e5459b0042817790e7c48b774f87fd503aa9ddd7f3eabe2fb0086f243d7b9273",
+    "src/pet/PetExplore.test.tsx": "fb7a04c3d9b014146ee5f2d7f57daeddca67f51909a1c395538f1866db8eb3d4",
+    "scripts/browser/pet-explore-names.test.mjs": "ff00ed58b386f7aa807454d4233dae197ee4d4de570b3210b33e565bb3b766a8",
+    "docs/ART.md": "e58e87e5f8b6d40f4a98281ec507b76adc7a66fb6e7fb904c7808ffc246e5cb8"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/explore-names-source.diff",
+    "sha256": "11f9defb4d30343356278b9feae04d371d7ad03ef0eefdc94745ac79dbd5f19f"
+  },
+  "scope": "4file label-onlyExplore polish,reusing existingbuilder objectNames,no newstate/clock/route/art/persistence."
+}

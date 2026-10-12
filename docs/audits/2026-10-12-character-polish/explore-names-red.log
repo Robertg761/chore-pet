@@ -1,0 +1,61 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetExplore.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetExplore.test.tsx (14 tests | 4 failed) 91ms
+   × distinguishes repeated furnishings with the same numbered names as the builder 7ms
+   × keeps repeated choice IDs and feedback safe for __proto__ 4ms
+   × keeps repeated choice IDs and feedback safe for constructor 3ms
+   × keeps repeated choice IDs and feedback safe for toString 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetExplore.test.tsx > distinguishes repeated furnishings with the same numbered names as the builder
+AssertionError: expected [ Array(3) ] to deeply equal [ 'Potted plant 1', …(2) ]
+
+- Expected
++ Received
+
+  [
+-   "Potted plant 1",
+-   "Potted plant 2",
++   "Potted plant",
++   "Potted plant",
+    "Teddy bear",
+  ]
+
+ ❯ src/pet/PetExplore.test.tsx:79:58
+     77|   click(button(ui.container, 'Explore together'))
+     78|   const select = ui.container.querySelector('select')!
+     79|   expect([...select.options].map(option => option.text)).toEqual(['Pot…
+       |                                                          ^
+     80|   act(() => { select.value = 'second-plant'; select.dispatchEvent(new …
+     81|   click(button(ui.container, 'Look together'))
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/pet/PetExplore.test.tsx > keeps repeated choice IDs and feedback safe for __proto__
+ FAIL  src/pet/PetExplore.test.tsx > keeps repeated choice IDs and feedback safe for constructor
+ FAIL  src/pet/PetExplore.test.tsx > keeps repeated choice IDs and feedback safe for toString
+AssertionError: expected 'Potted plant' to be 'Potted plant 1' // Object.is equality
+
+Expected: "Potted plant 1"
+Received: "Potted plant"
+
+ ❯ src/pet/PetExplore.test.tsx:95:42
+     93|   click(button(ui.container, 'Explore together'))
+     94|   const select = ui.container.querySelector('select')!
+     95|   expect(select.selectedOptions[0].text).toBe('Potted plant 1')
+       |                                          ^
+     96|   click(button(ui.container, 'Look together'))
+     97|   expect(ui.props.onLook).toHaveBeenCalledExactlyOnceWith(id)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 10 passed (14)
+   Start at  18:34:34
+   Duration  531ms (environment 60%, tests 21%, transform 9%, import 8%, worker 1%)
+
