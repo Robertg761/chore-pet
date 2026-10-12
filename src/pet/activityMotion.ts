@@ -83,9 +83,10 @@ function inputFor(state: SampleState, now: number, species: Species, mood: Mood,
 }
 function frameFor(state: SampleState, now: number, input: MotionInput): MotionFrame {
   const frame = sampleMotion(input)
-  // Older/custom samplers may omit this optional field. Normalize before the
-  // generic numeric blend so absent eye openness cannot turn into NaN.
+  // Older/custom samplers may omit optional eye fields. Normalize before the
+  // generic numeric blend, retaining the legacy discrete expression fallback.
   frame.eyeOpen ??= 1
+  frame.pleasedWeight ??= frame.expression === 'pleased' ? 1 : 0
   frame.leftGroundX ??= 0
   frame.leftGroundY ??= 0
   frame.rightGroundX ??= 0

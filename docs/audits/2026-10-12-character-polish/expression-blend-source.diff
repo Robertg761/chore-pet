@@ -1,0 +1,601 @@
+diff --git c/docs/ART.md w/docs/ART.md
+index 7510569..4d595a5 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -135,6 +135,7 @@ Every pose defines all six anchors (`src/character/slots.ts`). Items are drawn c
+ - Walking phase follows accumulated route distance across tile boundaries. Departure fades in over 120ms and arrival fades out over 180ms across the whole journey. Do not restart the gait on each tile. Body lift stays within 24 SVG units; sampled scale stays within `[0.85,1.15]`.
+ - Greeting, affection, celebration, and big celebration last 1200, 1600, 1800, and 2200ms. Finite actions recover to their mood pose. Interruptions preserve the visible fractional world position and blend from the outgoing sampled pose. Rapid taps allow one pending response and reuse the same decorative accent nodes.
+ - Sampled reaction marks emerge at their own anchors on the existing finite opacity envelope. The heart grows from 82% and rises 2 SVG units; the star grows from 70% and rises 4. Peak geometry and static cheering art remain exact. The marks settle back as they fade; they add no clock, state, or nodes and remain suppressed for resting poses and reduced motion.
++- Healthy pleased faces ease in over the first18% of a greeting, pats, hop, cheer or environmental wave, and settle over the last18%. Intermediate frames narrow the outgoing eyes with their current blink before crossfading the existing shapes; content/meh mouths crossfade, while the happy mouth stays single. One cream contrast backing follows the expression on dark bodies. The numeric expression weight also carries an interrupted smile through the existing120ms activity blend. Rest, full smiles, legacy omitted weights, sleeping and unwell art retain their existing geometry; reduced motion retains the full finite still reaction. No extra clock or saved state.
+ - Greeting and wardrobe waves use species-specific held hand sweeps. Bun retains its lively cadence, Mochi sweeps more slowly, and Sprout uses a smaller, slower wave. Preserve action durations, gesture envelopes, torso/feet/appendages, gaze, wardrobe attachment and reduced-motion stills.
+ - Sampled art owns breathing, blinks, limb motion, and accents. Disable independent CSS breathing and blinking inside it. Reduced motion removes sampled displacement, gait, breathing, secondary sway, blinks, and animated accents while retaining still mood/reaction expressions. System preference changes apply during the session.
+ - Idle appendages follow the existing four-second breath with a small species-specific delay; they settle to neutral position and zero velocity at the loop boundary. Feet, body position and shadow stay fixed. Primary140ms blinks keep their lifetime phase across actions; every other primary blink has a second140ms blink after60ms fully open. Sleeping and sick art retain their existing static geometry.
+diff --git c/src/character/AnimatedCharacter.test.tsx w/src/character/AnimatedCharacter.test.tsx
+index 3da8390..62b88b8 100644
+--- c/src/character/AnimatedCharacter.test.tsx
++++ w/src/character/AnimatedCharacter.test.tsx
+@@ -324,7 +324,7 @@ describe('AnimatedCharacterArt', () => {
+ 
+   it('leaves sleeping, sick and pleased closed-eye art unchanged by blink input', () => {
+     for (const species of speciesList) for (const pose of ['sleeping', 'sick', 'idle'] as const) {
+-      const scene = (eyeOpen: number) => <svg><AnimatedCharacterArt species={species} mood={pose === 'sick' ? 'sick' : 'happy'} pose={pose} bodyColour={PALETTE.petDefault} frame={{ ...neutral, expression: 'pleased', eyeOpen }} /></svg>
++      const scene = (eyeOpen: number) => <svg><AnimatedCharacterArt species={species} mood={pose === 'sick' ? 'sick' : 'happy'} pose={pose} bodyColour={PALETTE.petDefault} frame={{ ...neutral, expression: 'pleased', pleasedWeight: 1, eyeOpen }} /></svg>
+       const { container, rerender } = mount(scene(1))
+       const before = container.innerHTML
+       rerender(scene(0))
+diff --git c/src/character/motion.test.ts w/src/character/motion.test.ts
+index 9a19c9c..2c3f978 100644
+--- c/src/character/motion.test.ts
++++ w/src/character/motion.test.ts
+@@ -12,7 +12,7 @@ const neutral: MotionFrame = {
+   bodyX: 0, bodyY: 0, scaleX: 1, scaleY: 1, lean: 0,
+   leftFoot: 0, rightFoot: 0, leftGroundX: 0, leftGroundY: 0, rightGroundX: 0, rightGroundY: 0, leftArm: 0, rightArm: 0,
+   leftAppendage: 0, rightAppendage: 0, gazeX: 0, gazeY: 0, eyeOpen: 1,
+-  shadowScale: 1, shadowOpacity: 1, accentOpacity: 0, expression: 'mood',
++  shadowScale: 1, shadowOpacity: 1, accentOpacity: 0, expression: 'mood', pleasedWeight: 0,
+ }
+ const input = (over: Partial<MotionInput> = {}): MotionInput => ({
+   species: 'mochi', mood: 'happy', action: 'greet', elapsedMs: 0,
+@@ -394,7 +394,8 @@ describe('readable reactions and accessibility', () => {
+     for (const species of SPECIES) for (const mood of moods) for (const action of actions) {
+       const early = sampleMotion(input({ species, mood, action, reducedMotion: true, elapsedMs: ACTION_MS[action] * 0.3, distance: 0.2 }))
+       const late = sampleMotion(input({ species, mood, action, reducedMotion: true, elapsedMs: ACTION_MS[action] * 0.7, distance: 0.8 }))
+-      expect({ ...early, expression: 'mood' }).toEqual(neutral)
++      expect({ ...early, expression: 'mood', pleasedWeight: 0 }).toEqual(neutral)
++      expect(early.pleasedWeight).toBe(early.expression === 'pleased' ? 1 : 0)
+       expect(late).toEqual(early)
+       if (mood === 'sick') expect(early.expression).toBe(action === 'notice' ? 'alert' : 'mood')
+     }
+diff --git c/src/character/motion.ts w/src/character/motion.ts
+index 9776971..7a28dba 100644
+--- c/src/character/motion.ts
++++ w/src/character/motion.ts
+@@ -53,6 +53,8 @@ export interface MotionFrame {
+   shadowOpacity: number
+   accentOpacity: number
+   expression: 'mood' | 'pleased' | 'alert'
++  /** Optional numeric smile blend; omitted legacy frames use expression directly. */
++  pleasedWeight?: number
+ }
+ 
+ export const ACTION_MS: Record<MotionAction, number> = {
+@@ -97,7 +99,7 @@ function neutral(): MotionFrame {
+     bodyX: 0, bodyY: 0, scaleX: 1, scaleY: 1, lean: 0,
+     leftFoot: 0, rightFoot: 0, leftGroundX: 0, leftGroundY: 0, rightGroundX: 0, rightGroundY: 0, leftArm: 0, rightArm: 0,
+     leftAppendage: 0, rightAppendage: 0, gazeX: 0, gazeY: 0, eyeOpen: 1,
+-    shadowScale: 1, shadowOpacity: 1, accentOpacity: 0, expression: 'mood',
++    shadowScale: 1, shadowOpacity: 1, accentOpacity: 0, expression: 'mood', pleasedWeight: 0,
+   }
+ }
+ 
+@@ -194,6 +196,9 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+   if (!looping && (duration === 0 || elapsed === 0 || elapsed >= duration)) return frame
+ 
+   frame.expression = expressionFor(action, mood)
++  frame.pleasedWeight = frame.expression === 'pleased'
++    ? reducedMotion ? 1 : envelope(elapsed / duration, 0, 0.18, 0.82, 1)
++    : 0
+   if (reducedMotion) return frame
+ 
+   const personality = PERSONALITY[species]
+diff --git c/src/character/parts.tsx w/src/character/parts.tsx
+index 199996b..5aa4808 100644
+--- c/src/character/parts.tsx
++++ w/src/character/parts.tsx
+@@ -286,22 +286,41 @@ export function RestingFaceMotion({ gaze, children }: { gaze: Gaze; children: Re
+ }
+ 
+ /** Eyes and mouth. Gaze moves eye ink only, leaving brows, mouth and glasses attached. */
+-export function Face({ mood, eyeY, mouthY, gaze, expression, eyeOpen }: { mood: Expression; eyeY: number; mouthY: number; gaze?: Gaze; expression?: MotionFrame['expression']; eyeOpen?: number }) {
++export function Face({ mood, eyeY, mouthY, gaze, expression, eyeOpen, pleasedWeight }: {
++  mood: Expression; eyeY: number; mouthY: number; gaze?: Gaze; expression?: MotionFrame['expression']; eyeOpen?: number; pleasedWeight?: number
++}) {
+   const scale = useStrokeScale()
+   const backing = needsFaceBacking(useContext(FaceBodyColourContext))
+   const motion = useContext(FaceMotionContext)
+   gaze ??= motion.gaze
+   expression ??= motion.expression
+-  const faceMood = mood === 'sick' || mood === 'scruffy' || mood === 'sleeping' ? mood : expression === 'pleased' ? 'cheering' : mood
++  const healthy = mood === 'happy' || mood === 'content' || mood === 'meh'
++  const fallback = expression === 'pleased' ? 1 : 0
++  const smile = healthy ? Math.max(0, Math.min(1, typeof pleasedWeight === 'number' && Number.isFinite(pleasedWeight) ? pleasedWeight : fallback)) : 0
++  const faceMood = healthy && smile > 0 ? 'cheering' : mood
++  const blending = smile > 0 && smile < 1
++  const backingHeight = faceMood === 'scruffy' || faceMood === 'sick' ? 21
++    : faceMood === 'sleeping' ? 9 : healthy ? 15 - 6 * smile : faceMood === 'cheering' ? 9 : 15
++  const opening = typeof eyeOpen === 'number' && Number.isFinite(eyeOpen) ? Math.max(0, Math.min(1, eyeOpen)) : 1
++  const eyes = (eyeMood: Expression, openness = eyeOpen) => <>
++    <Eye x={100 - EYE_SPREAD} y={eyeY} mood={eyeMood} side={-1} gaze={gaze} alert={expression === 'alert'} eyeOpen={openness} />
++    <Eye x={100 + EYE_SPREAD} y={eyeY} mood={eyeMood} side={1} gaze={gaze} alert={expression === 'alert'} eyeOpen={openness} />
++  </>
+   return (
+     <g data-expression={expression !== undefined ? faceMood : undefined} stroke={ink} strokeWidth={3.5 * scale} strokeLinecap="round" strokeLinejoin="round" fill="none">
+       {backing && <g data-face-contrast="" fill={cream} stroke="none">
+-        {[80, 120].map((x) => <ellipse key={x} cx={x} cy={eyeY - (faceMood === 'scruffy' || faceMood === 'sick' ? 4 : 0)} rx={15} ry={faceMood === 'scruffy' || faceMood === 'sick' ? 21 : faceMood === 'sleeping' || faceMood === 'cheering' ? 9 : 15} />)}
++        {[80, 120].map((x) => <ellipse key={x} cx={x} cy={eyeY - (faceMood === 'scruffy' || faceMood === 'sick' ? 4 : 0)} rx={15} ry={backingHeight} />)}
+         <ellipse cx={100} cy={mouthY + 1} rx={13} ry={9} />
+       </g>}
+-      <Eye x={100 - EYE_SPREAD} y={eyeY} mood={faceMood} side={-1} gaze={gaze} alert={expression === 'alert'} eyeOpen={eyeOpen} />
+-      <Eye x={100 + EYE_SPREAD} y={eyeY} mood={faceMood} side={1} gaze={gaze} alert={expression === 'alert'} eyeOpen={eyeOpen} />
+-      <Mouth y={mouthY} mood={faceMood} />
++      {blending ? <g data-expression-layer="mood" aria-hidden="true" opacity={1 - smile}>
++        {eyes(mood, opening * (1 - smile))}
++        {mood !== 'happy' && <Mouth y={mouthY} mood={mood} />}
++      </g> : <Eye x={100 - EYE_SPREAD} y={eyeY} mood={faceMood} side={-1} gaze={gaze} alert={expression === 'alert'} eyeOpen={eyeOpen} />}
++      {blending ? <g data-expression-layer="pleased" aria-hidden="true" opacity={smile}>
++        {eyes('cheering')}
++        {mood !== 'happy' && <Mouth y={mouthY} mood="cheering" />}
++      </g> : <Eye x={100 + EYE_SPREAD} y={eyeY} mood={faceMood} side={1} gaze={gaze} alert={expression === 'alert'} eyeOpen={eyeOpen} />}
++      {blending ? mood === 'happy' && <Mouth y={mouthY} mood="happy" /> : <Mouth y={mouthY} mood={faceMood} />}
+       {mood === 'sick' && (
+         <path d={`M151 ${eyeY - 16} q-6 9 0 12 q6 -3 0 -12 Z`} fill={sky} strokeWidth={2.5} />
+       )}
+diff --git c/src/character/species/animatedBody.tsx w/src/character/species/animatedBody.tsx
+index 6ccf2dc..7ffe7a6 100644
+--- c/src/character/species/animatedBody.tsx
++++ w/src/character/species/animatedBody.tsx
+@@ -41,6 +41,7 @@ export function finiteMotionFrame(frame: MotionFrame): MotionFrame {
+     eyeOpen: n(frame.eyeOpen ?? 1, 1, 0, 1),
+     shadowScale: n(frame.shadowScale, 1, 0, 1.5), shadowOpacity: n(frame.shadowOpacity, 1, 0, 1), accentOpacity: n(frame.accentOpacity, 0, 0, 1),
+     expression: frame.expression === 'pleased' || frame.expression === 'alert' ? frame.expression : 'mood',
++    pleasedWeight: n(frame.pleasedWeight ?? (frame.expression === 'pleased' ? 1 : 0), frame.expression === 'pleased' ? 1 : 0, 0, 1),
+   }
+ }
+ 
+@@ -168,7 +169,8 @@ export function articulatedPose(species: Species, input: MotionFrame, poseName:
+           {species === 'mochi' && mochiPleats()}
+           <MoodTint d={rig.d} mood={mood} colour={colour} smudges={rig.smudges} />
+           <Cheeks y={species === 'bun' ? mouthY - 2 : species === 'mochi' && poseName === 'scruffy' ? 144 : rig.cheekY} spread={rig.spread} />
+-          <Face mood={poseName === 'idle' ? mood : poseName} expression={frame.expression} gaze={{ x: frame.gazeX, y: frame.gazeY }} eyeOpen={frame.eyeOpen} eyeY={eyeY} mouthY={mouthY} />
++          <Face mood={poseName === 'idle' ? mood : poseName} expression={frame.expression} pleasedWeight={frame.pleasedWeight}
++            gaze={{ x: frame.gazeX, y: frame.gazeY }} eyeOpen={frame.eyeOpen} eyeY={eyeY} mouthY={mouthY} />
+           {species === 'bun' && <path d={`M95.5 ${eyeY + 8.5} h9 l-4.5 4.5 Z`} fill={PALETTE.blush} strokeWidth={2.5} />}
+         </Ink>
+       )
+diff --git c/src/pet/activityMotion.ts w/src/pet/activityMotion.ts
+index d23ab97..7593a2a 100644
+--- c/src/pet/activityMotion.ts
++++ w/src/pet/activityMotion.ts
+@@ -83,9 +83,10 @@ function inputFor(state: SampleState, now: number, species: Species, mood: Mood,
+ }
+ function frameFor(state: SampleState, now: number, input: MotionInput): MotionFrame {
+   const frame = sampleMotion(input)
+-  // Older/custom samplers may omit this optional field. Normalize before the
+-  // generic numeric blend so absent eye openness cannot turn into NaN.
++  // Older/custom samplers may omit optional eye fields. Normalize before the
++  // generic numeric blend, retaining the legacy discrete expression fallback.
+   frame.eyeOpen ??= 1
++  frame.pleasedWeight ??= frame.expression === 'pleased' ? 1 : 0
+   frame.leftGroundX ??= 0
+   frame.leftGroundY ??= 0
+   frame.rightGroundX ??= 0
+diff --git 1/src/character/expressionBlend.test.tsx 2/src/character/expressionBlend.test.tsx
+new file mode 100644
+index 0000000..edc46f3
+--- /dev/null
++++ 2/src/character/expressionBlend.test.tsx
+@@ -0,0 +1,124 @@
++// @vitest-environment jsdom
++import { describe, expect, it } from 'vitest'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { EYE_STYLES, type EyeStyle, type Mood, type Species } from '../domain/types'
++import { initialPet, step, type PetState, type World } from '../pet/behaviour'
++import { motionFor } from '../pet/activityMotion'
++import type { InteractionTarget } from '../pet/interactions'
++import { AnimatedCharacterArt } from './AnimatedCharacter'
++import { ACTION_MS, sampleMotion, type MotionAction, type MotionFrame } from './motion'
++
++const neutral = sampleMotion({ species: 'bun', mood: 'happy', action: 'idle', elapsedMs: 0, durationMs: 4000, distance: 0, reducedMotion: false })
++// The extension keeps the pre-feature regression type-valid before the optional field exists.
++const weight = (frame: MotionFrame) => (frame as MotionFrame & { pleasedWeight?: number }).pleasedWeight
++const weighted = (value: number): MotionFrame => ({ ...neutral, expression: 'pleased', pleasedWeight: value } as MotionFrame)
++const legacy = (frame: MotionFrame, expression: MotionFrame['expression']): MotionFrame => {
++  const copy = { ...frame, expression } as MotionFrame & { pleasedWeight?: number }
++  delete copy.pleasedWeight
++  return copy
++}
++function markup(frame: MotionFrame, mood: Mood = 'happy', species: Species = 'bun', eyes: EyeStyle = 'classic') {
++  return renderToStaticMarkup(<svg><AnimatedCharacterArt species={species} mood={mood} bodyColour="#38243b"
++    equipped={{ head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }}
++    look={{ eyes }} frame={frame} /></svg>)
++}
++function tree(frame: MotionFrame, mood: Mood = 'happy', species: Species = 'bun') {
++  const node = document.createElement('div')
++  node.innerHTML = markup(frame, mood, species)
++  return node
++}
++
++describe('pleased expression transitions', () => {
++  it.each(['mochi', 'bun', 'sprout'] as const)('%s warms and settles its finite smile without changing reduced stills', species => {
++    for (const action of ['greet', 'affection', 'celebrate', 'celebrate-big', 'wave'] satisfies MotionAction[]) {
++      const at = (phase: number, reducedMotion = false) => sampleMotion({ species, mood: 'happy', action,
++        elapsedMs: ACTION_MS[action] * phase, durationMs: ACTION_MS[action], distance: 0, reducedMotion })
++      expect(weight(at(0))).toBe(0)
++      expect(weight(at(.05))).toBeGreaterThan(0)
++      expect(weight(at(.05))).toBeLessThan(.25)
++      expect(weight(at(.1))).toBeGreaterThan(weight(at(.05))!)
++      expect(weight(at(.5))).toBe(1)
++      expect(weight(at(.95))).toBeGreaterThan(0)
++      expect(weight(at(.95))).toBeLessThan(.25)
++      expect(weight(at(1))).toBe(0)
++      for (const phase of [.05, .5, .95]) expect(weight(at(phase, true))).toBe(1)
++    }
++  })
++
++  it('crossfades existing healthy eye shapes with complementary opacity and one contrast backing', () => {
++    for (const mood of ['happy', 'content', 'meh'] as const) {
++      const node = tree(weighted(.25), mood)
++      const base = node.querySelector('[data-expression-layer="mood"]')!
++      const pleased = node.querySelector('[data-expression-layer="pleased"]')!
++      expect(base).not.toBeNull()
++      expect(pleased).not.toBeNull()
++      expect(Number(base.getAttribute('opacity'))).toBe(.75)
++      expect(Number(pleased.getAttribute('opacity'))).toBe(.25)
++      expect(base.querySelectorAll('[data-eye-gaze]')).toHaveLength(2)
++      expect(pleased.querySelectorAll('[data-eye-gaze]')).toHaveLength(0)
++      expect(node.querySelectorAll('[data-face-contrast]')).toHaveLength(1)
++      expect(node.querySelector('[data-face-contrast] ellipse')!.getAttribute('ry')).toBe('13.5')
++      for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) expect(node.querySelectorAll(`[data-slot="${slot}"]`)).toHaveLength(1)
++    }
++  })
++
++  it('keeps exact legacy endpoint art for every species and eye style with no extra face nodes', () => {
++    for (const species of ['mochi', 'bun', 'sprout'] as const) for (const mood of ['happy', 'content', 'meh'] as const) {
++      for (const eyes of EYE_STYLES) {
++        expect(markup(weighted(0), mood, species, eyes)).toBe(markup(legacy(neutral, 'mood'), mood, species, eyes))
++        expect(markup(weighted(1), mood, species, eyes)).toBe(markup(legacy(neutral, 'pleased'), mood, species, eyes))
++      }
++    }
++    for (const value of [0, 1]) expect(tree(weighted(value)).querySelectorAll('[data-expression-layer]')).toHaveLength(0)
++  })
++
++  it('preserves scruffy and sick art independently of the optional smile weight', () => {
++    for (const species of ['mochi', 'bun', 'sprout'] as const) for (const mood of ['scruffy', 'sick'] as const) {
++      expect(markup(weighted(.5), mood, species)).toBe(markup(legacy(neutral, 'pleased'), mood, species))
++    }
++  })
++
++  it('bounds malformed weights without dropping legacy expression fallbacks', () => {
++    expect(markup(weighted(-2))).toBe(markup(weighted(0)))
++    expect(markup(weighted(2))).toBe(markup(weighted(1)))
++    for (const value of [NaN, Infinity, -Infinity]) {
++      expect(markup(weighted(value))).toBe(markup(weighted(1)))
++      expect(markup({ ...weighted(value), expression: 'mood' })).toBe(markup(weighted(0)))
++    }
++  })
++
++  it('closes the outgoing healthy eyes as the smile appears without reopening a blink', () => {
++    for (const mood of ['happy', 'content', 'meh'] as const) for (const eyeOpen of [0, .8, 1]) {
++      const node = tree({ ...weighted(.5), eyeOpen }, mood)
++      const openness = [...node.querySelectorAll('[data-expression-layer="mood"] [data-eye-open]')]
++        .map(eye => Number(eye.getAttribute('data-eye-open')))
++      expect(openness).toEqual([eyeOpen * .5, eyeOpen * .5])
++      expect(node.querySelectorAll('[data-expression-layer="pleased"] [data-eye-open]')).toHaveLength(0)
++    }
++  })
++
++  it('keeps sleeping art settled when an outgoing smile is still present', () => {
++    for (const species of ['mochi', 'bun', 'sprout'] as const) {
++      const render = (frame: MotionFrame) => renderToStaticMarkup(<svg><AnimatedCharacterArt species={species}
++        mood="happy" pose="sleeping" bodyColour="#38243b" frame={frame} /></svg>)
++      expect(render(weighted(.5))).toBe(render(weighted(0)))
++      expect(render(weighted(.5))).not.toContain('data-expression-layer')
++    }
++  })
++
++  it.each(['mochi', 'bun', 'sprout'] as const)('carries the outgoing %s plant-wave smile through actual target removal', species => {
++    const target: InteractionTarget = { objectId: 'plant', signature: 'plant-clean', tile: { tx: 2, ty: 2 },
++      gaze: { tx: 3, ty: 2 }, action: 'wave', contact: false }
++    const state: PetState = { ...initialPet(target.tile, 0), activity: {
++      kind: 'interact', phase: 'action', target, start: 0, until: ACTION_MS.wave,
++    } }
++    const world: World = { free: () => true, mood: 'happy', away: false, mess: null, interactions: [] }
++    const stopped = step(state, world, 700, () => .99)
++    expect(stopped.activity.kind).toBe('idle')
++    expect(weight(motionFor(stopped, 700, species, 'happy', false).frame)).toBe(1)
++    const halfway = motionFor(stopped, 760, species, 'happy', false).frame
++    expect(weight(halfway)).toBeCloseTo(.5, 10)
++    expect(tree(halfway, 'happy', species).querySelectorAll('[data-expression-layer]')).toHaveLength(2)
++    expect(weight(motionFor(stopped, 820, species, 'happy', false).frame)).toBe(0)
++  })
++})
+diff --git 1/scripts/browser/pet-expression-blend.test.mjs 2/scripts/browser/pet-expression-blend.test.mjs
+new file mode 100644
+index 0000000..25272a9
+--- /dev/null
++++ 2/scripts/browser/pet-expression-blend.test.mjs
+@@ -0,0 +1,100 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
++
++async function setup(t, species = 'mochi') {
++  const page = await browserApp(t, { reducedMotion: 'no-preference', viewport: { width: 1280, height: 800 } })
++  await page.evaluate(species => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
++      const read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, pet = Object.values(saved.tables.pets)[0]
++        pet.species = species
++        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++        saved.outbox = {}
++        store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), species)
++  await page.clock.install()
++  await page.clock.pauseAt(Date.now() + 1000)
++  await page.addInitScript(() => {
++    Math.random = () => .99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__expressionFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__expressionFrames.delete(id); callback(now) })
++      window.__expressionFrames.add(id)
++      return id
++    }
++    window.cancelAnimationFrame = id => { window.__expressionFrames.delete(id); cancel(id) }
++  })
++  await page.reload()
++  await page.locator('.room-pet').waitFor()
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  return page
++}
++
++async function mix(resident) {
++  const values = await resident.locator('[data-expression-layer]').evaluateAll(nodes => nodes.map(node => ({
++    kind: node.dataset.expressionLayer, opacity: +node.getAttribute('opacity'),
++    openEyes: node.querySelectorAll('[data-eye-gaze]').length,
++    openings: [...node.querySelectorAll('[data-eye-open]')].map(eye => +eye.getAttribute('data-eye-open')),
++  })))
++  assert.equal(values.length, 2, 'the normal reaction must ease between its existing faces')
++  const base = values.find(value => value.kind === 'mood'), pleased = values.find(value => value.kind === 'pleased')
++  assert.equal(base.openEyes, 2)
++  assert.equal(pleased.openEyes, 0)
++  assert.ok(base.opacity > 0 && base.opacity < 1)
++  assert.ok(pleased.opacity > 0 && pleased.opacity < 1)
++  assert.ok(Math.abs(base.opacity + pleased.opacity - 1) < 1e-10)
++  assert.equal(base.openings.length, 2)
++  assert.ok(base.openings.every(opening => opening >= 0 && opening <= base.opacity + 1e-10), 'outgoing eyes close with the smile while retaining any current blink')
++}
++
++for (const species of ['mochi', 'bun', 'sprout']) {
++  test(`${species} eases its actual pleased face at the start and return of pats`, async t => {
++    const page = await setup(t, species), resident = page.locator('.room-pet')
++    const saved = (await snapshot(page)).tables, position = await resident.getAttribute('transform')
++    await resident.evaluate(node => { window.__expressionPet = node })
++    await page.getByRole('button', { name: 'Gentle pats', exact: true }).click()
++    await page.clock.runFor(128)
++    await mix(resident)
++    assert.equal(await page.evaluate(() => window.__expressionFrames.size), 1)
++    await page.clock.runFor(672)
++    assert.equal(await resident.locator('[data-expression-layer]').count(), 0, 'the full smile retains one face')
++    assert.equal(await resident.locator('[data-expression="cheering"]').count(), 1)
++    await page.clock.runFor(704)
++    await mix(resident)
++    await page.clock.runFor(200)
++    assert.equal(await resident.locator('[data-expression-layer]').count(), 0, 'the settled mood retains one face')
++    assert.equal(await resident.locator('[data-eye-gaze]').count(), 2)
++    assert.equal(await resident.getAttribute('transform'), position)
++    assert.equal(await resident.evaluate(node => node === window.__expressionPet), true)
++    for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) assert.equal(await resident.locator(`[data-slot="${slot}"]`).count(), 1)
++    assert.equal(await page.evaluate(() => window.__expressionFrames.size), 1, 'normal idle keeps only the existing resident loop')
++    assert.deepEqual((await snapshot(page)).tables, saved)
++    t.diagnostic(`Chromium ${page.context().browser().version()}; complementary eye layers only during easing; one clock; unchanged node/position/outfit/saved tables`)
++  })
++}
++
++test('live reduced motion keeps the existing full reaction still and settles without extra face layers', async t => {
++  const page = await setup(t), resident = page.locator('.room-pet')
++  await page.getByRole('button', { name: 'Gentle pats', exact: true }).click()
++  await page.clock.runFor(128)
++  await mix(resident)
++  await changeReducedMotion(page, 'reduce')
++  assert.equal(await resident.locator('[data-expression-layer]').count(), 0)
++  assert.equal(await resident.locator('[data-expression="cheering"]').count(), 1)
++  const still = await resident.locator('[data-character-body]').innerHTML()
++  await page.clock.runFor(600)
++  assert.equal(await resident.locator('[data-character-body]').innerHTML(), still)
++  await page.clock.runFor(1000)
++  assert.equal(await page.evaluate(() => window.__expressionFrames.size), 0)
++  assert.equal(await resident.locator('[data-expression-layer]').count(), 0)
++})
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-expression-blend.mjs 2/docs/audits/2026-10-12-character-polish/capture-expression-blend.mjs
+new file mode 100644
+index 0000000..45111cd
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-expression-blend.mjs
+@@ -0,0 +1,53 @@
++// Bounded static comparison of production faces and their attached wardrobe.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++
++const label = process.argv[2], out = 'docs/audits/2026-10-12-character-polish'
++if (!['before', 'after'].includes(label)) throw new Error('Expected before or after')
++const sourcePaths = ['src/character/motion.ts', 'src/character/parts.tsx', 'src/character/species/animatedBody.tsx', 'src/pet/activityMotion.ts']
++const baselines = Object.fromEntries(await Promise.all(sourcePaths.map(async path => [
++  `${process.cwd()}/${path}`, await readFile(`${out}/expression-blend-baseline-${path.split('/').at(-1)}.txt`, 'utf8'),
++])))
++const server = await createServer({ plugins: [{ name: 'expression-baseline', enforce: 'pre', transform(code, id) {
++  const source = baselines[id.split('?')[0]]
++  if (label === 'before' && source !== undefined) return { code: source, map: null }
++} }], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++  const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++  const { sampleMotion, ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts')
++  const { SPECIES_COLOUR, PALETTE } = await server.ssrLoadModule('/src/art/palette.ts')
++  const { PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++  const h = React.createElement, cells = [], samples = []
++  const equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++  for (const species of ['mochi', 'bun', 'sprout']) for (const mood of ['content', 'meh']) {
++    const bodyColour = mood === 'meh' ? '#38243b' : SPECIES_COLOUR[species]
++    const look = { eyes: mood === 'meh' ? 'lashes' : 'classic' }
++    for (const facing of [1, -1]) for (const phase of [.06, .5, .94]) {
++      const frame = sampleMotion({ species, mood, action: 'affection', elapsedMs: ACTION_MS.affection * phase,
++        blinkMs: ACTION_MS.affection * phase, durationMs: ACTION_MS.affection, distance: 0, facing, reducedMotion: false })
++      const views = [200, 60, 25].map((size, i) => h('g', { key: size,
++        transform: `translate(${[0, 205, 280][i]} ${100 - size / 2}) scale(${size / 200})` },
++        h('g', { transform: facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined },
++          h(AnimatedCharacterArt, { species, mood, frame, equipped, bodyColour, look, strokeScale: size === 25 ? PET_STROKE_SCALE : 1 }))))
++      cells.push(h('g', { key: cells.length, transform: `translate(${cells.length % 4 * 330} ${Math.floor(cells.length / 4) * 230})` }, views,
++        h('text', { x: 8, y: 220, fontSize: 11, fill: PALETTE.ink }, `${species} ${mood} f${facing} ${phase * 100}%;200/60/25px`)))
++      samples.push({ species, mood, facing, phase, bodyColour, look, frame })
++    }
++  }
++  const markup = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width: 1320, height: 2070 },
++    h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), cells))
++  const png = `${out}/expression-blend-${label}-sizes.png`
++  await writeFile(png, new Resvg(markup).render().asPng())
++  const hash = bytes => createHash('sha256').update(bytes).digest('hex')
++  const sources = [...sourcePaths, 'src/character/AnimatedCharacter.tsx', 'src/character/Character.tsx', `${out}/capture-expression-blend.mjs`]
++  await writeFile(`${out}/expression-blend-${label}.json`, JSON.stringify({ method:
++    '36 dressed affection samples:3species/2moods-and-looks/2mirrors/3phases,108views200/60/25px. Content/light/classic and meh/dark/lashes. Baseline production sources are exact72552aa. Static comparison, not temporal acceptance.',
++    samples, sourceSha256: Object.fromEntries(await Promise.all(sources.map(async path => [path,
++      hash(label === 'before' && baselines[`${process.cwd()}/${path}`] !== undefined ? baselines[`${process.cwd()}/${path}`] : await readFile(path))]))),
++    captureSha256: { [png]: hash(await readFile(png)) } }, null, 2) + '\n')
++  console.log(`Wrote ${label}:36dressed samples/108size views`)
++} finally { await server.close() }
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-expression-blend-midpoints.mjs 2/docs/audits/2026-10-12-character-polish/capture-expression-blend-midpoints.mjs
+new file mode 100644
+index 0000000..c553c25
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-expression-blend-midpoints.mjs
+@@ -0,0 +1,41 @@
++// Additional still review at the greatest overlap of the two existing faces.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const out = 'docs/audits/2026-10-12-character-polish'
++const server = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++  const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++  const { sampleMotion, ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts')
++  const { SPECIES_COLOUR, PALETTE } = await server.ssrLoadModule('/src/art/palette.ts')
++  const { PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++  const h = React.createElement, cells = [], samples = []
++  for (const species of ['mochi', 'bun', 'sprout']) for (const mood of ['happy', 'content', 'meh']) for (const dark of [false, true]) {
++    const bodyColour = dark ? '#38243b' : SPECIES_COLOUR[species], look = { eyes: dark ? 'lashes' : 'classic' }
++    const frame = sampleMotion({ species, mood, action: 'affection', elapsedMs: ACTION_MS.affection * .09,
++      blinkMs: ACTION_MS.affection * .09, durationMs: ACTION_MS.affection, distance: 0, reducedMotion: false })
++    if (Math.abs(frame.pleasedWeight - .5) > 1e-10) throw new Error('Expected halfway face')
++    const views = [200, 60, 25].map((size, i) => h('g', { key: size,
++      transform: `translate(${[0, 205, 280][i]} ${100 - size / 2}) scale(${size / 200})` },
++      h(AnimatedCharacterArt, { species, mood, frame, bodyColour, look, strokeScale: size === 25 ? PET_STROKE_SCALE : 1,
++        equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } })))
++    cells.push(h('g', { key: cells.length, transform: `translate(${cells.length % 3 * 330} ${Math.floor(cells.length / 3) * 230})` }, views,
++      h('text', { x: 8, y: 220, fontSize: 11, fill: PALETTE.ink }, `${species} ${mood} ${dark ? 'dark/lashes' : 'light/classic'};50%face`)))
++    samples.push({ species, mood, bodyColour, look, frame })
++  }
++  const png = `${out}/expression-blend-midpoints.png`
++  const markup = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width: 990, height: 1380 },
++    h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), cells))
++  await writeFile(png, new Resvg(markup).render().asPng())
++  const hash = bytes => createHash('sha256').update(bytes).digest('hex')
++  const sources = ['src/character/motion.ts', 'src/character/parts.tsx', 'src/character/species/animatedBody.tsx',
++    'src/character/AnimatedCharacter.tsx', 'src/character/Character.tsx', `${out}/capture-expression-blend-midpoints.mjs`]
++  await writeFile(`${out}/expression-blend-midpoints.json`, JSON.stringify({ method:
++    '18 dressed halfway facial blends,54views200/60/25px.3species/3healthy moods/2colour-and-look combinations. Static overlap review,not temporal acceptance.',
++    samples, sourceSha256: Object.fromEntries(await Promise.all(sources.map(async path => [path, hash(await readFile(path))]))),
++    captureSha256: { [png]: hash(await readFile(png)) } }, null, 2) + '\n')
++  console.log('Wrote18halfway blends/54sizeviews')
++} finally { await server.close() }
+diff --git 1/docs/audits/2026-10-12-character-polish/compare-expression-blend.mjs 2/docs/audits/2026-10-12-character-polish/compare-expression-blend.mjs
+new file mode 100644
+index 0000000..609b8d3
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/compare-expression-blend.mjs
+@@ -0,0 +1,82 @@
++// Exact baseline comparisons, one SSR server at a time; no browser or live clocks.
++import assert from 'node:assert/strict'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++import ts from 'typescript'
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++
++const out = 'docs/audits/2026-10-12-character-polish'
++const paths = ['src/character/motion.ts', 'src/character/parts.tsx', 'src/character/species/animatedBody.tsx', 'src/pet/activityMotion.ts']
++const baseline = Object.fromEntries(await Promise.all(paths.map(async path => [path,
++  await readFile(`${out}/expression-blend-baseline-${path.split('/').at(-1)}.txt`, 'utf8')])))
++const current = Object.fromEntries(await Promise.all(paths.map(async path => [path, await readFile(path, 'utf8')])))
++const hash = value => createHash('sha256').update(value).digest('hex')
++async function sampler(source) {
++  const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText
++  return import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`)
++}
++const before = await sampler(baseline[paths[0]]), after = await sampler(current[paths[0]])
++assert.deepEqual(after.ACTION_MS, before.ACTION_MS)
++const speciesList = ['mochi', 'bun', 'sprout'], moods = ['happy', 'content', 'meh', 'scruffy', 'sick']
++const phases = [0, .05, .1, .18, .3, .4, .48, .5, .56, .64, .75, .82, .95, 1, 2]
++let frames = 0, intermediateSmiles = 0
++for (const species of speciesList) for (const mood of moods) for (const action of Object.keys(before.ACTION_MS)) {
++  for (const factor of [.5, 1, 2]) for (const reducedMotion of [false, true]) for (const facing of [1, -1]) for (const phase of phases) {
++    const durationMs = before.ACTION_MS[action] * factor
++    const input = { species, mood, action, durationMs, elapsedMs: phase * durationMs, blinkMs: 9250 + phase * durationMs, distance: phase * 3, facing, reducedMotion }
++    const a = before.sampleMotion(input), { pleasedWeight, ...b } = after.sampleMotion(input)
++    assert.deepEqual(b, a, `${species}/${mood}/${action}/${factor}/${phase}/${reducedMotion}: all preexisting fields exact`)
++    assert.ok(pleasedWeight >= 0 && pleasedWeight <= 1)
++    if (a.expression !== 'pleased') assert.equal(pleasedWeight, 0)
++    else if (reducedMotion) assert.equal(pleasedWeight, 1)
++    else if (pleasedWeight > 0 && pleasedWeight < 1) intermediateSmiles++
++    frames++
++  }
++}
++assert.ok(intermediateSmiles > 0)
++
++const neutral = before.sampleMotion({ species: 'bun', mood: 'happy', action: 'idle', elapsedMs: 0, durationMs: 4000, distance: 0, reducedMotion: false })
++const scenes = []
++for (const species of speciesList) for (const mood of moods) for (const bodyColour of ['#FFD65C', '#38243b']) {
++  for (const eyes of ['classic', 'sparkly', 'button', 'lashes']) for (const expression of ['mood', 'alert', 'pleased']) {
++    scenes.push({ props: { species, mood, bodyColour, look: { eyes } }, frame: { ...neutral, expression } })
++  }
++}
++for (const species of speciesList) for (const pose of ['idle', 'content', 'meh', 'scruffy', 'sick', 'sleeping', 'cheering']) {
++  for (const bodyColour of ['#FFD65C', '#38243b']) for (const eyes of ['classic', 'sparkly', 'button', 'lashes']) {
++    for (const expression of ['mood', 'alert', 'pleased']) scenes.push({ props: { species, pose, mood: 'happy', bodyColour, look: { eyes } }, frame: { ...neutral, expression } })
++  }
++}
++for (const species of speciesList) for (const mood of moods) for (const action of ['greet', 'affection', 'celebrate', 'celebrate-big', 'wave']) {
++  for (const reducedMotion of [false, true]) for (const phase of [0, .5, 1]) {
++    scenes.push({ props: { species, mood, bodyColour: '#38243b', look: { eyes: 'lashes' } }, input: {
++      species, mood, action, reducedMotion, elapsedMs: before.ACTION_MS[action] * phase, durationMs: before.ACTION_MS[action], distance: 0,
++    } })
++  }
++}
++async function render(label) {
++  const server = await createServer({ plugins: [{ name: 'expression-exact-baseline', enforce: 'pre', transform(code, id) {
++    const path = id.split('?')[0].replace(`${process.cwd()}/`, '')
++    if (label === 'before' && baseline[path] !== undefined) return { code: baseline[path], map: null }
++  } }], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++  try {
++    const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++    const sampleMotion = label === 'before' ? before.sampleMotion : after.sampleMotion
++    return scenes.map(scene => hash(renderToStaticMarkup(React.createElement('svg', null,
++      React.createElement(AnimatedCharacterArt, { ...scene.props, frame: scene.input ? sampleMotion(scene.input) : scene.frame,
++        equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }, strokeScale: 1.6 })))))
++  } finally { await server.close() }
++}
++const beforeMarkup = await render('before'), afterMarkup = await render('after')
++for (let i = 0; i < scenes.length; i++) assert.equal(afterMarkup[i], beforeMarkup[i], `Exact SVG markup including IDs: ${JSON.stringify(scenes[i])}`)
++await writeFile(`${out}/expression-blend-differential.json`, JSON.stringify({ method:
++  '40500 numeric samples: all preexisting fields/durations exact; new smile weight bounded and reduced stills retained. 1314 exact dressed SVG comparisons including IDs: legacy omitted weights across species/moods/eye styles/colours/poses; sampled reaction start/peak/end and reduced stills. No live temporal acceptance.',
++  frames, intermediateSmiles, exactMarkup: scenes.length,
++  baselineSha256: Object.fromEntries(paths.map(path => [path, hash(baseline[path])])),
++  sourceSha256: Object.fromEntries(paths.map(path => [path, hash(current[path])])),
++  runnerSha256: hash(await readFile(new URL(import.meta.url))),
++  markupAggregateSha256: hash(JSON.stringify(beforeMarkup)),
++}, null, 2) + '\n')
++console.log(`${frames} frames preserve all preexisting fields; ${scenes.length} exact SVG comparisons including IDs; ${intermediateSmiles} intermediate smiles`)

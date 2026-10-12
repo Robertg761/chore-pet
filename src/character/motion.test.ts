@@ -12,7 +12,7 @@ const neutral: MotionFrame = {
   bodyX: 0, bodyY: 0, scaleX: 1, scaleY: 1, lean: 0,
   leftFoot: 0, rightFoot: 0, leftGroundX: 0, leftGroundY: 0, rightGroundX: 0, rightGroundY: 0, leftArm: 0, rightArm: 0,
   leftAppendage: 0, rightAppendage: 0, gazeX: 0, gazeY: 0, eyeOpen: 1,
-  shadowScale: 1, shadowOpacity: 1, accentOpacity: 0, expression: 'mood',
+  shadowScale: 1, shadowOpacity: 1, accentOpacity: 0, expression: 'mood', pleasedWeight: 0,
 }
 const input = (over: Partial<MotionInput> = {}): MotionInput => ({
   species: 'mochi', mood: 'happy', action: 'greet', elapsedMs: 0,
@@ -394,7 +394,8 @@ describe('readable reactions and accessibility', () => {
     for (const species of SPECIES) for (const mood of moods) for (const action of actions) {
       const early = sampleMotion(input({ species, mood, action, reducedMotion: true, elapsedMs: ACTION_MS[action] * 0.3, distance: 0.2 }))
       const late = sampleMotion(input({ species, mood, action, reducedMotion: true, elapsedMs: ACTION_MS[action] * 0.7, distance: 0.8 }))
-      expect({ ...early, expression: 'mood' }).toEqual(neutral)
+      expect({ ...early, expression: 'mood', pleasedWeight: 0 }).toEqual(neutral)
+      expect(early.pleasedWeight).toBe(early.expression === 'pleased' ? 1 : 0)
       expect(late).toEqual(early)
       if (mood === 'sick') expect(early.expression).toBe(action === 'notice' ? 'alert' : 'mood')
     }

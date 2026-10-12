@@ -1,0 +1,40 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/expressionBlend.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/expressionBlend.test.tsx (12 tests | 1 failed) 618ms
+   ❯ pleased expression transitions (12)
+     × closes the outgoing healthy eyes as the smile appears without reopening a blink 15ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/expressionBlend.test.tsx > pleased expression transitions > closes the outgoing healthy eyes as the smile appears without reopening a blink
+AssertionError: expected [ 0.8, 0.8 ] to deeply equal [ 0.4, 0.4 ]
+
+- Expected
++ Received
+
+  [
+-   0.4,
+-   0.4,
++   0.8,
++   0.8,
+  ]
+
+ ❯ src/character/expressionBlend.test.tsx:95:24
+     93|       const openness = [...node.querySelectorAll('[data-expression-lay…
+     94|         .map(eye => Number(eye.getAttribute('data-eye-open')))
+     95|       expect(openness).toEqual([eyeOpen * .5, eyeOpen * .5])
+       |                        ^
+     96|       expect(node.querySelectorAll('[data-expression-layer="pleased"] …
+     97|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  19:44:57
+   Duration  1.27s (tests 52%, environment 22%, transform 21%, import 4%)
+

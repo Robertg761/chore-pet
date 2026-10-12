@@ -324,7 +324,7 @@ describe('AnimatedCharacterArt', () => {
 
   it('leaves sleeping, sick and pleased closed-eye art unchanged by blink input', () => {
     for (const species of speciesList) for (const pose of ['sleeping', 'sick', 'idle'] as const) {
-      const scene = (eyeOpen: number) => <svg><AnimatedCharacterArt species={species} mood={pose === 'sick' ? 'sick' : 'happy'} pose={pose} bodyColour={PALETTE.petDefault} frame={{ ...neutral, expression: 'pleased', eyeOpen }} /></svg>
+      const scene = (eyeOpen: number) => <svg><AnimatedCharacterArt species={species} mood={pose === 'sick' ? 'sick' : 'happy'} pose={pose} bodyColour={PALETTE.petDefault} frame={{ ...neutral, expression: 'pleased', pleasedWeight: 1, eyeOpen }} /></svg>
       const { container, rerender } = mount(scene(1))
       const before = container.innerHTML
       rerender(scene(0))

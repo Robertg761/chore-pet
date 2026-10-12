@@ -1,0 +1,35 @@
+✔ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1829.151683ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1604.575337ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1633.730992ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1582.249881ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1736.997301ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1604.422486ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ a scrolled-away resident pauses, lets an offscreen response expire, and resumes when partly visible (2758.72045ms)
+ℹ Offscreen pending frames before pause:0
+ℹ Chromium 152.0.7977.82; real native scroll;0offscreen/1visible pending resident frame
+✔ missing native observation retains the existing resident clock (973.132149ms)
+✔ native default observer emits edge contact without a second positive-area entry (874.861121ms)
+ℹ Native default threshold contract matches the hook notification-filtering regression.
+✔ native ancestor clipping pauses a resident still inside the viewport (815.114703ms)
+ℹ Native ancestor entries:[{"inside":false,"ratio":0,"bottom":434.37969970703125,"height":0}]
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (2642.870436ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (2676.742913ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 640x360 (3740.039962ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (2612.153422ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (2618.974872ms)
+✔ wardrobe Hop live reduced motion settles the preview and does not restart when restored (1904.243198ms)
+✔ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (1817.944899ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 34594.273045

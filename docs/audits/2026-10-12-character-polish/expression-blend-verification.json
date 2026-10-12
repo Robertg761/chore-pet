@@ -1,0 +1,310 @@
+{
+  "freeze": {
+    "baseCommit": "72552aa86a8ceaecbae6aa9a6f6a4b3bdfa12acc",
+    "sources": {
+      "src/character/motion.ts": "a7506e91f0260cb628a348716eec7eb772f5b46de371a41cbf44a5d42439dd00",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+      "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+      "src/character/motion.test.ts": "08ccecdc522ae00e3fdb6131a6afaab9c6ea3469b21c41ac6a1295c8b9ddc8d1",
+      "src/character/AnimatedCharacter.test.tsx": "f71a2cf0fa90d8ed4d71300ba50dcb81190fe0ee7fcb69a152669f426e2df183",
+      "src/character/expressionBlend.test.tsx": "5a60970cfc22cc2ddba02d1b645ef45e0ad85580bce1c6fca34b6cf1fcaa69ea",
+      "scripts/browser/pet-expression-blend.test.mjs": "7f697ce0b380b99a0688aa3eefeb3ecaf45e3909ab472ba0c3fb5ca86f352df7",
+      "docs/ART.md": "1bbf9bc368abd08be08a5bc42ae7cad0b5a273b7da271e39f6ab790e676b59ea",
+      "docs/audits/2026-10-12-character-polish/capture-expression-blend.mjs": "b6536a5ba00e25e33111d935cae600b2fd21f6cbe297720b474ae639f909b365",
+      "docs/audits/2026-10-12-character-polish/capture-expression-blend-midpoints.mjs": "016df096ff2fbaa6e0c7d19fb3d1cfaaa3cb0bfcd4cf8b82b39bfd28deb6c0a5",
+      "docs/audits/2026-10-12-character-polish/compare-expression-blend.mjs": "43a2161a6b84b2b5496031cb288ff36985396204ef098424f075e6ded2d9f7c3"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/expression-blend-source.diff",
+      "sha256": "2736262a9f484daa3ce223d4ccc21ecd7262c47abaa7ef62755571e752112d0f"
+    },
+    "scope": "12paths: optional numeric smile weight in sampler/activity blend/SVG renderer, healthy outgoing eye narrowing using current blink, existing shapes crossfade; legacy/rest/peak/reduced/unwell endpoints exact. Tests/docs/three bounded diagnostic runners. No new clock/state/save."
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/expression-blend-artifacts.json",
+    "sha256": "eed290e5b1faefcee33f739f538836611c93bcf6f8d0e5b0d70eea2081ce04f5"
+  },
+  "checks": [
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-red.log",
+      "logSha256": "4abb598068d7fee71dc4ec1ccb86bb98efdda7f672e342174820909b7b63242a",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "Initial9unit regressions8fail/1pass;incorrect extra eye style names corrected later;not all-style evidence."
+    },
+    {
+      "name": "red-final",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-red-final.log",
+      "logSha256": "a2738fbe1e3ade9ffb1da8b99ce6990be624ae82724535198aa85df341d14b8c",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-red-final.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "Corrected9unit regressions8fail/1unwellpass805ms."
+    },
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-browser-red.log",
+      "logSha256": "86e9376ee0253c7671800efbd509fd5e2d7a3b63cb96dbe2e65efc032fc6fe5f",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-browser-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "FouractualSVG missing-expression-layer failures."
+    },
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-capture-before.log",
+      "logSha256": "c95187623e467c9255b27c71c596c34bc62925ae81c912afb5029b3da9c43488",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-capture-before.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Original36dressed samples/108views using exact72552aa baseline."
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-focused.log",
+      "logSha256": "fec88f1e07825300e6f2cbe9eeff2a387871a5fbcc840705bbd044fb1f7094b7",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-focused.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "162pass/2oldfixturefail: new reduced numeric field and explicit pleased blink fixture."
+    },
+    {
+      "name": "focused-final",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-focused-final.log",
+      "logSha256": "b46a01ed5e12b7cbd089c89bef322fee3af4a4c79cbf576e786396897e807550",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-focused-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "164pass/4files10.84s;predates2moreedgecase tests and eye-narrowing refinement."
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-build.log",
+      "logSha256": "5c0d73e5d75f21abe92f43447f53b88fcc2b91a9fe4b76474c027e53655389e0",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Typebuild0;before comment-only clarification and finaleye-narrowing."
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Lint0 before latercapturehelper/narrowing edits."
+    },
+    {
+      "name": "differential",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-differential.log",
+      "logSha256": "976d9e8f30e82596f5d8cd27bea2642a51bc69244653c5085341c249a99182b5",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-differential.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "40500preexistingfields/1314exactSVG0;predatescomment-onlyclarification andeye-narrowing."
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-browser.log",
+      "logSha256": "120a4fca6bef0dfd97603350483266bec86832bbe7197331df905d07163dd739",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-browser.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "12expression/player cases0,21.100s;nonexistentthirdfilenamepatternmatchednothing.Nooffscreenclaim;predatesnarrowing."
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-full.log",
+      "logSha256": "fd86737cbd6bd49cfc06e3089707c18bc381b7cd10cd0427a0c009caa6d0bcb7",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "2168/101files62.15s0;predatesneweye-narrowingtest/refinement."
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-capture-after.log",
+      "logSha256": "85ab20a17e003e0e06d896e178671e57f154a517fc05d679f5980c9305ec9e41",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-capture-after.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Firstcandidate36samples/108views0;retainedfirst-prefixedartifacts."
+    },
+    {
+      "name": "browser-regressions",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-browser-regressions.log",
+      "logSha256": "d5f4dad31c0aa83f9436cef566d54eb5454215a121b94c51a4900a816f482d6f",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-browser-regressions.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "17environment/offscreen/wardrobe0,34.594s;predatesnarrowing."
+    },
+    {
+      "name": "capture-midpoints",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-capture-midpoints.log",
+      "logSha256": "bfe59fc63cb3f56fa5d7981d28ceaeb6dd3f828e2a8e348de84bbdbc168b89b4",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-capture-midpoints.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Firstcandidate18halfway/54views0;retainedfirst-prefixedartifacts."
+    },
+    {
+      "name": "lint-final",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-lint-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Lint0 withfirstmidpointhelper;predatesnarrowing."
+    },
+    {
+      "name": "differential-final",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-differential-final.log",
+      "logSha256": "a7122d68ca2953cf79b319ff537798332f259d277b946095d85d828758735402",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-differential-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "40500/1314 comparisons0;currentnormalizationcomment butpredatesnarrowing."
+    },
+    {
+      "name": "eye-close-red",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-eye-close-red.log",
+      "logSha256": "fa789741f7d094019681d460b23238caa1afa2c37e1db5690aef9e996c23f69f",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-eye-close-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "Neweyelidregression1fail/11pass1.27s:0.8vs0.4."
+    },
+    {
+      "name": "focused-refined",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-focused-refined.log",
+      "logSha256": "342fbec4e081160ae376a9c0c2c01b465447e2f23f42db69b87a5fcac12773c9",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-focused-refined.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Final167/4files11.01s0."
+    },
+    {
+      "name": "capture-midpoints-final",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-capture-midpoints-final.log",
+      "logSha256": "fd896ac8b406767996f6538955e766c182a106de13e58394d92512ec77adc3b0",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-capture-midpoints-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Final18halfway blends/54views0;rootinspected."
+    },
+    {
+      "name": "lint-refined",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-lint-refined.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-lint-refined.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Finalzero-warninglint0 acrossfrozen12paths."
+    },
+    {
+      "name": "capture-after-final",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-capture-after-final.log",
+      "logSha256": "be7c59a093e5ec59e38a91e60652c2e2e7017480531472620ac512dfb41bc372",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-capture-after-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Final36dressed samples/108views0;rootinspected."
+    },
+    {
+      "name": "differential-refined",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-differential-refined.log",
+      "logSha256": "7e73780486b6b295034940d08ea9eb075fe2612f5f10b398ba09cec86126123a",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-differential-refined.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Final40500allpreexistingfields exact/1314exactSVG includingIDs0."
+    },
+    {
+      "name": "build-final",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-build-final.log",
+      "logSha256": "ddde415fbb9a23d9f376313186f3a2bfcaf71e8c95cb97ccc92484ce8363e23b",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-build-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Finaltypebuild0;existingbundlesizeadvisory."
+    },
+    {
+      "name": "full-final",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-full-final.log",
+      "logSha256": "df3bfd15039ae506857e06175f0bba676cb4211ff4bb64be5fe03a738f8b7fa3",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-full-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Final2169/101files62.68s0."
+    },
+    {
+      "name": "browser-final",
+      "log": "docs/audits/2026-10-12-character-polish/expression-blend-browser-final.log",
+      "logSha256": "1f4be6f9cc9864ae483fe472c53acaa51d97f66bd0163aff8a218aecc59c325e",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/expression-blend-browser-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Final29selectednativecases0, productionrefinedbuild;4new+8player+6environment+4offscreen+7wardrobe."
+    }
+  ],
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/expression-blend-review.md",
+    "sha256": "11348a88e4f059482c47f230c8aae6561a3a270c75108f1bf088dbc602ebd546"
+  },
+  "root": "Allbindings checked after finalexecution. Sequential heavy jobs,768MBNodeheap/oneVitestworker/oneChromium/nice10. Sampled availableRAM5.3\u20136.8GB,tmpfree4.1GB;not continuous peak/CPU/battery measurement. Plan17%used,ordinaryallowed,lastread. Static/numeric/native evidence only;human playback/physicaldevice/assistive-technology acceptance remain deferred."
+}

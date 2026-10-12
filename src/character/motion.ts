@@ -53,6 +53,8 @@ export interface MotionFrame {
   shadowOpacity: number
   accentOpacity: number
   expression: 'mood' | 'pleased' | 'alert'
+  /** Optional numeric smile blend; omitted legacy frames use expression directly. */
+  pleasedWeight?: number
 }
 
 export const ACTION_MS: Record<MotionAction, number> = {
@@ -97,7 +99,7 @@ function neutral(): MotionFrame {
     bodyX: 0, bodyY: 0, scaleX: 1, scaleY: 1, lean: 0,
     leftFoot: 0, rightFoot: 0, leftGroundX: 0, leftGroundY: 0, rightGroundX: 0, rightGroundY: 0, leftArm: 0, rightArm: 0,
     leftAppendage: 0, rightAppendage: 0, gazeX: 0, gazeY: 0, eyeOpen: 1,
-    shadowScale: 1, shadowOpacity: 1, accentOpacity: 0, expression: 'mood',
+    shadowScale: 1, shadowOpacity: 1, accentOpacity: 0, expression: 'mood', pleasedWeight: 0,
   }
 }
 
@@ -194,6 +196,9 @@ export function sampleMotion(input: MotionInput): MotionFrame {
   if (!looping && (duration === 0 || elapsed === 0 || elapsed >= duration)) return frame
 
   frame.expression = expressionFor(action, mood)
+  frame.pleasedWeight = frame.expression === 'pleased'
+    ? reducedMotion ? 1 : envelope(elapsed / duration, 0, 0.18, 0.82, 1)
+    : 0
   if (reducedMotion) return frame
 
   const personality = PERSONALITY[species]

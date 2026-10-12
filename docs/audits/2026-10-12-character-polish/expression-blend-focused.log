@@ -1,0 +1,69 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/expressionBlend.test.tsx src/character/motion.test.ts src/character/AnimatedCharacter.test.tsx src/pet/activityMotion.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/AnimatedCharacter.test.tsx (58 tests | 1 failed) 8006ms
+   ❯ AnimatedCharacterArt (48)
+     × leaves sleeping, sick and pleased closed-eye art unchanged by blink input 21ms
+ ❯ src/character/motion.test.ts (30 tests | 1 failed) 404ms
+   ❯ readable reactions and accessibility (10)
+     × removes all motion and accents while retaining still reaction expressions 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/AnimatedCharacter.test.tsx > AnimatedCharacterArt > leaves sleeping, sick and pleased closed-eye art unchanged by blink input
+AssertionError: expected '<svg><g class="ch-animated" data-char…' to be '<svg><g class="ch-animated" data-char…' // Object.is equality
+
+Expected: "<svg><g class="ch-animated" data-character-pose="idle"><g data-character-ground="" opacity="1" transform="translate(100 186) scale(1 1) translate(-100 -186)"><ellipse cx="100" cy="186" rx="56" ry="7" fill="#2B1E2F" opacity="0.15" stroke="none"></ellipse></g><g data-character-body="" transform="translate(0 0) rotate(0 100 181) translate(100 181) scale(1 1) translate(-100 -181)"><g data-slot="body"><g stroke="#2B1E2F" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><g data-appendage="left-ear" data-pivot="82 98" transform="rotate(0 82 98)"><g transform="rotate(-6 82 98)"><path d="M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z" fill="#FFD65C"></path><path d="M75 90 C67 68 67 44 74 39 C81 35 87 62 86 90 Z" fill="#F28FA0" stroke="none"></path></g></g><g data-appendage="right-ear" data-pivot="118 98" transform="rotate(0 118 98)"><g transform="translate(200 0) scale(-1 1)"><g transform="rotate(-6 82 98)"><path d="M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z" fill="#FFD65C"></path><path d="M75 90 C67 68 67 44 74 39 C81 35 87 62 86 90 Z" fill="#F28FA0" stroke="none"></path></g></g></g><g data-foot="left" transform="translate(100 181) scale(1 1) translate(-100 -181) rotate(0 100 181) translate(0 0)"><ellipse cx="78" cy="178" rx="16" ry="9" fill="#FFD65C" transform="rotate(0 78 178)"></ellipse></g><g data-foot="right" transform="translate(100 181) scale(1 1) translate(-100 -181) rotate(0 100 181) translate(0 0)"><ellipse cx="122" cy="178" rx="16" ry="9" fill="#FFD65C" transform="rotate(0 122 178)"></ellipse></g><g data-arm="left" data-pivot="55 140" transform="rotate(0 55 140)"><path d="M55 140 L48 148" fill="none" stroke-width="17"></path><path d="M55 140 L48 148" fill="none" stroke="#FFD65C" stroke-width="9"></path><ellipse cx="48" cy="148" rx="10" ry="13" fill="#FFD65C" transform="rotate(-20 48 148)"></ellipse></g><g data-arm="right" data-pivot="145 140" transform="rotate(0 145 140)"><path d="M145 140 L152 148" fill="none" stroke-width="17"></path><path d="M145 140 L152 148" fill="none" stroke="#FFD65C" stroke-width="9"></path><ellipse cx="152" cy="148" rx="10" ry="13" fill="#FFD65C" transform="rotate(20 152 148)"></ellipse></g><g><clipPath id="bodyraf"><path d="M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z"></path></clipPath><g clip-path="url(#bodyraf)" stroke="none"><path d="M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z" fill="#f3bd62"></path><path d="M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z" fill="#FFD65C" transform="translate(-6 -9)"></path><g fill="#FFFFFF" opacity="0.7"><ellipse cx="70" cy="112" rx="9" ry="5.5" transform="rotate(-38 70 112)"></ellipse><circle cx="81" cy="104" r="2.6"></circle></g></g><path d="M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z" fill="none"></path></g><g fill="#F28FA0" stroke="none" opacity="0.85"><ellipse cx="64" cy="143" rx="9.5" ry="5.5"></ellipse><ellipse cx="136" cy="143" rx="9.5" ry="5.5"></ellipse></g><g data-expression="happy" stroke="#2B1E2F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><g class="ch-eye"><g data-eye-open="1" transform="translate(80 126) scale(1 1) translate(-80 -126)"><g data-eye-gaze="" transform="translate(0 0)"><g stroke="none"><ellipse cx="80" cy="126" rx="8.5" ry="10.5" fill="#2B1E2F"></ellipse><circle cx="82.9" cy="121.8" r="3.3" fill="#FFFFFF"></circle><circle cx="77.2" cy="130" r="1.5" fill="#FFFFFF"></circle></g></g></g></g><g class="ch-eye"><g data-eye-open="1" transform="translate(120 126) scale(1 1) translate(-120 -126)"><g data-eye-gaze="" transform="translate(0 0)"><g stroke="none"><ellipse cx="120" cy="126" rx="8.5" ry="10.5" fill="#2B1E2F"></ellipse><circle cx="122.9" cy="121.8" r="3.3" fill="#FFFFFF"></circle><circle cx="117.2" cy="130" r="1.5" fill="#FFFFFF"></circle></g></g></g></g><g><path d="M91.5 143 q8.5 12 17 0 Z" fill="#2B1E2F"></path><path d="M95.5 148.6 q4.5 -3.6 9 0 q-4.5 2.2 -9 0 Z" fill="#F28FA0" stroke="none"></path></g></g><path d="M95.5 134.5 h9 l-4.5 4.5 Z" fill="#F28FA0" stroke-width="2.5"></path></g></g><g></g></g><g data-character-accents="" aria-hidden="true" pointer-events="none" opacity="0"><g aria-hidden="true"><g transform="translate(24 68) rotate(-12) scale(0.82)"><path d="M0 6 C-10.5 -0.75 -7.5 -9.75 0 -3.75 C7.5 -9.75 10.5 -0.75 0 6 Z" fill="#F28FA0" stroke="#2B1E2F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></path></g><g transform="translate(176 58) rotate(10) scale(0.7)"><path d="M0 -8 Q2.08 -2.08 8 0 Q2.08 2.08 0 8 Q-2.08 2.08 -8 0 Q-2.08 -2.08 0 -8 Z" fill="#FFD65C" stroke="#2B1E2F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></path></g></g></g></g></svg>"
+Received: "<svg><g class="ch-animated" data-character-pose="idle"><g data-character-ground="" opacity="1" transform="translate(100 186) scale(1 1) translate(-100 -186)"><ellipse cx="100" cy="186" rx="56" ry="7" fill="#2B1E2F" opacity="0.15" stroke="none"></ellipse></g><g data-character-body="" transform="translate(0 0) rotate(0 100 181) translate(100 181) scale(1 1) translate(-100 -181)"><g data-slot="body"><g stroke="#2B1E2F" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><g data-appendage="left-ear" data-pivot="82 98" transform="rotate(0 82 98)"><g transform="rotate(-6 82 98)"><path d="M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z" fill="#FFD65C"></path><path d="M75 90 C67 68 67 44 74 39 C81 35 87 62 86 90 Z" fill="#F28FA0" stroke="none"></path></g></g><g data-appendage="right-ear" data-pivot="118 98" transform="rotate(0 118 98)"><g transform="translate(200 0) scale(-1 1)"><g transform="rotate(-6 82 98)"><path d="M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z" fill="#FFD65C"></path><path d="M75 90 C67 68 67 44 74 39 C81 35 87 62 86 90 Z" fill="#F28FA0" stroke="none"></path></g></g></g><g data-foot="left" transform="translate(100 181) scale(1 1) translate(-100 -181) rotate(0 100 181) translate(0 0)"><ellipse cx="78" cy="178" rx="16" ry="9" fill="#FFD65C" transform="rotate(0 78 178)"></ellipse></g><g data-foot="right" transform="translate(100 181) scale(1 1) translate(-100 -181) rotate(0 100 181) translate(0 0)"><ellipse cx="122" cy="178" rx="16" ry="9" fill="#FFD65C" transform="rotate(0 122 178)"></ellipse></g><g data-arm="left" data-pivot="55 140" transform="rotate(0 55 140)"><path d="M55 140 L48 148" fill="none" stroke-width="17"></path><path d="M55 140 L48 148" fill="none" stroke="#FFD65C" stroke-width="9"></path><ellipse cx="48" cy="148" rx="10" ry="13" fill="#FFD65C" transform="rotate(-20 48 148)"></ellipse></g><g data-arm="right" data-pivot="145 140" transform="rotate(0 145 140)"><path d="M145 140 L152 148" fill="none" stroke-width="17"></path><path d="M145 140 L152 148" fill="none" stroke="#FFD65C" stroke-width="9"></path><ellipse cx="152" cy="148" rx="10" ry="13" fill="#FFD65C" transform="rotate(20 152 148)"></ellipse></g><g><clipPath id="bodyraf"><path d="M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z"></path></clipPath><g clip-path="url(#bodyraf)" stroke="none"><path d="M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z" fill="#f3bd62"></path><path d="M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z" fill="#FFD65C" transform="translate(-6 -9)"></path><g fill="#FFFFFF" opacity="0.7"><ellipse cx="70" cy="112" rx="9" ry="5.5" transform="rotate(-38 70 112)"></ellipse><circle cx="81" cy="104" r="2.6"></circle></g></g><path d="M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z" fill="none"></path></g><g fill="#F28FA0" stroke="none" opacity="0.85"><ellipse cx="64" cy="143" rx="9.5" ry="5.5"></ellipse><ellipse cx="136" cy="143" rx="9.5" ry="5.5"></ellipse></g><g data-expression="happy" stroke="#2B1E2F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><g class="ch-eye"><g data-eye-open="0" transform="translate(80 126) scale(1 0) translate(-80 -126)"><g data-eye-gaze="" transform="translate(0 0)"><g stroke="none"><ellipse cx="80" cy="126" rx="8.5" ry="10.5" fill="#2B1E2F"></ellipse><circle cx="82.9" cy="121.8" r="3.3" fill="#FFFFFF"></circle><circle cx="77.2" cy="130" r="1.5" fill="#FFFFFF"></circle></g></g></g></g><g class="ch-eye"><g data-eye-open="0" transform="translate(120 126) scale(1 0) translate(-120 -126)"><g data-eye-gaze="" transform="translate(0 0)"><g stroke="none"><ellipse cx="120" cy="126" rx="8.5" ry="10.5" fill="#2B1E2F"></ellipse><circle cx="122.9" cy="121.8" r="3.3" fill="#FFFFFF"></circle><circle cx="117.2" cy="130" r="1.5" fill="#FFFFFF"></circle></g></g></g></g><g><path d="M91.5 143 q8.5 12 17 0 Z" fill="#2B1E2F"></path><path d="M95.5 148.6 q4.5 -3.6 9 0 q-4.5 2.2 -9 0 Z" fill="#F28FA0" stroke="none"></path></g></g><path d="M95.5 134.5 h9 l-4.5 4.5 Z" fill="#F28FA0" stroke-width="2.5"></path></g></g><g></g></g><g data-character-accents="" aria-hidden="true" pointer-events="none" opacity="0"><g aria-hidden="true"><g transform="translate(24 68) rotate(-12) scale(0.82)"><path d="M0 6 C-10.5 -0.75 -7.5 -9.75 0 -3.75 C7.5 -9.75 10.5 -0.75 0 6 Z" fill="#F28FA0" stroke="#2B1E2F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></path></g><g transform="translate(176 58) rotate(10) scale(0.7)"><path d="M0 -8 Q2.08 -2.08 8 0 Q2.08 2.08 0 8 Q-2.08 2.08 -8 0 Q-2.08 -2.08 0 -8 Z" fill="#FFD65C" stroke="#2B1E2F" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></path></g></g></g></g></svg>"
+
+ ❯ src/character/AnimatedCharacter.test.tsx:331:35
+    329|       const before = container.innerHTML
+    330|       rerender(scene(0))
+    331|       expect(container.innerHTML).toBe(before)
+       |                                   ^
+    332|       expect(container.querySelector('[data-eye-open]')).toBeNull()
+    333|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/character/motion.test.ts > readable reactions and accessibility > removes all motion and accents while retaining still reaction expressions
+AssertionError: expected { bodyX: +0, bodyY: +0, …(21) } to deeply equal { bodyX: +0, bodyY: +0, …(21) }
+
+- Expected
++ Received
+
+@@ -10,11 +10,11 @@
+    "leftAppendage": 0,
+    "leftArm": 0,
+    "leftFoot": 0,
+    "leftGroundX": 0,
+    "leftGroundY": 0,
+-   "pleasedWeight": 0,
++   "pleasedWeight": 1,
+    "rightAppendage": 0,
+    "rightArm": 0,
+    "rightFoot": 0,
+    "rightGroundX": 0,
+    "rightGroundY": 0,
+
+ ❯ src/character/motion.test.ts:397:48
+    395|       const early = sampleMotion(input({ species, mood, action, reduce…
+    396|       const late = sampleMotion(input({ species, mood, action, reduced…
+    397|       expect({ ...early, expression: 'mood' }).toEqual(neutral)
+       |                                                ^
+    398|       expect(late).toEqual(early)
+    399|       if (mood === 'sick') expect(early.expression).toBe(action === 'n…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  2 failed | 162 passed (164)
+   Start at  19:37:42
+   Duration  10.58s (tests 89%, environment 5%, transform 4%, import 2%)
+
+    Isolate  4 workers spawned · ~210ms startup each (spawn + environment, per file)
+             at least ~631ms faster with isolate: false — reuses workers across files instead of one per file
+

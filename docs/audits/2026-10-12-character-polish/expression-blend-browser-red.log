@@ -1,0 +1,88 @@
+✖ mochi eases its actual pleased face at the start and return of pats (1018.773993ms)
+✖ bun eases its actual pleased face at the start and return of pats (991.789863ms)
+✖ sprout eases its actual pleased face at the start and return of pats (1026.906262ms)
+✖ live reduced motion keeps the existing full reaction still and settles without extra face layers (920.342736ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4365.607551
+
+✖ failing tests:
+
+test at scripts/browser/pet-expression-blend.test.mjs:58:3
+✖ mochi eases its actual pleased face at the start and return of pats (1018.773993ms)
+  AssertionError [ERR_ASSERTION]: the normal reaction must ease between its existing faces
+  
+  0 !== 2
+  
+      at mix (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-expression-blend.test.mjs:48:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-expression-blend.test.mjs:64:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-expression-blend.test.mjs:58:3
+✖ bun eases its actual pleased face at the start and return of pats (991.789863ms)
+  AssertionError [ERR_ASSERTION]: the normal reaction must ease between its existing faces
+  
+  0 !== 2
+  
+      at mix (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-expression-blend.test.mjs:48:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-expression-blend.test.mjs:64:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-expression-blend.test.mjs:58:3
+✖ sprout eases its actual pleased face at the start and return of pats (1026.906262ms)
+  AssertionError [ERR_ASSERTION]: the normal reaction must ease between its existing faces
+  
+  0 !== 2
+  
+      at mix (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-expression-blend.test.mjs:48:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-expression-blend.test.mjs:64:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-expression-blend.test.mjs:83:1
+✖ live reduced motion keeps the existing full reaction still and settles without extra face layers (920.342736ms)
+  AssertionError [ERR_ASSERTION]: the normal reaction must ease between its existing faces
+  
+  0 !== 2
+  
+      at mix (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-expression-blend.test.mjs:48:10)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-expression-blend.test.mjs:87:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

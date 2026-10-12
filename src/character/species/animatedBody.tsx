@@ -41,6 +41,7 @@ export function finiteMotionFrame(frame: MotionFrame): MotionFrame {
     eyeOpen: n(frame.eyeOpen ?? 1, 1, 0, 1),
     shadowScale: n(frame.shadowScale, 1, 0, 1.5), shadowOpacity: n(frame.shadowOpacity, 1, 0, 1), accentOpacity: n(frame.accentOpacity, 0, 0, 1),
     expression: frame.expression === 'pleased' || frame.expression === 'alert' ? frame.expression : 'mood',
+    pleasedWeight: n(frame.pleasedWeight ?? (frame.expression === 'pleased' ? 1 : 0), frame.expression === 'pleased' ? 1 : 0, 0, 1),
   }
 }
 
@@ -168,7 +169,8 @@ export function articulatedPose(species: Species, input: MotionFrame, poseName: 
           {species === 'mochi' && mochiPleats()}
           <MoodTint d={rig.d} mood={mood} colour={colour} smudges={rig.smudges} />
           <Cheeks y={species === 'bun' ? mouthY - 2 : species === 'mochi' && poseName === 'scruffy' ? 144 : rig.cheekY} spread={rig.spread} />
-          <Face mood={poseName === 'idle' ? mood : poseName} expression={frame.expression} gaze={{ x: frame.gazeX, y: frame.gazeY }} eyeOpen={frame.eyeOpen} eyeY={eyeY} mouthY={mouthY} />
+          <Face mood={poseName === 'idle' ? mood : poseName} expression={frame.expression} pleasedWeight={frame.pleasedWeight}
+            gaze={{ x: frame.gazeX, y: frame.gazeY }} eyeOpen={frame.eyeOpen} eyeY={eyeY} mouthY={mouthY} />
           {species === 'bun' && <path d={`M95.5 ${eyeY + 8.5} h9 l-4.5 4.5 Z`} fill={PALETTE.blush} strokeWidth={2.5} />}
         </Ink>
       )

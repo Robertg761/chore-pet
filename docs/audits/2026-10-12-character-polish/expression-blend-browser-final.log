@@ -1,0 +1,57 @@
+✔ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1784.24145ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1778.598627ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1740.094926ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1601.201611ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1646.70772ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1664.389221ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ mochi eases its actual pleased face at the start and return of pats (1367.418034ms)
+ℹ Chromium 152.0.7977.82; complementary eye layers only during easing; one clock; unchanged node/position/outfit/saved tables
+✔ bun eases its actual pleased face at the start and return of pats (1343.176389ms)
+ℹ Chromium 152.0.7977.82; complementary eye layers only during easing; one clock; unchanged node/position/outfit/saved tables
+✔ sprout eases its actual pleased face at the start and return of pats (1330.599336ms)
+ℹ Chromium 152.0.7977.82; complementary eye layers only during easing; one clock; unchanged node/position/outfit/saved tables
+✔ live reduced motion keeps the existing full reaction still and settles without extra face layers (1337.168299ms)
+✔ a scrolled-away resident pauses, lets an offscreen response expire, and resumes when partly visible (2886.258895ms)
+ℹ Offscreen pending frames before pause:0
+ℹ Chromium 152.0.7977.82; real native scroll;0offscreen/1visible pending resident frame
+✔ missing native observation retains the existing resident clock (912.223466ms)
+✔ native default observer emits edge contact without a second positive-area entry (874.291679ms)
+ℹ Native default threshold contract matches the hook notification-filtering regression.
+✔ native ancestor clipping pauses a resident still inside the viewport (804.027059ms)
+ℹ Native ancestor entries:[{"inside":false,"ratio":0,"bottom":434.37969970703125,"height":0}]
+✔ native player choices stay still and fit 320px (2066.952889ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2024.566577ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2011.997893ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2001.786776ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2008.627588ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (982.225737ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2279.079762ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1749.985742ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (2649.368117ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (2603.834826ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 640x360 (3794.108757ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (2634.890131ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (2660.224194ms)
+✔ wardrobe Hop live reduced motion settles the preview and does not restart when restored (1803.762847ms)
+✔ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (1808.698416ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 56119.451544

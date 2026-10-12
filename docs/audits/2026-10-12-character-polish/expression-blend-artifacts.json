@@ -1,0 +1,22 @@
+{
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/expression-blend-before-sizes.png": "31f4511f71343fbb58da9ab76b46a0bf2e2421e98a94dc8a37e0e2ddf4b2f6c0",
+    "docs/audits/2026-10-12-character-polish/expression-blend-before.json": "8c78925447d9ebf054ebbf49bf77350944de2bb831b8239aab744581ed57d1a5",
+    "docs/audits/2026-10-12-character-polish/expression-blend-after-sizes.png": "b830fdfd045f270dc81025176a14f0ace763ba7102362a2cc48958f62e0bedcc",
+    "docs/audits/2026-10-12-character-polish/expression-blend-after.json": "b7dcb94637de7f4d42a6046d75e3b68ce4a1517f83c9e8f50e788878d6c521c9",
+    "docs/audits/2026-10-12-character-polish/expression-blend-midpoints.png": "f0e3fce867fe2235f3c59d80f1a18f8bf2eac0bd67d80c6ce3d3bb2e7ab7f113",
+    "docs/audits/2026-10-12-character-polish/expression-blend-midpoints.json": "18ae7d4fef0baa0099da2f2b624f0e40dddcf8f4e429750e0d246e50fdf59b0a",
+    "docs/audits/2026-10-12-character-polish/expression-blend-differential.json": "f685fb7fa16a6aaa6a49ba537d4a23bc41422f646018950d008c00f18f9e86f0",
+    "docs/audits/2026-10-12-character-polish/expression-blend-baseline-motion.ts.txt": "81e5c16b30f1133158b1f51d743a7faba4d496ec8183679e34375bfc21e31cb5",
+    "docs/audits/2026-10-12-character-polish/expression-blend-baseline-parts.tsx.txt": "7f7f027722f54a96e79a49b3accca9863b68250c090c3bd4c1a889456c19d3a7",
+    "docs/audits/2026-10-12-character-polish/expression-blend-baseline-animatedBody.tsx.txt": "524d6bd0f87b4851520743cb598c04b5077924a421dbb3cc61ab639a7185cbcb",
+    "docs/audits/2026-10-12-character-polish/expression-blend-baseline-activityMotion.ts.txt": "eaf7a7f3c73a8e06209a05fb4c52fde4819c0792d543613665aaa5c044faf314"
+  },
+  "historicalCandidate": {
+    "docs/audits/2026-10-12-character-polish/expression-blend-first-after-sizes.png": "bca708043f29e2e5dcef119b1dd6cc3938259e682e7d576f63f25feac288f3c3",
+    "docs/audits/2026-10-12-character-polish/expression-blend-first-after.json": "9ee231a1ec8a183d3929cb11e898a994bd89a606fd7897a7aa714df85407b1ef",
+    "docs/audits/2026-10-12-character-polish/expression-blend-first-midpoints.png": "bcb9d7d1b2bd215e7082a7305a68d4adf416fd6754d119e167998cf9eac3af38",
+    "docs/audits/2026-10-12-character-polish/expression-blend-first-midpoints.json": "e1e7fa67fa22f118e0bd31e8073e3aa533ad1147ac8f636f85230d1be14b45ed"
+  },
+  "scope": "Final11artifacts:4exactbaselinefiles,3PNGs/3captureJSONs,1numeric/markupdifferential. Historical4first-candidate files preserved bytewise; original PNG paths in their capture JSONs map to first-prefixed PNGs. Candidate source hashes are historical, not final-source bindings. Stills only; no human temporal acceptance."
+}

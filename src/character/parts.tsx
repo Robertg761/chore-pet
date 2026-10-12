@@ -286,22 +286,41 @@ export function RestingFaceMotion({ gaze, children }: { gaze: Gaze; children: Re
 }
 
 /** Eyes and mouth. Gaze moves eye ink only, leaving brows, mouth and glasses attached. */
-export function Face({ mood, eyeY, mouthY, gaze, expression, eyeOpen }: { mood: Expression; eyeY: number; mouthY: number; gaze?: Gaze; expression?: MotionFrame['expression']; eyeOpen?: number }) {
+export function Face({ mood, eyeY, mouthY, gaze, expression, eyeOpen, pleasedWeight }: {
+  mood: Expression; eyeY: number; mouthY: number; gaze?: Gaze; expression?: MotionFrame['expression']; eyeOpen?: number; pleasedWeight?: number
+}) {
   const scale = useStrokeScale()
   const backing = needsFaceBacking(useContext(FaceBodyColourContext))
   const motion = useContext(FaceMotionContext)
   gaze ??= motion.gaze
   expression ??= motion.expression
-  const faceMood = mood === 'sick' || mood === 'scruffy' || mood === 'sleeping' ? mood : expression === 'pleased' ? 'cheering' : mood
+  const healthy = mood === 'happy' || mood === 'content' || mood === 'meh'
+  const fallback = expression === 'pleased' ? 1 : 0
+  const smile = healthy ? Math.max(0, Math.min(1, typeof pleasedWeight === 'number' && Number.isFinite(pleasedWeight) ? pleasedWeight : fallback)) : 0
+  const faceMood = healthy && smile > 0 ? 'cheering' : mood
+  const blending = smile > 0 && smile < 1
+  const backingHeight = faceMood === 'scruffy' || faceMood === 'sick' ? 21
+    : faceMood === 'sleeping' ? 9 : healthy ? 15 - 6 * smile : faceMood === 'cheering' ? 9 : 15
+  const opening = typeof eyeOpen === 'number' && Number.isFinite(eyeOpen) ? Math.max(0, Math.min(1, eyeOpen)) : 1
+  const eyes = (eyeMood: Expression, openness = eyeOpen) => <>
+    <Eye x={100 - EYE_SPREAD} y={eyeY} mood={eyeMood} side={-1} gaze={gaze} alert={expression === 'alert'} eyeOpen={openness} />
+    <Eye x={100 + EYE_SPREAD} y={eyeY} mood={eyeMood} side={1} gaze={gaze} alert={expression === 'alert'} eyeOpen={openness} />
+  </>
   return (
     <g data-expression={expression !== undefined ? faceMood : undefined} stroke={ink} strokeWidth={3.5 * scale} strokeLinecap="round" strokeLinejoin="round" fill="none">
       {backing && <g data-face-contrast="" fill={cream} stroke="none">
-        {[80, 120].map((x) => <ellipse key={x} cx={x} cy={eyeY - (faceMood === 'scruffy' || faceMood === 'sick' ? 4 : 0)} rx={15} ry={faceMood === 'scruffy' || faceMood === 'sick' ? 21 : faceMood === 'sleeping' || faceMood === 'cheering' ? 9 : 15} />)}
+        {[80, 120].map((x) => <ellipse key={x} cx={x} cy={eyeY - (faceMood === 'scruffy' || faceMood === 'sick' ? 4 : 0)} rx={15} ry={backingHeight} />)}
         <ellipse cx={100} cy={mouthY + 1} rx={13} ry={9} />
       </g>}
-      <Eye x={100 - EYE_SPREAD} y={eyeY} mood={faceMood} side={-1} gaze={gaze} alert={expression === 'alert'} eyeOpen={eyeOpen} />
-      <Eye x={100 + EYE_SPREAD} y={eyeY} mood={faceMood} side={1} gaze={gaze} alert={expression === 'alert'} eyeOpen={eyeOpen} />
-      <Mouth y={mouthY} mood={faceMood} />
+      {blending ? <g data-expression-layer="mood" aria-hidden="true" opacity={1 - smile}>
+        {eyes(mood, opening * (1 - smile))}
+        {mood !== 'happy' && <Mouth y={mouthY} mood={mood} />}
+      </g> : <Eye x={100 - EYE_SPREAD} y={eyeY} mood={faceMood} side={-1} gaze={gaze} alert={expression === 'alert'} eyeOpen={eyeOpen} />}
+      {blending ? <g data-expression-layer="pleased" aria-hidden="true" opacity={smile}>
+        {eyes('cheering')}
+        {mood !== 'happy' && <Mouth y={mouthY} mood="cheering" />}
+      </g> : <Eye x={100 + EYE_SPREAD} y={eyeY} mood={faceMood} side={1} gaze={gaze} alert={expression === 'alert'} eyeOpen={eyeOpen} />}
+      {blending ? mood === 'happy' && <Mouth y={mouthY} mood="happy" /> : <Mouth y={mouthY} mood={faceMood} />}
       {mood === 'sick' && (
         <path d={`M151 ${eyeY - 16} q-6 9 0 12 q6 -3 0 -12 Z`} fill={sky} strokeWidth={2.5} />
       )}

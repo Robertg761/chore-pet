@@ -1,0 +1,22 @@
+{
+  "baseCommit": "72552aa86a8ceaecbae6aa9a6f6a4b3bdfa12acc",
+  "sources": {
+    "src/character/motion.ts": "a7506e91f0260cb628a348716eec7eb772f5b46de371a41cbf44a5d42439dd00",
+    "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+    "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+    "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+    "src/character/motion.test.ts": "08ccecdc522ae00e3fdb6131a6afaab9c6ea3469b21c41ac6a1295c8b9ddc8d1",
+    "src/character/AnimatedCharacter.test.tsx": "f71a2cf0fa90d8ed4d71300ba50dcb81190fe0ee7fcb69a152669f426e2df183",
+    "src/character/expressionBlend.test.tsx": "5a60970cfc22cc2ddba02d1b645ef45e0ad85580bce1c6fca34b6cf1fcaa69ea",
+    "scripts/browser/pet-expression-blend.test.mjs": "7f697ce0b380b99a0688aa3eefeb3ecaf45e3909ab472ba0c3fb5ca86f352df7",
+    "docs/ART.md": "1bbf9bc368abd08be08a5bc42ae7cad0b5a273b7da271e39f6ab790e676b59ea",
+    "docs/audits/2026-10-12-character-polish/capture-expression-blend.mjs": "b6536a5ba00e25e33111d935cae600b2fd21f6cbe297720b474ae639f909b365",
+    "docs/audits/2026-10-12-character-polish/capture-expression-blend-midpoints.mjs": "016df096ff2fbaa6e0c7d19fb3d1cfaaa3cb0bfcd4cf8b82b39bfd28deb6c0a5",
+    "docs/audits/2026-10-12-character-polish/compare-expression-blend.mjs": "43a2161a6b84b2b5496031cb288ff36985396204ef098424f075e6ded2d9f7c3"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/expression-blend-source.diff",
+    "sha256": "2736262a9f484daa3ce223d4ccc21ecd7262c47abaa7ef62755571e752112d0f"
+  },
+  "scope": "12paths: optional numeric smile weight in sampler/activity blend/SVG renderer, healthy outgoing eye narrowing using current blink, existing shapes crossfade; legacy/rest/peak/reduced/unwell endpoints exact. Tests/docs/three bounded diagnostic runners. No new clock/state/save."
+}

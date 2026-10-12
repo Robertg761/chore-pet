@@ -1,0 +1,20 @@
+{
+  "method": "40500 numeric samples: all preexisting fields/durations exact; new smile weight bounded and reduced stills retained. 1314 exact dressed SVG comparisons including IDs: legacy omitted weights across species/moods/eye styles/colours/poses; sampled reaction start/peak/end and reduced stills. No live temporal acceptance.",
+  "frames": 40500,
+  "intermediateSmiles": 1080,
+  "exactMarkup": 1314,
+  "baselineSha256": {
+    "src/character/motion.ts": "81e5c16b30f1133158b1f51d743a7faba4d496ec8183679e34375bfc21e31cb5",
+    "src/character/parts.tsx": "7f7f027722f54a96e79a49b3accca9863b68250c090c3bd4c1a889456c19d3a7",
+    "src/character/species/animatedBody.tsx": "524d6bd0f87b4851520743cb598c04b5077924a421dbb3cc61ab639a7185cbcb",
+    "src/pet/activityMotion.ts": "eaf7a7f3c73a8e06209a05fb4c52fde4819c0792d543613665aaa5c044faf314"
+  },
+  "sourceSha256": {
+    "src/character/motion.ts": "a7506e91f0260cb628a348716eec7eb772f5b46de371a41cbf44a5d42439dd00",
+    "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+    "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+    "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7"
+  },
+  "runnerSha256": "43a2161a6b84b2b5496031cb288ff36985396204ef098424f075e6ded2d9f7c3",
+  "markupAggregateSha256": "5a832808405152053d995cb62e4d2f5bc30c46b31172f752e9bfbba6f624c8db"
+}

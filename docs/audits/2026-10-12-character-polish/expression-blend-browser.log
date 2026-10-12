@@ -1,0 +1,30 @@
+✔ mochi eases its actual pleased face at the start and return of pats (1383.215589ms)
+ℹ Chromium 152.0.7977.82; complementary eye layers only during easing; one clock; unchanged node/position/outfit/saved tables
+✔ bun eases its actual pleased face at the start and return of pats (1294.426655ms)
+ℹ Chromium 152.0.7977.82; complementary eye layers only during easing; one clock; unchanged node/position/outfit/saved tables
+✔ sprout eases its actual pleased face at the start and return of pats (1279.85381ms)
+ℹ Chromium 152.0.7977.82; complementary eye layers only during easing; one clock; unchanged node/position/outfit/saved tables
+✔ live reduced motion keeps the existing full reaction still and settles without extra face layers (1269.309696ms)
+✔ native player choices stay still and fit 320px (2056.652201ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2005.877793ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2024.235317ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2054.509462ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2007.816461ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (941.076938ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2296.425585ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1709.519132ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21099.939539
