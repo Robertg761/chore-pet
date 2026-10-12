@@ -23,6 +23,9 @@ it('starts collapsed and sends only explicit choices without creating scheduling
   expect(ui.props.onReact).toHaveBeenLastCalledWith('greet')
   click(button(ui.container, 'Gentle pats'))
   expect(ui.props.onReact).toHaveBeenLastCalledWith('affection')
+  expect(button(ui.container, 'Happy hop')).toBeDefined()
+  click(button(ui.container, 'Happy hop'))
+  expect(ui.props.onReact).toHaveBeenLastCalledWith('hop')
   expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
   expect(requestAnimationFrame).not.toHaveBeenCalled()
   click(toggle)
@@ -32,7 +35,7 @@ it('starts collapsed and sends only explicit choices without creating scheduling
 it.each(['travel', 'away', 'sick'] as const)('explains and blocks play while %s', blocked => {
   const ui = mount({ blocked })
   click(button(ui.container, 'Spend time together'))
-  for (const label of ['Wave', 'Gentle pats']) {
+  for (const label of ['Wave', 'Gentle pats', 'Happy hop']) {
     expect((button(ui.container, label) as HTMLButtonElement).disabled).toBe(true)
     click(button(ui.container, label))
   }

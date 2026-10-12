@@ -1,0 +1,23 @@
+{
+  "baseCommit": "8574288",
+  "sources": {
+    "src/pet/behaviour.ts": "c4e9efb89c93e6cddac05552000587ced2bd668489d11031bfd30b62f2f06303",
+    "src/pet/activityMotion.ts": "eaf7a7f3c73a8e06209a05fb4c52fde4819c0792d543613665aaa5c044faf314",
+    "src/pet/LivingRoom.tsx": "166583cc175634143fcf9ae93e6fc6fa30e763168964b754deeb7c622ee5f1bf",
+    "src/pet/PetPlay.tsx": "d8f61e25c3b0ba368b72140163d7f3192952dee922b5694d4dc09d8e41312379",
+    "src/pet/PetPlay.css": "fa3945fd3187d64dcd675634360813475c0eacb8eb1eb60e754a0f7cc3bbc630",
+    "src/content/petLines.ts": "1579d054d8f975527eeaef079d2427cebcb96ac2d0529b7cdc2fbe9acd53e61f",
+    "src/pet/behaviour.test.ts": "a9ed0de69da4f122380b4408d08e8b27794c9d37ec5c91927a6a081e84a838f8",
+    "src/pet/activityMotion.test.ts": "1efdab93c7bc2909a03a806cd4390d2c69ddfe57cdb459bf92aad32ecc4797ab",
+    "src/pet/PetIntegration.test.tsx": "b2632a6de22599aec596130b207b3543cf5441f41cf7c36310485d77576be52d",
+    "src/pet/PetPlay.test.tsx": "bd93163b22f9170b9baaff2329cd00f410e023b1a3a585c022e87c7e7aed23d1",
+    "src/content/petLines.test.ts": "83a34cdeed390327e7bd7eb19ea0bb2f370789dddc111580848cc1b66b13ad06",
+    "scripts/browser/pet-play.test.mjs": "4e4cf81a14c08786a3bc27f5638b55152d4ac8132639e93f82f7c2041f62418a",
+    "docs/ART.md": "29e88a5df98c2595b7f8fe45e6318224772902e62a5e85ad90052efe0534dd0f"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/player-hop-source.diff",
+    "sha256": "c9a6125fc05e82f5ada5ddbbc0ddfd8733c9c71b6e091ca03644d4e14fe67754"
+  },
+  "scope": "13source feature:explicit transient playerhop priority0 mappedtoexisting1800mscelebration art,3dialoguelines,compactchoice,nativesavedstate/visibilitychecks. No sampler/art/clock/persistence changes."
+}

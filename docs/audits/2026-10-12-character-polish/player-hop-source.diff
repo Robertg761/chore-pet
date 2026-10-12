@@ -1,0 +1,433 @@
+diff --git c/docs/ART.md w/docs/ART.md
+index 9c44988..bf705b4 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -164,6 +164,8 @@ The resident clock pauses when reduced-motion art is settled or the pet is resti
+ 
+ One native IntersectionObserver pauses that same clock when the resident's SVG is completely outside the viewport or scroll clipping. Any positive visible area keeps it active. Exact edge contact also stays active because the native default threshold may omit the following positive-area notification. Returning into view samples current world deadlines before paint and clears stale hover. Offscreen responses request no frames; returning resumes a finite response only while its deadline remains active. Missing observation support retains the existing clock policy. Observer cleanup ignores queued callbacks; no polling or additional animation clock is used.
+ 
+-Spend time together follows the home chore list and offers explicit Wave and Gentle pats choices. Both use the resident's existing finite greeting/affection sampler, retaining its fractional position and outgoing pose. Busy requests do not queue or extend a reaction; chore cheers keep priority. The resident owns the single successful spoken line, and the controls explain resting/travel without waking or moving the pet. Reduced motion keeps a still pose and returns to zero pending frames when the response ends. Controls remain optional, with no saved changes or separate clock.
++Spend time together follows the home chore list and offers explicit Wave, Gentle pats and Happy hop choices. They use the resident's existing finite greeting/affection/celebration samplers, retaining its fractional position and outgoing pose. Busy requests do not queue or extend a reaction; chore cheers keep priority. The resident owns the single successful spoken line, and the controls explain resting/travel without waking or moving the pet. Reduced motion keeps a still pose and returns to zero pending frames when the response ends. Controls remain optional, with no saved changes or separate clock.
+ 
+ Environmental gaze starts at the actual drawn eye centre, including tired-eye offsets, species/mood torso geometry and facing. Convert the current detail through the inverse torso before bounding local eye travel to the renderer's three-by-two-unit limits. Inspection retains its forward tilt for low details and eases toward a small backward tilt for overhead details, using the existing finite gesture envelope. Keep feet grounded, clothing under the same torso transform and current safe approaches; no contact is implied.
++
++Happy hop uses a separate transient player reaction with play dialogue and the existing1800ms celebration geometry. Chore cheers can preempt it; a hop cannot replace an active response or alter tap alternation/progress. Reduced motion stays still, offscreen expiry samples before return, and all three native choices share the same resident clock. Compact wrapping buttons preserve44px+targets and scene visibility on narrow phones.
+diff --git c/scripts/browser/pet-play.test.mjs w/scripts/browser/pet-play.test.mjs
+index 62ea640..0d9674e 100644
+--- c/scripts/browser/pet-play.test.mjs
++++ w/scripts/browser/pet-play.test.mjs
+@@ -66,6 +66,8 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
+     await page.keyboard.press('Tab')
+     const wave = page.getByRole('button', { name: 'Wave', exact: true })
+     const pats = page.getByRole('button', { name: 'Gentle pats', exact: true })
++    const hop = page.getByRole('button', { name: 'Happy hop', exact: true })
++    assert.equal(await hop.count(), 1)
+     assert.equal(await wave.evaluate(node => node === document.activeElement), true)
+     await page.keyboard.press('Enter')
+     await assertPetVisible(resident)
+@@ -83,14 +85,26 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
+     assert.notEqual((await live.textContent()).trim(), hello)
+     await page.clock.runFor(800)
+     assert.equal(await resident.getAttribute('transform'), position)
+-    for (const control of [toggle, wave, pats]) {
++    for (const control of [toggle, wave, pats, hop]) {
+       const bounds = await control.boundingBox()
+       assert.ok(bounds.height >= 44 && bounds.width >= 44)
+       assert.ok(bounds.x >= -1 && bounds.x + bounds.width <= viewport.width + 1)
+     }
+     const room = await page.locator('.home-scene .home-room').boundingBox()
+     assert.ok(room.height >= originalRoom.height - .5, 'expanded player choices must preserve room size')
+-    const clearance = await pats.evaluate(node => {
++    await page.clock.runFor(1000)
++    assert.equal(await page.evaluate(() => window.__playFrames.size), 0)
++    await page.keyboard.press('Tab')
++    assert.equal(await hop.evaluate(node => node === document.activeElement), true)
++    const stillBody = await resident.locator('[data-character-body]').getAttribute('transform')
++    await page.keyboard.press('Enter')
++    await assertPetVisible(resident)
++    assert.equal(await page.locator('.pet-play [role="status"]').textContent(), '')
++    await page.clock.runFor(900)
++    assert.equal(await resident.locator('[data-character-body]').getAttribute('transform'), stillBody)
++    assert.equal(await resident.getAttribute('transform'), position)
++    assert.equal(await page.evaluate(() => window.__playFrames.size), 1)
++    const clearance = await hop.evaluate(node => {
+       const bounds = node.getBoundingClientRect(), style = getComputedStyle(node)
+       const ring = parseFloat(style.outlineWidth) + Math.max(0, parseFloat(style.outlineOffset))
+       let bottom = innerHeight
+@@ -102,7 +116,7 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
+       }
+       return bottom - bounds.bottom - ring
+     })
+-    assert.ok(clearance >= -.5, `focused pats outline must clear scroll clipping: ${clearance}px`)
++    assert.ok(clearance >= -.5, `focused hop outline must clear scroll clipping: ${clearance}px`)
+     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
+     await capture(page, `play-${viewport.width}.png`)
+     await page.clock.runFor(1000)
+@@ -204,3 +218,39 @@ test('chosen affection joins a live step, ignores rapid busy choices, and honors
+   assert.deepEqual((await snapshot(page)).tables, saved)
+   t.diagnostic(`Chromium ${page.context().browser().version()}; join${join.toFixed(4)}roomSVGunits;20busychoices;oneframeclock;live reduction`)
+ })
++
++
++test('a chosen hop takes off and lands on the existing resident clock without changing progress', async t => {
++  const page = await browserApp(t, { reducedMotion: 'no-preference' })
++  await instrument(page)
++  const resident = page.locator('.room-pet')
++  await resident.waitFor()
++  const saved = (await snapshot(page)).tables
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  const before = await resident.evaluate(readPet)
++  const shadow = await resident.locator('[data-character-ground]').getAttribute('transform')
++  await page.getByRole('button', { name: 'Happy hop', exact: true }).click()
++  await page.clock.runFor(756)
++  const lifted = await resident.evaluate(readPet)
++  assert.equal(lifted.x, before.x)
++  assert.equal(lifted.y, before.y)
++  assert.ok(lifted.body[0].y < before.body[0].y - 1, 'the sampled character must visibly lift at the existing peak')
++  assert.notEqual(await resident.locator('[data-character-ground]').getAttribute('transform'), shadow)
++  await assertPetVisible(resident)
++  assert.equal(await page.evaluate(() => window.__playFrames.size), 1)
++  await capture(page, 'hop-peak-390.png')
++  const heard = await page.locator('.living-room [aria-live="polite"]').textContent()
++  for (let n = 0; n < 10; n++) await page.getByRole('button', { name: 'Happy hop', exact: true }).click()
++  assert.deepEqual((await resident.evaluate(readPet)).body, lifted.body)
++  assert.equal(await page.locator('.living-room [aria-live="polite"]').textContent(), heard)
++  assert.match(await page.locator('.pet-play [role="status"]').textContent(), /moment/)
++  await page.clock.runFor(1200)
++  assert.equal(await resident.locator('[data-expression="content"]').count(), 1)
++  assert.equal(await resident.locator('[data-character-ground]').getAttribute('transform'), shadow)
++  assert.equal(await page.evaluate(() => window.__playFrames.size), 1, 'normal healthy idle keeps its original clock')
++  await changeReducedMotion(page, 'reduce')
++  await page.clock.runFor(120)
++  assert.equal(await page.evaluate(() => window.__playFrames.size), 0)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  t.diagnostic(`Chromium ${page.context().browser().version()};existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables`)
++})
+diff --git c/src/content/petLines.test.ts w/src/content/petLines.test.ts
+index e37c14a..0cc715c 100644
+--- c/src/content/petLines.test.ts
++++ w/src/content/petLines.test.ts
+@@ -4,6 +4,7 @@ import {
+   BIG_DONE_LINES,
+   GREETING_LINES,
+   AFFECTION_LINES,
++  HOP_LINES,
+   CALM_OBJECT_LINES,
+   calmObjectLine,
+   doneLine,
+@@ -42,6 +43,7 @@ const ALL_LISTS: Record<string, string[]> = {
+   TAP_LINES,
+   GREETING_LINES,
+   AFFECTION_LINES,
++  HOP_LINES,
+   DONE_LINES,
+   VACATION_LINES,
+   WELCOME_LINES,
+@@ -65,7 +67,7 @@ describe('line lists', () => {
+       expect(lines.length).toBeGreaterThanOrEqual(2)
+       expect(lines.length).toBeLessThanOrEqual(3)
+     }
+-    for (const lines of [GREETING_LINES, AFFECTION_LINES]) {
++    for (const lines of [GREETING_LINES, AFFECTION_LINES, HOP_LINES]) {
+       expect(lines.length).toBeGreaterThanOrEqual(3)
+       expect(lines.length).toBeLessThanOrEqual(4)
+     }
+@@ -343,3 +345,8 @@ describe('doneLine', () => {
+     expect(doneLine(1, 'Wash the dishes')).toBe('Wash the dishes: done! Hooray!')
+   })
+ })
++
++it('keeps chosen-hop dialogue separate from chore and reward claims', () => {
++  expect(HOP_LINES.length).toBeGreaterThanOrEqual(3)
++  for (const line of HOP_LINES) expect(line).not.toMatch(/\b(done|reward|xp|clean|streak|chore)\b/i)
++})
+diff --git c/src/content/petLines.ts w/src/content/petLines.ts
+index cff6ec5..47b574a 100644
+--- c/src/content/petLines.ts
++++ w/src/content/petLines.ts
+@@ -192,7 +192,7 @@ export const TAP_LINES: string[] = [
+   'Wheee!',
+ ]
+ 
+-/** Chosen player greetings and gentle affection, independent of tap alternation. */
++/** Chosen player moments, independent of tap alternation and chore rewards. */
+ export const GREETING_LINES: string[] = [
+   'Hello, friend!',
+   'I see you!',
+@@ -205,6 +205,11 @@ export const AFFECTION_LINES: string[] = [
+   'This is a cosy moment.',
+   'Happy to be here with you.',
+ ]
++export const HOP_LINES: string[] = [
++  'Hop, hop!',
++  'A little hop for you.',
++  'Ta-da! That was fun.',
++]
+ 
+ /** Celebrations when a chore gets done. Lines starting with {chore} are capitalised. */
+ export const DONE_LINES: string[] = [
+diff --git c/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index 7f277cd..5ebc41c 100644
+--- c/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
+ import { catalogEntry } from '../catalog/objects'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+ import { ACTION_MS } from '../character/motion'
+-import { AFFECTION_LINES, CAUGHT_UP_LINES, GREETING_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
++import { AFFECTION_LINES, CAUGHT_UP_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
+ import { messiestObject } from '../domain/mess'
+ import type { NeglectLevel } from '../domain/neglect'
+ import type { ChoreStatus } from '../domain/schedule'
+@@ -71,6 +71,8 @@ export interface LivingRoomControl {
+   respond: (action: PlayerGesture) => PlayerResponseResult
+ }
+ 
++const PLAYER_LINES: Record<PlayerGesture, string[]> = { greet: GREETING_LINES, affection: AFFECTION_LINES, hop: HOP_LINES }
++
+ function objectDialogue({ objects, stages, neglect, chores }: Pick<LivingRoomProps, 'objects' | 'stages' | 'neglect' | 'chores'>, objectId: string, seed: number): string | null {
+   const target = objects.find(object => object.id === objectId)
+   const entry = target && catalogEntry(target.catalogId)
+@@ -256,7 +258,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+     const next = react(current, now, action)
+     advance(next, now)
+     play('chirp')
+-    setSaid({ text: pickLine(action === 'greet' ? GREETING_LINES : AFFECTION_LINES, next.beat), heard: true })
++    setSaid({ text: pickLine(PLAYER_LINES[action], next.beat), heard: true })
+     return 'started'
+   }, lookAt: objectId => {
+     if (away || mood === 'sick') return 'resting'
+diff --git c/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index a9343d3..ba6946c 100644
+--- c/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -1020,9 +1020,64 @@ it('declines player choices during a chore cheer or rest without replacing dialo
+   expect(typeof control.current!.respond).toBe('function')
+   const cheer = ui.container.querySelector('[aria-live]')!.textContent
+   act(() => { expect(control.current!.respond('affection')).toBe('busy') })
++  act(() => { expect(control.current!.respond('hop')).toBe('busy') })
+   expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(cheer)
+   ui.rerender(<LivingRoom {...props} control={control} mood="sick" />)
+   act(() => { expect(control.current!.respond('greet')).toBe('resting') })
++  act(() => { expect(control.current!.respond('hop')).toBe('resting') })
+   ui.rerender(<LivingRoom {...props} control={control} away />)
+   act(() => { expect(control.current!.respond('affection')).toBe('resting') })
++  act(() => { expect(control.current!.respond('hop')).toBe('resting') })
++})
++
++it('plays a chosen hop from a fractional invitation, coalesces busy requests and lets chores preempt it', () => {
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" objects={[plant]} control={control} initialTile={{ tx: 7, ty: 7 }} />)
++  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
++  frame(137)
++  const resident = ui.container.querySelector('.room-pet')!, node = art(ui.container)
++  const position = resident.getAttribute('transform')
++  act(() => { expect(control.current!.respond('hop')).toBe('started') })
++  expect(resident.getAttribute('transform')).toBe(position)
++  const heard = ui.container.querySelector('[aria-live]')!.textContent
++  expect(petLines.HOP_LINES).toContain(heard)
++  frame(893)
++  expect(node.querySelector('[data-character-body]')!.getAttribute('transform')).toMatch(/translate\(0 -17\)/)
++  for (let n = 0; n < 20; n++) act(() => { expect(control.current!.respond('hop')).toBe('busy') })
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
++  expect(frames.size).toBe(1)
++  ui.rerender(<LivingRoom {...props} mood="happy" objects={[plant]} control={control} initialTile={{ tx: 7, ty: 7 }} celebrate={{ key: 301, choreName: 'Water plant' }} />)
++  expect(ui.container.querySelector('[aria-live]')!.textContent).not.toBe(heard)
++  act(() => { expect(control.current!.respond('hop')).toBe('busy') })
++  expect(art(ui.container)).toBe(node)
++})
++
++it('keeps a reduced hop still and releases its only frame at the original deadline', () => {
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" control={control} />)
++  const body = art(ui.container).querySelector('[data-character-body]')!
++  const initial = body.getAttribute('transform')
++  act(() => { expect(control.current!.respond('hop')).toBe('started') })
++  frame(756)
++  expect(body.getAttribute('transform')).toBe(initial)
++  expect(frames.size).toBe(1)
++  frame(1800)
++  expect(frames.size).toBe(0)
++  expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
++})
++
++it('expires an offscreen hop before return without invisible frames or stale cheer', () => {
++  const visibility = observeResident()
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" control={control} />)
++  visibility.show(false)
++  act(() => { expect(control.current!.respond('hop')).toBe('started') })
++  expect(petLines.HOP_LINES).toContain(ui.container.querySelector('[aria-live]')!.textContent)
++  expect(frames.size).toBe(0)
++  now = 1900
++  visibility.show(true)
++  expect(frames.size).toBe(0)
++  expect(ui.container.querySelector('[data-expression="happy"]')).not.toBeNull()
+ })
+diff --git c/src/pet/PetPlay.css w/src/pet/PetPlay.css
+index 7f0f692..63dffe2 100644
+--- c/src/pet/PetPlay.css
++++ w/src/pet/PetPlay.css
+@@ -4,7 +4,7 @@
+ .pet-play-panel { margin-top: 8px; padding: 12px; border: var(--outline); border-radius: var(--radius); background: var(--card); }
+ .pet-play-panel[hidden] { display: none; }
+ .pet-play-actions { display: flex; flex-wrap: wrap; gap: 10px; min-width: 0; }
+-.pet-play-actions .btn { flex: 1 1 120px; min-height: 48px; }
++.pet-play-actions .btn { flex: 1 1 5em; min-height: 48px; padding: 6px; font-size: 0.875rem; }
+ .pet-play-note, .pet-play-feedback { margin: 8px 0 0; font-size: 0.875rem; font-weight: 700; overflow-wrap: anywhere; }
+ .pet-play-note { color: var(--ink-soft); }
+ .pet-play-feedback:empty { margin: 0; }
+diff --git c/src/pet/PetPlay.test.tsx w/src/pet/PetPlay.test.tsx
+index bd37257..3b5fb1f 100644
+--- c/src/pet/PetPlay.test.tsx
++++ w/src/pet/PetPlay.test.tsx
+@@ -23,6 +23,9 @@ it('starts collapsed and sends only explicit choices without creating scheduling
+   expect(ui.props.onReact).toHaveBeenLastCalledWith('greet')
+   click(button(ui.container, 'Gentle pats'))
+   expect(ui.props.onReact).toHaveBeenLastCalledWith('affection')
++  expect(button(ui.container, 'Happy hop')).toBeDefined()
++  click(button(ui.container, 'Happy hop'))
++  expect(ui.props.onReact).toHaveBeenLastCalledWith('hop')
+   expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
+   expect(requestAnimationFrame).not.toHaveBeenCalled()
+   click(toggle)
+@@ -32,7 +35,7 @@ it('starts collapsed and sends only explicit choices without creating scheduling
+ it.each(['travel', 'away', 'sick'] as const)('explains and blocks play while %s', blocked => {
+   const ui = mount({ blocked })
+   click(button(ui.container, 'Spend time together'))
+-  for (const label of ['Wave', 'Gentle pats']) {
++  for (const label of ['Wave', 'Gentle pats', 'Happy hop']) {
+     expect((button(ui.container, label) as HTMLButtonElement).disabled).toBe(true)
+     click(button(ui.container, label))
+   }
+diff --git c/src/pet/PetPlay.tsx w/src/pet/PetPlay.tsx
+index 113c371..a1055cd 100644
+--- c/src/pet/PetPlay.tsx
++++ w/src/pet/PetPlay.tsx
+@@ -32,6 +32,8 @@ export function PetPlay({ petName, blocked, onReact }: PetPlayProps) {
+           onClick={() => choose('greet')}>Wave</button>
+         <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
+           onClick={() => choose('affection')}>Gentle pats</button>
++        <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
++          onClick={() => choose('hop')}>Happy hop</button>
+       </div>
+       {note && <p id={`${id}-note`} className="pet-play-note">{note}</p>}
+       {/* The resident announces successful choices; only unavailable/busy needs another status. */}
+diff --git c/src/pet/activityMotion.test.ts w/src/pet/activityMotion.test.ts
+index 198908e..ac062e1 100644
+--- c/src/pet/activityMotion.test.ts
++++ w/src/pet/activityMotion.test.ts
+@@ -663,3 +663,17 @@ describe('phase transition continuity', () => {
+     expect(frame.leftFoot).toBeCloseTo(0)
+   })
+ })
++
++it.each(['bun', 'mochi', 'sprout'] as const)('maps a %s player hop to the existing celebration art without giving it chore priority', species => {
++  const hop = react(initialPet({ tx: 2, ty: 2 }, 0), 0, 'hop')
++  for (const reduced of [false, true]) for (const elapsedMs of [0, 180, 420, 756, 900, 1200, 1600, 1799, 1800]) {
++    const sampled = motionFor(hop, elapsedMs, species, 'happy', reduced)
++    expect(sampled.action).toBe('celebrate')
++    expect(sampled.durationMs).toBe(1800)
++    if (elapsedMs >= TIMING.blendMs || reduced) {
++      expect(sampled.frame).toEqual(sampleMotion({ species, action: 'celebrate', mood: 'happy', elapsedMs,
++        blinkMs: elapsedMs, durationMs: 1800, distance: 0, reducedMotion: reduced }))
++    }
++  }
++  expect(motionFor(hop, 756, species, 'happy', false).frame.bodyY).toBeLessThan(-10)
++})
+diff --git c/src/pet/activityMotion.ts w/src/pet/activityMotion.ts
+index 84f7031..d23ab97 100644
+--- c/src/pet/activityMotion.ts
++++ w/src/pet/activityMotion.ts
+@@ -57,7 +57,7 @@ function inputFor(state: SampleState, now: number, species: Species, mood: Mood,
+       break
+     }
+     case 'react':
+-      action = a.action ?? 'greet'
++      action = a.action === 'hop' ? 'celebrate' : a.action ?? 'greet'
+       start = a.start ?? a.until - TIMING.reactMs
+       durationMs = a.until - start
+       break
+diff --git c/src/pet/behaviour.test.ts w/src/pet/behaviour.test.ts
+index 6555a97..983bc27 100644
+--- c/src/pet/behaviour.test.ts
++++ w/src/pet/behaviour.test.ts
+@@ -483,3 +483,34 @@ describe('lost approach access', () => {
+     expect(step(second, world(), 2900, always(0.9)).activity.kind).toBe('idle')
+   })
+ })
++
++describe('chosen player hop', () => {
++  it('keeps a finite play reaction separate from chore priority and tap alternation', () => {
++    const first = react(initialPet({ tx: 2, ty: 2 }, 0), 0, 'hop')
++    expect(first.activity).toMatchObject({ kind: 'react', action: 'hop', start: 0, until: 1800 })
++    expect(first.reactions).toBe(0)
++    expect(first.pendingTap).toBe(false)
++    expect(react(first, 100, 'hop')).toBe(first)
++    expect(react(first, 100, 'greet')).toBe(first)
++    expect(tap(step(first, world(), 1800, always(.9)), 1900).activity).toMatchObject({ action: 'greet' })
++  })
++
++  it.each(['celebrate', 'celebrate-big'] as const)('lets %s preempt a hop while declining hops during that chore cheer', action => {
++    const first = react(initialPet({ tx: 2, ty: 2 }, 0), 0, 'hop')
++    const chore = react(first, 600, action)
++    expect(chore.activity).toMatchObject({ action, start: 600 })
++    expect(react(chore, 700, 'hop')).toBe(chore)
++  })
++
++  it('retains the exact fractional route origin and reconnects safely after play', () => {
++    const moving: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), activity: {
++      kind: 'walk', path: [{ tx: 3, ty: 2 }, { tx: 4, ty: 2 }], stepStart: 0, then: 'idle',
++    } }
++    const hop = react(moving, 137, 'hop')
++    expect(positionAt(hop, 137)).toEqual(positionAt(moving, 137))
++    const resumed = step(hop, world(), 1937, always(.9))
++    expect(positionAt(resumed, 1937)).toEqual(positionAt(moving, 137))
++    expect(resumed.activity.kind).toBe('walk')
++    expect(step(resumed, world(), 2800, always(.9)).tile).toEqual({ tx: 3, ty: 2 })
++  })
++})
+diff --git c/src/pet/behaviour.ts w/src/pet/behaviour.ts
+index e8b0b84..3c1c32b 100644
+--- c/src/pet/behaviour.ts
++++ w/src/pet/behaviour.ts
+@@ -1,6 +1,6 @@
+ import type { Mood } from '../domain/types'
+ import type { PoseName } from '../character/poses'
+-import { ACTION_MS, type GroundPoint, type MotionAction } from '../character/motion'
++import { ACTION_MS, type GroundPoint } from '../character/motion'
+ import { ROOM_SIZE } from '../room/grid'
+ import { PET_SCALE, roomPoint } from '../room/shell/geometry'
+ import { chooseInteraction, type InteractionTarget } from './interactions'
+@@ -8,9 +8,9 @@ import { besideTiles, findPath, type Tile } from './pathfinding'
+ 
+ // Keep the old public pathfinding imports valid without a behaviour/interaction cycle.
+ export { besideTiles, findPath, type Tile } from './pathfinding'
+-export type PlayerGesture = 'greet' | 'affection'
++export type PlayerGesture = 'greet' | 'affection' | 'hop'
+ export type ReactionKind = 'tap' | PlayerGesture | 'celebrate' | 'celebrate-big'
+-type ReactionAction = 'greet' | 'affection' | 'celebrate' | 'celebrate-big'
++type ReactionAction = PlayerGesture | 'celebrate' | 'celebrate-big'
+ export type Walk = {
+   kind: 'walk'; path: Tile[]; stepStart: number; then: 'idle' | 'look'
+   /** First segment may start between tiles after an interruption. */
+@@ -435,14 +435,14 @@ export function react(state: PetState, now: number, kind: ReactionKind): PetStat
+   }
+   if (state.activity.kind === 'react' && now < state.activity.until) {
+     if (kind === 'tap') return state.pendingTap ? state : { ...state, pendingTap: true }
+-    const priority = (action: MotionAction) => action === 'celebrate-big' ? 2 : action === 'celebrate' ? 1 : 0
++    const priority = (action: ReactionAction) => action === 'celebrate-big' ? 2 : action === 'celebrate' ? 1 : 0
+     if (priority(kind) <= priority(state.activity.action ?? 'greet')) return state
+   }
+   const count = (state.reactions ?? 0) + (kind === 'tap' ? 1 : 0)
+   const action: ReactionAction = kind === 'tap' ? count % 2 ? 'greet' : 'affection' : kind
+-  const next = change(state, { kind: 'react', action, start: now, until: now + ACTION_MS[action] }, now)
++  const next = change(state, { kind: 'react', action, start: now, until: now + ACTION_MS[action === 'hop' ? 'celebrate' : action] }, now)
+   const frozen = freeze(state, now)
+-  return { ...next, tile: frozen.tile, position: frozen.position, resume: frozen.resume, reactions: count, pendingTap: kind === 'tap' || kind === 'greet' || kind === 'affection' ? false : pendingTap, noticeStart: undefined }
++  return { ...next, tile: frozen.tile, position: frozen.position, resume: frozen.resume, reactions: count, pendingTap: kind === 'celebrate' || kind === 'celebrate-big' ? pendingTap : false, noticeStart: undefined }
+ }
+ export function tap(state: PetState, now: number): PetState { return react(state, now, 'tap') }
+ export function needsRender(prev: PetState, next: PetState): boolean {

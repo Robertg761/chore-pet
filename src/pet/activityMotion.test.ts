@@ -663,3 +663,17 @@ describe('phase transition continuity', () => {
     expect(frame.leftFoot).toBeCloseTo(0)
   })
 })
+
+it.each(['bun', 'mochi', 'sprout'] as const)('maps a %s player hop to the existing celebration art without giving it chore priority', species => {
+  const hop = react(initialPet({ tx: 2, ty: 2 }, 0), 0, 'hop')
+  for (const reduced of [false, true]) for (const elapsedMs of [0, 180, 420, 756, 900, 1200, 1600, 1799, 1800]) {
+    const sampled = motionFor(hop, elapsedMs, species, 'happy', reduced)
+    expect(sampled.action).toBe('celebrate')
+    expect(sampled.durationMs).toBe(1800)
+    if (elapsedMs >= TIMING.blendMs || reduced) {
+      expect(sampled.frame).toEqual(sampleMotion({ species, action: 'celebrate', mood: 'happy', elapsedMs,
+        blinkMs: elapsedMs, durationMs: 1800, distance: 0, reducedMotion: reduced }))
+    }
+  }
+  expect(motionFor(hop, 756, species, 'happy', false).frame.bodyY).toBeLessThan(-10)
+})

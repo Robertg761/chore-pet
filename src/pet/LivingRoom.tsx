@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { catalogEntry } from '../catalog/objects'
 import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
 import { ACTION_MS } from '../character/motion'
-import { AFFECTION_LINES, CAUGHT_UP_LINES, GREETING_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
+import { AFFECTION_LINES, CAUGHT_UP_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
 import { messiestObject } from '../domain/mess'
 import type { NeglectLevel } from '../domain/neglect'
 import type { ChoreStatus } from '../domain/schedule'
@@ -70,6 +70,8 @@ export interface LivingRoomControl {
   lookAt: (objectId: string) => VisitResult
   respond: (action: PlayerGesture) => PlayerResponseResult
 }
+
+const PLAYER_LINES: Record<PlayerGesture, string[]> = { greet: GREETING_LINES, affection: AFFECTION_LINES, hop: HOP_LINES }
 
 function objectDialogue({ objects, stages, neglect, chores }: Pick<LivingRoomProps, 'objects' | 'stages' | 'neglect' | 'chores'>, objectId: string, seed: number): string | null {
   const target = objects.find(object => object.id === objectId)
@@ -256,7 +258,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     const next = react(current, now, action)
     advance(next, now)
     play('chirp')
-    setSaid({ text: pickLine(action === 'greet' ? GREETING_LINES : AFFECTION_LINES, next.beat), heard: true })
+    setSaid({ text: pickLine(PLAYER_LINES[action], next.beat), heard: true })
     return 'started'
   }, lookAt: objectId => {
     if (away || mood === 'sick') return 'resting'

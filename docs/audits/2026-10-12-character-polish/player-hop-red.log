@@ -1,0 +1,247 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/behaviour.test.ts src/pet/activityMotion.test.ts src/pet/PetIntegration.test.tsx src/pet/PetPlay.test.tsx src/content/petLines.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (90 tests | 3 failed) 1847ms
+   × plays a chosen hop from a fractional invitation, coalesces busy requests and lets chores preempt it 17ms
+   × keeps a reduced hop still and releases its only frame at the original deadline 11ms
+   × expires an offscreen hop before return without invisible frames or stale cheer 15ms
+ ❯ src/content/petLines.test.ts (39 tests | 6 failed) 99ms
+   ❯ line lists (9)
+     × has every list non-empty and within its size range 5ms
+     × keeps every line under 60 characters, and chore lines under 48 filled 3ms
+     × is sentence case, plain text, and has no duplicates within a list 4ms
+     × never uses guilt or drama words 56ms
+     × has chore lines that all use the placeholder, and no other lists that need it unexpectedly 1ms
+   × keeps chosen-hop dialogue separate from chore and reward claims 0ms
+ ❯ src/pet/activityMotion.test.ts (67 tests | 3 failed) 119ms
+   × maps a bun player hop to the existing celebration art without giving it chore priority 6ms
+   × maps a mochi player hop to the existing celebration art without giving it chore priority 1ms
+   × maps a sprout player hop to the existing celebration art without giving it chore priority 0ms
+ ❯ src/pet/PetPlay.test.tsx (5 tests | 4 failed) 49ms
+   × starts collapsed and sends only explicit choices without creating scheduling work 33ms
+   × explains and blocks play while travel 4ms
+   × explains and blocks play while away 3ms
+   × explains and blocks play while sick 3ms
+ ❯ src/pet/behaviour.test.ts (54 tests | 2 failed) 30ms
+   ❯ chosen player hop (4)
+     × keeps a finite play reaction separate from chore priority and tap alternation 7ms
+     × retains the exact fractional route origin and reconnects safely after play 1ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 18 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/content/petLines.test.ts > line lists > has every list non-empty and within its size range
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ src/content/petLines.test.ts:71:20
+     69|     }
+     70|     for (const lines of [GREETING_LINES, AFFECTION_LINES, HOP_LINES]) {
+     71|       expect(lines.length).toBeGreaterThanOrEqual(3)
+       |                    ^
+     72|       expect(lines.length).toBeLessThanOrEqual(4)
+     73|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/18]⎯
+
+ FAIL  src/content/petLines.test.ts > line lists > keeps every line under 60 characters, and chore lines under 48 filled
+TypeError: lines is not iterable
+ ❯ src/content/petLines.test.ts:94:26
+     92|   it('keeps every line under 60 characters, and chore lines under 48 f…
+     93|     for (const [name, lines] of Object.entries(ALL_LISTS)) {
+     94|       for (const line of lines) {
+       |                          ^
+     95|         expect(line.length, `${name}: ${line}`).toBeLessThan(60)
+     96|         if (line.includes('{chore}')) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/18]⎯
+
+ FAIL  src/content/petLines.test.ts > line lists > is sentence case, plain text, and has no duplicates within a list
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ src/content/petLines.test.ts:105:52
+    103|   it('is sentence case, plain text, and has no duplicates within a lis…
+    104|     for (const [name, lines] of Object.entries(ALL_LISTS)) {
+    105|       expect(new Set(lines).size, name).toBe(lines.length)
+       |                                                    ^
+    106|       for (const line of lines) {
+    107|         const first = line.charAt(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/18]⎯
+
+ FAIL  src/content/petLines.test.ts > line lists > never uses guilt or drama words
+TypeError: lines is not iterable
+ ❯ src/content/petLines.test.ts:118:26
+    116|   it('never uses guilt or drama words', () => {
+    117|     for (const [name, lines] of Object.entries(ALL_LISTS)) {
+    118|       for (const line of lines) {
+       |                          ^
+    119|         const lower = line.toLowerCase()
+    120|         for (const word of BANNED) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/18]⎯
+
+ FAIL  src/content/petLines.test.ts > line lists > has chore lines that all use the placeholder, and no other lists that need it unexpectedly
+TypeError: lines is not iterable
+ ❯ src/content/petLines.test.ts:149:26
+    147|     for (const [name, lines] of Object.entries(ALL_LISTS)) {
+    148|       if (name === 'CHORE_LINES' || name === 'DONE_LINES') continue
+    149|       for (const line of lines) expect(line, name).not.toContain('{cho…
+       |                          ^
+    150|     }
+    151|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/18]⎯
+
+ FAIL  src/content/petLines.test.ts > keeps chosen-hop dialogue separate from chore and reward claims
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ src/content/petLines.test.ts:350:20
+    348|
+    349| it('keeps chosen-hop dialogue separate from chore and reward claims', …
+    350|   expect(HOP_LINES.length).toBeGreaterThanOrEqual(3)
+       |                    ^
+    351|   for (const line of HOP_LINES) expect(line).not.toMatch(/\b(done|rewa…
+    352| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/18]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > plays a chosen hop from a fractional invitation, coalesces busy requests and lets chores preempt it
+AssertionError: the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+ ❯ src/pet/PetIntegration.test.tsx:1040:30
+    1038|   expect(resident.getAttribute('transform')).toBe(position)
+    1039|   const heard = ui.container.querySelector('[aria-live]')!.textContent
+    1040|   expect(petLines.HOP_LINES).toContain(heard)
+       |                              ^
+    1041|   frame(893)
+    1042|   expect(node.querySelector('[data-character-body]')!.getAttribute('tr…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/18]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps a reduced hop still and releases its only frame at the original deadline
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/pet/PetIntegration.test.tsx:1061:23
+    1059|   frame(756)
+    1060|   expect(body.getAttribute('transform')).toBe(initial)
+    1061|   expect(frames.size).toBe(1)
+       |                       ^
+    1062|   frame(1800)
+    1063|   expect(frames.size).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/18]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > expires an offscreen hop before return without invisible frames or stale cheer
+AssertionError: the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+ ❯ src/pet/PetIntegration.test.tsx:1074:30
+    1072|   visibility.show(false)
+    1073|   act(() => { expect(control.current!.respond('hop')).toBe('started') …
+    1074|   expect(petLines.HOP_LINES).toContain(ui.container.querySelector('[ar…
+       |                              ^
+    1075|   expect(frames.size).toBe(0)
+    1076|   now = 1900
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/18]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > starts collapsed and sends only explicit choices without creating scheduling work
+AssertionError: expected undefined to be defined
+ ❯ src/pet/PetPlay.test.tsx:26:45
+     24|   click(button(ui.container, 'Gentle pats'))
+     25|   expect(ui.props.onReact).toHaveBeenLastCalledWith('affection')
+     26|   expect(button(ui.container, 'Happy hop')).toBeDefined()
+       |                                             ^
+     27|   click(button(ui.container, 'Happy hop'))
+     28|   expect(ui.props.onReact).toHaveBeenLastCalledWith('hop')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/18]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > explains and blocks play while travel
+ FAIL  src/pet/PetPlay.test.tsx > explains and blocks play while away
+ FAIL  src/pet/PetPlay.test.tsx > explains and blocks play while sick
+TypeError: Cannot read properties of undefined (reading 'disabled')
+ ❯ src/pet/PetPlay.test.tsx:39:40
+     37|   click(button(ui.container, 'Spend time together'))
+     38|   for (const label of ['Wave', 'Gentle pats', 'Happy hop']) {
+     39|     expect((button(ui.container, label) as HTMLButtonElement).disabled…
+       |                                        ^
+     40|     click(button(ui.container, label))
+     41|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/18]⎯
+
+ FAIL  src/pet/activityMotion.test.ts > maps a bun player hop to the existing celebration art without giving it chore priority
+ FAIL  src/pet/activityMotion.test.ts > maps a mochi player hop to the existing celebration art without giving it chore priority
+ FAIL  src/pet/activityMotion.test.ts > maps a sprout player hop to the existing celebration art without giving it chore priority
+AssertionError: expected 'hop' to be 'celebrate' // Object.is equality
+
+Expected: "celebrate"
+Received: "hop"
+
+ ❯ src/pet/activityMotion.test.ts:671:28
+    669|   for (const reduced of [false, true]) for (const elapsedMs of [0, 180…
+    670|     const sampled = motionFor(hop, elapsedMs, species, 'happy', reduce…
+    671|     expect(sampled.action).toBe('celebrate')
+       |                            ^
+    672|     expect(sampled.durationMs).toBe(1800)
+    673|     if (elapsedMs >= TIMING.blendMs || reduced) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/18]⎯
+
+ FAIL  src/pet/behaviour.test.ts > chosen player hop > keeps a finite play reaction separate from chore priority and tap alternation
+AssertionError: expected { kind: 'react', action: 'hop', …(2) } to match object { kind: 'react', action: 'hop', …(2) }
+
+- Expected
++ Received
+
+  {
+    "action": "hop",
+    "kind": "react",
+    "start": 0,
+-   "until": 1800,
++   "until": NaN,
+  }
+
+ ❯ src/pet/behaviour.test.ts:490:28
+    488|   it('keeps a finite play reaction separate from chore priority and ta…
+    489|     const first = react(initialPet({ tx: 2, ty: 2 }, 0), 0, 'hop')
+    490|     expect(first.activity).toMatchObject({ kind: 'react', action: 'hop…
+       |                            ^
+    491|     expect(first.reactions).toBe(0)
+    492|     expect(first.pendingTap).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/18]⎯
+
+ FAIL  src/pet/behaviour.test.ts > chosen player hop > retains the exact fractional route origin and reconnects safely after play
+AssertionError: expected { tx: 3, ty: 2 } to deeply equal { tx: 4, ty: 2 }
+
+- Expected
++ Received
+
+  {
+-   "tx": 4,
++   "tx": 3,
+    "ty": 2,
+  }
+
+ ❯ src/pet/behaviour.test.ts:514:59
+    512|     expect(positionAt(resumed, 1937)).toEqual(positionAt(moving, 137))
+    513|     expect(resumed.activity.kind).toBe('walk')
+    514|     expect(step(resumed, world(), 2800, always(.9)).tile).toEqual({ tx…
+       |                                                           ^
+    515|   })
+    516| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/18]⎯
+
+
+ Test Files  5 failed (5)
+      Tests  18 failed | 237 passed (255)
+   Start at  18:26:47
+   Duration  3.99s (tests 61%, transform 18%, environment 14%, import 6%)
+
+    Isolate  5 workers spawned · ~181ms startup each (spawn + environment, per file)
+             at least ~722ms faster with isolate: false — reuses workers across files instead of one per file
+

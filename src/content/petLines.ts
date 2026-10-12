@@ -192,7 +192,7 @@ export const TAP_LINES: string[] = [
   'Wheee!',
 ]
 
-/** Chosen player greetings and gentle affection, independent of tap alternation. */
+/** Chosen player moments, independent of tap alternation and chore rewards. */
 export const GREETING_LINES: string[] = [
   'Hello, friend!',
   'I see you!',
@@ -204,6 +204,11 @@ export const AFFECTION_LINES: string[] = [
   'Gentle pats are my favourite.',
   'This is a cosy moment.',
   'Happy to be here with you.',
+]
+export const HOP_LINES: string[] = [
+  'Hop, hop!',
+  'A little hop for you.',
+  'Ta-da! That was fun.',
 ]
 
 /** Celebrations when a chore gets done. Lines starting with {chore} are capitalised. */

@@ -57,7 +57,7 @@ function inputFor(state: SampleState, now: number, species: Species, mood: Mood,
       break
     }
     case 'react':
-      action = a.action ?? 'greet'
+      action = a.action === 'hop' ? 'celebrate' : a.action ?? 'greet'
       start = a.start ?? a.until - TIMING.reactMs
       durationMs = a.until - start
       break

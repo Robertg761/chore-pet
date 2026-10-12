@@ -483,3 +483,34 @@ describe('lost approach access', () => {
     expect(step(second, world(), 2900, always(0.9)).activity.kind).toBe('idle')
   })
 })
+
+describe('chosen player hop', () => {
+  it('keeps a finite play reaction separate from chore priority and tap alternation', () => {
+    const first = react(initialPet({ tx: 2, ty: 2 }, 0), 0, 'hop')
+    expect(first.activity).toMatchObject({ kind: 'react', action: 'hop', start: 0, until: 1800 })
+    expect(first.reactions).toBe(0)
+    expect(first.pendingTap).toBe(false)
+    expect(react(first, 100, 'hop')).toBe(first)
+    expect(react(first, 100, 'greet')).toBe(first)
+    expect(tap(step(first, world(), 1800, always(.9)), 1900).activity).toMatchObject({ action: 'greet' })
+  })
+
+  it.each(['celebrate', 'celebrate-big'] as const)('lets %s preempt a hop while declining hops during that chore cheer', action => {
+    const first = react(initialPet({ tx: 2, ty: 2 }, 0), 0, 'hop')
+    const chore = react(first, 600, action)
+    expect(chore.activity).toMatchObject({ action, start: 600 })
+    expect(react(chore, 700, 'hop')).toBe(chore)
+  })
+
+  it('retains the exact fractional route origin and reconnects safely after play', () => {
+    const moving: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), activity: {
+      kind: 'walk', path: [{ tx: 3, ty: 2 }, { tx: 4, ty: 2 }], stepStart: 0, then: 'idle',
+    } }
+    const hop = react(moving, 137, 'hop')
+    expect(positionAt(hop, 137)).toEqual(positionAt(moving, 137))
+    const resumed = step(hop, world(), 1937, always(.9))
+    expect(positionAt(resumed, 1937)).toEqual(positionAt(moving, 137))
+    expect(resumed.activity.kind).toBe('walk')
+    expect(step(resumed, world(), 2800, always(.9)).tile).toEqual({ tx: 3, ty: 2 })
+  })
+})

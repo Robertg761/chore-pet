@@ -1,0 +1,98 @@
+{
+  "freeze": {
+    "baseCommit": "8574288",
+    "sources": {
+      "src/pet/behaviour.ts": "c4e9efb89c93e6cddac05552000587ced2bd668489d11031bfd30b62f2f06303",
+      "src/pet/activityMotion.ts": "eaf7a7f3c73a8e06209a05fb4c52fde4819c0792d543613665aaa5c044faf314",
+      "src/pet/LivingRoom.tsx": "166583cc175634143fcf9ae93e6fc6fa30e763168964b754deeb7c622ee5f1bf",
+      "src/pet/PetPlay.tsx": "d8f61e25c3b0ba368b72140163d7f3192952dee922b5694d4dc09d8e41312379",
+      "src/pet/PetPlay.css": "fa3945fd3187d64dcd675634360813475c0eacb8eb1eb60e754a0f7cc3bbc630",
+      "src/content/petLines.ts": "1579d054d8f975527eeaef079d2427cebcb96ac2d0529b7cdc2fbe9acd53e61f",
+      "src/pet/behaviour.test.ts": "a9ed0de69da4f122380b4408d08e8b27794c9d37ec5c91927a6a081e84a838f8",
+      "src/pet/activityMotion.test.ts": "1efdab93c7bc2909a03a806cd4390d2c69ddfe57cdb459bf92aad32ecc4797ab",
+      "src/pet/PetIntegration.test.tsx": "b2632a6de22599aec596130b207b3543cf5441f41cf7c36310485d77576be52d",
+      "src/pet/PetPlay.test.tsx": "bd93163b22f9170b9baaff2329cd00f410e023b1a3a585c022e87c7e7aed23d1",
+      "src/content/petLines.test.ts": "83a34cdeed390327e7bd7eb19ea0bb2f370789dddc111580848cc1b66b13ad06",
+      "scripts/browser/pet-play.test.mjs": "4e4cf81a14c08786a3bc27f5638b55152d4ac8132639e93f82f7c2041f62418a",
+      "docs/ART.md": "29e88a5df98c2595b7f8fe45e6318224772902e62a5e85ad90052efe0534dd0f"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/player-hop-source.diff",
+      "sha256": "c9a6125fc05e82f5ada5ddbbc0ddfd8733c9c71b6e091ca03644d4e14fe67754"
+    },
+    "scope": "13source feature:explicit transient playerhop priority0 mappedtoexisting1800mscelebration art,3dialoguelines,compactchoice,nativesavedstate/visibilitychecks. No sampler/art/clock/persistence changes."
+  },
+  "checks": [
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/player-hop-browser-red.log",
+      "logSha256": "8305d29aa2c4a87781b8b4115a3c1bc0a824b339190c8feb1c6418e57716545b",
+      "exitCode": 1,
+      "result": "PriorproductionUI0vs1missingHappyhopchoice."
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/player-hop-red.log",
+      "logSha256": "b8a47eca0eda391388bac9ff49435c06488f7fe41e922c1e20eaeb21b34d088c",
+      "exitCode": 1,
+      "result": "18fail/237passbeforefeature;includes1incorrectroutefixtureexpected4vs existingreconnectionendpoint3,corrected."
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/player-hop-focused.log",
+      "logSha256": "7aea1c8c07e2b09d107627cd8c7f6ae07520d73e179f721c0c251031a3725611",
+      "exitCode": 0,
+      "result": "255pass/5files3.88s;predatesonly3addedhopguardassertionsinexistingtest."
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/player-hop-build.log",
+      "logSha256": "8f50ddaa44e5c805d8a880e3b99aa7ffde330db45f3aae0f51dd274b0f2b0617",
+      "exitCode": 0,
+      "result": "Final TypeScript/productionbuild includingguardassertions."
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/player-hop-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "result": "Zero warnings."
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/player-hop-browser.log",
+      "logSha256": "c34bc6d66751ca933476b200acf30e36624a375c98169cae5c7754f753a0527f",
+      "exitCode": 0,
+      "result": "12nativecases21.1942s:5viewportreducedchoices/roomreset/fractionaljoin/normalhop/4offscreenplatformcases,6captures."
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/player-hop-full.log",
+      "logSha256": "8b3bfa2b1eb5baf6f4b3e490edc9e34ac7a4915a0f6876a9d2c24784aa425b7b",
+      "exitCode": 0,
+      "result": "2125pass/98files62.61s final13sourcefreeze."
+    }
+  ],
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/player-hop-browser-red-fixture.mjs": "d46eb979a32f4a02a1d46c3b740d170c41ebfd7af4d7134ef455ec88706beb76",
+    "docs/audits/2026-10-12-character-polish/player-hop-layout/hop-peak-390.png": "4dd241a16772351ae458fcc5949af82ff212dc4155defb7d9825b0c4382fc237",
+    "docs/audits/2026-10-12-character-polish/player-hop-layout/play-1280.png": "692c36de4c80f41e3b43a76d1f853fef37efe32ab899e6b4572c5035b18ef481",
+    "docs/audits/2026-10-12-character-polish/player-hop-layout/play-320.png": "54bc3ed34ab405250432fcd3feadd4127f0cf13db9db6a4b2c7560fca3f8fad8",
+    "docs/audits/2026-10-12-character-polish/player-hop-layout/play-390.png": "3bf2082c44174a8b9eb94f6a57e6e2e114ca397cd9296d4aff95f7f3419c5dd6",
+    "docs/audits/2026-10-12-character-polish/player-hop-layout/play-640.png": "ade1f97d7555cb18ebcca4066710e799019119395e0fe55b4265ef8b938b74bb",
+    "docs/audits/2026-10-12-character-polish/player-hop-layout/play-844.png": "ce9275cceba1b12c2f432530e940dfb8e705c5064dd97d27d1675bfcbbf563eb"
+  },
+  "verificationScope": "Root observed7exitresults;full2125passbindsfinal13sourcesincluding3extraexistingtestguardassertions.Finalbuild/lint/browser bindall13sources;focusedpredatesonly3extraexistingtestguardassertions. Rootinspected6layout/peakPNGs. Native characterbody95%visible,scene sizepreserved,focus44px+fits;phone captures scrollsomeenvironmentoffscreen while characterremainsvisible. Nativegeometry/frameassertions supporttakeoff/landing;stillimagealone isnottemporalacceptance. Concurrent nextbatchExploretestadditions areexcluded fromhopfreeze/checkpoint;full2125predatesthoseindependenttests.",
+  "resources": "Singleheavyprocess/oneworker/oneChromium;RAM7.2GBavailable,/tmp4.1GBfree;lastaccount14%usedordinaryusageallowed.",
+  "limits": [
+    "No human temporal/AT/physicaldevice/CPUor batteryclaim.",
+    "Normalpeakcapture390only;other5layoutsreducedmotion;not exhaustive outfits/moods.",
+    "Redfixture exactcopiedfrom/tmp originallyexecuted;hardcodedlocalhelperimport is evidence,not a reusable production browser test."
+  ],
+  "pending": [],
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/player-hop-review.md",
+    "sha256": "749ef77a031f1dd1f12fe6562b5d1b138e7b2bf6345e52abd9385de82ee704ee",
+    "result": "Independent static/still scopeapproved,noactionablefindings.All6PNGsinspected. Reviewer corrected unsupported user-agentrestriction attribution before rootacceptance;otherreportbytes preserved."
+  }
+}

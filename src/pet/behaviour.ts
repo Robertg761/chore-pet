@@ -1,6 +1,6 @@
 import type { Mood } from '../domain/types'
 import type { PoseName } from '../character/poses'
-import { ACTION_MS, type GroundPoint, type MotionAction } from '../character/motion'
+import { ACTION_MS, type GroundPoint } from '../character/motion'
 import { ROOM_SIZE } from '../room/grid'
 import { PET_SCALE, roomPoint } from '../room/shell/geometry'
 import { chooseInteraction, type InteractionTarget } from './interactions'
@@ -8,9 +8,9 @@ import { besideTiles, findPath, type Tile } from './pathfinding'
 
 // Keep the old public pathfinding imports valid without a behaviour/interaction cycle.
 export { besideTiles, findPath, type Tile } from './pathfinding'
-export type PlayerGesture = 'greet' | 'affection'
+export type PlayerGesture = 'greet' | 'affection' | 'hop'
 export type ReactionKind = 'tap' | PlayerGesture | 'celebrate' | 'celebrate-big'
-type ReactionAction = 'greet' | 'affection' | 'celebrate' | 'celebrate-big'
+type ReactionAction = PlayerGesture | 'celebrate' | 'celebrate-big'
 export type Walk = {
   kind: 'walk'; path: Tile[]; stepStart: number; then: 'idle' | 'look'
   /** First segment may start between tiles after an interruption. */
@@ -435,14 +435,14 @@ export function react(state: PetState, now: number, kind: ReactionKind): PetStat
   }
   if (state.activity.kind === 'react' && now < state.activity.until) {
     if (kind === 'tap') return state.pendingTap ? state : { ...state, pendingTap: true }
-    const priority = (action: MotionAction) => action === 'celebrate-big' ? 2 : action === 'celebrate' ? 1 : 0
+    const priority = (action: ReactionAction) => action === 'celebrate-big' ? 2 : action === 'celebrate' ? 1 : 0
     if (priority(kind) <= priority(state.activity.action ?? 'greet')) return state
   }
   const count = (state.reactions ?? 0) + (kind === 'tap' ? 1 : 0)
   const action: ReactionAction = kind === 'tap' ? count % 2 ? 'greet' : 'affection' : kind
-  const next = change(state, { kind: 'react', action, start: now, until: now + ACTION_MS[action] }, now)
+  const next = change(state, { kind: 'react', action, start: now, until: now + ACTION_MS[action === 'hop' ? 'celebrate' : action] }, now)
   const frozen = freeze(state, now)
-  return { ...next, tile: frozen.tile, position: frozen.position, resume: frozen.resume, reactions: count, pendingTap: kind === 'tap' || kind === 'greet' || kind === 'affection' ? false : pendingTap, noticeStart: undefined }
+  return { ...next, tile: frozen.tile, position: frozen.position, resume: frozen.resume, reactions: count, pendingTap: kind === 'celebrate' || kind === 'celebrate-big' ? pendingTap : false, noticeStart: undefined }
 }
 export function tap(state: PetState, now: number): PetState { return react(state, now, 'tap') }
 export function needsRender(prev: PetState, next: PetState): boolean {

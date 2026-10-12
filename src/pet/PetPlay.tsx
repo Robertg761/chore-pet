@@ -32,6 +32,8 @@ export function PetPlay({ petName, blocked, onReact }: PetPlayProps) {
           onClick={() => choose('greet')}>Wave</button>
         <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
           onClick={() => choose('affection')}>Gentle pats</button>
+        <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
+          onClick={() => choose('hop')}>Happy hop</button>
       </div>
       {note && <p id={`${id}-note`} className="pet-play-note">{note}</p>}
       {/* The resident announces successful choices; only unavailable/busy needs another status. */}

@@ -1,0 +1,31 @@
+✔ a scrolled-away resident pauses, lets an offscreen response expire, and resumes when partly visible (2750.161189ms)
+ℹ Offscreen pending frames before pause:0
+ℹ Chromium 152.0.7977.82; real native scroll;0offscreen/1visible pending resident frame
+✔ missing native observation retains the existing resident clock (859.753096ms)
+✔ native default observer emits edge contact without a second positive-area entry (816.071209ms)
+ℹ Native default threshold contract matches the hook notification-filtering regression.
+✔ native ancestor clipping pauses a resident still inside the viewport (797.299007ms)
+ℹ Native ancestor entries:[{"inside":false,"ratio":0,"bottom":434.37969970703125,"height":0}]
+✔ native player choices stay still and fit 320px (2064.762154ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2035.488514ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2101.937597ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2040.333323ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2043.88391ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (897.047121ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2273.913671ms)
+ℹ Chromium 152.0.7977.82; join0.1120roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1760.336293ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21194.157977
