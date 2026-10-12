@@ -320,6 +320,35 @@ function blockedRoute(state: PetState, world: World, now: number): {
   }
   return null
 }
+
+/** A player invitation uses the existing approach and gesture, never a teleport. */
+export function visitObject(state: PetState, world: World, objectId: string, now: number): PetState | null {
+  if (!Number.isFinite(now) || world.away || world.mood === 'sick'
+    || state.activity.kind === 'sleep' || state.activity.kind === 'sick'
+    || (state.activity.kind === 'react' && now < state.activity.until)) return null
+  const targets = world.interactions?.filter(target => target.objectId === objectId) ?? []
+  if (!targets.length) return null
+  const blocked = blockedRoute(state, world, now)
+  const a = state.activity
+  if (!blocked && (a.kind === 'walk' || a.kind === 'interact') && a.target
+    && a.target.objectId === objectId && targetValid(a.target, world)) return state
+  const safe = blocked ? { ...cancel(state, now, () => 0.99, blocked.walkAt), ...blocked.frozen } : state
+  const frozen = freeze(safe, now)
+  const position = frozen.position ?? frozen.tile
+  // A fractional interruption may reconnect only through its known segment.
+  const endpoints = key(position) === key(frozen.tile) ? [frozen.tile]
+    : frozen.resume ? [frozen.resume.to, frozen.resume.from] : [frozen.tile]
+  for (const endpoint of endpoints) {
+    if (!Number.isInteger(endpoint.tx) || !Number.isInteger(endpoint.ty) || !inRoom(endpoint) || !world.free(endpoint)
+      || (endpoint.tx !== position.tx && endpoint.ty !== position.ty)) continue
+    const selected = chooseInteraction(endpoint, targets, world.free, 0)
+    if (!selected) continue
+    const path = key(position) === key(endpoint) ? selected.path : [endpoint, ...selected.path]
+    return path.length ? startWalk(frozen, path, now, 'idle', selected.target) : orient(frozen, selected.target, now)
+  }
+  return null
+}
+
 function hasFreshTap(state: PetState, now: number): boolean {
   return !!state.pendingTap && state.activity.kind === 'react' && now <= state.activity.until + TIMING.stepMs
 }

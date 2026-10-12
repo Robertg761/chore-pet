@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react'
+import { useCallback, useContext, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type Ref, type RefObject } from 'react'
 import { createPortal } from 'react-dom'
 import { catalogEntry } from '../catalog/objects'
 import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
@@ -14,7 +14,7 @@ import { SceneContext } from '../room/sceneContext'
 import { petObstacles } from './obstacles'
 import { PET_STROKE_SCALE, ROOM_WIDTH, petTransform } from '../room/shell/geometry'
 import { play } from '../audio/sfx'
-import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sortTile, step, tap, type PetState, type Tile, type World } from './behaviour'
+import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sortTile, step, tap, visitObject, type PetState, type Tile, type World } from './behaviour'
 import { motionFor } from './activityMotion'
 import { interactionTargets } from './interactions'
 import { usePetMotion } from './usePetMotion'
@@ -58,6 +58,23 @@ export interface LivingRoomProps {
   onPosition?: (tile: Tile) => void
   /** Effects in room coordinates, drawn over everything (e.g. a sparkle on the object just cleaned). */
   overlay?: ReactNode
+  /** Optional player invitation, sharing this resident's clock and state. */
+  control?: Ref<LivingRoomControl>
+}
+
+export type VisitResult = 'started' | 'still' | 'busy' | 'resting' | 'unreachable' | 'unavailable'
+export interface LivingRoomControl { lookAt: (objectId: string) => VisitResult }
+
+function objectDialogue({ objects, stages, neglect, chores }: Pick<LivingRoomProps, 'objects' | 'stages' | 'neglect' | 'chores'>, objectId: string, seed: number): string | null {
+  const target = objects.find(object => object.id === objectId)
+  const entry = target && catalogEntry(target.catalogId)
+  if (!target || !entry) return null
+  const chore = chores.find(item => item.objectId === target.id)
+  const level = neglect?.[target.id] ?? 0
+  const stage = Object.prototype.hasOwnProperty.call(stages, target.id) ? stages[target.id] ?? 'clean' : 'clean'
+  return level > 0 || stage !== 'clean'
+    ? messLine(entry.mess, level, seed) || objectLine(entry.id, chore?.name ?? '', seed) || null
+    : calmObjectLine(entry.id, seed) || pickLine(MOOD_LINES.content, seed)
 }
 
 const LINE_MS = 3600
@@ -132,7 +149,7 @@ interface Said {
   heard: boolean
 }
 
-export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, chores, statuses, celebrate, onCelebrated, initialTile, onPosition, overlay }: LivingRoomProps) {
+export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, chores, statuses, celebrate, onCelebrated, initialTile, onPosition, overlay, control }: LivingRoomProps) {
   const scene = useContext(SceneContext)
   const solid = useMemo(() => petObstacles(objects, stages), [objects, stages])
   const messiest = messiestObject(chores, statuses)
@@ -158,6 +175,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
   const live = useRef<Shown>(shown)
   const motion = useRef<MotionControl | null>(null)
   const attention = useRef<PlayerAttention>({ pointer: null, focused: false, reset: false })
+  const invitation = useRef<{ objectId: string; announced: boolean } | null>(null)
   const petNode = useRef<SVGGElement>(null)
   const bubbleNode = useRef<HTMLParagraphElement>(null)
   const reportPosition = useRef(onPosition)
@@ -204,6 +222,36 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     advance(advanceState(live.current.state, world, now, reduced), now)
   }, [advance, world])
 
+  useImperativeHandle(control, () => ({ lookAt: objectId => {
+    if (away || mood === 'sick') return 'resting'
+    if (!objects.some(object => object.id === objectId && catalogEntry(object.catalogId))) return 'unreachable'
+    const now = performance.now(), reduced = motion.current?.reduced ?? false
+    const current = advanceState(live.current.state, world, now, reduced)
+    if (current.activity.kind === 'react' && now < current.activity.until) return 'busy'
+    if (reduced) {
+      invitation.current = null
+      advance(current, now)
+      const text = objectDialogue({ objects, stages, neglect, chores }, objectId, current.beat)
+      if (text) setSaid({ text, heard: true })
+      return 'still'
+    }
+    const next = visitObject(current, world, objectId, now)
+    if (!next) return 'unreachable'
+    if (next !== current || invitation.current?.objectId !== objectId) {
+      invitation.current = { objectId, announced: false }
+      attention.current.pointer = null
+      setSaid(null)
+      if (next.activity.kind === 'interact') {
+        invitation.current.announced = true
+        const seed = next === current ? live.current.interactionBeat ?? next.beat : next.beat
+        const text = objectDialogue({ objects, stages, neglect, chores }, objectId, seed)
+        if (text) setSaid({ text, heard: true })
+      }
+    }
+    advance(next, now)
+    return 'started'
+  } }))
+
   // A line stays up for a few seconds.
   useEffect(() => {
     if (!said) return
@@ -216,6 +264,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
   useEffect(() => {
     if (!celebrate || celebrate.key === celebrated.current) return
     celebrated.current = celebrate.key
+    invitation.current = null
     const now = performance.now()
     const current = advanceState(live.current.state, world, now, motion.current?.reduced ?? false)
     advance(react(current, now, celebrate.big ? 'celebrate-big' : 'celebrate'), now)
@@ -224,6 +273,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
   }, [celebrate, advance, onCelebrated, world])
 
   function onTap() {
+    invitation.current = null
     play('chirp')
     const t = performance.now()
     const current = advanceState(live.current.state, world, t, motion.current?.reduced ?? false)
@@ -240,18 +290,8 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
   let line: string | null = null
   if (said) line = said.text
   else if (a.kind === 'interact') {
-    const target = objects.find((object) => object.id === a.target.objectId)
-    const entry = target && catalogEntry(target.catalogId)
-    const chore = target && chores.find((item) => item.objectId === target.id)
     const seed = shown.interactionBeat ?? state.beat
-    if (entry && target) {
-      const level = neglect?.[target.id] ?? 0
-      const stage = Object.prototype.hasOwnProperty.call(stages, target.id) ? stages[target.id] ?? 'clean' : 'clean'
-      const messy = level > 0 || stage !== 'clean'
-      // Healthy objects invite a calm observation, independent of other overdue chores.
-      line = messy ? messLine(entry.mess, level, seed) || objectLine(entry.id, chore?.name ?? '', seed) || null
-        : calmObjectLine(entry.id, seed) || pickLine(MOOD_LINES.content, seed)
-    }
+    line = objectDialogue({ objects, stages, neglect, chores }, a.target.objectId, seed)
   } else if (a.kind === 'look' && messiest && messObject && messEntry) {
     // A smelly or dusty thing gets a line about the smell or dust every other look; otherwise the object's own line.
     const level = neglect?.[messObject.id] ?? 0
@@ -260,6 +300,21 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     const caughtUp = chores.length > 0 && !statuses.some((s) => s.state === 'overdue' || s.state === 'due')
     line = pickLine(caughtUp && state.beat % 8 === 0 ? CAUGHT_UP_LINES : MOOD_LINES[mood], state.beat)
   }
+
+  // An explicit invitation makes one observation audible at arrival. Automatic
+  // exploration stays quiet; interruptions discard the pending invitation.
+  useEffect(() => {
+    const requested = invitation.current
+    if (!requested) return
+    const { objectId } = requested
+    if (a.kind === 'interact' && a.target.objectId === objectId) {
+      if (!requested.announced) {
+        requested.announced = true
+        const text = objectDialogue({ objects, stages, neglect, chores }, objectId, shown.interactionBeat ?? state.beat)
+        if (text) setSaid({ text, heard: true })
+      }
+    } else if (a.kind !== 'walk' || a.target?.objectId !== objectId) invitation.current = null
+  }, [a, objects, stages, neglect, chores, shown.interactionBeat, state.beat])
 
   // Measure the bubble once its words are in, so it can find a spot clear of the furniture before it is seen.
   useLayoutEffect(() => {

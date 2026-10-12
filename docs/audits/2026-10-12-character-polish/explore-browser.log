@@ -1,0 +1,59 @@
+✔ keyboard exploration stays still and fits 320px (816.662329ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 390px (843.61799ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 1280px (834.624823ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✖ an invitation joins a live step, reaches the chosen detail, coalesces repeats, and respects live reduction (1434.228489ms)
+✔ keyboard Enter reaches and activates the resident without moving its world position (1164.918115ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (1021.963244ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (2933.964276ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.0229 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1118.849901ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.1175 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (1714.723194ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (909.14614ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1361.845126ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (1279.2036ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 641ms; lift sampled at 1397ms; landing at 1817ms
+✔ a second room gets its own furniture and chores, and the kitchen keeps its own (1177.687241ms)
+✔ the pill counts late chores in the other rooms (995.233559ms)
+✔ removing a room asks first, then archives its chores (1204.487173ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 14
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20014.847553
+
+✖ failing tests:
+
+test at scripts/browser/pet-explore.test.mjs:61:1
+✖ an invitation joins a live step, reaches the chosen detail, coalesces repeats, and respects live reduction (1434.228489ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 159.32000732421875
+  - 159.57000732421875
+        ^
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore.test.mjs:96:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 159.32000732421875,
+    expected: 159.57000732421875,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

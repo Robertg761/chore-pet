@@ -1,0 +1,9 @@
+{
+  "method": "First production browser stills, from initial Explore inside home-stage. Narrow screenshots exposed unreadably small room. Preserved full code freeze corresponds to original browser script/compiled production sources. Later roomBounds assertion reproduces38.37px room at320.",
+  "files": {
+    "explore-before-layout.diff": "6495e33476944284fd76052d19462e9d64f940ec9f20120614e611584b1c08ef",
+    "explore-320-before-layout.png": "e57d34af2b2aeec5c874bb58b71d04f2164204d3af8057cae650b65721a94aa9",
+    "explore-390-before-layout.png": "092c347787a2d9d48f95f38ed9291f4f783cd016ce530e44c20027779e0c1f00",
+    "explore-1280-before-layout.png": "4cdb8fac83dcb831037765ab0d0607c86e2af5456390bbce9a4772634c0ac415"
+  }
+}

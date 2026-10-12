@@ -1,0 +1,41 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetExplore.test.tsx src/pet/visits.test.ts src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetExplore.test.tsx (10 tests | 1 failed) 83ms
+   × starts collapsed, exposes named choices, and invites only the selected furnishing without scheduling work 40ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetExplore.test.tsx > starts collapsed, exposes named choices, and invites only the selected furnishing without scheduling work
+AssertionError: expected [ 'Potted plant', 'Teddy bear' ] to deeply equal [ 'Plant', 'Teddy bear' ]
+
+- Expected
++ Received
+
+  [
+-   "Plant",
++   "Potted plant",
+    "Teddy bear",
+  ]
+
+ ❯ src/pet/PetExplore.test.tsx:31:58
+     29|   const select = ui.container.querySelector('select')!
+     30|   expect(ui.container.querySelector(`label[for="${select.id}"]`)!.text…
+     31|   expect([...select.options].map(option => option.text)).toEqual(['Pla…
+       |                                                          ^
+     32|   act(() => { select.value = 'bear-id'; select.dispatchEvent(new Event…
+     33|   click(button(ui.container, 'Look together'))
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 88 passed (89)
+   Start at  16:53:35
+   Duration  3.46s (tests 56%, transform 22%, environment 16%, import 5%)
+
+    Isolate  3 workers spawned · ~247ms startup each (spawn + environment, per file)
+             at least ~494ms faster with isolate: false — reuses workers across files instead of one per file
+

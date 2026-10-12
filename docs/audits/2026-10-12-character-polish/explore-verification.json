@@ -1,0 +1,91 @@
+{
+  "baseCommit": "1a1cb5f",
+  "checks": [
+    {
+      "name": "focused",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/pet/PetExplore.test.tsx src/pet/visits.test.ts src/pet/PetIntegration.test.tsx src/pet/behaviour.test.ts src/App.navigation.test.tsx",
+      "log": "explore-focused-expanded.log",
+      "exitCode": 0,
+      "result": "147 pass,5files,4.97s; predates only App placement/CSS/browser refinements"
+    },
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "explore-unit.log",
+      "exitCode": 0,
+      "result": "2043 pass,92files,59.59s; final behavior/App placement, before CSS-only container wrap and browser additions"
+    },
+    {
+      "name": "build-final",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "explore-focus-build.log",
+      "exitCode": 0,
+      "result": "TypeScript/production pass after final scroll-margin rule; existing chunk-size advisory"
+    },
+    {
+      "name": "lint-final",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "explore-lint-focus-final.log",
+      "exitCode": 0,
+      "result": "zero warnings on final code and browser assertions"
+    },
+    {
+      "name": "browser-final",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium CHORE_EXPLORE_CAPTURE_DIR=docs/audits/2026-10-12-character-polish nice -n 10 node --test --test-concurrency=1 scripts/browser/pet-explore.test.mjs scripts/browser/pet-motion.test.mjs scripts/browser/rooms.test.mjs",
+      "log": "explore-browser-all-final.log",
+      "exitCode": 0,
+      "result": "17 pass,22.28s; final behavior/container wrapping, predates only scoped10px scroll-margin and focus-clipping assertion"
+    },
+    {
+      "name": "browser-focus-final",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium CHORE_EXPLORE_CAPTURE_DIR=docs/audits/2026-10-12-character-polish nice -n 10 node --test --test-concurrency=1 scripts/browser/pet-explore.test.mjs",
+      "log": "explore-browser-focus-final.log",
+      "exitCode": 0,
+      "result": "6pass,6.90s; five viewport keyboard/layout/name/focus-ring checks and one live-motion case; final pose join0.2253roomSVGunits,oneapplicationRAF"
+    }
+  ],
+  "sourceSha256": {
+    "src/App.tsx": "28501086c3f160dbe6cc516415889edc4890554b05a60aa6c95d5b63a350bd53",
+    "src/App.navigation.test.tsx": "4128af0094656eade3ef278f9cdfa6e6f2fcf570d9c34f6a6455d349b0cf9707",
+    "src/pet/LivingRoom.tsx": "0352e808f86a19b74c1044404ea214d2c5d0f2251a266dbbc62a20517a336b23",
+    "src/pet/PetIntegration.test.tsx": "f1c9c6c56af9ea67dac9c595863b57243707f699513c48ebd1fe0e6088d3fbe8",
+    "src/pet/behaviour.ts": "abfaebf51a64be14f10c261735f462da28f7e0f487403de4081e27939c8e293e",
+    "src/pet/visits.test.ts": "54e0730e2f510bdd00f26e03b15d3cd312fba21c78fcee7e29832b919cbee1e0",
+    "src/pet/PetExplore.tsx": "8c7495cac3862146c8b50a37640d2f22214c44fd388a4fa8529cb7a5353c40ba",
+    "src/pet/PetExplore.css": "4e0bfaed8db83bdb5f37ef2404617fc633454dbd30ca64d1944d103f9f3a7567",
+    "src/pet/PetExplore.test.tsx": "8a1d177ffa25d3545de0153ab1d39ede85a7f9e20657cfc42ebfd8645de5b05b",
+    "scripts/browser/pet-explore.test.mjs": "38b862c09f52939f819d4ccbc4abda0f9392ab79bcb9c55a4abd86441f6678bd"
+  },
+  "patchSha256": "ad5b6321dbacf7f234be142f7efc7fe31f5f9de6720e2841c0bc6d956415139a",
+  "captures": {
+    "explore-320.png": "6e0a5e989f789f028c99b7a056cee6ba5cd488661a5f4e362a410bffb0041fbd",
+    "explore-390.png": "399348600de1311f77b8e6265c68082342f0e1f771f7128f020b3b2f39937110",
+    "explore-1280.png": "c17e8c5c355fd5cdcda0abffc6f8729256331196f27c958054ab18fc729dfc68",
+    "explore-640.png": "67388d1e621eb6c982728cb6c3573f027a05e69bf8ad753798a40e9e110caa86",
+    "explore-844.png": "3d4a541bc307b4d9a7ec2d586592c0a3aee6064a6bf3f8b17435ebddf83c7bb4",
+    "explore-640-before-focus.png": "cff9f0c6e454a3f3cc50e57eea03bf3ebca4304563784a66edc95e6c2ea6bf74"
+  },
+  "redEvidence": [
+    "explore-core-red.log:11 missing-feature failures.",
+    "explore-integration-red.log:3 missing-control failures,64existing pass.",
+    "explore-coalesced-red.log:1missing audible observation for already-running ambient interaction,67pass.",
+    "explore-app-red.log:missing Explore wiring,4existing pass.",
+    "explore-ui-red.log:missing component module.",
+    "explore-room-layout-red.log:real room shrink to38.37px on320phone.",
+    "explore-landscape-red.log:both narrow landscape selectors fail required width.",
+    "explore-focus-red.log:640px focused Look outline clips6px against actual scroll ancestor; scoped scroll-margin fixes it in explore-focus-green.log(1pass1.30s,exit0)."
+  ],
+  "history": [
+    "explore-focused.log:one fixture expects Plant instead of registered Potted plant; corrected in focused-final/expanded.",
+    "explore-browser.log:14pass,1prior-rAF-vs-input exact-coordinate failure. Valid subframe travel is now bounded by measured time and independent documented step speed; exact same-time three-species core pose checks retained.",
+    "explore-browser-layout-final.log:motion/desktop pass;2phone failures used arbitrary220px minimum above established198.54px baseline. Final check uses settled closed/open invariance plus180px portrait/100px short landscape floor.",
+    "explore-browser-final.log:four cases pass before container-width refinement. Prior three full-page captures preserved as before-wrap; final captures use actual viewport framing.",
+    "explore-before-layout.json preserves original freeze and3stills that exposed real room shrink."
+  ],
+  "limitations": [
+    "Shared existing clock; one application rAF in active-motion production case. Reduced idle clock optimization is a future batch.",
+    "Screen-reader text delivery is covered through live-region DOM semantics and native keyboard checks, not a human AT session.",
+    "Independent review certifies final frozen source only; root records process exits separately.",
+    "Human temporal playback remains open."
+  ]
+}

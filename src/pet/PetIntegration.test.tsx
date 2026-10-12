@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, Profiler, StrictMode } from 'react'
+import { act, createRef, Profiler, StrictMode } from 'react'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import * as petLines from '../content/petLines'
 import { KIND_LINES, MOOD_LINES, OBJECT_LINES } from '../content/petLines'
@@ -7,7 +7,7 @@ import type { ChoreStatus } from '../domain/schedule'
 import type { Chore, Pet, PlacedObject } from '../domain/types'
 import { homeLayout } from '../room/homeLayout'
 import { render } from '../test/react'
-import { LivingRoom, type LivingRoomProps } from './LivingRoom'
+import { LivingRoom, type LivingRoomControl, type LivingRoomProps } from './LivingRoom'
 import { HomeTraveler } from './HomeTraveler'
 import type { RoomWaypoint } from './homeTravel'
 import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
@@ -44,7 +44,7 @@ beforeEach(() => {
   vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
   vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
 })
-afterEach(() => { cleanups.splice(0).forEach((fn) => fn()); vi.restoreAllMocks(); vi.unstubAllGlobals() })
+afterEach(() => { cleanups.splice(0).forEach((fn) => fn()); vi.restoreAllMocks(); vi.useRealTimers(); vi.unstubAllGlobals() })
 function mount(content: Parameters<typeof render>[0]) { const ui = render(content); cleanups.push(ui.unmount); return ui }
 function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach((fn) => fn(at))) }
 function preference(value: boolean) { act(() => { Object.defineProperty(media, 'matches', { value, configurable: true }); media.dispatchEvent(new Event('change')) }) }
@@ -61,6 +61,120 @@ function pointerAt(node: Element, x: number, y: number, pointerType = 'mouse') {
 function gaze(container: Element) {
   return container.querySelector('[data-eye-gaze]')!.getAttribute('transform')
 }
+
+it('announces an invited observation once at arrival using the existing single clock', () => {
+  const control = createRef<LivingRoomControl>()
+  const teddy: PlacedObject = { ...plant, id: 'bear', catalogId: 'teddy', tileX: 5, tileY: 4 }
+  const ui = mount(<LivingRoom {...props} mood="happy" objects={[plant, teddy]} control={control} />)
+  const original = art(ui.container)
+  let result: string | undefined
+  act(() => { result = control.current?.lookAt('bear') })
+  expect(result).toBe('started')
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
+  frame(840)
+  act(() => { result = control.current?.lookAt('bear') })
+  expect(result).toBe('started')
+  frame(2100)
+  const heard = ui.container.querySelector('[aria-live]')!.textContent
+  expect(petLines.CALM_OBJECT_LINES.teddy).toContain(heard)
+  frame(2460); frame(2700)
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
+  expect(art(ui.container)).toBe(original)
+  expect(frames.size).toBe(1)
+  visibility(true)
+  expect(frames.size).toBe(0)
+  visibility(false)
+  expect(frames.size).toBe(1)
+})
+
+it('answers an invitation from its current position in reduced motion', () => {
+  Object.defineProperty(media, 'matches', { value: true, configurable: true })
+  const control = createRef<LivingRoomControl>()
+  const ui = mount(<LivingRoom {...props} mood="happy" objects={[plant]} control={control} />)
+  const resident = ui.container.querySelector('.room-pet')!
+  const before = resident.getAttribute('transform')
+  let result: string | undefined
+  act(() => { result = control.current?.lookAt('plant') })
+  expect(result).toBe('still')
+  expect(petLines.CALM_OBJECT_LINES.plant).toContain(ui.container.querySelector('[aria-live]')!.textContent)
+  frame(2000); frame(5000)
+  expect(resident.getAttribute('transform')).toBe(before)
+  expect(Number(ui.container.querySelector('[data-character-accents]')!.getAttribute('opacity'))).toBe(0)
+  expect(frames.size).toBe(1)
+})
+
+it('makes an already-running ambient interaction audible without restarting it', () => {
+  const control = createRef<LivingRoomControl>()
+  const ui = mount(<LivingRoom {...props} mood="happy" objects={[plant]} control={control} />)
+  frame(1500)
+  const observation = ui.container.querySelector('.pet-bubble')!.textContent
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
+  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(observation)
+  frame(1860); frame(1980)
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(observation)
+  expect(frames.size).toBe(1)
+})
+
+it('keeps player dialogue priority and declines resting or missing-object invitations', () => {
+  const control = createRef<LivingRoomControl>()
+  const ui = mount(<LivingRoom {...props} mood="happy" objects={[plant]} control={control} />)
+  click(ui.container.querySelector('.room-pet')!)
+  const heard = ui.container.querySelector('[aria-live]')!.textContent
+  let result: string | undefined
+  act(() => { result = control.current?.lookAt('plant') })
+  expect(result).toBe('busy')
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
+  frame(1300)
+  act(() => { result = control.current?.lookAt('missing') })
+  expect(result).toBe('unreachable')
+  ui.rerender(<LivingRoom {...props} objects={[plant]} control={control} away />)
+  act(() => { result = control.current?.lookAt('plant') })
+  expect(result).toBe('resting')
+  ui.rerender(<LivingRoom {...props} objects={[plant]} control={control} mood="sick" />)
+  act(() => { result = control.current?.lookAt('plant') })
+  expect(result).toBe('resting')
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
+})
+
+it.each(['tap', 'cheer'] as const)('discards a pending invitation when a player %s interrupts it', cause => {
+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+  const control = createRef<LivingRoomControl>()
+  const teddy: PlacedObject = { ...plant, id: 'bear', catalogId: 'teddy', tileX: 5, tileY: 4 }
+  const scene = (celebrate?: LivingRoomProps['celebrate']) => <LivingRoom {...props} mood="happy" objects={[plant, teddy]} control={control} celebrate={celebrate} />
+  const ui = mount(scene())
+  act(() => { expect(control.current!.lookAt('bear')).toBe('started') })
+  frame(420)
+  if (cause === 'tap') click(ui.container.querySelector('.room-pet')!)
+  else ui.rerender(scene({ key: 12, choreName: 'Water the plant' }))
+  expect(ui.container.querySelector('[aria-live]')!.textContent).not.toBe('')
+  act(() => vi.advanceTimersByTime(3600))
+  frame(4000); frame(4420); frame(10000); frame(20000)
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
+  expect(frames.size).toBe(1)
+})
+
+it('discards removed targets and settles an invited route when reduced motion changes live', () => {
+  const control = createRef<LivingRoomControl>()
+  const teddy: PlacedObject = { ...plant, id: 'bear', catalogId: 'teddy', tileX: 5, tileY: 4 }
+  const scene = (objects: PlacedObject[]) => <LivingRoom {...props} mood="happy" objects={objects} control={control} />
+  const ui = mount(scene([plant, teddy]))
+  act(() => { expect(control.current!.lookAt('bear')).toBe('started') })
+  frame(420)
+  ui.rerender(scene([plant]))
+  frame(500); frame(3000)
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
+  ui.rerender(scene([plant, teddy]))
+  act(() => { expect(control.current!.lookAt('bear')).toBe('started') })
+  frame(3200)
+  preference(true)
+  const position = ui.container.querySelector('.room-pet')!.getAttribute('transform')
+  frame(3400)
+  expect(ui.container.querySelector('.room-pet')!.getAttribute('transform')).toBe(position)
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
+  act(() => { expect(control.current!.lookAt('bear')).toBe('still') })
+  expect(petLines.CALM_OBJECT_LINES.teddy).toContain(ui.container.querySelector('[aria-live]')!.textContent)
+})
 
 it('eases idle eyes toward a pointer, releases them smoothly and keeps one clock without room redraws', () => {
   const ui = mount(<LivingRoom {...props} mood="happy" />)

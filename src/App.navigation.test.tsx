@@ -85,3 +85,23 @@ it('passes current fixture stages into routing and updates them after a schedule
   expect(watched.mock.calls.at(-1)?.[8]).toBeDefined()
   expect(watched.mock.calls.at(-1)?.[8]?.[dishwasher.id] ?? 'clean').toBe('clean')
 })
+
+it('invites the resident to explore without changing chores or saved pet data', () => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date('2026-10-07T12:00:00'))
+  vi.spyOn(performance, 'now').mockReturnValue(0)
+  vi.stubGlobal('requestAnimationFrame', () => 1)
+  vi.stubGlobal('cancelAnimationFrame', () => {})
+  recovered()
+  const ui = render(<App />); cleanups.push(ui.unmount)
+  const resident = ui.container.querySelector('.room-pet')
+  const toggle = [...ui.container.querySelectorAll('button')].find(button => button.textContent === 'Explore together')
+  expect(toggle).toBeDefined()
+  click(toggle!)
+  const select = ui.container.querySelector<HTMLSelectElement>('.pet-explore select')!
+  expect(select.options.length).toBe(Object.keys(fixture.state.snapshot.tables.placed_objects).length)
+  click([...ui.container.querySelectorAll('button')].find(button => button.textContent === 'Look together')!)
+  expect(ui.container.querySelector('.pet-explore [role="status"]')!.textContent).toContain('You invited Mochi')
+  expect(ui.container.querySelector('.room-pet')).toBe(resident)
+  expect(fixture.apply).not.toHaveBeenCalled()
+})

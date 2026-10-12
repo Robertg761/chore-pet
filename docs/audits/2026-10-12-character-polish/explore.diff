@@ -1,0 +1,858 @@
+diff --git c/src/App.navigation.test.tsx w/src/App.navigation.test.tsx
+index 4f8677d..b94926b 100644
+--- c/src/App.navigation.test.tsx
++++ w/src/App.navigation.test.tsx
+@@ -85,3 +85,23 @@ it('passes current fixture stages into routing and updates them after a schedule
+   expect(watched.mock.calls.at(-1)?.[8]).toBeDefined()
+   expect(watched.mock.calls.at(-1)?.[8]?.[dishwasher.id] ?? 'clean').toBe('clean')
+ })
++
++it('invites the resident to explore without changing chores or saved pet data', () => {
++  vi.useFakeTimers()
++  vi.setSystemTime(new Date('2026-10-07T12:00:00'))
++  vi.spyOn(performance, 'now').mockReturnValue(0)
++  vi.stubGlobal('requestAnimationFrame', () => 1)
++  vi.stubGlobal('cancelAnimationFrame', () => {})
++  recovered()
++  const ui = render(<App />); cleanups.push(ui.unmount)
++  const resident = ui.container.querySelector('.room-pet')
++  const toggle = [...ui.container.querySelectorAll('button')].find(button => button.textContent === 'Explore together')
++  expect(toggle).toBeDefined()
++  click(toggle!)
++  const select = ui.container.querySelector<HTMLSelectElement>('.pet-explore select')!
++  expect(select.options.length).toBe(Object.keys(fixture.state.snapshot.tables.placed_objects).length)
++  click([...ui.container.querySelectorAll('button')].find(button => button.textContent === 'Look together')!)
++  expect(ui.container.querySelector('.pet-explore [role="status"]')!.textContent).toContain('You invited Mochi')
++  expect(ui.container.querySelector('.room-pet')).toBe(resident)
++  expect(fixture.apply).not.toHaveBeenCalled()
++})
+diff --git c/src/App.tsx w/src/App.tsx
+index 6e41e69..5fe3d56 100644
+--- c/src/App.tsx
++++ w/src/App.tsx
+@@ -53,7 +53,8 @@ import { orderRooms, readRoomOrder, writeRoomOrder, readFocusedRoomId, resolveFo
+ import { Sparkle } from './effects'
+ import { checkPlacement, turned } from './room/grid'
+ import { lookup } from './room/placement'
+-import { LivingRoom, type Celebration } from './pet/LivingRoom'
++import { LivingRoom, type Celebration, type LivingRoomControl } from './pet/LivingRoom'
++import { PetExplore } from './pet/PetExplore'
+ import { CatalogTray } from './screens/CatalogTray'
+ import { CharacterCreator } from './screens/CharacterCreator'
+ import { ChoreEditor } from './screens/ChoreEditor'
+@@ -186,6 +187,7 @@ export default function App() {
+     return { condition, neglect, stages }
+   }, [data.chores, data.completions, today, data.home?.vacations])
+   const travel = useHomePet(data.home?.id, focusedRoomId, layout, connections, data.objects, roomNames(rooms), data.pet?.name ?? 'Your pet', view.name, stages)
++  const residentControl = useRef<LivingRoomControl | null>(null)
+   /** Change screen with a short slide: forward when going deeper, back when returning. */
+   const setView = (next: View) => {
+     if (next.name === view.name) { setViewNow(next); return }
+@@ -741,6 +743,7 @@ export default function App() {
+       away={away}
+       initialTile={travel.position}
+       onPosition={(tile) => travel.onPosition({ roomId: resident.id, ...tile })}
++      control={residentControl}
+       chores={chores.filter((chore) => residentObjects.some((object) => object.id === chore.objectId))}
+       statuses={condition.statuses}
+       celebrate={resident.id === room?.id ? celebrate : null}
+@@ -978,6 +981,10 @@ export default function App() {
+       </div>
+ 
+       <div className="home-chores">
++        {room && roomObjects.length > 0 && <PetExplore key={`${home.id}:${room.id}`} objects={roomObjects} petName={pet.name}
++          blocked={away ? 'away' : condition.mood === 'sick' ? 'sick' : travel.journey || resident?.id !== room.id ? 'travel' : undefined}
++          onLook={objectId => !travel.journey && resident?.id === room.id
++            ? residentControl.current?.lookAt(objectId) ?? 'unavailable' : 'unavailable'} />}
+         {showFirstDoneHint({
+           onboarded: readFlag(onboardedKey(home.id)),
+           hintDone: readFlag(hintKey(home.id)),
+diff --git c/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index 480c61b..a97c906 100644
+--- c/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -1,4 +1,4 @@
+-import { useCallback, useContext, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react'
++import { useCallback, useContext, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type Ref, type RefObject } from 'react'
+ import { createPortal } from 'react-dom'
+ import { catalogEntry } from '../catalog/objects'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+@@ -14,7 +14,7 @@ import { SceneContext } from '../room/sceneContext'
+ import { petObstacles } from './obstacles'
+ import { PET_STROKE_SCALE, ROOM_WIDTH, petTransform } from '../room/shell/geometry'
+ import { play } from '../audio/sfx'
+-import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sortTile, step, tap, type PetState, type Tile, type World } from './behaviour'
++import { blendProgress, initialPet, needsRender, positionAt, react, routeAt, sortTile, step, tap, visitObject, type PetState, type Tile, type World } from './behaviour'
+ import { motionFor } from './activityMotion'
+ import { interactionTargets } from './interactions'
+ import { usePetMotion } from './usePetMotion'
+@@ -58,6 +58,23 @@ export interface LivingRoomProps {
+   onPosition?: (tile: Tile) => void
+   /** Effects in room coordinates, drawn over everything (e.g. a sparkle on the object just cleaned). */
+   overlay?: ReactNode
++  /** Optional player invitation, sharing this resident's clock and state. */
++  control?: Ref<LivingRoomControl>
++}
++
++export type VisitResult = 'started' | 'still' | 'busy' | 'resting' | 'unreachable' | 'unavailable'
++export interface LivingRoomControl { lookAt: (objectId: string) => VisitResult }
++
++function objectDialogue({ objects, stages, neglect, chores }: Pick<LivingRoomProps, 'objects' | 'stages' | 'neglect' | 'chores'>, objectId: string, seed: number): string | null {
++  const target = objects.find(object => object.id === objectId)
++  const entry = target && catalogEntry(target.catalogId)
++  if (!target || !entry) return null
++  const chore = chores.find(item => item.objectId === target.id)
++  const level = neglect?.[target.id] ?? 0
++  const stage = Object.prototype.hasOwnProperty.call(stages, target.id) ? stages[target.id] ?? 'clean' : 'clean'
++  return level > 0 || stage !== 'clean'
++    ? messLine(entry.mess, level, seed) || objectLine(entry.id, chore?.name ?? '', seed) || null
++    : calmObjectLine(entry.id, seed) || pickLine(MOOD_LINES.content, seed)
+ }
+ 
+ const LINE_MS = 3600
+@@ -132,7 +149,7 @@ interface Said {
+   heard: boolean
+ }
+ 
+-export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, chores, statuses, celebrate, onCelebrated, initialTile, onPosition, overlay }: LivingRoomProps) {
++export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, chores, statuses, celebrate, onCelebrated, initialTile, onPosition, overlay, control }: LivingRoomProps) {
+   const scene = useContext(SceneContext)
+   const solid = useMemo(() => petObstacles(objects, stages), [objects, stages])
+   const messiest = messiestObject(chores, statuses)
+@@ -158,6 +175,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+   const live = useRef<Shown>(shown)
+   const motion = useRef<MotionControl | null>(null)
+   const attention = useRef<PlayerAttention>({ pointer: null, focused: false, reset: false })
++  const invitation = useRef<{ objectId: string; announced: boolean } | null>(null)
+   const petNode = useRef<SVGGElement>(null)
+   const bubbleNode = useRef<HTMLParagraphElement>(null)
+   const reportPosition = useRef(onPosition)
+@@ -204,6 +222,36 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+     advance(advanceState(live.current.state, world, now, reduced), now)
+   }, [advance, world])
+ 
++  useImperativeHandle(control, () => ({ lookAt: objectId => {
++    if (away || mood === 'sick') return 'resting'
++    if (!objects.some(object => object.id === objectId && catalogEntry(object.catalogId))) return 'unreachable'
++    const now = performance.now(), reduced = motion.current?.reduced ?? false
++    const current = advanceState(live.current.state, world, now, reduced)
++    if (current.activity.kind === 'react' && now < current.activity.until) return 'busy'
++    if (reduced) {
++      invitation.current = null
++      advance(current, now)
++      const text = objectDialogue({ objects, stages, neglect, chores }, objectId, current.beat)
++      if (text) setSaid({ text, heard: true })
++      return 'still'
++    }
++    const next = visitObject(current, world, objectId, now)
++    if (!next) return 'unreachable'
++    if (next !== current || invitation.current?.objectId !== objectId) {
++      invitation.current = { objectId, announced: false }
++      attention.current.pointer = null
++      setSaid(null)
++      if (next.activity.kind === 'interact') {
++        invitation.current.announced = true
++        const seed = next === current ? live.current.interactionBeat ?? next.beat : next.beat
++        const text = objectDialogue({ objects, stages, neglect, chores }, objectId, seed)
++        if (text) setSaid({ text, heard: true })
++      }
++    }
++    advance(next, now)
++    return 'started'
++  } }))
++
+   // A line stays up for a few seconds.
+   useEffect(() => {
+     if (!said) return
+@@ -216,6 +264,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+   useEffect(() => {
+     if (!celebrate || celebrate.key === celebrated.current) return
+     celebrated.current = celebrate.key
++    invitation.current = null
+     const now = performance.now()
+     const current = advanceState(live.current.state, world, now, motion.current?.reduced ?? false)
+     advance(react(current, now, celebrate.big ? 'celebrate-big' : 'celebrate'), now)
+@@ -224,6 +273,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+   }, [celebrate, advance, onCelebrated, world])
+ 
+   function onTap() {
++    invitation.current = null
+     play('chirp')
+     const t = performance.now()
+     const current = advanceState(live.current.state, world, t, motion.current?.reduced ?? false)
+@@ -240,18 +290,8 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+   let line: string | null = null
+   if (said) line = said.text
+   else if (a.kind === 'interact') {
+-    const target = objects.find((object) => object.id === a.target.objectId)
+-    const entry = target && catalogEntry(target.catalogId)
+-    const chore = target && chores.find((item) => item.objectId === target.id)
+     const seed = shown.interactionBeat ?? state.beat
+-    if (entry && target) {
+-      const level = neglect?.[target.id] ?? 0
+-      const stage = Object.prototype.hasOwnProperty.call(stages, target.id) ? stages[target.id] ?? 'clean' : 'clean'
+-      const messy = level > 0 || stage !== 'clean'
+-      // Healthy objects invite a calm observation, independent of other overdue chores.
+-      line = messy ? messLine(entry.mess, level, seed) || objectLine(entry.id, chore?.name ?? '', seed) || null
+-        : calmObjectLine(entry.id, seed) || pickLine(MOOD_LINES.content, seed)
+-    }
++    line = objectDialogue({ objects, stages, neglect, chores }, a.target.objectId, seed)
+   } else if (a.kind === 'look' && messiest && messObject && messEntry) {
+     // A smelly or dusty thing gets a line about the smell or dust every other look; otherwise the object's own line.
+     const level = neglect?.[messObject.id] ?? 0
+@@ -261,6 +301,21 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+     line = pickLine(caughtUp && state.beat % 8 === 0 ? CAUGHT_UP_LINES : MOOD_LINES[mood], state.beat)
+   }
+ 
++  // An explicit invitation makes one observation audible at arrival. Automatic
++  // exploration stays quiet; interruptions discard the pending invitation.
++  useEffect(() => {
++    const requested = invitation.current
++    if (!requested) return
++    const { objectId } = requested
++    if (a.kind === 'interact' && a.target.objectId === objectId) {
++      if (!requested.announced) {
++        requested.announced = true
++        const text = objectDialogue({ objects, stages, neglect, chores }, objectId, shown.interactionBeat ?? state.beat)
++        if (text) setSaid({ text, heard: true })
++      }
++    } else if (a.kind !== 'walk' || a.target?.objectId !== objectId) invitation.current = null
++  }, [a, objects, stages, neglect, chores, shown.interactionBeat, state.beat])
++
+   // Measure the bubble once its words are in, so it can find a spot clear of the furniture before it is seen.
+   useLayoutEffect(() => {
+     const node = bubbleNode.current
+diff --git c/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index 28e6803..cf61cc2 100644
+--- c/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -1,5 +1,5 @@
+ // @vitest-environment jsdom
+-import { act, Profiler, StrictMode } from 'react'
++import { act, createRef, Profiler, StrictMode } from 'react'
+ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+ import * as petLines from '../content/petLines'
+ import { KIND_LINES, MOOD_LINES, OBJECT_LINES } from '../content/petLines'
+@@ -7,7 +7,7 @@ import type { ChoreStatus } from '../domain/schedule'
+ import type { Chore, Pet, PlacedObject } from '../domain/types'
+ import { homeLayout } from '../room/homeLayout'
+ import { render } from '../test/react'
+-import { LivingRoom, type LivingRoomProps } from './LivingRoom'
++import { LivingRoom, type LivingRoomControl, type LivingRoomProps } from './LivingRoom'
+ import { HomeTraveler } from './HomeTraveler'
+ import type { RoomWaypoint } from './homeTravel'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+@@ -44,7 +44,7 @@ beforeEach(() => {
+   vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
+   vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
+ })
+-afterEach(() => { cleanups.splice(0).forEach((fn) => fn()); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++afterEach(() => { cleanups.splice(0).forEach((fn) => fn()); vi.restoreAllMocks(); vi.useRealTimers(); vi.unstubAllGlobals() })
+ function mount(content: Parameters<typeof render>[0]) { const ui = render(content); cleanups.push(ui.unmount); return ui }
+ function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach((fn) => fn(at))) }
+ function preference(value: boolean) { act(() => { Object.defineProperty(media, 'matches', { value, configurable: true }); media.dispatchEvent(new Event('change')) }) }
+@@ -62,6 +62,120 @@ function gaze(container: Element) {
+   return container.querySelector('[data-eye-gaze]')!.getAttribute('transform')
+ }
+ 
++it('announces an invited observation once at arrival using the existing single clock', () => {
++  const control = createRef<LivingRoomControl>()
++  const teddy: PlacedObject = { ...plant, id: 'bear', catalogId: 'teddy', tileX: 5, tileY: 4 }
++  const ui = mount(<LivingRoom {...props} mood="happy" objects={[plant, teddy]} control={control} />)
++  const original = art(ui.container)
++  let result: string | undefined
++  act(() => { result = control.current?.lookAt('bear') })
++  expect(result).toBe('started')
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
++  frame(840)
++  act(() => { result = control.current?.lookAt('bear') })
++  expect(result).toBe('started')
++  frame(2100)
++  const heard = ui.container.querySelector('[aria-live]')!.textContent
++  expect(petLines.CALM_OBJECT_LINES.teddy).toContain(heard)
++  frame(2460); frame(2700)
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
++  expect(art(ui.container)).toBe(original)
++  expect(frames.size).toBe(1)
++  visibility(true)
++  expect(frames.size).toBe(0)
++  visibility(false)
++  expect(frames.size).toBe(1)
++})
++
++it('answers an invitation from its current position in reduced motion', () => {
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" objects={[plant]} control={control} />)
++  const resident = ui.container.querySelector('.room-pet')!
++  const before = resident.getAttribute('transform')
++  let result: string | undefined
++  act(() => { result = control.current?.lookAt('plant') })
++  expect(result).toBe('still')
++  expect(petLines.CALM_OBJECT_LINES.plant).toContain(ui.container.querySelector('[aria-live]')!.textContent)
++  frame(2000); frame(5000)
++  expect(resident.getAttribute('transform')).toBe(before)
++  expect(Number(ui.container.querySelector('[data-character-accents]')!.getAttribute('opacity'))).toBe(0)
++  expect(frames.size).toBe(1)
++})
++
++it('makes an already-running ambient interaction audible without restarting it', () => {
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" objects={[plant]} control={control} />)
++  frame(1500)
++  const observation = ui.container.querySelector('.pet-bubble')!.textContent
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
++  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(observation)
++  frame(1860); frame(1980)
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(observation)
++  expect(frames.size).toBe(1)
++})
++
++it('keeps player dialogue priority and declines resting or missing-object invitations', () => {
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" objects={[plant]} control={control} />)
++  click(ui.container.querySelector('.room-pet')!)
++  const heard = ui.container.querySelector('[aria-live]')!.textContent
++  let result: string | undefined
++  act(() => { result = control.current?.lookAt('plant') })
++  expect(result).toBe('busy')
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
++  frame(1300)
++  act(() => { result = control.current?.lookAt('missing') })
++  expect(result).toBe('unreachable')
++  ui.rerender(<LivingRoom {...props} objects={[plant]} control={control} away />)
++  act(() => { result = control.current?.lookAt('plant') })
++  expect(result).toBe('resting')
++  ui.rerender(<LivingRoom {...props} objects={[plant]} control={control} mood="sick" />)
++  act(() => { result = control.current?.lookAt('plant') })
++  expect(result).toBe('resting')
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
++})
++
++it.each(['tap', 'cheer'] as const)('discards a pending invitation when a player %s interrupts it', cause => {
++  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
++  const control = createRef<LivingRoomControl>()
++  const teddy: PlacedObject = { ...plant, id: 'bear', catalogId: 'teddy', tileX: 5, tileY: 4 }
++  const scene = (celebrate?: LivingRoomProps['celebrate']) => <LivingRoom {...props} mood="happy" objects={[plant, teddy]} control={control} celebrate={celebrate} />
++  const ui = mount(scene())
++  act(() => { expect(control.current!.lookAt('bear')).toBe('started') })
++  frame(420)
++  if (cause === 'tap') click(ui.container.querySelector('.room-pet')!)
++  else ui.rerender(scene({ key: 12, choreName: 'Water the plant' }))
++  expect(ui.container.querySelector('[aria-live]')!.textContent).not.toBe('')
++  act(() => vi.advanceTimersByTime(3600))
++  frame(4000); frame(4420); frame(10000); frame(20000)
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
++  expect(frames.size).toBe(1)
++})
++
++it('discards removed targets and settles an invited route when reduced motion changes live', () => {
++  const control = createRef<LivingRoomControl>()
++  const teddy: PlacedObject = { ...plant, id: 'bear', catalogId: 'teddy', tileX: 5, tileY: 4 }
++  const scene = (objects: PlacedObject[]) => <LivingRoom {...props} mood="happy" objects={objects} control={control} />
++  const ui = mount(scene([plant, teddy]))
++  act(() => { expect(control.current!.lookAt('bear')).toBe('started') })
++  frame(420)
++  ui.rerender(scene([plant]))
++  frame(500); frame(3000)
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
++  ui.rerender(scene([plant, teddy]))
++  act(() => { expect(control.current!.lookAt('bear')).toBe('started') })
++  frame(3200)
++  preference(true)
++  const position = ui.container.querySelector('.room-pet')!.getAttribute('transform')
++  frame(3400)
++  expect(ui.container.querySelector('.room-pet')!.getAttribute('transform')).toBe(position)
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe('')
++  act(() => { expect(control.current!.lookAt('bear')).toBe('still') })
++  expect(petLines.CALM_OBJECT_LINES.teddy).toContain(ui.container.querySelector('[aria-live]')!.textContent)
++})
++
+ it('eases idle eyes toward a pointer, releases them smoothly and keeps one clock without room redraws', () => {
+   const ui = mount(<LivingRoom {...props} mood="happy" />)
+   const resident = ui.container.querySelector('.room-pet')!
+diff --git c/src/pet/behaviour.ts w/src/pet/behaviour.ts
+index 078b9b0..3990b5a 100644
+--- c/src/pet/behaviour.ts
++++ w/src/pet/behaviour.ts
+@@ -320,6 +320,35 @@ function blockedRoute(state: PetState, world: World, now: number): {
+   }
+   return null
+ }
++
++/** A player invitation uses the existing approach and gesture, never a teleport. */
++export function visitObject(state: PetState, world: World, objectId: string, now: number): PetState | null {
++  if (!Number.isFinite(now) || world.away || world.mood === 'sick'
++    || state.activity.kind === 'sleep' || state.activity.kind === 'sick'
++    || (state.activity.kind === 'react' && now < state.activity.until)) return null
++  const targets = world.interactions?.filter(target => target.objectId === objectId) ?? []
++  if (!targets.length) return null
++  const blocked = blockedRoute(state, world, now)
++  const a = state.activity
++  if (!blocked && (a.kind === 'walk' || a.kind === 'interact') && a.target
++    && a.target.objectId === objectId && targetValid(a.target, world)) return state
++  const safe = blocked ? { ...cancel(state, now, () => 0.99, blocked.walkAt), ...blocked.frozen } : state
++  const frozen = freeze(safe, now)
++  const position = frozen.position ?? frozen.tile
++  // A fractional interruption may reconnect only through its known segment.
++  const endpoints = key(position) === key(frozen.tile) ? [frozen.tile]
++    : frozen.resume ? [frozen.resume.to, frozen.resume.from] : [frozen.tile]
++  for (const endpoint of endpoints) {
++    if (!Number.isInteger(endpoint.tx) || !Number.isInteger(endpoint.ty) || !inRoom(endpoint) || !world.free(endpoint)
++      || (endpoint.tx !== position.tx && endpoint.ty !== position.ty)) continue
++    const selected = chooseInteraction(endpoint, targets, world.free, 0)
++    if (!selected) continue
++    const path = key(position) === key(endpoint) ? selected.path : [endpoint, ...selected.path]
++    return path.length ? startWalk(frozen, path, now, 'idle', selected.target) : orient(frozen, selected.target, now)
++  }
++  return null
++}
++
+ function hasFreshTap(state: PetState, now: number): boolean {
+   return !!state.pendingTap && state.activity.kind === 'react' && now <= state.activity.until + TIMING.stepMs
+ }
+diff --git 1/src/pet/visits.test.ts 2/src/pet/visits.test.ts
+new file mode 100644
+index 0000000..ec52668
+--- /dev/null
++++ 2/src/pet/visits.test.ts
+@@ -0,0 +1,96 @@
++import { expect, it } from 'vitest'
++import { ACTION_MS } from '../character/motion'
++import type { MessStage, PlacedObject } from '../domain/types'
++import { overlaps } from '../room/grid'
++import { motionFor } from './activityMotion'
++import { initialPet, positionAt, react, step, TIMING, visitObject, type PetState, type World } from './behaviour'
++import { interactionTargets } from './interactions'
++import { petObstacles } from './obstacles'
++
++const plant: PlacedObject = { id: 'leaves', roomId: 'a', catalogId: 'plant', tileX: 2, tileY: 2, rotation: 0 }
++const teddy: PlacedObject = { id: 'bear', roomId: 'a', catalogId: 'teddy', tileX: 5, tileY: 4, rotation: 0 }
++function world(objects = [plant, teddy], stages: Record<string, MessStage> = {}): World {
++  const solids = petObstacles(objects, stages)
++  const free = (tile: { tx: number; ty: number }) => !solids.some(solid => overlaps(solid, { ...tile, w: 1, d: 1 }))
++  return { free, mood: 'happy', away: false, mess: null, interactions: interactionTargets(objects, free, stages) }
++}
++const state = () => initialPet({ tx: 6, ty: 6 }, 0)
++
++it('starts the named object interaction in place when already beside it', () => {
++  const before = initialPet({ tx: 3, ty: 2 }, 0)
++  const next = visitObject(before, world(), 'leaves', 100)!
++  expect(next.activity).toMatchObject({ kind: 'interact', phase: 'orient', target: { objectId: 'leaves', action: 'wave', contact: false } })
++  expect(positionAt(next, 100)).toEqual(before.tile)
++  expect(step(next, world(), 100 + ACTION_MS.turn, () => 0.99).activity).toMatchObject({ kind: 'interact', phase: 'action' })
++  expect(before.activity.kind).toBe('idle')
++})
++
++it('routes only to the requested furnishing using its existing preferred clear approach', () => {
++  const w = world(), next = visitObject(state(), w, 'bear', 100)!
++  expect(next.activity).toMatchObject({ kind: 'walk', target: { objectId: 'bear', tile: { tx: 6, ty: 4 }, contact: false } })
++  if (next.activity.kind !== 'walk') throw new Error('Expected a route')
++  expect(next.activity.path).toEqual([{ tx: 6, ty: 5 }, { tx: 6, ty: 4 }])
++  expect(next.activity.path.every(w.free)).toBe(true)
++  const arrived = step(next, w, 100 + 2 * TIMING.stepMs, () => 0.99)
++  expect(arrived.activity).toMatchObject({ kind: 'interact', phase: 'orient', target: { objectId: 'bear' } })
++})
++
++it.each(['missing', 'constructor', '__proto__'])('rejects an unknown object id %s', id => {
++  expect(visitObject(state(), world(), id, 100)).toBeNull()
++})
++
++it('does not cross a sealed lane to reach a selected object', () => {
++  const w = world()
++  w.free = tile => tile.tx !== 1
++  expect(visitObject(initialPet({ tx: 0, ty: 0 }, 0), w, 'bear', 100)).toBeNull()
++})
++
++it('leaves sleep, illness and unfinished player reactions in charge', () => {
++  const before = state(), w = world()
++  expect(visitObject(before, { ...w, away: true }, 'bear', 100)).toBeNull()
++  expect(visitObject(before, { ...w, mood: 'sick' }, 'bear', 100)).toBeNull()
++  for (const kind of ['tap', 'celebrate', 'celebrate-big'] as const) {
++    const reacting = react(before, 0, kind)
++    expect(visitObject(reacting, w, 'bear', 100)).toBeNull()
++  }
++})
++
++it('coalesces the same valid route and interaction without restarting their clocks', () => {
++  const w = world(), next = visitObject(state(), w, 'bear', 100)!
++  expect(visitObject(next, w, 'bear', 200)).toBe(next)
++  const arrived = step(next, w, 940, () => 0.99)
++  expect(visitObject(arrived, w, 'bear', 1000)).toBe(arrived)
++})
++
++it.each([false, true])('retains a fractional origin and reconnects through a clear segment endpoint (blocked=%s)', blocked => {
++  const before: PetState = { ...initialPet({ tx: 2, ty: 4 }, 0), activity: {
++    kind: 'walk', origin: { tx: 2, ty: 4 }, path: [{ tx: 3, ty: 4 }, { tx: 3, ty: 3 }],
++    stepStart: 0, journeyStart: 0, durationMs: 840, then: 'idle',
++  } }
++  const w = world([plant])
++  const ordinaryFree = w.free
++  w.free = tile => ordinaryFree(tile) && !(blocked && tile.tx === 3 && tile.ty === 4)
++  const next = visitObject(before, w, 'leaves', 100)!
++  expect(positionAt(next, 100)).toEqual(positionAt(before, 100))
++  expect(next.activity.kind).toBe('walk')
++  if (next.activity.kind !== 'walk') throw new Error('Expected a route')
++  expect(next.activity.path[0]).toEqual({ tx: blocked ? 2 : 3, ty: 4 })
++  expect(next.activity.path.every(w.free)).toBe(true)
++  let from = positionAt(next, 100)
++  for (const tile of next.activity.path) {
++    expect(tile.tx === from.tx || tile.ty === from.ty).toBe(true)
++    from = tile
++  }
++  if (!blocked) for (const species of ['bun', 'mochi', 'sprout'] as const) {
++    expect(motionFor(next, 100, species, 'happy', false).frame).toEqual(motionFor(before, 100, species, 'happy', false).frame)
++  }
++})
++
++it('uses current condition geometry and cancels a visit when its target changes or disappears', () => {
++  const w = world(), next = visitObject(state(), w, 'leaves', 100)!
++  const dirty = world([plant, teddy], { leaves: 'messy2' })
++  expect(step(next, dirty, 200, () => 0.99).activity.kind).toBe('idle')
++  expect(step(next, world([teddy]), 200, () => 0.99).activity.kind).toBe('idle')
++  const selected = visitObject(state(), dirty, 'leaves', 100)!
++  expect(selected.activity).toMatchObject({ target: { action: 'concern' } })
++})
+diff --git 1/src/pet/PetExplore.tsx 2/src/pet/PetExplore.tsx
+new file mode 100644
+index 0000000..f594402
+--- /dev/null
++++ 2/src/pet/PetExplore.tsx
+@@ -0,0 +1,61 @@
++import { useId, useState } from 'react'
++import { catalogEntry } from '../catalog/objects'
++import type { PlacedObject } from '../domain/types'
++import type { VisitResult } from './LivingRoom'
++import './PetExplore.css'
++
++export interface PetExploreProps {
++  objects: PlacedObject[]
++  petName: string
++  blocked?: 'travel' | 'away' | 'sick'
++  onLook: (objectId: string) => VisitResult
++}
++
++/** Optional room play. Selection and feedback belong to this room visit only. */
++export function PetExplore({ objects, petName, blocked, onLook }: PetExploreProps) {
++  const id = useId()
++  const [open, setOpen] = useState(false)
++  const [selectedId, setSelectedId] = useState('')
++  const [feedback, setFeedback] = useState<{ objectId: string; result: VisitResult } | null>(null)
++  const choices = objects.flatMap(object => {
++    const entry = catalogEntry(object.catalogId)
++    return entry ? [{ object, entry }] : []
++  })
++  const selected = choices.find(choice => choice.object.id === selectedId) ?? choices[0]
++  const disabled = Boolean(blocked || !selected)
++  const note = blocked === 'travel' ? `${petName} is on the way.`
++    : blocked === 'away' ? `${petName} is resting while you're away.`
++    : blocked === 'sick' ? `${petName} is resting today.`
++    : !selected ? 'Add a furnishing to explore together.' : ''
++  const result = feedback?.objectId === selected?.object.id ? feedback?.result : null
++  const name = selected?.entry.name.toLowerCase()
++  const message = result === 'started' ? `You invited ${petName} to look at the ${name}.`
++    : result === 'still' ? `${petName} noticed the ${name} from here.`
++    : result === 'busy' ? `${petName} is busy for a moment. Try again shortly.`
++    : result === 'resting' ? `${petName} is resting. Try again later.`
++    : result === 'unreachable' ? "There isn't a clear way to that spot."
++    : result === 'unavailable' ? `${petName} is on the way. Try again when they arrive.` : ''
++
++  return <div className="pet-explore">
++    <button type="button" className="btn btn-quiet pet-explore-toggle" aria-expanded={open} aria-controls={`${id}-panel`}
++      onClick={() => setOpen(value => !value)}>Explore together</button>
++    <div id={`${id}-panel`} className="pet-explore-panel" hidden={!open}>
++      <div className="pet-explore-row">
++        <div className="pet-explore-choice">
++          <label htmlFor={`${id}-object`}>Show {petName}</label>
++          <select id={`${id}-object`} className="field" disabled={disabled} value={selected?.object.id ?? ''}
++            aria-describedby={note ? `${id}-note` : undefined}
++            onChange={event => { setSelectedId(event.target.value); setFeedback(null) }}>
++            {choices.map(({ object, entry }) => <option key={object.id} value={object.id}>{entry.name}</option>)}
++          </select>
++        </div>
++        <button type="button" className="btn" disabled={disabled} aria-describedby={note ? `${id}-note` : undefined}
++          onClick={() => {
++            if (!disabled && selected) setFeedback({ objectId: selected.object.id, result: onLook(selected.object.id) })
++          }}>Look together</button>
++      </div>
++      {note && <p id={`${id}-note`} className="pet-explore-note">{note}</p>}
++      <p className="pet-explore-feedback" role="status">{blocked ? '' : message}</p>
++    </div>
++  </div>
++}
+diff --git 1/src/pet/PetExplore.css 2/src/pet/PetExplore.css
+new file mode 100644
+index 0000000..4c518d0
+--- /dev/null
++++ 2/src/pet/PetExplore.css
+@@ -0,0 +1,13 @@
++.pet-explore { flex: none; width: 100%; min-width: 0; }
++.pet-explore :is(button, select) { scroll-margin-block: 10px; }
++.pet-explore-toggle { min-height: 44px; padding: 8px 12px; font-size: 0.875rem; }
++.pet-explore-panel { margin-top: 8px; padding: 12px; border: var(--outline); border-radius: var(--radius); background: var(--card); }
++.pet-explore-panel[hidden] { display: none; }
++.pet-explore-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; min-width: 0; }
++.pet-explore-choice { flex: 1 1 180px; display: flex; flex-direction: column; gap: 6px; min-width: min(100%, 180px); }
++.pet-explore-choice label { font-weight: 800; overflow-wrap: anywhere; }
++.pet-explore-choice select { width: 100%; min-height: 48px; min-width: 0; }
++.pet-explore-row > .btn { flex: 1 0 auto; min-height: 48px; }
++.pet-explore-note, .pet-explore-feedback { margin: 8px 0 0; font-size: 0.875rem; font-weight: 700; overflow-wrap: anywhere; }
++.pet-explore-note { color: var(--ink-soft); }
++.pet-explore-feedback:empty { margin: 0; }
+diff --git 1/src/pet/PetExplore.test.tsx 2/src/pet/PetExplore.test.tsx
+new file mode 100644
+index 0000000..41a12f7
+--- /dev/null
++++ 2/src/pet/PetExplore.test.tsx
+@@ -0,0 +1,72 @@
++// @vitest-environment jsdom
++import { act } from 'react'
++import { afterEach, expect, it, vi } from 'vitest'
++import type { PlacedObject } from '../domain/types'
++import { click, render } from '../test/react'
++import { PetExplore, type PetExploreProps } from './PetExplore'
++
++const objects: PlacedObject[] = [
++  { id: 'plant-id', roomId: 'a', catalogId: 'plant', tileX: 2, tileY: 2, rotation: 0 },
++  { id: 'bear-id', roomId: 'a', catalogId: 'teddy', tileX: 4, tileY: 4, rotation: 0 },
++]
++const cleanups: (() => void)[] = []
++afterEach(() => { cleanups.splice(0).forEach(cleanup => cleanup()); vi.unstubAllGlobals() })
++function mount(patch: Partial<PetExploreProps> = {}) {
++  const props: PetExploreProps = { objects, petName: 'Bun', onLook: vi.fn(() => 'started' as const), ...patch }
++  const ui = render(<PetExplore {...props} />); cleanups.push(ui.unmount)
++  return { ...ui, props }
++}
++function button(container: Element, text: string) { return [...container.querySelectorAll('button')].find(node => node.textContent === text)! }
++
++it('starts collapsed, exposes named choices, and invites only the selected furnishing without scheduling work', () => {
++  vi.stubGlobal('requestAnimationFrame', vi.fn())
++  const ui = mount()
++  const trigger = button(ui.container, 'Explore together')
++  expect(trigger.getAttribute('aria-expanded')).toBe('false')
++  expect(ui.container.querySelector('[hidden]')).not.toBeNull()
++  click(trigger)
++  expect(trigger.getAttribute('aria-expanded')).toBe('true')
++  const select = ui.container.querySelector('select')!
++  expect(ui.container.querySelector(`label[for="${select.id}"]`)!.textContent).toBe('Show Bun')
++  expect([...select.options].map(option => option.text)).toEqual(['Potted plant', 'Teddy bear'])
++  act(() => { select.value = 'bear-id'; select.dispatchEvent(new Event('change', { bubbles: true })) })
++  click(button(ui.container, 'Look together'))
++  expect(ui.props.onLook).toHaveBeenCalledExactlyOnceWith('bear-id')
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('teddy bear')
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++  click(trigger)
++  expect(trigger.getAttribute('aria-expanded')).toBe('false')
++})
++
++it.each(['travel', 'away', 'sick'] as const)('explains why invitations are unavailable during %s', blocked => {
++  const ui = mount({ blocked })
++  click(button(ui.container, 'Explore together'))
++  expect(ui.container.querySelector('select')!.disabled).toBe(true)
++  expect((button(ui.container, 'Look together') as HTMLButtonElement).disabled).toBe(true)
++  expect(ui.container.querySelector('.pet-explore-note')!.textContent).toMatch(blocked === 'travel' ? /on the way/ : /resting/)
++  click(button(ui.container, 'Look together'))
++  expect(ui.props.onLook).not.toHaveBeenCalled()
++})
++
++it.each([
++  ['still', /from here/], ['busy', /busy/], ['resting', /resting/], ['unreachable', /clear way/], ['unavailable', /on the way/],
++] as const)('gives understandable feedback for %s', (result, message) => {
++  const ui = mount({ onLook: () => result })
++  click(button(ui.container, 'Explore together'))
++  click(button(ui.container, 'Look together'))
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toMatch(message)
++})
++
++it('drops stale feedback and selects a remaining furnishing when the selected object disappears', () => {
++  const ui = mount()
++  click(button(ui.container, 'Explore together'))
++  click(button(ui.container, 'Look together'))
++  ui.rerender(<PetExplore {...ui.props} objects={[objects[1]]} />)
++  expect(ui.container.querySelector('select')!.value).toBe('bear-id')
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
++  click(button(ui.container, 'Look together'))
++  expect(ui.props.onLook).toHaveBeenLastCalledWith('bear-id')
++  ui.rerender(<PetExplore {...ui.props} objects={[]} />)
++  expect((button(ui.container, 'Look together') as HTMLButtonElement).disabled).toBe(true)
++  expect(ui.container.querySelector('.pet-explore-note')!.textContent).toContain('furnishing')
++})
+diff --git 1/scripts/browser/pet-explore.test.mjs 2/scripts/browser/pet-explore.test.mjs
+new file mode 100644
+index 0000000..fe9a27b
+--- /dev/null
++++ 2/scripts/browser/pet-explore.test.mjs
+@@ -0,0 +1,172 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
++
++async function capture(page, name) {
++  const directory = process.env.CHORE_EXPLORE_CAPTURE_DIR
++  if (!directory) return
++  await mkdir(directory, { recursive: true })
++  await page.screenshot({ path: join(directory, name), fullPage: false })
++}
++
++// A local saved-home fixture, using the same persisted snapshot as other tests.
++async function longPetName(page) {
++  await page.evaluate(() => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
++      const read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, pet = Object.values(saved.tables.pets)[0]
++        pet.name = 'A very long pet name'
++        const pending = saved.outbox[`pets:${pet.id}`]
++        if (pending) pending.value.name = pet.name
++        store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }))
++  await page.reload()
++}
++
++for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }, { width: 1280, height: 800 }, { width: 640, height: 360 }, { width: 844, height: 390 }]) {
++  test(`keyboard exploration stays still and fits ${viewport.width}px`, async t => {
++    const page = await browserApp(t, { viewport })
++    if (viewport.height < 500) await longPetName(page)
++    const settleLayout = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
++    await settleLayout()
++    const closedRoomBounds = await page.locator('.home-scene .home-room').boundingBox()
++    const toggle = page.getByRole('button', { name: 'Explore together', exact: true })
++    assert.equal(await toggle.getAttribute('aria-expanded'), 'false')
++    await toggle.focus()
++    await page.keyboard.press('Enter')
++    await page.keyboard.press('Tab')
++    const select = page.getByLabel(/^Show /)
++    assert.equal(await select.evaluate(node => node === document.activeElement), true)
++    await page.keyboard.press('End')
++    const resident = page.locator('.room-pet')
++    const before = await resident.getAttribute('transform')
++    await page.keyboard.press('Tab')
++    const look = page.getByRole('button', { name: 'Look together', exact: true })
++    assert.equal(await look.evaluate(node => node === document.activeElement), true)
++    await page.keyboard.press('Enter')
++    assert.match(await page.locator('.pet-explore [role="status"]').textContent(), /from here/)
++    assert.ok((await page.locator('.living-room [aria-live="polite"]').textContent()).trim())
++    assert.equal(await resident.getAttribute('transform'), before)
++    assert.equal(await look.evaluate(node => node === document.activeElement), true)
++    for (const control of [toggle, select, look]) {
++      const bounds = await control.boundingBox()
++      assert.ok(bounds.height >= 44 && bounds.width >= 44)
++      assert.ok(bounds.x >= -1 && bounds.x + bounds.width <= viewport.width + 1)
++    }
++    assert.ok((await select.boundingBox()).width >= 160, 'the closed selector must have room for the furnishing name')
++    const focusClearance = await look.evaluate(node => {
++      const bounds = node.getBoundingClientRect(), style = getComputedStyle(node)
++      const ring = parseFloat(style.outlineWidth) + Math.max(0, parseFloat(style.outlineOffset))
++      let bottom = innerHeight
++      for (let parent = node.parentElement; parent; parent = parent.parentElement) {
++        if (/(auto|scroll|hidden|clip)/.test(getComputedStyle(parent).overflowY)) {
++          const clip = parent.getBoundingClientRect()
++          bottom = Math.min(bottom, clip.top + parent.clientTop + parent.clientHeight)
++        }
++      }
++      return bottom - bounds.bottom - ring
++    })
++    assert.ok(focusClearance >= -0.5, `the focused Look button and its outline must clear scroll clipping, got ${focusClearance}px`)
++    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
++    await settleLayout()
++    const roomBounds = await page.locator('.home-scene .home-room').boundingBox()
++    const minimumRoomHeight = viewport.height < 500 ? 100 : 180
++    assert.ok(roomBounds.height >= closedRoomBounds.height - 0.5 && roomBounds.height >= minimumRoomHeight,
++      `opening Explore must retain the scene size: closed ${closedRoomBounds.height}px, open ${roomBounds.height}px`)
++    await capture(page, `explore-${viewport.width}.png`)
++    t.diagnostic(`Chromium ${page.context().browser().version()}; offline production; native keyboard and reduced motion`)
++  })
++}
++
++function readPet(node) {
++  const matrix = node.transform.baseVal.consolidate().matrix
++  const body = node.querySelector('[data-character-body]')
++  // Compare in the existing room SVG; disclosure/feedback can resize the scene
++  // viewport, which is a layout change rather than a character pose change.
++  const bodyMatrix = body.getCTM()
++  return {
++    at: performance.now(), frameAt: window.__exploreLastFrame ?? performance.now(),
++    x: matrix.e, y: matrix.f,
++    body: [[45, 40], [155, 40], [45, 182], [155, 182]].map(([x, y]) => {
++      const point = new DOMPoint(x, y).matrixTransform(bodyMatrix)
++      return { x: point.x, y: point.y }
++    }),
++  }
++}
++
++test('an invitation joins a live step, reaches the chosen detail, coalesces repeats, and respects live reduction', async t => {
++  const page = await browserApp(t, { reducedMotion: 'no-preference' })
++  await page.clock.install()
++  await page.clock.pauseAt(Date.now() + 1000)
++  await page.addInitScript(() => {
++    Math.random = () => 0.99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    const pending = new Set()
++    window.__exploreFrames = pending
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { pending.delete(id); window.__exploreLastFrame = now; callback(now) })
++      pending.add(id)
++      return id
++    }
++    window.cancelAnimationFrame = id => { pending.delete(id); cancel(id) }
++  })
++  await page.reload()
++  const beforeData = (await snapshot(page)).tables
++  const plant = Object.values(beforeData.placed_objects).find(object => object.catalogId === 'plant')
++  const fridge = Object.values(beforeData.placed_objects).find(object => object.catalogId === 'fridge')
++  const resident = page.locator('.room-pet')
++  await resident.waitFor()
++  await resident.evaluate(node => { window.__explorePet = node })
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  await page.getByLabel(/^Show /).selectOption(plant.id)
++  const start = await resident.evaluate(readPet)
++  let before
++  for (let i = 0; i < 100; i++) {
++    await page.clock.runFor(32)
++    const at = await resident.evaluate(readPet)
++    if (Math.hypot(at.x - start.x, at.y - start.y) > 1) { before = at; break }
++  }
++  assert.ok(before, 'resident must be moving before the invitation')
++  await page.getByRole('button', { name: 'Look together', exact: true }).click()
++  const after = await resident.evaluate(readPet)
++  // Input may land after the last painted frame. A tile takes420ms and projects
++  // to(21.25,10.625), so bound that legitimate sub-frame route advance.
++  const subframeTravel = Math.hypot(21.25, 10.625) / 420 * Math.max(0, after.at - before.frameAt)
++  assert.ok(Math.hypot(after.x - before.x, after.y - before.y) <= subframeTravel + 0.01, 'invitation must preserve the actual input position without rounding to a tile')
++  const displacement = Math.max(...before.body.map((point, i) => Math.hypot(point.x - after.body[i].x, point.y - after.body[i].y)))
++  assert.ok(displacement < 0.5, `invitation pose join: ${displacement} room SVG units`)
++  assert.equal(await resident.evaluate(node => node === window.__explorePet), true)
++  assert.match(await page.locator('.pet-explore [role="status"]').textContent(), /You invited/)
++  const live = page.locator('.living-room [aria-live="polite"]')
++  let heard = ''
++  for (let i = 0; i < 100 && !heard; i++) {
++    await page.clock.runFor(100)
++    heard = (await live.textContent()).trim()
++  }
++  assert.ok(['Hello, little leaves!', "I'm waving to the plant."].includes(heard), `expected selected plant observation, got ${heard}`)
++  const arrived = await resident.getAttribute('transform')
++  for (let i = 0; i < 20; i++) await page.getByRole('button', { name: 'Look together', exact: true }).click()
++  assert.equal(await live.textContent(), heard)
++  assert.equal(await resident.getAttribute('transform'), arrived)
++  assert.equal(await page.evaluate(() => window.__exploreFrames.size), 1)
++  await changeReducedMotion(page, 'reduce')
++  const still = await resident.getAttribute('transform')
++  await page.getByLabel(/^Show /).selectOption(fridge.id)
++  await page.getByRole('button', { name: 'Look together', exact: true }).click()
++  assert.match(await page.locator('.pet-explore [role="status"]').textContent(), /from here/)
++  await page.clock.runFor(300)
++  assert.equal(await resident.getAttribute('transform'), still)
++  assert.equal(await page.evaluate(() => window.__exploreFrames.size), 1)
++  assert.deepEqual((await snapshot(page)).tables, beforeData, 'invitations must not alter saved home data')
++  t.diagnostic(`Chromium ${page.context().browser().version()}; pose join ${displacement.toFixed(4)} room SVG units; one application rAF`)
++})

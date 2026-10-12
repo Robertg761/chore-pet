@@ -1,0 +1,8 @@
+{
+  "method": "Corrected stage layout, before container-width wrapping. These three prior stills were full-page captures; final stills will show actual viewport framing. Narrow landscape red evidence is in explore-landscape-red.log.",
+  "files": {
+    "explore-320-before-wrap.png": "78b9d558ef6a92ecd11cd4a3a68b4d3ad5ff1dd2ca220e8c55099f9dbb58e1ec",
+    "explore-390-before-wrap.png": "f9c3a11a6d931509175410a734630365f0fe63675c2b55133b4fbdcf87032082",
+    "explore-1280-before-wrap.png": "80427749820fd822baaa35c3d3af679254b562f7c8d02948ccb760154c34e158"
+  }
+}

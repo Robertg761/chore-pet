@@ -1,0 +1,125 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/visits.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/visits.test.ts (11 tests | 11 failed) 10ms
+   × starts the named object interaction in place when already beside it 5ms
+   × routes only to the requested furnishing using its existing preferred clear approach 1ms
+   × rejects an unknown object id missing 0ms
+   × rejects an unknown object id constructor 0ms
+   × rejects an unknown object id __proto__ 0ms
+   × does not cross a sealed lane to reach a selected object 0ms
+   × leaves sleep, illness and unfinished player reactions in charge 0ms
+   × coalesces the same valid route and interaction without restarting their clocks 0ms
+   × retains a fractional origin and reconnects through a clear segment endpoint (blocked=false) 0ms
+   × retains a fractional origin and reconnects through a clear segment endpoint (blocked=true) 0ms
+   × uses current condition geometry and cancels a visit when its target changes or disappears 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/visits.test.ts > starts the named object interaction in place when already beside it
+TypeError: visitObject is not a function
+ ❯ src/pet/visits.test.ts:21:16
+     19| it('starts the named object interaction in place when already beside i…
+     20|   const before = initialPet({ tx: 3, ty: 2 }, 0)
+     21|   const next = visitObject(before, world(), 'leaves', 100)!
+       |                ^
+     22|   expect(next.activity).toMatchObject({ kind: 'interact', phase: 'orie…
+     23|   expect(positionAt(next, 100)).toEqual(before.tile)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  src/pet/visits.test.ts > routes only to the requested furnishing using its existing preferred clear approach
+TypeError: visitObject is not a function
+ ❯ src/pet/visits.test.ts:29:29
+     27|
+     28| it('routes only to the requested furnishing using its existing preferr…
+     29|   const w = world(), next = visitObject(state(), w, 'bear', 100)!
+       |                             ^
+     30|   expect(next.activity).toMatchObject({ kind: 'walk', target: { object…
+     31|   if (next.activity.kind !== 'walk') throw new Error('Expected a route…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  src/pet/visits.test.ts > rejects an unknown object id missing
+ FAIL  src/pet/visits.test.ts > rejects an unknown object id constructor
+ FAIL  src/pet/visits.test.ts > rejects an unknown object id __proto__
+TypeError: visitObject is not a function
+ ❯ src/pet/visits.test.ts:39:10
+     37|
+     38| it.each(['missing', 'constructor', '__proto__'])('rejects an unknown o…
+     39|   expect(visitObject(state(), world(), id, 100)).toBeNull()
+       |          ^
+     40| })
+     41|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  src/pet/visits.test.ts > does not cross a sealed lane to reach a selected object
+TypeError: visitObject is not a function
+ ❯ src/pet/visits.test.ts:45:10
+     43|   const w = world()
+     44|   w.free = tile => tile.tx !== 1
+     45|   expect(visitObject(initialPet({ tx: 0, ty: 0 }, 0), w, 'bear', 100))…
+       |          ^
+     46| })
+     47|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  src/pet/visits.test.ts > leaves sleep, illness and unfinished player reactions in charge
+TypeError: visitObject is not a function
+ ❯ src/pet/visits.test.ts:50:10
+     48| it('leaves sleep, illness and unfinished player reactions in charge', …
+     49|   const before = state(), w = world()
+     50|   expect(visitObject(before, { ...w, away: true }, 'bear', 100)).toBeN…
+       |          ^
+     51|   expect(visitObject(before, { ...w, mood: 'sick' }, 'bear', 100)).toB…
+     52|   for (const kind of ['tap', 'celebrate', 'celebrate-big'] as const) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+ FAIL  src/pet/visits.test.ts > coalesces the same valid route and interaction without restarting their clocks
+TypeError: visitObject is not a function
+ ❯ src/pet/visits.test.ts:59:29
+     57|
+     58| it('coalesces the same valid route and interaction without restarting …
+     59|   const w = world(), next = visitObject(state(), w, 'bear', 100)!
+       |                             ^
+     60|   expect(visitObject(next, w, 'bear', 200)).toBe(next)
+     61|   const arrived = step(next, w, 940, () => 0.99)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯
+
+ FAIL  src/pet/visits.test.ts > retains a fractional origin and reconnects through a clear segment endpoint (blocked=false)
+ FAIL  src/pet/visits.test.ts > retains a fractional origin and reconnects through a clear segment endpoint (blocked=true)
+TypeError: visitObject is not a function
+ ❯ src/pet/visits.test.ts:73:16
+     71|   const ordinaryFree = w.free
+     72|   w.free = tile => ordinaryFree(tile) && !(blocked && tile.tx === 3 &&…
+     73|   const next = visitObject(before, w, 'leaves', 100)!
+       |                ^
+     74|   expect(positionAt(next, 100)).toEqual(positionAt(before, 100))
+     75|   expect(next.activity.kind).toBe('walk')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯
+
+ FAIL  src/pet/visits.test.ts > uses current condition geometry and cancels a visit when its target changes or disappears
+TypeError: visitObject is not a function
+ ❯ src/pet/visits.test.ts:90:29
+     88|
+     89| it('uses current condition geometry and cancels a visit when its targe…
+     90|   const w = world(), next = visitObject(state(), w, 'leaves', 100)!
+       |                             ^
+     91|   const dirty = world([plant, teddy], { leaves: 'messy2' })
+     92|   expect(step(next, dirty, 200, () => 0.99).activity.kind).toBe('idle')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  11 failed (11)
+   Start at  16:49:52
+   Duration  312ms (transform 77%, import 17%, tests 5%, worker 2%)
+

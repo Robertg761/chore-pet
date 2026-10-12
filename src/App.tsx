@@ -53,7 +53,8 @@ import { orderRooms, readRoomOrder, writeRoomOrder, readFocusedRoomId, resolveFo
 import { Sparkle } from './effects'
 import { checkPlacement, turned } from './room/grid'
 import { lookup } from './room/placement'
-import { LivingRoom, type Celebration } from './pet/LivingRoom'
+import { LivingRoom, type Celebration, type LivingRoomControl } from './pet/LivingRoom'
+import { PetExplore } from './pet/PetExplore'
 import { CatalogTray } from './screens/CatalogTray'
 import { CharacterCreator } from './screens/CharacterCreator'
 import { ChoreEditor } from './screens/ChoreEditor'
@@ -186,6 +187,7 @@ export default function App() {
     return { condition, neglect, stages }
   }, [data.chores, data.completions, today, data.home?.vacations])
   const travel = useHomePet(data.home?.id, focusedRoomId, layout, connections, data.objects, roomNames(rooms), data.pet?.name ?? 'Your pet', view.name, stages)
+  const residentControl = useRef<LivingRoomControl | null>(null)
   /** Change screen with a short slide: forward when going deeper, back when returning. */
   const setView = (next: View) => {
     if (next.name === view.name) { setViewNow(next); return }
@@ -741,6 +743,7 @@ export default function App() {
       away={away}
       initialTile={travel.position}
       onPosition={(tile) => travel.onPosition({ roomId: resident.id, ...tile })}
+      control={residentControl}
       chores={chores.filter((chore) => residentObjects.some((object) => object.id === chore.objectId))}
       statuses={condition.statuses}
       celebrate={resident.id === room?.id ? celebrate : null}
@@ -978,6 +981,10 @@ export default function App() {
       </div>
 
       <div className="home-chores">
+        {room && roomObjects.length > 0 && <PetExplore key={`${home.id}:${room.id}`} objects={roomObjects} petName={pet.name}
+          blocked={away ? 'away' : condition.mood === 'sick' ? 'sick' : travel.journey || resident?.id !== room.id ? 'travel' : undefined}
+          onLook={objectId => !travel.journey && resident?.id === room.id
+            ? residentControl.current?.lookAt(objectId) ?? 'unavailable' : 'unavailable'} />}
         {showFirstDoneHint({
           onboarded: readFlag(onboardedKey(home.id)),
           hintDone: readFlag(hintKey(home.id)),

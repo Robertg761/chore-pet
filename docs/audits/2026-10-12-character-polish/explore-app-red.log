@@ -1,0 +1,28 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/App.navigation.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/App.navigation.test.tsx (5 tests | 1 failed) 629ms
+   × invites the resident to explore without changing chores or saved pet data 54ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.navigation.test.tsx > invites the resident to explore without changing chores or saved pet data
+AssertionError: expected undefined to be defined
+ ❯ src/App.navigation.test.tsx:99:18
+     97|   const resident = ui.container.querySelector('.room-pet')
+     98|   const toggle = [...ui.container.querySelectorAll('button')].find(but…
+     99|   expect(toggle).toBeDefined()
+       |                  ^
+    100|   click(toggle!)
+    101|   const select = ui.container.querySelector('.pet-explore select')!
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  16:53:54
+   Duration  2.17s (transform 49%, tests 30%, environment 12%, import 9%)
+

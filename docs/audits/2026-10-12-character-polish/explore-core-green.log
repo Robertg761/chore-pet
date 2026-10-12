@@ -1,0 +1,11 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/visits.test.ts src/pet/behaviour.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+
+ Test Files  2 passed (2)
+      Tests  61 passed (61)
+   Start at  16:50:07
+   Duration  540ms (transform 61%, import 20%, tests 16%, worker 3%)
+

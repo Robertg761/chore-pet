@@ -1,0 +1,35 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetExplore.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetExplore.test.tsx (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetExplore.test.tsx [ src/pet/PetExplore.test.tsx ]
+Error: Failed to resolve import "./PetExplore" from "src/pet/PetExplore.test.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /home/robert/.codex/worktrees/4511/chore-pet/src/pet/PetExplore.test.tsx:6:49
+  3  |  import { afterEach, expect, it, vi } from "vitest";
+  4  |  import { click, render } from "../test/react";
+  5  |  import { PetExplore } from "./PetExplore";
+     |                              ^
+  6  |  var _jsxFileName = "/home/robert/.codex/worktrees/4511/chore-pet/src/pet/PetExplore.test.tsx";
+  7  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
+ ❯ TransformPluginContext._formatLog node_modules/vite/dist/node/chunks/node.js:8766:39
+ ❯ TransformPluginContext.error node_modules/vite/dist/node/chunks/node.js:8763:14
+ ❯ normalizeUrl node_modules/vite/dist/node/chunks/node.js:26593:18
+ ❯ node_modules/vite/dist/node/chunks/node.js:26663:30
+ ❯ TransformPluginContext.transform node_modules/vite/dist/node/chunks/node.js:26629:4
+ ❯ EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/node.js:8545:14
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/node.js:20157:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  16:52:56
+   Duration  395ms (environment 99%, worker 1%)
+

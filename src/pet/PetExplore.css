@@ -1,0 +1,13 @@
+.pet-explore { flex: none; width: 100%; min-width: 0; }
+.pet-explore :is(button, select) { scroll-margin-block: 10px; }
+.pet-explore-toggle { min-height: 44px; padding: 8px 12px; font-size: 0.875rem; }
+.pet-explore-panel { margin-top: 8px; padding: 12px; border: var(--outline); border-radius: var(--radius); background: var(--card); }
+.pet-explore-panel[hidden] { display: none; }
+.pet-explore-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; min-width: 0; }
+.pet-explore-choice { flex: 1 1 180px; display: flex; flex-direction: column; gap: 6px; min-width: min(100%, 180px); }
+.pet-explore-choice label { font-weight: 800; overflow-wrap: anywhere; }
+.pet-explore-choice select { width: 100%; min-height: 48px; min-width: 0; }
+.pet-explore-row > .btn { flex: 1 0 auto; min-height: 48px; }
+.pet-explore-note, .pet-explore-feedback { margin: 8px 0 0; font-size: 0.875rem; font-weight: 700; overflow-wrap: anywhere; }
+.pet-explore-note { color: var(--ink-soft); }
+.pet-explore-feedback:empty { margin: 0; }
