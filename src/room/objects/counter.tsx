@@ -166,9 +166,9 @@ function messy2() {
       {crumbs([[0.3, 0.55], [0.4, 1.0], [0.2, 0.85], [0.65, 0.3], [0.82, 1.1], [0.8, 1.45], [0.35, 1.1], [0.9, 0.9]], H)}
       {/* a wobbly tower of dirty bowls, and a takeout box sitting on the board */}
       {takeout(t.x, t.y + 1)}
-      {bowl(b.x, b.y + 1, white, undefined, 'a')}
-      {bowl(b.x + 0.5, b.y - 3, warmRed, undefined, 'b')}
-      {bowl(b.x - 0.5, b.y - 7, white, undefined, 'c')}
+      {bowl(b.x, b.y + 1, white, undefined, 'bowl-a')}
+      {bowl(b.x + 0.5, b.y - 3, warmRed, undefined, 'bowl-b')}
+      {bowl(b.x - 0.5, b.y - 7, white, undefined, 'bowl-c')}
       <g transform={`rotate(-10 ${b.x} ${b.y - 11})`}>{bowl(b.x, b.y - 11, PALETTE.fabricBlue, dirt)}</g>
       {mug(iso(0.86, 1.22, H).x, iso(0.86, 1.22, H).y + 2, { dirty: true, tipped: true })}
       {stink(b.x - 14, b.y - 18)}

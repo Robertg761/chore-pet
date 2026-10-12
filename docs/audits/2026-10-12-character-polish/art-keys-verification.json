@@ -1,0 +1,59 @@
+{
+  "baseCommit": "9a7bcaa",
+  "checks": [
+    {
+      "name": "red",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/room/objects/keys.test.tsx",
+      "log": "art-keys-red.log",
+      "exitCode": 1,
+      "result": "2 duplicate-key failures(counter,dining-table),22pass; all shape comparisons already pass"
+    },
+    {
+      "name": "focused",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/room/objects/keys.test.tsx src/App.navigation.test.tsx",
+      "log": "art-keys-green.log",
+      "exitCode": 0,
+      "result": "28 pass,3.19s; overdue-home warnings gone"
+    },
+    {
+      "name": "build",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "art-keys-build.log",
+      "exitCode": 0,
+      "result": "TypeScript/production pass; existing chunk-size advisory"
+    },
+    {
+      "name": "lint",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "art-keys-lint.log",
+      "exitCode": 0,
+      "result": "zero warnings"
+    },
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "art-keys-unit.log",
+      "exitCode": 0,
+      "result": "2014 pass,90files,56.36s"
+    },
+    {
+      "name": "exact-drawing-identity",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 node docs/audits/2026-10-12-character-polish/hash-object-art.mjs <destination>",
+      "exitCode": 0,
+      "result": "art-keys-before.json and art-keys-after.json: all72 production SVG hashes and byte counts identical, both commands exit0; no PNG generation"
+    }
+  ],
+  "sourceSha256": {
+    "src/room/objects/counter.tsx": "6a17ccda803d04de3bc52448d832602c86b271b63031f55dc3ddaf35810b281c",
+    "src/room/objects/diningTable.tsx": "9d0968046afdce17e0983905aefaf305ffcc029e771bc0a46b0aab28542e987c",
+    "src/room/objects/keys.test.tsx": "16dbc0d69481540cb2917230276c5d6933f8e0fa617f03d3281d37d39bf6447d",
+    "docs/audits/2026-10-12-character-polish/hash-object-art.mjs": "3abfa795828fc80bf193f4d6fc74fb77903d12d4e7d24ea9d4a84cbbd2310d8d"
+  },
+  "patchSha256": "34c6cc9d4570ac350fc3f1322f2c5ad9ba55307d354899f3e14da8dc9fcd451d",
+  "limitations": [
+    "Keys alone change; no drawing geometry, attributes or order change. No dropped-node failure was observed before correction, so none is claimed fixed.",
+    "Client condition transitions and exact drawing identity cover this four-key correction; no additional browser or image capture was needed.",
+    "Independent review certifies frozen source and audit provenance; root records process exits separately.",
+    "Human temporal playback remains open."
+  ]
+}

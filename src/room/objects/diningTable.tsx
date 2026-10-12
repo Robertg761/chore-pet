@@ -182,7 +182,7 @@ function messy2() {
       {/* messy plates and a bowl at each place */}
       {plate(SPOT_1.x, SPOT_1.y - 1, warmRed)}
       {plate(SPOT_1.x + 1, SPOT_1.y - 4.5)}
-      {bowl(SPOT_2.x, SPOT_2.y, white, petDefault, 'b')}
+      {bowl(SPOT_2.x, SPOT_2.y, white, petDefault, 'bowl-b')}
       {mug(cup.x, cup.y + 1, { tipped: true, dirty: true })}
       {/* the stack */}
       {plate(stack.x, stack.y - 1, warmRed)}

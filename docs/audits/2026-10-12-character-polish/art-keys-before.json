@@ -1,0 +1,333 @@
+{
+  "method": "Exact production SVG markup SHA-256 for all24 catalog objects at all3 conditions. React keys are not serialized; geometry, attributes and child order are.",
+  "drawings": {
+    "shower/clean": {
+      "sha256": "4f6310e8468567d69119b3af7573b9f46c4bc86bca223d0d566a687c17bc48c8",
+      "bytes": 5163
+    },
+    "shower/messy1": {
+      "sha256": "a343e7452f5539eff2c255f7c9945b9a6b3bb54fa306a3790ad75efedab285b7",
+      "bytes": 7489
+    },
+    "shower/messy2": {
+      "sha256": "50a26cac725d9356928f3a1a3e03501ffbafe8e832c5dd2019de378d406bb8ef",
+      "bytes": 8463
+    },
+    "toilet/clean": {
+      "sha256": "606cdb903477057fe71addace743945461010d3b270c2a3190b905e64032377a",
+      "bytes": 15555
+    },
+    "toilet/messy1": {
+      "sha256": "588a3348c500cf672d1400b2dc6a468b1b8a14257242abdded86d7e3b7813395",
+      "bytes": 20262
+    },
+    "toilet/messy2": {
+      "sha256": "77c5bec8f85ea4c857cfcc57aa299fd927338d90f3ba5dfc3024ad475f0b5900",
+      "bytes": 16015
+    },
+    "washer/clean": {
+      "sha256": "642cfe11bfb0cfb58cb99b31c77e0a86582e920d7c6adb8610e32e6568402454",
+      "bytes": 918
+    },
+    "washer/messy1": {
+      "sha256": "ebe7f1b8ad8bed14937fac4d039173c0e44d0cb8ee186ab7200515a0c784c794",
+      "bytes": 2242
+    },
+    "washer/messy2": {
+      "sha256": "aa54b04e2d5f47312c95696aed0449f3a5a6159f90d340958fc63641a14f36d3",
+      "bytes": 3779
+    },
+    "bed/clean": {
+      "sha256": "93a8c274578c7e857c80cba4376dde6a7d4158075656b03283d8526260c28501",
+      "bytes": 3434
+    },
+    "bed/messy1": {
+      "sha256": "9728cc0c22217ff4468e3386a009ffff5a674f6433d434f3f8a23830842f66c8",
+      "bytes": 4896
+    },
+    "bed/messy2": {
+      "sha256": "3c34002a8b5a8f661190cac152d5a86c200a4857a550d28cd203d81b20ff1780",
+      "bytes": 6660
+    },
+    "counter/clean": {
+      "sha256": "bab0fefed4af68c11dc515b4ba14b7f494e907379668b5fc2bae35709b219e87",
+      "bytes": 4425
+    },
+    "counter/messy1": {
+      "sha256": "a2a00e2c8be472b815a9ee623784f0954c8864e5392820d437d1f8e36821eaa4",
+      "bytes": 6027
+    },
+    "counter/messy2": {
+      "sha256": "c65312b075cd04c5b1a6a57dbd29a8208145f89e0b16e68804a4c388f120ff6b",
+      "bytes": 9818
+    },
+    "dining-table/clean": {
+      "sha256": "0adb2ae1f0293e045f1065ca32f675135a6202f363083974067dfaa2397a2b5f",
+      "bytes": 28879
+    },
+    "dining-table/messy1": {
+      "sha256": "da15c39e95ff5265cf0e39a435a8680863c19a5d86298c5a8d2b3647269adf99",
+      "bytes": 30720
+    },
+    "dining-table/messy2": {
+      "sha256": "6e0082bf5ba042bcfe5d01ecb13a61c4e625f035c8a04b5c9c50576ca55b4199",
+      "bytes": 33933
+    },
+    "dishwasher/clean": {
+      "sha256": "8b6f8b49d70bc1ecbbc4552a42fd967618dc48f639aa181692e6c2407b68dcf1",
+      "bytes": 1630
+    },
+    "dishwasher/messy1": {
+      "sha256": "64f8d241627a56f0ad9c45d7524abf39696ad5d0192fa8324a6619361b5f3a0c",
+      "bytes": 3437
+    },
+    "dishwasher/messy2": {
+      "sha256": "3a28fe189b7d8bae83d1ed8c253d3cf5af9e341170f6954f3be3380346c31428",
+      "bytes": 4805
+    },
+    "fridge/clean": {
+      "sha256": "881fc2b794cfd65f8efc5b2c8f48e69a471ad2ef2b749c9fea7f41bc2c83eb5f",
+      "bytes": 1556
+    },
+    "fridge/messy1": {
+      "sha256": "2d042be6c0bd9448211c8dfefecda402ac976e49ecc585cd1a1fedd5c9c10268",
+      "bytes": 2740
+    },
+    "fridge/messy2": {
+      "sha256": "6a051c5a1fb8de0b492becefde032d855b0e87c40e56a67ff4fd46025ed16492",
+      "bytes": 3461
+    },
+    "recycling/clean": {
+      "sha256": "2afa3ca2db2ba4a263ba3eb80b698f40f523a45527fec5c9efa7e4121ad27d8a",
+      "bytes": 7463
+    },
+    "recycling/messy1": {
+      "sha256": "c20b0c5080ce7c6f7732427c7e8f899facf32512e7d2a38c6260c398447d2e26",
+      "bytes": 8467
+    },
+    "recycling/messy2": {
+      "sha256": "088d785ec641fa8ea05b6b95baaa2d8856fdfb68c6aacdd8e965f86ac671d2f7",
+      "bytes": 12367
+    },
+    "sink/clean": {
+      "sha256": "554704ab1727cfa5d796ddf9b8c59a79d4988f5d85069b04126c2cbd40ccbdff",
+      "bytes": 1536
+    },
+    "sink/messy1": {
+      "sha256": "4ca4c0f465b84a6527a88bfd21af96507ba5c76cde2b3082921cc2cf2014fbab",
+      "bytes": 3058
+    },
+    "sink/messy2": {
+      "sha256": "3a4e4334d6f670c43f75e85560ddc57fdd60f48ec0111e6dbdecf61ace0d8d33",
+      "bytes": 6467
+    },
+    "stove/clean": {
+      "sha256": "257db5f10c561182dcded4f5584b5105c522b449a1587c7fcb1a9626de83eac7",
+      "bytes": 2694
+    },
+    "stove/messy1": {
+      "sha256": "31775c0b112091f14d6e364cfe2ce611c6a5723cb2848aae4207cef7de9c5542",
+      "bytes": 3840
+    },
+    "stove/messy2": {
+      "sha256": "d756d60efe9b2ae8a8340cd2b7ffc0d51ab27e4d420823a67116d854c4a87062",
+      "bytes": 6322
+    },
+    "table/clean": {
+      "sha256": "bc47bb343cf4f892c30f7c9431fec625e96bb261257d8bc1dc210147478a4b1b",
+      "bytes": 6578
+    },
+    "table/messy1": {
+      "sha256": "6dd80199e7e6c56fba71c6ec5b552d5dc0770971640cdfbfe8331c75225f6933",
+      "bytes": 8429
+    },
+    "table/messy2": {
+      "sha256": "d028a8b176238f8a7bd2d056ca796b5c8b6cbcb8d5a0d75ea3dab2583e0c9190",
+      "bytes": 10662
+    },
+    "trash/clean": {
+      "sha256": "fe7c707ac13e18d933b092ac4000e170da6f64de42125177a1e48f17aa5eb523",
+      "bytes": 806
+    },
+    "trash/messy1": {
+      "sha256": "6b6d0d2e1b073bb40220532d5cfd01c63578853ace6c5fa1088b1ee37e630caf",
+      "bytes": 1509
+    },
+    "trash/messy2": {
+      "sha256": "0f58af18f91819a0edb9df4c9c022ff9f638870adfff9274cd40922cdb4e6268",
+      "bytes": 3596
+    },
+    "couch/clean": {
+      "sha256": "cd8d4d8210164d3cad8c3dc39da9c83ab8865def2ba5223d7fd0fd510e962f0d",
+      "bytes": 12680
+    },
+    "couch/messy1": {
+      "sha256": "40f29fb544044d49c69bdc64725765e51d6deb86eff38fcd7347aa9f520a8ea3",
+      "bytes": 13891
+    },
+    "couch/messy2": {
+      "sha256": "62a12b0c534ff682553d1ca9bc217ce0f0ae050941e9907ca4c74035120a4600",
+      "bytes": 14535
+    },
+    "fish-tank/clean": {
+      "sha256": "56b479e1feeceb062095f0673388f6770e5c91812abcc52e19f147029b4ec9bc",
+      "bytes": 11900
+    },
+    "fish-tank/messy1": {
+      "sha256": "2f383fdc46ffca44671ad863db2d47f7ab443120c3e2c4ed9277d241c17eb348",
+      "bytes": 12148
+    },
+    "fish-tank/messy2": {
+      "sha256": "b6aecdc0c61aee9f5798c59fcaafc5d5bc94da9559db60e347b791583b33d02a",
+      "bytes": 14141
+    },
+    "plant/clean": {
+      "sha256": "d81323d37bbe175b58649256c4f936d3f4f80d627d766999758ea4038f896c12",
+      "bytes": 5064
+    },
+    "plant/messy1": {
+      "sha256": "de1319c2a08d5beceaa047946b2fa4c499b081dd0846ae505382445ce862a115",
+      "bytes": 5548
+    },
+    "plant/messy2": {
+      "sha256": "1050050044d8cd18dc10cf9e3e7345b2ca6701cc091e6b099c472d0ca176ae8b",
+      "bytes": 6279
+    },
+    "rug/clean": {
+      "sha256": "edca62dee07edcff753f4eebf4ce40e914802a12c48154f79747f9704ee40a70",
+      "bytes": 5577
+    },
+    "rug/messy1": {
+      "sha256": "5b1e97907b5052aad1da431c85a1fc8bef39c42c21b2b37255a88784322acca5",
+      "bytes": 6458
+    },
+    "rug/messy2": {
+      "sha256": "757631c288c0baa7005dd592fc59de19a29ce42f4fd5b3cb4b5715c75e015a01",
+      "bytes": 8139
+    },
+    "teddy/clean": {
+      "sha256": "708c7360a6551f812abc1811acac393feb99d69bef205cbf9a883b1f750f6b30",
+      "bytes": 3056
+    },
+    "teddy/messy1": {
+      "sha256": "18daa46c8c4bbc7df7a16e714d31472f480d254ebd671fa3124b3c069447438e",
+      "bytes": 3591
+    },
+    "teddy/messy2": {
+      "sha256": "34c897a3f82c833702c0d45116da5f4fdfa0409381a162655e453260640b0897",
+      "bytes": 4723
+    },
+    "lamp/clean": {
+      "sha256": "a92a7d452411919de85057e949fe3c65a5e5bd88ccdbd4559ce3cb8b1b80dd1c",
+      "bytes": 4082
+    },
+    "lamp/messy1": {
+      "sha256": "fe79879e0931e5503310d6291d873cb2d303e29ec20b6f54bf65432cec8a7c77",
+      "bytes": 4665
+    },
+    "lamp/messy2": {
+      "sha256": "34650c798efd0c03ff5ee6f82fc394b563023ea9cb69bd8a573e7fa395d92c84",
+      "bytes": 7332
+    },
+    "poster/clean": {
+      "sha256": "8c382b088a24c4f50d64c8ddeaf7e03cd922acd152987626c0aa1d9a4a27aebc",
+      "bytes": 1665
+    },
+    "poster/messy1": {
+      "sha256": "48c790137fcf4566d9785eac35b5e69a1e220b3abf3084208bdbb176536081d6",
+      "bytes": 1666
+    },
+    "poster/messy2": {
+      "sha256": "feec39a58c08a081e83d3f295b6e4c5fd5e9aae66d3b6e4d5705db046a6fb66b",
+      "bytes": 2895
+    },
+    "fairy-lights/clean": {
+      "sha256": "b2e70649b8c2faac669164b4d66b978be82e00f9a26c21690d467cb50495465a",
+      "bytes": 4613
+    },
+    "fairy-lights/messy1": {
+      "sha256": "dd242bd57f4b442fa03e03f23e02d59144cb70578c2d52dc45f1228b4e84f460",
+      "bytes": 4867
+    },
+    "fairy-lights/messy2": {
+      "sha256": "521df916a9caf49795c03a1691f9b23fa2c26c6463e3d8715cefcd92b0c1be3f",
+      "bytes": 5043
+    },
+    "bookshelf/clean": {
+      "sha256": "1354a54565cf9d2911b4109c05011f1809e00d4e2d770ef967790a6172871993",
+      "bytes": 8210
+    },
+    "bookshelf/messy1": {
+      "sha256": "cc99f25a7c90ec36867fe76a5fae9a7a674579b98f61248af7e428d44508b697",
+      "bytes": 8934
+    },
+    "bookshelf/messy2": {
+      "sha256": "952965fbe7b6bb32933a27a78d759e279ea927db315f13fa3f2c87720647a8e3",
+      "bytes": 11155
+    },
+    "wall-clock/clean": {
+      "sha256": "3317a3ccb1291cf1ed58cd4d252bd4b441011f8d9427bbba65c30e928da3b3e6",
+      "bytes": 1613
+    },
+    "wall-clock/messy1": {
+      "sha256": "2271ecfc2f34dcb1bd350746e053afe66e5dc559a6f3f20c744814cea4ec4d58",
+      "bytes": 2052
+    },
+    "wall-clock/messy2": {
+      "sha256": "9bba6b42a9dd2069411210e92fa099c1b3a32749a70fdd724c229947e740c1b5",
+      "bytes": 2568
+    },
+    "bean-bag/clean": {
+      "sha256": "97aa3a6d519515f542bd821ca3245451bfac4302ef7316ac8fb9873ba77278e7",
+      "bytes": 1580
+    },
+    "bean-bag/messy1": {
+      "sha256": "0e8b90e31b9f1c0cddbfc6ec215a092a874f87fa7afa272db98d81d3d933686b",
+      "bytes": 1960
+    },
+    "bean-bag/messy2": {
+      "sha256": "7a428cdba050719369df3eed6a16081176f6a3c97d988d8081ace396b1cff1b1",
+      "bytes": 3561
+    }
+  },
+  "sourceSha256": {
+    "src/room/objects/batch1.ts": "04c6c0fc511c69ce11690216d60c2daeac4c40214bf2a0569d5a84382caba5a0",
+    "src/room/objects/batch2-parts.tsx": "d497f69a9af9709597667668293ef3627f383db7105033c0873a3b2ee7a08d54",
+    "src/room/objects/batch2.ts": "b40cf596199e67044042ae7dc36087db03993bf21fcc49072c036c4000af8541",
+    "src/room/objects/batch3.ts": "f982fe2e99365eb15e73c0deff110c1405ac09c99fa6d182b1b17e6eeec5dd68",
+    "src/room/objects/beanBag.tsx": "57c8aebf8d0fb65cadc3970e7e9c5ecff56e32da4beeffa4532126114cf09afa",
+    "src/room/objects/bed.tsx": "7a0ee6cbfb05a69ed3c1a781f5357585aaf2620c4c759b5a2540db1f1a463b35",
+    "src/room/objects/bookshelf.tsx": "366483e1d7ba25839752f4d9afc5f75be3418777c853c8c3cf229bd6dfa7593d",
+    "src/room/objects/couch.tsx": "a811b4e1f5dc13fae7f6611fb1ee1109d534b967d33ac85c9abfb91bdc2fda55",
+    "src/room/objects/counter.tsx": "142a33ab47f1604d5ee1b3093ad26bc5fbdec0a40bd9dce5345c2905d897236a",
+    "src/room/objects/decor.ts": "6135cb0ca92272b72939b11c6aea636975c7420649161caf3d029361679ada1d",
+    "src/room/objects/decorParts.tsx": "7733f21cc5af9735ed05f07023ae156aaa24efe75386d6b7ffed74976cfc58aa",
+    "src/room/objects/diningTable.tsx": "1505ceab911ef9ce1b8f6fef58bae097c7243cc99294f758b455cc0ac21910b6",
+    "src/room/objects/dishwasher.tsx": "25fae69638c1536013f53cf8a157a86b032dff5dea825827aa04623fb45f8589",
+    "src/room/objects/fairyLights.tsx": "91d3e97a91413406ee27bada35ba249fedbf7d0d5d196f7d268c0aaf69cbf3fa",
+    "src/room/objects/fishTank.tsx": "8ba05add70f86e8a4a0fbffef6ee079dbaab7f5d73c2f06dd303b9ae753a1ec4",
+    "src/room/objects/fridge.tsx": "882890be0b1556eb72f069d322278a815b563a8e80d81eec0532987f5f0e521f",
+    "src/room/objects/index.ts": "b74c1948c79bba2c75568a84be517e0255d1bd124553197d10da191d15617e6f",
+    "src/room/objects/keys.test.tsx": "16dbc0d69481540cb2917230276c5d6933f8e0fa617f03d3281d37d39bf6447d",
+    "src/room/objects/kitchenParts.tsx": "5d2095951ca47384f3b30072074f23352ddd801e8bc862094bc263acd6e8bb1f",
+    "src/room/objects/lamp.tsx": "89afbe410068d6f9918093900d938a5cdcaa41c8cfbe7d711c66fe2023723610",
+    "src/room/objects/mess.tsx": "490389adab426507fcbc3a1b09612471e6df49bf76dfd9092bb9fa6afc6a8dc5",
+    "src/room/objects/plant.tsx": "20e00d30efa5c5ba0ccbbfb59166c5a8b0291cd645f54ee61b3bc70fdeaa13f0",
+    "src/room/objects/poster.tsx": "01b1f5dd0b1d9a29ad39a3c35286a95d298dc5ccfcad7f37ad213f132174359e",
+    "src/room/objects/recycling.tsx": "f4255bc166e8282e755b7436a57f4a5625075dbca6317f9c8d77e59c602da6a3",
+    "src/room/objects/rug.tsx": "d433cd71982984f2ad3196968867351d0ab574bbd9a920fc2c1c03e4f97b129d",
+    "src/room/objects/shapes3.tsx": "073f5eb139e09f9b94d0c06bcc74eb095ea1abf5a974277169e9c032b948a04c",
+    "src/room/objects/shower.tsx": "17c8f5f84399512a88e2d5d31f4c46e1b3bc4765b26e8fe64a852efbaae1d1cd",
+    "src/room/objects/sink.tsx": "25e80fc576ce2c1e14d1278ffebf827e0b93cd0570548b157ed8fca59bafea8f",
+    "src/room/objects/stove.tsx": "65c7af2bc43ec3a52ab428654c61df7932b042db057cdb1e9afc4805a3f3a7b9",
+    "src/room/objects/table.tsx": "debbdc8a5a1e2fdc48a26e390cbef977354980636f4ab4cea2d71159f21afc03",
+    "src/room/objects/tableware.tsx": "953797710131f3ca9340abe6fa9302fb023315e8ef425420f33d1b53f60e1f3c",
+    "src/room/objects/teddy.tsx": "69a09365f7e3ef8fc7fd16affbb320cc5fd0fcf5d93bcbbd91b1432a05fd56ac",
+    "src/room/objects/toilet.tsx": "f0c876047c941ac86b93c4c782321a3fd3fd920d7cd95ef579df6fbb7ffd84f4",
+    "src/room/objects/trash.tsx": "343ad908d17650d8e931942b4316415e47882785ad5f74c517a1c9528bc40477",
+    "src/room/objects/types.ts": "d67e8c335ebe3b92d82cede9f9ac5aa95781a33abd1f75b779b5fd7377d02c7f",
+    "src/room/objects/wallClock.tsx": "10417fabf0752719eca4b295eebac8b3c73a7d8e66ea946f0b3d21fbe20b7458",
+    "src/room/objects/washer.tsx": "cb260bae31bb0643c9c48c2a49e189486191859a1630247663daa89bed6145b6",
+    "docs/audits/2026-10-12-character-polish/hash-object-art.mjs": "3abfa795828fc80bf193f4d6fc74fb77903d12d4e7d24ea9d4a84cbbd2310d8d"
+  }
+}

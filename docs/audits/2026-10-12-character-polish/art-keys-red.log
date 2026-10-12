@@ -1,0 +1,65 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/room/objects/keys.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/room/objects/keys.test.tsx (24 tests | 2 failed) 862ms
+   × counter keeps every shape and unique keys when its condition changes 52ms
+   × dining-table keeps every shape and unique keys when its condition changes 143ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/room/objects/keys.test.tsx > counter keeps every shape and unique keys when its condition changes
+AssertionError: counter: duplicate sibling keys: expected [ …(6) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. a",
++   "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. b",
++   "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. c",
++   "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. a",
++   "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. b",
++   "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. c",
++ ]
+
+ ❯ src/room/objects/keys.test.tsx:41:55
+     39|       expect(drawing(ui.container.firstElementChild!), `${id}/${stage}…
+     40|     }
+     41|     expect(warnings, `${id}: duplicate sibling keys`).toEqual([])
+       |                                                       ^
+     42|   } finally {
+     43|     ui.unmount()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/room/objects/keys.test.tsx > dining-table keeps every shape and unique keys when its condition changes
+AssertionError: dining-table: duplicate sibling keys: expected [ …(2) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. b",
++   "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. b",
++ ]
+
+ ❯ src/room/objects/keys.test.tsx:41:55
+     39|       expect(drawing(ui.container.firstElementChild!), `${id}/${stage}…
+     40|     }
+     41|     expect(warnings, `${id}: duplicate sibling keys`).toEqual([])
+       |                                                       ^
+     42|   } finally {
+     43|     ui.unmount()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 22 passed (24)
+   Start at  16:42:33
+   Duration  1.53s (tests 60%, environment 18%, transform 17%, import 5%)
+
