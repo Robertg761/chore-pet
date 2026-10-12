@@ -11,6 +11,8 @@ import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionFrame } from './mo
 import { articulatedPose } from './species/animatedBody'
 import { poseFor } from './poses'
 import { ITEMS } from './items'
+import { initialPet, step } from '../pet/behaviour'
+import { motionFor } from '../pet/activityMotion'
 
 const speciesList: Species[] = ['bun', 'mochi', 'sprout']
 const outfit = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
@@ -46,6 +48,27 @@ function worldPoint(node: Element, x: number, y: number): [number, number] {
 }
 
 describe('AnimatedCharacterArt', () => {
+  it('preserves both visible ear tips when idle follow-through turns into a leftward walk', () => {
+    const before = initialPet({ tx: 2, ty: 2 }, 0)
+    const after = step(before, { free: () => true, mood: 'happy', away: false, mess: null, interactions: [] }, 2000, () => 0.3)
+    expect(after.activity.kind).toBe('walk')
+    expect(after.facing).toBe(-before.facing)
+    const scene = (state: typeof before) => <svg><g transform={state.facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined}>
+      <AnimatedCharacterArt species="bun" mood="happy" bodyColour={PALETTE.white} frame={motionFor(state, 2000, 'bun', 'happy', false).frame} />
+    </g></svg>
+    const { container, rerender } = mount(scene(before))
+    const tips = () => [...container.querySelectorAll('[data-appendage]')].map((node) => {
+      // (72,26) is the end of the first cubic segment in the shared ear path.
+      const point = worldPoint(node.querySelector('path')!, 72, 26)
+      return point
+    }).sort((a, b) => a[0] - b[0])
+    const original = tips()
+    expect(original).toHaveLength(2)
+    rerender(scene(after))
+    const joined = tips()
+    for (let i = 0; i < 2; i++) for (let axis = 0; axis < 2; axis++) expect(joined[i][axis]).toBeCloseTo(original[i][axis], 10)
+  })
+
   for (const species of speciesList) {
     for (const expression of ['mood', 'pleased', 'alert'] as const) {
       it(`${species} renders ${expression} with the complete attached wardrobe`, () => {

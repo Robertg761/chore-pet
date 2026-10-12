@@ -1,0 +1,80 @@
+{
+  "baseCommit": "336f777507f3ae390560d6a7693b6bb0a3de614f",
+  "checks": [
+    {
+      "name": "focused-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/character/idleMotion.test.ts src/character/motion.test.ts src/character/AnimatedCharacter.test.tsx src/pet/activityMotion.test.ts src/pet/PetIntegration.test.tsx",
+      "log": "idle-corrected.log",
+      "exitCode": 0,
+      "result": "212 pass in5 files"
+    },
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "idle-unit-final.log",
+      "exitCode": 0,
+      "result": "1920 pass in86 files,53.08s; before next bathroom test additions"
+    },
+    {
+      "name": "build",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "idle-build.log",
+      "exitCode": 0,
+      "result": "TypeScript and production build pass; existing chunk-size advisory"
+    },
+    {
+      "name": "lint",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "idle-lint.log",
+      "exitCode": 0,
+      "result": "pass, zero warnings"
+    },
+    {
+      "name": "production-motion-browser",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium nice -n 10 node --test --test-concurrency=1 scripts/browser/creator-motion.test.mjs scripts/browser/wardrobe-motion.test.mjs scripts/browser/pet-motion.test.mjs",
+      "log": "idle-browser.log",
+      "exitCode": 0,
+      "result": "17 pass,37.73s; isolated offline production contexts, sequential"
+    },
+    {
+      "name": "padded-captures",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 node docs/audits/2026-10-12-character-polish/capture-idle.mjs",
+      "log": "idle-capture.log",
+      "exitCode": 0,
+      "result": "24 sway cells,30 blink cells,240 padded rasters,zero outside pixels"
+    }
+  ],
+  "sourceSha256": {
+    "src/character/motion.ts": "c5728645139ddfdf5c73296fc07dc1fbca12ae6a98e3640d269862166c240091",
+    "src/character/idleMotion.test.ts": "ad7b0052e6017a880ebd00b6b31ca313c8e14da6822a83a17fa7d441c0e55499",
+    "src/character/AnimatedCharacter.test.tsx": "0d0c04344b9849bcbc6fde95b24bc5db1de8f0c77ed1d2b09458057c0466ae72",
+    "src/pet/activityMotion.test.ts": "5a01904f6b434961b32ed9c54dacc60447a091b71fc90aef8ed0fa309605e5ea",
+    "src/pet/activityMotion.ts": "6401e236e3a3d71d6cba8d30f66986f3e40a0ba05f35c26b057d59139518452a",
+    "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+    "src/character/species/animatedBody.tsx": "e338788eeb57e5c7f651d198f8ecfd85925ce33c9e0cd7528f45575cf8b79212",
+    "docs/audits/2026-10-12-character-polish/capture-idle.mjs": "9335484afe3cd803774f35e75dea8bc14e9d9844a9bb45bb8e18f1ede81bbf53"
+  },
+  "captures": [
+    {
+      "file": "idle-sway.png",
+      "sha256": "7fe5ffd49f115f036bfad792fae0bfa3a2e1c0598f2a71445a99ef3bcde76a55"
+    },
+    {
+      "file": "idle-blinks.png",
+      "sha256": "7611b8708870980973263441462d563c4997e8c8f9354e89784df4c82a7041c2"
+    },
+    {
+      "file": "idle-captures.json",
+      "sha256": "67d94500c63caad355a536916b823337e4fe2a97a11edd6800effbdba3409032"
+    }
+  ],
+  "history": [
+    "idle-red.log:8 new expected failures.",
+    "idle-green.log:88 pass; misspelled integration filename ignored by Vitest. idle-focused.log corrects it,147 pass.",
+    "idle-unit.log:1918 pass,1 failure in raw local angle assertion on facing change. Production mirror was correct. Corrected assertion and independent rendered ear-tip regression pass."
+  ],
+  "limitations": [
+    "Static source review and production stills do not close human temporal playback acceptance.",
+    "The17 browser cases cover existing room/creator/wardrobe integration; the new blink schedule and idle sway have focused sampler and rendered-art evidence, without a new live room idle-case capture."
+  ]
+}

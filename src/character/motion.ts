@@ -179,18 +179,27 @@ export function sampleMotion(input: MotionInput): MotionFrame {
   const safeElapsed = Number.isFinite(elapsed) ? elapsed : 0
   const blinkMs = input.blinkMs ?? safeElapsed
   const blinkOffset = { bun: 0, mochi: 1700, sprout: 3300 }[species]
-  const blinkPhase = ((Number.isFinite(blinkMs) ? Math.max(0, blinkMs) : 0) % 6000 + blinkOffset) % 6000
-  // A 140ms blink, with smooth closure/reopening and no second clock in the SVG.
+  const lifetimePhase = ((Number.isFinite(blinkMs) ? Math.max(0, blinkMs) : 0) % 12000 + blinkOffset) % 12000
+  const blinkPhase = lifetimePhase % 6000
+  // Preserve primary timing; every other blink has a second 140ms blink after
+  // a fully open 60ms gap. Both use the same lifetime clock and smooth joins.
   // Finite actions ease to neutral at their endpoints, even during a lifetime blink.
   const blinkStrength = looping ? 1 : envelope(elapsed / duration, 0, 0.1, 0.9, 1)
-  frame.eyeOpen = 1 - 0.9 * envelope(blinkPhase, 3000, 3050, 3090, 3140) * blinkStrength
+  const blink = Math.max(envelope(blinkPhase, 3000, 3050, 3090, 3140), envelope(lifetimePhase, 9200, 9250, 9290, 9340))
+  frame.eyeOpen = 1 - 0.9 * blink * blinkStrength
   // Walking settles its geometry, but retains the lifetime blink for arrival
   // snapshots and shared travel. Finite gestures keep their neutral guard above.
   if (action === 'walk' && (duration === 0 || elapsed === 0 || elapsed >= duration)) return frame
   if (action === 'idle') {
-    const breath = (1 - Math.cos((safeElapsed % ACTION_MS.idle) / ACTION_MS.idle * Math.PI * 2)) / 2
+    const phase = (safeElapsed % ACTION_MS.idle) / ACTION_MS.idle * Math.PI * 2
+    const breath = (1 - Math.cos(phase)) / 2
     frame.scaleX -= 0.004 * breath * amplitude
     frame.scaleY += 0.007 * breath * amplitude
+    // Follow the breath with a delayed, small movement. The breath envelope
+    // gives appendages neutral position and zero velocity at the loop seam.
+    const follow = breath === 0 ? 0 : Math.sin(phase - personality.lag) * breath * personality.follow * 0.18 * energy
+    frame.leftAppendage = follow
+    frame.rightAppendage = follow * 0.8
     return frame
   }
 

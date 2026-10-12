@@ -655,7 +655,11 @@ describe('phase transition continuity', () => {
     const pet = initialPet({ tx: 2, ty: 2 }, 0)
     const moved = step(pet, world, 2000, () => 0.3)
     const frame = motion(moved, 2000).frame
-    expect(frame).toEqual(motion(pet, 2000).frame)
+    const before = motion(pet, 2000).frame
+    expect(moved.facing).toBe(-pet.facing)
+    // Frames are local to the facing. The outgoing ears swap and negate so
+    // the outer mirror preserves their screen positions at the handoff.
+    expect(frame).toEqual({ ...before, leftAppendage: -before.rightAppendage, rightAppendage: -before.leftAppendage })
     expect(frame.leftFoot).toBeCloseTo(0)
   })
 })

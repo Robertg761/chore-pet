@@ -1,0 +1,37 @@
+{
+  "method": "Production sampler/SVG static stills at 200/60/25px and padded raster containment. Not live room integration or temporal playback acceptance.",
+  "swayCells": 24,
+  "blinkCells": 30,
+  "rasterSamples": 240,
+  "outside": 0,
+  "alphaThreshold": 5,
+  "strokeScale": 1.6,
+  "extrema": {
+    "mochi": {
+      "minimumAt": 2944,
+      "maximumAt": 1616,
+      "minimumDegrees": -0.3621758674081825,
+      "maximumDegrees": 0.7795473453790349
+    },
+    "bun": {
+      "minimumAt": 3056,
+      "maximumAt": 1712,
+      "minimumDegrees": -0.6777854953274501,
+      "maximumDegrees": 2.0026253194487738
+    },
+    "sprout": {
+      "minimumAt": 3136,
+      "maximumAt": 1808,
+      "minimumDegrees": -0.4035344173791619,
+      "maximumDegrees": 1.560827518066982
+    }
+  },
+  "sourceSha256": {
+    "src/character/motion.ts": "c5728645139ddfdf5c73296fc07dc1fbca12ae6a98e3640d269862166c240091",
+    "src/character/idleMotion.test.ts": "ad7b0052e6017a880ebd00b6b31ca313c8e14da6822a83a17fa7d441c0e55499",
+    "src/character/AnimatedCharacter.tsx": "8c9451af5b412428f72edaec05960222093c9ded356bec26d89ad07ffe6bda67",
+    "src/character/species/animatedBody.tsx": "e338788eeb57e5c7f651d198f8ecfd85925ce33c9e0cd7528f45575cf8b79212",
+    "src/pet/activityMotion.ts": "6401e236e3a3d71d6cba8d30f66986f3e40a0ba05f35c26b057d59139518452a",
+    "docs/audits/2026-10-12-character-polish/capture-idle.mjs": "9335484afe3cd803774f35e75dea8bc14e9d9844a9bb45bb8e18f1ede81bbf53"
+  }
+}

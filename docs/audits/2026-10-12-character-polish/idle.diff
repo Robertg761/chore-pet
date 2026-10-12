@@ -1,0 +1,199 @@
+diff --git i/src/character/AnimatedCharacter.test.tsx w/src/character/AnimatedCharacter.test.tsx
+index bcb1bf1..dd39b45 100644
+--- i/src/character/AnimatedCharacter.test.tsx
++++ w/src/character/AnimatedCharacter.test.tsx
+@@ -11,6 +11,8 @@ import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionFrame } from './mo
+ import { articulatedPose } from './species/animatedBody'
+ import { poseFor } from './poses'
+ import { ITEMS } from './items'
++import { initialPet, step } from '../pet/behaviour'
++import { motionFor } from '../pet/activityMotion'
+ 
+ const speciesList: Species[] = ['bun', 'mochi', 'sprout']
+ const outfit = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
+@@ -46,6 +48,27 @@ function worldPoint(node: Element, x: number, y: number): [number, number] {
+ }
+ 
+ describe('AnimatedCharacterArt', () => {
++  it('preserves both visible ear tips when idle follow-through turns into a leftward walk', () => {
++    const before = initialPet({ tx: 2, ty: 2 }, 0)
++    const after = step(before, { free: () => true, mood: 'happy', away: false, mess: null, interactions: [] }, 2000, () => 0.3)
++    expect(after.activity.kind).toBe('walk')
++    expect(after.facing).toBe(-before.facing)
++    const scene = (state: typeof before) => <svg><g transform={state.facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined}>
++      <AnimatedCharacterArt species="bun" mood="happy" bodyColour={PALETTE.white} frame={motionFor(state, 2000, 'bun', 'happy', false).frame} />
++    </g></svg>
++    const { container, rerender } = mount(scene(before))
++    const tips = () => [...container.querySelectorAll('[data-appendage]')].map((node) => {
++      // (72,26) is the end of the first cubic segment in the shared ear path.
++      const point = worldPoint(node.querySelector('path')!, 72, 26)
++      return point
++    }).sort((a, b) => a[0] - b[0])
++    const original = tips()
++    expect(original).toHaveLength(2)
++    rerender(scene(after))
++    const joined = tips()
++    for (let i = 0; i < 2; i++) for (let axis = 0; axis < 2; axis++) expect(joined[i][axis]).toBeCloseTo(original[i][axis], 10)
++  })
++
+   for (const species of speciesList) {
+     for (const expression of ['mood', 'pleased', 'alert'] as const) {
+       it(`${species} renders ${expression} with the complete attached wardrobe`, () => {
+diff --git i/src/character/motion.ts w/src/character/motion.ts
+index 2af488c..3750c94 100644
+--- i/src/character/motion.ts
++++ w/src/character/motion.ts
+@@ -179,18 +179,27 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+   const safeElapsed = Number.isFinite(elapsed) ? elapsed : 0
+   const blinkMs = input.blinkMs ?? safeElapsed
+   const blinkOffset = { bun: 0, mochi: 1700, sprout: 3300 }[species]
+-  const blinkPhase = ((Number.isFinite(blinkMs) ? Math.max(0, blinkMs) : 0) % 6000 + blinkOffset) % 6000
+-  // A 140ms blink, with smooth closure/reopening and no second clock in the SVG.
++  const lifetimePhase = ((Number.isFinite(blinkMs) ? Math.max(0, blinkMs) : 0) % 12000 + blinkOffset) % 12000
++  const blinkPhase = lifetimePhase % 6000
++  // Preserve primary timing; every other blink has a second 140ms blink after
++  // a fully open 60ms gap. Both use the same lifetime clock and smooth joins.
+   // Finite actions ease to neutral at their endpoints, even during a lifetime blink.
+   const blinkStrength = looping ? 1 : envelope(elapsed / duration, 0, 0.1, 0.9, 1)
+-  frame.eyeOpen = 1 - 0.9 * envelope(blinkPhase, 3000, 3050, 3090, 3140) * blinkStrength
++  const blink = Math.max(envelope(blinkPhase, 3000, 3050, 3090, 3140), envelope(lifetimePhase, 9200, 9250, 9290, 9340))
++  frame.eyeOpen = 1 - 0.9 * blink * blinkStrength
+   // Walking settles its geometry, but retains the lifetime blink for arrival
+   // snapshots and shared travel. Finite gestures keep their neutral guard above.
+   if (action === 'walk' && (duration === 0 || elapsed === 0 || elapsed >= duration)) return frame
+   if (action === 'idle') {
+-    const breath = (1 - Math.cos((safeElapsed % ACTION_MS.idle) / ACTION_MS.idle * Math.PI * 2)) / 2
++    const phase = (safeElapsed % ACTION_MS.idle) / ACTION_MS.idle * Math.PI * 2
++    const breath = (1 - Math.cos(phase)) / 2
+     frame.scaleX -= 0.004 * breath * amplitude
+     frame.scaleY += 0.007 * breath * amplitude
++    // Follow the breath with a delayed, small movement. The breath envelope
++    // gives appendages neutral position and zero velocity at the loop seam.
++    const follow = breath === 0 ? 0 : Math.sin(phase - personality.lag) * breath * personality.follow * 0.18 * energy
++    frame.leftAppendage = follow
++    frame.rightAppendage = follow * 0.8
+     return frame
+   }
+ 
+diff --git i/src/pet/activityMotion.test.ts w/src/pet/activityMotion.test.ts
+index 400bc15..06c15df 100644
+--- i/src/pet/activityMotion.test.ts
++++ w/src/pet/activityMotion.test.ts
+@@ -655,7 +655,11 @@ describe('phase transition continuity', () => {
+     const pet = initialPet({ tx: 2, ty: 2 }, 0)
+     const moved = step(pet, world, 2000, () => 0.3)
+     const frame = motion(moved, 2000).frame
+-    expect(frame).toEqual(motion(pet, 2000).frame)
++    const before = motion(pet, 2000).frame
++    expect(moved.facing).toBe(-pet.facing)
++    // Frames are local to the facing. The outgoing ears swap and negate so
++    // the outer mirror preserves their screen positions at the handoff.
++    expect(frame).toEqual({ ...before, leftAppendage: -before.rightAppendage, rightAppendage: -before.leftAppendage })
+     expect(frame.leftFoot).toBeCloseTo(0)
+   })
+ })
+diff --git 1/src/character/idleMotion.test.ts 2/src/character/idleMotion.test.ts
+new file mode 100644
+index 0000000..1ca2b9b
+--- /dev/null
++++ 2/src/character/idleMotion.test.ts
+@@ -0,0 +1,99 @@
++import { describe, expect, it } from 'vitest'
++import { SPECIES, type Mood, type Species } from '../domain/types'
++import { ACTION_MS, sampleMotion, type MotionAction } from './motion'
++
++const moods: Mood[] = ['happy', 'content', 'meh', 'scruffy', 'sick']
++const idle = (species: Species, elapsedMs: number, mood: Mood = 'happy', reducedMotion = false) => sampleMotion({
++  species, mood, action: 'idle', elapsedMs, blinkMs: 0, distance: 0,
++  durationMs: ACTION_MS.idle, reducedMotion,
++})
++
++describe('calm idle follow-through', () => {
++  it.each(SPECIES)('%s moves its appendages gently while keeping feet, position and shadow still', (species) => {
++    const samples = Array.from({ length: 251 }, (_, i) => idle(species, i * 16))
++    expect(samples.some((f) => Math.abs(f.leftAppendage) > 0.3)).toBe(true)
++    expect(samples.some((f) => Math.abs(f.rightAppendage) > 0.2)).toBe(true)
++    for (const frame of samples) {
++      expect(Math.abs(frame.leftAppendage)).toBeLessThanOrEqual(2.2)
++      expect(Math.abs(frame.rightAppendage)).toBeLessThanOrEqual(2.2)
++      expect(frame).toMatchObject({ bodyX: 0, bodyY: 0, lean: 0, leftFoot: 0, rightFoot: 0,
++        leftGroundX: 0, leftGroundY: 0, rightGroundX: 0, rightGroundY: 0,
++        leftArm: 0, rightArm: 0, shadowScale: 1, shadowOpacity: 1, accentOpacity: 0 })
++    }
++  })
++
++  it('gives each species a different delayed response and softens it with lower energy', () => {
++    const at = SPECIES.map((species) => idle(species, 2000).leftAppendage)
++    expect(new Set(at).size).toBe(3)
++    expect(Math.abs(at[SPECIES.indexOf('bun')])).toBeGreaterThan(Math.abs(at[SPECIES.indexOf('mochi')]))
++    for (const species of SPECIES) {
++      const energy = moods.map((mood) => Math.abs(idle(species, 2000, mood).leftAppendage))
++      for (let i = 1; i < energy.length; i++) expect(energy[i]).toBeLessThan(energy[i - 1])
++    }
++  })
++
++  it('joins breathing loops at neutral appendage position and zero velocity', () => {
++    for (const species of SPECIES) for (const mood of moods) for (const seam of [0, 4000, 8000, 12000]) {
++      const before = idle(species, seam - 0.1, mood), at = idle(species, seam, mood), after = idle(species, seam + 0.1, mood)
++      expect(at).toMatchObject({ leftAppendage: 0, rightAppendage: 0, scaleX: 1, scaleY: 1 })
++      for (const key of ['leftAppendage', 'rightAppendage', 'scaleX', 'scaleY'] as const) {
++        expect(Math.abs(before[key] - at[key]) / 0.1).toBeLessThan(0.00001)
++        expect(Math.abs(after[key] - at[key]) / 0.1).toBeLessThan(0.00001)
++      }
++    }
++  })
++
++  it('suppresses breathing and sway immediately for reduced motion', () => {
++    for (const species of SPECIES) for (const mood of moods) for (const time of [500, 1000, 2000, 3000]) {
++      expect(idle(species, time, mood, true)).toEqual(idle(species, 0, mood, true))
++    }
++  })
++})
++
++const schedules = [
++  { species: 'bun', single: 3000, double: 9000 },
++  { species: 'mochi', single: 1300, double: 7300 },
++  { species: 'sprout', single: 11700, double: 5700 },
++] as const
++
++function eyes(species: Species, blinkMs: number, action: MotionAction = 'idle', reducedMotion = false, elapsedMs = ACTION_MS[action] * 0.5) {
++  return sampleMotion({ species, mood: 'happy', action, elapsedMs, blinkMs, distance: 0,
++    durationMs: ACTION_MS[action], reducedMotion }).eyeOpen!
++}
++
++describe('occasional double blinks', () => {
++  it.each(schedules)('$species keeps primary blink timing and alternates single and double clusters', ({ species, single, double }) => {
++    for (const offset of [0, 12000, 24000]) {
++      expect(eyes(species, single + offset + 70)).toBeCloseTo(0.1)
++      expect(eyes(species, single + offset + 270)).toBe(1)
++      expect(eyes(species, double + offset + 70)).toBeCloseTo(0.1)
++      expect(eyes(species, double + offset + 270)).toBeCloseTo(0.1)
++      for (const gap of [140, 170, 200, 340]) expect(eyes(species, double + offset + gap)).toBe(1)
++      expect(eyes(species, double + offset + 225)).toBeCloseTo(0.55)
++      expect(eyes(species, double + offset + 315)).toBeCloseTo(0.55)
++    }
++  })
++
++  it('closes and reopens smoothly at every primary, secondary and lifetime-cycle join', () => {
++    for (const { species, single, double } of schedules) {
++      for (const t of [0, 12000, 24000, ...[single, double, double + 200].flatMap((start) => [start, start + 50, start + 90, start + 140])]) {
++        const before = eyes(species, t - 0.01), at = eyes(species, t), after = eyes(species, t + 0.01)
++        expect(Math.abs(before - at) / 0.01).toBeLessThan(0.00002)
++        expect(Math.abs(after - at) / 0.01).toBeLessThan(0.00002)
++      }
++    }
++  })
++
++  it('preserves the second blink across action changes while retaining reduction and finite endpoint rules', () => {
++    for (const { species, double } of schedules) for (const action of Object.keys(ACTION_MS) as MotionAction[]) {
++      const time = double + 270
++      expect(eyes(species, time, action)).toBeCloseTo(0.1)
++      expect(eyes(species, time, action, false, ACTION_MS[action] * 0.6)).toBeCloseTo(0.1)
++      expect(eyes(species, time, action, true)).toBe(1)
++      if (action !== 'idle' && action !== 'walk') {
++        expect(eyes(species, time, action, false, 0)).toBe(1)
++        expect(eyes(species, time, action, false, ACTION_MS[action])).toBe(1)
++      }
++    }
++  })
++})

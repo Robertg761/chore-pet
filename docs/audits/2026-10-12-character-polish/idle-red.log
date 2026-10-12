@@ -1,0 +1,91 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/idleMotion.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/idleMotion.test.ts (11 tests | 8 failed) 24ms
+   ❯ calm idle follow-through (6)
+     × mochi moves its appendages gently while keeping feet, position and shadow still 7ms
+     × bun moves its appendages gently while keeping feet, position and shadow still 1ms
+     × sprout moves its appendages gently while keeping feet, position and shadow still 1ms
+     × gives each species a different delayed response and softens it with lower energy 1ms
+   ❯ occasional double blinks (5)
+     × bun keeps primary blink timing and alternates single and double clusters 1ms
+     × mochi keeps primary blink timing and alternates single and double clusters 0ms
+     × sprout keeps primary blink timing and alternates single and double clusters 0ms
+     × preserves the second blink across action changes while retaining reduction and finite endpoint rules 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/idleMotion.test.ts > calm idle follow-through > mochi moves its appendages gently while keeping feet, position and shadow still
+ FAIL  src/character/idleMotion.test.ts > calm idle follow-through > bun moves its appendages gently while keeping feet, position and shadow still
+ FAIL  src/character/idleMotion.test.ts > calm idle follow-through > sprout moves its appendages gently while keeping feet, position and shadow still
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/character/idleMotion.test.ts:14:66
+     12|   it.each(SPECIES)('%s moves its appendages gently while keeping feet,…
+     13|     const samples = Array.from({ length: 251 }, (_, i) => idle(species…
+     14|     expect(samples.some((f) => Math.abs(f.leftAppendage) > 0.3)).toBe(…
+       |                                                                  ^
+     15|     expect(samples.some((f) => Math.abs(f.rightAppendage) > 0.2)).toBe…
+     16|     for (const frame of samples) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/character/idleMotion.test.ts > calm idle follow-through > gives each species a different delayed response and softens it with lower energy
+AssertionError: expected 1 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 1
+
+ ❯ src/character/idleMotion.test.ts:27:30
+     25|   it('gives each species a different delayed response and softens it w…
+     26|     const at = SPECIES.map((species) => idle(species, 2000).leftAppend…
+     27|     expect(new Set(at).size).toBe(3)
+       |                              ^
+     28|     expect(Math.abs(at[SPECIES.indexOf('bun')])).toBeGreaterThan(Math.…
+     29|     for (const species of SPECIES) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/character/idleMotion.test.ts > occasional double blinks > bun keeps primary blink timing and alternates single and double clusters
+ FAIL  src/character/idleMotion.test.ts > occasional double blinks > mochi keeps primary blink timing and alternates single and double clusters
+ FAIL  src/character/idleMotion.test.ts > occasional double blinks > sprout keeps primary blink timing and alternates single and double clusters
+AssertionError: expected 1 to be close to 0.1, received difference is 0.9, but expected 0.005
+ ❯ src/character/idleMotion.test.ts:70:52
+     68|       expect(eyes(species, single + offset + 270)).toBe(1)
+     69|       expect(eyes(species, double + offset + 70)).toBeCloseTo(0.1)
+     70|       expect(eyes(species, double + offset + 270)).toBeCloseTo(0.1)
+       |                                                    ^
+     71|       for (const gap of [140, 170, 200, 340]) expect(eyes(species, dou…
+     72|       expect(eyes(species, double + offset + 225)).toBeCloseTo(0.55)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/character/idleMotion.test.ts > occasional double blinks > preserves the second blink across action changes while retaining reduction and finite endpoint rules
+AssertionError: expected 1 to be close to 0.1, received difference is 0.9, but expected 0.005
+ ❯ src/character/idleMotion.test.ts:90:43
+     88|     for (const { species, double } of schedules) for (const action of …
+     89|       const time = double + 270
+     90|       expect(eyes(species, time, action)).toBeCloseTo(0.1)
+       |                                           ^
+     91|       expect(eyes(species, time, action, false, ACTION_MS[action] * 0.…
+     92|       expect(eyes(species, time, action, true)).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed | 3 passed (11)
+   Start at  15:45:28
+   Duration  215ms (transform 59%, tests 24%, import 14%, worker 4%)
+

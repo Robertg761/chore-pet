@@ -1,0 +1,56 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/activityMotion.test.ts (64 tests | 1 failed) 120ms
+   ❯ phase transition continuity (9)
+     × starts wandering from the current idle breathing frame 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/activityMotion.test.ts > phase transition continuity > starts wandering from the current idle breathing frame
+AssertionError: expected { bodyX: +0, bodyY: +0, …(20) } to deeply equal { bodyX: +0, bodyY: +0, …(20) }
+
+- Expected
++ Received
+
+@@ -5,16 +5,16 @@
+    "expression": "mood",
+    "eyeOpen": 1,
+    "gazeX": 0,
+    "gazeY": 0,
+    "lean": 0,
+-   "leftAppendage": 1.6919861247953643,
++   "leftAppendage": -1.3535888998362915,
+    "leftArm": 0,
+    "leftFoot": 0,
+    "leftGroundX": 0,
+    "leftGroundY": 0,
+-   "rightAppendage": 1.3535888998362915,
++   "rightAppendage": -1.6919861247953643,
+    "rightArm": 0,
+    "rightFoot": 0,
+    "rightGroundX": 0,
+    "rightGroundY": 0,
+    "scaleX": 0.996,
+
+ ❯ src/pet/activityMotion.test.ts:658:19
+    656|     const moved = step(pet, world, 2000, () => 0.3)
+    657|     const frame = motion(moved, 2000).frame
+    658|     expect(frame).toEqual(motion(pet, 2000).frame)
+       |                   ^
+    659|     expect(frame.leftFoot).toBeCloseTo(0)
+    660|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 85 passed (86)
+      Tests  1 failed | 1918 passed (1919)
+   Start at  15:47:11
+   Duration  53.52s (tests 82%, environment 8%, transform 5%, import 4%, worker 1%)
+
+    Isolate  86 workers spawned · ~124ms startup each (spawn + environment, per file)
+             at least ~10.51s faster with isolate: false — reuses workers across files instead of one per file
+

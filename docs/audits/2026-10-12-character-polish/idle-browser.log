@@ -1,0 +1,36 @@
+✔ creator previews the actual character while keeping face choices visible at 320x568 (3952.420193ms)
+✔ creator previews the actual character while keeping face choices visible at 844x390 (3338.170324ms)
+✔ creator previews the actual character while keeping face choices visible at 1280x800 (3378.36045ms)
+✔ creator settles live reduction and initial reduction keeps look choices available (3784.133894ms)
+✔ keyboard Enter reaches and activates the resident without moving its world position (1017.402598ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ keyboard Space reaches and activates the resident without moving its world position (998.07335ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ twenty rapid taps preserve the character node, bound effects, and allow only one pending reaction (2921.587096ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ maximum coalesced torso join 0.0421 CSS px
+✔ tap mid-step retains fractional world position and the outgoing body pose (1117.388697ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ mid-step torso join 0.0740 CSS px
+✔ ambient routes and adjacent gestures stay outside sample furniture in both orientations (1762.892853ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ idle resident follows screen-space attention on its existing clock and respects keyboard and reduced motion (898.475826ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during a walk settles articulation and can restore motion live (1318.203765ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+✔ changing reduced motion during chore-celebration landing leaves a grounded still pet (1317.166956ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; motion enabled
+ℹ completion announced at 561ms; lift sampled at 1317ms; landing at 1737ms
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (2257.869127ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (2216.348594ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (2357.611898ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (2180.904474ms)
+✔ wardrobe live reduced motion settles the preview and does not restart when restored (1775.722113ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37734.663488
