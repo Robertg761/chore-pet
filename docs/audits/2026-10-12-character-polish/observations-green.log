@@ -1,0 +1,28 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/content/petLines.test.ts src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (60 tests | 1 failed) 1262ms
+   × uses observations for chore-free reward decor while an unmapped fixture keeps calm mood dialogue 25ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > uses observations for chore-free reward decor while an unmapped fixture keeps calm mood dialogue
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ src/pet/PetIntegration.test.tsx:312:56
+    310|     const { container } = mount(<LivingRoom {...props} objects={[{ ...…
+    311|     frame(1500)
+    312|     const line = container.querySelector('.pet-bubble')!.textContent
+       |                                                        ^
+    313|     const expected = catalogId === 'teddy' ? ['Hello, soft little frie…
+    314|     expect(expected).toContain(line)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 98 passed (99)
+   Start at  16:17:41
+   Duration  2.56s (tests 57%, transform 26%, environment 11%, import 5%)
+

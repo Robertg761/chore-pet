@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { CATALOG } from '../catalog/objects'
+import { ALL_ENTRIES, CATALOG } from '../catalog/objects'
 import {
   BIG_DONE_LINES,
+  CALM_OBJECT_LINES,
+  calmObjectLine,
   doneLine,
   CAUGHT_UP_LINES,
   CHORE_LINES,
@@ -33,6 +35,7 @@ const TYPICAL_CHORE = 'wash the dishes'
 const ALL_LISTS: Record<string, string[]> = {
   ...Object.fromEntries(MOODS.map((m) => [`MOOD_LINES.${m}`, MOOD_LINES[m]])),
   ...Object.fromEntries(Object.entries(OBJECT_LINES).map(([id, l]) => [`OBJECT_LINES.${id}`, l])),
+  ...Object.fromEntries(Object.entries(CALM_OBJECT_LINES).map(([id, l]) => [`CALM_OBJECT_LINES.${id}`, l])),
   CHORE_LINES,
   TAP_LINES,
   DONE_LINES,
@@ -163,6 +166,34 @@ describe('line lists', () => {
   })
 })
 
+describe('calmObjectLine', () => {
+  const observedIds = ['shower', 'toilet', 'washer', 'sink', 'stove', 'fridge', 'counter', 'plant', 'fish-tank',
+    'bookshelf', 'teddy', 'lamp', 'poster', 'wall-clock', 'fairy-lights', 'bed', 'couch', 'bean-bag', 'rug']
+
+  it('has two distinct observations for every current interaction profile, including reward decor', () => {
+    expect(Object.keys(CALM_OBJECT_LINES).sort()).toEqual([...observedIds].sort())
+    for (const id of observedIds) {
+      expect(ALL_ENTRIES.some((entry) => entry.id === id), id).toBe(true)
+      expect(CALM_OBJECT_LINES[id]).toHaveLength(2)
+      expect(new Set([calmObjectLine(id, 0), calmObjectLine(id, 1)]).size, id).toBe(2)
+    }
+  })
+
+  it('uses deterministic selection for ordinary and unusual beat values', () => {
+    for (const id of observedIds) {
+      for (const beat of [-5, 0, 1, 2, 2.9, Number.MAX_SAFE_INTEGER, Number.NaN, Infinity, -Infinity]) {
+        expect(calmObjectLine(id, beat)).toBe(pickLine(CALM_OBJECT_LINES[id], beat))
+      }
+    }
+  })
+
+  it.each(['dishwasher', 'nope', '', 'constructor', 'toString', '__proto__', 'hasOwnProperty'])(
+    'leaves an unmapped or inherited key %s quiet', (id) => {
+      expect(calmObjectLine(id, 0)).toBe('')
+    },
+  )
+})
+
 describe('messLine', () => {
   it('picks from the kind and level, and is deterministic', () => {
     for (const kind of ['stink', 'dust', 'wilt'] as const) {
@@ -201,6 +232,10 @@ describe('objectLine', () => {
     expect(OBJECT_LINES.washer).toContain(objectLine('washer', 'Do a load of laundry', 0))
     expect(OBJECT_LINES.sink).toContain(objectLine('sink', 'Dishes my way', 1))
     expect(objectLine('nope', 'Anything', 0)).toBe('')
+  })
+
+  it.each(['constructor', 'toString', '__proto__'])('is quiet for inherited catalog key %s', (id) => {
+    expect(objectLine(id, 'Anything', 0)).toBe('')
   })
 
   it('never leaves a placeholder or an empty line for any catalog chore', () => {

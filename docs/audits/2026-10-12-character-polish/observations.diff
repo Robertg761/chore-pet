@@ -1,0 +1,191 @@
+diff --git i/src/content/petLines.test.ts w/src/content/petLines.test.ts
+index a794062..8177055 100644
+--- i/src/content/petLines.test.ts
++++ w/src/content/petLines.test.ts
+@@ -1,7 +1,9 @@
+ import { describe, expect, it } from 'vitest'
+-import { CATALOG } from '../catalog/objects'
++import { ALL_ENTRIES, CATALOG } from '../catalog/objects'
+ import {
+   BIG_DONE_LINES,
++  CALM_OBJECT_LINES,
++  calmObjectLine,
+   doneLine,
+   CAUGHT_UP_LINES,
+   CHORE_LINES,
+@@ -33,6 +35,7 @@ const TYPICAL_CHORE = 'wash the dishes'
+ const ALL_LISTS: Record<string, string[]> = {
+   ...Object.fromEntries(MOODS.map((m) => [`MOOD_LINES.${m}`, MOOD_LINES[m]])),
+   ...Object.fromEntries(Object.entries(OBJECT_LINES).map(([id, l]) => [`OBJECT_LINES.${id}`, l])),
++  ...Object.fromEntries(Object.entries(CALM_OBJECT_LINES).map(([id, l]) => [`CALM_OBJECT_LINES.${id}`, l])),
+   CHORE_LINES,
+   TAP_LINES,
+   DONE_LINES,
+@@ -163,6 +166,34 @@ describe('line lists', () => {
+   })
+ })
+ 
++describe('calmObjectLine', () => {
++  const observedIds = ['shower', 'toilet', 'washer', 'sink', 'stove', 'fridge', 'counter', 'plant', 'fish-tank',
++    'bookshelf', 'teddy', 'lamp', 'poster', 'wall-clock', 'fairy-lights', 'bed', 'couch', 'bean-bag', 'rug']
++
++  it('has two distinct observations for every current interaction profile, including reward decor', () => {
++    expect(Object.keys(CALM_OBJECT_LINES).sort()).toEqual([...observedIds].sort())
++    for (const id of observedIds) {
++      expect(ALL_ENTRIES.some((entry) => entry.id === id), id).toBe(true)
++      expect(CALM_OBJECT_LINES[id]).toHaveLength(2)
++      expect(new Set([calmObjectLine(id, 0), calmObjectLine(id, 1)]).size, id).toBe(2)
++    }
++  })
++
++  it('uses deterministic selection for ordinary and unusual beat values', () => {
++    for (const id of observedIds) {
++      for (const beat of [-5, 0, 1, 2, 2.9, Number.MAX_SAFE_INTEGER, Number.NaN, Infinity, -Infinity]) {
++        expect(calmObjectLine(id, beat)).toBe(pickLine(CALM_OBJECT_LINES[id], beat))
++      }
++    }
++  })
++
++  it.each(['dishwasher', 'nope', '', 'constructor', 'toString', '__proto__', 'hasOwnProperty'])(
++    'leaves an unmapped or inherited key %s quiet', (id) => {
++      expect(calmObjectLine(id, 0)).toBe('')
++    },
++  )
++})
++
+ describe('messLine', () => {
+   it('picks from the kind and level, and is deterministic', () => {
+     for (const kind of ['stink', 'dust', 'wilt'] as const) {
+@@ -203,6 +234,10 @@ describe('objectLine', () => {
+     expect(objectLine('nope', 'Anything', 0)).toBe('')
+   })
+ 
++  it.each(['constructor', 'toString', '__proto__'])('is quiet for inherited catalog key %s', (id) => {
++    expect(objectLine(id, 'Anything', 0)).toBe('')
++  })
++
+   it('never leaves a placeholder or an empty line for any catalog chore', () => {
+     for (const entry of CATALOG) {
+       for (const chore of entry.chores) {
+diff --git i/src/content/petLines.ts w/src/content/petLines.ts
+index d4e633e..8b541fd 100644
+--- i/src/content/petLines.ts
++++ w/src/content/petLines.ts
+@@ -139,6 +139,29 @@ export const OBJECT_LINES: Record<string, string[]> = {
+   ],
+ }
+ 
++/** Quiet observations while interacting with a healthy object or decor. */
++export const CALM_OBJECT_LINES: Record<string, string[]> = {
++  shower: ['Such a little shower head.', 'That shower head looks like a tiny hat.'],
++  toilet: ['Such a small, round button.', 'One little button, right on top.'],
++  washer: ['Hello, round little window.', 'A little window for watching laundry.'],
++  sink: ['A little basin for a little splash.', 'That tap has a lovely curve.'],
++  stove: ['A little pot with a little lid.', 'A tiny knob on top of the pot.'],
++  fridge: ['That red magnet caught my eye.', 'A little red dot on a big fridge.'],
++  counter: ['I spotted a tiny tomato!', 'A little tomato on a little board.'],
++  plant: ['Hello, little leaves!', "I'm waving to the plant."],
++  'fish-tank': ['Hello in there, little fish!', 'A tiny wave for the fish.'],
++  bookshelf: ['So many colours on those shelves.', 'I wonder what is in that red book.'],
++  teddy: ['Hello, soft little friend.', 'That teddy has such a sweet face.'],
++  lamp: ['That shade looks like a little umbrella.', 'A warm little glow. Cosy.'],
++  poster: ['Those hills look peaceful.', 'A tiny sunny day in a frame.'],
++  'wall-clock': ["Tick, tock. I'm in no hurry.", 'Round clock, tiny hands.'],
++  'fairy-lights': ['All those little lights in a row.', 'A little string of cosy colours.'],
++  bed: ['Those blankets look cosy.', 'A comfy spot for a daydream.'],
++  couch: ['Those cushions look soft.', 'That couch looks like a good thinking spot.'],
++  'bean-bag': ['That looks like a comfy cloud.', 'A little nest for a little rest.'],
++  rug: ['Little dots around a cosy middle.', 'I like that little flower on the rug.'],
++}
++
+ /**
+  * Overdue chores that are not tied to an object. Every line uses {chore} and
+  * reads after a verb phrase ("wash the dishes").
+@@ -314,7 +337,14 @@ export function objectLine(catalogId: string, choreName: string, beat: number):
+   const wanted = choreName.trim().toLowerCase()
+   const index = catalogEntry(catalogId)?.chores.findIndex((c) => c.name.toLowerCase() === wanted) ?? -1
+   const specific = index >= 0 ? CHORE_OBJECT_LINES[`${catalogId}:${index}`] : undefined
+-  return pickLine(specific ?? OBJECT_LINES[catalogId] ?? [], beat)
++  const general = Object.prototype.hasOwnProperty.call(OBJECT_LINES, catalogId) ? OBJECT_LINES[catalogId] : []
++  return pickLine(specific ?? general, beat)
++}
++
++/** Unmapped objects stay quiet so the caller can use a calm mood fallback. */
++export function calmObjectLine(catalogId: string, beat: number): string {
++  const lines = Object.prototype.hasOwnProperty.call(CALM_OBJECT_LINES, catalogId) ? CALM_OBJECT_LINES[catalogId] : []
++  return pickLine(lines, beat)
+ }
+ 
+ /**
+diff --git i/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index c4747d9..bee23ce 100644
+--- i/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useImperativeHandle, useLayoutEffec
+ import { createPortal } from 'react-dom'
+ import { catalogEntry } from '../catalog/objects'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+-import { CAUGHT_UP_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
++import { CAUGHT_UP_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
+ import { messiestObject } from '../domain/mess'
+ import type { NeglectLevel } from '../domain/neglect'
+ import type { ChoreStatus } from '../domain/schedule'
+@@ -256,7 +256,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+       const messy = level > 0 || stage !== 'clean'
+       // Healthy objects invite a calm observation, independent of other overdue chores.
+       line = messy ? messLine(entry.mess, level, seed) || objectLine(entry.id, chore?.name ?? '', seed) || null
+-        : pickLine(MOOD_LINES.content, seed)
++        : calmObjectLine(entry.id, seed) || pickLine(MOOD_LINES.content, seed)
+     }
+   } else if (a.kind === 'look' && messiest && messObject && messEntry) {
+     // A smelly or dusty thing gets a line about the smell or dust every other look; otherwise the object's own line.
+diff --git i/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index e146789..4f43666 100644
+--- i/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -216,6 +216,7 @@ it.each([
+   frame(1500) // Orient begins, followed by a 360ms turn.
+   const opening = container.querySelector('.pet-bubble')!.textContent
+   expect(opening).toBeTruthy()
++  if (stage === 'clean') expect(['Hello, little leaves!', "I'm waving to the plant."]).toContain(opening)
+   for (const time of [1859, 1860, 2400, actionEnd, actionEnd + 179]) {
+     frame(time) // Actual behavior crosses action and the 180ms settle phase.
+     expect(container.querySelector('.pet-bubble')!.textContent).toBe(opening)
+@@ -247,7 +248,7 @@ it.each(['constructor', 'toString', '__proto__'])('uses clean dialogue for reser
+   const { container } = mount(<LivingRoom {...props} objects={[{ ...plant, id }]} stages={{}} neglect={{}} />)
+   frame(1500)
+   const line = container.querySelector('.pet-bubble')!.textContent
+-  expect(MOOD_LINES.content).toContain(line)
++  expect(['Hello, little leaves!', "I'm waving to the plant."]).toContain(line)
+   expect(container.querySelector('[aria-live]')!.textContent).toBe('')
+   frame(2400)
+   expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
+@@ -294,13 +295,27 @@ it.each(dialogueObjects.flatMap((object) => [false, true].map((otherOverdue) =>
+     frame(1500)
+     const line = container.querySelector('.pet-bubble')!.textContent
+     expect(line).toBeTruthy()
+-    expect(MOOD_LINES.content).toContain(line)
++    const observations = { plant: ['Hello, little leaves!', "I'm waving to the plant."],
++      sink: ['A little basin for a little splash.', 'That tap has a lovely curve.'],
++      counter: ['I spotted a tiny tomato!', 'A little tomato on a little board.'] }
++    expect(observations[catalogId]).toContain(line)
+     expect(container.querySelector('[aria-live]')!.textContent).toBe('')
+     frame(1860)
+     expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
+   },
+ )
+ 
++it.each(['teddy', 'dishwasher'])('uses observations or the calm fallback for chore-free %s', (catalogId) => {
++    const { container } = mount(<LivingRoom {...props} objects={[{ ...plant, catalogId }]} />)
++    frame(1500)
++    const line = container.querySelector('.pet-bubble')!.textContent
++    const expected = catalogId === 'teddy' ? ['Hello, soft little friend.', 'That teddy has such a sweet face.'] : MOOD_LINES.content
++    expect(expected).toContain(line)
++    expect(container.querySelector('[aria-live]')!.textContent).toBe('')
++    frame(1860); frame(2400)
++    expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
++})
++
+ it.each(dialogueObjects.flatMap((object) => ([1, 2, 3] as const).map((level) => ({ ...object, level }))))(
+   'keeps condition dialogue for an overdue $catalogId at neglect $level',
+   ({ catalogId, name, kind, level }) => {

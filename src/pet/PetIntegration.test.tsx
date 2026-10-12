@@ -216,6 +216,7 @@ it.each([
   frame(1500) // Orient begins, followed by a 360ms turn.
   const opening = container.querySelector('.pet-bubble')!.textContent
   expect(opening).toBeTruthy()
+  if (stage === 'clean') expect(['Hello, little leaves!', "I'm waving to the plant."]).toContain(opening)
   for (const time of [1859, 1860, 2400, actionEnd, actionEnd + 179]) {
     frame(time) // Actual behavior crosses action and the 180ms settle phase.
     expect(container.querySelector('.pet-bubble')!.textContent).toBe(opening)
@@ -247,7 +248,7 @@ it.each(['constructor', 'toString', '__proto__'])('uses clean dialogue for reser
   const { container } = mount(<LivingRoom {...props} objects={[{ ...plant, id }]} stages={{}} neglect={{}} />)
   frame(1500)
   const line = container.querySelector('.pet-bubble')!.textContent
-  expect(MOOD_LINES.content).toContain(line)
+  expect(['Hello, little leaves!', "I'm waving to the plant."]).toContain(line)
   expect(container.querySelector('[aria-live]')!.textContent).toBe('')
   frame(2400)
   expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
@@ -294,12 +295,26 @@ it.each(dialogueObjects.flatMap((object) => [false, true].map((otherOverdue) => 
     frame(1500)
     const line = container.querySelector('.pet-bubble')!.textContent
     expect(line).toBeTruthy()
-    expect(MOOD_LINES.content).toContain(line)
+    const observations = { plant: ['Hello, little leaves!', "I'm waving to the plant."],
+      sink: ['A little basin for a little splash.', 'That tap has a lovely curve.'],
+      counter: ['I spotted a tiny tomato!', 'A little tomato on a little board.'] }
+    expect(observations[catalogId]).toContain(line)
     expect(container.querySelector('[aria-live]')!.textContent).toBe('')
     frame(1860)
     expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
   },
 )
+
+it.each(['teddy', 'dishwasher'])('uses observations or the calm fallback for chore-free %s', (catalogId) => {
+    const { container } = mount(<LivingRoom {...props} objects={[{ ...plant, catalogId }]} />)
+    frame(1500)
+    const line = container.querySelector('.pet-bubble')!.textContent
+    const expected = catalogId === 'teddy' ? ['Hello, soft little friend.', 'That teddy has such a sweet face.'] : MOOD_LINES.content
+    expect(expected).toContain(line)
+    expect(container.querySelector('[aria-live]')!.textContent).toBe('')
+    frame(1860); frame(2400)
+    expect(container.querySelector('.pet-bubble')!.textContent).toBe(line)
+})
 
 it.each(dialogueObjects.flatMap((object) => ([1, 2, 3] as const).map((level) => ({ ...object, level }))))(
   'keeps condition dialogue for an overdue $catalogId at neglect $level',

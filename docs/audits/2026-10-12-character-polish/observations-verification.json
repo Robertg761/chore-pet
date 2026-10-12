@@ -1,0 +1,53 @@
+{
+  "baseCommit": "b257455",
+  "checks": [
+    {
+      "name": "focused",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1 src/content/petLines.test.ts src/pet/PetIntegration.test.tsx",
+      "log": "observations-focused.log",
+      "exitCode": 0,
+      "result": "100 pass"
+    },
+    {
+      "name": "full-unit",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm test -- --maxWorkers=1",
+      "log": "observations-unit.log",
+      "exitCode": 0,
+      "result": "1952 pass,87 files,53.75s"
+    },
+    {
+      "name": "build",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run build",
+      "log": "observations-build.log",
+      "exitCode": 0,
+      "result": "TypeScript/build pass,existing chunk-size advisory"
+    },
+    {
+      "name": "lint",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 nice -n 10 npm run lint",
+      "log": "observations-lint.log",
+      "exitCode": 0,
+      "result": "zero warnings"
+    },
+    {
+      "name": "resident-browser",
+      "command": "NODE_OPTIONS=--max-old-space-size=768 CHROME=/usr/bin/chromium nice -n 10 node --test --test-concurrency=1 scripts/browser/pet-motion.test.mjs",
+      "log": "observations-browser.log",
+      "exitCode": 0,
+      "result": "8 pass,11.49s"
+    }
+  ],
+  "sourceSha256": {
+    "src/content/petLines.ts": "d67a5d6c30144b3c90e444ee3f79bae1c902e109f546ffd8f84cb5b9fc55e89a",
+    "src/content/petLines.test.ts": "7827fddf4a522cee30b78d53c0cb0681bed49830087cfe78c546c4c2e42751b6",
+    "src/pet/LivingRoom.tsx": "75c30c91b555fe99c2a66e7f7b3c26822cb83629de4fea16a9e8e0ebc558f308",
+    "src/pet/PetIntegration.test.tsx": "e784a0b09cb7a5c0b3f36a0a468810a565997406debb4a0db6b26dd5ca94d2b4"
+  },
+  "redEvidence": "observations-red.log:12 fail,77 pass;9 integration generic-line mismatches and3 inherited-key failures.",
+  "history": "observations-green.log initially has1 added fixture failure because the shared fake clock moved backward between mounts. Separate parameterized cases fix it; observations-focused.log records100 pass.",
+  "limitations": [
+    "All complete batch9 checks precede the separately uncommitted idle-review tests and source changes.",
+    "No clocks, persistence, or choreography changed. Existing browser checks cover resident behavior; new content selection/phase/priority is covered by real LivingRoom integration tests.",
+    "Human temporal playback remains open."
+  ]
+}

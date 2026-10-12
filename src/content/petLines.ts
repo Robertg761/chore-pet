@@ -139,6 +139,29 @@ export const OBJECT_LINES: Record<string, string[]> = {
   ],
 }
 
+/** Quiet observations while interacting with a healthy object or decor. */
+export const CALM_OBJECT_LINES: Record<string, string[]> = {
+  shower: ['Such a little shower head.', 'That shower head looks like a tiny hat.'],
+  toilet: ['Such a small, round button.', 'One little button, right on top.'],
+  washer: ['Hello, round little window.', 'A little window for watching laundry.'],
+  sink: ['A little basin for a little splash.', 'That tap has a lovely curve.'],
+  stove: ['A little pot with a little lid.', 'A tiny knob on top of the pot.'],
+  fridge: ['That red magnet caught my eye.', 'A little red dot on a big fridge.'],
+  counter: ['I spotted a tiny tomato!', 'A little tomato on a little board.'],
+  plant: ['Hello, little leaves!', "I'm waving to the plant."],
+  'fish-tank': ['Hello in there, little fish!', 'A tiny wave for the fish.'],
+  bookshelf: ['So many colours on those shelves.', 'I wonder what is in that red book.'],
+  teddy: ['Hello, soft little friend.', 'That teddy has such a sweet face.'],
+  lamp: ['That shade looks like a little umbrella.', 'A warm little glow. Cosy.'],
+  poster: ['Those hills look peaceful.', 'A tiny sunny day in a frame.'],
+  'wall-clock': ["Tick, tock. I'm in no hurry.", 'Round clock, tiny hands.'],
+  'fairy-lights': ['All those little lights in a row.', 'A little string of cosy colours.'],
+  bed: ['Those blankets look cosy.', 'A comfy spot for a daydream.'],
+  couch: ['Those cushions look soft.', 'That couch looks like a good thinking spot.'],
+  'bean-bag': ['That looks like a comfy cloud.', 'A little nest for a little rest.'],
+  rug: ['Little dots around a cosy middle.', 'I like that little flower on the rug.'],
+}
+
 /**
  * Overdue chores that are not tied to an object. Every line uses {chore} and
  * reads after a verb phrase ("wash the dishes").
@@ -314,7 +337,14 @@ export function objectLine(catalogId: string, choreName: string, beat: number): 
   const wanted = choreName.trim().toLowerCase()
   const index = catalogEntry(catalogId)?.chores.findIndex((c) => c.name.toLowerCase() === wanted) ?? -1
   const specific = index >= 0 ? CHORE_OBJECT_LINES[`${catalogId}:${index}`] : undefined
-  return pickLine(specific ?? OBJECT_LINES[catalogId] ?? [], beat)
+  const general = Object.prototype.hasOwnProperty.call(OBJECT_LINES, catalogId) ? OBJECT_LINES[catalogId] : []
+  return pickLine(specific ?? general, beat)
+}
+
+/** Unmapped objects stay quiet so the caller can use a calm mood fallback. */
+export function calmObjectLine(catalogId: string, beat: number): string {
+  const lines = Object.prototype.hasOwnProperty.call(CALM_OBJECT_LINES, catalogId) ? CALM_OBJECT_LINES[catalogId] : []
+  return pickLine(lines, beat)
 }
 
 /**

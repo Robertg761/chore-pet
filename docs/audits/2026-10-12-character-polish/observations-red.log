@@ -1,0 +1,98 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/content/petLines.test.ts src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (59 tests | 9 failed) 1189ms
+   × uses clean dialogue for reserved object ID constructor with empty ordinary records 19ms
+   × uses clean dialogue for reserved object ID toString with empty ordinary records 16ms
+   × uses clean dialogue for reserved object ID __proto__ with empty ordinary records 15ms
+   × uses neutral dialogue for a clean plant with another overdue object: false 19ms
+   × uses neutral dialogue for a clean plant with another overdue object: true 21ms
+   × uses neutral dialogue for a clean sink with another overdue object: false 14ms
+   × uses neutral dialogue for a clean sink with another overdue object: true 19ms
+   × uses neutral dialogue for a clean counter with another overdue object: false 17ms
+   × uses neutral dialogue for a clean counter with another overdue object: true 15ms
+ ❯ src/content/petLines.test.ts (30 tests | 3 failed) 93ms
+   ❯ objectLine (6)
+     × is quiet for inherited catalog key constructor 3ms
+     × is quiet for inherited catalog key toString 0ms
+     × is quiet for inherited catalog key __proto__ 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/content/petLines.test.ts > objectLine > is quiet for inherited catalog key constructor
+ FAIL  src/content/petLines.test.ts > objectLine > is quiet for inherited catalog key toString
+ FAIL  src/content/petLines.test.ts > objectLine > is quiet for inherited catalog key __proto__
+TypeError: lines.filter is not a function
+ ❯ pickLine src/content/petLines.ts:295:40
+    293|   const raw = vars.chore?.trim()
+    294|   const chore = raw && raw.length > 1 && raw[1] === raw[1].toLowerCase…
+    295|   const usable = chore ? lines : lines.filter((line) => !line.includes…
+       |                                        ^
+    296|   if (usable.length === 0) return ''
+    297|
+ ❯ objectLine src/content/petLines.ts:317:10
+ ❯ src/content/petLines.test.ts:207:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > uses clean dialogue for reserved object ID constructor with empty ordinary records
+ FAIL  src/pet/PetIntegration.test.tsx > uses clean dialogue for reserved object ID toString with empty ordinary records
+ FAIL  src/pet/PetIntegration.test.tsx > uses clean dialogue for reserved object ID __proto__ with empty ordinary records
+AssertionError: expected [ 'Hello, little leaves!', …(1) ] to include 'I found the warmest spot in the room.'
+ ❯ src/pet/PetIntegration.test.tsx:250:65
+    248|   frame(1500)
+    249|   const line = container.querySelector('.pet-bubble')!.textContent
+    250|   expect(['Hello, little leaves!', "I'm waving to the plant."]).toCont…
+       |                                                                 ^
+    251|   expect(container.querySelector('[aria-live]')!.textContent).toBe('')
+    252|   frame(2400)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > uses neutral dialogue for a clean plant with another overdue object: false
+ FAIL  src/pet/PetIntegration.test.tsx > uses neutral dialogue for a clean plant with another overdue object: true
+AssertionError: expected [ 'Hello, little leaves!', …(1) ] to include 'I found the warmest spot in the room.'
+ ❯ src/pet/PetIntegration.test.tsx:300:37
+    298|       sink: ['A little basin for a little splash.', 'That tap has a lo…
+    299|       counter: ['I spotted a tiny tomato!', 'A little tomato on a litt…
+    300|     expect(observations[catalogId]).toContain(line)
+       |                                     ^
+    301|     expect(container.querySelector('[aria-live]')!.textContent).toBe('…
+    302|     frame(1860)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > uses neutral dialogue for a clean sink with another overdue object: false
+ FAIL  src/pet/PetIntegration.test.tsx > uses neutral dialogue for a clean sink with another overdue object: true
+AssertionError: expected [ …(2) ] to include 'I found the warmest spot in the room.'
+ ❯ src/pet/PetIntegration.test.tsx:300:37
+    298|       sink: ['A little basin for a little splash.', 'That tap has a lo…
+    299|       counter: ['I spotted a tiny tomato!', 'A little tomato on a litt…
+    300|     expect(observations[catalogId]).toContain(line)
+       |                                     ^
+    301|     expect(container.querySelector('[aria-live]')!.textContent).toBe('…
+    302|     frame(1860)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > uses neutral dialogue for a clean counter with another overdue object: false
+ FAIL  src/pet/PetIntegration.test.tsx > uses neutral dialogue for a clean counter with another overdue object: true
+AssertionError: expected [ 'I spotted a tiny tomato!', …(1) ] to include 'I found the warmest spot in the room.'
+ ❯ src/pet/PetIntegration.test.tsx:300:37
+    298|       sink: ['A little basin for a little splash.', 'That tap has a lo…
+    299|       counter: ['I spotted a tiny tomato!', 'A little tomato on a litt…
+    300|     expect(observations[catalogId]).toContain(line)
+       |                                     ^
+    301|     expect(container.querySelector('[aria-live]')!.textContent).toBe('…
+    302|     frame(1860)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  12 failed | 77 passed (89)
+   Start at  16:16:50
+   Duration  2.42s (tests 57%, transform 26%, environment 11%, import 5%)
+

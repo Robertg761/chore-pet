@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useImperativeHandle, useLayoutEffec
 import { createPortal } from 'react-dom'
 import { catalogEntry } from '../catalog/objects'
 import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
-import { CAUGHT_UP_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
+import { CAUGHT_UP_LINES, MOOD_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
 import { messiestObject } from '../domain/mess'
 import type { NeglectLevel } from '../domain/neglect'
 import type { ChoreStatus } from '../domain/schedule'
@@ -256,7 +256,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
       const messy = level > 0 || stage !== 'clean'
       // Healthy objects invite a calm observation, independent of other overdue chores.
       line = messy ? messLine(entry.mess, level, seed) || objectLine(entry.id, chore?.name ?? '', seed) || null
-        : pickLine(MOOD_LINES.content, seed)
+        : calmObjectLine(entry.id, seed) || pickLine(MOOD_LINES.content, seed)
     }
   } else if (a.kind === 'look' && messiest && messObject && messEntry) {
     // A smelly or dusty thing gets a line about the smell or dust every other look; otherwise the object's own line.
