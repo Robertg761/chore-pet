@@ -1,0 +1,31 @@
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (2728.80651ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (2772.045808ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 640x360 (2915.138913ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (2668.105631ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (2741.47803ms)
+✔ wardrobe Hop live reduced motion settles the preview and does not restart when restored (1824.249835ms)
+✔ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (1852.505476ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 6
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17903.997342
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-motion.test.mjs:23:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 640x360 (2915.138913ms)
+  AssertionError [ERR_ASSERTION]: item names must fit without breaking a short word across lines
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:54:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

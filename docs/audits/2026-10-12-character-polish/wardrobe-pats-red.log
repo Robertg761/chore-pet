@@ -1,0 +1,99 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/screens/Wardrobe.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/screens/Wardrobe.test.tsx (10 tests | 4 failed) 513ms
+   × previews gentle pats for exactly1600ms on the same subtree and isolated clock 25ms
+   × keeps the pats stop control focused, rejects other movements and lets pose selection end it 13ms
+   × cancels pats on live reduction without replay and exposes its disabled state 14ms
+   × pauses hidden pats, expires on return and ignores callbacks after unmount 14ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/Wardrobe.test.tsx > previews gentle pats for exactly1600ms on the same subtree and isolated clock
+AssertionError: button Gentle pats: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     32|   return node!
+     33| }
+ ❯ src/screens/Wardrobe.test.tsx:154:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/screens/Wardrobe.test.tsx > keeps the pats stop control focused, rejects other movements and lets pose selection end it
+AssertionError: button Gentle pats: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     32|   return node!
+     33| }
+ ❯ src/screens/Wardrobe.test.tsx:176:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/screens/Wardrobe.test.tsx > cancels pats on live reduction without replay and exposes its disabled state
+AssertionError: button Gentle pats: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     32|   return node!
+     33| }
+ ❯ src/screens/Wardrobe.test.tsx:201:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/screens/Wardrobe.test.tsx > pauses hidden pats, expires on return and ignores callbacks after unmount
+AssertionError: button Gentle pats: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     32|   return node!
+     33| }
+ ❯ src/screens/Wardrobe.test.tsx:212:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 6 passed (10)
+   Start at  19:21:30
+   Duration  1.37s (tests 40%, transform 32%, environment 21%, import 7%)
+

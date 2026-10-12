@@ -1,0 +1,25 @@
+✖ wardrobe finite previews stay usable and preserve the outfit at 640x360 (3062.788488ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3463.041526
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-motion.test.mjs:23:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 640x360 (3062.788488ms)
+  AssertionError [ERR_ASSERTION]: every wardrobe tab must fit its row:{"width":640,"height":360,"scroll":640,"art":{"x":109,"y":57.59375,"w":220,"h":161.40625,"right":329,"bottom":219},"body":{"x":92,"y":44.59375,"w":528,"h":305.40625,"right":620,"bottom":350},"stage":{"x":92,"y":44.59375,"w":254,"h":305.40625,"right":346,"bottom":350},"side":{"x":361,"y":39.59375,"w":264,"h":315.40625,"right":625,"bottom":355},"tabs":{"x":366,"y":44.59375,"w":254,"h":56,"right":620,"bottom":100.59375},"tabButtons":[{"x":293,"y":50.59375,"w":57.453125,"h":44,"right":350.453125,"bottom":94.59375},{"x":354.453125,"y":50.59375,"w":51.875,"h":44,"right":406.328125,"bottom":94.59375},{"x":410.328125,"y":50.59375,"w":55.078125,"h":44,"right":465.40625,"bottom":94.59375},{"x":469.40625,"y":50.59375,"w":62.484375,"h":44,"right":531.890625,"bottom":94.59375},{"x":535.890625,"y":50.59375,"w":78.109375,"h":44,"right":614,"bottom":94.59375}],"controls":[{"x":115,"y":233,"w":49,"h":44,"right":164,"bottom":277},{"x":168,"y":233,"w":49,"h":44,"right":217,"bottom":277},{"x":221,"y":233,"w":49,"h":44,"right":270,"bottom":277},{"x":274,"y":233,"w":49,"h":44,"right":323,"bottom":277},{"x":109,"y":291,"w":68,"h":44,"right":177,"bottom":335},{"x":185,"y":291,"w":68,"h":44,"right":253,"bottom":335},{"x":261,"y":291,"w":68,"h":44,"right":329,"bottom":335}]}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:53:51)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

@@ -1,0 +1,17 @@
+{
+  "baseCommit": "647d5530ef74ecbb87d8f49445198809d4665ab6",
+  "sources": {
+    "src/screens/WardrobePreview.tsx": "80b0d138cfaac49a4a539171c3d014e8f06779ee3c9716b35866f896c45d2713",
+    "src/screens/Wardrobe.css": "4d4d01b556f6302b0860c03e42ebfa05b14254c12750a2814bb415533636daaa",
+    "src/screens/Wardrobe.test.tsx": "137eb49cb21b7d5deb66296ffbf8955a12bd85358eb368e9abfb234c823f3a25",
+    "scripts/browser/wardrobe-motion.test.mjs": "a43f5e978dbdd82eda3a5b354019ab2f9f066a69ab0c0124a91eb9c4f8ae87e7",
+    "docs/ART.md": "f2a8747801c735e512b00f4feaf50256a5bc02fbd9b233105e63fce72a174126",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-landscape-diagnostic.mjs": "5c750c6ca9a520d1d0f986a44d3e330f150ec401d4d5ca89c17ac4bed09fa7c6",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-landscape-final-diagnostic.mjs": "e9608e30faf368cd4c7d727204ed3815a993014aea2460315cf14b81a9c8d027"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-source.diff",
+    "sha256": "f5bc03bf81baf8231a4ff7c91da173e90b24d8b5c018588fc92abff0e3bccb1e"
+  },
+  "scope": "Seven paths: affection wardrobe choice on existing finite clock; three-control grid; narrow landscape3column/halfwidth/compact44px tabs; focused/native tests/docs and2read-only historical layout probes. No sampler/controller/persistence/clock changes. First diagnostic applies to original5-column build; final diagnostic injects prior4-column candidate for replay on currentbuild."
+}

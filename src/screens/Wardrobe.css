@@ -10,6 +10,7 @@
 .wd-stage {
   flex: 1 1 0;
   min-height: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,8 +22,8 @@
 }
 .wd-preview { flex: 1 1 0; min-height: 0; width: 100%; display: block; }
 .wd-poses { align-self: stretch; }
-.wd-motion { display: flex; justify-content: center; gap: 8px; flex: none; }
-.wd-motion .btn { min-width: 96px; }
+.wd-motion { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: min(100%, 360px); min-width: 0; gap: 8px; flex: none; }
+.wd-motion .btn { min-width: 44px; padding: 0 6px; line-height: 1.2; }
 .wd-motion-note { max-width: 32ch; text-align: center; }
 .wd-tabs .seg-btn { white-space: nowrap; }
 .wd-poses .seg-btn { padding: 0 2px; font-size: 0.875rem; }
@@ -155,4 +156,12 @@ button.wd-tile:active, .wd-outfit-try:active { transform: scale(0.97); }
   .wd-outfits { gap: 10px; }
   .wd-outfit-art { max-width: 80px; }
   .wd-outfit-name { font-size: 0.875rem; }
+}
+
+/* A narrow landscape panel needs wider item tiles and enough room for poses. */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 640px) and (max-width: 759px) {
+  .wd-side { flex-basis: 50%; }
+  .wd-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .wd-tabs { gap: 1px; padding: 2px; }
+  .wd-tabs .seg-btn { flex: 1 1 auto; min-width: 44px; padding: 0 1px; font-size: 0.75rem; }
 }

@@ -1,0 +1,15 @@
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (2751.562193ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (2636.375091ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 640x360 (3864.159037ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (2733.839012ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (2696.383605ms)
+✔ wardrobe Hop live reduced motion settles the preview and does not restart when restored (1881.412957ms)
+✔ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (1823.568953ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18795.043402

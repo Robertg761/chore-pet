@@ -1,0 +1,75 @@
+✖ wardrobe finite previews stay usable and preserve the outfit at 320x568 (6404.924308ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 390x664 (6301.770952ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 640x360 (2883.754553ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 844x390 (6376.203989ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (6451.548718ms)
+✔ wardrobe Hop live reduced motion settles the preview and does not restart when restored (1783.260769ms)
+✔ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (1786.792462ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 2
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32375.789891
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-motion.test.mjs:23:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 320x568 (6404.924308ms)
+  locator.waitFor: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByRole('button', { name: 'Gentle pats', exact: true }) to be visible[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:93:74) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByRole('button', { name: 'Gentle pats', exact: true }) to be visible" ]
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:23:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 390x664 (6301.770952ms)
+  locator.waitFor: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByRole('button', { name: 'Gentle pats', exact: true }) to be visible[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:93:74) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByRole('button', { name: 'Gentle pats', exact: true }) to be visible" ]
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:23:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 640x360 (2883.754553ms)
+  AssertionError [ERR_ASSERTION]: item names must fit without breaking a short word across lines
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:48:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:23:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 844x390 (6376.203989ms)
+  locator.waitFor: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByRole('button', { name: 'Gentle pats', exact: true }) to be visible[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:93:74) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByRole('button', { name: 'Gentle pats', exact: true }) to be visible" ]
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:23:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (6451.548718ms)
+  locator.waitFor: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByRole('button', { name: 'Gentle pats', exact: true }) to be visible[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:93:74) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByRole('button', { name: 'Gentle pats', exact: true }) to be visible" ]
+  }

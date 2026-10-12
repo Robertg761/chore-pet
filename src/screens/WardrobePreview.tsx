@@ -7,7 +7,7 @@ import { usePetMotion } from '../pet/usePetMotion'
 import { SegThumb } from '../shell/SegThumb'
 import { describeOutfit, WARDROBE_POSES } from './wardrobeModel'
 
-type PreviewAction = 'greet' | 'celebrate'
+type PreviewAction = 'greet' | 'affection' | 'celebrate'
 interface PreviewRun { action: PreviewAction; start: number }
 
 /** One finite, on-demand clock, isolated from the wardrobe's item grid. */
@@ -50,6 +50,8 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
     <div className="wd-motion" role="group" aria-label="Movement preview">
       <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'greet')}
         onClick={() => toggle('greet')}>{active?.action === 'greet' ? 'Stop wave' : 'Wave'}</button>
+      <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'affection')}
+        onClick={() => toggle('affection')}>{active?.action === 'affection' ? 'Stop pats' : 'Gentle pats'}</button>
       <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'celebrate')}
         onClick={() => toggle('celebrate')}>{active?.action === 'celebrate' ? 'Stop hop' : 'Hop'}</button>
     </div>

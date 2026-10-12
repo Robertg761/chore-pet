@@ -1,0 +1,260 @@
+{
+  "freeze": {
+    "baseCommit": "647d5530ef74ecbb87d8f49445198809d4665ab6",
+    "sources": {
+      "src/screens/WardrobePreview.tsx": "80b0d138cfaac49a4a539171c3d014e8f06779ee3c9716b35866f896c45d2713",
+      "src/screens/Wardrobe.css": "4d4d01b556f6302b0860c03e42ebfa05b14254c12750a2814bb415533636daaa",
+      "src/screens/Wardrobe.test.tsx": "137eb49cb21b7d5deb66296ffbf8955a12bd85358eb368e9abfb234c823f3a25",
+      "scripts/browser/wardrobe-motion.test.mjs": "a43f5e978dbdd82eda3a5b354019ab2f9f066a69ab0c0124a91eb9c4f8ae87e7",
+      "docs/ART.md": "f2a8747801c735e512b00f4feaf50256a5bc02fbd9b233105e63fce72a174126",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pats-landscape-diagnostic.mjs": "5c750c6ca9a520d1d0f986a44d3e330f150ec401d4d5ca89c17ac4bed09fa7c6",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pats-landscape-final-diagnostic.mjs": "e9608e30faf368cd4c7d727204ed3815a993014aea2460315cf14b81a9c8d027"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-source.diff",
+      "sha256": "f5bc03bf81baf8231a4ff7c91da173e90b24d8b5c018588fc92abff0e3bccb1e"
+    },
+    "scope": "Seven paths: affection wardrobe choice on existing finite clock; three-control grid; narrow landscape3column/halfwidth/compact44px tabs; focused/native tests/docs and2read-only historical layout probes. No sampler/controller/persistence/clock changes. First diagnostic applies to original5-column build; final diagnostic injects prior4-column candidate for replay on currentbuild."
+  },
+  "checks": [
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-red.log",
+      "logSha256": "a5f5ebb9f6272ac5083bfd52377ed6904fd3128d1cd44bede4cbb3d695b2bbbe",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "4missingbuttonfail/6priorpass,1.37s."
+    },
+    {
+      "name": "browser-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-browser-red.log",
+      "logSha256": "93b11ecfd18a879ac6513794a5279690cb27ef111a1fa4231b658f343b0687a1",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-browser-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "6missingchoicefail:5counts,1clicktimeout."
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-focused.log",
+      "logSha256": "558946c3cd7fd6c965177bf1ba168cdde8ae679379e8bd477e82748306cc0bcd",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "50tests/3files2.44s; finalJS/units, beforeCSS-onlyiterations."
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-build.log",
+      "logSha256": "07449772261e41046fabc8802d6ed12a33935fc259e9f173568fb1e2e1b80834",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Initialtypebuild."
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Cleaninitialsource."
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-browser.log",
+      "logSha256": "960163ebb7fdce6138ba1870874e8d2373f854fcf6a4421374dd56f5807cd9ce",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-browser.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "7cases2pass/5fail32.376s;4postdeadlineRAFfixturewaits and640olditemwordwrap."
+    },
+    {
+      "name": "landscape-diagnostic",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-landscape-diagnostic.log",
+      "logSha256": "2924fc45c218af09ed80ea4a45c07d5b859eb33738c60d9b928bf29f84e3cb9c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-landscape-diagnostic.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Old5colbuild:2/3movementarrangements identical52.33pxtile/40.33pxtext/2lines."
+    },
+    {
+      "name": "build-final",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-build-final.log",
+      "logSha256": "71871350d2fd767bb677d0a996bfbff3a9042bd220bf3156914222cd0f9bf0d8",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-build-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Typebuildfirst4column/minwidth0/halfwidthadjustment."
+    },
+    {
+      "name": "lint-final",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-lint-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Clean."
+    },
+    {
+      "name": "browser-final",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-browser-final.log",
+      "logSha256": "95231e6e7099a8dece5b34e76cf9cf830c3f82f1328a9e44a2946f0c92898c92",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-browser-final.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "7cases6pass/1remaining640wordwrap,17.904s."
+    },
+    {
+      "name": "landscape-final-diagnostic",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-landscape-final-diagnostic.log",
+      "logSha256": "e656dba8c14186c4ab789c3924275cb454f9c4d14bee92cd965ba4541d736dea",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-landscape-final-diagnostic.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Before3colproductedit:4cols59pxtile,47pxroomfor53.892pxtext;3colcandidate fits, art161.41pxunchanged."
+    },
+    {
+      "name": "build-landscape",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-build-landscape.log",
+      "logSha256": "bca4c1263fdbf1524a490a7061418b06be94734140a93dd5a26feff7da715cc1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-build-landscape.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Typebuild3collandscape."
+    },
+    {
+      "name": "lint-landscape",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-lint-landscape.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-lint-landscape.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Clean."
+    },
+    {
+      "name": "browser-landscape",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-browser-landscape.log",
+      "logSha256": "aab9d2a7b5277134df8b6e5c0d5f2dbebe2155e37b280baef6e7d431693e7536",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-browser-landscape.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Final3col640andbaseline-injected4\u21923diagnostic2cases7.514s0; predatestabcompact."
+    },
+    {
+      "name": "tabs-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-tabs-red.log",
+      "logSha256": "db87286e9beeb1e269dade9791f0e76f9cf104edf15bf8630f332dd85af0c18d",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-tabs-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      },
+      "result": "Direct640tabfitred:Headstarts293versusrow366;hiddenHead/FaceunderOnbackscroll."
+    },
+    {
+      "name": "build-tabs",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-build-tabs.log",
+      "logSha256": "130f13ca60fce661e8c2dc38e63220edec9894a0846922e8187ef2c4e128417e",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-build-tabs.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "TypebuildfinaltabCSS;test-onlylabel-fitassertaddedlater."
+    },
+    {
+      "name": "lint-tabs",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-lint-tabs.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-lint-tabs.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Cleanbeforetest-onlylabel-fitassert."
+    },
+    {
+      "name": "browser-tabs",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-browser-tabs.log",
+      "logSha256": "f4f0e812868ee372df14f3c87a28c43815a98f2de0a409d516c875e9ea4252a3",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-browser-tabs.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "7nativecases18.795s0 onfinal7frozenpaths;all5viewports,3finiteactions/2reductioncases,alltab/label/target/focus/persistence checks."
+    },
+    {
+      "name": "lint-frozen",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pats-lint-frozen.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-lint-frozen.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      "result": "Cleanonfinal7frozenpaths."
+    }
+  ],
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-1280x800.json": "92534c49fc86dcfd13933b8e849601834efaa7e3e7b255ad16305d8453ea1f23",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-1280x800.png": "18573a21c3c4bcd36ef5dcf8daacdd16f95148cd0d60780259248a558c16b3ae",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-320x568.json": "f277f39e95a610185774d1c0c689c222e60b2c5934ee4bf0335bdcfde2a1e552",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-320x568.png": "61116bc35b0bbc27742b52803e65ca31059c950e6444d0dd1f2b7aa67b491b2a",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-390x664.json": "50b03d1e4a79b39df7c84a5fff31ef95cd621f94bf1b7c6391d92cc14bf39559",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-390x664.png": "ecd832224a582d0fd8e28da1d2e6bc74b0f008313f62902c46530335f786e0a5",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-640x360.json": "6650ef78d4b2202a0dc70acc619efd85a14d865aa1e6b2f1ea2370b9dafaad36",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-640x360.png": "b1726144e2ff7629d9a5d467c2ce438c996a94b827aeb942a9df00c8769c3d48",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-844x390.json": "e2984a988bfb23a17bd1801f635a44256819265eb214abd0c9eae51e668e97ae",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-844x390.png": "8000d60aab8f651989454e3cb7591151e0759647e5704e06f19b35942329e936",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-pats-1280x800.png": "be5cf36838ec6966990f8cadd2df315a5640393e4d1a148ff1788f6269d7f8a1",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-pats-320x568.png": "ad900f7605f77749b5131bc0f0182ed06495ca279e01a7f29438287b3ab02dd9",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-pats-390x664.png": "0c1fd78c7f5d522dfba1ecce21393ae9a0c68424fe47fddc8f8851dca357a144",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-pats-640x360.png": "ea0acab1b7536aad74250e8967a37bcc7f412417a9dc0e0edeaa140c1a7c2247",
+    "docs/audits/2026-10-12-character-polish/wardrobe-pats-captures/wardrobe-pats-844x390.png": "408e36117ec363f73d21f94e466ed5012067f23d92201dc2820055fbddd1eb0a"
+  },
+  "verificationScope": "Rootobservedfinal50focused/typebuild/zero-warninglint/7nativeexits0;reverified7source/patch/15artifacts and19log/exitbindings. NofullrepeatforisolatedWardrobeUI;priorfull2153predates4newcases. Allfinalcaptures regeneratedonfinalbuild,rootinspectedearlier10stillsandfinalchanged640pair;independentrevieweraskedtoinspectall10finalPNGs.",
+  "resources": "Oneheavyprocess,oneworker/Chromium,nice10/768MBNodeheap. AvailableRAMobserved6.1\u20136.6GB,/tmp4.0GBfree;account16%usedordinaryallowed.",
+  "limits": [
+    "Nohuman temporal/AT/physicaldevice/CPU/batteryclaim.",
+    "Wardrobe captures showMochi withcombinedoutfit atwave420ms/pats800ms;sampler\u2019sall-speciescontinuity/artcoverage remains priorbatch evidence.",
+    "Historicalfirstdiagnostic requiresold5columnbuild;finalprobeinjects4columncandidate before3columncomparison. Lastprobeexecution predatescompacttabs,whichareseparatelycoveredbyfinal7nativecases."
+  ],
+  "pending": [],
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-pats-review.md",
+    "sha256": "a9cb1a9a11afe726639b0219d177407ffd57879a37f2d920d43e0f11603fa03e",
+    "result": "Aquinas independent7path/static/stillapproval,no actionablefindings;all23bindingsmatch,all10finalPNGsinspected. Executionprovenance remainsroot-owned."
+  }
+}

@@ -1,0 +1,112 @@
+✖ wardrobe finite previews stay usable and preserve the outfit at 320x568 (1642.508853ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 390x664 (1539.023491ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 640x360 (2690.607665ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 844x390 (1528.38197ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (1583.745123ms)
+✖ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (5528.59914ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 0
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15164.530199
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-motion.test.mjs:23:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 320x568 (1642.508853ms)
+  AssertionError [ERR_ASSERTION]: wardrobe must preview the gentle player response
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:28:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:23:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 390x664 (1539.023491ms)
+  AssertionError [ERR_ASSERTION]: wardrobe must preview the gentle player response
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:28:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:23:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 640x360 (2690.607665ms)
+  AssertionError [ERR_ASSERTION]: wardrobe must preview the gentle player response
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:28:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:23:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 844x390 (1528.38197ms)
+  AssertionError [ERR_ASSERTION]: wardrobe must preview the gentle player response
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:28:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:23:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (1583.745123ms)
+  AssertionError [ERR_ASSERTION]: wardrobe must preview the gentle player response
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:28:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:104:46
+✖ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (5528.59914ms)
+  locator.click: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByRole('button', { name: 'Gentle pats', exact: true })[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:107:65) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByRole('button', { name: 'Gentle pats', exact: true })" ]
+  }
