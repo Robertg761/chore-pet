@@ -1,0 +1,53 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/dev/GalleryMotion.test.tsx src/dev/MotionReview.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/dev/MotionReview.test.tsx (22 tests | 1 failed) 1703ms
+   × respects device reduction without changing the local override or review time 50ms
+ ❯ src/dev/GalleryMotion.test.tsx (10 tests | 1 failed) 596ms
+   × settles a device-reduced gallery without replay or claiming the system setting is active 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/dev/GalleryMotion.test.tsx > settles a device-reduced gallery without replay or claiming the system setting is active
+AssertionError: expected 'Start example animationsSystem reduce…' to contain 'Reduced motion is active. Examples st…'
+
+Expected: "Reduced motion is active. Examples stay still."
+Received: "Start example animationsSystem reduced motion is active. Examples stay still."
+
+ ❯ src/dev/GalleryMotion.test.tsx:138:31
+    136|   expect(gallery.dataset.examplesMotion).toBe('paused')
+    137|   expect(button('Start example animations').disabled).toBe(true)
+    138|   expect(gallery.textContent).toContain('Reduced motion is active. Exa…
+       |                               ^
+    139|   expect(gallery.textContent).not.toContain('System reduced motion is …
+    140|   act(() => setPetMotionReduced(false))
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/dev/MotionReview.test.tsx > respects device reduction without changing the local override or review time
+AssertionError: expected 'Deterministic motion reviewProduction…' to contain 'Reduced motion is active.'
+
+Expected: "Reduced motion is active."
+Received: "Deterministic motion reviewProduction sampler and character art. Scrubbing pauses playback. Settings stay in this panel.Character and actionSpeciesmochibunsproutMoodhappycontentmehscruffysickFacingRightLeftActionidlewalkturngreetaffectionstretchcelebratecelebrate-bignoticeinspectwavereachrestdustsmellconcernBody colorSpecies defaultYellowPinkSkyWhiteDark inkEyesclassicsparklybuttonlashesCheeksroundheartsfrecklesnoneWardrobebody slotBody color aboveoutfit slotNoneHoodieOverallsDressCosy knit sweaterApronneck slotNoneScarfBow tieBandanaface slotNoneRound glassesHeart glasseshead slotNoneRed beanieBowAutumn leaf crownChef's hatGolden crownback slotNoneBackpackPlaybackPlayRestartBack 16 msForward 16 msPlayback speed1×0.5×0.25×Loop playbackAction duration: 1800 ms. Paused at 756 ms.Time scrubberElapsed millisecondsReview overlays and motion preferenceGround lineGround anchorContact target, unavailableForce reduced motion in this panelGround line and pivot anchor use sampler coordinates y=181 and (100,181). No furniture contact target is supplied by this standalone preview. Overlays appear only on the close-up. System reduced motion is active.200px · close-up60px · room check25px · fit-homeKey framesSampled comparisons, not contact geometry. Choose a frame to pause there.Start0 msAnticipation180 msLift756 msLanding / compression1368 msRecovery1800 ms"
+
+ ❯ src/dev/MotionReview.test.tsx:212:36
+    210|   expect(currentSample()?.reducedMotion).toBe(true)
+    211|   expect(body()).not.toBe(moving)
+    212|   expect(ui.container.textContent).toContain('Reduced motion is active…
+       |                                    ^
+    213|   expect(ui.container.textContent).not.toContain('System reduced motio…
+    214|   expect(control<HTMLInputElement>('Time scrubber').value).toBe('756')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 30 passed (32)
+   Start at  20:45:11
+   Duration  3.67s (tests 66%, transform 16%, environment 15%, import 4%)
+
+    Isolate  2 workers spawned · ~334ms startup each (spawn + environment, per file)
+             at least ~334ms faster with isolate: false — reuses workers across files instead of one per file
+

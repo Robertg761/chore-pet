@@ -1,0 +1,29 @@
+✔ gallery starts without repeating work and animates only visible rows at 390px (5597.100978ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery starts without repeating work and animates only visible rows at 1280px (5799.320459ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery initial and live reduced motion stay authoritative without automatic replay (11844.421875ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery effects replay finitely with bounded nodes and no automatic restart (8471.476203ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery effects stay still when visibility observation is unavailable (2951.336505ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ sampled motion review plays independently while gallery examples remain still (2856.161762ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ device motion choice persists and keeps finite reactions still at320px (4926.348406ms)
+ℹ Chromium 152.0.7977.82; native keyboard44px choice; reload; visible resident0idle/1finite/0deadline; still markup; restored normal1; unchanged saved tables.
+✔ device motion choice persists and keeps finite reactions still at1280px (4994.338654ms)
+ℹ Chromium 152.0.7977.82; native keyboard44px choice; reload; visible resident0idle/1finite/0deadline; still markup; restored normal1; unchanged saved tables.
+✔ device off cannot override system reduction, and live system changes retain the existing clock (998.756462ms)
+✔ native cross-tab storage pauses a visible pet and cancels a preview without replaying it (2987.787656ms)
+ℹ One Chromium/app page plus a minimal same-origin storage-only peer; real StorageEvent, cancellation/no replay and live Settings checked state; unchanged saved tables.
+✔ a device-reduced gallery cheer keeps its pet still and fades before its existing deadline (3569.429466ms)
+ℹ Device on/system off: three CSS cheering pets still;36 static-fade accents end by1200ms;original finite cleanup;0RAF.
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 55779.355347

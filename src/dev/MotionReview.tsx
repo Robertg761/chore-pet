@@ -44,7 +44,7 @@ export default function MotionReview() {
   const durationMs = ACTION_MS[action]
   // Study the whole blink pattern without changing the sampler's body cycle.
   const reviewSpanMs = action === 'idle' ? 12000 : durationMs
-  const { reducedMotion: systemReducedMotion } = usePetMotion((now) => {
+  const { reducedMotion: preferredReducedMotion } = usePetMotion((now) => {
     const delta = previousTick.current === null ? 0 : Math.max(0, now - previousTick.current)
     previousTick.current = now
     const time = playTime.current + delta * speed
@@ -55,7 +55,7 @@ export default function MotionReview() {
       previousTick.current = null
     }
   }, playing && inView, undefined, () => { previousTick.current = null })
-  const reducedMotion = reduce || systemReducedMotion
+  const reducedMotion = reduce || preferredReducedMotion
 
   function seek(value: number, limit = reviewSpanMs) {
     const time = Number.isFinite(value) ? Math.round(Math.max(0, Math.min(limit, value))) : 0
@@ -169,7 +169,7 @@ export default function MotionReview() {
         <label><input type="checkbox" disabled checked={false} readOnly />Contact target, unavailable</label>
         <label><input type="checkbox" checked={reduce} onChange={(event) => setReduce(event.target.checked)} />Force reduced motion in this panel</label>
       </fieldset>
-      <p id={notesId}>Ground line and pivot anchor use sampler coordinates y=181 and (100,181). No furniture contact target is supplied by this standalone preview. Overlays appear only on the close-up. {systemReducedMotion && 'System reduced motion is active.'}</p>
+      <p id={notesId}>Ground line and pivot anchor use sampler coordinates y=181 and (100,181). No furniture contact target is supplied by this standalone preview. Overlays appear only on the close-up. {preferredReducedMotion && 'Reduced motion is active.'}</p>
       <div className="motion-review-previews" ref={previewNode}>
         {[200, 60, 25].map((size) => <figure key={size}>
           <div className="motion-review-stage">{preview(size, frame, `${species}, ${mood}, ${action} at ${elapsedMs} ms, ${size}px`, size === 200)}</div>

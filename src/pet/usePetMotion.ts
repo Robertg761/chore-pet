@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { petMotionReduced, subscribePetMotionPreference } from './motionPreference'
 
 /** Boolean callers keep one activity policy for both motion preferences. */
 export type MotionActivity = boolean | { normal: boolean; reduced: boolean }
@@ -7,7 +8,7 @@ export type MotionActivity = boolean | { normal: boolean; reduced: boolean }
  * Supplies browser rAF timestamps in the same monotonic time domain as
  * performance.now(). Hidden tabs receive no ticks; the first visible frame
  * includes elapsed hidden time, so existing activity deadlines remain valid.
- * Preference handlers share the query subscription and run only on changes,
+ * Preference handlers share the query/device updates and run only on changes,
  * even while inactive, so finite previews can cancel in the same event batch.
  * Optional resume handlers run before the first delivered tick after starting
  * or resuming, allowing relative playback to exclude paused time. Absolute
@@ -27,24 +28,25 @@ export function usePetMotion(
   useLayoutEffect(() => { latestResume.current = onResume }, [onResume])
 
   const [reducedMotion, setReducedMotion] = useState(() =>
-    typeof window !== 'undefined' &&
-    (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false),
+    petMotionReduced() || (typeof window !== 'undefined' &&
+    (window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false)),
   )
   const preference = useRef(reducedMotion)
   const running = typeof active === 'boolean' ? active : reducedMotion ? active.reduced : active.normal
 
   useEffect(() => {
     const query = window.matchMedia?.('(prefers-reduced-motion: reduce)')
-    if (!query) return
     const update = () => {
-      const changed = preference.current !== query.matches
-      preference.current = query.matches
-      setReducedMotion(query.matches)
-      if (changed) latestPreferenceChange.current?.(query.matches)
+      const reduced = petMotionReduced() || (query?.matches ?? false)
+      const changed = preference.current !== reduced
+      preference.current = reduced
+      setReducedMotion(reduced)
+      if (changed) latestPreferenceChange.current?.(reduced)
     }
-    query.addEventListener('change', update)
+    query?.addEventListener('change', update)
+    const unsubscribe = subscribePetMotionPreference(update)
     update()
-    return () => query.removeEventListener('change', update)
+    return () => { query?.removeEventListener('change', update); unsubscribe() }
   }, [])
 
   useEffect(() => {

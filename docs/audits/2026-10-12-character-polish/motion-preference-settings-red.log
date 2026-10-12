@@ -1,0 +1,41 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/screens/SettingsScreen.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/screens/SettingsScreen.test.tsx (4 tests | 2 failed) 85ms
+   × offers a described device motion choice and preserves it without closing Settings 37ms
+   × keeps the checked control synchronized with a live preference change 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/SettingsScreen.test.tsx > offers a described device motion choice and preserves it without closing Settings
+AssertionError: expected undefined to be defined
+ ❯ src/screens/SettingsScreen.test.tsx:23:19
+     21|   cleanups.push(ui.unmount)
+     22|   const control = motionControl(ui.container)
+     23|   expect(control).toBeDefined()
+       |                   ^
+     24|   expect(control!.checked).toBe(true)
+     25|   const note = document.getElementById(control!.getAttribute('aria-des…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/screens/SettingsScreen.test.tsx > keeps the checked control synchronized with a live preference change
+AssertionError: expected undefined to be defined
+ ❯ src/screens/SettingsScreen.test.tsx:39:19
+     37|   cleanups.push(ui.unmount)
+     38|   const control = motionControl(ui.container)
+     39|   expect(control).toBeDefined()
+       |                   ^
+     40|   expect(control!.checked).toBe(false)
+     41|   act(() => setPetMotionReduced(true))
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  20:38:12
+   Duration  1.04s (transform 55%, environment 28%, tests 9%, import 8%)
+

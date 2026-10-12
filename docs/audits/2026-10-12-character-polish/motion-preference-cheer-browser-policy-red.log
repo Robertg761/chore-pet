@@ -1,0 +1,25 @@
+✖ a device-reduced gallery cheer keeps its pet still and fades before its existing deadline (2574.690415ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2965.308884
+
+✖ failing tests:
+
+test at scripts/browser/pet-motion-preference.test.mjs:167:1
+✖ a device-reduced gallery cheer keeps its pet still and fades before its existing deadline (2574.690415ms)
+  AssertionError [ERR_ASSERTION]: device reduction must suppress the CSS hop, body breathing and blinks
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-motion-preference.test.mjs:185:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

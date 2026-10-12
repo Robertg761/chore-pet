@@ -48,7 +48,7 @@ export default function GalleryMotion({ children }: { children: ReactNode }) {
         disabled={reducedMotion || !supported} onClick={() => setPlaying((value) => !value)}>
         {requested ? 'Stop example animations' : 'Start example animations'}
       </button>
-      <p id={description}>{reducedMotion ? 'System reduced motion is active. Examples stay still.'
+      <p id={description}>{reducedMotion ? 'Reduced motion is active. Examples stay still.'
         : !supported ? 'Animation visibility tracking is unavailable. Examples stay still.'
           : 'Examples start still. Only visible rows animate. Effects replay on demand; motion review has its own controls.'}</p>
     </div>

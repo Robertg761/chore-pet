@@ -1,0 +1,14 @@
+{
+  "baseCommit": "07df6379ad5c9ea3984dc66648b3b60c69a147ab",
+  "rafSchedulingSuffixByteEqual": true,
+  "rafSuffixSha256": "e99f97f1e6b1a2003ababc4031836f0cfbe458e9cff1a4cec08e8ee9f04864b8",
+  "unchangedSources": {
+    "src/character/motion.ts": "27af4dbddb2f7ace9672447a9aa10040d755f10b17a0f3508eb27edd88a1d2db",
+    "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+    "src/pet/behaviour.ts": "fc713b18836e7597195dad30cc6b11dedc167549ff807e78795ac577e9226d9d",
+    "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+    "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7",
+    "src/pet/LivingRoom.tsx": "5100675e09ed679ef1473f70e80e4878f47f855764ea27879b60da4930992e02"
+  },
+  "scope": "Source equivalence only. Native pending-frame and lifecycle checks separately establish representative behavior; no CPU/battery claim."
+}

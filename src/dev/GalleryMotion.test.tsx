@@ -4,12 +4,14 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { click, render } from '../test/react'
 import GalleryMotion from './GalleryMotion'
 import EffectReview from './EffectReview'
+import { setPetMotionReduced } from '../pet/motionPreference'
 
 let ui: ReturnType<typeof render> | undefined
 let media: MediaQueryList
 let observers: { callback: IntersectionObserverCallback; observe: ReturnType<typeof vi.fn>; disconnect: ReturnType<typeof vi.fn> }[]
 
 beforeEach(() => {
+  setPetMotionReduced(false)
   vi.useFakeTimers()
   media = Object.assign(new EventTarget(), { matches: false, media: '(prefers-reduced-motion: reduce)' }) as MediaQueryList
   vi.stubGlobal('matchMedia', () => media)
@@ -28,6 +30,7 @@ beforeEach(() => {
 afterEach(() => {
   ui?.unmount()
   ui = undefined
+  setPetMotionReduced(false)
   vi.useRealTimers()
   vi.unstubAllGlobals()
   vi.restoreAllMocks()
@@ -123,6 +126,21 @@ it('honors initial/live reduction and does not restart when the preference is re
   const initial = mountGallery()
   expect(initial.dataset.examplesMotion).toBe('paused')
   expect(button('Start example animations').disabled).toBe(true)
+})
+
+it('settles a device-reduced gallery without replay or claiming the system setting is active', () => {
+  const gallery = mountGallery()
+  click(button('Start example animations'))
+  act(() => setPetMotionReduced(true))
+  expect(media.matches).toBe(false)
+  expect(gallery.dataset.examplesMotion).toBe('paused')
+  expect(button('Start example animations').disabled).toBe(true)
+  expect(gallery.textContent).toContain('Reduced motion is active. Examples stay still.')
+  expect(gallery.textContent).not.toContain('System reduced motion is active.')
+  act(() => setPetMotionReduced(false))
+  expect(gallery.dataset.examplesMotion).toBe('paused')
+  expect(button('Start example animations').disabled).toBe(false)
+  expect(requestAnimationFrame).not.toHaveBeenCalled()
 })
 
 it('keeps examples still when observation is unavailable and cleans up on unmount', () => {

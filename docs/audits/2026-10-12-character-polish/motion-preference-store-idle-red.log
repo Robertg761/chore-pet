@@ -1,0 +1,58 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/motionPreference.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/motionPreference.test.ts (13 tests | 2 failed) 25ms
+   × refreshes a device change made while there were no consumers 5ms
+   × does not notify a consumer removed by an earlier callback in the same change 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/motionPreference.test.ts > refreshes a device change made while there were no consumers
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/pet/motionPreference.test.ts:100:32
+     98|   // Another tab can change storage while this view has no native list…
+     99|   localStorage.setItem(m.PET_MOTION_PREFERENCE_KEY, 'on')
+    100|   expect(m.petMotionReduced()).toBe(true)
+       |                                ^
+    101|   cleanup.push(m.subscribePetMotionPreference(() => {}))
+    102|   expect(m.petMotionReduced()).toBe(true)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/pet/motionPreference.test.ts > does not notify a consumer removed by an earlier callback in the same change
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array []
+
+
+Number of calls: 1
+
+ ❯ src/pet/motionPreference.test.ts:125:22
+    123|   cleanup.push(stopSecond)
+    124|   m.setPetMotionReduced(true)
+    125|   expect(second).not.toHaveBeenCalled()
+       |                      ^
+    126| })
+    127|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 11 passed (13)
+   Start at  20:35:19
+   Duration  420ms (environment 81%, tests 8%, transform 7%, import 3%, worker 1%)
+

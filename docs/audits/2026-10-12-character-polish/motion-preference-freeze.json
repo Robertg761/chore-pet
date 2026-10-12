@@ -1,0 +1,25 @@
+{
+  "baseCommit": "07df6379ad5c9ea3984dc66648b3b60c69a147ab",
+  "sources": {
+    "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+    "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+    "src/screens/SettingsScreen.tsx": "7f19c4fe5558cf0ff2fd08cea657085902c36ebba466735c681a55925ec68f72",
+    "src/dev/GalleryMotion.tsx": "0f055a8b7ed225c9adc6d4e2baa6181fd87620220c30d5cb9f7993ab506b195a",
+    "src/dev/MotionReview.tsx": "4a22a5c5401427337d1a2e08d0609958ad5b7267fdd2f8ac9e3eda898cafffd1",
+    "src/effects/Cheer.tsx": "f482b12fa7bf783dcf4951dee6b60d775797b296e90a93398f885b16ddab6468",
+    "src/effects/effects.css": "98d92a24abea25b2beacb39c90c82d132051c935df79ea77eee7a0e83f742a90",
+    "src/pet/motionPreference.test.ts": "646cf1e48167baf88a182b74a1f60b14bfd6d6530609e1f9da4271d9f091fdcd",
+    "src/pet/usePetMotion.preference.test.tsx": "39d4767c5b54d38a0a4335b4f1bd8553ebffdf5aa78f0103e98c77655da70f68",
+    "src/screens/SettingsScreen.test.tsx": "7ad4b1160390a63b48be542928d8ed6499674b2ecc86a741b825bb0feb9b9e64",
+    "src/dev/GalleryMotion.test.tsx": "0bda441669aec5dcdeb3001a59a7a359c840aa713e56632b887db15c202ac399",
+    "src/dev/MotionReview.test.tsx": "bebc071211393a076213da9dd28597c8941a237aa0cae6f9c6354b8e166f0f88",
+    "src/effects/Cheer.test.tsx": "ac11f9f263dcf656f7eda9b546f05d0ce36905fc2e2747142f1999d0e8215b34",
+    "scripts/browser/pet-motion-preference.test.mjs": "d2229f600abf3e9ac454ef1be95abb948fff30e8218194c14d808917dbefcda9",
+    "docs/ART.md": "37a0d2a708e5f62bfec3fc6767616421667d09fe1d1b761218b6cf363433b48b"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/motion-preference-source.diff",
+    "sha256": "117bb84c741255f78c616f14e10bbe8315897c001df15f946438ce9db3a5e511"
+  },
+  "scope": "Device-local reduced pet motion: scoped preference store, existing shared hook preference path, native Settings checkbox, accurate developer preview messages, CSS pet cheers; 7 runtime files,6 unit files,1 native runner,ART. No new frame clock or timer; existing finite cleanup/deadlines and OR-system policy."
+}

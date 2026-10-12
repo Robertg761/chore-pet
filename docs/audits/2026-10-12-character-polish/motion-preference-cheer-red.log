@@ -1,0 +1,77 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/effects/Cheer.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/effects/Cheer.test.tsx (4 tests | 4 failed) 51ms
+   × starts device-reduced cheers still with one existing 1200ms deadline and no frame request 33ms
+   × settles a live device change without replay or extending the original deadline 6ms
+   × settles a live system change without replay or extending the original deadline 6ms
+   × does not replay an initially reduced cheer on restore and cleans up its deadline on unmount 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/effects/Cheer.test.tsx > starts device-reduced cheers still with one existing 1200ms deadline and no frame request
+AssertionError: expected null not to be null
+ ❯ src/effects/Cheer.test.tsx:32:64
+     30|   setPetMotionReduced(true)
+     31|   const done = mount()
+     32|   expect(ui!.container.querySelector('.fx-cheer-reduced')).not.toBeNul…
+       |                                                                ^
+     33|   expect(media.matches).toBe(false)
+     34|   expect(vi.getTimerCount()).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/effects/Cheer.test.tsx > starts device-reduced cheers still with one existing 1200ms deadline and no frame request
+ FAIL  src/effects/Cheer.test.tsx > settles a live device change without replay or extending the original deadline
+ FAIL  src/effects/Cheer.test.tsx > does not replay an initially reduced cheer on restore and cleans up its deadline on unmount
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/effects/Cheer.test.tsx:20:30
+     18| afterEach(() => {
+     19|   ui?.unmount(); ui = undefined
+     20|   expect(vi.getTimerCount()).toBe(0)
+       |                              ^
+     21|   setPetMotionReduced(false)
+     22|   vi.useRealTimers(); vi.unstubAllGlobals(); vi.restoreAllMocks()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/effects/Cheer.test.tsx > settles a live device change without replay or extending the original deadline
+ FAIL  src/effects/Cheer.test.tsx > settles a live system change without replay or extending the original deadline
+AssertionError: expected null not to be null
+ ❯ src/effects/Cheer.test.tsx:50:64
+     48|   act(() => vi.advanceTimersByTime(400))
+     49|   change(true)
+     50|   expect(ui!.container.querySelector('.fx-cheer-settled')).not.toBeNul…
+       |                                                                ^
+     51|   expect(vi.getTimerCount()).toBe(1)
+     52|   change(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/effects/Cheer.test.tsx > does not replay an initially reduced cheer on restore and cleans up its deadline on unmount
+AssertionError: expected null not to be null
+ ❯ src/effects/Cheer.test.tsx:66:64
+     64|   act(() => vi.advanceTimersByTime(400))
+     65|   act(() => setPetMotionReduced(false))
+     66|   expect(ui!.container.querySelector('.fx-cheer-settled')).not.toBeNul…
+       |                                                                ^
+     67|   act(() => vi.advanceTimersByTime(799))
+     68|   expect(done).not.toHaveBeenCalled()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+   Start at  20:46:16
+   Duration  496ms (environment 66%, tests 13%, transform 12%, import 8%, worker 1%)
+

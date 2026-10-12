@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
 import { setSoundOn, soundOn } from '../audio/sfx'
 import { ReminderSettings } from '../reminders/ReminderSettings'
 import { ScreenHeader } from '../shell/ScreenHeader'
 import { AccountSection } from './AccountSection'
 import { SavedHomes } from './SavedHomes'
+import { petMotionReduced, setPetMotionReduced, subscribePetMotionPreference } from '../pet/motionPreference'
 import './SettingsScreen.css'
 
-// Settings: sound, reminders, and saving progress to an account.
+// Settings: device preferences, reminders, and saving progress to an account.
 
 export interface SettingsScreenProps {
   petName: string
@@ -29,6 +30,8 @@ const PRIVACY_URL = 'https://github.com/Robertg761/chore-pet/blob/main/docs/PRIV
 
 export function SettingsScreen({ petName, homeId, onClose, account, onStartOver, onClearRoom, otherHomes = 0, rooms = 1 }: SettingsScreenProps) {
   const [sound, setSound] = useState(soundOn)
+  const reducedPetMotion = useSyncExternalStore(subscribePetMotionPreference, petMotionReduced, () => false)
+  const motionNoteId = useId()
   // Start over asks twice: which kind of fresh start, then whether to go ahead.
   const [startOver, setStartOver] = useState<null | 'choose' | 'clear' | 'erase'>(null)
   const startOverRef = useRef<HTMLButtonElement>(null)
@@ -60,6 +63,15 @@ export function SettingsScreen({ petName, homeId, onClose, account, onStartOver,
               />
               <span>Sounds</span>
             </label>
+          </div>
+
+          <div className="settings-card">
+            <label className="settings-toggle">
+              <input type="checkbox" className="check" checked={reducedPetMotion} aria-describedby={motionNoteId}
+                onChange={event => setPetMotionReduced(event.target.checked)} />
+              <span>Reduce pet motion</span>
+            </label>
+            <p id={motionNoteId} className="settings-note">Keeps your pet and movement previews still on this device. Your system's reduced-motion setting is always respected.</p>
           </div>
 
           <div className="settings-card">

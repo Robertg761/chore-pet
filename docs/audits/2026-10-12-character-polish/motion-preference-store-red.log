@@ -1,0 +1,115 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/motionPreference.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/motionPreference.test.ts (10 tests | 5 failed) 20ms
+   × reads the device preference before the first consumer subscribes 5ms
+   × persists real changes and notifies each consumer only when the value changes 2ms
+   × keeps the selection in memory when storage reads and writes are blocked 1ms
+   × receives scoped local-storage changes and clearing without echo writes 1ms
+   × shares one native storage listener and removes it with the final consumer 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/motionPreference.test.ts > reads the device preference before the first consumer subscribes
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/pet/motionPreference.test.ts:18:32
+     16|   const m = await load()
+     17|   localStorage.setItem(m.PET_MOTION_PREFERENCE_KEY, 'on')
+     18|   expect(m.petMotionReduced()).toBe(true)
+       |                                ^
+     19| })
+     20|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/pet/motionPreference.test.ts > persists real changes and notifies each consumer only when the value changes
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/pet/motionPreference.test.ts:26:32
+     24|   const write = vi.spyOn(Storage.prototype, 'setItem')
+     25|   m.setPetMotionReduced(true)
+     26|   expect(m.petMotionReduced()).toBe(true)
+       |                                ^
+     27|   expect(localStorage.getItem(m.PET_MOTION_PREFERENCE_KEY)).toBe('on')
+     28|   expect(first).toHaveBeenCalledOnce(); expect(second).toHaveBeenCalle…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/pet/motionPreference.test.ts > keeps the selection in memory when storage reads and writes are blocked
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/pet/motionPreference.test.ts:44:32
+     42|   cleanup.push(m.subscribePetMotionPreference(changed))
+     43|   expect(() => m.setPetMotionReduced(true)).not.toThrow()
+     44|   expect(m.petMotionReduced()).toBe(true)
+       |                                ^
+     45|   expect(changed).toHaveBeenCalledOnce()
+     46|   m.setPetMotionReduced(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/pet/motionPreference.test.ts > receives scoped local-storage changes and clearing without echo writes
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/pet/motionPreference.test.ts:61:32
+     59|   expect(changed).not.toHaveBeenCalled()
+     60|   event(m.PET_MOTION_PREFERENCE_KEY, 'on')
+     61|   expect(m.petMotionReduced()).toBe(true)
+       |                                ^
+     62|   expect(changed).toHaveBeenCalledOnce()
+     63|   event(m.PET_MOTION_PREFERENCE_KEY, 'on')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/pet/motionPreference.test.ts > shares one native storage listener and removes it with the final consumer
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/pet/motionPreference.test.ts:76:65
+     74|   const stopFirst = m.subscribePetMotionPreference(first), stopSecond …
+     75|   cleanup.push(stopFirst, stopSecond)
+     76|   expect(add.mock.calls.filter(([name]) => name === 'storage')).toHave…
+       |                                                                 ^
+     77|   stopFirst(); stopFirst()
+     78|   expect(remove.mock.calls.filter(([name]) => name === 'storage')).toH…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 5 passed (10)
+   Start at  20:33:57
+   Duration  429ms (environment 84%, transform 6%, tests 6%, import 2%, worker 1%)
+

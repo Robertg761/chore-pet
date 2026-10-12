@@ -1,0 +1,103 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/usePetMotion.preference.test.tsx src/pet/usePetMotion.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/usePetMotion.preference.test.tsx (5 tests | 5 failed) 33ms
+   × starts with the saved device policy and no pending frame when reduced art is settled 21ms
+   × cancels the existing frame on a live device change and resumes only one frame 3ms
+   × respects the system policy and only announces effective OR-policy changes 4ms
+   × delivers device changes to the latest inactive handler without matchMedia and removes the subscription 2ms
+   × reconciles a preference changed between rendering and subscribing before a frame runs 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/usePetMotion.preference.test.tsx > starts with the saved device policy and no pending frame when reduced art is settled
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ src/pet/usePetMotion.preference.test.tsx:40:36
+     38|   setPetMotionReduced(true)
+     39|   const changed = vi.fn(), ui = mount({ changed })
+     40|   expect(ui.container.textContent).toBe('true')
+       |                                    ^
+     41|   expect(frames.size).toBe(0)
+     42|   expect(changed).not.toHaveBeenCalled()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/pet/usePetMotion.preference.test.tsx > cancels the existing frame on a live device change and resumes only one frame
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ src/pet/usePetMotion.preference.test.tsx:49:36
+     47|   expect(frames.size).toBe(1)
+     48|   act(() => setPetMotionReduced(true))
+     49|   expect(ui.container.textContent).toBe('true')
+       |                                    ^
+     50|   expect(frames.size).toBe(0)
+     51|   expect(changed.mock.calls).toEqual([[true]])
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/pet/usePetMotion.preference.test.tsx > respects the system policy and only announces effective OR-policy changes
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ src/pet/usePetMotion.preference.test.tsx:67:36
+     65|   act(() => setPetMotionReduced(true))
+     66|   system(false)
+     67|   expect(ui.container.textContent).toBe('true')
+       |                                    ^
+     68|   expect(frames.size).toBe(0)
+     69|   expect(changed).not.toHaveBeenCalled()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/pet/usePetMotion.preference.test.tsx > delivers device changes to the latest inactive handler without matchMedia and removes the subscription
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ src/pet/usePetMotion.preference.test.tsx:85:36
+     83|   ui.rerender(<Clock changed={latest} active={false} />)
+     84|   act(() => setPetMotionReduced(true))
+     85|   expect(ui.container.textContent).toBe('true')
+       |                                    ^
+     86|   expect(latest.mock.calls).toEqual([[true]])
+     87|   expect(first).not.toHaveBeenCalled()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/pet/usePetMotion.preference.test.tsx > reconciles a preference changed between rendering and subscribing before a frame runs
+AssertionError: expected 'false' to be 'true' // Object.is equality
+
+Expected: "true"
+Received: "false"
+
+ ❯ src/pet/usePetMotion.preference.test.tsx:101:36
+     99|   }
+    100|   const ui = render(<LatePreference />); mounted.push(ui)
+    101|   expect(ui.container.textContent).toBe('true')
+       |                                    ^
+    102|   expect(frames.size).toBe(0)
+    103|   expect(changed.mock.calls).toEqual([[true]])
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  5 failed | 20 passed (25)
+   Start at  20:36:22
+   Duration  954ms (environment 70%, tests 11%, transform 9%, import 8%, worker 1%)
+
+    Isolate  2 workers spawned · ~348ms startup each (spawn + environment, per file)
+             at least ~348ms faster with isolate: false — reuses workers across files instead of one per file
+

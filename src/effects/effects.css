@@ -101,3 +101,20 @@
     transform: none;
   }
 }
+
+/* The device choice shares the pet policy; room sparkles retain their own
+   system preference. Keep the static cheer's existing fade/deadline. */
+.fx-cheer-reduced .fx-cheer-hop,
+.fx-cheer-reduced .ch-breathe,
+.fx-cheer-reduced .ch-eye,
+.fx-cheer-settled .fx-cheer-hop {
+  animation: none;
+}
+.fx-cheer-reduced .fx-cheer-pop {
+  animation: fx-static-fade var(--fx-reduced-dur, 1000ms) ease-in-out calc(var(--fx-delay, 0ms) * 0.4) both;
+  transform: none;
+}
+.fx-cheer-settled .fx-cheer-pop {
+  animation: none;
+  opacity: 0;
+}

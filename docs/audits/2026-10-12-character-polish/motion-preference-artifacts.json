@@ -1,0 +1,11 @@
+{
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/motion-preference-layout/motion-preference-cheer-1280.png": "1ee1beef9fda76530e3fb1d49e02f7604e6336655cc0aab7b427adc058fb5a71",
+    "docs/audits/2026-10-12-character-polish/motion-preference-layout/motion-preference-home-1280.png": "7921ecf19ddf13e7518eaf032d1d6c512f2463ee94a2006f15d7655d53a083d6",
+    "docs/audits/2026-10-12-character-polish/motion-preference-layout/motion-preference-home-320.png": "d8269f18d128638eb0c29f31f29a8a22af0f9f1a88631424adde0da87ec669ed",
+    "docs/audits/2026-10-12-character-polish/motion-preference-layout/motion-preference-settings-1280.png": "6d9280d3de6de107912fe85457a86d5ca2846a9726387965d49e648f9a51aa00",
+    "docs/audits/2026-10-12-character-polish/motion-preference-layout/motion-preference-settings-320.png": "f2c78d721c8b76848e87acde9b1721f1ccc690d23046554e505c919260f06ed9",
+    "docs/audits/2026-10-12-character-polish/motion-preference-loop-equivalence.json": "e549d7b5dcaed16cac365650fe85035b25a0c85c88922e92c2bfe38e5828a67a"
+  },
+  "scope": "Five bounded final native stills: Settings/Home at320/1280 plus three static CSS cheering pets at1280. Source equivalence records exact existing RAF scheduling suffix and6 unchanged sampler/renderer/controller/room sources. Stills/isolated Chromium do not establish temporal or physical-device acceptance."
+}

@@ -6,6 +6,7 @@ import * as motion from '../character/motion'
 import { CHARACTER_SLOTS } from '../domain/types'
 import { ITEMS } from '../character/items'
 import MotionReview from './MotionReview'
+import { setPetMotionReduced } from '../pet/motionPreference'
 
 let ui: ReturnType<typeof render>
 let frames: Map<number, FrameRequestCallback>
@@ -13,6 +14,7 @@ let nextFrame: number
 let media: MediaQueryList
 
 beforeEach(() => {
+  setPetMotionReduced(false)
   media = Object.assign(new EventTarget(), {
     matches: false,
     media: '(prefers-reduced-motion: reduce)',
@@ -34,6 +36,7 @@ beforeEach(() => {
 
 afterEach(() => {
   ui.unmount()
+  setPetMotionReduced(false)
   vi.restoreAllMocks()
   vi.unstubAllGlobals()
 })
@@ -171,7 +174,7 @@ it('labels the local override separately from authoritative live system reduced 
   const still = body()
   expect(override.checked).toBe(false)
   expect(currentSample()?.reducedMotion).toBe(true)
-  expect(ui.container.textContent).toContain('System reduced motion is active.')
+  expect(ui.container.textContent).toContain('Reduced motion is active.')
 
   const systemPreference = (matches: boolean) => act(() => {
     Object.defineProperty(media, 'matches', { configurable: true, value: matches })
@@ -181,7 +184,7 @@ it('labels the local override separately from authoritative live system reduced 
   expect(override.checked).toBe(false)
   expect(currentSample()?.reducedMotion).toBe(false)
   expect(body()).not.toBe(still)
-  expect(ui.container.textContent).not.toContain('System reduced motion is active.')
+  expect(ui.container.textContent).not.toContain('Reduced motion is active.')
 
   click(override)
   expect(body()).toBe(still)
@@ -191,6 +194,27 @@ it('labels the local override separately from authoritative live system reduced 
   expect(body()).toBe(still)
   systemPreference(false)
   expect(body()).not.toBe(still)
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('756')
+  expect(frames.size).toBe(0)
+})
+
+it('respects device reduction without changing the local override or review time', () => {
+  select('Action', 'celebrate')
+  input(control('Time scrubber'), '756')
+  const override = control<HTMLInputElement>('Force reduced motion in this panel')
+  const body = () => ui.container.querySelector('[data-character-body]')!.getAttribute('transform')
+  const moving = body()
+  act(() => setPetMotionReduced(true))
+  expect(media.matches).toBe(false)
+  expect(override.checked).toBe(false)
+  expect(currentSample()?.reducedMotion).toBe(true)
+  expect(body()).not.toBe(moving)
+  expect(ui.container.textContent).toContain('Reduced motion is active.')
+  expect(ui.container.textContent).not.toContain('System reduced motion is active.')
+  expect(control<HTMLInputElement>('Time scrubber').value).toBe('756')
+  act(() => setPetMotionReduced(false))
+  expect(currentSample()?.reducedMotion).toBe(false)
+  expect(body()).toBe(moving)
   expect(control<HTMLInputElement>('Time scrubber').value).toBe('756')
   expect(frames.size).toBe(0)
 })

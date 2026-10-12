@@ -1,0 +1,22 @@
+✖ a device-reduced gallery cheer keeps its pet still and fades before its existing deadline (4857.864017ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5473.037737
+
+✖ failing tests:
+
+test at scripts/browser/pet-motion-preference.test.mjs:166:1
+✖ a device-reduced gallery cheer keeps its pet still and fades before its existing deadline (4857.864017ms)
+  locator.waitFor: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByRole('heading', { name: 'Art gallery', exact: true }) to be visible[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-motion-preference.test.mjs:172:73) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByRole('heading', { name: 'Art gallery', exact: true }) to be visible" ]
+  }

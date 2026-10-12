@@ -1,0 +1,48 @@
+✔ creator previews the actual character while keeping face choices visible at 320x568 (3933.444425ms)
+✔ creator previews the actual character while keeping face choices visible at 844x390 (3329.275213ms)
+✔ creator previews the actual character while keeping face choices visible at 1280x800 (3335.918566ms)
+✔ creator settles live reduction and initial reduction keeps look choices available (3880.878611ms)
+✔ gallery starts without repeating work and animates only visible rows at 390px (5370.961911ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery starts without repeating work and animates only visible rows at 1280px (5751.235281ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery initial and live reduced motion stay authoritative without automatic replay (12122.114864ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery effects replay finitely with bounded nodes and no automatic restart (8280.364823ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ gallery effects stay still when visibility observation is unavailable (3028.226111ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ sampled motion review plays independently while gallery examples remain still (3119.090043ms)
+ℹ Chromium 152.0.7977.82; isolated offline production art gallery
+✔ native offscreen review playback pauses and resumes without counting the hidden interval (2785.464613ms)
+ℹ Chromium 152.0.7977.82;native scroll;0offscreen/1visible frame;10000ms gap excluded
+✔ unavailable native observation preserves explicit manual review playback (2460.06375ms)
+✔ the reduced resident stops idle frames but completes an explicit response (1216.314663ms)
+ℹ Chromium 152.0.7977.82; reduced:0 idle frames,1 finite clock,0 after response
+✔ the sick resident stops idle frames but completes an explicit response (919.690812ms)
+ℹ Chromium 152.0.7977.82; sick:0 idle frames,1 finite clock,0 after response
+✔ the away resident stops idle frames but completes an explicit response (897.058028ms)
+ℹ Chromium 152.0.7977.82; away:0 idle frames,1 finite clock,0 after response
+✔ a scrolled-away resident pauses, lets an offscreen response expire, and resumes when partly visible (2743.946601ms)
+ℹ Offscreen pending frames before pause:0
+ℹ Chromium 152.0.7977.82; real native scroll;0offscreen/1visible pending resident frame
+✔ missing native observation retains the existing resident clock (908.365786ms)
+✔ native default observer emits edge contact without a second positive-area entry (873.634666ms)
+ℹ Native default threshold contract matches the hook notification-filtering regression.
+✔ native ancestor clipping pauses a resident still inside the viewport (819.287144ms)
+ℹ Native ancestor entries:[{"inside":false,"ratio":0,"bottom":434.37969970703125,"height":0}]
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (2733.950689ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (2625.395218ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 640x360 (3774.053966ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (2620.317927ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (2614.482606ms)
+✔ wardrobe Hop live reduced motion settles the preview and does not restart when restored (1799.002674ms)
+✔ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (1817.636142ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 86085.574756

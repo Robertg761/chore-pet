@@ -1,0 +1,15 @@
+✔ device motion choice persists and keeps finite reactions still at320px (4573.497699ms)
+ℹ Chromium 152.0.7977.82; native keyboard44px choice; reload; visible resident0idle/1finite/0deadline; still markup; restored normal1; unchanged saved tables.
+✔ device motion choice persists and keeps finite reactions still at1280px (5071.00887ms)
+ℹ Chromium 152.0.7977.82; native keyboard44px choice; reload; visible resident0idle/1finite/0deadline; still markup; restored normal1; unchanged saved tables.
+✔ device off cannot override system reduction, and live system changes retain the existing clock (978.590872ms)
+✔ native cross-tab storage pauses a visible pet and cancels a preview without replaying it (2950.176423ms)
+ℹ One Chromium/app page plus a minimal same-origin storage-only peer; real StorageEvent, cancellation/no replay and live Settings checked state; unchanged saved tables.
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14029.528749

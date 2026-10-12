@@ -1,8 +1,8 @@
-import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { PALETTE } from '../art/palette'
 import { AccentMark } from '../character/accent'
 import './effects.css'
-import { prefersReducedMotion } from './shapes'
+import { usePetMotion } from '../pet/usePetMotion'
 
 // The pet's celebration, in its own 200x200 box: the art hops twice (squash,
 // stretch, squash) while two waves of hearts and stars pop around it. The marks
@@ -41,19 +41,25 @@ export interface CheerProps {
 }
 
 type Vars = CSSProperties & Record<`--fx-${string}`, string>
+const noFrame = () => {}
 
 export function Cheer({ children, onDone }: CheerProps) {
+  const [settled, setSettled] = useState(false)
+  const { reducedMotion } = usePetMotion(noFrame, false, () => setSettled(true))
+  // Preference changes settle the current CSS effect, without replaying it or
+  // replacing its original finite deadline. This consumer requests no frames.
+  const initialReduction = useRef(reducedMotion)
   const done = useRef(onDone)
   useEffect(() => {
     done.current = onDone
   })
   useEffect(() => {
-    const t = setTimeout(() => done.current?.(), prefersReducedMotion() ? REDUCED_DURATION : DURATION)
+    const t = setTimeout(() => done.current?.(), initialReduction.current ? REDUCED_DURATION : DURATION)
     return () => clearTimeout(t)
   }, [])
 
   return (
-    <g>
+    <g className={[reducedMotion && 'fx-cheer-reduced', settled && 'fx-cheer-settled'].filter(Boolean).join(' ') || undefined}>
       <g className="fx-cheer-hop" style={{ '--fx-hop': `${HOP_MS}ms`, '--fx-hops': `${HOPS}` } as Vars}>
         {children}
       </g>

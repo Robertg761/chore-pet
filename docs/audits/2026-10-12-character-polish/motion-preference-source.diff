@@ -1,0 +1,1024 @@
+diff --git c/docs/ART.md w/docs/ART.md
+index b2574f6..f33bc97 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -137,7 +137,7 @@ Every pose defines all six anchors (`src/character/slots.ts`). Items are drawn c
+ - Sampled reaction marks emerge at their own anchors on the existing finite opacity envelope. The heart grows from 82% and rises 2 SVG units; the star grows from 70% and rises 4. Peak geometry and static cheering art remain exact. The marks settle back as they fade; they add no clock, state, or nodes and remain suppressed for resting poses and reduced motion.
+ - Healthy pleased faces ease in over the first 18% of a greeting, pats, stretch, hop, cheer or environmental wave, and settle over the last 18%. Intermediate frames narrow the outgoing eyes with their current blink before crossfading the existing shapes; content/meh mouths crossfade, while the happy mouth stays single. One cream contrast backing follows the expression on dark bodies. The numeric expression weight also carries an interrupted smile through the existing 120 ms activity blend. Rest, full smiles, legacy omitted weights, sleeping and unwell art retain their existing geometry; reduced motion retains the full finite still reaction. No extra clock or saved state.
+ - Greeting and wardrobe waves use species-specific held hand sweeps. Bun retains its lively cadence, Mochi sweeps more slowly, and Sprout uses a smaller, slower wave. Preserve action durations, gesture envelopes, torso/feet/appendages, gaze, wardrobe attachment and reduced-motion stills.
+-- Sampled art owns breathing, blinks, limb motion, and accents. Disable independent CSS breathing and blinking inside it. Reduced motion removes sampled displacement, gait, breathing, secondary sway, blinks, and animated accents while retaining still mood/reaction expressions. System preference changes apply during the session.
++- Sampled art owns breathing, blinks, limb motion, and accents. Disable independent CSS breathing and blinking inside it. Reduced motion removes sampled displacement, gait, breathing, secondary sway, blinks, and animated accents while retaining still mood/reaction expressions. System and device preference changes apply during the session.
+ - Idle appendages follow the existing four-second breath with a small species-specific delay; they settle to neutral position and zero velocity at the loop boundary. Feet, body position and shadow stay fixed. Primary140ms blinks keep their lifetime phase across actions; every other primary blink has a second140ms blink after60ms fully open. Sleeping and sick art retain their existing static geometry.
+ - Environmental profiles live in `src/pet/interactions.ts`. They choose reachable adjacent standing tiles and gaze points from the rotated object footprint. Kitchen profiles gaze at the rendered basin/plate stacks, pot knob/raised lid, retained freezer magnet, and tomato/takeout opening. Bathroom profiles follow the shower-head underside/water spot/steam smiley, toilet flush button/lid smudge/stained water line, and washer window/laundry/open-door fabric. Points follow the current condition. The remaining catalog profiles follow dishwasher controls/plate stacks, dining-table flower/place settings, coffee-table top/plates, trash handle/bags and retained recycling badge. The resident reserves additional front clearance for the folded messy2 dishwasher door, mirrored with its art; placement footprints remain fixed. Resident and multi-room routes share the same condition-aware pet obstacles. A clearance change replans travel from its current drawn position; closed fixtures restore their original routes. This changes pet navigation without changing placement footprints. Current profiles use contact-free gestures; no paw-to-furniture contact geometry is verified. Do not depict chores being completed or sitting on furniture without dedicated anchors and occlusion rules.
+ - Clean-object interactions use two calm observations for each of the24 catalog/decor entries, including reward decor. Select by the held interaction beat so turns, action and settling keep one line. Unmapped objects use calm mood content; dirty objects retain condition dialogue. Player responses take priority, and ambient observations remain silent in the live region.
+@@ -152,7 +152,7 @@ Gallery examples start still. Start example animations enables CSS animation onl
+ 
+ Cheer accents finish fading by the 1750ms cleanup deadline, or 1200ms under reduced motion. Preserve earlier accent timing and shorten only late marks; no visible accent should outlive its owner.
+ 
+-The deterministic motion panel uses the production sampler and renderer. Explicit playback pauses while its three previews are offscreen or the document is hidden, resuming at the same review time. A single native observer gates the existing clock; unsupported observation keeps manual playback available. The optional clock resume callback resets relative review timing before its first tick, preserving absolute resident timestamps and deadlines. Idle review spans12seconds to expose the complete blink pattern and three4-second breath cycles, while the sampler keeps its4000ms body duration. Species-specific primary blink, open-gap and second-blink comparison frames pause at exact times. Compare 200px, 60px, and 25px previews, play at 1×/0.5×/0.25×, and scrub exact milliseconds or choose a key frame. Ground line and ground-anchor overlays are optional. Furniture contact overlay is unavailable because the standalone panel supplies no contact geometry. Review settings stay local to the panel; the system reduced-motion preference remains authoritative over its local override.
++The deterministic motion panel uses the production sampler and renderer. Explicit playback pauses while its three previews are offscreen or the document is hidden, resuming at the same review time. A single native observer gates the existing clock; unsupported observation keeps manual playback available. The optional clock resume callback resets relative review timing before its first tick, preserving absolute resident timestamps and deadlines. Idle review spans12seconds to expose the complete blink pattern and three4-second breath cycles, while the sampler keeps its4000ms body duration. Species-specific primary blink, open-gap and second-blink comparison frames pause at exact times. Compare 200px, 60px, and 25px previews, play at 1×/0.5×/0.25×, and scrub exact milliseconds or choose a key frame. Ground line and ground-anchor overlays are optional. Furniture contact overlay is unavailable because the standalone panel supplies no contact geometry. Review settings stay local to the panel; system and device reduced-motion preferences remain authoritative over its local override.
+ 
+ Use playback and real-room checks to judge grounding, clipping, interrupted motion, and gaze. Numeric continuity and SVG attachment tests support that review but do not establish visual quality by themselves.
+ 
+@@ -166,7 +166,9 @@ Explore together offers explicit player invitations to a chosen furnishing. Keep
+ 
+ While Explore together is open and available, mark its selected furnishing with a stationary footprint outline and chevron. Changing or removing the choice updates the marker; collapse, blocked exploration, room changes and unmount clear it. Reuse build selection geometry in preview mode without its floor wash or bobbing animation. Previewing stays decorative: preserve the pet's current position, pose, speech, activity, and clock, with no visit, audio, or saved-data changes. The marker is hidden from assistive technology and never intercepts input.
+ 
+-The resident clock pauses when reduced-motion art is settled or the pet is resting asleep/sick. Finite player reactions/notices keep the same single clock until their deadline; normal-motion suppression completes its existing120ms blend before pausing. Healthy normal-motion residents retain breathing, lifetime blinks and exploration. World/preference changes still validate and paint before display even with no pending frames. Initial sleeping/sick residents start in their resting activity, without blending from an unshown idle frame. Existing Boolean usePetMotion consumers keep their prior scheduling policy; the resident supplies separate normal/reduced activity flags. No new timer, clock or saved preference is introduced.
++The resident clock pauses when reduced-motion art is settled or the pet is resting asleep/sick. Finite player reactions/notices keep the same single clock until their deadline; normal-motion suppression completes its existing120ms blend before pausing. Healthy normal-motion residents retain breathing, lifetime blinks and exploration. World/preference changes still validate and paint before display even with no pending frames. Initial sleeping/sick residents start in their resting activity, without blending from an unshown idle frame. Existing Boolean usePetMotion consumers keep their prior scheduling policy; the resident supplies separate normal/reduced activity flags. This lifecycle adds no timer or clock.
++
++Settings offers a device-local Reduce pet motion choice, off by default. Either this choice or the system preference activates the existing pet/preview reduction policy; switching the choice off never overrides the system. Persist only its scoped local-storage key, retain the visit choice when storage is blocked, and synchronize native cross-tab changes through one shared listener while consumers exist. A settled visible resident requests no frames; finite still responses retain their original deadline. Live changes cancel wardrobe/creator/gallery playback without replay when restored. The review panel retains explicit timeline controls and its local override, while the shared preference remains authoritative over the sampled art. CSS pet cheers in welcome, gifts and the gallery also stay still under reduction, retaining static accent fades and their existing cleanup timer. Either live preference change settles that finite effect without replay or deadline extension. No home/account fields, backend writes, timers or animation clocks are added. General page transitions, room sparkles and unrelated CSS continue to follow their existing system preference.
+ 
+ One native IntersectionObserver pauses that same clock when the resident's SVG is completely outside the viewport or scroll clipping. Any positive visible area keeps it active. Exact edge contact also stays active because the native default threshold may omit the following positive-area notification. Returning into view samples current world deadlines before paint and clears stale hover. Offscreen responses request no frames; returning resumes a finite response only while its deadline remains active. Missing observation support retains the existing clock policy. Observer cleanup ignores queued callbacks; no polling or additional animation clock is used.
+ 
+diff --git c/src/dev/GalleryMotion.test.tsx w/src/dev/GalleryMotion.test.tsx
+index 37e4240..4abc6c7 100644
+--- c/src/dev/GalleryMotion.test.tsx
++++ w/src/dev/GalleryMotion.test.tsx
+@@ -4,12 +4,14 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+ import { click, render } from '../test/react'
+ import GalleryMotion from './GalleryMotion'
+ import EffectReview from './EffectReview'
++import { setPetMotionReduced } from '../pet/motionPreference'
+ 
+ let ui: ReturnType<typeof render> | undefined
+ let media: MediaQueryList
+ let observers: { callback: IntersectionObserverCallback; observe: ReturnType<typeof vi.fn>; disconnect: ReturnType<typeof vi.fn> }[]
+ 
+ beforeEach(() => {
++  setPetMotionReduced(false)
+   vi.useFakeTimers()
+   media = Object.assign(new EventTarget(), { matches: false, media: '(prefers-reduced-motion: reduce)' }) as MediaQueryList
+   vi.stubGlobal('matchMedia', () => media)
+@@ -28,6 +30,7 @@ beforeEach(() => {
+ afterEach(() => {
+   ui?.unmount()
+   ui = undefined
++  setPetMotionReduced(false)
+   vi.useRealTimers()
+   vi.unstubAllGlobals()
+   vi.restoreAllMocks()
+@@ -125,6 +128,21 @@ it('honors initial/live reduction and does not restart when the preference is re
+   expect(button('Start example animations').disabled).toBe(true)
+ })
+ 
++it('settles a device-reduced gallery without replay or claiming the system setting is active', () => {
++  const gallery = mountGallery()
++  click(button('Start example animations'))
++  act(() => setPetMotionReduced(true))
++  expect(media.matches).toBe(false)
++  expect(gallery.dataset.examplesMotion).toBe('paused')
++  expect(button('Start example animations').disabled).toBe(true)
++  expect(gallery.textContent).toContain('Reduced motion is active. Examples stay still.')
++  expect(gallery.textContent).not.toContain('System reduced motion is active.')
++  act(() => setPetMotionReduced(false))
++  expect(gallery.dataset.examplesMotion).toBe('paused')
++  expect(button('Start example animations').disabled).toBe(false)
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++})
++
+ it('keeps examples still when observation is unavailable and cleans up on unmount', () => {
+   vi.stubGlobal('IntersectionObserver', undefined)
+   const gallery = mountGallery()
+diff --git c/src/dev/GalleryMotion.tsx w/src/dev/GalleryMotion.tsx
+index e19180b..4c468da 100644
+--- c/src/dev/GalleryMotion.tsx
++++ w/src/dev/GalleryMotion.tsx
+@@ -48,7 +48,7 @@ export default function GalleryMotion({ children }: { children: ReactNode }) {
+         disabled={reducedMotion || !supported} onClick={() => setPlaying((value) => !value)}>
+         {requested ? 'Stop example animations' : 'Start example animations'}
+       </button>
+-      <p id={description}>{reducedMotion ? 'System reduced motion is active. Examples stay still.'
++      <p id={description}>{reducedMotion ? 'Reduced motion is active. Examples stay still.'
+         : !supported ? 'Animation visibility tracking is unavailable. Examples stay still.'
+           : 'Examples start still. Only visible rows animate. Effects replay on demand; motion review has its own controls.'}</p>
+     </div>
+diff --git c/src/dev/MotionReview.test.tsx w/src/dev/MotionReview.test.tsx
+index b9e8320..af8b1d5 100644
+--- c/src/dev/MotionReview.test.tsx
++++ w/src/dev/MotionReview.test.tsx
+@@ -6,6 +6,7 @@ import * as motion from '../character/motion'
+ import { CHARACTER_SLOTS } from '../domain/types'
+ import { ITEMS } from '../character/items'
+ import MotionReview from './MotionReview'
++import { setPetMotionReduced } from '../pet/motionPreference'
+ 
+ let ui: ReturnType<typeof render>
+ let frames: Map<number, FrameRequestCallback>
+@@ -13,6 +14,7 @@ let nextFrame: number
+ let media: MediaQueryList
+ 
+ beforeEach(() => {
++  setPetMotionReduced(false)
+   media = Object.assign(new EventTarget(), {
+     matches: false,
+     media: '(prefers-reduced-motion: reduce)',
+@@ -34,6 +36,7 @@ beforeEach(() => {
+ 
+ afterEach(() => {
+   ui.unmount()
++  setPetMotionReduced(false)
+   vi.restoreAllMocks()
+   vi.unstubAllGlobals()
+ })
+@@ -171,7 +174,7 @@ it('labels the local override separately from authoritative live system reduced
+   const still = body()
+   expect(override.checked).toBe(false)
+   expect(currentSample()?.reducedMotion).toBe(true)
+-  expect(ui.container.textContent).toContain('System reduced motion is active.')
++  expect(ui.container.textContent).toContain('Reduced motion is active.')
+ 
+   const systemPreference = (matches: boolean) => act(() => {
+     Object.defineProperty(media, 'matches', { configurable: true, value: matches })
+@@ -181,7 +184,7 @@ it('labels the local override separately from authoritative live system reduced
+   expect(override.checked).toBe(false)
+   expect(currentSample()?.reducedMotion).toBe(false)
+   expect(body()).not.toBe(still)
+-  expect(ui.container.textContent).not.toContain('System reduced motion is active.')
++  expect(ui.container.textContent).not.toContain('Reduced motion is active.')
+ 
+   click(override)
+   expect(body()).toBe(still)
+@@ -195,6 +198,27 @@ it('labels the local override separately from authoritative live system reduced
+   expect(frames.size).toBe(0)
+ })
+ 
++it('respects device reduction without changing the local override or review time', () => {
++  select('Action', 'celebrate')
++  input(control('Time scrubber'), '756')
++  const override = control<HTMLInputElement>('Force reduced motion in this panel')
++  const body = () => ui.container.querySelector('[data-character-body]')!.getAttribute('transform')
++  const moving = body()
++  act(() => setPetMotionReduced(true))
++  expect(media.matches).toBe(false)
++  expect(override.checked).toBe(false)
++  expect(currentSample()?.reducedMotion).toBe(true)
++  expect(body()).not.toBe(moving)
++  expect(ui.container.textContent).toContain('Reduced motion is active.')
++  expect(ui.container.textContent).not.toContain('System reduced motion is active.')
++  expect(control<HTMLInputElement>('Time scrubber').value).toBe('756')
++  act(() => setPetMotionReduced(false))
++  expect(currentSample()?.reducedMotion).toBe(false)
++  expect(body()).toBe(moving)
++  expect(control<HTMLInputElement>('Time scrubber').value).toBe('756')
++  expect(frames.size).toBe(0)
++})
++
+ it('renders actual 200px, 60px, and 25px previews plus selectable key frames', () => {
+   for (const size of [200, 60, 25]) {
+     expect(ui.container.querySelector(`svg[width="${size}"][height="${size}"]`)).toBeTruthy()
+diff --git c/src/dev/MotionReview.tsx w/src/dev/MotionReview.tsx
+index f073208..b3a542c 100644
+--- c/src/dev/MotionReview.tsx
++++ w/src/dev/MotionReview.tsx
+@@ -44,7 +44,7 @@ export default function MotionReview() {
+   const durationMs = ACTION_MS[action]
+   // Study the whole blink pattern without changing the sampler's body cycle.
+   const reviewSpanMs = action === 'idle' ? 12000 : durationMs
+-  const { reducedMotion: systemReducedMotion } = usePetMotion((now) => {
++  const { reducedMotion: preferredReducedMotion } = usePetMotion((now) => {
+     const delta = previousTick.current === null ? 0 : Math.max(0, now - previousTick.current)
+     previousTick.current = now
+     const time = playTime.current + delta * speed
+@@ -55,7 +55,7 @@ export default function MotionReview() {
+       previousTick.current = null
+     }
+   }, playing && inView, undefined, () => { previousTick.current = null })
+-  const reducedMotion = reduce || systemReducedMotion
++  const reducedMotion = reduce || preferredReducedMotion
+ 
+   function seek(value: number, limit = reviewSpanMs) {
+     const time = Number.isFinite(value) ? Math.round(Math.max(0, Math.min(limit, value))) : 0
+@@ -169,7 +169,7 @@ export default function MotionReview() {
+         <label><input type="checkbox" disabled checked={false} readOnly />Contact target, unavailable</label>
+         <label><input type="checkbox" checked={reduce} onChange={(event) => setReduce(event.target.checked)} />Force reduced motion in this panel</label>
+       </fieldset>
+-      <p id={notesId}>Ground line and pivot anchor use sampler coordinates y=181 and (100,181). No furniture contact target is supplied by this standalone preview. Overlays appear only on the close-up. {systemReducedMotion && 'System reduced motion is active.'}</p>
++      <p id={notesId}>Ground line and pivot anchor use sampler coordinates y=181 and (100,181). No furniture contact target is supplied by this standalone preview. Overlays appear only on the close-up. {preferredReducedMotion && 'Reduced motion is active.'}</p>
+       <div className="motion-review-previews" ref={previewNode}>
+         {[200, 60, 25].map((size) => <figure key={size}>
+           <div className="motion-review-stage">{preview(size, frame, `${species}, ${mood}, ${action} at ${elapsedMs} ms, ${size}px`, size === 200)}</div>
+diff --git c/src/effects/Cheer.tsx w/src/effects/Cheer.tsx
+index a7a0899..42441c6 100644
+--- c/src/effects/Cheer.tsx
++++ w/src/effects/Cheer.tsx
+@@ -1,8 +1,8 @@
+-import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
++import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+ import { PALETTE } from '../art/palette'
+ import { AccentMark } from '../character/accent'
+ import './effects.css'
+-import { prefersReducedMotion } from './shapes'
++import { usePetMotion } from '../pet/usePetMotion'
+ 
+ // The pet's celebration, in its own 200x200 box: the art hops twice (squash,
+ // stretch, squash) while two waves of hearts and stars pop around it. The marks
+@@ -41,19 +41,25 @@ export interface CheerProps {
+ }
+ 
+ type Vars = CSSProperties & Record<`--fx-${string}`, string>
++const noFrame = () => {}
+ 
+ export function Cheer({ children, onDone }: CheerProps) {
++  const [settled, setSettled] = useState(false)
++  const { reducedMotion } = usePetMotion(noFrame, false, () => setSettled(true))
++  // Preference changes settle the current CSS effect, without replaying it or
++  // replacing its original finite deadline. This consumer requests no frames.
++  const initialReduction = useRef(reducedMotion)
+   const done = useRef(onDone)
+   useEffect(() => {
+     done.current = onDone
+   })
+   useEffect(() => {
+-    const t = setTimeout(() => done.current?.(), prefersReducedMotion() ? REDUCED_DURATION : DURATION)
++    const t = setTimeout(() => done.current?.(), initialReduction.current ? REDUCED_DURATION : DURATION)
+     return () => clearTimeout(t)
+   }, [])
+ 
+   return (
+-    <g>
++    <g className={[reducedMotion && 'fx-cheer-reduced', settled && 'fx-cheer-settled'].filter(Boolean).join(' ') || undefined}>
+       <g className="fx-cheer-hop" style={{ '--fx-hop': `${HOP_MS}ms`, '--fx-hops': `${HOPS}` } as Vars}>
+         {children}
+       </g>
+diff --git c/src/effects/effects.css w/src/effects/effects.css
+index 4bb260a..1a1d1df 100644
+--- c/src/effects/effects.css
++++ w/src/effects/effects.css
+@@ -101,3 +101,20 @@
+     transform: none;
+   }
+ }
++
++/* The device choice shares the pet policy; room sparkles retain their own
++   system preference. Keep the static cheer's existing fade/deadline. */
++.fx-cheer-reduced .fx-cheer-hop,
++.fx-cheer-reduced .ch-breathe,
++.fx-cheer-reduced .ch-eye,
++.fx-cheer-settled .fx-cheer-hop {
++  animation: none;
++}
++.fx-cheer-reduced .fx-cheer-pop {
++  animation: fx-static-fade var(--fx-reduced-dur, 1000ms) ease-in-out calc(var(--fx-delay, 0ms) * 0.4) both;
++  transform: none;
++}
++.fx-cheer-settled .fx-cheer-pop {
++  animation: none;
++  opacity: 0;
++}
+diff --git c/src/pet/usePetMotion.ts w/src/pet/usePetMotion.ts
+index 7a4709f..0619223 100644
+--- c/src/pet/usePetMotion.ts
++++ w/src/pet/usePetMotion.ts
+@@ -1,4 +1,5 @@
+ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
++import { petMotionReduced, subscribePetMotionPreference } from './motionPreference'
+ 
+ /** Boolean callers keep one activity policy for both motion preferences. */
+ export type MotionActivity = boolean | { normal: boolean; reduced: boolean }
+@@ -7,7 +8,7 @@ export type MotionActivity = boolean | { normal: boolean; reduced: boolean }
+  * Supplies browser rAF timestamps in the same monotonic time domain as
+  * performance.now(). Hidden tabs receive no ticks; the first visible frame
+  * includes elapsed hidden time, so existing activity deadlines remain valid.
+- * Preference handlers share the query subscription and run only on changes,
++ * Preference handlers share the query/device updates and run only on changes,
+  * even while inactive, so finite previews can cancel in the same event batch.
+  * Optional resume handlers run before the first delivered tick after starting
+  * or resuming, allowing relative playback to exclude paused time. Absolute
+@@ -27,24 +28,25 @@ export function usePetMotion(
+   useLayoutEffect(() => { latestResume.current = onResume }, [onResume])
+ 
+   const [reducedMotion, setReducedMotion] = useState(() =>
+-    typeof window !== 'undefined' &&
+-    (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false),
++    petMotionReduced() || (typeof window !== 'undefined' &&
++    (window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false)),
+   )
+   const preference = useRef(reducedMotion)
+   const running = typeof active === 'boolean' ? active : reducedMotion ? active.reduced : active.normal
+ 
+   useEffect(() => {
+     const query = window.matchMedia?.('(prefers-reduced-motion: reduce)')
+-    if (!query) return
+     const update = () => {
+-      const changed = preference.current !== query.matches
+-      preference.current = query.matches
+-      setReducedMotion(query.matches)
+-      if (changed) latestPreferenceChange.current?.(query.matches)
++      const reduced = petMotionReduced() || (query?.matches ?? false)
++      const changed = preference.current !== reduced
++      preference.current = reduced
++      setReducedMotion(reduced)
++      if (changed) latestPreferenceChange.current?.(reduced)
+     }
+-    query.addEventListener('change', update)
++    query?.addEventListener('change', update)
++    const unsubscribe = subscribePetMotionPreference(update)
+     update()
+-    return () => query.removeEventListener('change', update)
++    return () => { query?.removeEventListener('change', update); unsubscribe() }
+   }, [])
+ 
+   useEffect(() => {
+diff --git c/src/screens/SettingsScreen.test.tsx w/src/screens/SettingsScreen.test.tsx
+index a92110b..9b3849d 100644
+--- c/src/screens/SettingsScreen.test.tsx
++++ w/src/screens/SettingsScreen.test.tsx
+@@ -1,10 +1,48 @@
+ // @vitest-environment jsdom
+ import { afterEach, expect, it, vi } from 'vitest'
++import { act } from 'react'
+ import { click, render } from '../test/react'
+ import { SettingsScreen } from './SettingsScreen'
++import { PET_MOTION_PREFERENCE_KEY, petMotionReduced, setPetMotionReduced } from '../pet/motionPreference'
+ 
+ const cleanups: (() => void)[] = []
+-afterEach(() => cleanups.splice(0).forEach((fn) => fn()))
++afterEach(() => {
++  cleanups.splice(0).forEach((fn) => fn())
++  setPetMotionReduced(false)
++  localStorage.removeItem(PET_MOTION_PREFERENCE_KEY)
++})
++
++const motionControl = (root: HTMLElement) => [...root.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')]
++  .find(input => [...input.labels ?? []].some(label => label.textContent?.trim() === 'Reduce pet motion'))
++
++it('offers a described device motion choice and preserves it without closing Settings', () => {
++  setPetMotionReduced(true)
++  const close = vi.fn(), ui = render(<SettingsScreen petName="Mochi" onClose={close} account={<p>Account</p>} />)
++  cleanups.push(ui.unmount)
++  const control = motionControl(ui.container)
++  expect(control).toBeDefined()
++  expect(control!.checked).toBe(true)
++  const note = document.getElementById(control!.getAttribute('aria-describedby')!)!
++  expect(note.textContent).toContain('on this device')
++  expect(note.textContent).toContain("Your system's reduced-motion setting is always respected.")
++  click(control!)
++  expect(control!.checked).toBe(false)
++  expect(petMotionReduced()).toBe(false)
++  expect(localStorage.getItem(PET_MOTION_PREFERENCE_KEY)).toBe('off')
++  expect(close).not.toHaveBeenCalled()
++})
++
++it('keeps the checked control synchronized with a live preference change', () => {
++  const ui = render(<SettingsScreen petName="Mochi" onClose={() => {}} account={<p>Account</p>} />)
++  cleanups.push(ui.unmount)
++  const control = motionControl(ui.container)
++  expect(control).toBeDefined()
++  expect(control!.checked).toBe(false)
++  act(() => setPetMotionReduced(true))
++  expect(control!.checked).toBe(true)
++  act(() => setPetMotionReduced(false))
++  expect(control!.checked).toBe(false)
++})
+ 
+ /** The last button with this label (the confirm step's Back, not the header's). */
+ const button = (root: HTMLElement, name: string) =>
+diff --git c/src/screens/SettingsScreen.tsx w/src/screens/SettingsScreen.tsx
+index 4397ac6..37cfff1 100644
+--- c/src/screens/SettingsScreen.tsx
++++ w/src/screens/SettingsScreen.tsx
+@@ -1,12 +1,13 @@
+-import { useEffect, useRef, useState } from 'react'
++import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
+ import { setSoundOn, soundOn } from '../audio/sfx'
+ import { ReminderSettings } from '../reminders/ReminderSettings'
+ import { ScreenHeader } from '../shell/ScreenHeader'
+ import { AccountSection } from './AccountSection'
+ import { SavedHomes } from './SavedHomes'
++import { petMotionReduced, setPetMotionReduced, subscribePetMotionPreference } from '../pet/motionPreference'
+ import './SettingsScreen.css'
+ 
+-// Settings: sound, reminders, and saving progress to an account.
++// Settings: device preferences, reminders, and saving progress to an account.
+ 
+ export interface SettingsScreenProps {
+   petName: string
+@@ -29,6 +30,8 @@ const PRIVACY_URL = 'https://github.com/Robertg761/chore-pet/blob/main/docs/PRIV
+ 
+ export function SettingsScreen({ petName, homeId, onClose, account, onStartOver, onClearRoom, otherHomes = 0, rooms = 1 }: SettingsScreenProps) {
+   const [sound, setSound] = useState(soundOn)
++  const reducedPetMotion = useSyncExternalStore(subscribePetMotionPreference, petMotionReduced, () => false)
++  const motionNoteId = useId()
+   // Start over asks twice: which kind of fresh start, then whether to go ahead.
+   const [startOver, setStartOver] = useState<null | 'choose' | 'clear' | 'erase'>(null)
+   const startOverRef = useRef<HTMLButtonElement>(null)
+@@ -62,6 +65,15 @@ export function SettingsScreen({ petName, homeId, onClose, account, onStartOver,
+             </label>
+           </div>
+ 
++          <div className="settings-card">
++            <label className="settings-toggle">
++              <input type="checkbox" className="check" checked={reducedPetMotion} aria-describedby={motionNoteId}
++                onChange={event => setPetMotionReduced(event.target.checked)} />
++              <span>Reduce pet motion</span>
++            </label>
++            <p id={motionNoteId} className="settings-note">Keeps your pet and movement previews still on this device. Your system's reduced-motion setting is always respected.</p>
++          </div>
++
+           <div className="settings-card">
+             <h2>Reminders</h2>
+             <ReminderSettings petName={petName} />
+diff --git 1/src/pet/motionPreference.ts 2/src/pet/motionPreference.ts
+new file mode 100644
+index 0000000..0cec1bd
+--- /dev/null
++++ 2/src/pet/motionPreference.ts
+@@ -0,0 +1,69 @@
++/** Device-local opt-in; the system preference remains authoritative. */
++export const PET_MOTION_PREFERENCE_KEY = 'chore-pet-reduce-motion'
++
++let loaded = false
++let reduced = false
++let unsavedChoice = false
++const listeners = new Set<() => void>()
++let eventTarget: Window | null = null
++
++export function petMotionReduced(): boolean {
++  if (typeof window === 'undefined') return false
++  // No listener runs between consumers. Refresh then, while retaining a visit
++  // choice that could not be saved over an older readable storage value.
++  if (!loaded || (listeners.size === 0 && !unsavedChoice)) {
++    loaded = true
++    try { reduced = window.localStorage.getItem(PET_MOTION_PREFERENCE_KEY) === 'on' }
++    catch { /* Storage may be unavailable; keep the visit's in-memory choice. */ }
++  }
++  return reduced
++}
++
++function update(value: boolean, persist: boolean): void {
++  loaded = true
++  if (!persist) unsavedChoice = false
++  if (value === reduced) return
++  reduced = value
++  if (persist && typeof window !== 'undefined') {
++    try {
++      window.localStorage.setItem(PET_MOTION_PREFERENCE_KEY, value ? 'on' : 'off')
++      unsavedChoice = false
++    } catch { unsavedChoice = true }
++  }
++  // A subscriber can unmount while reacting to the preference change.
++  for (const listener of [...listeners]) if (listeners.has(listener)) listener()
++}
++
++export function setPetMotionReduced(value: boolean): void {
++  petMotionReduced()
++  update(value, true)
++}
++
++function onStorage(event: StorageEvent): void {
++  if (!eventTarget || (event.key !== PET_MOTION_PREFERENCE_KEY && event.key !== null)) return
++  try {
++    if (event.storageArea && event.storageArea !== eventTarget.localStorage) return
++  } catch { return }
++  update(event.key !== null && event.newValue === 'on', false)
++}
++
++export function subscribePetMotionPreference(listener: () => void): () => void {
++  petMotionReduced()
++  if (listeners.size === 0 && typeof window !== 'undefined') {
++    eventTarget = window
++    eventTarget.addEventListener('storage', onStorage)
++  }
++  // Each subscription owns its cleanup, even if callbacks happen to match.
++  const notify = () => listener()
++  listeners.add(notify)
++  let active = true
++  return () => {
++    if (!active) return
++    active = false
++    listeners.delete(notify)
++    if (listeners.size === 0 && eventTarget) {
++      eventTarget.removeEventListener('storage', onStorage)
++      eventTarget = null
++    }
++  }
++}
+diff --git 1/src/pet/motionPreference.test.ts 2/src/pet/motionPreference.test.ts
+new file mode 100644
+index 0000000..e98cd6e
+--- /dev/null
++++ 2/src/pet/motionPreference.test.ts
+@@ -0,0 +1,126 @@
++// @vitest-environment jsdom
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++
++const cleanup: (() => void)[] = []
++beforeEach(() => { vi.resetModules(); localStorage.clear() })
++afterEach(() => { cleanup.splice(0).forEach(stop => stop()); vi.restoreAllMocks(); vi.unstubAllGlobals(); localStorage.clear() })
++const load = () => import('./motionPreference')
++
++it.each([null, 'off', 'true', 'unexpected'])('defaults to normal pet motion for stored %s', async stored => {
++  const m = await load()
++  if (stored !== null) localStorage.setItem(m.PET_MOTION_PREFERENCE_KEY, stored)
++  expect(m.petMotionReduced()).toBe(false)
++})
++
++it('reads the device preference before the first consumer subscribes', async () => {
++  const m = await load()
++  localStorage.setItem(m.PET_MOTION_PREFERENCE_KEY, 'on')
++  expect(m.petMotionReduced()).toBe(true)
++})
++
++it('persists real changes and notifies each consumer only when the value changes', async () => {
++  const m = await load(), first = vi.fn(), second = vi.fn()
++  cleanup.push(m.subscribePetMotionPreference(first), m.subscribePetMotionPreference(second))
++  const write = vi.spyOn(Storage.prototype, 'setItem')
++  m.setPetMotionReduced(true)
++  expect(m.petMotionReduced()).toBe(true)
++  expect(localStorage.getItem(m.PET_MOTION_PREFERENCE_KEY)).toBe('on')
++  expect(first).toHaveBeenCalledOnce(); expect(second).toHaveBeenCalledOnce()
++  m.setPetMotionReduced(true)
++  expect(first).toHaveBeenCalledOnce(); expect(write).toHaveBeenCalledOnce()
++  m.setPetMotionReduced(false)
++  expect(m.petMotionReduced()).toBe(false)
++  expect(localStorage.getItem(m.PET_MOTION_PREFERENCE_KEY)).toBe('off')
++  expect(first).toHaveBeenCalledTimes(2); expect(second).toHaveBeenCalledTimes(2)
++})
++
++it('keeps the selection in memory when storage reads and writes are blocked', async () => {
++  const m = await load(), changed = vi.fn()
++  vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('blocked') })
++  vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('blocked') })
++  expect(m.petMotionReduced()).toBe(false)
++  cleanup.push(m.subscribePetMotionPreference(changed))
++  expect(() => m.setPetMotionReduced(true)).not.toThrow()
++  expect(m.petMotionReduced()).toBe(true)
++  expect(changed).toHaveBeenCalledOnce()
++  m.setPetMotionReduced(false)
++  expect(m.petMotionReduced()).toBe(false)
++  expect(changed).toHaveBeenCalledTimes(2)
++})
++
++it('receives scoped local-storage changes and clearing without echo writes', async () => {
++  const m = await load(), changed = vi.fn()
++  cleanup.push(m.subscribePetMotionPreference(changed))
++  const write = vi.spyOn(Storage.prototype, 'setItem')
++  const event = (key: string | null, newValue: string | null, storageArea: Storage = localStorage) =>
++    window.dispatchEvent(new StorageEvent('storage', { key, newValue, storageArea }))
++  event('unrelated', 'on')
++  event(m.PET_MOTION_PREFERENCE_KEY, 'on', sessionStorage)
++  expect(changed).not.toHaveBeenCalled()
++  event(m.PET_MOTION_PREFERENCE_KEY, 'on')
++  expect(m.petMotionReduced()).toBe(true)
++  expect(changed).toHaveBeenCalledOnce()
++  event(m.PET_MOTION_PREFERENCE_KEY, 'on')
++  expect(changed).toHaveBeenCalledOnce()
++  event(null, null)
++  expect(m.petMotionReduced()).toBe(false)
++  expect(changed).toHaveBeenCalledTimes(2)
++  expect(write).not.toHaveBeenCalled()
++})
++
++it('shares one native storage listener and removes it with the final consumer', async () => {
++  const m = await load(), first = vi.fn(), second = vi.fn()
++  const add = vi.spyOn(window, 'addEventListener'), remove = vi.spyOn(window, 'removeEventListener')
++  const stopFirst = m.subscribePetMotionPreference(first), stopSecond = m.subscribePetMotionPreference(second)
++  cleanup.push(stopFirst, stopSecond)
++  expect(add.mock.calls.filter(([name]) => name === 'storage')).toHaveLength(1)
++  stopFirst(); stopFirst()
++  expect(remove.mock.calls.filter(([name]) => name === 'storage')).toHaveLength(0)
++  m.setPetMotionReduced(true)
++  expect(first).not.toHaveBeenCalled(); expect(second).toHaveBeenCalledOnce()
++  stopSecond(); stopSecond()
++  expect(remove.mock.calls.filter(([name]) => name === 'storage')).toHaveLength(1)
++  window.dispatchEvent(new StorageEvent('storage', { key: m.PET_MOTION_PREFERENCE_KEY, newValue: 'off', storageArea: localStorage }))
++  expect(second).toHaveBeenCalledOnce()
++})
++
++it('can be read without a browser or storage', async () => {
++  const m = await load()
++  vi.stubGlobal('window', undefined)
++  expect(m.petMotionReduced()).toBe(false)
++})
++
++it('refreshes a device change made while there were no consumers', async () => {
++  const m = await load()
++  expect(m.petMotionReduced()).toBe(false)
++  const stop = m.subscribePetMotionPreference(() => {})
++  stop()
++  // Another tab can change storage while this view has no native listener.
++  localStorage.setItem(m.PET_MOTION_PREFERENCE_KEY, 'on')
++  expect(m.petMotionReduced()).toBe(true)
++  cleanup.push(m.subscribePetMotionPreference(() => {}))
++  expect(m.petMotionReduced()).toBe(true)
++})
++
++it('does not replace an unsaved visit choice with the older readable storage value', async () => {
++  const m = await load()
++  localStorage.setItem(m.PET_MOTION_PREFERENCE_KEY, 'off')
++  expect(m.petMotionReduced()).toBe(false)
++  vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('write blocked') })
++  m.setPetMotionReduced(true)
++  expect(localStorage.getItem(m.PET_MOTION_PREFERENCE_KEY)).toBe('off')
++  expect(m.petMotionReduced()).toBe(true)
++  const stop = m.subscribePetMotionPreference(() => {})
++  stop()
++  expect(m.petMotionReduced()).toBe(true)
++})
++
++it('does not notify a consumer removed by an earlier callback in the same change', async () => {
++  const m = await load(), second = vi.fn()
++  let stopSecond = () => {}
++  cleanup.push(m.subscribePetMotionPreference(() => stopSecond()))
++  stopSecond = m.subscribePetMotionPreference(second)
++  cleanup.push(stopSecond)
++  m.setPetMotionReduced(true)
++  expect(second).not.toHaveBeenCalled()
++})
+diff --git 1/src/pet/usePetMotion.preference.test.tsx 2/src/pet/usePetMotion.preference.test.tsx
+new file mode 100644
+index 0000000..c3ecdd9
+--- /dev/null
++++ 2/src/pet/usePetMotion.preference.test.tsx
+@@ -0,0 +1,104 @@
++// @vitest-environment jsdom
++import { act, useLayoutEffect } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import { render } from '../test/react'
++import { setPetMotionReduced } from './motionPreference'
++import { usePetMotion } from './usePetMotion'
++
++const mounted: ReturnType<typeof render>[] = []
++let frames: Map<number, FrameRequestCallback>
++let media: MediaQueryList
++beforeEach(() => {
++  localStorage.clear(); setPetMotionReduced(false)
++  frames = new Map(); let serial = 0
++  vi.spyOn(document, 'hidden', 'get').mockReturnValue(false)
++  media = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  vi.stubGlobal('matchMedia', () => media)
++  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { const id = ++serial; frames.set(id, callback); return id })
++  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
++})
++afterEach(() => {
++  mounted.splice(0).forEach(ui => ui.unmount())
++  expect(frames.size).toBe(0)
++  setPetMotionReduced(false); localStorage.clear()
++  vi.restoreAllMocks(); vi.unstubAllGlobals()
++})
++function Clock({ changed, active = true }: { changed?: (value: boolean) => void; active?: boolean }) {
++  const { reducedMotion } = usePetMotion(() => {}, active ? { normal: true, reduced: false } : false, changed)
++  return <output>{String(reducedMotion)}</output>
++}
++function mount(props: Parameters<typeof Clock>[0] = {}) {
++  const ui = render(<Clock {...props} />); mounted.push(ui); return ui
++}
++function system(value: boolean) {
++  act(() => { Object.assign(media, { matches: value }); media.dispatchEvent(new Event('change')) })
++}
++
++it('starts with the saved device policy and no pending frame when reduced art is settled', () => {
++  setPetMotionReduced(true)
++  const changed = vi.fn(), ui = mount({ changed })
++  expect(ui.container.textContent).toBe('true')
++  expect(frames.size).toBe(0)
++  expect(changed).not.toHaveBeenCalled()
++})
++
++it('cancels the existing frame on a live device change and resumes only one frame', () => {
++  const changed = vi.fn(), ui = mount({ changed })
++  expect(frames.size).toBe(1)
++  act(() => setPetMotionReduced(true))
++  expect(ui.container.textContent).toBe('true')
++  expect(frames.size).toBe(0)
++  expect(changed.mock.calls).toEqual([[true]])
++  act(() => setPetMotionReduced(true))
++  expect(changed).toHaveBeenCalledOnce()
++  act(() => setPetMotionReduced(false))
++  expect(ui.container.textContent).toBe('false')
++  expect(frames.size).toBe(1)
++  expect(changed.mock.calls).toEqual([[true], [false]])
++})
++
++it('respects the system policy and only announces effective OR-policy changes', () => {
++  Object.assign(media, { matches: true })
++  const changed = vi.fn(), ui = mount({ changed })
++  expect(ui.container.textContent).toBe('true')
++  expect(frames.size).toBe(0)
++  act(() => setPetMotionReduced(true))
++  system(false)
++  expect(ui.container.textContent).toBe('true')
++  expect(frames.size).toBe(0)
++  expect(changed).not.toHaveBeenCalled()
++  system(true)
++  act(() => setPetMotionReduced(false))
++  expect(ui.container.textContent).toBe('true')
++  expect(changed).not.toHaveBeenCalled()
++  system(false)
++  expect(ui.container.textContent).toBe('false')
++  expect(changed.mock.calls).toEqual([[false]])
++  expect(frames.size).toBe(1)
++})
++
++it('delivers device changes to the latest inactive handler without matchMedia and removes the subscription', () => {
++  vi.stubGlobal('matchMedia', undefined)
++  const first = vi.fn(), latest = vi.fn(), ui = mount({ changed: first, active: false })
++  ui.rerender(<Clock changed={latest} active={false} />)
++  act(() => setPetMotionReduced(true))
++  expect(ui.container.textContent).toBe('true')
++  expect(latest.mock.calls).toEqual([[true]])
++  expect(first).not.toHaveBeenCalled()
++  expect(frames.size).toBe(0)
++  ui.unmount(); mounted.splice(mounted.indexOf(ui), 1)
++  act(() => setPetMotionReduced(false))
++  expect(latest).toHaveBeenCalledOnce()
++})
++
++it('reconciles a preference changed between rendering and subscribing before a frame runs', () => {
++  const changed = vi.fn()
++  function LatePreference() {
++    useLayoutEffect(() => { setPetMotionReduced(true) }, [])
++    return <Clock changed={changed} />
++  }
++  const ui = render(<LatePreference />); mounted.push(ui)
++  expect(ui.container.textContent).toBe('true')
++  expect(frames.size).toBe(0)
++  expect(changed.mock.calls).toEqual([[true]])
++})
+diff --git 1/src/effects/Cheer.test.tsx 2/src/effects/Cheer.test.tsx
+new file mode 100644
+index 0000000..3fa23c1
+--- /dev/null
++++ 2/src/effects/Cheer.test.tsx
+@@ -0,0 +1,77 @@
++// @vitest-environment jsdom
++import { act } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import { render } from '../test/react'
++import { setPetMotionReduced } from '../pet/motionPreference'
++import { Cheer } from './Cheer'
++
++let ui: ReturnType<typeof render> | undefined
++let media: MediaQueryList
++beforeEach(() => {
++  setPetMotionReduced(false)
++  vi.useFakeTimers()
++  media = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  vi.stubGlobal('matchMedia', () => media)
++  vi.stubGlobal('requestAnimationFrame', vi.fn())
++  vi.stubGlobal('cancelAnimationFrame', vi.fn())
++})
++afterEach(() => {
++  ui?.unmount(); ui = undefined
++  // jsdom queues a zero-delay cross-document StorageEvent for setItem.
++  act(() => vi.advanceTimersByTime(0))
++  expect(vi.getTimerCount()).toBe(0)
++  setPetMotionReduced(false)
++  vi.useRealTimers(); vi.unstubAllGlobals(); vi.restoreAllMocks()
++})
++function mount(done = vi.fn()) {
++  ui = render(<svg><Cheer onDone={done}><g className="ch-breathe"><g className="ch-eye" /></g></Cheer></svg>)
++  act(() => vi.advanceTimersByTime(0))
++  return done
++}
++
++it('starts device-reduced cheers still with one existing 1200ms deadline and no frame request', () => {
++  setPetMotionReduced(true)
++  const done = mount()
++  expect(ui!.container.querySelector('.fx-cheer-reduced')).not.toBeNull()
++  expect(media.matches).toBe(false)
++  expect(vi.getTimerCount()).toBe(1)
++  act(() => vi.advanceTimersByTime(1199))
++  expect(done).not.toHaveBeenCalled()
++  act(() => vi.advanceTimersByTime(1))
++  expect(done).toHaveBeenCalledOnce()
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++})
++
++it.each(['device', 'system'])('settles a live %s change without replay or extending the original deadline', source => {
++  const done = mount()
++  const change = (value: boolean) => act(() => {
++    if (source === 'device') setPetMotionReduced(value)
++    else { Object.assign(media, { matches: value }); media.dispatchEvent(new Event('change')) }
++    vi.advanceTimersByTime(0)
++  })
++  act(() => vi.advanceTimersByTime(400))
++  change(true)
++  expect(ui!.container.querySelector('.fx-cheer-settled')).not.toBeNull()
++  expect(vi.getTimerCount()).toBe(1)
++  change(false)
++  expect(ui!.container.querySelector('.fx-cheer-settled')).not.toBeNull()
++  act(() => vi.advanceTimersByTime(1349))
++  expect(done).not.toHaveBeenCalled()
++  act(() => vi.advanceTimersByTime(1))
++  expect(done).toHaveBeenCalledOnce()
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++})
++
++it('does not replay an initially reduced cheer on restore and cleans up its deadline on unmount', () => {
++  setPetMotionReduced(true)
++  const done = mount()
++  act(() => vi.advanceTimersByTime(400))
++  act(() => setPetMotionReduced(false))
++  expect(ui!.container.querySelector('.fx-cheer-settled')).not.toBeNull()
++  act(() => vi.advanceTimersByTime(799))
++  expect(done).not.toHaveBeenCalled()
++  ui!.unmount(); ui = undefined
++  act(() => vi.advanceTimersByTime(10000))
++  expect(done).not.toHaveBeenCalled()
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++})
+diff --git 1/scripts/browser/pet-motion-preference.test.mjs 2/scripts/browser/pet-motion-preference.test.mjs
+new file mode 100644
+index 0000000..561616f
+--- /dev/null
++++ 2/scripts/browser/pet-motion-preference.test.mjs
+@@ -0,0 +1,197 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
++
++const key = 'chore-pet-reduce-motion'
++function recordFrames() {
++  const request = requestAnimationFrame, cancel = cancelAnimationFrame
++  window.__deviceMotion = { pending: new Set(), delivered: 0 }
++  window.requestAnimationFrame = callback => {
++    const id = request(now => { window.__deviceMotion.pending.delete(id); window.__deviceMotion.delivered++; callback(now) })
++    window.__deviceMotion.pending.add(id); return id
++  }
++  window.cancelAnimationFrame = id => { window.__deviceMotion.pending.delete(id); cancel(id) }
++}
++async function instrument(page) {
++  await page.clock.install()
++  await page.clock.pauseAt(Date.now() + 1000)
++  await page.addInitScript(() => { Math.random = () => .99 })
++  await page.addInitScript(recordFrames)
++  await page.reload()
++  await page.locator('.room-pet').waitFor()
++}
++const read = page => page.evaluate(() => ({ pending: window.__deviceMotion.pending.size, delivered: window.__deviceMotion.delivered }))
++async function settleView(page) {
++  // Page transitions use the browser's own animation clock. Keep them enabled,
++  // waiting for their existing marker rather than counting them as pet frames.
++  for (let i = 0; i < 30; i++) {
++    if (await page.evaluate(() => !document.documentElement.dataset.vt)) return
++    await page.waitForTimeout(20)
++  }
++  assert.fail('the existing view transition must finish before sampling pet policy')
++}
++async function settings(page) {
++  await page.getByRole('button', { name: 'More', exact: true }).click()
++  await page.getByRole('button', { name: 'Settings', exact: true }).click()
++  await page.getByRole('heading', { name: 'Settings', exact: true }).waitFor()
++  await settleView(page)
++  return page.getByRole('checkbox', { name: 'Reduce pet motion', exact: true })
++}
++async function home(page) {
++  await page.getByRole('button', { name: 'Home', exact: true }).click()
++  await page.locator('.room-pet').waitFor()
++  await settleView(page)
++  await page.clock.runFor(64)
++  assert.equal(await page.evaluate(() => document.hidden), false)
++  const visible = await page.locator('.room-pet [data-character-body]').evaluate(node => {
++    const box = node.getBoundingClientRect()
++    let left = 0, top = 0, right = innerWidth, bottom = innerHeight
++    for (let p = node.parentElement; p; p = p.parentElement) {
++      const style = getComputedStyle(p), clip = p.getBoundingClientRect()
++      if (/(auto|scroll|hidden|clip)/.test(style.overflowX)) { left = Math.max(left, clip.left + p.clientLeft); right = Math.min(right, clip.left + p.clientLeft + p.clientWidth) }
++      if (/(auto|scroll|hidden|clip)/.test(style.overflowY)) { top = Math.max(top, clip.top + p.clientTop); bottom = Math.min(bottom, clip.top + p.clientTop + p.clientHeight) }
++    }
++    return Math.max(0, Math.min(right, box.right) - Math.max(left, box.left)) * Math.max(0, Math.min(bottom, box.bottom) - Math.max(top, box.top)) / (box.width * box.height)
++  })
++  assert.ok(visible >= .95, 'a visible resident must prove the policy, rather than an offscreen pause')
++}
++async function capture(page, name) {
++  if (!process.env.CHORE_MOTION_PREFERENCE_CAPTURE_DIR) return
++  await mkdir(process.env.CHORE_MOTION_PREFERENCE_CAPTURE_DIR, { recursive: true })
++  await page.screenshot({ path: join(process.env.CHORE_MOTION_PREFERENCE_CAPTURE_DIR, name), fullPage: false })
++}
++async function pending(page, expected) {
++  for (let i = 0; i < 20; i++) {
++    if ((await read(page)).pending === expected) return
++    await page.waitForTimeout(20)
++  }
++  assert.equal((await read(page)).pending, expected)
++}
++
++for (const width of [320, 1280]) test(`device motion choice persists and keeps finite reactions still at${width}px`, async t => {
++  const page = await browserApp(t, { viewport: { width, height: width === 320 ? 640 : 800 }, reducedMotion: 'no-preference' })
++  await instrument(page)
++  assert.equal((await read(page)).pending, 1)
++  const saved = (await snapshot(page)).tables
++  const choice = await settings(page)
++  assert.equal(await choice.count(), 1)
++  assert.equal(await choice.isChecked(), false)
++  assert.equal(await page.evaluate(key => localStorage.getItem(key), key), null)
++  await choice.focus(); await page.keyboard.press('Space')
++  assert.equal(await choice.isChecked(), true)
++  assert.equal(await choice.evaluate(node => node === document.activeElement && node.matches(':focus-visible')), true)
++  const label = await choice.locator('..').boundingBox()
++  assert.ok(label.width >= 44 && label.height >= 44)
++  assert.match(await choice.evaluate(node => document.getElementById(node.getAttribute('aria-describedby')).textContent), /on this device.*system's reduced-motion setting is always respected/)
++  await capture(page, `motion-preference-settings-${width}.png`)
++  await home(page)
++  assert.equal((await read(page)).pending, 0)
++  const stopped = await read(page)
++  await page.clock.runFor(2000)
++  assert.deepEqual(await read(page), stopped, 'settled device-reduced art requests and delivers no idle frames')
++  const resident = page.locator('.room-pet')
++  await resident.focus(); await page.keyboard.press('Enter')
++  assert.equal((await read(page)).pending, 1)
++  await page.clock.runFor(128)
++  const still = await resident.locator('[data-character-body]').innerHTML()
++  await page.clock.runFor(672)
++  assert.equal(await resident.locator('[data-character-body]').innerHTML(), still)
++  await page.clock.runFor(1000)
++  assert.equal((await read(page)).pending, 0)
++  assert.ok((await page.locator('.living-room [aria-live="polite"]').textContent()).trim())
++  await capture(page, `motion-preference-home-${width}.png`)
++  await page.reload(); await page.locator('.room-pet').waitFor(); await page.clock.runFor(64)
++  assert.equal((await read(page)).pending, 0)
++  assert.equal(await page.evaluate(key => localStorage.getItem(key), key), 'on')
++  const restored = await settings(page)
++  assert.equal(await restored.isChecked(), true)
++  await restored.focus(); await page.keyboard.press('Space')
++  assert.equal(await restored.isChecked(), false)
++  await home(page)
++  assert.equal((await read(page)).pending, 1)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  t.diagnostic(`Chromium ${page.context().browser().version()}; native keyboard44px choice; reload; visible resident0idle/1finite/0deadline; still markup; restored normal1; unchanged saved tables.`)
++})
++
++test('device off cannot override system reduction, and live system changes retain the existing clock', async t => {
++  const page = await browserApp(t, { reducedMotion: 'reduce' })
++  await instrument(page)
++  const saved = (await snapshot(page)).tables, choice = await settings(page)
++  assert.equal(await choice.isChecked(), false)
++  await choice.focus(); await page.keyboard.press('Space'); await page.keyboard.press('Space')
++  assert.equal(await choice.isChecked(), false)
++  await home(page)
++  assert.equal((await read(page)).pending, 0)
++  await changeReducedMotion(page, 'no-preference'); await page.clock.runFor(64)
++  assert.equal((await read(page)).pending, 1)
++  await changeReducedMotion(page, 'reduce'); await page.clock.runFor(160)
++  assert.equal((await read(page)).pending, 0)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
++
++test('native cross-tab storage pauses a visible pet and cancels a preview without replaying it', async t => {
++  const page = await browserApp(t, { viewport: { width: 1280, height: 800 }, reducedMotion: 'no-preference' })
++  await instrument(page)
++  const saved = (await snapshot(page)).tables
++  const peer = await page.context().newPage(), url = new URL('motion-preference-probe', page.url()).href
++  await peer.route(url, route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Storage event probe</title>' }))
++  await peer.goto(url); await page.bringToFront()
++  const choose = value => peer.evaluate(({ key, value }) => localStorage.setItem(key, value), { key, value })
++  await choose('on'); await pending(page, 0)
++  await home(page)
++  assert.equal((await read(page)).pending, 0)
++  await choose('off'); await pending(page, 1)
++  await page.getByRole('button', { name: 'Wardrobe', exact: true }).click()
++  await page.getByRole('button', { name: 'Hop', exact: true }).waitFor(); await settleView(page)
++  await page.getByRole('button', { name: 'Hop', exact: true }).click(); await page.clock.runFor(400)
++  assert.equal((await read(page)).pending, 1)
++  await choose('on'); await pending(page, 0)
++  assert.equal(await page.getByRole('button', { name: 'Stop hop', exact: true }).count(), 0)
++  assert.equal(await page.getByRole('button', { name: 'Hop', exact: true }).isDisabled(), true)
++  assert.match(await page.locator('.wd-motion-note').textContent(), /reduced motion/)
++  await choose('off'); await page.waitForTimeout(50)
++  assert.equal(await page.getByRole('button', { name: 'Hop', exact: true }).isEnabled(), true)
++  await page.clock.runFor(2000)
++  assert.equal((await read(page)).pending, 0, 'restoring motion must not replay the cancelled preview')
++  const choice = await settings(page)
++  assert.equal(await choice.isChecked(), false)
++  await choose('on'); await page.waitForTimeout(50)
++  assert.equal(await choice.isChecked(), true)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  await peer.close()
++  t.diagnostic('One Chromium/app page plus a minimal same-origin storage-only peer; real StorageEvent, cancellation/no replay and live Settings checked state; unchanged saved tables.')
++})
++
++test('a device-reduced gallery cheer keeps its pet still and fades before its existing deadline', async t => {
++  const page = await browserApp(t, { viewport: { width: 1280, height: 800 }, reducedMotion: 'no-preference' })
++  await page.evaluate(key => localStorage.setItem(key, 'on'), key)
++  await page.addInitScript(recordFrames)
++  const url = new URL(page.url()); url.search = '?art'
++  await page.goto(url.href)
++  await page.getByRole('heading', { name: 'Art gallery', exact: true }).waitFor()
++  await page.getByRole('button', { name: 'Replay cheers', exact: true }).click()
++  assert.equal(await page.locator('.gallery-effects .fx-cheer-hop').count(), 3)
++  const policy = await page.locator('.gallery-effects').evaluate(node => ({
++    system: matchMedia('(prefers-reduced-motion: reduce)').matches,
++    names: [...node.querySelectorAll('.fx-cheer-hop,.ch-breathe,.ch-eye')].map(el => getComputedStyle(el).animationName),
++    accents: [...node.querySelectorAll('.fx-cheer-pop')].map(el => {
++      const style = getComputedStyle(el)
++      return { name: style.animationName, end: (parseFloat(style.animationDelay) + parseFloat(style.animationDuration)) * 1000 }
++    }),
++  }))
++  assert.equal(policy.system, false)
++  assert.ok(policy.names.length >= 6 && policy.names.every(name => name === 'none'), 'device reduction must suppress the CSS hop, body breathing and blinks')
++  assert.equal(policy.accents.length, 36)
++  assert.ok(policy.accents.every(accent => accent.name === 'fx-static-fade' && accent.end <= 1200.1))
++  assert.equal((await read(page)).pending, 0)
++  if (process.env.CHORE_MOTION_PREFERENCE_CAPTURE_DIR) {
++    await mkdir(process.env.CHORE_MOTION_PREFERENCE_CAPTURE_DIR, { recursive: true })
++    await page.locator('.gallery-effects').screenshot({ path: join(process.env.CHORE_MOTION_PREFERENCE_CAPTURE_DIR, 'motion-preference-cheer-1280.png') })
++  }
++  await page.waitForFunction(() => !document.querySelector('.gallery-effects .fx-cheer-hop'), undefined, { polling: 50, timeout: 1600 })
++  assert.equal(await page.locator('.gallery-effects .fx-cheer-hop').count(), 0)
++  assert.equal((await read(page)).pending, 0)
++  t.diagnostic('Device on/system off: three CSS cheering pets still;36 static-fade accents end by1200ms;original finite cleanup;0RAF.')
++})
