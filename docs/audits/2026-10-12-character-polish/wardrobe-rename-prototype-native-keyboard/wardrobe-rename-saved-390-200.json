@@ -1,0 +1,184 @@
+{
+  "layout": {
+    "width": 390,
+    "overflow": 0,
+    "frames": 0,
+    "controls": [
+      {
+        "name": "Wear Sunday clothes",
+        "box": {
+          "x": 20,
+          "y": 186.375,
+          "width": 350,
+          "height": 91.890625,
+          "right": 370,
+          "bottom": 278.265625
+        },
+        "parent": {
+          "x": 14,
+          "y": 180.375,
+          "width": 362,
+          "height": 200.890625,
+          "right": 376,
+          "bottom": 381.265625
+        }
+      },
+      {
+        "name": "Rename Sunday clothes",
+        "box": {
+          "x": 20,
+          "y": 282.265625,
+          "width": 350,
+          "height": 44,
+          "right": 370,
+          "bottom": 326.265625
+        },
+        "parent": {
+          "x": 14,
+          "y": 180.375,
+          "width": 362,
+          "height": 200.890625,
+          "right": 376,
+          "bottom": 381.265625
+        }
+      },
+      {
+        "name": "Remove Sunday clothes",
+        "box": {
+          "x": 20,
+          "y": 330.265625,
+          "width": 350,
+          "height": 44,
+          "right": 370,
+          "bottom": 374.265625
+        },
+        "parent": {
+          "x": 14,
+          "y": 180.375,
+          "width": 362,
+          "height": 200.890625,
+          "right": 376,
+          "bottom": 381.265625
+        }
+      },
+      {
+        "name": "Wear Cosy",
+        "box": {
+          "x": 20,
+          "y": 395.265625,
+          "width": 350,
+          "height": 91.890625,
+          "right": 370,
+          "bottom": 487.15625
+        },
+        "parent": {
+          "x": 14,
+          "y": 389.265625,
+          "width": 362,
+          "height": 200.890625,
+          "right": 376,
+          "bottom": 590.15625
+        }
+      },
+      {
+        "name": "Rename Cosy",
+        "box": {
+          "x": 20,
+          "y": 491.15625,
+          "width": 350,
+          "height": 44,
+          "right": 370,
+          "bottom": 535.15625
+        },
+        "parent": {
+          "x": 14,
+          "y": 389.265625,
+          "width": 362,
+          "height": 200.890625,
+          "right": 376,
+          "bottom": 590.15625
+        }
+      },
+      {
+        "name": "Remove Cosy",
+        "box": {
+          "x": 20,
+          "y": 539.15625,
+          "width": 350,
+          "height": 44,
+          "right": 370,
+          "bottom": 583.15625
+        },
+        "parent": {
+          "x": 14,
+          "y": 389.265625,
+          "width": 362,
+          "height": 200.890625,
+          "right": 376,
+          "bottom": 590.15625
+        }
+      },
+      {
+        "name": "Wear Party clothes",
+        "box": {
+          "x": 20,
+          "y": 604.15625,
+          "width": 350,
+          "height": 91.890625,
+          "right": 370,
+          "bottom": 696.046875
+        },
+        "parent": {
+          "x": 14,
+          "y": 598.15625,
+          "width": 362,
+          "height": 200.890625,
+          "right": 376,
+          "bottom": 799.046875
+        }
+      },
+      {
+        "name": "Rename Party clothes",
+        "box": {
+          "x": 20,
+          "y": 700.046875,
+          "width": 350,
+          "height": 44,
+          "right": 370,
+          "bottom": 744.046875
+        },
+        "parent": {
+          "x": 14,
+          "y": 598.15625,
+          "width": 362,
+          "height": 200.890625,
+          "right": 376,
+          "bottom": 799.046875
+        }
+      },
+      {
+        "name": "Remove Party clothes",
+        "box": {
+          "x": 20,
+          "y": 748.046875,
+          "width": 350,
+          "height": 44,
+          "right": 370,
+          "bottom": 792.046875
+        },
+        "parent": {
+          "x": 14,
+          "y": 598.15625,
+          "width": 362,
+          "height": 200.890625,
+          "right": 376,
+          "bottom": 799.046875
+        }
+      }
+    ],
+    "input": null,
+    "focus": "Rename Sunday clothes",
+    "focusedPaintVisible": true
+  },
+  "method": "Only target saved name changes, current wearing and tables preserved; native focus returns to renamed card."
+}

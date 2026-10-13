@@ -1,0 +1,12 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run --config /tmp/wardrobe-rename-config.mjs src/screens/Wardrobe.rename.test.tsx --maxWorkers=1 --reporter=dot
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+···········
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  01:15:38
+   Duration  1.62s (tests 46%, transform 31%, environment 16%, import 6%)
+

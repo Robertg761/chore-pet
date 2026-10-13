@@ -1,0 +1,22 @@
+✔ keeps input editing through native layout change wide=false/100% (1787.77894ms)
+✔ keeps Save name editing through native layout change wide=false/100% (1717.313558ms)
+✔ keeps Not now editing through native layout change wide=false/100% (1737.350511ms)
+✔ keeps input editing through native layout change wide=true/100% (1694.84472ms)
+✔ keeps Save name editing through native layout change wide=true/100% (1710.422709ms)
+✔ keeps Not now editing through native layout change wide=true/100% (1684.631666ms)
+✔ keeps input editing through native layout change wide=false/200% (1673.869956ms)
+✔ keeps Save name editing through native layout change wide=false/200% (1689.543045ms)
+✔ keeps Not now editing through native layout change wide=false/200% (1720.026481ms)
+✔ keeps input editing through native layout change wide=true/200% (1682.839874ms)
+✔ keeps Save name editing through native layout change wide=true/200% (1704.5187ms)
+✔ keeps Not now editing through native layout change wide=true/200% (1736.55696ms)
+✔ keeps editor draft without stealing preview focus on native resize wide=false (1300.543149ms)
+✔ keeps editor draft without stealing preview focus on native resize wide=true (1289.410724ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 23547.067486

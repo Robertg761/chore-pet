@@ -1,0 +1,38 @@
+{
+  "utc": "2026-10-13T04:15:27.476735+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "npx",
+    "vitest",
+    "run",
+    "--maxWorkers=1",
+    "--reporter=dot"
+  ],
+  "exitCode": 125,
+  "resourceStopReason": "Insufficient launch headroom; no child started.",
+  "launchMinimumMiB": 4096,
+  "runReserveMiB": 2048,
+  "nodeOptions": "--max-old-space-size=512",
+  "cleanup": {
+    "processGroup": null,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": []
+  },
+  "minimumObservedAvailableBytes": 4260098048,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4260098048,
+      "tmpFreeBytes": 4289998848
+    },
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4260098048,
+      "tmpFreeBytes": 4289998848
+    }
+  ]
+}

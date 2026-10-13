@@ -1,0 +1,92 @@
+import argparse
+import datetime
+import json
+import os
+from pathlib import Path
+import shutil
+import signal
+import subprocess
+import time
+
+parser = argparse.ArgumentParser()
+parser.add_argument('label')
+parser.add_argument('--launch-mib', type=int, default=3200)
+parser.add_argument('command', nargs=argparse.REMAINDER)
+args = parser.parse_args()
+command = args.command[1:] if args.command[:1] == ['--'] else args.command
+if not command:
+    parser.error('command required')
+out = Path('docs/audits/2026-10-12-character-polish')
+samples = []
+
+
+def sample():
+    available = int(next(line.split()[1] for line in Path('/proc/meminfo').read_text().splitlines() if line.startswith('MemAvailable:'))) * 1024
+    row = {'elapsedSeconds': round(time.monotonic() - start, 3),
+           'memAvailableBytes': available, 'tmpFreeBytes': shutil.disk_usage('/tmp').free}
+    samples.append(row)
+    return row
+
+
+class SupervisorSignal(Exception):
+    def __init__(self, number):
+        self.number = number
+
+
+def interrupted(number, _frame):
+    raise SupervisorSignal(number)
+
+
+signal.signal(signal.SIGTERM, interrupted)
+signal.signal(signal.SIGINT, interrupted)
+start = time.monotonic()
+first = sample()
+reason = None
+code = 125
+child = None
+with (out / f'{args.label}.log').open('w') as log:
+    try:
+        if first['memAvailableBytes'] < args.launch_mib * 1024**2 or first['tmpFreeBytes'] < 2 * 1024**3:
+            reason = 'Insufficient launch headroom; no child started.'
+            log.write(reason + '\n')
+        else:
+            child = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+            while child.poll() is None:
+                current = sample()
+                if current['memAvailableBytes'] < 2 * 1024**3 or current['tmpFreeBytes'] < 2 * 1024**3:
+                    reason = 'Resource reserve crossed; stopped only this job process group.'
+                    code = 124
+                    break
+                time.sleep(1)
+            if reason is None:
+                code = child.returncode
+    except SupervisorSignal as stopped:
+        code = 128 + stopped.number
+        reason = f'Supervisor received signal {stopped.number}; stopped only this job process group.'
+    finally:
+        if child is not None and child.poll() is None:
+            try:
+                os.killpg(child.pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+            try:
+                child.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                os.killpg(child.pid, signal.SIGKILL)
+                child.wait()
+        if reason:
+            log.write('\n' + reason + '\n')
+            log.flush()
+        sample()
+(out / f'{args.label}.exit').write_text(str(code) + '\n')
+(out / f'{args.label}-resources.json').write_text(json.dumps({
+    'utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'command': command, 'exitCode': code, 'resourceStopReason': reason,
+    'launchMinimumMiB': args.launch_mib, 'runReserveMiB': 2048,
+    'nodeOptions': os.environ.get('NODE_OPTIONS'),
+    'minimumObservedAvailableBytes': min(row['memAvailableBytes'] for row in samples),
+    'method': 'Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT stop the owned child group and preserve final sidecars.',
+    'samples': samples,
+}, indent=2) + '\n')
+print(args.label, 'exit', code, 'minimum observed available MiB', round(min(row['memAvailableBytes'] for row in samples) / 1024**2, 1), reason or '')
+raise SystemExit(code)

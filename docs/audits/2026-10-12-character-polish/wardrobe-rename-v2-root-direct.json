@@ -1,0 +1,79 @@
+{
+  "directlyOpened": {
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-input-narrow-100.png": "01c681fe6a275df8faaa6e4a85b9887ddd2308ffabf9d8778127eca78588dd9e",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-input-wide-100.png": "66d1c160288ebf9b90b1e7f348397624ea8e5e45fb616273c16d8364bb22e768",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-input-narrow-200.png": "03fc1fc92e39db448a24bf6bb9daadcd11d4af8cf0cccdd90b3ed55ac0fa7d55",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-input-wide-200.png": "78585b3479a2c55891235dc0dbec8c8af2b6c3c9caf261dc7e7757369067d5bb",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-Save-name-narrow-100.png": "622c8a1e0fe33b5fc5559681cc709bcbd5976b5ba8524e58d7d25c2885c5d445",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-Save-name-wide-100.png": "0b2ac7768e0079dba93d8f0f90849bfe614642cd4c6c2c05908a07b67c78aabf",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-Save-name-narrow-200.png": "8a1eed2166c3c8d446b13e5578e8ac9b3805d2523589dd74b64a60b8bd70e925",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-Save-name-wide-200.png": "f820dfe9e9c0c15011c23c07ad2d55809a74ae5f11e3a5c776a3a76c88b5c208",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-Not-now-narrow-100.png": "622c8a1e0fe33b5fc5559681cc709bcbd5976b5ba8524e58d7d25c2885c5d445",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-Not-now-wide-100.png": "141896790ba12fa7664999a198f5e47680575a5375c8c9b15abe763ad89d6b6c",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-Not-now-narrow-200.png": "d562febca4a9a3f2c91bdde77f7166e7e6fa4c418ea8d913232f84cdae707fb2",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-Not-now-wide-200.png": "3337a20530731c0f6a269453c979c781c4307a7e0e9309c83e84bcf92a4ed682",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-same-narrow-100.png": "66b6f0a4a6413b033dece025a6c05a773961331af2e1b404e67db60b88a32dbb",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-same-wide-100.png": "000c1b88aed87c2dacf8dcca9ca425c20bea2b11639c59dc12122634ca822a3b",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-same-narrow-200.png": "ab1e978a5bab8ecfadaae8ed413254837fdb1996dd6bc9556b7ec273ae2c21c0",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-final-native/wardrobe-resize-same-wide-200.png": "31db1828539e534f4e00789efed9db2390b50f406a306ea9d52a7a598c544ee8",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-edit-320-100.png": "49443bb36930c2921ee0221e926753389995e6b01b4094c5a4bced588981a961",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-saved-320-100.png": "926f1963223b8557712c7ad8ddb59322c50dd072cc199aac8ba7f5f77aa21b0a",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-edit-320-200.png": "56319fc3ddc62ff04578f6a9aa063910563f3dc756ce581be20061b1f9c2bd3c",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-edit-390-200.png": "840a7577565255cd1e673a715e23a961f9e6035d0ea6dc38aad4c96d85b0b68e",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-edit-390-100.png": "6d9a5a6bc1ce6b211f0b2a0d6da9b7f9f010646af7853464cd09a7503c49c6b3",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-saved-390-100.png": "319253391c94663ae98333eafbeec990b37de3a9392731397a2e1a80efbd0bdf",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-edit-844-100.png": "79da52243284193303c6d4e1f6dce03f23c5f95e654ab1899567f6481e360c4c",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-edit-1280-100.png": "23302ebf3103dd052236db788ce5556548c81d723fe5e917e0b8b54ab9b174c3",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-saved-1280-100.png": "dc743b7d42d8bab67e8c343cbaebcb32b8a4a9b915fb68b4fee71d4ee8ef38dd",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-saved-1280-200.png": "15ab412cceff4094a184e47b1edc1ba34530b01255caed9505ddf8c48e11f118",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-held-preview.png": "03ceb5d975a5ffb70289f5b9e5fbac8a38d9602d692fb83a38db5fa19c2c9139",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-new-look.png": "f55ef27ba068662dc2eddea01bd7be05b9aab64066ceaf13092290b32fff6aa8"
+  },
+  "method": "Root directly opened28 distinct final PNGs in fourteen two-image calls:all16resize and12changedrename. Ten remaining rename PNGs match byte-exact previously directly reviewed original final captures, bound in png-comparison. Programmatic native control focus/selection plus actual native keyboard activation are scripted; fixed-layout rename cases also exercise native Tab/Space navigation. Root font percentages are not browser zoom.",
+  "sourceBindings": {
+    "src/screens/Wardrobe.tsx": "163f7917730078cdb29f5cd0bac7247050fb4e01b70a5e728d6244946b153b34",
+    "src/screens/Wardrobe.css": "8c397f6967c5efec784703b02d4024185415f7832e8233bd7f93536b6fa2431b"
+  },
+  "byteExactPriorReview": {
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-edit-1280-200.png": {
+      "sha256": "a8e85f2582dbb210748fd0ff23448355cdf20437b7d0b50416dff3c06ead823e",
+      "prior": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint/wardrobe-rename-edit-1280-200.png"
+    },
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-edit-640-100.png": {
+      "sha256": "12d55b0a4fcc6d32621e912e8149a5737bf1517c705d0aea17abe0956027a2ce",
+      "prior": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint/wardrobe-rename-edit-640-100.png"
+    },
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-edit-640-200.png": {
+      "sha256": "a6b1e080569498d176a6863a5b4d9997da8880ef84b52948168159555b0eb5bb",
+      "prior": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint/wardrobe-rename-edit-640-200.png"
+    },
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-edit-844-200.png": {
+      "sha256": "b8b51faf332e62af6eed8d9829350b86f6bede4cf4bf89cc168a125ace2d9f05",
+      "prior": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint/wardrobe-rename-edit-844-200.png"
+    },
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-saved-320-200.png": {
+      "sha256": "a9f84ac8e70aa70c1c737215dbe4ebaf2497bb9dc0d37caf8cd091e6c4b5a94e",
+      "prior": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint/wardrobe-rename-saved-320-200.png"
+    },
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-saved-390-200.png": {
+      "sha256": "c5cb2206df6ab062d6f45845ed834132be6bb7680fc39ba9c1987604a15f11b0",
+      "prior": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint/wardrobe-rename-saved-390-200.png"
+    },
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-saved-640-100.png": {
+      "sha256": "2602d704d81fbc721ac65fc88c6a4436fc85510a04ebfac0ef76f1bfa7ca5f5f",
+      "prior": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint/wardrobe-rename-saved-640-100.png"
+    },
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-saved-640-200.png": {
+      "sha256": "ea703b090b494c3a9470aed308089c698c5c2662287b81f2bfdecfefc28b3700",
+      "prior": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint/wardrobe-rename-saved-640-200.png"
+    },
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-saved-844-100.png": {
+      "sha256": "624c7bc565fdd7e3eb706cdf64a8dc648f89313de72b4fd697ae3d3cb4d1d622",
+      "prior": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint/wardrobe-rename-saved-844-100.png"
+    },
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native/wardrobe-rename-saved-844-200.png": {
+      "sha256": "6617073204feaadfa3ecd4b162ece6c01c5c167aee9f909104d1bc04619fd08e",
+      "prior": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint/wardrobe-rename-saved-844-200.png"
+    }
+  }
+}

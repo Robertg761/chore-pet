@@ -1,0 +1,18 @@
+{
+  "input": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-review-input.json",
+    "sha256": "7eedf50201c91947df31259d73104e824dc765ad6d2b0989f4b00f36885c1d59"
+  },
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-independent-review.md",
+    "sha256": "c8f82af1860516951e36dbc894536c699a08a9a189d7cacfd6ee71c383b6e0a6",
+    "verdict": "CHANGES REQUESTED, oneP2 live viewport focus/reachability; originalfixedlayoutscopeaccepted"
+  },
+  "change": "Keep saved editor at stable second child inside panel, select Saved on wide-to-narrow with a draft, reveal only already-focused form control immediately during layout changes. Original source snapshots preserved; original immutable input/report/manifest/patch unchanged.",
+  "newScope": [
+    "src/screens/Wardrobe.resize.test.tsx",
+    "scripts/browser/wardrobe-resize.test.mjs",
+    "docs/audits/2026-10-12-character-polish/wardrobe-resize-design.md"
+  ],
+  "notes": "Separate heart-glasses red tests moved out of src to /tmp until this revision checkpoint; art production remains unchanged. No claim originalinputsourcepaths match revisedcurrentproduction."
+}

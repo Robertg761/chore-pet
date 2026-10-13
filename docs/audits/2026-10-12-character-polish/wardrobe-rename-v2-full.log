@@ -1,0 +1,139 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run --maxWorkers=1 --reporter=dot
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+························································································································································································································································································································································································································································································································stderr | src/data/store.test.ts > sync engine > sets aside only the row the server refuses, not the whole batch
+The server refused a change; it is kept aside [
+  {
+    table: 'chores',
+    kind: 'upsert',
+    key: '80bb0203-0d32-4159-b13c-adc7b24c8532',
+    value: {
+      id: '80bb0203-0d32-4159-b13c-adc7b24c8532',
+      homeId: '99f9e2c7-da9e-4930-acaf-e9317077a7d3',
+      objectId: null,
+      name: 'Bad',
+      schedule: [Object],
+      createdOn: '2026-10-01',
+      photoProof: false
+    },
+    seq: 6,
+    id: 'c0f2e93c-6472-4c9f-98a3-43b43b0a50d7'
+  }
+] refused
+
+stderr | src/data/store.test.ts > when the browser refuses local storage > says so instead of claiming the home is saved
+Could not read the offline copy; running from memory Error: SecurityError
+    at Object.load (/home/robert/.codex/worktrees/4511/chore-pet/src/data/store.test.ts:214:32)
+    at /home/robert/.codex/worktrees/4511/chore-pet/src/data/store.ts:364:42
+    at load (/home/robert/.codex/worktrees/4511/chore-pet/src/data/store.ts:377:6)
+    at Object.start (/home/robert/.codex/worktrees/4511/chore-pet/src/data/store.ts:636:13)
+    at /home/robert/.codex/worktrees/4511/chore-pet/src/data/store.test.ts:220:17
+    at file:///home/robert/.codex/worktrees/4511/chore-pet/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1628:35
+    at file:///home/robert/.codex/worktrees/4511/chore-pet/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:26
+    at file:///home/robert/.codex/worktrees/4511/chore-pet/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3321:20
+    at new Promise (<anonymous>)
+    at runWithCancel (file:///home/robert/.codex/worktrees/4511/chore-pet/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3316:10)
+
+stderr | src/data/store.test.ts > when the browser refuses local storage > notices a failing save, and recovers once saving works again
+Could not save the offline copy Error: QuotaExceededError
+    at Object.save (/home/robert/.codex/worktrees/4511/chore-pet/src/data/store.test.ts:227:95)
+    at writeWith (/home/robert/.codex/worktrees/4511/chore-pet/src/data/store.ts:253:32)
+    at write (/home/robert/.codex/worktrees/4511/chore-pet/src/data/store.ts:264:11)
+
+stderr | src/data/store.test.ts > changes the server refuses > sets a row aside after it keeps getting stuck (a 413 with no code), so the queue moves again
+The server refused a change; it is kept aside [
+  {
+    table: 'chores',
+    kind: 'upsert',
+    key: '6d72c92f-5dd8-465f-a5ab-31f023f70884',
+    value: {
+      id: '6d72c92f-5dd8-465f-a5ab-31f023f70884',
+      homeId: '8be594c9-8493-4d0a-90ed-978277a5ee4c',
+      objectId: null,
+      name: 'Huge',
+      schedule: [Object],
+      createdOn: '2026-10-01',
+      photoProof: false
+    },
+    seq: 5,
+    id: '00c4af29-f2f2-4e3b-ad52-013237f8de20'
+  }
+] Payload Too Large
+
+stderr | src/data/store.test.ts > changes the server refuses > can queue set-aside rows again, or forget them
+The server refused a change; it is kept aside [
+  {
+    table: 'chores',
+    kind: 'upsert',
+    key: 'a154902e-71c1-4dae-a4ff-ce14a58287d2',
+    value: {
+      id: 'a154902e-71c1-4dae-a4ff-ce14a58287d2',
+      homeId: '7bdb46bd-bb1f-49b0-9ca2-af296e2ae02e',
+      objectId: null,
+      name: 'Dishes',
+      schedule: [Object],
+      createdOn: '2026-10-01',
+      photoProof: false
+    },
+    seq: 5,
+    id: '69c29691-79b4-4d64-ae3e-a8041d346bf9'
+  }
+] refused
+
+stderr | src/data/store.test.ts > changes the server refuses > can queue set-aside rows again, or forget them
+The server refused a change; it is kept aside [
+  {
+    table: 'chores',
+    kind: 'upsert',
+    key: '21ec98c6-d357-4f3f-a5de-37744a6e1bc8',
+    value: {
+      id: '21ec98c6-d357-4f3f-a5de-37744a6e1bc8',
+      homeId: '7bdb46bd-bb1f-49b0-9ca2-af296e2ae02e',
+      objectId: null,
+      name: 'Bins',
+      schedule: [Object],
+      createdOn: '2026-10-01',
+      photoProof: false
+    },
+    seq: 7,
+    id: '2037e542-d6fa-423b-81a1-094bc601d39d'
+  }
+] refused
+
+stderr | src/data/store.test.ts > the offline copy > stops waiting for a stuck load, runs from memory, and never writes over the stored copy
+Could not read the offline copy; running from memory Error: Timed out after 20ms
+    at Timeout._onTimeout (/home/robert/.codex/worktrees/4511/chore-pet/src/data/store.ts:136:43)
+    at listOnTimeout (node:internal/timers:685:17)
+    at processTimers (node:internal/timers:618:7)
+
+························stderr | src/data/store.test.ts > a failed save > never makes this tab forget its own unsaved changes on the next save
+Could not save the offline copy Error: QuotaExceededError
+    at Object.update (/home/robert/.codex/worktrees/4511/chore-pet/src/data/store.test.ts:841:17)
+    at writeWith (/home/robert/.codex/worktrees/4511/chore-pet/src/data/store.ts:241:7)
+    at write (/home/robert/.codex/worktrees/4511/chore-pet/src/data/store.ts:264:5)
+
+·······················································································································································································································································································································································································································································································································································································································································································································································································································································································stderr | src/data/recovery.test.ts > recovery durability > does not clear an unreadable durable store
+Could not read the offline copy; running from memory Error: Storage blocked
+    at Object.failure [as load] (/home/robert/.codex/worktrees/4511/chore-pet/src/data/recovery.test.ts:9:37)
+    at /home/robert/.codex/worktrees/4511/chore-pet/src/data/store.ts:364:42
+    at load (/home/robert/.codex/worktrees/4511/chore-pet/src/data/store.ts:377:6)
+    at Object.start (/home/robert/.codex/worktrees/4511/chore-pet/src/data/store.ts:636:13)
+    at /home/robert/.codex/worktrees/4511/chore-pet/src/data/recovery.test.ts:61:17
+    at file:///home/robert/.codex/worktrees/4511/chore-pet/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:1628:35
+    at file:///home/robert/.codex/worktrees/4511/chore-pet/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:2783:26
+    at file:///home/robert/.codex/worktrees/4511/chore-pet/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3321:20
+    at new Promise (<anonymous>)
+    at runWithCancel (file:///home/robert/.codex/worktrees/4511/chore-pet/node_modules/vitest/dist/chunks/run.BTlFXlnv.js:3316:10)
+
+···········································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································
+
+ Test Files  127 passed (127)
+      Tests  2418 passed (2418)
+   Start at  02:11:50
+   Duration  87.31s (tests 80%, environment 12%, import 4%, transform 3%, worker 1%)
+
+    Isolate  127 workers spawned · ~154ms startup each (spawn + environment, per file)
+             at least ~19.39s faster with isolate: false — reuses workers across files instead of one per file
+

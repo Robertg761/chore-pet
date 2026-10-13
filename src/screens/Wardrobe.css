@@ -80,8 +80,8 @@
 .wd-tile-name { font-size: 0.75rem; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
 
 .wd-saved { display: flex; flex-direction: column; gap: 8px; }
-.wd-outfits { list-style: none; padding: 5px; margin: -5px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-/* One card per saved outfit: the look (a button that wears it) and its Remove action sit inside the same border. */
+.wd-outfits { list-style: none; padding: 5px; margin: -5px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr)); gap: 8px; }
+/* One card per saved outfit keeps its look and explicit name/removal actions together. */
 .wd-outfit {
   min-width: 0;
   padding: 3px 3px 4px;
@@ -114,18 +114,18 @@
 /* The question takes the Remove button's place inside the card; the buttons wrap to stack when the card is narrow (Keep first, so Remove stays at the bottom, level with its neighbours). */
 .wd-confirm { display: flex; flex-wrap: wrap; gap: 4px; }
 .wd-confirm .btn { flex: 1 1 56px; padding: 0 2px; font-size: 0.8125rem; }
-.wd-outfit > .btn { width: 100%; }
-/* Cards stretch to the tallest in the row, so the action row (Remove, or Remove and Keep) is pinned to the bottom of each card. */
-.wd-outfit > .btn,
-.wd-outfit > .wd-confirm { margin-top: auto; }
+/* Cards stretch equally; action stacks remain at the bottom with room for focus rings when scrolled into view. */
+.wd-outfit-actions { display: flex; flex-direction: column; gap: 4px; margin-top: auto; scroll-margin-block: 6px; }
+.wd-outfit-actions > .btn { width: 100%; white-space: normal; overflow-wrap: anywhere; scroll-margin-block: 6px; }
 
 .wd-name-form { display: flex; flex-direction: column; gap: 2px; }
 .wd-label { font-size: 0.875rem; font-weight: 800; }
 .wd-name-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.wd-input { flex: 1 1 100px; }
+.wd-input { flex: 1 1 10rem; min-width: 0; max-width: 100%; scroll-margin-block: 6px; }
+.wd-name-row .btn { max-width: 100%; white-space: normal; overflow-wrap: anywhere; scroll-margin-block: 6px; }
 
 .wd-save-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
-.wd-save-outfit { flex: none; }
+.wd-save-outfit { flex: none; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
 .wd-save-row .wd-note { flex: 1 1 140px; }
 
 .wd-tile, .wd-outfit-try { transition: transform 0.12s ease; }

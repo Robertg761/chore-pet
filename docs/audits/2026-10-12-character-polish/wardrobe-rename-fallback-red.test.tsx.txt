@@ -1,0 +1,127 @@
+// @vitest-environment jsdom
+import { act, StrictMode, useState } from 'react'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import type { Pet } from '../domain/types'
+import { click, input, render } from '../test/react'
+import { Wardrobe, type WardrobeProps } from './Wardrobe'
+
+const viewport = vi.hoisted(() => ({ wide: false }))
+vi.mock('../shell/useViewport', () => ({ useWide: () => viewport.wide }))
+const original: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#ffcfda',
+  equipped: { outfit: 'hoodie' }, outfits: [
+    { id: 'a', name: 'Weekend', equipped: { head: 'bow', neck: 'scarf' } },
+    { id: 'b', name: 'Cosy', equipped: { outfit: 'hoodie' } },
+    { id: 'c', name: 'Party', equipped: { head: 'crown', outfit: 'dress' } },
+  ] }
+let ui: ReturnType<typeof render>, current: Pet, update: (pet: Pet) => void
+let changed: ReturnType<typeof vi.fn<WardrobeProps['onChange']>>
+let now: number, serial: number, frames: Map<number, FrameRequestCallback>
+function Harness() {
+  const [pet, setPet] = useState(current)
+  current = pet; update = setPet
+  return <Wardrobe pet={pet} progress={null} onChange={patch => { changed(patch); setPet(value => ({ ...value, ...patch })) }} />
+}
+beforeEach(() => {
+  current = structuredClone(original); changed = vi.fn(); now = 0; serial = 0; frames = new Map(); viewport.wide = false
+  vi.spyOn(performance, 'now').mockImplementation(() => now)
+  vi.stubGlobal('matchMedia', () => Object.assign(new EventTarget(), { matches: false }))
+  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
+  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
+  ui = render(<StrictMode><Harness /></StrictMode>)
+})
+afterEach(() => { ui.unmount(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
+function button(name: string) {
+  const node = [...ui.container.querySelectorAll('button')].find(node => node.getAttribute('aria-label') === name || node.textContent === name)
+  expect(node, name).toBeTruthy(); return node!
+}
+function saved() { if (!viewport.wide) click(button('Saved')) }
+function field() { const node = ui.container.querySelector<HTMLInputElement>('.wd-name-form input'); expect(node).not.toBeNull(); return node! }
+function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
+function key(node: HTMLElement, key: string) { act(() => node.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }))) }
+
+it.each([false, true])('renames only the selected saved name while preserving a paused mirrored preview, wide=%s', wide => {
+  viewport.wide = wide; act(() => update({ ...current }))
+  click(button('Rest')); frame(800); click(button('Pause movement preview of Mochi')); click(button('Mirror preview of Mochi'))
+  const art = ui.container.querySelector('.wd-preview .ch-animated')!, held = art.outerHTML
+  saved(); const control = button('Rename Weekend'); click(control)
+  expect(field().value).toBe('Weekend'); expect(document.activeElement).toBe(field())
+  expect(field().selectionStart).toBe(0); expect(field().selectionEnd).toBe(7); expect(field().maxLength).toBe(16)
+  input(field(), '  Sunday  '); click(button('Save name'))
+  expect(changed).toHaveBeenCalledExactlyOnceWith({ outfits: original.outfits!.map(o => o.id === 'a' ? { ...o, name: 'Sunday' } : o) })
+  expect(current.equipped).toEqual(original.equipped)
+  expect(button('Wear Sunday').getAttribute('aria-pressed')).toBe('false'); expect(button('Wear Cosy').getAttribute('aria-pressed')).toBe('true')
+  expect(button('Rename Sunday')).toBe(control); expect(document.activeElement).toBe(control)
+  expect(ui.container.querySelector('.wd-preview .ch-animated')).toBe(art); expect(art.outerHTML).toBe(held)
+  expect(button('Mirror preview of Mochi').getAttribute('aria-pressed')).toBe('true'); expect(button('Resume movement preview of Mochi').disabled).toBe(false)
+  expect(frames.size).toBe(0); expect(button('Stop rest')).toBeTruthy()
+})
+
+it.each(['Not now', 'Escape'])('cancels an unsaved rename with %s and returns focus without a write', cancel => {
+  saved(); const control = button('Rename Weekend'); click(control); input(field(), 'Changed')
+  if (cancel === 'Escape') key(field(), 'Escape'); else click(button(cancel))
+  expect(ui.container.querySelector('.wd-name-form')).toBeNull(); expect(current).toEqual(original)
+  expect(changed).not.toHaveBeenCalled(); expect(document.activeElement).toBe(control); expect(frames.size).toBe(0)
+})
+
+it.each(['  Weekend  ', '   '])('closes a no-op rename without saving for %j', value => {
+  saved(); const control = button('Rename Weekend'); click(control); input(field(), value); click(button('Save name'))
+  expect(changed).not.toHaveBeenCalled(); expect(current).toEqual(original); expect(document.activeElement).toBe(control)
+})
+
+it('switches edit targets without saving the previous draft', () => {
+  saved(); click(button('Rename Weekend')); input(field(), 'Discard me'); click(button('Rename Party'))
+  expect(ui.container.querySelectorAll('.wd-name-form')).toHaveLength(1); expect(field().value).toBe('Party')
+  input(field(), 'Celebration'); click(button('Save name'))
+  expect(current.outfits!.map(o => o.name)).toEqual(['Weekend', 'Cosy', 'Celebration']); expect(changed).toHaveBeenCalledTimes(1)
+})
+
+it('uses the latest saved target and neighbors instead of current clothing or stale editor data', () => {
+  saved(); click(button('Rename Weekend')); input(field(), 'Fresh')
+  act(() => update({ ...current, equipped: { back: 'backpack' }, outfits: current.outfits!.map(o => o.id === 'a' ? { ...o, equipped: { outfit: 'apron' } } : o.id === 'b' ? { ...o, name: 'Newest' } : o) }))
+  click(button('Save name'))
+  expect(current.outfits![0]).toEqual({ id: 'a', name: 'Fresh', equipped: { outfit: 'apron' } })
+  expect(current.outfits![1].name).toBe('Newest'); expect(current.equipped).toEqual({ back: 'backpack' })
+  expect(changed.mock.calls[0][0]).not.toHaveProperty('equipped')
+})
+
+it('closes safely if the edited outfit disappears and never recreates it', () => {
+  saved(); click(button('Rename Weekend')); input(field(), 'Stale')
+  act(() => update({ ...current, outfits: current.outfits!.filter(o => o.id !== 'a') }))
+  expect(ui.container.querySelector('.wd-name-form')).toBeNull(); expect(changed).not.toHaveBeenCalled()
+  expect(current.outfits!.map(o => o.id)).toEqual(['b', 'c']); expect(document.activeElement).not.toBe(document.body)
+})
+
+it.each([false, true])('returns usable focus when every saved look disappears, empty clothing=%s', empty => {
+  saved(); click(button('Rename Weekend')); input(field(), 'Stale')
+  act(() => update({ ...current, outfits: [], equipped: empty ? {} : current.equipped }))
+  expect(ui.container.querySelector('.wd-name-form')).toBeNull(); expect(changed).not.toHaveBeenCalled()
+  expect(document.activeElement).toBe(button(empty ? 'Saved' : 'Save this outfit'))
+  expect(current.outfits).toEqual([]); expect(frames.size).toBe(0)
+})
+
+it('closes a newly full save without writing and focuses an existing card instead of a disabled control', () => {
+  saved(); act(() => update({ ...current, outfits: current.outfits!.slice(0, 2), equipped: { neck: 'scarf' } }))
+  click(button('Save this outfit')); input(field(), 'Draft')
+  act(() => update({ ...current, outfits: [...current.outfits!, original.outfits![2]] }))
+  const before = structuredClone(current); click(button('Save outfit'))
+  expect(current).toEqual(before); expect(changed).not.toHaveBeenCalled()
+  expect(button('Save this outfit').disabled).toBe(true); expect(document.activeElement).toBe(button('Rename Weekend'))
+  expect(frames.size).toBe(0)
+})
+
+it('retains duplicate-name policy and explicit removal confirmation', () => {
+  saved(); click(button('Rename Weekend')); input(field(), 'Cosy'); click(button('Save name'))
+  expect(current.outfits!.map(o => o.name)).toEqual(['Cosy', 'Cosy', 'Party'])
+  click(button('Remove Party')); expect(ui.container.querySelector('[aria-label="Remove Party?"]')).not.toBeNull()
+  click(button('Keep')); expect(current.outfits).toHaveLength(3); expect(changed).toHaveBeenCalledTimes(1)
+})
+
+it('keeps new-outfit saving separate from renaming after a saved look is removed', () => {
+  saved(); click(button('Remove Party')); const group = ui.container.querySelector('[aria-label="Remove Party?"]')!
+  click([...group.querySelectorAll('button')].find(b => b.textContent === 'Remove')!)
+  act(() => update({ ...current, equipped: { neck: 'scarf' } }))
+  click(button('Save this outfit')); input(field(), 'New look'); click(button('Save outfit'))
+  expect(current.outfits!.map(o => o.name)).toEqual(['Weekend', 'Cosy', 'New look'])
+  expect(current.outfits![2].equipped).toEqual({ neck: 'scarf' }); expect(changed).toHaveBeenCalledTimes(2)
+  expect(document.activeElement).toBe(button('Rename New look'))
+})

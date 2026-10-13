@@ -1,0 +1,20 @@
+{
+  "observedAvailableMiB": [
+    4171.65625,
+    4196.33984375,
+    4220.8046875,
+    4212.92578125,
+    4210.7109375,
+    4236.35546875,
+    4232.42578125,
+    4230.48046875,
+    4188.125,
+    4482.3984375,
+    4465.27734375,
+    4452.5
+  ],
+  "started": true,
+  "thresholdMiB": 4352,
+  "consecutive": 3,
+  "method": "Lightweight2s preflight observations, up to46s; normal4096MiB launch guard and2048MiB run reserve still apply."
+}

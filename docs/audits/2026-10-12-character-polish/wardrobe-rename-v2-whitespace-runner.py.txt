@@ -1,0 +1,9 @@
+from pathlib import Path
+import subprocess
+sources=['src/screens/Wardrobe.tsx','src/screens/Wardrobe.css','src/screens/Wardrobe.rename.test.tsx','src/screens/Wardrobe.resize.test.tsx','scripts/browser/wardrobe-rename.test.mjs','scripts/browser/wardrobe-resize.test.mjs','docs/ART.md','docs/audits/2026-10-12-character-polish/wardrobe-rename-design.md','docs/audits/2026-10-12-character-polish/wardrobe-resize-design.md']
+for p in sources:
+ tracked=subprocess.run(['git','ls-files','--error-unmatch',p],capture_output=True).returncode==0
+ command=['git','diff','--check','--',p]if tracked else['git','diff','--no-index','--check','--','/dev/null',p]
+ r=subprocess.run(command,capture_output=True,text=True)
+ print(p,r.returncode,(r.stdout+r.stderr).strip())
+ assert r.returncode==(0 if tracked else 1)and not(r.stdout+r.stderr).strip(),p

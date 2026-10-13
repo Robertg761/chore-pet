@@ -1,0 +1,158 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run src/screens/Wardrobe.rename.test.tsx --maxWorkers=1 --reporter=dot
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+xxxxxxxxxx·
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/Wardrobe.rename.test.tsx > renames only the selected saved name while preserving a paused mirrored preview, wide=false
+ FAIL  src/screens/Wardrobe.rename.test.tsx > renames only the selected saved name while preserving a paused mirrored preview, wide=true
+AssertionError: Rename Weekend: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.rename.test.tsx:35:22
+     33| function button(name: string) {
+     34|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     35|   expect(node, name).toBeTruthy(); return node!
+       |                      ^
+     36| }
+     37| function saved() { if (!viewport.wide) click(button('Saved')) }
+ ❯ src/screens/Wardrobe.rename.test.tsx:46:28
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/screens/Wardrobe.rename.test.tsx > cancels an unsaved rename with Not now and returns focus without a write
+ FAIL  src/screens/Wardrobe.rename.test.tsx > cancels an unsaved rename with Escape and returns focus without a write
+AssertionError: Rename Weekend: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.rename.test.tsx:35:22
+     33| function button(name: string) {
+     34|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     35|   expect(node, name).toBeTruthy(); return node!
+       |                      ^
+     36| }
+     37| function saved() { if (!viewport.wide) click(button('Saved')) }
+ ❯ src/screens/Wardrobe.rename.test.tsx:60:28
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/screens/Wardrobe.rename.test.tsx > closes a no-op rename without saving for "  Weekend  "
+ FAIL  src/screens/Wardrobe.rename.test.tsx > closes a no-op rename without saving for "   "
+AssertionError: Rename Weekend: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.rename.test.tsx:35:22
+     33| function button(name: string) {
+     34|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     35|   expect(node, name).toBeTruthy(); return node!
+       |                      ^
+     36| }
+     37| function saved() { if (!viewport.wide) click(button('Saved')) }
+ ❯ src/screens/Wardrobe.rename.test.tsx:67:28
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/screens/Wardrobe.rename.test.tsx > switches edit targets without saving the previous draft
+AssertionError: Rename Weekend: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.rename.test.tsx:35:22
+     33| function button(name: string) {
+     34|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     35|   expect(node, name).toBeTruthy(); return node!
+       |                      ^
+     36| }
+     37| function saved() { if (!viewport.wide) click(button('Saved')) }
+ ❯ src/screens/Wardrobe.rename.test.tsx:72:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/screens/Wardrobe.rename.test.tsx > uses the latest saved target and neighbors instead of current clothing or stale editor data
+AssertionError: Rename Weekend: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.rename.test.tsx:35:22
+     33| function button(name: string) {
+     34|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     35|   expect(node, name).toBeTruthy(); return node!
+       |                      ^
+     36| }
+     37| function saved() { if (!viewport.wide) click(button('Saved')) }
+ ❯ src/screens/Wardrobe.rename.test.tsx:79:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/screens/Wardrobe.rename.test.tsx > closes safely if the edited outfit disappears and never recreates it
+AssertionError: Rename Weekend: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.rename.test.tsx:35:22
+     33| function button(name: string) {
+     34|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     35|   expect(node, name).toBeTruthy(); return node!
+       |                      ^
+     36| }
+     37| function saved() { if (!viewport.wide) click(button('Saved')) }
+ ❯ src/screens/Wardrobe.rename.test.tsx:88:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  src/screens/Wardrobe.rename.test.tsx > retains duplicate-name policy and explicit removal confirmation
+AssertionError: Rename Weekend: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.rename.test.tsx:35:22
+     33| function button(name: string) {
+     34|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     35|   expect(node, name).toBeTruthy(); return node!
+       |                      ^
+     36| }
+     37| function saved() { if (!viewport.wide) click(button('Saved')) }
+ ❯ src/screens/Wardrobe.rename.test.tsx:95:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed | 1 passed (11)
+   Start at  01:09:55
+   Duration  1.66s (transform 43%, tests 33%, environment 17%, import 7%)
+

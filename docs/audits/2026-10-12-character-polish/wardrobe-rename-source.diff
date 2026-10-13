@@ -1,0 +1,567 @@
+diff --git i/src/screens/Wardrobe.tsx w/src/screens/Wardrobe.tsx
+index be89fa6..bd0438f 100644
+--- i/src/screens/Wardrobe.tsx
++++ w/src/screens/Wardrobe.tsx
+@@ -17,11 +17,13 @@ import {
+   activeOutfit,
+   addOutfit,
+   clearSlot,
++  cleanOutfitName,
+   defaultOutfitName,
+   isEmptyOutfit,
+   isFull,
+   itemsForSlot,
+   removeOutfit,
++  replaceOutfit,
+   sameOutfit,
+   toggleItem,
+   wearableOutfit,
+@@ -67,18 +69,22 @@ function NoneArt() {
+ 
+ /** A tab: one of the slots, or (on phones) the saved outfits. */
+ type Section = WardrobeSlot | 'saved'
++type NameEditor = { kind: 'save' } | { kind: 'rename'; id: string }
+ 
+ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
+   const uid = useId()
+   const equipped = pet.equipped
+   const wide = useWide()
+   const [picked, setPicked] = useState<Section>('head')
+-  const [naming, setNaming] = useState(false)
++  const [editor, setEditor] = useState<NameEditor | null>(null)
+   const [name, setName] = useState('')
+   const [removing, setRemoving] = useState<string | null>(null)
+   const nameRef = useRef<HTMLInputElement>(null)
++  const savedRef = useRef<HTMLElement>(null)
++  const returnFocus = useRef<string | null>(null)
+ 
+   const outfits = pet.outfits ?? []
++  const editingOutfit = editor?.kind === 'rename' ? outfits.find(o => o.id === editor.id) : undefined
+   const current = activeOutfit(outfits, equipped)
+   const full = isFull(outfits)
+   // On wide screens the saved outfits sit under the items; on phones they are one more tab.
+@@ -90,8 +96,25 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
+   const wear = (next: Pet['equipped']) => onChange({ equipped: next })
+ 
+   useEffect(() => {
+-    if (naming) nameRef.current?.select()
+-  }, [naming])
++    if (editor) {
++      nameRef.current?.focus()
++      nameRef.current?.select()
++    } else if (returnFocus.current) {
++      const controls = [document.getElementById(returnFocus.current),
++        savedRef.current?.querySelector<HTMLButtonElement>('.wd-outfit-actions > button'),
++        document.getElementById(`${uid}-save-outfit`),
++        savedRef.current?.closest('.wd')?.querySelector<HTMLButtonElement>('.wd-tab[aria-selected="true"]')]
++      const control = controls.find(node => node && !node.matches(':disabled'))
++      const actions = control?.closest('.wd-outfit')?.querySelector('.wd-outfit-actions')
++      const target = actions ?? control
++      target?.scrollIntoView?.({ block: 'end', inline: 'nearest', behavior: 'instant' })
++      control?.focus({ preventScroll: true })
++      returnFocus.current = null
++    }
++  }, [editor, uid])
++
++  // An externally removed target ends its draft before the next committed render.
++  if (editor?.kind === 'rename' && !editingOutfit) setEditor(null)
+ 
+   // Keep the chosen tab in view when the row scrolls sideways.
+   useEffect(() => {
+@@ -108,13 +131,31 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
+   }
+ 
+   function startNaming() {
++    returnFocus.current = `${uid}-save-outfit`
++    setRemoving(null)
+     setName(defaultOutfitName(outfits))
+-    setNaming(true)
++    setEditor({ kind: 'save' })
++  }
++
++  function startRename(outfit: SavedOutfit) {
++    returnFocus.current = `${uid}-rename-${outfit.id}`
++    setRemoving(null)
++    setName(outfit.name)
++    setEditor({ kind: 'rename', id: outfit.id })
+   }
+ 
+   function saveOutfit() {
+-    onChange({ outfits: addOutfit(outfits, name, equipped, crypto.randomUUID()) })
+-    setNaming(false)
++    if (editor?.kind === 'rename') {
++      const clean = cleanOutfitName(name)
++      if (editingOutfit && clean && clean !== editingOutfit.name) {
++        onChange({ outfits: replaceOutfit(outfits, editingOutfit.id, editingOutfit.equipped, clean) })
++      }
++    } else if (editor?.kind === 'save' && !full) {
++      const id = crypto.randomUUID()
++      returnFocus.current = `${uid}-rename-${id}`
++      onChange({ outfits: addOutfit(outfits, name, equipped, id) })
++    }
++    setEditor(null)
+   }
+ 
+   function confirmRemove(outfit: SavedOutfit) {
+@@ -163,7 +204,7 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
+   )
+ 
+   const saved = (
+-    <section className="wd-saved" aria-labelledby={`${uid}-saved`}>
++    <section ref={savedRef} className="wd-saved" aria-labelledby={`${uid}-saved`}>
+       <h2 id={`${uid}-saved`} className={wide ? 'wd-sub' : 'sr-only'}>
+         Saved outfits
+       </h2>
+@@ -175,6 +216,10 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
+                 <PetArt className="wd-outfit-art" pet={pet} equipped={wearableOutfit(o.equipped, progress)} pose="idle" />
+                 <span className="wd-outfit-name">{o.name}</span>
+               </button>
++              <div className="wd-outfit-actions">
++              <button id={`${uid}-rename-${o.id}`} type="button" className="btn btn-sm" aria-label={`Rename ${o.name}`} onClick={() => startRename(o)}>
++                Rename
++              </button>
+               {removing === o.id ? (
+                 <div className="wd-confirm" role="group" aria-label={`Remove ${o.name}?`}>
+                   <button type="button" className="btn btn-sm" onClick={() => setRemoving(null)}>
+@@ -185,10 +230,11 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
+                   </button>
+                 </div>
+               ) : (
+-                <button type="button" className="btn btn-sm" aria-label={`Remove ${o.name}`} onClick={() => setRemoving(o.id)}>
++                <button type="button" className="btn btn-sm" aria-label={`Remove ${o.name}`} onClick={() => { returnFocus.current = null; setEditor(null); setRemoving(o.id) }}>
+                   Remove
+                 </button>
+               )}
++              </div>
+             </li>
+           ))}
+         </ul>
+@@ -196,9 +242,11 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
+         <p className="wd-note">Save a look to switch back to it any time.</p>
+       )}
+ 
+-      {naming ? (
++      {editor && (editor.kind === 'save' || editingOutfit) ? (
+         <form
+           className="wd-name-form"
++          aria-label={editor.kind === 'rename' ? `Rename ${editingOutfit?.name}` : 'Save an outfit'}
++          onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); setEditor(null) } }}
+           onSubmit={(e) => {
+             e.preventDefault()
+             saveOutfit()
+@@ -210,16 +258,16 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
+           <div className="wd-name-row">
+             <input ref={nameRef} id={`${uid}-name`} className="field wd-input" type="text" value={name} maxLength={MAX_OUTFIT_NAME} autoComplete="off" onChange={(e) => setName(e.target.value)} />
+             <button type="submit" className="btn btn-primary">
+-              Save outfit
++              {editor.kind === 'rename' ? 'Save name' : 'Save outfit'}
+             </button>
+-            <button type="button" className="btn" onClick={() => setNaming(false)}>
++            <button type="button" className="btn" onClick={() => setEditor(null)}>
+               Not now
+             </button>
+           </div>
+         </form>
+       ) : (
+         <div className="wd-save-row">
+-          <button type="button" className="btn wd-save-outfit" disabled={full || isEmptyOutfit(equipped) || Boolean(current)} onClick={startNaming}>
++          <button id={`${uid}-save-outfit`} type="button" className="btn wd-save-outfit" disabled={full || isEmptyOutfit(equipped) || Boolean(current)} onClick={startNaming}>
+             Save this outfit
+           </button>
+           {saveHint && <p className="wd-note">{saveHint}</p>}
+diff --git i/src/screens/Wardrobe.css w/src/screens/Wardrobe.css
+index 811fa9a..b6d5a45 100644
+--- i/src/screens/Wardrobe.css
++++ w/src/screens/Wardrobe.css
+@@ -80,8 +80,8 @@
+ .wd-tile-name { font-size: 0.75rem; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
+ 
+ .wd-saved { display: flex; flex-direction: column; gap: 8px; }
+-.wd-outfits { list-style: none; padding: 5px; margin: -5px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+-/* One card per saved outfit: the look (a button that wears it) and its Remove action sit inside the same border. */
++.wd-outfits { list-style: none; padding: 5px; margin: -5px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr)); gap: 8px; }
++/* One card per saved outfit keeps its look and explicit name/removal actions together. */
+ .wd-outfit {
+   min-width: 0;
+   padding: 3px 3px 4px;
+@@ -114,18 +114,18 @@
+ /* The question takes the Remove button's place inside the card; the buttons wrap to stack when the card is narrow (Keep first, so Remove stays at the bottom, level with its neighbours). */
+ .wd-confirm { display: flex; flex-wrap: wrap; gap: 4px; }
+ .wd-confirm .btn { flex: 1 1 56px; padding: 0 2px; font-size: 0.8125rem; }
+-.wd-outfit > .btn { width: 100%; }
+-/* Cards stretch to the tallest in the row, so the action row (Remove, or Remove and Keep) is pinned to the bottom of each card. */
+-.wd-outfit > .btn,
+-.wd-outfit > .wd-confirm { margin-top: auto; }
++/* Cards stretch equally; action stacks remain at the bottom with room for focus rings when scrolled into view. */
++.wd-outfit-actions { display: flex; flex-direction: column; gap: 4px; margin-top: auto; scroll-margin-block: 6px; }
++.wd-outfit-actions > .btn { width: 100%; white-space: normal; overflow-wrap: anywhere; scroll-margin-block: 6px; }
+ 
+ .wd-name-form { display: flex; flex-direction: column; gap: 2px; }
+ .wd-label { font-size: 0.875rem; font-weight: 800; }
+ .wd-name-row { display: flex; flex-wrap: wrap; gap: 8px; }
+-.wd-input { flex: 1 1 100px; }
++.wd-input { flex: 1 1 10rem; min-width: 0; max-width: 100%; }
++.wd-name-row .btn { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+ 
+ .wd-save-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
+-.wd-save-outfit { flex: none; }
++.wd-save-outfit { flex: none; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+ .wd-save-row .wd-note { flex: 1 1 140px; }
+ 
+ .wd-tile, .wd-outfit-try { transition: transform 0.12s ease; }
+diff --git 1/src/screens/Wardrobe.rename.test.tsx 2/src/screens/Wardrobe.rename.test.tsx
+new file mode 100644
+index 0000000..4b2a114
+--- /dev/null
++++ 2/src/screens/Wardrobe.rename.test.tsx
+@@ -0,0 +1,127 @@
++// @vitest-environment jsdom
++import { act, StrictMode, useLayoutEffect, useState } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import type { Pet } from '../domain/types'
++import { click, input, render } from '../test/react'
++import { Wardrobe, type WardrobeProps } from './Wardrobe'
++
++const viewport = vi.hoisted(() => ({ wide: false }))
++vi.mock('../shell/useViewport', () => ({ useWide: () => viewport.wide }))
++const original: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#ffcfda',
++  equipped: { outfit: 'hoodie' }, outfits: [
++    { id: 'a', name: 'Weekend', equipped: { head: 'bow', neck: 'scarf' } },
++    { id: 'b', name: 'Cosy', equipped: { outfit: 'hoodie' } },
++    { id: 'c', name: 'Party', equipped: { head: 'crown', outfit: 'dress' } },
++  ] }
++let ui: ReturnType<typeof render>, current: Pet, update: (pet: Pet) => void
++let changed: ReturnType<typeof vi.fn<WardrobeProps['onChange']>>
++let now: number, serial: number, frames: Map<number, FrameRequestCallback>
++function Harness() {
++  const [pet, setPet] = useState(current)
++  useLayoutEffect(() => { current = pet; update = setPet }, [pet])
++  return <Wardrobe pet={pet} progress={null} onChange={patch => { changed(patch); setPet(value => ({ ...value, ...patch })) }} />
++}
++beforeEach(() => {
++  current = structuredClone(original); changed = vi.fn(); now = 0; serial = 0; frames = new Map(); viewport.wide = false
++  vi.spyOn(performance, 'now').mockImplementation(() => now)
++  vi.stubGlobal('matchMedia', () => Object.assign(new EventTarget(), { matches: false }))
++  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
++  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
++  ui = render(<StrictMode><Harness /></StrictMode>)
++})
++afterEach(() => { ui.unmount(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++function button(name: string) {
++  const node = [...ui.container.querySelectorAll('button')].find(node => node.getAttribute('aria-label') === name || node.textContent === name)
++  expect(node, name).toBeTruthy(); return node!
++}
++function saved() { if (!viewport.wide) click(button('Saved')) }
++function field() { const node = ui.container.querySelector<HTMLInputElement>('.wd-name-form input'); expect(node).not.toBeNull(); return node! }
++function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
++function key(node: HTMLElement, key: string) { act(() => node.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }))) }
++
++it.each([false, true])('renames only the selected saved name while preserving a paused mirrored preview, wide=%s', wide => {
++  viewport.wide = wide; act(() => update({ ...current }))
++  click(button('Rest')); frame(800); click(button('Pause movement preview of Mochi')); click(button('Mirror preview of Mochi'))
++  const art = ui.container.querySelector('.wd-preview .ch-animated')!, held = art.outerHTML
++  saved(); const control = button('Rename Weekend'); click(control)
++  expect(field().value).toBe('Weekend'); expect(document.activeElement).toBe(field())
++  expect(field().selectionStart).toBe(0); expect(field().selectionEnd).toBe(7); expect(field().maxLength).toBe(16)
++  input(field(), '  Sunday  '); click(button('Save name'))
++  expect(changed).toHaveBeenCalledExactlyOnceWith({ outfits: original.outfits!.map(o => o.id === 'a' ? { ...o, name: 'Sunday' } : o) })
++  expect(current.equipped).toEqual(original.equipped)
++  expect(button('Wear Sunday').getAttribute('aria-pressed')).toBe('false'); expect(button('Wear Cosy').getAttribute('aria-pressed')).toBe('true')
++  expect(button('Rename Sunday')).toBe(control); expect(document.activeElement).toBe(control)
++  expect(ui.container.querySelector('.wd-preview .ch-animated')).toBe(art); expect(art.outerHTML).toBe(held)
++  expect(button('Mirror preview of Mochi').getAttribute('aria-pressed')).toBe('true'); expect(button('Resume movement preview of Mochi').disabled).toBe(false)
++  expect(frames.size).toBe(0); expect(button('Stop rest')).toBeTruthy()
++})
++
++it.each(['Not now', 'Escape'])('cancels an unsaved rename with %s and returns focus without a write', cancel => {
++  saved(); const control = button('Rename Weekend'); click(control); input(field(), 'Changed')
++  if (cancel === 'Escape') key(field(), 'Escape'); else click(button(cancel))
++  expect(ui.container.querySelector('.wd-name-form')).toBeNull(); expect(current).toEqual(original)
++  expect(changed).not.toHaveBeenCalled(); expect(document.activeElement).toBe(control); expect(frames.size).toBe(0)
++})
++
++it.each(['  Weekend  ', '   '])('closes a no-op rename without saving for %j', value => {
++  saved(); const control = button('Rename Weekend'); click(control); input(field(), value); click(button('Save name'))
++  expect(changed).not.toHaveBeenCalled(); expect(current).toEqual(original); expect(document.activeElement).toBe(control)
++})
++
++it('switches edit targets without saving the previous draft', () => {
++  saved(); click(button('Rename Weekend')); input(field(), 'Discard me'); click(button('Rename Party'))
++  expect(ui.container.querySelectorAll('.wd-name-form')).toHaveLength(1); expect(field().value).toBe('Party')
++  input(field(), 'Celebration'); click(button('Save name'))
++  expect(current.outfits!.map(o => o.name)).toEqual(['Weekend', 'Cosy', 'Celebration']); expect(changed).toHaveBeenCalledTimes(1)
++})
++
++it('uses the latest saved target and neighbors instead of current clothing or stale editor data', () => {
++  saved(); click(button('Rename Weekend')); input(field(), 'Fresh')
++  act(() => update({ ...current, equipped: { back: 'backpack' }, outfits: current.outfits!.map(o => o.id === 'a' ? { ...o, equipped: { outfit: 'apron' } } : o.id === 'b' ? { ...o, name: 'Newest' } : o) }))
++  click(button('Save name'))
++  expect(current.outfits![0]).toEqual({ id: 'a', name: 'Fresh', equipped: { outfit: 'apron' } })
++  expect(current.outfits![1].name).toBe('Newest'); expect(current.equipped).toEqual({ back: 'backpack' })
++  expect(changed.mock.calls[0][0]).not.toHaveProperty('equipped')
++})
++
++it('closes safely if the edited outfit disappears and never recreates it', () => {
++  saved(); click(button('Rename Weekend')); input(field(), 'Stale')
++  act(() => update({ ...current, outfits: current.outfits!.filter(o => o.id !== 'a') }))
++  expect(ui.container.querySelector('.wd-name-form')).toBeNull(); expect(changed).not.toHaveBeenCalled()
++  expect(current.outfits!.map(o => o.id)).toEqual(['b', 'c']); expect(document.activeElement).not.toBe(document.body)
++})
++
++it.each([false, true])('returns usable focus when every saved look disappears, empty clothing=%s', empty => {
++  saved(); click(button('Rename Weekend')); input(field(), 'Stale')
++  act(() => update({ ...current, outfits: [], equipped: empty ? {} : current.equipped }))
++  expect(ui.container.querySelector('.wd-name-form')).toBeNull(); expect(changed).not.toHaveBeenCalled()
++  expect(document.activeElement).toBe(button(empty ? 'Saved' : 'Save this outfit'))
++  expect(current.outfits).toEqual([]); expect(frames.size).toBe(0)
++})
++
++it('closes a newly full save without writing and focuses an existing card instead of a disabled control', () => {
++  saved(); act(() => update({ ...current, outfits: current.outfits!.slice(0, 2), equipped: { neck: 'scarf' } }))
++  click(button('Save this outfit')); input(field(), 'Draft')
++  act(() => update({ ...current, outfits: [...current.outfits!, original.outfits![2]] }))
++  const before = structuredClone(current); click(button('Save outfit'))
++  expect(current).toEqual(before); expect(changed).not.toHaveBeenCalled()
++  expect(button('Save this outfit').disabled).toBe(true); expect(document.activeElement).toBe(button('Rename Weekend'))
++  expect(frames.size).toBe(0)
++})
++
++it('retains duplicate-name policy and explicit removal confirmation', () => {
++  saved(); click(button('Rename Weekend')); input(field(), 'Cosy'); click(button('Save name'))
++  expect(current.outfits!.map(o => o.name)).toEqual(['Cosy', 'Cosy', 'Party'])
++  click(button('Remove Party')); expect(ui.container.querySelector('[aria-label="Remove Party?"]')).not.toBeNull()
++  click(button('Keep')); expect(current.outfits).toHaveLength(3); expect(changed).toHaveBeenCalledTimes(1)
++})
++
++it('keeps new-outfit saving separate from renaming after a saved look is removed', () => {
++  saved(); click(button('Remove Party')); const group = ui.container.querySelector('[aria-label="Remove Party?"]')!
++  click([...group.querySelectorAll('button')].find(b => b.textContent === 'Remove')!)
++  act(() => update({ ...current, equipped: { neck: 'scarf' } }))
++  click(button('Save this outfit')); input(field(), 'New look'); click(button('Save outfit'))
++  expect(current.outfits!.map(o => o.name)).toEqual(['Weekend', 'Cosy', 'New look'])
++  expect(current.outfits![2].equipped).toEqual({ neck: 'scarf' }); expect(changed).toHaveBeenCalledTimes(2)
++  expect(document.activeElement).toBe(button('Rename New look'))
++})
+diff --git 1/scripts/browser/wardrobe-rename.test.mjs 2/scripts/browser/wardrobe-rename.test.mjs
+new file mode 100644
+index 0000000..fe9a46e
+--- /dev/null
++++ 2/scripts/browser/wardrobe-rename.test.mjs
+@@ -0,0 +1,184 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, snapshot } from './helpers.mjs'
++
++const out = process.env.CHORE_RENAME_CAPTURE_DIR
++async function fixture(t, width, height, text) {
++  const page = await browserApp(t, { viewport: { width, height }, reducedMotion: 'no-preference' })
++  await page.evaluate(() => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, pet = Object.values(saved.tables.pets)[0]
++        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++        pet.outfits = [
++          { id: 'weekend', name: 'Weekend', equipped: { head: 'bow', outfit: 'hoodie' } },
++          { id: 'cosy', name: 'Cosy', equipped: { ...pet.equipped } },
++          { id: 'party', name: 'Party clothes', equipped: { head: 'crown', outfit: 'dress' } },
++        ]
++        const progress = Object.values(saved.tables.progress)[0]
++        progress.unlockedItems = [...new Set([...progress.unlockedItems, ...[
++          'beanie-red', 'bow', 'glasses', 'scarf', 'bow-tie', 'backpack', 'hoodie', 'overalls',
++          'dress', 'knit-sweater', 'leaf-crown', 'chef-hat', 'heart-glasses', 'bandana', 'apron', 'crown',
++        ].map(id => `item:${id}`)])]
++        saved.outbox = {}; store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }))
++  await page.reload()
++  await page.getByRole('button', { name: 'Wardrobe', exact: true }).click()
++  await page.getByRole('heading', { name: 'Dress up Mochi' }).waitFor()
++  await page.waitForFunction(() => !document.documentElement.dataset.vt)
++  await page.evaluate(text => { document.documentElement.style.fontSize = `${text}%` }, text)
++  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
++  await page.evaluate(() => {
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__renameFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__renameFrames.delete(id); callback(now) })
++      window.__renameFrames.add(id); return id
++    }
++    window.cancelAnimationFrame = id => { window.__renameFrames.delete(id); cancel(id) }
++  })
++  const savedTab = page.getByRole('tab', { name: 'Saved', exact: true })
++  if (await savedTab.count()) await savedTab.click()
++  await page.clock.runFor(240)
++  return page
++}
++
++async function capture(page, name, data) {
++  if (!out) return
++  await mkdir(out, { recursive: true })
++  await page.screenshot({ path: join(out, `${name}.png`), animations: 'disabled' })
++  await writeFile(join(out, `${name}.json`), JSON.stringify(data, null, 2) + '\n')
++}
++
++async function layout(page) {
++  return page.evaluate(() => {
++    const rect = node => { const b = node.getBoundingClientRect(); return { x: b.x, y: b.y, width: b.width, height: b.height, right: b.right, bottom: b.bottom } }
++    const focused = document.activeElement, focusBox = rect(focused)
++    const hit = document.elementFromPoint(focusBox.x + focusBox.width / 2, focusBox.y + focusBox.height / 2)
++    const outfitName = focused.closest('.wd-outfit')?.querySelector('.wd-outfit-name')
++    const nameBox = outfitName ? rect(outfitName) : null
++    const nameHit = nameBox ? document.elementFromPoint(nameBox.x + nameBox.width / 2, nameBox.y + nameBox.height / 2) : null
++    return {
++      width: innerWidth, overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - innerWidth,
++      frames: window.__renameFrames.size,
++      controls: [...document.querySelectorAll('.wd-outfit button, .wd-name-form .btn')].map(node => ({ name: node.getAttribute('aria-label') || node.textContent, box: rect(node), parent: rect(node.closest('.wd-outfit') || node.closest('.wd-name-form')) })),
++      input: document.querySelector('.wd-name-form input') ? rect(document.querySelector('.wd-name-form input')) : null,
++      readableFieldWidth: document.querySelector('.wd-name-form') ? Math.min(document.querySelector('.wd-name-form').getBoundingClientRect().width, 10 * parseFloat(getComputedStyle(document.documentElement).fontSize)) : null,
++      focus: document.activeElement?.getAttribute('aria-label') || document.activeElement?.tagName,
++      focusedPaintVisible: focused === hit || focused.contains(hit),
++      focusedOutfitNamePaintVisible: outfitName ? outfitName === nameHit || outfitName.contains(nameHit) : null,
++    }
++  })
++}
++function assertLayout(data) {
++  assert.equal(data.focusedPaintVisible, true, 'the focused input or returned Rename button must be visible through actual scroll clipping')
++  if (data.focusedOutfitNamePaintVisible !== null) assert.equal(data.focusedOutfitNamePaintVisible, true, 'the saved name must remain readable beside the returned Rename focus')
++  assert.ok(data.overflow <= 1, 'enlarged text must not cause horizontal page overflow')
++  for (const control of data.controls) {
++    assert.ok(control.box.width >= 44 && control.box.height >= 44, `${control.name} retains a 44px target`)
++    assert.ok(control.box.x >= control.parent.x - 1 && control.box.right <= control.parent.right + 1, `${control.name} stays within its card or form`)
++  }
++  if (data.input) assert.ok(data.input.x >= -1 && data.input.right <= data.width + 1, 'name field stays within the viewport')
++  if (data.input) assert.ok(data.input.width >= data.readableFieldWidth - 1, 'the name field keeps readable space as text grows')
++}
++
++for (const { width, height } of [{ width: 320, height: 568 }, { width: 390, height: 664 }, { width: 640, height: 360 }, { width: 844, height: 390 }, { width: 1280, height: 800 }]) {
++  for (const text of [100, 200]) test(`rename saved outfit fits ${width}x${height}/${text}% and changes only its saved name`, async t => {
++    const page = await fixture(t, width, height, text), before = (await snapshot(page)).tables
++    const rename = page.getByRole('button', { name: 'Rename Weekend', exact: true })
++    await rename.focus(); await page.keyboard.press('Enter')
++    const field = page.getByRole('textbox', { name: 'Outfit name', exact: true })
++    assert.equal(await field.inputValue(), 'Weekend')
++    assert.equal(await field.evaluate(node => node === document.activeElement && node.selectionStart === 0 && node.selectionEnd === 7), true)
++    assert.equal(await field.getAttribute('maxlength'), '16')
++    const open = await layout(page); assertLayout(open); assert.equal(open.frames, 0)
++    await capture(page, `wardrobe-rename-edit-${width}-${text}`, { layout: open, browser: page.context().browser().version(), method: 'Native keyboard opens a saved-name editor; root font100/200 percent, not browser zoom.' })
++    await field.fill('Discard this')
++    await page.keyboard.press('Tab')
++    assert.equal(await page.getByRole('button', { name: 'Save name', exact: true }).evaluate(node => node === document.activeElement), true)
++    assertLayout(await layout(page))
++    await page.keyboard.press('Tab')
++    assert.equal(await page.getByRole('button', { name: 'Not now', exact: true }).evaluate(node => node === document.activeElement), true)
++    assertLayout(await layout(page))
++    await page.keyboard.press('Space')
++    assert.equal(await rename.evaluate(node => node === document.activeElement), true)
++    assertLayout(await layout(page)); assert.deepEqual((await snapshot(page)).tables, before)
++    await page.keyboard.press('Enter')
++    assert.equal(await field.inputValue(), 'Weekend')
++    await field.fill('Sunday clothes'); await page.keyboard.press('Enter')
++    const renamed = page.getByRole('button', { name: 'Rename Sunday clothes', exact: true })
++    assert.equal(await renamed.evaluate(node => node === document.activeElement), true)
++    assert.equal(await page.getByRole('textbox', { name: 'Outfit name', exact: true }).count(), 0)
++    const after = (await snapshot(page)).tables, expected = structuredClone(before), pet = Object.values(expected.pets)[0]
++    pet.outfits[0].name = 'Sunday clothes'; assert.deepEqual(after, expected)
++    assert.equal(await page.getByRole('button', { name: 'Wear Cosy', exact: true }).getAttribute('aria-pressed'), 'true')
++    assert.equal(await page.getByRole('button', { name: 'Wear Sunday clothes', exact: true }).getAttribute('aria-pressed'), 'false')
++    const closed = await layout(page)
++    await capture(page, `wardrobe-rename-saved-${width}-${text}`, { layout: closed, method: 'Only target saved name changes, current wearing and tables preserved; native focus returns to renamed card.' })
++    assertLayout(closed); assert.equal(closed.frames, 0)
++    await page.reload(); await page.getByRole('button', { name: 'Wardrobe', exact: true }).click()
++    await page.getByRole('heading', { name: 'Dress up Mochi' }).waitFor()
++    const savedTab = page.getByRole('tab', { name: 'Saved', exact: true }); if (await savedTab.count()) await savedTab.click()
++    assert.equal(await page.getByRole('button', { name: 'Rename Sunday clothes', exact: true }).count(), 1)
++    assert.deepEqual((await snapshot(page)).tables, expected)
++  })
++}
++
++test('native cancel and rename preserve a held mirrored movement and its remaining clock', async t => {
++  const page = await fixture(t, 1280, 800, 100), saved = (await snapshot(page)).tables
++  await page.getByRole('button', { name: 'Rest', exact: true }).click(); await page.clock.runFor(800)
++  await page.getByRole('button', { name: 'Pause movement preview of Mochi', exact: true }).click()
++  await page.getByRole('button', { name: 'Mirror preview of Mochi', exact: true }).click()
++  const art = page.locator('.wd-preview .ch-animated'), held = await art.evaluate(node => { window.__renameArt = node; return node.outerHTML })
++  const rename = page.getByRole('button', { name: 'Rename Weekend', exact: true })
++  await rename.focus(); await page.keyboard.press('Enter')
++  const field = page.getByRole('textbox', { name: 'Outfit name', exact: true })
++  await field.fill('Discard'); await page.keyboard.press('Escape')
++  assert.equal(await rename.evaluate(node => node === document.activeElement), true)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  await rename.click(); await field.fill('Held look'); await page.getByRole('button', { name: 'Save name', exact: true }).click()
++  await page.clock.runFor(60000)
++  assert.equal(await art.evaluate(node => node.outerHTML), held); assert.equal(await art.evaluate(node => node === window.__renameArt), true)
++  assert.equal(await page.evaluate(() => window.__renameFrames.size), 0)
++  assert.equal(await page.getByRole('button', { name: 'Mirror preview of Mochi', exact: true }).getAttribute('aria-pressed'), 'true')
++  await page.getByRole('button', { name: 'Resume movement preview of Mochi', exact: true }).click(); await page.clock.runFor(1640)
++  assert.equal(await page.getByRole('button', { name: 'Rest', exact: true }).isEnabled(), true)
++  assert.equal(await page.evaluate(() => window.__renameFrames.size), 0)
++  const expected = structuredClone(saved); Object.values(expected.pets)[0].outfits[0].name = 'Held look'
++  assert.deepEqual((await snapshot(page)).tables, expected)
++  await capture(page, 'wardrobe-rename-held-preview', { method: 'Native Escape cancellation, explicit rename,60000ms held mirrored rest and remaining-duration cleanup; no clothing/progress/table changes except saved name.' })
++})
++
++test('new-look saving remains separate and returns visible focus to its own saved card', async t => {
++  const page = await fixture(t, 1280, 800, 100)
++  await page.getByRole('button', { name: 'Remove Party clothes', exact: true }).click()
++  await page.getByRole('group', { name: 'Remove Party clothes?', exact: true }).getByRole('button', { name: 'Remove', exact: true }).click()
++  await page.getByRole('button', { name: 'Red beanie', exact: true }).click()
++  const before = (await snapshot(page)).tables, petBefore = Object.values(before.pets)[0]
++  assert.equal(petBefore.outfits.length, 2); assert.equal(petBefore.equipped.head, undefined)
++  const save = page.getByRole('button', { name: 'Save this outfit', exact: true })
++  await save.click()
++  const field = page.getByRole('textbox', { name: 'Outfit name', exact: true })
++  await field.fill('Discard'); await page.keyboard.press('Escape')
++  assert.equal(await save.evaluate(node => node === document.activeElement), true)
++  assert.deepEqual((await snapshot(page)).tables, before)
++  await save.click(); await field.fill('New look'); await page.keyboard.press('Enter')
++  const rename = page.getByRole('button', { name: 'Rename New look', exact: true })
++  assert.equal(await rename.evaluate(node => node === document.activeElement), true)
++  const view = await layout(page); assertLayout(view); assert.equal(view.frames, 0)
++  const after = (await snapshot(page)).tables, petAfter = Object.values(after.pets)[0], added = petAfter.outfits[2]
++  assert.ok(added.id && !petBefore.outfits.some(o => o.id === added.id)); assert.equal(added.name, 'New look')
++  assert.deepEqual(added.equipped, petBefore.equipped)
++  const expected = structuredClone(before); Object.values(expected.pets)[0].outfits.push(added)
++  assert.deepEqual(after, expected)
++  await capture(page, 'wardrobe-rename-new-look', { layout: view, method: 'Explicit removal frees a slot, item change selects an unsaved look, Escape cancels new-name editing, Save outfit adds a distinct ID and returns visible focus to its own Rename control. Existing equipped data is preserved during naming.' })
++})
+diff --git i/docs/ART.md w/docs/ART.md
+index 5cb47ef..678e331 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -225,3 +225,5 @@ Healthy waves toward plants and fish tanks use one smaller appendage sway with s
+ Wardrobe movement previews can pause on the delivered pose with no running RAF, remain inspectable through Mirror and outfit updates, and resume for their remaining active duration. Stop, pose changes and live reduced motion cancel paused runs; restoring motion does not replay them. Hidden unpaused previews keep their existing absolute expiry, while manual pauses stay held until resumed. The 48px Pause/Resume button sits opposite Mirror without consuming a control row.
+ 
+ Healthy player Wave greetings retain their existing species hand arcs, cycles, gaze, lean, grounded feet, pleased face and 1200ms duration. Their delayed appendage follow-through uses one restrained sway at gains Mochi .55, Bun .6 and Sprout .5, slightly more expressive than an environment wave. Sick and reduced output and other actions retain their existing samples. Healthy idle keeps its single resident clock after the finite greeting; reduced idle stops it.
++
++Saved wardrobe looks have an explicit Rename action. Naming keeps the saved outfit ID, order and clothing, and leaves the currently worn look and preview state alone. The editor shares the existing 16-character naming rules, supports Escape/Not now without writes, and returns focus with the saved label and card actions visible. Saved cards reflow with text size. A paused mirrored movement stays held during rename. No new preview clock is added; renaming saves only the chosen name through the existing outfit update.
+diff --git 1/docs/audits/2026-10-12-character-polish/wardrobe-rename-design.md 2/docs/audits/2026-10-12-character-polish/wardrobe-rename-design.md
+new file mode 100644
+index 0000000..4d11280
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/wardrobe-rename-design.md
+@@ -0,0 +1,17 @@
++Batch54: rename a saved outfit through an explicit Rename action on its card. Reuse the existing outfit-name form, 16-character name cleaning and replaceOutfit helper. A rename updates only the matching saved name; use the saved outfit's own equipped value, never the currently worn look. Preserve ID, list order, other looks, current wearing, preview pose/mirror/pause and clock. A blank rename keeps the existing name and a no-op produces no save. If the target disappears while editing, close without recreating it or writing stale state. Read the latest target on submit. Duplicate names retain the existing allowed policy. Keep new-outfit saving and removal confirmation available and distinct.
++
++Use native name input, Save name, Not now and Escape cancellation; focus/select the existing name when opening and return keyboard focus to the card's Rename control after saving or canceling. One editor at a time; switching target discards only unsaved text. No new timers, schema, dependency, background writes or external service. Keep Rename and Remove as stacked full-width card actions at compact widths and verify name wrapping, focus, native keyboard, persisted-only-name changes and the paused preview at 100/200-percent text in portrait and landscape. Add meaningful controlled Wardrobe unit cases and an offline native regression before implementation. Keep every diagnostic and exact candidate binding; use the existing one-heavy-job resource guard.
++
++Initial controlled red:10missing-control failures and1existing new-save case passes; native initial case rejects missing Rename. The first isolated candidate passes11unit/native cases but lacks native paint visibility checks. Root short-phone still inspection exposes clipped returned focus. A new native hit-test assertion reproduces that at320/100. Nearest scrolling fixes that view but leaves5of11 enlarged/landscape cases clipped; disabling finite CSS transitions for static PNGs changes only capture settling, and the same5failures remain. Centered return passes11cases and native Tab/Space cancellation, but a new name-paint check reproduces a partly hidden saved label at844/200. The final candidate scrolls the complete action stack to the end of the scrollport, with6px scroll margin, then focuses Rename without a second scroll. This retains the saved name above the actions and passes all11native cases with actual elementFromPoint checks for both focus and name, including native cancellation.
++
++Retain initial, nearest, centered and final candidate source bytes and each fixture revision. Native final-candidate fixtures now seed all16wearables as earned so card art matches saved looks; this is fixture data only. CSS transitions are disabled only for static screenshots, not for native motion sampling. A newly saved look returns focus to its own Rename action. There are no production edits until candidate source, behavior and stills are reviewed. All original accepted greeting bytes are preserved at b5987ae.
++
++Applied the reviewed action-stack candidate, then the114focused checks pass. Final-candidate still inspection also reveals that the pixel100px name-field basis squeezes selected Weekend to its trailing letters at1280/200. A native readable-width assertion reproduces it before changing styles. Set the field basis to10rem, retaining min-width0/max-width100percent and wrapping buttons. This scales the input with text and lets it use its own row when needed. Preserve the21action-stack stills as reviewed diagnostics, with their original CSS hash/path. Final production checks and visual review cover the corrected field.
++
++Production build and55native cases pass with10rem field (12rename plus43existing preview cases). Then three controlled stale-data focus cases correctly fail: all looks disappear with worn/empty clothing, and a new-save draft becomes full. The final focus return tries the requested control, an existing Rename, enabled Save-this-outfit, then the selected category tab, skipping disabled controls. No data write or outfit recreation occurs on these exits. Existing normal requested-Rename behavior and CSS are unchanged;14rename unit cases and12native rename cases are verified again after the correction, followed by the full suite and production build.
++
++The scoped lint review found missing stable uid in the focus effect, render-time assignments in the controlled test harness, and effect-driven draft cleanup. Add uid to the focus dependencies, expose the harness state in a layout effect, and close an externally removed rename target through a guarded render adjustment before commit. This preserves the focus-return effect and prevents an invalid draft from committing. Retain the prior source snapshots, full suite and native evidence; repeat focused checks, build, native flows and full suite on the corrected sources. The prior four lint findings are retained as an expected red check.
++
++Post-lint cleanup:97focused tests/8files and12native rename flows pass, plus production build and zero-warning lint. The full-suite repeat was attempted before the native supervisor reported completion; its4096MiB launch guard rejected it at3507.109375MiB and no child started. Preserve that125exit and resource record, and wait for native completion/headroom before any repeat. This was an orchestration ordering mistake, not a product test failure or reserve crossing. Only one heavy job actually ran.
++
++A second full-repeat launch was rejected atabout4063MiB before a child started after headroom fell between observation and launch. A lightweight2s preflight gate then waited for three observations above4352MiB; the normal4096MiB launch/2048MiB run guard remained in force. Final-source full suite passes2409tests/126files,86.69s, with minimum observed available RAMabout2935MiB. Both125launch rejections remain explicit historical evidence. All22final production PNGs were directly inspected after the lint cleanup; the independent review receives exact source/run bindings and both prior full/native histories.

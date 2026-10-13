@@ -1,0 +1,7 @@
+{
+  "sourceSha256": {
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-before-fallback-Wardrobe.tsx.txt": "34d7e8e21d0ab28eccf6a1ef69421ea6a877024c2a9356573e80143d2d44b742",
+    "src/screens/Wardrobe.css": "8e03a2596f17fe329dea2506969f4e45d000e72da94c700be649dbd7cc22ed65"
+  },
+  "method": "55native tests passed before the final focus-fallback correction, with the readable10rem field and final12case rename fixture. The final12rename cases are rerun after correcting stale-data fallback. Existing43preview cases exercise unchanged Preview/CSS/owner paths."
+}

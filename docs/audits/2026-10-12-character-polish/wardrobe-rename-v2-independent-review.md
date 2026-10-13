@@ -1,0 +1,48 @@
+PASS. No actionable P0, P1, P2 or P3 findings in this bounded review. The preserved revision addresses Nash's original P2 live-viewport focus/hiding finding. The original fixed-layout acceptance remains intact.
+
+I independently reviewed the nine-source patch, relevant unchanged ownership/data code, preserved results and specified stills against Git base `b5987ae2d4b2a92aae5542f6f648578a7bda515d`. The [authoritative input](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-review-input.json) SHA256 is `d1c0a37424d98367fbc00b5401e9d9ddd7b36050599f52f6ed770e88dfd2db34`, matching the requested identity. This is one static/source/still review; test and build results below describe preserved executions.
+
+The lifecycle correction is sound. [Wardrobe.tsx:328](/home/robert/.codex/worktrees/4511/chore-pet/src/screens/Wardrobe.tsx:328) retains Saved as the second child of the same panel, including the empty first-child position on the Saved tab. The guarded adjustment at [line 118](/home/robert/.codex/worktrees/4511/chore-pet/src/screens/Wardrobe.tsx:118) selects Saved when an open editor moves wide-to-narrow, before committing a hidden editor. Input and button identity therefore survive both layout directions. The existing opening focus/select effect depends on editor identity and uid at [line 99](/home/robert/.codex/worktrees/4511/chore-pet/src/screens/Wardrobe.tsx:99), so resize does not reselect partly typed text.
+
+The immediate layout reveal and resize listener share one helper at [line 127](/home/robert/.codex/worktrees/4511/chore-pet/src/screens/Wardrobe.tsx:127). It scrolls only the already-focused element inside this Saved name form, without focus, selection, timer or write calls. Cleanup removes that exact listener before replacement or unmount. This handles changed scroll ownership and reflow within the same layout. [Wardrobe.css:124](/home/robert/.codex/worktrees/4511/chore-pet/src/screens/Wardrobe.css:124) supplies the 6px input/button scroll margins. Recorded native assertions cover backward selection, focused Save name/Not now, Mirror focus outside the form, Enter/Space closure and returned Rename focus.
+
+Rename still resolves the latest target and outfits on render, then submits only a nonempty changed name using that target's saved clothing at [Wardrobe.tsx:167](/home/robert/.codex/worktrees/4511/chore-pet/src/screens/Wardrobe.tsx:167). IDs, order, neighbors and worn clothing remain intact. Blank/unchanged submissions and cancellation produce no write. The guarded missing-target exit at [line 123](/home/robert/.codex/worktrees/4511/chore-pet/src/screens/Wardrobe.tsx:123) prevents recreation; existing focus fallback skips disabled controls. The controlled cases at [Wardrobe.rename.test.tsx:66](/home/robert/.codex/worktrees/4511/chore-pet/src/screens/Wardrobe.rename.test.tsx:66) cover no-op, latest data, disappearance, fallback, duplicate policy and separate new-look saving. WardrobePreview remains at its original React location with unchanged source/clock dependencies. Native checks assert held mirrored Rest SVG/node identity, zero pending RAF and remaining-duration completion; the held-preview PNG itself was captured after resume/expiry.
+
+| Independent verification | Result |
+| --- | --- |
+| Input and base commit object identity | Both match |
+| Frozen source hashes | 9/9 match |
+| Unchanged hashes and bytes against Git base | 39/39 match, including production extras.tsx |
+| Exact patch | All 9 files reconstructed in memory from base/context; final bytes and old/new blob abbreviations match |
+| Patch and artifact-manifest hashes | Both match |
+| Artifact hashes | 636/636 match, none missing |
+| Preserved original evidence | Input/report/patch/manifest match; all 468 artifacts and 38 raw pairs retained unchanged |
+| Original source identities | All 6 match through the 3 declared v1 snapshots and 3 unchanged current files |
+| Raw log/exit pairs | 52/52; all 104 hashes and 52 numeric exit values match |
+| Final visual binding | 28 direct PNGs, 10 exact-prior PNGs and 2 source hashes match; exact 38-PNG inventory |
+
+These categories overlap. Old Wardrobe/CSS/ART current paths intentionally differ; their preserved snapshots establish the original identities.
+
+The final [full log:132](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-full.log:132) records 2,418 tests in 127 files passing in 87.31s. The [focused log:8](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-focused.log:8) records 106 tests in nine actual files passing in 10.08s. The [native log:74](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-native.log:74) records 73 passes, zero failures/cancellations/skips, in 165.423115877s: 18 mirror + 9 motion + 16 pause + 12 rename + 18 resize. The resize cases comprise 12 focused-editor transitions, two outside-preview-focus cases and four same-layout reflows. New-look resize also has controlled unit coverage.
+
+The unambiguous revision [production build](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-build.log) records successful tsc/Vite/PWA completion with the retained chunk-size advisory. Five-file zero-warning lint and nine-source whitespace evidence have exit 0. I also checked all nine sources for trailing whitespace. The whitespace wrapper's per-untracked-file exit 1 means differences from /dev/null, with no whitespace diagnostic; its aggregate exit is 0. Revision notes correctly distinguish the original historical build-final citation from the later original build-lint.
+
+All four new historical failure runs remain explicit: controlled resize 8 failed/1 passed; native baseline 1 focus failure; structural native 5 passed/9 paint-clipping failures; same-layout native 1 passed/3 paint-clipping failures. The intermediate wide-only reveal records 14 passes. Together with the original nine exit-1 checks and two exit-125 launch rejections, the 52 pairs comprise 37 exit-0, 13 exit-1 and two exit-125 results. Assertions after an earlier failure are not credited as executed.
+
+I directly opened all 16 PNGs in wardrobe-resize-final-native and all 12 changed rename PNGs identified by the [comparison](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-png-comparison.json). The [root-direct manifest](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/wardrobe-rename-v2-root-direct.json) binds exactly those 28 views plus 10 carried identities. I independently compared bytes for the other ten against the previously independently reviewed v1 captures. They are carried identity, not new direct views: edit 1280/200, 640/100, 640/200, 844/200; saved 320/200, 390/200, 640/100, 640/200, 844/100, 844/200.
+
+I also directly opened the three requested diagnostics: wardrobe-resize-native-red/wardrobe-resize-input-narrow-100.png, wardrobe-resize-native/wardrobe-resize-input-narrow-100.png and wardrobe-resize-same-red/wardrobe-resize-same-wide-100.png. Their records distinguish BODY focus from retained INPUT focus below the viewport. Final counterparts reveal the editor. Final stills show readable selected names, wrapping actions and visible returned Rename/name context; other content can scroll behind sticky tabs.
+
+I recomputed all 37 stored layouts, 21 rename and 16 resize: 385 button target/horizontal-parent checks, 26 input viewport/readability checks and all rectangle arithmetic pass. Each readable threshold independently equals min(form width, 10rem) at the recorded 16/32px roots. Minimum button dimension is 44px; maximum horizontal overflow and pending RAF are both zero. All 37 focus-center flags and 11 applicable saved-name-center flags are true. Hit identities cannot be independently reconstructed from stored rectangles. In particular, the baseline BODY center flag is true despite lost input focus, so activeElement assertions matter separately. Center hits and programmatic-focus stills do not certify every focus-ring pixel, full-element visibility or every control simultaneously.
+
+Resource arithmetic also matches: 52 raw sidecars, 1,038 samples, minimum available RAM 2,776.9375 MiB, minimum /tmp free 3,994.88671875 MiB, two launch rejections with no child and zero reserve stops. Each summary row matches its raw sample minima, count and exit. The preserved supervisor matches the previously reviewed v2 bytes. These are approximately one-second host snapshots, not peak process RSS/CPU measurements or device certification.
+
+Behaviors declined to certify within this bounded evidence:
+
+- Cross-engine, physical-device, browser-zoom and arbitrary content behavior; captures use Chromium 152 and root font 100/200 percent.
+- Human temporal comfort and complete focus-ring/occlusion coverage; stills and recorded center hits are limited observations.
+- Native resize of a new-look draft and enlarged-text outside-preview-focus behavior; supplied native cases do not cover those combinations.
+- Atomic external-update races beyond the controlled latest-data/missing-target cases; recorded provenance is not independent execution attestation.
+- The separate heart-frame investigation; it was entirely excluded, while production extras.tsx was verified unchanged against base.
+
+No other in-scope behavior was set aside. No repository code, test, build, browser, agent, network request, external message or commit was run. Only this report was written; frozen sources and other audits were untouched.

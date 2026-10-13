@@ -1,0 +1,229 @@
+{
+  "layout": {
+    "width": 1280,
+    "overflow": 0,
+    "frames": 0,
+    "controls": [
+      {
+        "name": "Wear Weekend",
+        "box": {
+          "x": 700,
+          "y": 424.984375,
+          "width": 144.65625,
+          "height": 104.09375,
+          "right": 844.65625,
+          "bottom": 529.078125
+        },
+        "parent": {
+          "x": 694,
+          "y": 418.984375,
+          "width": 156.65625,
+          "height": 213.09375,
+          "right": 850.65625,
+          "bottom": 632.078125
+        }
+      },
+      {
+        "name": "Rename Weekend",
+        "box": {
+          "x": 700,
+          "y": 533.078125,
+          "width": 144.65625,
+          "height": 44,
+          "right": 844.65625,
+          "bottom": 577.078125
+        },
+        "parent": {
+          "x": 694,
+          "y": 418.984375,
+          "width": 156.65625,
+          "height": 213.09375,
+          "right": 850.65625,
+          "bottom": 632.078125
+        }
+      },
+      {
+        "name": "Remove Weekend",
+        "box": {
+          "x": 700,
+          "y": 581.078125,
+          "width": 144.65625,
+          "height": 44,
+          "right": 844.65625,
+          "bottom": 625.078125
+        },
+        "parent": {
+          "x": 694,
+          "y": 418.984375,
+          "width": 156.65625,
+          "height": 213.09375,
+          "right": 850.65625,
+          "bottom": 632.078125
+        }
+      },
+      {
+        "name": "Wear Cosy",
+        "box": {
+          "x": 866.65625,
+          "y": 424.984375,
+          "width": 144.671875,
+          "height": 104.09375,
+          "right": 1011.328125,
+          "bottom": 529.078125
+        },
+        "parent": {
+          "x": 860.65625,
+          "y": 418.984375,
+          "width": 156.671875,
+          "height": 213.09375,
+          "right": 1017.328125,
+          "bottom": 632.078125
+        }
+      },
+      {
+        "name": "Rename Cosy",
+        "box": {
+          "x": 866.65625,
+          "y": 533.078125,
+          "width": 144.671875,
+          "height": 44,
+          "right": 1011.328125,
+          "bottom": 577.078125
+        },
+        "parent": {
+          "x": 860.65625,
+          "y": 418.984375,
+          "width": 156.671875,
+          "height": 213.09375,
+          "right": 1017.328125,
+          "bottom": 632.078125
+        }
+      },
+      {
+        "name": "Remove Cosy",
+        "box": {
+          "x": 866.65625,
+          "y": 581.078125,
+          "width": 144.671875,
+          "height": 44,
+          "right": 1011.328125,
+          "bottom": 625.078125
+        },
+        "parent": {
+          "x": 860.65625,
+          "y": 418.984375,
+          "width": 156.671875,
+          "height": 213.09375,
+          "right": 1017.328125,
+          "bottom": 632.078125
+        }
+      },
+      {
+        "name": "Wear Party clothes",
+        "box": {
+          "x": 1033.328125,
+          "y": 424.984375,
+          "width": 144.671875,
+          "height": 104.09375,
+          "right": 1178,
+          "bottom": 529.078125
+        },
+        "parent": {
+          "x": 1027.328125,
+          "y": 418.984375,
+          "width": 156.671875,
+          "height": 213.09375,
+          "right": 1184,
+          "bottom": 632.078125
+        }
+      },
+      {
+        "name": "Rename Party clothes",
+        "box": {
+          "x": 1033.328125,
+          "y": 533.078125,
+          "width": 144.671875,
+          "height": 44,
+          "right": 1178,
+          "bottom": 577.078125
+        },
+        "parent": {
+          "x": 1027.328125,
+          "y": 418.984375,
+          "width": 156.671875,
+          "height": 213.09375,
+          "right": 1184,
+          "bottom": 632.078125
+        }
+      },
+      {
+        "name": "Remove Party clothes",
+        "box": {
+          "x": 1033.328125,
+          "y": 581.078125,
+          "width": 144.671875,
+          "height": 44,
+          "right": 1178,
+          "bottom": 625.078125
+        },
+        "parent": {
+          "x": 1027.328125,
+          "y": 418.984375,
+          "width": 156.671875,
+          "height": 213.09375,
+          "right": 1184,
+          "bottom": 632.078125
+        }
+      },
+      {
+        "name": "Save name",
+        "box": {
+          "x": 953,
+          "y": 661.078125,
+          "width": 120.140625,
+          "height": 44,
+          "right": 1073.140625,
+          "bottom": 705.078125
+        },
+        "parent": {
+          "x": 694,
+          "y": 640.078125,
+          "width": 490,
+          "height": 65,
+          "right": 1184,
+          "bottom": 705.078125
+        }
+      },
+      {
+        "name": "Not now",
+        "box": {
+          "x": 1081.140625,
+          "y": 661.078125,
+          "width": 102.859375,
+          "height": 44,
+          "right": 1184,
+          "bottom": 705.078125
+        },
+        "parent": {
+          "x": 694,
+          "y": 640.078125,
+          "width": 490,
+          "height": 65,
+          "right": 1184,
+          "bottom": 705.078125
+        }
+      }
+    ],
+    "input": {
+      "x": 694,
+      "y": 661.078125,
+      "width": 251,
+      "height": 44,
+      "right": 945,
+      "bottom": 705.078125
+    },
+    "focus": "INPUT"
+  },
+  "browser": "152.0.7977.82",
+  "method": "Native keyboard opens a saved-name editor; root font100/200 percent, not browser zoom."
+}

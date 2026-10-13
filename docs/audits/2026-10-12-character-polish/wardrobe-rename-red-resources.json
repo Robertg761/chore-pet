@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-13T03:39:58.232313+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "npx",
+    "vitest",
+    "run",
+    "src/screens/Wardrobe.rename.test.tsx",
+    "--maxWorkers=1",
+    "--reporter=dot"
+  ],
+  "exitCode": 1,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": "--max-old-space-size=256",
+  "minimumObservedAvailableBytes": 4541861888,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT stop the owned child group and preserve final sidecars.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4695482368,
+      "tmpFreeBytes": 4290170880
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4695482368,
+      "tmpFreeBytes": 4290170880
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4798959616,
+      "tmpFreeBytes": 4290134016
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "memAvailableBytes": 4541861888,
+      "tmpFreeBytes": 4288303104
+    },
+    {
+      "elapsedSeconds": 3.001,
+      "memAvailableBytes": 4788854784,
+      "tmpFreeBytes": 4290170880
+    }
+  ]
+}

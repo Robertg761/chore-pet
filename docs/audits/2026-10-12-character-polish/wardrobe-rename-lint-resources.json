@@ -1,0 +1,44 @@
+{
+  "utc": "2026-10-13T04:12:03.602105+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "npx",
+    "oxlint",
+    "--max-warnings=0",
+    "src/screens/Wardrobe.tsx",
+    "src/screens/Wardrobe.rename.test.tsx"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": "--max-old-space-size=192",
+  "cleanup": {
+    "processGroup": 4,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 0
+  },
+  "minimumObservedAvailableBytes": 4688039936,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4688039936,
+      "tmpFreeBytes": 4289966080
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4688039936,
+      "tmpFreeBytes": 4289966080
+    },
+    {
+      "elapsedSeconds": 1.003,
+      "memAvailableBytes": 4748738560,
+      "tmpFreeBytes": 4289966080
+    }
+  ]
+}

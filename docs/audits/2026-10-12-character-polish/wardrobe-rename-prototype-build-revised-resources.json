@@ -1,0 +1,42 @@
+{
+  "utc": "2026-10-13T03:45:49.415392+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "npx",
+    "vite",
+    "build",
+    "--config",
+    "/tmp/wardrobe-rename-build-config.mjs"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": "--max-old-space-size=512",
+  "minimumObservedAvailableBytes": 4477681664,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT stop the owned child group and preserve final sidecars.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4569853952,
+      "tmpFreeBytes": 4290117632
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4569853952,
+      "tmpFreeBytes": 4290117632
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4477681664,
+      "tmpFreeBytes": 4290117632
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "memAvailableBytes": 4617158656,
+      "tmpFreeBytes": 4290101248
+    }
+  ]
+}

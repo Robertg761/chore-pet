@@ -1,0 +1,185 @@
+{
+  "layout": {
+    "width": 844,
+    "overflow": 0,
+    "frames": 0,
+    "controls": [
+      {
+        "name": "Wear Sunday clothes",
+        "box": {
+          "x": 430.09375,
+          "y": 206.15625,
+          "width": 115.96875,
+          "height": 76.9375,
+          "right": 546.0625,
+          "bottom": 283.09375
+        },
+        "parent": {
+          "x": 424.09375,
+          "y": 200.15625,
+          "width": 127.96875,
+          "height": 185.9375,
+          "right": 552.0625,
+          "bottom": 386.09375
+        }
+      },
+      {
+        "name": "Rename Sunday clothes",
+        "box": {
+          "x": 430.09375,
+          "y": 287.09375,
+          "width": 115.96875,
+          "height": 44,
+          "right": 546.0625,
+          "bottom": 331.09375
+        },
+        "parent": {
+          "x": 424.09375,
+          "y": 200.15625,
+          "width": 127.96875,
+          "height": 185.9375,
+          "right": 552.0625,
+          "bottom": 386.09375
+        }
+      },
+      {
+        "name": "Remove Sunday clothes",
+        "box": {
+          "x": 430.09375,
+          "y": 335.09375,
+          "width": 115.96875,
+          "height": 44,
+          "right": 546.0625,
+          "bottom": 379.09375
+        },
+        "parent": {
+          "x": 424.09375,
+          "y": 200.15625,
+          "width": 127.96875,
+          "height": 185.9375,
+          "right": 552.0625,
+          "bottom": 386.09375
+        }
+      },
+      {
+        "name": "Wear Cosy",
+        "box": {
+          "x": 566.0625,
+          "y": 206.15625,
+          "width": 115.96875,
+          "height": 76.9375,
+          "right": 682.03125,
+          "bottom": 283.09375
+        },
+        "parent": {
+          "x": 560.0625,
+          "y": 200.15625,
+          "width": 127.96875,
+          "height": 185.9375,
+          "right": 688.03125,
+          "bottom": 386.09375
+        }
+      },
+      {
+        "name": "Rename Cosy",
+        "box": {
+          "x": 566.0625,
+          "y": 287.09375,
+          "width": 115.96875,
+          "height": 44,
+          "right": 682.03125,
+          "bottom": 331.09375
+        },
+        "parent": {
+          "x": 560.0625,
+          "y": 200.15625,
+          "width": 127.96875,
+          "height": 185.9375,
+          "right": 688.03125,
+          "bottom": 386.09375
+        }
+      },
+      {
+        "name": "Remove Cosy",
+        "box": {
+          "x": 566.0625,
+          "y": 335.09375,
+          "width": 115.96875,
+          "height": 44,
+          "right": 682.03125,
+          "bottom": 379.09375
+        },
+        "parent": {
+          "x": 560.0625,
+          "y": 200.15625,
+          "width": 127.96875,
+          "height": 185.9375,
+          "right": 688.03125,
+          "bottom": 386.09375
+        }
+      },
+      {
+        "name": "Wear Party clothes",
+        "box": {
+          "x": 702.03125,
+          "y": 206.15625,
+          "width": 115.96875,
+          "height": 76.9375,
+          "right": 818,
+          "bottom": 283.09375
+        },
+        "parent": {
+          "x": 696.03125,
+          "y": 200.15625,
+          "width": 127.96875,
+          "height": 185.9375,
+          "right": 824,
+          "bottom": 386.09375
+        }
+      },
+      {
+        "name": "Rename Party clothes",
+        "box": {
+          "x": 702.03125,
+          "y": 287.09375,
+          "width": 115.96875,
+          "height": 44,
+          "right": 818,
+          "bottom": 331.09375
+        },
+        "parent": {
+          "x": 696.03125,
+          "y": 200.15625,
+          "width": 127.96875,
+          "height": 185.9375,
+          "right": 824,
+          "bottom": 386.09375
+        }
+      },
+      {
+        "name": "Remove Party clothes",
+        "box": {
+          "x": 702.03125,
+          "y": 335.09375,
+          "width": 115.96875,
+          "height": 44,
+          "right": 818,
+          "bottom": 379.09375
+        },
+        "parent": {
+          "x": 696.03125,
+          "y": 200.15625,
+          "width": 127.96875,
+          "height": 185.9375,
+          "right": 824,
+          "bottom": 386.09375
+        }
+      }
+    ],
+    "input": null,
+    "focus": "Rename Sunday clothes",
+    "focusedPaintVisible": true,
+    "focusedOutfitNamePaintVisible": true
+  },
+  "method": "Only target saved name changes, current wearing and tables preserved; native focus returns to renamed card."
+}

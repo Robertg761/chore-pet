@@ -1,0 +1,188 @@
+✖ keeps input editing through native layout change wide=false/100% (1732.464986ms)
+✖ keeps Save name editing through native layout change wide=false/100% (1643.468144ms)
+✖ keeps Not now editing through native layout change wide=false/100% (1678.419934ms)
+✖ keeps input editing through native layout change wide=true/100% (1640.269068ms)
+✖ keeps Save name editing through native layout change wide=true/100% (1644.597703ms)
+✖ keeps Not now editing through native layout change wide=true/100% (1643.628524ms)
+✔ keeps input editing through native layout change wide=false/200% (1924.547304ms)
+✔ keeps Save name editing through native layout change wide=false/200% (2479.849843ms)
+✔ keeps Not now editing through native layout change wide=false/200% (2396.564452ms)
+✖ keeps input editing through native layout change wide=true/200% (2245.511501ms)
+✖ keeps Save name editing through native layout change wide=true/200% (1790.068702ms)
+✖ keeps Not now editing through native layout change wide=true/200% (1951.347118ms)
+✔ keeps editor draft without stealing preview focus on native resize wide=false (1472.796448ms)
+✔ keeps editor draft without stealing preview focus on native resize wide=true (1487.852932ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 5
+ℹ fail 9
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26137.431426
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-resize.test.mjs:103:122
+✖ keeps input editing through native layout change wide=false/100% (1732.464986ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:83:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:121:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-resize.test.mjs:103:122
+✖ keeps Save name editing through native layout change wide=false/100% (1643.468144ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:83:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:121:3)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-resize.test.mjs:103:122
+✖ keeps Not now editing through native layout change wide=false/100% (1678.419934ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:83:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:121:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-resize.test.mjs:103:122
+✖ keeps input editing through native layout change wide=true/100% (1640.269068ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:83:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:121:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-resize.test.mjs:103:122
+✖ keeps Save name editing through native layout change wide=true/100% (1644.597703ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:83:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:121:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-resize.test.mjs:103:122
+✖ keeps Not now editing through native layout change wide=true/100% (1643.628524ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:83:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:121:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-resize.test.mjs:103:122
+✖ keeps input editing through native layout change wide=true/200% (2245.511501ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:83:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:121:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-resize.test.mjs:103:122
+✖ keeps Save name editing through native layout change wide=true/200% (1790.068702ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:83:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:121:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-resize.test.mjs:103:122
+✖ keeps Not now editing through native layout change wide=true/200% (1951.347118ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:83:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-resize.test.mjs:121:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

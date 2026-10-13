@@ -1,0 +1,119 @@
+{
+  "utc": "2026-10-13T03:47:04.140473+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "env",
+    "CHROME=/usr/bin/chromium",
+    "CHORE_RENAME_CAPTURE_DIR=docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-stills",
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "scripts/browser/wardrobe-rename.test.mjs"
+  ],
+  "exitCode": 1,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": "--max-old-space-size=384",
+  "minimumObservedAvailableBytes": 4817129472,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT stop the owned child group and preserve final sidecars.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 5345468416,
+      "tmpFreeBytes": 4290101248
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 5345468416,
+      "tmpFreeBytes": 4290101248
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 5076893696,
+      "tmpFreeBytes": 4276604928
+    },
+    {
+      "elapsedSeconds": 2.002,
+      "memAvailableBytes": 4978851840,
+      "tmpFreeBytes": 4271190016
+    },
+    {
+      "elapsedSeconds": 3.002,
+      "memAvailableBytes": 4943953920,
+      "tmpFreeBytes": 4271632384
+    },
+    {
+      "elapsedSeconds": 4.002,
+      "memAvailableBytes": 4951511040,
+      "tmpFreeBytes": 4273385472
+    },
+    {
+      "elapsedSeconds": 5.002,
+      "memAvailableBytes": 5000785920,
+      "tmpFreeBytes": 4289449984
+    },
+    {
+      "elapsedSeconds": 6.003,
+      "memAvailableBytes": 4918853632,
+      "tmpFreeBytes": 4267839488
+    },
+    {
+      "elapsedSeconds": 7.003,
+      "memAvailableBytes": 4930437120,
+      "tmpFreeBytes": 4257226752
+    },
+    {
+      "elapsedSeconds": 8.003,
+      "memAvailableBytes": 4944695296,
+      "tmpFreeBytes": 4264890368
+    },
+    {
+      "elapsedSeconds": 9.003,
+      "memAvailableBytes": 5064089600,
+      "tmpFreeBytes": 4288032768
+    },
+    {
+      "elapsedSeconds": 10.003,
+      "memAvailableBytes": 4936916992,
+      "tmpFreeBytes": 4247638016
+    },
+    {
+      "elapsedSeconds": 11.004,
+      "memAvailableBytes": 4989177856,
+      "tmpFreeBytes": 4251578368
+    },
+    {
+      "elapsedSeconds": 12.004,
+      "memAvailableBytes": 5034348544,
+      "tmpFreeBytes": 4260384768
+    },
+    {
+      "elapsedSeconds": 13.004,
+      "memAvailableBytes": 4823945216,
+      "tmpFreeBytes": 4208242688
+    },
+    {
+      "elapsedSeconds": 14.004,
+      "memAvailableBytes": 4840464384,
+      "tmpFreeBytes": 4206260224
+    },
+    {
+      "elapsedSeconds": 15.005,
+      "memAvailableBytes": 4995694592,
+      "tmpFreeBytes": 4265127936
+    },
+    {
+      "elapsedSeconds": 16.005,
+      "memAvailableBytes": 4817129472,
+      "tmpFreeBytes": 4207104000
+    },
+    {
+      "elapsedSeconds": 17.005,
+      "memAvailableBytes": 5232316416,
+      "tmpFreeBytes": 4290101248
+    }
+  ]
+}

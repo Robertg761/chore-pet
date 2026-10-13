@@ -1,0 +1,19 @@
+✔ rename saved outfit fits 320x568/100% and changes only its saved name (1553.338017ms)
+✔ rename saved outfit fits 320x568/200% and changes only its saved name (1498.268618ms)
+✔ rename saved outfit fits 390x664/100% and changes only its saved name (1481.092368ms)
+✔ rename saved outfit fits 390x664/200% and changes only its saved name (1485.769299ms)
+✔ rename saved outfit fits 640x360/100% and changes only its saved name (1581.292104ms)
+✔ rename saved outfit fits 640x360/200% and changes only its saved name (1452.037261ms)
+✔ rename saved outfit fits 844x390/100% and changes only its saved name (1433.05363ms)
+✔ rename saved outfit fits 844x390/200% and changes only its saved name (1445.585746ms)
+✔ rename saved outfit fits 1280x800/100% and changes only its saved name (1514.367901ms)
+✔ rename saved outfit fits 1280x800/200% and changes only its saved name (1748.612639ms)
+✔ native cancel and rename preserve a held mirrored movement and its remaining clock (2207.450322ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17793.346075

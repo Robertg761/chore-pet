@@ -1,0 +1,35 @@
+{
+  "sourceRunBindings": {
+    "full": {
+      "src/screens/Wardrobe.tsx": {
+        "snapshot": "docs/audits/2026-10-12-character-polish/wardrobe-rename-before-lint-Wardrobe.tsx.txt",
+        "sha256": "2922cd312c776749d93a871095ebe8a037bda8d123b6dead7a161512cc03d736"
+      },
+      "src/screens/Wardrobe.rename.test.tsx": {
+        "snapshot": "docs/audits/2026-10-12-character-polish/wardrobe-rename-before-lint-Wardrobe.rename.test.tsx.txt",
+        "sha256": "742926b35aca3fc64adbc167b31915950f1b9675334348e08b9bf7a8778d6ed2"
+      }
+    },
+    "full-lint": {
+      "method": "Final sources and tests frozen in review input after successful completion."
+    },
+    "native": {
+      "sourceSha256": {
+        "docs/audits/2026-10-12-character-polish/wardrobe-rename-before-fallback-Wardrobe.tsx.txt": "34d7e8e21d0ab28eccf6a1ef69421ea6a877024c2a9356573e80143d2d44b742",
+        "src/screens/Wardrobe.css": "8e03a2596f17fe329dea2506969f4e45d000e72da94c700be649dbd7cc22ed65"
+      },
+      "method": "55native tests passed before the final focus-fallback correction, with the readable10rem field and final12case rename fixture. The final12rename cases are rerun after correcting stale-data fallback. Existing43preview cases exercise unchanged Preview/CSS/owner paths."
+    },
+    "native-final": {
+      "src/screens/Wardrobe.tsx": {
+        "snapshot": "docs/audits/2026-10-12-character-polish/wardrobe-rename-before-lint-Wardrobe.tsx.txt",
+        "sha256": "2922cd312c776749d93a871095ebe8a037bda8d123b6dead7a161512cc03d736"
+      },
+      "src/screens/Wardrobe.css": "8e03a2596f17fe329dea2506969f4e45d000e72da94c700be649dbd7cc22ed65"
+    },
+    "native-lint": {
+      "method": "Final production source and CSS frozen in review input;22final stills bound by final-visual-review."
+    }
+  },
+  "limits": "Declared recorded-source bindings and hashes, not execution attestation. Prototype Vite overrides did not typecheck; production build checks do."
+}

@@ -1,0 +1,31 @@
+{
+  "directlyOpened": "All21final isolated candidate stills: edit and saved state in five viewports at100/200root-font size, plus held-preview integration. Name and returned Rename focus readable; keyboard/cancel/persistence native checks pass. Same healthy on-demand preview and finite clock. Static screenshots disable finite CSS transitions; not human animation-comfort acceptance.",
+  "candidateSources": {
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-actions-prototype-Wardrobe.css.txt": "67f9d8fad586cdbf6595b47fd628bfe56d1633ad2f493b5e17301d33850a9b58",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-before-fallback-Wardrobe.tsx.txt": "34d7e8e21d0ab28eccf6a1ef69421ea6a877024c2a9356573e80143d2d44b742"
+  },
+  "files": {
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-edit-1280-100.png": "f4f3704b11c587782ddb3b389fee9418bf67a99b8a36d0fa859df8db0f0b9ad5",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-edit-1280-200.png": "8d35d1896b086c17da7738e1058bcb1c2e909d15abe920715df75d0e6cf64cb5",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-edit-320-100.png": "49443bb36930c2921ee0221e926753389995e6b01b4094c5a4bced588981a961",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-edit-320-200.png": "56319fc3ddc62ff04578f6a9aa063910563f3dc756ce581be20061b1f9c2bd3c",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-edit-390-100.png": "420220b99b8b4ca9a26257be785505a37f6206b37232bbc6cd8332eac9640880",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-edit-390-200.png": "8d595d482ff8bd2769604ac5ffebf206f386bb234fbc474fe9dee9f274d2eca1",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-edit-640-100.png": "5a4ed898282a18b2c05951940b87d2fef93f54d105ad5b30c902fe21bafb368f",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-edit-640-200.png": "81382e6e3f907f6356f6a4e35998a1cc44e239c3e8d4237d2aadf68da5e37df8",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-edit-844-100.png": "a028649663bef0b2bb35944dfae6e2eca54ebab3e4a3a27826c8847272f97a36",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-edit-844-200.png": "4dbd16b06245033d898b66d726b47bc061db5c9edc8c54d8341f2170a805fcff",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-held-preview.png": "6150e8008e0942e129433ee666122574a3f32f939cc2ebc00a03920a69399ee9",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-saved-1280-100.png": "2786653f8effecba01f9faf16e213db61b06aa98c50bd2b108badaa639fcae36",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-saved-1280-200.png": "86ff1a32a76f08a464d348c3c44f8f1e9b2ad95f3666596451e395e7bf8607df",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-saved-320-100.png": "926f1963223b8557712c7ad8ddb59322c50dd072cc199aac8ba7f5f77aa21b0a",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-saved-320-200.png": "a9f84ac8e70aa70c1c737215dbe4ebaf2497bb9dc0d37caf8cd091e6c4b5a94e",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-saved-390-100.png": "780ffe1193d6fce11d422833802e472cb7d0696088a011a5edfeee14ec2837d1",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-saved-390-200.png": "c5cb2206df6ab062d6f45845ed834132be6bb7680fc39ba9c1987604a15f11b0",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-saved-640-100.png": "2602d704d81fbc721ac65fc88c6a4436fc85510a04ebfac0ef76f1bfa7ca5f5f",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-saved-640-200.png": "ea703b090b494c3a9470aed308089c698c5c2662287b81f2bfdecfefc28b3700",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-saved-844-100.png": "624c7bc565fdd7e3eb706cdf64a8dc648f89313de72b4fd697ae3d3cb4d1d622",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions/wardrobe-rename-saved-844-200.png": "6617073204feaadfa3ecd4b162ece6c01c5c167aee9f909104d1bc04619fd08e"
+  },
+  "finding": "The1280/200 editor field is visibly squeezed; a subsequent native width check reproduces it. These21stills are reviewed diagnostics, not final visual acceptance."
+}

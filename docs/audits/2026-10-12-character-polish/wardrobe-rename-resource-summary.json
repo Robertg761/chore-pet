@@ -1,0 +1,315 @@
+{
+  "runs": 38,
+  "sampleRows": 646,
+  "minimumObservedAvailableMiB": 2776.9375,
+  "minimumObservedTmpFreeMiB": 3995.3125,
+  "reserveStops": 0,
+  "launchRejections": 2,
+  "observedRuns": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-build-final-resources.json",
+      "minimumObservedAvailableMiB": 3781.8046875,
+      "minimumObservedTmpFreeMiB": 4091.2890625,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 12
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-build-lint-resources.json",
+      "minimumObservedAvailableMiB": 3698.33203125,
+      "minimumObservedTmpFreeMiB": 4091.21875,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 12
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-build-resources.json",
+      "minimumObservedAvailableMiB": 4045.828125,
+      "minimumObservedTmpFreeMiB": 4091.30078125,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 12
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-context-red-resources.json",
+      "minimumObservedAvailableMiB": 4506.2265625,
+      "minimumObservedTmpFreeMiB": 4059.80078125,
+      "exitCode": 1,
+      "resourceStopReason": null,
+      "samples": 4
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-diff-final-resources.json",
+      "minimumObservedAvailableMiB": 4401.8046875,
+      "minimumObservedTmpFreeMiB": 4091.21484375,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 3
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-diff-resources.json",
+      "minimumObservedAvailableMiB": 4225.8203125,
+      "minimumObservedTmpFreeMiB": 4091.21875,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 3
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-fallback-red-resources.json",
+      "minimumObservedAvailableMiB": 4426.32421875,
+      "minimumObservedTmpFreeMiB": 4089.5078125,
+      "exitCode": 1,
+      "resourceStopReason": null,
+      "samples": 5
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-field-red-resources.json",
+      "minimumObservedAvailableMiB": 4339.921875,
+      "minimumObservedTmpFreeMiB": 4029.91796875,
+      "exitCode": 1,
+      "resourceStopReason": null,
+      "samples": 4
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-focus-red-resources.json",
+      "minimumObservedAvailableMiB": 4181.44921875,
+      "minimumObservedTmpFreeMiB": 4074.71484375,
+      "exitCode": 1,
+      "resourceStopReason": null,
+      "samples": 4
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-focused-final-resources.json",
+      "minimumObservedAvailableMiB": 4342.125,
+      "minimumObservedTmpFreeMiB": 4089.25390625,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 13
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-focused-lint-resources.json",
+      "minimumObservedAvailableMiB": 4022.51171875,
+      "minimumObservedTmpFreeMiB": 4089.26171875,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 12
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-focused-resources.json",
+      "minimumObservedAvailableMiB": 4360.45703125,
+      "minimumObservedTmpFreeMiB": 4089.32421875,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 12
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-full-lint-rejected-2-resources.json",
+      "minimumObservedAvailableMiB": 4062.74609375,
+      "minimumObservedTmpFreeMiB": 4091.26171875,
+      "exitCode": 125,
+      "resourceStopReason": "Insufficient launch headroom; no child started.",
+      "samples": 2
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-full-lint-rejected-resources.json",
+      "minimumObservedAvailableMiB": 3507.109375,
+      "minimumObservedTmpFreeMiB": 4004.1875,
+      "exitCode": 125,
+      "resourceStopReason": "Insufficient launch headroom; no child started.",
+      "samples": 2
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-full-lint-resources.json",
+      "minimumObservedAvailableMiB": 2934.92578125,
+      "minimumObservedTmpFreeMiB": 4079.31640625,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 90
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-full-resources.json",
+      "minimumObservedAvailableMiB": 2776.9375,
+      "minimumObservedTmpFreeMiB": 4079.36328125,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 90
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-lint-red-resources.json",
+      "minimumObservedAvailableMiB": 4423.01171875,
+      "minimumObservedTmpFreeMiB": 4091.23046875,
+      "exitCode": 1,
+      "resourceStopReason": null,
+      "samples": 3
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-lint-resources.json",
+      "minimumObservedAvailableMiB": 4470.86328125,
+      "minimumObservedTmpFreeMiB": 4091.23046875,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 3
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-final-resources.json",
+      "minimumObservedAvailableMiB": 3760.796875,
+      "minimumObservedTmpFreeMiB": 4004.23046875,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 23
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint-resources.json",
+      "minimumObservedAvailableMiB": 3569.56640625,
+      "minimumObservedTmpFreeMiB": 4006.1796875,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 22
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-red-resources.json",
+      "minimumObservedAvailableMiB": 4161.9609375,
+      "minimumObservedTmpFreeMiB": 4074.2890625,
+      "exitCode": 1,
+      "resourceStopReason": null,
+      "samples": 8
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-resources.json",
+      "minimumObservedAvailableMiB": 3875.21484375,
+      "minimumObservedTmpFreeMiB": 3995.3125,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 141
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-build-actions-resources.json",
+      "minimumObservedAvailableMiB": 4314.609375,
+      "minimumObservedTmpFreeMiB": 4091.3125,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 5
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-build-centered-resources.json",
+      "minimumObservedAvailableMiB": 4913.83984375,
+      "minimumObservedTmpFreeMiB": 4091.33203125,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 4
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-build-resources.json",
+      "minimumObservedAvailableMiB": 4452.35546875,
+      "minimumObservedTmpFreeMiB": 4091.375,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 4
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-build-revised-resources.json",
+      "minimumObservedAvailableMiB": 4270.25,
+      "minimumObservedTmpFreeMiB": 4091.359375,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 4
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions-resources.json",
+      "minimumObservedAvailableMiB": 4187.60546875,
+      "minimumObservedTmpFreeMiB": 4003.43359375,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 21
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-centered-resources.json",
+      "minimumObservedAvailableMiB": 4331.44140625,
+      "minimumObservedTmpFreeMiB": 4008.0859375,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 20
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-keyboard-resources.json",
+      "minimumObservedAvailableMiB": 4393.0625,
+      "minimumObservedTmpFreeMiB": 4009.78515625,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 21
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-resources.json",
+      "minimumObservedAvailableMiB": 3852.58984375,
+      "minimumObservedTmpFreeMiB": 4008.24609375,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 20
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-revised-resources.json",
+      "minimumObservedAvailableMiB": 3724.29296875,
+      "minimumObservedTmpFreeMiB": 4008.95703125,
+      "exitCode": 1,
+      "resourceStopReason": null,
+      "samples": 20
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-stills-resources.json",
+      "minimumObservedAvailableMiB": 4593.97265625,
+      "minimumObservedTmpFreeMiB": 4011.40234375,
+      "exitCode": 1,
+      "resourceStopReason": null,
+      "samples": 19
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-unit-actions-resources.json",
+      "minimumObservedAvailableMiB": 4175.84375,
+      "minimumObservedTmpFreeMiB": 4089.5390625,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 5
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-unit-centered-resources.json",
+      "minimumObservedAvailableMiB": 4686.96875,
+      "minimumObservedTmpFreeMiB": 4089.54296875,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 5
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-unit-resources.json",
+      "minimumObservedAvailableMiB": 4332.9375,
+      "minimumObservedTmpFreeMiB": 4089.60546875,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 5
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-unit-revised-resources.json",
+      "minimumObservedAvailableMiB": 4173.62890625,
+      "minimumObservedTmpFreeMiB": 4089.5859375,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 5
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-red-resources.json",
+      "minimumObservedAvailableMiB": 4331.45703125,
+      "minimumObservedTmpFreeMiB": 4089.64453125,
+      "exitCode": 1,
+      "resourceStopReason": null,
+      "samples": 5
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-diff-prose-resources.json",
+      "minimumObservedAvailableMiB": 4380.6171875,
+      "minimumObservedTmpFreeMiB": 4091.2109375,
+      "exitCode": 0,
+      "resourceStopReason": null,
+      "samples": 3
+    }
+  ],
+  "limits": "Host snapshots around1second, not peak RSS/CPU or whole-system certification; isolated capped Node heaps, nice10, one worker/native browser at a time. One attempted full launch before native supervisor completion was rejected and no second heavy child started. Two guard rejections in total. Final full waited for stable margin. Prior v1 and current reviewed v2 supervisor bytes retained."
+}

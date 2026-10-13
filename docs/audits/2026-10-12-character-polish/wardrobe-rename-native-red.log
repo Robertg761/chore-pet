@@ -1,0 +1,22 @@
+✖ rename saved outfit fits 320x568/100% and changes only its saved name (5268.382918ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5921.610604
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-rename.test.mjs:78:34
+✖ rename saved outfit fits 320x568/100% and changes only its saved name (5268.382918ms)
+  locator.focus: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByRole('button', { name: 'Rename Weekend', exact: true })[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:81:18) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByRole('button', { name: 'Rename Weekend', exact: true })" ]
+  }

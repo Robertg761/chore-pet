@@ -1,0 +1,5 @@
+import { readFileSync } from 'node:fs'
+const candidate = { name: 'isolated-wardrobe-rename', enforce: 'pre', transform(code, id) {
+ for (const source of ['src/screens/Wardrobe.tsx','src/screens/Wardrobe.css']) if (id.split('?')[0] === process.cwd() + '/' + source) return { code: readFileSync('docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-' + source.split('/').at(-1) + '.txt','utf8'), map: null }
+} }
+export default { plugins: [candidate], test: { environment: 'node', include: ['src/**/*.test.{ts,tsx}', 'supabase/**/*.test.ts'] } }

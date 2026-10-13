@@ -1,0 +1,9 @@
+src/screens/Wardrobe.tsx 0 
+src/screens/Wardrobe.css 0 
+src/screens/Wardrobe.rename.test.tsx 1 
+src/screens/Wardrobe.resize.test.tsx 1 
+scripts/browser/wardrobe-rename.test.mjs 1 
+scripts/browser/wardrobe-resize.test.mjs 1 
+docs/ART.md 0 
+docs/audits/2026-10-12-character-polish/wardrobe-rename-design.md 1 
+docs/audits/2026-10-12-character-polish/wardrobe-resize-design.md 1 

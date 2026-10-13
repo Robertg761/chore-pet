@@ -1,0 +1,29 @@
+✖ rename saved outfit fits 844x390/200% and changes only its saved name (1374.245732ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1784.793503
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-rename.test.mjs:88:34
+✖ rename saved outfit fits 844x390/200% and changes only its saved name (1374.245732ms)
+  AssertionError [ERR_ASSERTION]: the saved name must remain readable beside the returned Rename focus
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:78:59)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:107:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

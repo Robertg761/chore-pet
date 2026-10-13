@@ -1,0 +1,52 @@
+{
+  "utc": "2026-10-13T03:53:54.077297+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "env",
+    "CHROME=/usr/bin/chromium",
+    "CHORE_RENAME_CAPTURE_DIR=docs/audits/2026-10-12-character-polish/wardrobe-rename-context-red-native",
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "--test-name-pattern=rename saved outfit fits 844x390/200%",
+    "scripts/browser/wardrobe-rename.test.mjs"
+  ],
+  "exitCode": 1,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": "--max-old-space-size=384",
+  "cleanup": {
+    "processGroup": 16896,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 1
+  },
+  "minimumObservedAvailableBytes": 4725121024,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 5029367808,
+      "tmpFreeBytes": 4290068480
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 5029367808,
+      "tmpFreeBytes": 4290068480
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4725121024,
+      "tmpFreeBytes": 4257009664
+    },
+    {
+      "elapsedSeconds": 2.022,
+      "memAvailableBytes": 4882268160,
+      "tmpFreeBytes": 4290068480
+    }
+  ]
+}

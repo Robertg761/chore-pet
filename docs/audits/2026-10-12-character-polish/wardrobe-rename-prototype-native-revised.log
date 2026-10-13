@@ -1,0 +1,111 @@
+✔ rename saved outfit fits 320x568/100% and changes only its saved name (1585.717282ms)
+✖ rename saved outfit fits 320x568/200% and changes only its saved name (1351.349339ms)
+✔ rename saved outfit fits 390x664/100% and changes only its saved name (1530.828025ms)
+✖ rename saved outfit fits 390x664/200% and changes only its saved name (1350.896547ms)
+✖ rename saved outfit fits 640x360/100% and changes only its saved name (1372.096681ms)
+✖ rename saved outfit fits 640x360/200% and changes only its saved name (1345.23121ms)
+✔ rename saved outfit fits 844x390/100% and changes only its saved name (1421.747601ms)
+✖ rename saved outfit fits 844x390/200% and changes only its saved name (1320.603758ms)
+✔ rename saved outfit fits 1280x800/100% and changes only its saved name (1534.065591ms)
+✔ rename saved outfit fits 1280x800/200% and changes only its saved name (1533.657777ms)
+✔ native cancel and rename preserve a held mirrored movement and its remaining clock (2222.177589ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 6
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 16970.534064
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-rename.test.mjs:83:34
+✖ rename saved outfit fits 320x568/200% and changes only its saved name (1351.349339ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:73:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:103:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-rename.test.mjs:83:34
+✖ rename saved outfit fits 390x664/200% and changes only its saved name (1350.896547ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:73:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:103:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-rename.test.mjs:83:34
+✖ rename saved outfit fits 640x360/100% and changes only its saved name (1372.096681ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:73:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:103:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-rename.test.mjs:83:34
+✖ rename saved outfit fits 640x360/200% and changes only its saved name (1345.23121ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:73:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:103:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-rename.test.mjs:83:34
+✖ rename saved outfit fits 844x390/200% and changes only its saved name (1320.603758ms)
+  AssertionError [ERR_ASSERTION]: the focused input or returned Rename button must be visible through actual scroll clipping
+  
+  false !== true
+  
+      at assertLayout (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:73:10)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rename.test.mjs:103:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,186 @@
+{
+  "layout": {
+    "width": 1280,
+    "overflow": 0,
+    "frames": 0,
+    "controls": [
+      {
+        "name": "Wear Weekend",
+        "box": {
+          "x": 700,
+          "y": 462.1875,
+          "width": 144.65625,
+          "height": 104.09375,
+          "right": 844.65625,
+          "bottom": 566.28125
+        },
+        "parent": {
+          "x": 694,
+          "y": 456.1875,
+          "width": 156.65625,
+          "height": 213.09375,
+          "right": 850.65625,
+          "bottom": 669.28125
+        }
+      },
+      {
+        "name": "Rename Weekend",
+        "box": {
+          "x": 700,
+          "y": 570.28125,
+          "width": 144.65625,
+          "height": 44,
+          "right": 844.65625,
+          "bottom": 614.28125
+        },
+        "parent": {
+          "x": 694,
+          "y": 456.1875,
+          "width": 156.65625,
+          "height": 213.09375,
+          "right": 850.65625,
+          "bottom": 669.28125
+        }
+      },
+      {
+        "name": "Remove Weekend",
+        "box": {
+          "x": 700,
+          "y": 618.28125,
+          "width": 144.65625,
+          "height": 44,
+          "right": 844.65625,
+          "bottom": 662.28125
+        },
+        "parent": {
+          "x": 694,
+          "y": 456.1875,
+          "width": 156.65625,
+          "height": 213.09375,
+          "right": 850.65625,
+          "bottom": 669.28125
+        }
+      },
+      {
+        "name": "Wear Cosy",
+        "box": {
+          "x": 866.65625,
+          "y": 462.1875,
+          "width": 144.671875,
+          "height": 104.09375,
+          "right": 1011.328125,
+          "bottom": 566.28125
+        },
+        "parent": {
+          "x": 860.65625,
+          "y": 456.1875,
+          "width": 156.671875,
+          "height": 213.09375,
+          "right": 1017.328125,
+          "bottom": 669.28125
+        }
+      },
+      {
+        "name": "Rename Cosy",
+        "box": {
+          "x": 866.65625,
+          "y": 570.28125,
+          "width": 144.671875,
+          "height": 44,
+          "right": 1011.328125,
+          "bottom": 614.28125
+        },
+        "parent": {
+          "x": 860.65625,
+          "y": 456.1875,
+          "width": 156.671875,
+          "height": 213.09375,
+          "right": 1017.328125,
+          "bottom": 669.28125
+        }
+      },
+      {
+        "name": "Remove Cosy",
+        "box": {
+          "x": 866.65625,
+          "y": 618.28125,
+          "width": 144.671875,
+          "height": 44,
+          "right": 1011.328125,
+          "bottom": 662.28125
+        },
+        "parent": {
+          "x": 860.65625,
+          "y": 456.1875,
+          "width": 156.671875,
+          "height": 213.09375,
+          "right": 1017.328125,
+          "bottom": 669.28125
+        }
+      },
+      {
+        "name": "Wear New look",
+        "box": {
+          "x": 1033.328125,
+          "y": 462.1875,
+          "width": 144.671875,
+          "height": 104.09375,
+          "right": 1178,
+          "bottom": 566.28125
+        },
+        "parent": {
+          "x": 1027.328125,
+          "y": 456.1875,
+          "width": 156.671875,
+          "height": 213.09375,
+          "right": 1184,
+          "bottom": 669.28125
+        }
+      },
+      {
+        "name": "Rename New look",
+        "box": {
+          "x": 1033.328125,
+          "y": 570.28125,
+          "width": 144.671875,
+          "height": 44,
+          "right": 1178,
+          "bottom": 614.28125
+        },
+        "parent": {
+          "x": 1027.328125,
+          "y": 456.1875,
+          "width": 156.671875,
+          "height": 213.09375,
+          "right": 1184,
+          "bottom": 669.28125
+        }
+      },
+      {
+        "name": "Remove New look",
+        "box": {
+          "x": 1033.328125,
+          "y": 618.28125,
+          "width": 144.671875,
+          "height": 44,
+          "right": 1178,
+          "bottom": 662.28125
+        },
+        "parent": {
+          "x": 1027.328125,
+          "y": 456.1875,
+          "width": 156.671875,
+          "height": 213.09375,
+          "right": 1184,
+          "bottom": 669.28125
+        }
+      }
+    ],
+    "input": null,
+    "readableFieldWidth": null,
+    "focus": "Rename New look",
+    "focusedPaintVisible": true,
+    "focusedOutfitNamePaintVisible": true
+  },
+  "method": "Explicit removal frees a slot, item change selects an unsaved look, Escape cancels new-name editing, Save outfit adds a distinct ID and returns visible focus to its own Rename control. Existing equipped data is preserved during naming."
+}

@@ -1,0 +1,159 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { browserApp, snapshot } from './helpers.mjs'
+
+const out = process.env.CHORE_RENAME_CAPTURE_DIR
+async function fixture(t, width, height, text) {
+  const page = await browserApp(t, { viewport: { width, height }, reducedMotion: 'no-preference' })
+  await page.evaluate(() => new Promise((resolve, reject) => {
+    const request = indexedDB.open('chore-pet', 1)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
+      read.onsuccess = () => {
+        const saved = read.result, pet = Object.values(saved.tables.pets)[0]
+        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
+        pet.outfits = [
+          { id: 'weekend', name: 'Weekend', equipped: { head: 'bow', outfit: 'hoodie' } },
+          { id: 'cosy', name: 'Cosy', equipped: { ...pet.equipped } },
+          { id: 'party', name: 'Party clothes', equipped: { head: 'crown', outfit: 'dress' } },
+        ]
+        const progress = Object.values(saved.tables.progress)[0]
+        progress.unlockedItems = [...new Set([...progress.unlockedItems, ...[
+          'beanie-red', 'bow', 'glasses', 'scarf', 'bow-tie', 'backpack', 'hoodie', 'overalls',
+          'dress', 'knit-sweater', 'leaf-crown', 'chef-hat', 'heart-glasses', 'bandana', 'apron', 'crown',
+        ].map(id => `item:${id}`)])]
+        saved.outbox = {}; store.put(saved, 'snapshot')
+      }
+      tx.oncomplete = () => { db.close(); resolve() }
+      tx.onerror = () => { db.close(); reject(tx.error) }
+    }
+  }))
+  await page.reload()
+  await page.getByRole('button', { name: 'Wardrobe', exact: true }).click()
+  await page.getByRole('heading', { name: 'Dress up Mochi' }).waitFor()
+  await page.waitForFunction(() => !document.documentElement.dataset.vt)
+  await page.evaluate(text => { document.documentElement.style.fontSize = `${text}%` }, text)
+  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
+  await page.evaluate(() => {
+    const request = requestAnimationFrame, cancel = cancelAnimationFrame
+    window.__renameFrames = new Set()
+    window.requestAnimationFrame = callback => {
+      const id = request(now => { window.__renameFrames.delete(id); callback(now) })
+      window.__renameFrames.add(id); return id
+    }
+    window.cancelAnimationFrame = id => { window.__renameFrames.delete(id); cancel(id) }
+  })
+  const savedTab = page.getByRole('tab', { name: 'Saved', exact: true })
+  if (await savedTab.count()) await savedTab.click()
+  await page.clock.runFor(240)
+  return page
+}
+
+async function capture(page, name, data) {
+  if (!out) return
+  await mkdir(out, { recursive: true })
+  await page.screenshot({ path: join(out, `${name}.png`), animations: 'disabled' })
+  await writeFile(join(out, `${name}.json`), JSON.stringify(data, null, 2) + '\n')
+}
+
+async function layout(page) {
+  return page.evaluate(() => {
+    const rect = node => { const b = node.getBoundingClientRect(); return { x: b.x, y: b.y, width: b.width, height: b.height, right: b.right, bottom: b.bottom } }
+    const focused = document.activeElement, focusBox = rect(focused)
+    const hit = document.elementFromPoint(focusBox.x + focusBox.width / 2, focusBox.y + focusBox.height / 2)
+    const outfitName = focused.closest('.wd-outfit')?.querySelector('.wd-outfit-name')
+    const nameBox = outfitName ? rect(outfitName) : null
+    const nameHit = nameBox ? document.elementFromPoint(nameBox.x + nameBox.width / 2, nameBox.y + nameBox.height / 2) : null
+    return {
+      width: innerWidth, overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - innerWidth,
+      frames: window.__renameFrames.size,
+      controls: [...document.querySelectorAll('.wd-outfit button, .wd-name-form .btn')].map(node => ({ name: node.getAttribute('aria-label') || node.textContent, box: rect(node), parent: rect(node.closest('.wd-outfit') || node.closest('.wd-name-form')) })),
+      input: document.querySelector('.wd-name-form input') ? rect(document.querySelector('.wd-name-form input')) : null,
+      readableFieldWidth: document.querySelector('.wd-name-form') ? Math.min(document.querySelector('.wd-name-form').getBoundingClientRect().width, 10 * parseFloat(getComputedStyle(document.documentElement).fontSize)) : null,
+      focus: document.activeElement?.getAttribute('aria-label') || document.activeElement?.tagName,
+      focusedPaintVisible: focused === hit || focused.contains(hit),
+      focusedOutfitNamePaintVisible: outfitName ? outfitName === nameHit || outfitName.contains(nameHit) : null,
+    }
+  })
+}
+function assertLayout(data) {
+  assert.equal(data.focusedPaintVisible, true, 'the focused input or returned Rename button must be visible through actual scroll clipping')
+  if (data.focusedOutfitNamePaintVisible !== null) assert.equal(data.focusedOutfitNamePaintVisible, true, 'the saved name must remain readable beside the returned Rename focus')
+  assert.ok(data.overflow <= 1, 'enlarged text must not cause horizontal page overflow')
+  for (const control of data.controls) {
+    assert.ok(control.box.width >= 44 && control.box.height >= 44, `${control.name} retains a 44px target`)
+    assert.ok(control.box.x >= control.parent.x - 1 && control.box.right <= control.parent.right + 1, `${control.name} stays within its card or form`)
+  }
+  if (data.input) assert.ok(data.input.x >= -1 && data.input.right <= data.width + 1, 'name field stays within the viewport')
+  if (data.input) assert.ok(data.input.width >= data.readableFieldWidth - 1, 'the name field keeps readable space as text grows')
+}
+
+for (const { width, height } of [{ width: 320, height: 568 }, { width: 390, height: 664 }, { width: 640, height: 360 }, { width: 844, height: 390 }, { width: 1280, height: 800 }]) {
+  for (const text of [100, 200]) test(`rename saved outfit fits ${width}x${height}/${text}% and changes only its saved name`, async t => {
+    const page = await fixture(t, width, height, text), before = (await snapshot(page)).tables
+    const rename = page.getByRole('button', { name: 'Rename Weekend', exact: true })
+    await rename.focus(); await page.keyboard.press('Enter')
+    const field = page.getByRole('textbox', { name: 'Outfit name', exact: true })
+    assert.equal(await field.inputValue(), 'Weekend')
+    assert.equal(await field.evaluate(node => node === document.activeElement && node.selectionStart === 0 && node.selectionEnd === 7), true)
+    assert.equal(await field.getAttribute('maxlength'), '16')
+    const open = await layout(page); assertLayout(open); assert.equal(open.frames, 0)
+    await capture(page, `wardrobe-rename-edit-${width}-${text}`, { layout: open, browser: page.context().browser().version(), method: 'Native keyboard opens a saved-name editor; root font100/200 percent, not browser zoom.' })
+    await field.fill('Discard this')
+    await page.keyboard.press('Tab')
+    assert.equal(await page.getByRole('button', { name: 'Save name', exact: true }).evaluate(node => node === document.activeElement), true)
+    assertLayout(await layout(page))
+    await page.keyboard.press('Tab')
+    assert.equal(await page.getByRole('button', { name: 'Not now', exact: true }).evaluate(node => node === document.activeElement), true)
+    assertLayout(await layout(page))
+    await page.keyboard.press('Space')
+    assert.equal(await rename.evaluate(node => node === document.activeElement), true)
+    assertLayout(await layout(page)); assert.deepEqual((await snapshot(page)).tables, before)
+    await page.keyboard.press('Enter')
+    assert.equal(await field.inputValue(), 'Weekend')
+    await field.fill('Sunday clothes'); await page.keyboard.press('Enter')
+    const renamed = page.getByRole('button', { name: 'Rename Sunday clothes', exact: true })
+    assert.equal(await renamed.evaluate(node => node === document.activeElement), true)
+    assert.equal(await page.getByRole('textbox', { name: 'Outfit name', exact: true }).count(), 0)
+    const after = (await snapshot(page)).tables, expected = structuredClone(before), pet = Object.values(expected.pets)[0]
+    pet.outfits[0].name = 'Sunday clothes'; assert.deepEqual(after, expected)
+    assert.equal(await page.getByRole('button', { name: 'Wear Cosy', exact: true }).getAttribute('aria-pressed'), 'true')
+    assert.equal(await page.getByRole('button', { name: 'Wear Sunday clothes', exact: true }).getAttribute('aria-pressed'), 'false')
+    const closed = await layout(page)
+    await capture(page, `wardrobe-rename-saved-${width}-${text}`, { layout: closed, method: 'Only target saved name changes, current wearing and tables preserved; native focus returns to renamed card.' })
+    assertLayout(closed); assert.equal(closed.frames, 0)
+    await page.reload(); await page.getByRole('button', { name: 'Wardrobe', exact: true }).click()
+    await page.getByRole('heading', { name: 'Dress up Mochi' }).waitFor()
+    const savedTab = page.getByRole('tab', { name: 'Saved', exact: true }); if (await savedTab.count()) await savedTab.click()
+    assert.equal(await page.getByRole('button', { name: 'Rename Sunday clothes', exact: true }).count(), 1)
+    assert.deepEqual((await snapshot(page)).tables, expected)
+  })
+}
+
+test('native cancel and rename preserve a held mirrored movement and its remaining clock', async t => {
+  const page = await fixture(t, 1280, 800, 100), saved = (await snapshot(page)).tables
+  await page.getByRole('button', { name: 'Rest', exact: true }).click(); await page.clock.runFor(800)
+  await page.getByRole('button', { name: 'Pause movement preview of Mochi', exact: true }).click()
+  await page.getByRole('button', { name: 'Mirror preview of Mochi', exact: true }).click()
+  const art = page.locator('.wd-preview .ch-animated'), held = await art.evaluate(node => { window.__renameArt = node; return node.outerHTML })
+  const rename = page.getByRole('button', { name: 'Rename Weekend', exact: true })
+  await rename.focus(); await page.keyboard.press('Enter')
+  const field = page.getByRole('textbox', { name: 'Outfit name', exact: true })
+  await field.fill('Discard'); await page.keyboard.press('Escape')
+  assert.equal(await rename.evaluate(node => node === document.activeElement), true)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+  await rename.click(); await field.fill('Held look'); await page.getByRole('button', { name: 'Save name', exact: true }).click()
+  await page.clock.runFor(60000)
+  assert.equal(await art.evaluate(node => node.outerHTML), held); assert.equal(await art.evaluate(node => node === window.__renameArt), true)
+  assert.equal(await page.evaluate(() => window.__renameFrames.size), 0)
+  assert.equal(await page.getByRole('button', { name: 'Mirror preview of Mochi', exact: true }).getAttribute('aria-pressed'), 'true')
+  await page.getByRole('button', { name: 'Resume movement preview of Mochi', exact: true }).click(); await page.clock.runFor(1640)
+  assert.equal(await page.getByRole('button', { name: 'Rest', exact: true }).isEnabled(), true)
+  assert.equal(await page.evaluate(() => window.__renameFrames.size), 0)
+  const expected = structuredClone(saved); Object.values(expected.pets)[0].outfits[0].name = 'Held look'
+  assert.deepEqual((await snapshot(page)).tables, expected)
+  await capture(page, 'wardrobe-rename-held-preview', { method: 'Native Escape cancellation, explicit rename,60000ms held mirrored rest and remaining-duration cleanup; no clothing/progress/table changes except saved name.' })
+})

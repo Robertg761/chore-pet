@@ -1,0 +1,15 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run src/screens/Wardrobe.resize.test.tsx src/screens/Wardrobe.rename.test.tsx src/screens/Wardrobe.test.tsx src/screens/Wardrobe.rest.test.tsx src/screens/Wardrobe.show.test.tsx src/screens/Wardrobe.stretch.test.tsx src/screens/Wardrobe.mirror.test.tsx src/screens/Wardrobe.pause.test.tsx src/screens/wardrobeModel.test.ts --maxWorkers=1 --reporter=dot
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+··········································································································
+
+ Test Files  9 passed (9)
+      Tests  106 passed (106)
+   Start at  02:06:11
+   Duration  10.08s (tests 63%, environment 23%, transform 7%, import 7%)
+
+    Isolate  9 workers spawned · ~316ms startup each (spawn + environment, per file)
+             at least ~2.53s faster with isolate: false — reuses workers across files instead of one per file
+

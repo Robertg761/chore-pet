@@ -1,0 +1,456 @@
+{
+  "freeze": {
+    "baseCommit": "b5987ae2d4b2a92aae5542f6f648578a7bda515d",
+    "sources": {
+      "src/screens/Wardrobe.tsx": "f3bb3c4a2f23443e3662ae44b342c1a539270042dfb3215044e2cf834f6b78f1",
+      "src/screens/Wardrobe.css": "8e03a2596f17fe329dea2506969f4e45d000e72da94c700be649dbd7cc22ed65",
+      "src/screens/Wardrobe.rename.test.tsx": "19ca3b4373cb697f462eaae8582d3e9e814c9cb14ebce2b4af6542744a3c18bd",
+      "scripts/browser/wardrobe-rename.test.mjs": "7adfdd595d219f0419b1c0a66879d38a7fcb8d307f6848361d65c25cc2de8231",
+      "docs/ART.md": "6aa708e7940f47c12c8ec2060607510d926c59dfae39025ad49d399e267d1081",
+      "docs/audits/2026-10-12-character-polish/wardrobe-rename-design.md": "94ca41ee0112ebdb151c5cacd5a2eacf4fdc79b1eb7110c2add52832b38612ef"
+    },
+    "unchangedSources": {
+      "src/screens/WardrobePreview.tsx": "de2ff2e4ee668b93fa58a87625d53ae1053145801d861e877931237295d86bea",
+      "src/screens/wardrobeModel.ts": "54a214a753fd87347ae0b4b2089ff5829be5c4f24b369ed6b0d52560ead86ddd",
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+      "src/character/accent.tsx": "97e78bfce8b045d60a905b7ca015b36df907f89699985882442f2c82d4d97cca",
+      "src/character/motion.ts": "155194546e3c9e68df5f7e4ccb129e27627998361aa503d9c7035439a2015e3b",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/room/shell/geometry.ts": "967f73de056add3298520e580aa172a720132b49b11dd5bcab4a8f1a4b4fd027",
+      "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+      "src/shell/SegThumb.tsx": "9c35f972813c2270237ca025a0bf07250eaf1b2f5b79cf49c1de7e79c3134eea",
+      "src/shell/controls.css": "a0d257f01716ffb9aeecc89d5903b4d92a00a5b035caba72b02c5090c1889dce",
+      "src/index.css": "28b09b668da92e49c2a13554af34e56408dcc677d21e954fbc8145262b592418",
+      "src/shell/viewTransition.ts": "04defe5d1aa6e4397b71b2873ff06ae3fb6f610e2ecf2a8a4fc4e0e4f3c82789",
+      "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+      "scripts/browser/wardrobe-motion.test.mjs": "572a222f53a43fdc4c8df29d5a6a6864b61222e4892bdad47e57697033e95195",
+      "scripts/browser/wardrobe-rest.test.mjs": "8926976d76b47d8597001305da60cb8dcf9003af46d21f0278621992f005cd96",
+      "scripts/browser/wardrobe-show.test.mjs": "772e260cabcd6c40c792347d379d35215d43c51d0825eb744d5c09d282d1f052",
+      "src/screens/Wardrobe.test.tsx": "137eb49cb21b7d5deb66296ffbf8955a12bd85358eb368e9abfb234c823f3a25",
+      "src/screens/Wardrobe.rest.test.tsx": "f5216a4894ef2dfa01ca68567f5c7c7800a6e02b8de9826b3f3421476919958b",
+      "src/screens/Wardrobe.show.test.tsx": "2d139ba0c68de07cafe6f659bb666a1172fdf160986c5d91a99a7dbe6fb1c8d2",
+      "src/screens/Wardrobe.stretch.test.tsx": "ad5924806d222c7bf3708e62cffdc8131de18877f3b8f1270e6b802b8f604074",
+      "src/screens/wardrobeModel.test.ts": "3d41f5b069f8ebf14d2652c348a5636d23c30a5f0c74a29762f2b7a392660139",
+      "src/pet/usePetMotion.test.tsx": "07474f35781bb9b3442939d6eba0da4753211092a0d423d69c88236c782de93b",
+      "src/pet/usePetMotion.preference.test.tsx": "39d4767c5b54d38a0a4335b4f1bd8553ebffdf5aa78f0103e98c77655da70f68",
+      "src/pet/motionPreference.test.ts": "646cf1e48167baf88a182b74a1f60b14bfd6d6530609e1f9da4271d9f091fdcd",
+      "src/screens/Wardrobe.mirror.test.tsx": "4cbe48092af349532247bf24439a4c966d86e6225eb7647f452b97dbfdf91632",
+      "src/screens/Wardrobe.pause.test.tsx": "251d620b5e8cdf7789a20b44417d2db7da757c32e5f89ae68aa1702be75836df",
+      "scripts/browser/wardrobe-pause.test.mjs": "9e18de58447605b310b611e5ea7c1d20671b0666a1fb0daf5860b38f2582f4c5",
+      "scripts/browser/wardrobe-mirror.test.mjs": "1addf655e3cae868496dcc5bb661e6b51d0b43a3814d89cf2cddbe862fd7dbe4",
+      "src/character/motion.greet.test.ts": "3736d66386f3ad6933759364a040e2ae1fc8435968f9d5fd0fafc48ab7529a8b",
+      "src/data/store.ts": "3a02f895c6688efb8257eec7f8ef083d6257a1e2c37cdd5b378cbe1807092733",
+      "src/App.tsx": "c8c59ac9cf30d66d7daaf1a8316b23c64beb0554784a59665e3057c39303e81a"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-source.diff",
+      "sha256": "624d83d54923dced0425a82f2e4bf86b4f8047b6977d3904c22e0451eb25d8ba"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-artifacts.json",
+    "sha256": "78d3621b1901e21d4fbaa93ea707148972c7a0100fb6d6c5909194b1de21f20f"
+  },
+  "checks": [
+    {
+      "name": "build-final",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-build-final.log",
+      "logSha256": "1f2e80bfef5233ba184e15c0baf24790695ad3829f2c9b3667d99ba5f17a0277",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-build-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "build-lint",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-build-lint.log",
+      "logSha256": "5eb73bd75e14ad26c084d77f7fb44e49cdbe2c0109047a3eda8cd53cd773e3a1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-build-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-build.log",
+      "logSha256": "bf9637e5600e2c103a5815a8d3b6806b5c3fd12471895ca95f69e1e69a6977ff",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "context-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-context-red.log",
+      "logSha256": "74d4ec5a2e9a01783517196847bff4d2b989afc63509f1e88515615b7ea2008f",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-context-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "diff-final",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-diff-final.log",
+      "logSha256": "c7bac0f6965154c962db3c30ffe699cdec88cf14c1444e1f303904da04912388",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-diff-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-diff.log",
+      "logSha256": "c7bac0f6965154c962db3c30ffe699cdec88cf14c1444e1f303904da04912388",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "fallback-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-fallback-red.log",
+      "logSha256": "6292356643dca767570baeb7e4498ba5a013129b15ee3dd88d7e186ff2ba61c4",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-fallback-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "field-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-field-red.log",
+      "logSha256": "ae85501a7decf19948ce644717be80ea56a0a788545a75374bedeeb4b5c383e3",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-field-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "focus-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-focus-red.log",
+      "logSha256": "8b12435deb3ccd7584b1a2a820cd9d9d5c8b0a6d880106506463af1638ce8cd0",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-focus-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "focused-final",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-focused-final.log",
+      "logSha256": "c6997982e384a02c78b8dcbbf7be0fc2396b3dc8e4e12def174cd8f6e367c189",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-focused-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused-lint",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-focused-lint.log",
+      "logSha256": "17b455b1725d63ff2f1978f88e0c70d4bd4f3b509943ae87c8db48cd250e140e",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-focused-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-focused.log",
+      "logSha256": "30be0379d8901251723f885ac2e9fa35603ccb94efed680e90d78cc3a194346e",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full-lint-rejected-2",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-full-lint-rejected-2.log",
+      "logSha256": "ee456c8cdd06e7459d057d3a3fa87527ba2f9a07ba46411d40fc8e3d44f76bc9",
+      "exitCode": 125,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-full-lint-rejected-2.exit",
+        "sha256": "a5e45837a2959db847f7e67a915d0ecaddd47f943af2af5fa6453be497faabca"
+      }
+    },
+    {
+      "name": "full-lint-rejected",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-full-lint-rejected.log",
+      "logSha256": "ee456c8cdd06e7459d057d3a3fa87527ba2f9a07ba46411d40fc8e3d44f76bc9",
+      "exitCode": 125,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-full-lint-rejected.exit",
+        "sha256": "a5e45837a2959db847f7e67a915d0ecaddd47f943af2af5fa6453be497faabca"
+      }
+    },
+    {
+      "name": "full-lint",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-full-lint.log",
+      "logSha256": "3c394afd8175beb7932db8310dacc462329db384f8fbbe9411a5bb60fb1b4d0e",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-full-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-full.log",
+      "logSha256": "d38b244839e39a333e6faf9771cfa2eb046618a03b3f56396dc763277455d0d1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-lint-red.log",
+      "logSha256": "ded132f1a5a42645c35c7fd985c28a46682cfd007434bf888facc4f873eef31f",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-lint-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-lint.log",
+      "logSha256": "dfbb47afa0ad9c6ca2ebd527b3d76d60932420be9d5d4266538292801b13b29e",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-final",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-final.log",
+      "logSha256": "a28696a18f5a084b554d4782543c9f2b912eacfdca2889b09c3e0f5ddb76d672",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-lint",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint.log",
+      "logSha256": "7873316a6b4e4dcb8f16133b630af7b31b08581624064a43e4c0a21a1e173074",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-red.log",
+      "logSha256": "722b4682586469d337af2e977c27149d780f91372e157ccfe3014bbd4778c834",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native.log",
+      "logSha256": "881965f04eff0954708687bbf073664a854d4780b6c55423b45b7d9cda89d0fa",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-build-actions",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-build-actions.log",
+      "logSha256": "a11eb659a8363943f0c85adc066e423a13ab1ba1e96fb4e7c3950d903958eee3",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-build-actions.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-build-centered",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-build-centered.log",
+      "logSha256": "f2875eeff9ab8dd9493e0f91df4fa87c8c75e8ac44bb81af2521c6f00a67bd73",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-build-centered.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-build-revised",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-build-revised.log",
+      "logSha256": "3df4e601b881cbde618a848876c3611118a137825e62f99b6d072b0d8ffa6a40",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-build-revised.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-build.log",
+      "logSha256": "0e78d7d5e5df6440e089a7f4638ab106861879386256b981869367fa59a03543",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-native-actions",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions.log",
+      "logSha256": "d01c08fdaeb7322cf55d2eb7ff2bed7dcb4614c5b337788052cc0a3afcf03e19",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-actions.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-native-centered",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-centered.log",
+      "logSha256": "20187a87a7e183313733ffa6d80a375f3c5decf31aaa32cf6243a9b5e92fa8f2",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-centered.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-native-keyboard",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-keyboard.log",
+      "logSha256": "8e94e6917c88f44115d00e976d9ddabfa94d7eaae16a9ab771941d23486fef4f",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-keyboard.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-native-revised",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-revised.log",
+      "logSha256": "f84f15808abd39dc99ae2458ffeaea32d585c83da0fba827aaa7a4e0082c1679",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-revised.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "prototype-native-stills",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-stills.log",
+      "logSha256": "16444931a571f750f0df9f9e966f3f31e68c15fd82afc3f891693cbef652f911",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native-stills.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "prototype-native",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native.log",
+      "logSha256": "9c0edbc30c26641a51f4fff9ec57347635a24216a643129420d0d445043677f6",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-unit-actions",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-unit-actions.log",
+      "logSha256": "758eeafa1bc2bd831ad5b548eede3138629e9aa2714f15b01b76190a59abd061",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-unit-actions.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-unit-centered",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-unit-centered.log",
+      "logSha256": "ce4dccdece5b6985823603243de7648a01f097301ae8bcc73d3eaa8082add96c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-unit-centered.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-unit-revised",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-unit-revised.log",
+      "logSha256": "bb6c8cf8e7c7048a9fbb21d29317baf99649be909e80a652ded55deddc38c700",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-unit-revised.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-unit",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-unit.log",
+      "logSha256": "bac2473e823afc6f9423fed2791da24e93861a26747d7b5b04af667961fe3d80",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-prototype-unit.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-rename-red.log",
+      "logSha256": "5a54b12e1c29d10989c7e2b50b5a188d57513e0919c8f8bce88dd36363f798e6",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-rename-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "status": "Completed scoped final checks; awaiting bounded independent static/source/still review.",
+  "results": {
+    "full": "Final-source2409tests/126files pass,86.69s; previous full2409/12686.85s before lint cleanup retained.",
+    "focused": "Final97tests/8files pass9.06s; prior117/9 and114/9 before lint cleanup retained. Nonexistent WardrobePreview.test.tsx filter in final command matches no file; eight actualfiles are explicitly reported. Full final includes all126actualfiles.",
+    "native": "Final12rename cases pass,19.951453697s,0failure/cancelled/skipped. Earlier55native cases pass138.1263735s with10rem field before stale-focus fallback, followed by12after fallback20.225942522s, then final12after lint cleanup. No claim55ranagainst final TS.",
+    "build": "Final production tsc -b && vite build pass; existing chunk-size advisory retained.",
+    "lint": "Final scoped max-warnings0 pass after four findings corrected; lint-red retained.",
+    "whitespace": "Six authored sources pass final scoped whitespace check."
+  },
+  "visualReview": {
+    "direct": "All22 final native-lint PNGs directly opened in eleven two-image calls; source/hash manifest retained. All21action-stack prototype PNGs directly reviewed as diagnostics, including cramped1280/200field, correctedto10rem before final build. Initial six pre-lint final captures also opened, no claimall22pre-lintopened.",
+    "geometry": "Twenty edit/saved layouts plus new-look layout:focused actualpaint true,saved-name actualpaint truewhenreturned,inputwidth textrelative>=10remorformwidth,44pxcontrols,<=1px horizontaloverflow,zeroRAF; heldpreview checked liveexactSVG60000ms and sameartnode,not inferred fromstill.",
+    "limits": "Root font100/200percent, not browser zoom. Sampled Chromium152keyboard/stills, not everyviewport/name/outfit/browser/device or human temporal comfort. Main art preview remains stable; no new motion clock or background writes."
+  },
+  "history": "Nine expected exit1 checks:unit/native baseline, clipped focus/nearest failures, CSSsettling repeat same failures, clipped saved-label context, squeezed namefield, stale-data focus fallback, lint findings. Two full launch125rejections/nochild. Every raw diagnostic and source/fixture revision retained; final final-source full/focused/native/build/lint/whitespace pass. No external publication.",
+  "resources": {
+    "runs": 37,
+    "sampleRows": 643,
+    "minimumObservedAvailableMiB": 2776.9375,
+    "minimumObservedTmpFreeMiB": 3995.3125,
+    "reserveStops": 0,
+    "launchRejections": 2,
+    "limits": "Host snapshots around1second, not peak RSS/CPU or whole-system certification; isolated capped Node heaps, nice10, one worker/native browser at a time. One attempted full launch before native supervisor completion was rejected and no second heavy child started. Two guard rejections in total. Final full waited for stable margin. Prior v1 and current reviewed v2 supervisor bytes retained."
+  },
+  "knownScopeLimits": "Static layout matrix and controlled stale-data cases; live narrow/wide reparenting of an open name editor remains a separately prepared investigation, not claimed verified in this checkpoint."
+}

@@ -1,0 +1,45 @@
+{
+  "utc": "2026-10-13T03:44:52.682692+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "env",
+    "CHROME=/usr/bin/chromium",
+    "CHORE_RENAME_CAPTURE_DIR=docs/audits/2026-10-12-character-polish/wardrobe-rename-focus-red-native",
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "--test-name-pattern=rename saved outfit fits 320x568/100%",
+    "scripts/browser/wardrobe-rename.test.mjs"
+  ],
+  "exitCode": 1,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": "--max-old-space-size=384",
+  "minimumObservedAvailableBytes": 4384567296,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT stop the owned child group and preserve final sidecars.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4600283136,
+      "tmpFreeBytes": 4290117632
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4600283136,
+      "tmpFreeBytes": 4290117632
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4384567296,
+      "tmpFreeBytes": 4272648192
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "memAvailableBytes": 4496633856,
+      "tmpFreeBytes": 4290117632
+    }
+  ]
+}

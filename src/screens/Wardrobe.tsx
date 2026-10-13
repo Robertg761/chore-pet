@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { CharacterArt } from '../character/Character'
 import type { PoseName } from '../character/poses'
 import type { Item } from '../character/slots'
@@ -17,11 +17,13 @@ import {
   activeOutfit,
   addOutfit,
   clearSlot,
+  cleanOutfitName,
   defaultOutfitName,
   isEmptyOutfit,
   isFull,
   itemsForSlot,
   removeOutfit,
+  replaceOutfit,
   sameOutfit,
   toggleItem,
   wearableOutfit,
@@ -67,18 +69,23 @@ function NoneArt() {
 
 /** A tab: one of the slots, or (on phones) the saved outfits. */
 type Section = WardrobeSlot | 'saved'
+type NameEditor = { kind: 'save' } | { kind: 'rename'; id: string }
 
 export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
   const uid = useId()
   const equipped = pet.equipped
   const wide = useWide()
   const [picked, setPicked] = useState<Section>('head')
-  const [naming, setNaming] = useState(false)
+  const [layoutWide, setLayoutWide] = useState(wide)
+  const [editor, setEditor] = useState<NameEditor | null>(null)
   const [name, setName] = useState('')
   const [removing, setRemoving] = useState<string | null>(null)
   const nameRef = useRef<HTMLInputElement>(null)
+  const savedRef = useRef<HTMLElement>(null)
+  const returnFocus = useRef<string | null>(null)
 
   const outfits = pet.outfits ?? []
+  const editingOutfit = editor?.kind === 'rename' ? outfits.find(o => o.id === editor.id) : undefined
   const current = activeOutfit(outfits, equipped)
   const full = isFull(outfits)
   // On wide screens the saved outfits sit under the items; on phones they are one more tab.
@@ -90,8 +97,44 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
   const wear = (next: Pet['equipped']) => onChange({ equipped: next })
 
   useEffect(() => {
-    if (naming) nameRef.current?.select()
-  }, [naming])
+    if (editor) {
+      nameRef.current?.focus()
+      nameRef.current?.select()
+    } else if (returnFocus.current) {
+      const controls = [document.getElementById(returnFocus.current),
+        savedRef.current?.querySelector<HTMLButtonElement>('.wd-outfit-actions > button'),
+        document.getElementById(`${uid}-save-outfit`),
+        savedRef.current?.closest('.wd')?.querySelector<HTMLButtonElement>('.wd-tab[aria-selected="true"]')]
+      const control = controls.find(node => node && !node.matches(':disabled'))
+      const actions = control?.closest('.wd-outfit')?.querySelector('.wd-outfit-actions')
+      const target = actions ?? control
+      target?.scrollIntoView?.({ block: 'end', inline: 'nearest', behavior: 'instant' })
+      control?.focus({ preventScroll: true })
+      returnFocus.current = null
+    }
+  }, [editor, uid])
+
+  // Keep an open editor available when the separate wide saved area becomes a tab.
+  if (wide !== layoutWide) {
+    setLayoutWide(wide)
+    if (!wide && editor) setPicked('saved')
+  }
+
+  // An externally removed target ends its draft before the next committed render.
+  if (editor?.kind === 'rename' && !editingOutfit) setEditor(null)
+
+  // Resize can change scroll ownership or move the field within the same layout.
+  useLayoutEffect(() => {
+    function revealFocusedEditor() {
+      const focused = document.activeElement
+      if (focused instanceof HTMLElement && savedRef.current?.contains(focused) && focused.closest('.wd-name-form')) {
+        focused.scrollIntoView?.({ block: 'end', inline: 'nearest', behavior: 'instant' })
+      }
+    }
+    revealFocusedEditor()
+    window.addEventListener('resize', revealFocusedEditor)
+    return () => window.removeEventListener('resize', revealFocusedEditor)
+  }, [wide])
 
   // Keep the chosen tab in view when the row scrolls sideways.
   useEffect(() => {
@@ -108,13 +151,31 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
   }
 
   function startNaming() {
+    returnFocus.current = `${uid}-save-outfit`
+    setRemoving(null)
     setName(defaultOutfitName(outfits))
-    setNaming(true)
+    setEditor({ kind: 'save' })
+  }
+
+  function startRename(outfit: SavedOutfit) {
+    returnFocus.current = `${uid}-rename-${outfit.id}`
+    setRemoving(null)
+    setName(outfit.name)
+    setEditor({ kind: 'rename', id: outfit.id })
   }
 
   function saveOutfit() {
-    onChange({ outfits: addOutfit(outfits, name, equipped, crypto.randomUUID()) })
-    setNaming(false)
+    if (editor?.kind === 'rename') {
+      const clean = cleanOutfitName(name)
+      if (editingOutfit && clean && clean !== editingOutfit.name) {
+        onChange({ outfits: replaceOutfit(outfits, editingOutfit.id, editingOutfit.equipped, clean) })
+      }
+    } else if (editor?.kind === 'save' && !full) {
+      const id = crypto.randomUUID()
+      returnFocus.current = `${uid}-rename-${id}`
+      onChange({ outfits: addOutfit(outfits, name, equipped, id) })
+    }
+    setEditor(null)
   }
 
   function confirmRemove(outfit: SavedOutfit) {
@@ -163,7 +224,7 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
   )
 
   const saved = (
-    <section className="wd-saved" aria-labelledby={`${uid}-saved`}>
+    <section ref={savedRef} className="wd-saved" aria-labelledby={`${uid}-saved`}>
       <h2 id={`${uid}-saved`} className={wide ? 'wd-sub' : 'sr-only'}>
         Saved outfits
       </h2>
@@ -175,6 +236,10 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
                 <PetArt className="wd-outfit-art" pet={pet} equipped={wearableOutfit(o.equipped, progress)} pose="idle" />
                 <span className="wd-outfit-name">{o.name}</span>
               </button>
+              <div className="wd-outfit-actions">
+              <button id={`${uid}-rename-${o.id}`} type="button" className="btn btn-sm" aria-label={`Rename ${o.name}`} onClick={() => startRename(o)}>
+                Rename
+              </button>
               {removing === o.id ? (
                 <div className="wd-confirm" role="group" aria-label={`Remove ${o.name}?`}>
                   <button type="button" className="btn btn-sm" onClick={() => setRemoving(null)}>
@@ -185,10 +250,11 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
                   </button>
                 </div>
               ) : (
-                <button type="button" className="btn btn-sm" aria-label={`Remove ${o.name}`} onClick={() => setRemoving(o.id)}>
+                <button type="button" className="btn btn-sm" aria-label={`Remove ${o.name}`} onClick={() => { returnFocus.current = null; setEditor(null); setRemoving(o.id) }}>
                   Remove
                 </button>
               )}
+              </div>
             </li>
           ))}
         </ul>
@@ -196,9 +262,11 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
         <p className="wd-note">Save a look to switch back to it any time.</p>
       )}
 
-      {naming ? (
+      {editor && (editor.kind === 'save' || editingOutfit) ? (
         <form
           className="wd-name-form"
+          aria-label={editor.kind === 'rename' ? `Rename ${editingOutfit?.name}` : 'Save an outfit'}
+          onKeyDown={e => { if (e.key === 'Escape') { e.preventDefault(); setEditor(null) } }}
           onSubmit={(e) => {
             e.preventDefault()
             saveOutfit()
@@ -210,16 +278,16 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
           <div className="wd-name-row">
             <input ref={nameRef} id={`${uid}-name`} className="field wd-input" type="text" value={name} maxLength={MAX_OUTFIT_NAME} autoComplete="off" onChange={(e) => setName(e.target.value)} />
             <button type="submit" className="btn btn-primary">
-              Save outfit
+              {editor.kind === 'rename' ? 'Save name' : 'Save outfit'}
             </button>
-            <button type="button" className="btn" onClick={() => setNaming(false)}>
+            <button type="button" className="btn" onClick={() => setEditor(null)}>
               Not now
             </button>
           </div>
         </form>
       ) : (
         <div className="wd-save-row">
-          <button type="button" className="btn wd-save-outfit" disabled={full || isEmptyOutfit(equipped) || Boolean(current)} onClick={startNaming}>
+          <button id={`${uid}-save-outfit`} type="button" className="btn wd-save-outfit" disabled={full || isEmptyOutfit(equipped) || Boolean(current)} onClick={startNaming}>
             Save this outfit
           </button>
           {saveHint && <p className="wd-note">{saveHint}</p>}
@@ -258,10 +326,10 @@ export function Wardrobe({ pet, progress, onChange }: WardrobeProps) {
           </div>
 
           <div id={`${uid}-panel`} role="tabpanel" aria-labelledby={`${uid}-tab-${showing}`} className="wd-panel">
-            {showing === 'saved' ? saved : itemsGrid}
+            {showing !== 'saved' && itemsGrid}
+            {(wide || showing === 'saved') && saved}
           </div>
 
-          {wide && saved}
         </div>
       </div>
     </section>
