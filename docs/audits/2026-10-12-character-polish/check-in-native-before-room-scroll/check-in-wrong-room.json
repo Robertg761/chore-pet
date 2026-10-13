@@ -1,0 +1,8 @@
+{
+  "description": "Mochi is resting today. Say a quiet hello. Choose Mochi's room to see them.",
+  "clock": {
+    "pending": 0,
+    "delivered": 0
+  },
+  "method": "Real blocked doorway/focused destination; resting resident remains in source room and Check in disabled with room explanation."
+}

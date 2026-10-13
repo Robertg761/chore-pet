@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { catalogEntry } from '../catalog/objects'
 import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
 import { ACTION_MS } from '../character/motion'
-import { AFFECTION_LINES, CAUGHT_UP_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, REST_LINES, STRETCH_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
+import { AFFECTION_LINES, CAUGHT_UP_LINES, CHECK_IN_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, REST_LINES, STRETCH_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
 import { messiestObject } from '../domain/mess'
 import type { NeglectLevel } from '../domain/neglect'
 import type { ChoreStatus } from '../domain/schedule'
@@ -69,6 +69,8 @@ export type PlayerResponseResult = 'started' | 'busy' | 'resting' | 'unavailable
 export interface LivingRoomControl {
   lookAt: (objectId: string) => VisitResult
   respond: (action: PlayerGesture) => PlayerResponseResult
+  /** A gaze-only hello while resting, with the existing600ms notice deadline. */
+  checkIn: () => PlayerResponseResult
   /** Show a stationary furnishing marker without changing pet activity. */
   preview: (objectId: string | null) => void
 }
@@ -263,6 +265,18 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
     advance(next, now)
     play('chirp')
     setSaid({ text: pickLine(PLAYER_LINES[action], next.beat), heard: true })
+    return 'started'
+  }, checkIn: () => {
+    if (!away && mood !== 'sick') return 'unavailable'
+    const now = performance.now()
+    const current = advanceState(live.current.state, world, now, motion.current?.reduced ?? false)
+    if (current.noticeStart !== undefined && now < current.noticeStart + ACTION_MS.notice) return 'busy'
+    invitation.current = null
+    attention.current.pointer = null
+    const next = react(current, now, 'tap')
+    advance(next, now)
+    play('chirp')
+    setSaid({ text: pickLine(CHECK_IN_LINES, next.beat), heard: true })
     return 'started'
   }, lookAt: objectId => {
     if (away || mood === 'sick') return 'resting'

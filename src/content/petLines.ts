@@ -210,6 +210,11 @@ export const HOP_LINES: string[] = [
   'A little hop for you.',
   'Ta-da! That was fun.',
 ]
+export const CHECK_IN_LINES: string[] = [
+  'Just a quiet little hello.',
+  "I'm still resting, but I hear you.",
+  'Hello from my cosy spot.',
+]
 export const REST_LINES: string[] = [
   'A quiet moment together.',
   'Happy to rest here with you.',

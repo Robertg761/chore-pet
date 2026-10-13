@@ -1,0 +1,11 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --config /tmp/check-in-prototype.config.mjs --maxWorkers=1 src/pet/PetCheckIn.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  23:17:43
+   Duration  1.31s (transform 46%, tests 24%, environment 21%, import 8%)
+

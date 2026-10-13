@@ -1,0 +1,215 @@
+{
+  "method": "PNG byte comparison of two preserved previous stages to current final captures; not source/JSON/perceptual equivalence. Intermediate stages are history, not current acceptance.",
+  "pairs": [
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-initial/check-in-bun-away.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-bun-away.png",
+      "initialSha256": "7630ee33e691a91eef032a063bd37d9714755d589206778d5a39043f6debd5a6",
+      "finalSha256": "65affc0905dc7560775a60af294863d22ced09a6cbcd74fb97b913c11f7f0f1f",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-initial/check-in-bun-sick.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-bun-sick.png",
+      "initialSha256": "a0081c4eac8f3ea210300337850f80876c433d7889abbec1c3d7610635027acb",
+      "finalSha256": "d9bd25c860fabc8f9e8fa4774479fb912651286888b49d64bfdeaf6e8837ecbc",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-initial/check-in-mochi-away.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-mochi-away.png",
+      "initialSha256": "a107a07b40b4d2a4ee549391e38136240fa2b39a5490b8e46f3713988dc0e6df",
+      "finalSha256": "94469f97210fd207aab48186045c71b5f9a3478ff19c093862ad6f2e6bbdb114",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-initial/check-in-mochi-sick.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-mochi-sick.png",
+      "initialSha256": "71c474a370c7602b1f950dbacf2d2dc6586574708a116851eb02e8c9a493745d",
+      "finalSha256": "9ed0b16f25fe6d6714ad3857cdde99b96c6a7b40b214a867cee969edbccd5beb",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-initial/check-in-offscreen.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-offscreen.png",
+      "initialSha256": "34d73a64d721fa3d80eff1eb091e7a0af833e07f0427189ab0c8b70f34304fe1",
+      "finalSha256": "34d73a64d721fa3d80eff1eb091e7a0af833e07f0427189ab0c8b70f34304fe1",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-initial/check-in-reduced-device.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-reduced-device.png",
+      "initialSha256": "f962de1756a30eb9b755f9a7726f4a892fa8d2954ce6af8dbde78e3913cc18b1",
+      "finalSha256": "e4b231ce9955242d1a553fd64798bf8c4f90b71cb0def3cee95825fac9a1ddb9",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-initial/check-in-reduced-system.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-reduced-system.png",
+      "initialSha256": "d2d47ad679238cc7f339fc44abe81654efe5473668dedb01dba01d1809c5463e",
+      "finalSha256": "d2d47ad679238cc7f339fc44abe81654efe5473668dedb01dba01d1809c5463e",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-initial/check-in-sprout-away.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-sprout-away.png",
+      "initialSha256": "4aac9a748e808583b4024d73841640622aaea71496c02ff4bf921e59c8986853",
+      "finalSha256": "14320fcea2c81573fe87b36f4adfe1de32b9774334d2870105e582258e22df77",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-initial/check-in-sprout-sick.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-sprout-sick.png",
+      "initialSha256": "62bbd6a3468fb0dd814f0990b09652f839219640e478c7002f9ab655067296a5",
+      "finalSha256": "3ab723d49fb70c0a0bbd499886584f3dcc8316b7833469e7b14fdc3b8413a715",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-initial/check-in-wrong-room.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-wrong-room.png",
+      "initialSha256": "72f8d3f96195104eca9c36e9c6f8e739fcd2c8672a9ea2ff4be12895877cdd19",
+      "finalSha256": "a717c303dcdc30eef6f555c950d9d1fce5c3c81b48942564918ef9f2e2eec202",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-bun-away.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-bun-away.png",
+      "initialSha256": "65affc0905dc7560775a60af294863d22ced09a6cbcd74fb97b913c11f7f0f1f",
+      "finalSha256": "65affc0905dc7560775a60af294863d22ced09a6cbcd74fb97b913c11f7f0f1f",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-bun-sick.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-bun-sick.png",
+      "initialSha256": "441c7b1c5f7497a30b1aade1da910b0d7c475469e0b517cac4d90991430ada95",
+      "finalSha256": "d9bd25c860fabc8f9e8fa4774479fb912651286888b49d64bfdeaf6e8837ecbc",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-layout-1280-100.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-layout-1280-100.png",
+      "initialSha256": "dfb98e5fbeafb6af7495cc65c53fa99dcdd18c82f33d9e832d72d70bf3434951",
+      "finalSha256": "dfb98e5fbeafb6af7495cc65c53fa99dcdd18c82f33d9e832d72d70bf3434951",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-layout-1280-200.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-layout-1280-200.png",
+      "initialSha256": "6be774c9a435ac8e54e5944562e34cb3513b506cff23fcb8a78c8fdd3076e2df",
+      "finalSha256": "6be774c9a435ac8e54e5944562e34cb3513b506cff23fcb8a78c8fdd3076e2df",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-layout-320-100.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-layout-320-100.png",
+      "initialSha256": "bfeb05287da4c43821fb8acfd451d26789c25af0b8d5125a2fd24a32c6c02e0d",
+      "finalSha256": "bfeb05287da4c43821fb8acfd451d26789c25af0b8d5125a2fd24a32c6c02e0d",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-layout-320-200.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-layout-320-200.png",
+      "initialSha256": "a68768f4dab6ee40906f4f498f5c06cf356899eac623f5f1a86eb07e31e97e95",
+      "finalSha256": "a68768f4dab6ee40906f4f498f5c06cf356899eac623f5f1a86eb07e31e97e95",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-layout-390-100.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-layout-390-100.png",
+      "initialSha256": "7e2cbd91529243f305d13b862a28fca4684b8cbb8906af25e17ce0593f685d1c",
+      "finalSha256": "7e2cbd91529243f305d13b862a28fca4684b8cbb8906af25e17ce0593f685d1c",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-layout-390-200.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-layout-390-200.png",
+      "initialSha256": "6a67e2edfc7f5921eea0872fa23bd6ee973a2d46ef8a51eb86f335a169758856",
+      "finalSha256": "6a67e2edfc7f5921eea0872fa23bd6ee973a2d46ef8a51eb86f335a169758856",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-layout-640-100.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-layout-640-100.png",
+      "initialSha256": "e5b5597e6c98fa09f9de821e19f285dfd95eeedb850fd36a02e2371e2f90970f",
+      "finalSha256": "e5b5597e6c98fa09f9de821e19f285dfd95eeedb850fd36a02e2371e2f90970f",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-layout-640-200.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-layout-640-200.png",
+      "initialSha256": "2bf4e899fea57ff669be8090edd7a18e1f8fd88711e4afea09c55ab9704f5858",
+      "finalSha256": "2bf4e899fea57ff669be8090edd7a18e1f8fd88711e4afea09c55ab9704f5858",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-layout-844-100.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-layout-844-100.png",
+      "initialSha256": "a0efc20e7ca1b74d12ed980945870afeb4e692b6780da0286c4e9f9c8a3caba5",
+      "finalSha256": "a0efc20e7ca1b74d12ed980945870afeb4e692b6780da0286c4e9f9c8a3caba5",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-layout-844-200.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-layout-844-200.png",
+      "initialSha256": "7dde4adc478f8bc38d665520f14f38f7cfca8409a81c338aef756684e60dd411",
+      "finalSha256": "7dde4adc478f8bc38d665520f14f38f7cfca8409a81c338aef756684e60dd411",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-mochi-away.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-mochi-away.png",
+      "initialSha256": "311b667041847063415fc25e900abd93eadfc848282ba231108eb5fbc20f4660",
+      "finalSha256": "94469f97210fd207aab48186045c71b5f9a3478ff19c093862ad6f2e6bbdb114",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-mochi-sick.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-mochi-sick.png",
+      "initialSha256": "690be14aff80642f0a7aab41438f204eeaa6d8d1e4e64088fb7c4ad35563d596",
+      "finalSha256": "9ed0b16f25fe6d6714ad3857cdde99b96c6a7b40b214a867cee969edbccd5beb",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-offscreen.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-offscreen.png",
+      "initialSha256": "34d73a64d721fa3d80eff1eb091e7a0af833e07f0427189ab0c8b70f34304fe1",
+      "finalSha256": "34d73a64d721fa3d80eff1eb091e7a0af833e07f0427189ab0c8b70f34304fe1",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-reduced-device.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-reduced-device.png",
+      "initialSha256": "1da1a8f7b6fa1b362223a4756bf3cc840ed0da48d3a94e6e6f72b3f34d791556",
+      "finalSha256": "e4b231ce9955242d1a553fd64798bf8c4f90b71cb0def3cee95825fac9a1ddb9",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-reduced-system.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-reduced-system.png",
+      "initialSha256": "d2d47ad679238cc7f339fc44abe81654efe5473668dedb01dba01d1809c5463e",
+      "finalSha256": "d2d47ad679238cc7f339fc44abe81654efe5473668dedb01dba01d1809c5463e",
+      "byteExact": true
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-sprout-away.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-sprout-away.png",
+      "initialSha256": "f3cfb9d3cfd94e6c56b0e0f845d77d0e64fb827d33d1989d3ff731058bfaa5ce",
+      "finalSha256": "14320fcea2c81573fe87b36f4adfe1de32b9774334d2870105e582258e22df77",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-sprout-sick.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-sprout-sick.png",
+      "initialSha256": "caecc9d43c251189a1bc303d60e24716b1e8ae0779c4f989f2ca867d1436a24e",
+      "finalSha256": "3ab723d49fb70c0a0bbd499886584f3dcc8316b7833469e7b14fdc3b8413a715",
+      "byteExact": false
+    },
+    {
+      "initial": "docs/audits/2026-10-12-character-polish/check-in-native-before-render-reset/check-in-wrong-room.png",
+      "final": "docs/audits/2026-10-12-character-polish/check-in-native/check-in-wrong-room.png",
+      "initialSha256": "79b3c217b061422aeb60a85ecf750a6aac1cca2ddf18de4a9b3f50fa3e602c75",
+      "finalSha256": "a717c303dcdc30eef6f555c950d9d1fce5c3c81b48942564918ef9f2e2eec202",
+      "byteExact": false
+    }
+  ]
+}

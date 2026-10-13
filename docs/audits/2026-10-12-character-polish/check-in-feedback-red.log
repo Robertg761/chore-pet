@@ -1,0 +1,36 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetPlay.checkIn.test.tsx -t does not revive
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetPlay.checkIn.test.tsx (10 tests | 2 failed | 8 skipped) 44ms
+   × does not revive an old play busy message after leaving and returning to its mode 37ms
+   × does not revive an old check-in busy message after leaving and returning to its mode 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetPlay.checkIn.test.tsx > does not revive an old play busy message after leaving and returning to its mode
+ FAIL  src/pet/PetPlay.checkIn.test.tsx > does not revive an old check-in busy message after leaving and returning to its mode
+AssertionError: expected 'Bun is busy for a moment. Try again s…' to be '' // Object.is equality
+
+- Expected
++ Received
+
++ Bun is busy for a moment. Try again shortly.
+
+ ❯ src/pet/PetPlay.checkIn.test.tsx:84:23
+     82|   expect(ui.status()).toBe('')
+     83|   ui.rerender(<PetPlay {...ui.props} blocked={blocked} />)
+     84|   expect(ui.status()).toBe('')
+       |                       ^
+     85|   expect(ui.button('Spend time together').getAttribute('aria-expanded'…
+     86| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 8 skipped (10)
+   Start at  23:20:38
+   Duration  463ms (environment 68%, tests 12%, transform 10%, import 9%, worker 1%)
+

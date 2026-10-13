@@ -1,0 +1,28 @@
+{
+  "viewport": {
+    "width": 320,
+    "height": 640
+  },
+  "font": 100,
+  "geometry": {
+    "x": 31,
+    "right": 289,
+    "height": 48,
+    "width": 258,
+    "label": {
+      "x": 131.953125,
+      "right": 188.046875,
+      "height": 19
+    },
+    "panelWidth": 282,
+    "panelScrollWidth": 282,
+    "documentWidth": 320,
+    "innerWidth": 320,
+    "focusVisible": true,
+    "notes": [
+      "Mochi is resting while you're away. Say a quiet hello."
+    ],
+    "controls": 1
+  },
+  "method": "Native production layout with100/200%root text, keyboard focus,44px width/48px height target and label/scroll bounds. Root text enlargement, not browser zoom or AT certification."
+}

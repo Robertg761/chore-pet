@@ -14,6 +14,7 @@
 @media (max-width: 374px) {
   .pet-play-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+.pet-play-actions .btn.pet-play-checkin { flex-basis: 100%; grid-column: 1 / -1; }
 /* The chores panel can be narrow inside a wide landscape viewport. Relative
    thresholds also leave room when text is enlarged, without a resize listener. */
 @supports (container-type: inline-size) {

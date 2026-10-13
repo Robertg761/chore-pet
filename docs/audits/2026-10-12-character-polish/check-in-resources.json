@@ -1,0 +1,18 @@
+{
+  "snapshots": [
+    {
+      "recordedUnixSeconds": 1791856282.6137416,
+      "memAvailableKiB": 5364700,
+      "tmpFreeBytes": 4304134144,
+      "workspaceFreeBytes": 590487830528,
+      "policy": "One heavy job/worker/browser;768MBNode heap cap/nice10. Defer heavy jobs below3GiBavailableRAM or2GiBtmpfree. Snapshot,not peak/performance certification."
+    },
+    {
+      "recordedUnixSeconds": 1791856934.978236,
+      "memAvailableKiB": 3650476,
+      "tmpFreeBytes": 4304130048,
+      "workspaceFreeBytes": 590470328320
+    }
+  ],
+  "policy": "One heavy job/worker/browser;768MBNode heap cap/nice10. Defer heavy jobs below3GiBavailableRAM or2GiBtmpfree. Snapshot,not peak/performance certification."
+}

@@ -1,0 +1,191 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
+
+const out = process.env.CHORE_CHECK_IN_CAPTURE_DIR
+async function capture(page, name, evidence) {
+  if (!out) return
+  await mkdir(out, { recursive: true })
+  await page.screenshot({ path: join(out, `${name}.png`) })
+  await writeFile(join(out, `${name}.json`), JSON.stringify(evidence, null, 2)+'\n')
+}
+async function fixture(t, mode, species = 'mochi', options = {}) {
+  const { device = false, secondRoom = false, font = 100, freeze = true, ...browserOptions } = options
+  const page = await browserApp(t, { viewport: { width: 1280, height: 800 }, reducedMotion: 'no-preference', ...browserOptions })
+  await page.evaluate(({ mode, species, secondRoom, device }) => new Promise((resolve, reject) => {
+    if (device) localStorage.setItem('chore-pet-reduce-motion', 'on')
+    const request = indexedDB.open('chore-pet', 1)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
+      read.onsuccess = () => {
+        const saved = read.result, tables = saved.tables, pet = Object.values(tables.pets)[0]
+        pet.species = species
+        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
+        if (mode === 'away') {
+          Object.values(tables.homes)[0].vacations = [{ start: '2000-01-01', end: '2099-12-31' }]
+          tables.chores = {}; tables.completions = {}
+        } else {
+          const old = new Date(Date.now()-45*86400000).toISOString().slice(0,10)
+          for (const chore of Object.values(tables.chores)) { chore.createdOn = old; chore.schedule = { kind: 'daily' } }
+          tables.completions = {}
+        }
+        if (secondRoom) {
+          const room = Object.values(tables.rooms)[0]
+          tables.rooms['second-room'] = { ...room, id: 'second-room', type: 'bedroom' }
+          const fridge = Object.values(tables.placed_objects).find(object => object.catalogId === 'fridge')
+          tables.placed_objects['blocked-door'] = { ...fridge, id: 'blocked-door', tileX: 7, tileY: 4, rotation: 0 }
+        }
+        saved.outbox = {}; store.put(saved, 'snapshot')
+      }
+      tx.oncomplete = () => { db.close(); resolve() }
+      tx.onerror = () => { db.close(); reject(tx.error) }
+    }
+  }), { mode, species, secondRoom, device })
+  if (freeze) { await page.clock.install(); await page.clock.pauseAt(Date.now()+1000) }
+  await page.addInitScript(font => {
+    Math.random = () => .99
+    if (font !== 100) document.addEventListener('DOMContentLoaded', () => { document.documentElement.style.fontSize = `${font}%` })
+    const request = requestAnimationFrame, cancel = cancelAnimationFrame
+    window.__checkInClock = { pending: new Set(), delivered: 0 }
+    window.requestAnimationFrame = callback => {
+      const id = request(now => { window.__checkInClock.pending.delete(id); window.__checkInClock.delivered++; callback(now) })
+      window.__checkInClock.pending.add(id); return id
+    }
+    window.cancelAnimationFrame = id => { window.__checkInClock.pending.delete(id); cancel(id) }
+  }, font)
+  await page.reload(); await page.locator('.room-pet').waitFor()
+  if (freeze) await page.clock.runFor(64)
+  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
+  return page
+}
+const clock = page => page.evaluate(() => ({ pending: window.__checkInClock.pending.size, delivered: window.__checkInClock.delivered }))
+const restingArt = node => {
+  const body = node.querySelector('[data-character-body]').cloneNode(true)
+  body.querySelectorAll('[data-expression]').forEach(part => part.remove())
+  return { body: body.outerHTML, face: node.querySelector('[data-expression]').outerHTML,
+    ground: node.querySelector('[data-character-ground]').outerHTML,
+    pose: node.querySelector('[data-character-pose]').getAttribute('data-character-pose'), position: node.getAttribute('transform') }
+}
+
+for (const species of ['mochi', 'bun', 'sprout']) for (const mode of ['away', 'sick']) {
+  test(`${species} ${mode} Check in keeps resting art and the original600ms deadline`, async t => {
+    const page = await fixture(t, mode, species), check = page.getByRole('button', { name: 'Check in', exact: true }), resident = page.locator('.room-pet')
+    await check.waitFor()
+    const saved = (await snapshot(page)).tables, before = await resident.evaluate(restingArt)
+    assert.equal(before.pose, mode === 'away' ? 'sleeping' : 'sick')
+    assert.equal((await clock(page)).pending, 0)
+    await resident.evaluate(node => { window.__checkInResident = node })
+    await page.locator('.living-room [aria-live="polite"]').evaluate(node => {
+      window.__checkInAnnouncements = []
+      new MutationObserver(() => window.__checkInAnnouncements.push(node.textContent)).observe(node, { childList: true, subtree: true, characterData: true })
+    })
+    await check.focus(); await page.keyboard.press('Enter')
+    assert.equal(await check.evaluate(node => node === document.activeElement && node.matches(':focus-visible')), true)
+    const live = page.locator('.living-room [aria-live="polite"]'), heard = await live.textContent()
+    assert.ok(heard.trim())
+    assert.equal((await clock(page)).pending, 1)
+    await page.clock.runFor(240)
+    const held = await resident.evaluate(restingArt)
+    assert.notEqual(held.face, before.face, 'only the existing small resting gaze acknowledges the player')
+    for (const key of ['body', 'ground', 'pose', 'position']) assert.equal(held[key], before[key], key)
+    await capture(page, `check-in-${species}-${mode}`, { species, mode, before, held, clock: await clock(page), heard, method: 'Actual keyboard Check in at240ms; sleeping/sick body excluding face and ground/world transform exact; gaze-only acknowledgment. Finite deadline and busy retry checked after capture.' })
+    await page.keyboard.press('Enter')
+    assert.match(await page.locator('.pet-play-feedback').textContent(), /busy/i)
+    assert.equal(await live.textContent(), heard)
+    assert.equal(await page.evaluate(() => window.__checkInAnnouncements.length), 1)
+    await page.clock.runFor(320)
+    assert.equal((await clock(page)).pending, 1)
+    await page.clock.runFor(80)
+    assert.equal((await clock(page)).pending, 0, 'expires by640ms, before a retry at240ms could extend600ms to840ms')
+    assert.deepEqual(await resident.evaluate(restingArt), before)
+    assert.equal(await resident.evaluate(node => node === window.__checkInResident), true)
+    assert.deepEqual((await snapshot(page)).tables, saved)
+    await page.keyboard.press('Enter'); assert.equal((await clock(page)).pending, 1)
+    await page.clock.runFor(640); assert.equal((await clock(page)).pending, 0)
+  })
+}
+
+for (const policy of ['system', 'device']) test(`${policy} reduced Check in stays still and returns to zero frames`, async t => {
+  const page = await fixture(t, policy === 'system' ? 'away' : 'sick', 'bun', { reducedMotion: policy === 'system' ? 'reduce' : 'no-preference', device: policy === 'device' })
+  const check = page.getByRole('button', { name: 'Check in', exact: true }), resident = page.locator('.room-pet')
+  await check.waitFor()
+  const still = await resident.locator('.ch-animated').innerHTML(), saved = (await snapshot(page)).tables
+  await check.focus(); await page.keyboard.press('Enter'); await page.clock.runFor(240)
+  assert.equal(await resident.locator('.ch-animated').innerHTML(), still)
+  assert.equal((await clock(page)).pending, 1)
+  const heard = await page.locator('.living-room [aria-live="polite"]').textContent(); assert.ok(heard.trim())
+  await capture(page, `check-in-reduced-${policy}`, { policy, clock: await clock(page), heard, method: 'Actual reduced preference; all animated art bytes unchanged at240ms, one finite existing clock. Expiry checked after capture.' })
+  await page.keyboard.press('Enter'); await page.clock.runFor(400)
+  assert.equal((await clock(page)).pending, 0)
+  assert.equal(await resident.locator('.ch-animated').innerHTML(), still)
+  if (policy === 'system') { await changeReducedMotion(page, 'no-preference'); assert.equal((await clock(page)).pending, 0) }
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})
+
+const viewports = [{ width: 320, height: 640 }, { width: 390, height: 664 }, { width: 640, height: 360 }, { width: 844, height: 390 }, { width: 1280, height: 800 }]
+for (const viewport of viewports) for (const font of [100, 200]) test(`Check in fits${viewport.width}x${viewport.height} at${font}%root text`, async t => {
+  const page = await fixture(t, 'away', 'mochi', { viewport, font, reducedMotion: 'reduce' }), check = page.getByRole('button', { name: 'Check in', exact: true })
+  await check.waitFor(); await check.scrollIntoViewIfNeeded(); await check.focus()
+  const geometry = await check.evaluate(node => {
+    const b = node.getBoundingClientRect(), range = document.createRange(); range.selectNodeContents(node); const label = range.getBoundingClientRect()
+    const panel = node.closest('.pet-play-panel')
+    return { x: b.x, right: b.right, height: b.height, width: b.width, label: { x: label.x, right: label.right, height: label.height }, panelWidth: panel.clientWidth, panelScrollWidth: panel.scrollWidth,
+      documentWidth: document.documentElement.scrollWidth, innerWidth, focusVisible: node === document.activeElement && node.matches(':focus-visible'),
+      notes: node.getAttribute('aria-describedby').split(/\s+/).map(id => document.getElementById(id).textContent), controls: panel.querySelectorAll('.pet-play-actions button').length }
+  })
+  assert.ok(geometry.x >= 0 && geometry.right <= viewport.width)
+  assert.ok(geometry.width >= 44 && geometry.height >= 48)
+  assert.ok(geometry.label.x >= geometry.x && geometry.label.right <= geometry.right)
+  assert.ok(geometry.panelScrollWidth <= geometry.panelWidth && geometry.documentWidth <= geometry.innerWidth)
+  assert.equal(geometry.controls, 1); assert.equal(geometry.focusVisible, true)
+  assert.match(geometry.notes.join(' '), /resting.*quiet hello/i)
+  await capture(page, `check-in-layout-${viewport.width}-${font}`, { viewport, font, geometry, method: 'Native production layout with100/200%root text, keyboard focus,44px width/48px height target and label/scroll bounds. Root text enlargement, not browser zoom or AT certification.' })
+})
+
+test('Check in explains the wrong room and re-enables in the resting resident room', async t => {
+  const page = await fixture(t, 'sick', 'mochi', { secondRoom: true }), saved = (await snapshot(page)).tables
+  await page.locator('.room-controls-focus select').selectOption('second-room')
+  assert.match(await page.locator('.home-scene-travel-status').textContent(), /blocked/)
+  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
+  const check = page.getByRole('button', { name: 'Check in', exact: true })
+  assert.equal(await check.isDisabled(), true)
+  const description = await check.evaluate(node => node.getAttribute('aria-describedby').split(/\s+/).map(id => document.getElementById(id).textContent).join(' '))
+  assert.match(description, /Choose Mochi's room/)
+  assert.equal((await clock(page)).pending, 0)
+  await capture(page, 'check-in-wrong-room', { description, clock: await clock(page), method: 'Real blocked doorway/focused destination; resting resident remains in source room and Check in disabled with room explanation.' })
+  const sourceId = Object.keys(saved.rooms).find(id => id !== 'second-room')
+  await page.locator('.room-controls-focus select').selectOption(sourceId)
+  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
+  assert.equal(await check.isEnabled(), true)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})
+
+
+test('an offscreen Check in resumes only before its deadline and expires without replay', async t => {
+  const page = await fixture(t, 'away', 'mochi', { viewport: { width: 320, height: 640 }, font: 200, reducedMotion: 'reduce', freeze: false })
+  const resident = page.locator('.room-pet'), check = page.getByRole('button', { name: 'Check in', exact: true }), show = page.getByRole('button', { name: 'Show room with Mochi', exact: true })
+  await check.waitFor()
+  const saved = (await snapshot(page)).tables, still = await resident.locator('.ch-animated').innerHTML()
+  const scrollAway = async () => {
+    await check.scrollIntoViewIfNeeded()
+    await page.waitForFunction(() => document.querySelector('.room-pet').getBoundingClientRect().bottom < 0)
+    await page.waitForFunction(() => window.__checkInClock.pending.size === 0)
+  }
+  await scrollAway(); await check.click()
+  assert.equal((await clock(page)).pending, 0)
+  const live = page.locator('.living-room [aria-live="polite"]'), heard = await live.textContent(); assert.ok(heard.trim())
+  await show.focus(); await page.keyboard.press('Enter')
+  await page.waitForFunction(() => window.__checkInClock.pending.size === 1)
+  assert.equal(await resident.evaluate(node => node === document.activeElement), true)
+  assert.equal(await resident.locator('.ch-animated').innerHTML(), still)
+  await scrollAway(); await page.waitForTimeout(700)
+  await show.focus(); await page.keyboard.press('Enter')
+  await page.waitForFunction(() => window.__checkInClock.pending.size === 0)
+  assert.equal(await resident.locator('.ch-animated').innerHTML(), still)
+  assert.equal(await live.textContent(), heard)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+  await capture(page, 'check-in-offscreen', { heard, clock: await clock(page), method: 'Real native observer and wall-clock600ms deadline at200%root text; offscreen0 -> active visible1 -> offscreen0 -> expired visible0, still reduced art and no replay/saved changes.' })
+})

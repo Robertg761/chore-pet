@@ -1,0 +1,155 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/PetPlay.checkIn.test.tsx src/pet/PetCheckIn.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetCheckIn.test.tsx (8 tests | 8 failed) 176ms
+   × accepts one quiet sick Check in without waking the body or extending600ms 57ms
+   × accepts one quiet away Check in without waking the body or extending600ms 21ms
+   × keeps a reduced sick Check in visually still and expires at its original deadline 20ms
+   × keeps a reduced away Check in visually still and expires at its original deadline 17ms
+   × uses current sick props for Check in before a frame and declines it when healthy 19ms
+   × uses current away props for Check in before a frame and declines it when healthy 15ms
+   × lets an offscreen sick Check in expire without replay or a hidden clock 18ms
+   × lets an offscreen away Check in expire without replay or a hidden clock 9ms
+ ❯ src/pet/PetPlay.checkIn.test.tsx (8 tests | 6 failed) 63ms
+   × offers one quiet Check in while away, delegates once and leaves success speech to the resident 33ms
+   × offers one quiet Check in while sick, delegates once and leaves success speech to the resident 4ms
+   × explains a away Check in that requires the resident room 4ms
+   × explains a sick Check in that requires the resident room 4ms
+   × announces a busy Check in once, clears accepted feedback, and keeps it relevant across modes 3ms
+   × hides old play feedback when resting and clears Check in feedback after Show room succeeds 6ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 14 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetCheckIn.test.tsx > accepts one quiet sick Check in without waking the body or extending600ms
+ FAIL  src/pet/PetCheckIn.test.tsx > accepts one quiet away Check in without waking the body or extending600ms
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ src/pet/PetCheckIn.test.tsx:50:43
+     48|   const control = createRef<LivingRoomControl>()
+     49|   const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? '…
+     50|   expect(typeof control.current!.checkIn).toBe('function')
+       |                                           ^
+     51|   const resident = ui.container.querySelector('.room-pet')!, node = ar…
+     52|   const body = restingBodyWithoutFace(ui.container), ground = ui.conta…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯
+
+ FAIL  src/pet/PetCheckIn.test.tsx > keeps a reduced sick Check in visually still and expires at its original deadline
+ FAIL  src/pet/PetCheckIn.test.tsx > keeps a reduced away Check in visually still and expires at its original deadline
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ src/pet/PetCheckIn.test.tsx:80:43
+     78|   const control = createRef<LivingRoomControl>()
+     79|   const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? '…
+     80|   expect(typeof control.current!.checkIn).toBe('function')
+       |                                           ^
+     81|   const still = art(ui.container).outerHTML
+     82|   act(() => { expect(control.current!.checkIn()).toBe('started') })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯
+
+ FAIL  src/pet/PetCheckIn.test.tsx > uses current sick props for Check in before a frame and declines it when healthy
+ FAIL  src/pet/PetCheckIn.test.tsx > uses current away props for Check in before a frame and declines it when healthy
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ src/pet/PetCheckIn.test.tsx:93:43
+     91|   const control = createRef<LivingRoomControl>()
+     92|   const ui = mount(<LivingRoom {...props} mood="happy" control={contro…
+     93|   expect(typeof control.current!.checkIn).toBe('function')
+       |                                           ^
+     94|   act(() => { expect(control.current!.checkIn()).toBe('unavailable') })
+     95|   ui.rerender(<LivingRoom {...props} mood={resting === 'sick' ? 'sick'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/14]⎯
+
+ FAIL  src/pet/PetCheckIn.test.tsx > lets an offscreen sick Check in expire without replay or a hidden clock
+ FAIL  src/pet/PetCheckIn.test.tsx > lets an offscreen away Check in expire without replay or a hidden clock
+AssertionError: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ src/pet/PetCheckIn.test.tsx:104:43
+    102|   const observer = observeResident(), control = createRef<LivingRoomCo…
+    103|   const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? '…
+    104|   expect(typeof control.current!.checkIn).toBe('function')
+       |                                           ^
+    105|   const still = art(ui.container).outerHTML
+    106|   observer.show(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/14]⎯
+
+ FAIL  src/pet/PetPlay.checkIn.test.tsx > offers one quiet Check in while away, delegates once and leaves success speech to the resident
+ FAIL  src/pet/PetPlay.checkIn.test.tsx > offers one quiet Check in while sick, delegates once and leaves success speech to the resident
+AssertionError: expected undefined to be defined
+ ❯ src/pet/PetPlay.checkIn.test.tsx:20:17
+     18|   const ui = mount({ blocked })
+     19|   const check = ui.button('Check in')
+     20|   expect(check).toBeDefined()
+       |                 ^
+     21|   expect([...ui.container.querySelectorAll('.pet-play-actions button')…
+     22|   expect(check.disabled).toBe(false)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/14]⎯
+
+ FAIL  src/pet/PetPlay.checkIn.test.tsx > explains a away Check in that requires the resident room
+ FAIL  src/pet/PetPlay.checkIn.test.tsx > explains a sick Check in that requires the resident room
+AssertionError: expected undefined to be defined
+ ❯ src/pet/PetPlay.checkIn.test.tsx:34:17
+     32|   const ui = mount({ blocked, showRoomUnavailable: "Choose Bun's room …
+     33|   const check = ui.button('Check in')
+     34|   expect(check).toBeDefined(); expect(check.disabled).toBe(true)
+       |                 ^
+     35|   const described = check.getAttribute('aria-describedby')!.split(/\s+…
+     36|   expect(described).toContain("Choose Bun's room to see them.")
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/14]⎯
+
+ FAIL  src/pet/PetPlay.checkIn.test.tsx > announces a busy Check in once, clears accepted feedback, and keeps it relevant across modes
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/test/react.tsx:23:78
+     21|   })
+     22| }
+     23| export function click(element: Element) { act(() => (element as HTMLEl…
+       |                                                                              ^
+     24|
+ ❯ process.env.NODE_ENV.exports.act node_modules/react/cjs/react.development.js:890:22
+ ❯ click src/test/react.tsx:23:43
+ ❯ src/pet/PetPlay.checkIn.test.tsx:56:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/14]⎯
+
+ FAIL  src/pet/PetPlay.checkIn.test.tsx > hides old play feedback when resting and clears Check in feedback after Show room succeeds
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/test/react.tsx:23:78
+     21|   })
+     22| }
+     23| export function click(element: Element) { act(() => (element as HTMLEl…
+       |                                                                              ^
+     24|
+ ❯ process.env.NODE_ENV.exports.act node_modules/react/cjs/react.development.js:890:22
+ ❯ click src/test/react.tsx:23:43
+ ❯ src/pet/PetPlay.checkIn.test.tsx:72:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/14]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  14 failed | 2 passed (16)
+   Start at  23:12:22
+   Duration  1.92s (transform 43%, environment 34%, tests 14%, import 9%, worker 1%)
+
+    Isolate  2 workers spawned · ~367ms startup each (spawn + environment, per file)
+             at least ~367ms faster with isolate: false — reuses workers across files instead of one per file
+

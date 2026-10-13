@@ -1,0 +1,13 @@
+import { readFileSync } from 'node:fs'
+const candidates = {
+  '/src/pet/LivingRoom.tsx': '/tmp/check-in-LivingRoom.tsx',
+  '/src/content/petLines.ts': '/tmp/check-in-petLines.ts',
+  '/src/App.tsx': '/tmp/check-in-App.tsx',
+}
+export default {
+  plugins: [{ name: 'isolated-check-in-candidate', enforce: 'pre', transform(code, id) {
+    const path = id.split('?')[0], candidate = candidates[path.slice(process.cwd().length)]
+    if (candidate) return { code: readFileSync(candidate, 'utf8'), map: null }
+  } }],
+  test: { environment: 'node', include: ['src/**/*.test.{ts,tsx}', 'supabase/**/*.test.ts'] },
+}

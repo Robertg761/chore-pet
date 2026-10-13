@@ -1,0 +1,606 @@
+diff --git i/src/App.tsx w/src/App.tsx
+index 2427d19..067c222 100644
+--- i/src/App.tsx
++++ w/src/App.tsx
+@@ -1012,6 +1012,8 @@ export default function App() {
+           blocked={away ? 'away' : condition.mood === 'sick' ? 'sick' : travel.journey || resident?.id !== room.id ? 'travel' : undefined}
+           onReact={action => !travel.journey && resident?.id === room.id
+             ? residentControl.current?.respond(action) ?? 'unavailable' : 'unavailable'}
++          onCheckIn={() => !travel.journey && resident?.id === room.id
++            ? residentControl.current?.checkIn() ?? 'unavailable' : 'unavailable'}
+           showRoomUnavailable={showRoomUnavailable} onShowRoom={showResidentRoom} />}
+       </div>
+ 
+diff --git i/src/content/petLines.ts w/src/content/petLines.ts
+index 19ab4d4..7e56dc7 100644
+--- i/src/content/petLines.ts
++++ w/src/content/petLines.ts
+@@ -210,6 +210,11 @@ export const HOP_LINES: string[] = [
+   'A little hop for you.',
+   'Ta-da! That was fun.',
+ ]
++export const CHECK_IN_LINES: string[] = [
++  'Just a quiet little hello.',
++  "I'm still resting, but I hear you.",
++  'Hello from my cosy spot.',
++]
+ export const REST_LINES: string[] = [
+   'A quiet moment together.',
+   'Happy to rest here with you.',
+diff --git i/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index bd0e787..9cfb2b9 100644
+--- i/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
+ import { catalogEntry } from '../catalog/objects'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+ import { ACTION_MS } from '../character/motion'
+-import { AFFECTION_LINES, CAUGHT_UP_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, REST_LINES, STRETCH_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
++import { AFFECTION_LINES, CAUGHT_UP_LINES, CHECK_IN_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, REST_LINES, STRETCH_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
+ import { messiestObject } from '../domain/mess'
+ import type { NeglectLevel } from '../domain/neglect'
+ import type { ChoreStatus } from '../domain/schedule'
+@@ -69,6 +69,8 @@ export type PlayerResponseResult = 'started' | 'busy' | 'resting' | 'unavailable
+ export interface LivingRoomControl {
+   lookAt: (objectId: string) => VisitResult
+   respond: (action: PlayerGesture) => PlayerResponseResult
++  /** A gaze-only hello while resting, with the existing600ms notice deadline. */
++  checkIn: () => PlayerResponseResult
+   /** Show a stationary furnishing marker without changing pet activity. */
+   preview: (objectId: string | null) => void
+ }
+@@ -264,6 +266,18 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+     play('chirp')
+     setSaid({ text: pickLine(PLAYER_LINES[action], next.beat), heard: true })
+     return 'started'
++  }, checkIn: () => {
++    if (!away && mood !== 'sick') return 'unavailable'
++    const now = performance.now()
++    const current = advanceState(live.current.state, world, now, motion.current?.reduced ?? false)
++    if (current.noticeStart !== undefined && now < current.noticeStart + ACTION_MS.notice) return 'busy'
++    invitation.current = null
++    attention.current.pointer = null
++    const next = react(current, now, 'tap')
++    advance(next, now)
++    play('chirp')
++    setSaid({ text: pickLine(CHECK_IN_LINES, next.beat), heard: true })
++    return 'started'
+   }, lookAt: objectId => {
+     if (away || mood === 'sick') return 'resting'
+     if (!objects.some(object => object.id === objectId && catalogEntry(object.catalogId))) return 'unreachable'
+diff --git i/src/pet/PetPlay.tsx w/src/pet/PetPlay.tsx
+index 38c84d8..af8cbba 100644
+--- i/src/pet/PetPlay.tsx
++++ w/src/pet/PetPlay.tsx
+@@ -7,28 +7,42 @@ export interface PetPlayProps {
+   petName: string
+   blocked?: 'travel' | 'away' | 'sick'
+   onReact: (action: PlayerGesture) => PlayerResponseResult
++  onCheckIn?: () => PlayerResponseResult
+   onShowRoom?: () => boolean
+   showRoomUnavailable?: string
+ }
+ 
+ /** Optional player time, after the chores. The resident owns all motion/speech. */
+-export function PetPlay({ petName, blocked, onReact, onShowRoom, showRoomUnavailable }: PetPlayProps) {
++export function PetPlay({ petName, blocked, onReact, onCheckIn, onShowRoom, showRoomUnavailable }: PetPlayProps) {
+   const id = useId()
+   const [open, setOpen] = useState(false)
+-  const [result, setResult] = useState<PlayerResponseResult | null>(null)
++  const [response, setResponse] = useState<{ source: 'play' | 'check-in' | 'view'; result: PlayerResponseResult } | null>(null)
++  const [previousMode, setPreviousMode] = useState(blocked)
++  if (previousMode !== blocked) {
++    setPreviousMode(blocked)
++    setResponse(null)
++  }
++  const canCheckIn = (blocked === 'away' || blocked === 'sick') && Boolean(onCheckIn)
+   const note = blocked === 'travel' ? `${petName} is on the way.`
+     : blocked === 'away' ? `${petName} is resting while you're away.`
+     : blocked === 'sick' ? `${petName} is resting today.` : ''
++  const restingNote = canCheckIn ? `${note} Say a quiet hello.` : note
+   const viewNote = showRoomUnavailable || (blocked === 'travel' ? note : '')
+   const viewNoteId = `${id}-${viewNote === note ? 'note' : 'view-note'}`
++  const result = response && (response.source === 'view'
++    || (response.source === 'check-in' && canCheckIn)
++    || (response.source === 'play' && !blocked)) ? response.result : null
+   const feedback = result === 'busy' ? `${petName} is busy for a moment. Try again shortly.`
+     : result === 'resting' ? `${petName} is resting. Try again later.`
+     : result === 'unavailable' ? `Try again when ${petName} arrives.` : ''
+   const choose = (action: PlayerGesture) => {
+-    if (!blocked) setResult(onReact(action))
++    if (!blocked) setResponse({ source: 'play', result: onReact(action) })
++  }
++  const checkIn = () => {
++    if (canCheckIn && !viewNote && onCheckIn) setResponse({ source: 'check-in', result: onCheckIn() })
+   }
+   const showRoom = () => {
+-    if (!viewNote && onShowRoom) setResult(onShowRoom() ? null : 'unavailable')
++    if (!viewNote && onShowRoom) setResponse(onShowRoom() ? null : { source: 'view', result: 'unavailable' })
+   }
+   return <div className="pet-play">
+     <div className="pet-play-heading">
+@@ -40,6 +54,9 @@ export function PetPlay({ petName, blocked, onReact, onShowRoom, showRoomUnavail
+     </div>
+     <div id={`${id}-panel`} className="pet-play-panel" hidden={!open}>
+       <div className="pet-play-actions" role="group" aria-label={`Time with ${petName}`}>
++        {canCheckIn ? <button type="button" className="btn pet-play-checkin" disabled={Boolean(viewNote)}
++          aria-describedby={[`${id}-note`, viewNote && viewNote !== note ? viewNoteId : ''].filter(Boolean).join(' ')}
++          onClick={checkIn}>Check in</button> : <>
+         <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
+           onClick={() => choose('greet')}>Wave</button>
+         <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
+@@ -50,11 +67,12 @@ export function PetPlay({ petName, blocked, onReact, onShowRoom, showRoomUnavail
+           onClick={() => choose('stretch')}>Stretch together</button>
+         <button type="button" className="btn pet-play-rest" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
+           onClick={() => choose('rest')}>Rest together</button>
++        </>}
+       </div>
+-      {note && <p id={`${id}-note`} className="pet-play-note">{note}</p>}
++      {note && <p id={`${id}-note`} className="pet-play-note">{restingNote}</p>}
+       {viewNote && viewNote !== note && <p id={viewNoteId} className="pet-play-note">{viewNote}</p>}
+       {/* The resident announces successful choices; only unavailable/busy needs another status. */}
+-      <p className="pet-play-feedback" role="status">{blocked && result !== 'unavailable' ? '' : feedback}</p>
++      <p className="pet-play-feedback" role="status">{feedback}</p>
+     </div>
+   </div>
+ }
+diff --git i/src/pet/PetPlay.css w/src/pet/PetPlay.css
+index bcba041..4460568 100644
+--- i/src/pet/PetPlay.css
++++ w/src/pet/PetPlay.css
+@@ -14,6 +14,7 @@
+ @media (max-width: 374px) {
+   .pet-play-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+ }
++.pet-play-actions .btn.pet-play-checkin { flex-basis: 100%; grid-column: 1 / -1; }
+ /* The chores panel can be narrow inside a wide landscape viewport. Relative
+    thresholds also leave room when text is enlarged, without a resize listener. */
+ @supports (container-type: inline-size) {
+diff --git 1/src/pet/PetPlay.checkIn.test.tsx 2/src/pet/PetPlay.checkIn.test.tsx
+new file mode 100644
+index 0000000..b9ac62b
+--- /dev/null
++++ 2/src/pet/PetPlay.checkIn.test.tsx
+@@ -0,0 +1,86 @@
++// @vitest-environment jsdom
++import { afterEach, expect, it, vi } from 'vitest'
++import { click, render } from '../test/react'
++import { PetPlay, type PetPlayProps } from './PetPlay'
++
++const cleanups: (() => void)[] = []
++afterEach(() => { cleanups.splice(0).forEach(fn => fn()); vi.unstubAllGlobals() })
++function mount(patch: Partial<PetPlayProps> = {}) {
++  const props: PetPlayProps = { petName: 'Bun', onReact: vi.fn(() => 'started' as const), onCheckIn: vi.fn(() => 'started' as const), ...patch }
++  const ui = render(<PetPlay {...props} />); cleanups.push(ui.unmount)
++  const button = (name: string) => [...ui.container.querySelectorAll('button')].find(node => node.textContent === name)!
++  click(button('Spend time together'))
++  return { ...ui, props, button, status: () => ui.container.querySelector('[role="status"]')!.textContent }
++}
++
++it.each(['away', 'sick'] as const)('offers one quiet Check in while %s, delegates once and leaves success speech to the resident', blocked => {
++  vi.stubGlobal('requestAnimationFrame', vi.fn())
++  const ui = mount({ blocked })
++  const check = ui.button('Check in')
++  expect(check).toBeDefined()
++  expect([...ui.container.querySelectorAll('.pet-play-actions button')].map(node => node.textContent)).toEqual(['Check in'])
++  expect(check.disabled).toBe(false)
++  expect(document.getElementById(check.getAttribute('aria-describedby')!)!.textContent).toMatch(/resting.*quiet hello/i)
++  click(check)
++  expect(ui.props.onCheckIn).toHaveBeenCalledOnce()
++  expect(ui.props.onReact).not.toHaveBeenCalled()
++  expect(ui.status()).toBe('')
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++})
++
++it.each(['away', 'sick'] as const)('explains a %s Check in that requires the resident room', blocked => {
++  const ui = mount({ blocked, showRoomUnavailable: "Choose Bun's room to see them." })
++  const check = ui.button('Check in')
++  expect(check).toBeDefined(); expect(check.disabled).toBe(true)
++  const described = check.getAttribute('aria-describedby')!.split(/\s+/).map(id => document.getElementById(id)!.textContent).join(' ')
++  expect(described).toContain("Choose Bun's room to see them.")
++  expect(described).toContain('resting')
++  click(check)
++  expect(ui.props.onCheckIn).not.toHaveBeenCalled()
++})
++
++it.each([undefined, 'travel'] as const)('retains the regular five choices when mode is %s', blocked => {
++  const ui = mount({ blocked })
++  expect(ui.button('Check in')).toBeUndefined()
++  const buttons = [...ui.container.querySelectorAll('.pet-play-actions button')] as HTMLButtonElement[]
++  expect(buttons.map(node => node.textContent)).toEqual(['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together'])
++  expect(buttons.every(node => node.disabled === Boolean(blocked))).toBe(true)
++  click(ui.button('Wave'))
++  expect(ui.props.onReact).toHaveBeenCalledTimes(blocked ? 0 : 1)
++  expect(ui.props.onCheckIn).not.toHaveBeenCalled()
++})
++
++it('announces a busy Check in once, clears accepted feedback, and keeps it relevant across modes', () => {
++  const onCheckIn = vi.fn().mockReturnValueOnce('busy').mockReturnValueOnce('started').mockReturnValue('busy')
++  const ui = mount({ blocked: 'sick', onCheckIn })
++  click(ui.button('Check in')); expect(ui.status()).toContain('moment')
++  click(ui.button('Check in')); expect(ui.status()).toBe('')
++  click(ui.button('Check in')); expect(ui.status()).toContain('moment')
++  ui.rerender(<PetPlay {...ui.props} blocked={undefined} />)
++  expect(ui.status()).toBe('')
++  expect(ui.button('Check in')).toBeUndefined()
++  click(ui.button('Wave')); expect(ui.status()).toBe('')
++  ui.rerender(<PetPlay {...ui.props} blocked="away" />)
++  expect(ui.status()).toBe('')
++})
++
++it('hides old play feedback when resting and clears Check in feedback after Show room succeeds', () => {
++  const ui = mount({ onReact: () => 'busy', onCheckIn: () => 'busy', onShowRoom: () => true })
++  click(ui.button('Wave')); expect(ui.status()).toContain('moment')
++  ui.rerender(<PetPlay {...ui.props} blocked="sick" />)
++  expect(ui.status()).toBe('')
++  click(ui.button('Check in')); expect(ui.status()).toContain('moment')
++  click(ui.button('Show room')); expect(ui.status()).toBe('')
++})
++
++it.each(['play', 'check-in'] as const)('does not revive an old %s busy message after leaving and returning to its mode', source => {
++  const blocked = source === 'check-in' ? 'sick' as const : undefined
++  const ui = mount({ blocked, onReact: () => 'busy', onCheckIn: () => 'busy' })
++  click(ui.button(source === 'check-in' ? 'Check in' : 'Wave'))
++  expect(ui.status()).toContain('moment')
++  ui.rerender(<PetPlay {...ui.props} blocked={source === 'check-in' ? undefined : 'sick'} />)
++  expect(ui.status()).toBe('')
++  ui.rerender(<PetPlay {...ui.props} blocked={blocked} />)
++  expect(ui.status()).toBe('')
++  expect(ui.button('Spend time together').getAttribute('aria-expanded')).toBe('true')
++})
+diff --git 1/src/pet/PetCheckIn.test.tsx 2/src/pet/PetCheckIn.test.tsx
+new file mode 100644
+index 0000000..a5c2fd3
+--- /dev/null
++++ 2/src/pet/PetCheckIn.test.tsx
+@@ -0,0 +1,129 @@
++// @vitest-environment jsdom
++import { act, createRef } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import * as petLines from '../content/petLines'
++import * as sfx from '../audio/sfx'
++import type { Pet } from '../domain/types'
++import { render } from '../test/react'
++import { LivingRoom, type LivingRoomControl, type LivingRoomProps } from './LivingRoom'
++
++const pet: Pet = { id: 'pet', homeId: 'home', name: 'Bun', species: 'bun', bodyColour: '#eee', equipped: {} }
++const props: LivingRoomProps = { room: { floorStyle: 'wood', wallStyle: 'cream' }, objects: [], stages: {}, pet, mood: 'meh', away: false, chores: [], statuses: [], initialTile: { tx: 3, ty: 2 } }
++let now: number
++let frames: Map<number, FrameRequestCallback>
++let serial: number
++let media: MediaQueryList
++const cleanups: (() => void)[] = []
++beforeEach(() => {
++  now = 0; serial = 0; frames = new Map()
++  vi.spyOn(performance, 'now').mockImplementation(() => now)
++  vi.spyOn(Math, 'random').mockReturnValue(0.99)
++  media = Object.assign(new EventTarget(), { matches: false, media: '(prefers-reduced-motion: reduce)' }) as MediaQueryList
++  vi.stubGlobal('matchMedia', () => media)
++  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
++  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
++})
++afterEach(() => { cleanups.splice(0).forEach(fn => fn()); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++function mount(content: Parameters<typeof render>[0]) { const ui = render(content); cleanups.push(ui.unmount); return ui }
++function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
++function preference(value: boolean) { act(() => { Object.defineProperty(media, 'matches', { value, configurable: true }); media.dispatchEvent(new Event('change')) }) }
++function art(container: Element) { return container.querySelector('.ch-animated')! }
++function observeResident() {
++  let target: Element, callback: IntersectionObserverCallback
++  vi.stubGlobal('IntersectionObserver', class {
++    constructor(fn: IntersectionObserverCallback) { callback = fn }
++    observe(node: Element) { target = node }
++    disconnect() {}
++  })
++  return { show(visible: boolean) { act(() => callback([{ target, isIntersecting: visible, intersectionRatio: visible ? 1 : 0 } as IntersectionObserverEntry], {} as IntersectionObserver)) } }
++}
++
++function restingBodyWithoutFace(container: Element) {
++  const body = container.querySelector('[data-character-body]')!.cloneNode(true) as Element
++  body.querySelectorAll('[data-expression]').forEach(node => node.remove())
++  return body.outerHTML
++}
++
++it.each(['sick', 'away'] as const)('accepts one quiet %s Check in without waking the body or extending600ms', resting => {
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? 'sick' : 'happy'} away={resting === 'away'} control={control} />)
++  expect(typeof control.current!.checkIn).toBe('function')
++  const resident = ui.container.querySelector('.room-pet')!, node = art(ui.container), position = resident.getAttribute('transform')
++  const body = restingBodyWithoutFace(ui.container), ground = ui.container.querySelector('[data-character-ground]')!.outerHTML
++  const face = ui.container.querySelector('[data-expression]')!.outerHTML
++  const chirp = vi.spyOn(sfx, 'play')
++  expect(frames.size).toBe(0)
++  act(() => { expect(control.current!.checkIn()).toBe('started') })
++  const heard = ui.container.querySelector('[aria-live]')!.textContent
++  expect(petLines.CHECK_IN_LINES).toContain(heard)
++  expect(frames.size).toBe(1)
++  frame(240)
++  expect(ui.container.querySelector('[data-expression]')!.outerHTML).not.toBe(face)
++  expect(restingBodyWithoutFace(ui.container)).toBe(body)
++  expect(ui.container.querySelector('[data-character-ground]')!.outerHTML).toBe(ground)
++  expect(art(ui.container)).toBe(node)
++  expect(resident.getAttribute('transform')).toBe(position)
++  act(() => { expect(control.current!.checkIn()).toBe('busy') })
++  expect(chirp).toHaveBeenCalledExactlyOnceWith('chirp')
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
++  frame(599); expect(frames.size).toBe(1)
++  frame(600); expect(frames.size).toBe(0)
++  expect(ui.container.querySelector('[data-expression]')!.outerHTML).toBe(face)
++  act(() => { expect(control.current!.checkIn()).toBe('started') })
++  frame(1200); expect(frames.size).toBe(0)
++})
++
++it.each(['sick', 'away'] as const)('keeps a reduced %s Check in visually still and expires at its original deadline', resting => {
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? 'sick' : 'happy'} away={resting === 'away'} control={control} />)
++  expect(typeof control.current!.checkIn).toBe('function')
++  const still = art(ui.container).outerHTML
++  act(() => { expect(control.current!.checkIn()).toBe('started') })
++  frame(240); expect(art(ui.container).outerHTML).toBe(still)
++  act(() => { expect(control.current!.checkIn()).toBe('busy') })
++  frame(600); expect(frames.size).toBe(0)
++  preference(false); expect(frames.size).toBe(0)
++  frame(900); expect(art(ui.container).outerHTML).toBe(still)
++})
++
++it.each(['sick', 'away'] as const)('uses current %s props for Check in before a frame and declines it when healthy', resting => {
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood="happy" control={control} />)
++  expect(typeof control.current!.checkIn).toBe('function')
++  act(() => { expect(control.current!.checkIn()).toBe('unavailable') })
++  ui.rerender(<LivingRoom {...props} mood={resting === 'sick' ? 'sick' : 'happy'} away={resting === 'away'} control={control} />)
++  act(() => { expect(control.current!.checkIn()).toBe('started') })
++  expect(art(ui.container).getAttribute('data-character-pose')).toBe(resting === 'away' ? 'sleeping' : 'sick')
++  frame(600); expect(frames.size).toBe(0)
++})
++
++it.each(['sick', 'away'] as const)('lets an offscreen %s Check in expire without replay or a hidden clock', resting => {
++  const observer = observeResident(), control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? 'sick' : 'happy'} away={resting === 'away'} control={control} />)
++  expect(typeof control.current!.checkIn).toBe('function')
++  const still = art(ui.container).outerHTML
++  observer.show(false)
++  act(() => { expect(control.current!.checkIn()).toBe('started') })
++  expect(frames.size).toBe(0)
++  now = 900
++  observer.show(true)
++  expect(frames.size).toBe(0)
++  expect(art(ui.container).outerHTML).toBe(still)
++  expect(petLines.CHECK_IN_LINES).toContain(ui.container.querySelector('[aria-live]')!.textContent)
++})
++
++it.each(['sick', 'away'] as const)('keeps an existing chore acknowledgment ahead of a %s Check in', resting => {
++  const control = createRef<LivingRoomControl>()
++  const ui = mount(<LivingRoom {...props} mood={resting === 'sick' ? 'sick' : 'happy'} away={resting === 'away'} control={control}
++    celebrate={{ key: 91, choreName: 'Wash dishes' }} />)
++  const heard = ui.container.querySelector('[aria-live]')!.textContent
++  expect(heard).not.toBe('')
++  act(() => { expect(control.current!.checkIn()).toBe('busy') })
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
++  frame(240)
++  act(() => { expect(control.current!.checkIn()).toBe('busy') })
++  frame(600); expect(frames.size).toBe(0)
++  act(() => { expect(control.current!.checkIn()).toBe('started') })
++  expect(petLines.CHECK_IN_LINES).toContain(ui.container.querySelector('[aria-live]')!.textContent)
++})
+diff --git 1/scripts/browser/pet-check-in.test.mjs 2/scripts/browser/pet-check-in.test.mjs
+new file mode 100644
+index 0000000..c46b210
+--- /dev/null
++++ 2/scripts/browser/pet-check-in.test.mjs
+@@ -0,0 +1,192 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
++
++const out = process.env.CHORE_CHECK_IN_CAPTURE_DIR
++async function capture(page, name, evidence) {
++  if (!out) return
++  await mkdir(out, { recursive: true })
++  await page.screenshot({ path: join(out, `${name}.png`) })
++  await writeFile(join(out, `${name}.json`), JSON.stringify(evidence, null, 2)+'\n')
++}
++async function fixture(t, mode, species = 'mochi', options = {}) {
++  const { device = false, secondRoom = false, font = 100, freeze = true, ...browserOptions } = options
++  const page = await browserApp(t, { viewport: { width: 1280, height: 800 }, reducedMotion: 'no-preference', ...browserOptions })
++  await page.evaluate(({ mode, species, secondRoom, device }) => new Promise((resolve, reject) => {
++    if (device) localStorage.setItem('chore-pet-reduce-motion', 'on')
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, tables = saved.tables, pet = Object.values(tables.pets)[0]
++        pet.species = species
++        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++        if (mode === 'away') {
++          Object.values(tables.homes)[0].vacations = [{ start: '2000-01-01', end: '2099-12-31' }]
++          tables.chores = {}; tables.completions = {}
++        } else {
++          const old = new Date(Date.now()-45*86400000).toISOString().slice(0,10)
++          for (const chore of Object.values(tables.chores)) { chore.createdOn = old; chore.schedule = { kind: 'daily' } }
++          tables.completions = {}
++        }
++        if (secondRoom) {
++          const room = Object.values(tables.rooms)[0]
++          tables.rooms['second-room'] = { ...room, id: 'second-room', type: 'bedroom' }
++          const fridge = Object.values(tables.placed_objects).find(object => object.catalogId === 'fridge')
++          tables.placed_objects['blocked-door'] = { ...fridge, id: 'blocked-door', tileX: 7, tileY: 4, rotation: 0 }
++        }
++        saved.outbox = {}; store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), { mode, species, secondRoom, device })
++  if (freeze) { await page.clock.install(); await page.clock.pauseAt(Date.now()+1000) }
++  await page.addInitScript(font => {
++    Math.random = () => .99
++    if (font !== 100) document.addEventListener('DOMContentLoaded', () => { document.documentElement.style.fontSize = `${font}%` })
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__checkInClock = { pending: new Set(), delivered: 0 }
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__checkInClock.pending.delete(id); window.__checkInClock.delivered++; callback(now) })
++      window.__checkInClock.pending.add(id); return id
++    }
++    window.cancelAnimationFrame = id => { window.__checkInClock.pending.delete(id); cancel(id) }
++  }, font)
++  await page.reload(); await page.locator('.room-pet').waitFor()
++  if (freeze) await page.clock.runFor(64)
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  return page
++}
++const clock = page => page.evaluate(() => ({ pending: window.__checkInClock.pending.size, delivered: window.__checkInClock.delivered }))
++const restingArt = node => {
++  const body = node.querySelector('[data-character-body]').cloneNode(true)
++  body.querySelectorAll('[data-expression]').forEach(part => part.remove())
++  return { body: body.outerHTML, face: node.querySelector('[data-expression]').outerHTML,
++    ground: node.querySelector('[data-character-ground]').outerHTML,
++    pose: node.querySelector('[data-character-pose]').getAttribute('data-character-pose'), position: node.getAttribute('transform') }
++}
++
++for (const species of ['mochi', 'bun', 'sprout']) for (const mode of ['away', 'sick']) {
++  test(`${species} ${mode} Check in keeps resting art and the original600ms deadline`, async t => {
++    const page = await fixture(t, mode, species), check = page.getByRole('button', { name: 'Check in', exact: true }), resident = page.locator('.room-pet')
++    await check.waitFor()
++    const saved = (await snapshot(page)).tables, before = await resident.evaluate(restingArt)
++    assert.equal(before.pose, mode === 'away' ? 'sleeping' : 'sick')
++    assert.equal((await clock(page)).pending, 0)
++    await resident.evaluate(node => { window.__checkInResident = node })
++    await page.locator('.living-room [aria-live="polite"]').evaluate(node => {
++      window.__checkInAnnouncements = []
++      new MutationObserver(() => window.__checkInAnnouncements.push(node.textContent)).observe(node, { childList: true, subtree: true, characterData: true })
++    })
++    await check.focus(); await page.keyboard.press('Enter')
++    assert.equal(await check.evaluate(node => node === document.activeElement && node.matches(':focus-visible')), true)
++    const live = page.locator('.living-room [aria-live="polite"]'), heard = await live.textContent()
++    assert.ok(heard.trim())
++    assert.equal((await clock(page)).pending, 1)
++    await page.clock.runFor(240)
++    const held = await resident.evaluate(restingArt)
++    assert.notEqual(held.face, before.face, 'only the existing small resting gaze acknowledges the player')
++    for (const key of ['body', 'ground', 'pose', 'position']) assert.equal(held[key], before[key], key)
++    await capture(page, `check-in-${species}-${mode}`, { species, mode, before, held, clock: await clock(page), heard, method: 'Actual keyboard Check in at240ms; sleeping/sick body excluding face and ground/world transform exact; gaze-only acknowledgment. Finite deadline and busy retry checked after capture.' })
++    await page.keyboard.press('Enter')
++    assert.match(await page.locator('.pet-play-feedback').textContent(), /busy/i)
++    assert.equal(await live.textContent(), heard)
++    assert.equal(await page.evaluate(() => window.__checkInAnnouncements.length), 1)
++    await page.clock.runFor(320)
++    assert.equal((await clock(page)).pending, 1)
++    await page.clock.runFor(80)
++    assert.equal((await clock(page)).pending, 0, 'expires by640ms, before a retry at240ms could extend600ms to840ms')
++    assert.deepEqual(await resident.evaluate(restingArt), before)
++    assert.equal(await resident.evaluate(node => node === window.__checkInResident), true)
++    assert.deepEqual((await snapshot(page)).tables, saved)
++    await page.keyboard.press('Enter'); assert.equal((await clock(page)).pending, 1)
++    await page.clock.runFor(640); assert.equal((await clock(page)).pending, 0)
++  })
++}
++
++for (const policy of ['system', 'device']) test(`${policy} reduced Check in stays still and returns to zero frames`, async t => {
++  const page = await fixture(t, policy === 'system' ? 'away' : 'sick', 'bun', { reducedMotion: policy === 'system' ? 'reduce' : 'no-preference', device: policy === 'device' })
++  const check = page.getByRole('button', { name: 'Check in', exact: true }), resident = page.locator('.room-pet')
++  await check.waitFor()
++  const still = await resident.locator('.ch-animated').innerHTML(), saved = (await snapshot(page)).tables
++  await check.focus(); await page.keyboard.press('Enter'); await page.clock.runFor(240)
++  assert.equal(await resident.locator('.ch-animated').innerHTML(), still)
++  assert.equal((await clock(page)).pending, 1)
++  const heard = await page.locator('.living-room [aria-live="polite"]').textContent(); assert.ok(heard.trim())
++  await capture(page, `check-in-reduced-${policy}`, { policy, clock: await clock(page), heard, method: 'Actual reduced preference; all animated art bytes unchanged at240ms, one finite existing clock. Expiry checked after capture.' })
++  await page.keyboard.press('Enter'); await page.clock.runFor(400)
++  assert.equal((await clock(page)).pending, 0)
++  assert.equal(await resident.locator('.ch-animated').innerHTML(), still)
++  if (policy === 'system') { await changeReducedMotion(page, 'no-preference'); assert.equal((await clock(page)).pending, 0) }
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
++
++const viewports = [{ width: 320, height: 640 }, { width: 390, height: 664 }, { width: 640, height: 360 }, { width: 844, height: 390 }, { width: 1280, height: 800 }]
++for (const viewport of viewports) for (const font of [100, 200]) test(`Check in fits${viewport.width}x${viewport.height} at${font}%root text`, async t => {
++  const page = await fixture(t, 'away', 'mochi', { viewport, font, reducedMotion: 'reduce' }), check = page.getByRole('button', { name: 'Check in', exact: true })
++  await check.waitFor(); await check.scrollIntoViewIfNeeded(); await check.focus(); await page.keyboard.press('Enter')
++  const geometry = await check.evaluate(node => {
++    const b = node.getBoundingClientRect(), range = document.createRange(); range.selectNodeContents(node); const label = range.getBoundingClientRect()
++    const panel = node.closest('.pet-play-panel')
++    return { x: b.x, right: b.right, height: b.height, width: b.width, label: { x: label.x, right: label.right, height: label.height }, panelWidth: panel.clientWidth, panelScrollWidth: panel.scrollWidth,
++      documentWidth: document.documentElement.scrollWidth, innerWidth, focusVisible: node === document.activeElement && node.matches(':focus-visible'),
++      notes: node.getAttribute('aria-describedby').split(/\s+/).map(id => document.getElementById(id).textContent), controls: panel.querySelectorAll('.pet-play-actions button').length }
++  })
++  assert.ok(geometry.x >= 0 && geometry.right <= viewport.width)
++  assert.ok(geometry.width >= 44 && geometry.height >= 48)
++  assert.ok(geometry.label.x >= geometry.x && geometry.label.right <= geometry.right)
++  assert.ok(geometry.panelScrollWidth <= geometry.panelWidth && geometry.documentWidth <= geometry.innerWidth)
++  assert.equal(geometry.controls, 1); assert.equal(geometry.focusVisible, true)
++  assert.match(geometry.notes.join(' '), /resting.*quiet hello/i)
++  await capture(page, `check-in-layout-${viewport.width}-${font}`, { viewport, font, geometry, method: 'Native production layout with100/200%root text, keyboard focus,44px width/48px height target and label/scroll bounds. Root text enlargement, not browser zoom or AT certification.' })
++})
++
++test('Check in explains the wrong room and re-enables in the resting resident room', async t => {
++  const page = await fixture(t, 'sick', 'mochi', { secondRoom: true }), saved = (await snapshot(page)).tables
++  await page.locator('.room-controls-focus select').selectOption('second-room')
++  assert.match(await page.locator('.home-scene-travel-status').textContent(), /blocked/)
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  const check = page.getByRole('button', { name: 'Check in', exact: true })
++  assert.equal(await check.isDisabled(), true)
++  const description = await check.evaluate(node => node.getAttribute('aria-describedby').split(/\s+/).map(id => document.getElementById(id).textContent).join(' '))
++  assert.match(description, /Choose Mochi's room/)
++  assert.equal((await clock(page)).pending, 0)
++  await check.scrollIntoViewIfNeeded()
++  await capture(page, 'check-in-wrong-room', { description, clock: await clock(page), method: 'Real blocked doorway/focused destination; resting resident remains in source room and Check in disabled with room explanation.' })
++  const sourceId = Object.keys(saved.rooms).find(id => id !== 'second-room')
++  await page.locator('.room-controls-focus select').selectOption(sourceId)
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  assert.equal(await check.isEnabled(), true)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
++
++
++test('an offscreen Check in resumes only before its deadline and expires without replay', async t => {
++  const page = await fixture(t, 'away', 'mochi', { viewport: { width: 320, height: 640 }, font: 200, reducedMotion: 'reduce', freeze: false })
++  const resident = page.locator('.room-pet'), check = page.getByRole('button', { name: 'Check in', exact: true }), show = page.getByRole('button', { name: 'Show room with Mochi', exact: true })
++  await check.waitFor()
++  const saved = (await snapshot(page)).tables, still = await resident.locator('.ch-animated').innerHTML()
++  const scrollAway = async () => {
++    await check.scrollIntoViewIfNeeded()
++    await page.waitForFunction(() => document.querySelector('.room-pet').getBoundingClientRect().bottom < 0)
++    await page.waitForFunction(() => window.__checkInClock.pending.size === 0)
++  }
++  await scrollAway(); await check.click()
++  assert.equal((await clock(page)).pending, 0)
++  const live = page.locator('.living-room [aria-live="polite"]'), heard = await live.textContent(); assert.ok(heard.trim())
++  await show.focus(); await page.keyboard.press('Enter')
++  await page.waitForFunction(() => window.__checkInClock.pending.size === 1)
++  assert.equal(await resident.evaluate(node => node === document.activeElement), true)
++  assert.equal(await resident.locator('.ch-animated').innerHTML(), still)
++  await scrollAway(); await page.waitForTimeout(700)
++  await show.focus(); await page.keyboard.press('Enter')
++  await page.waitForFunction(() => window.__checkInClock.pending.size === 0)
++  assert.equal(await resident.locator('.ch-animated').innerHTML(), still)
++  assert.equal(await live.textContent(), heard)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  await capture(page, 'check-in-offscreen', { heard, clock: await clock(page), method: 'Real native observer and wall-clock600ms deadline at200%root text; offscreen0 -> active visible1 -> offscreen0 -> expired visible0, still reduced art and no replay/saved changes.' })
++})
+diff --git i/docs/ART.md w/docs/ART.md
+index c317b03..be8112c 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -213,3 +213,5 @@ In cramped wardrobe page-flow layouts, Show preview scrolls instantly to the cur
+ Healthy furniture orientation keeps its existing 360ms torso, gaze, grounded stance and action handoff. Ears, knot and leaves follow one small half-sine deflection with species strengths (Mochi10%, Bun12%, Sprout10%), returning smoothly to neutral. Sick/reduced sampling and every other action remain unchanged; walking corner overlays retain their existing torso-only turn contribution.
+ 
+ Healthy upright notice uses one small appendage deflection over its existing600ms, with species strengths Mochi .15, Bun .20 and Sprout .15 applied to the existing follow envelope and mood energy. Primary lean, gaze, arm, ground, face, shadow and timing stay exact; sick and reduced sampler fields remain exact. Sleeping and sick renderers already keep body/appendages static and acknowledge only through the existing restrained gaze. Paused MotionReview samples prove upright SVG geometry, not a live resident notice path.
++
++While the resident is sleeping or unwell, Spend time together offers one Check in control in place of the five disabled play gestures. It uses the existing resting notice gaze and600ms lifetime; body, appendages, ground, world position, health and saved tables stay intact. Repeated checks return busy before sound/speech and do not extend or queue the notice. Successful speech stays in the resident's live region. Reduced motion keeps the art still; offscreen notices can expire without a hidden clock or replay. Outside the resident room, Check in is disabled with the existing room explanation. Healthy play and travel keep their existing five-control policy. The optional callback preserves legacy panel consumers. No additional motion owner, timer, observer or saved schema is introduced.
+diff --git 1/docs/audits/2026-10-12-character-polish/check-in-design.md 2/docs/audits/2026-10-12-character-polish/check-in-design.md
+new file mode 100644
+index 0000000..f46e0e7
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/check-in-design.md
+@@ -0,0 +1,7 @@
++Batch48: Add one Check in control while away/sick. App always provides an optional onCheckIn callback; legacy PetPlay consumers without it retain existing five disabled actions. Healthy five actions unchanged, travel stays blocked. Resting callback replaces the disabled five with one full-width48px Check in button, described by resting note and any view-unavailable note. Same-room/off-travel guard matches existing Show room; disable Check in outside the resident room and describe why. No new timers/observers/schema/network.
++
++Prefer LivingRoomControl.checkIn over adding notice to PlayerGesture: five existing gestures and their lines remain unchanged. checkIn only accepts current away/sick props, advances current world before reacting, rejects an already active600ms notice as busy before audio/speech, clears invitation/pointer, uses existing react(current,now,'tap') suppressed-state notice (no tap count increment), existing advance/one motion owner/chirp, and concise CHECK_IN_LINES. Body remains sleeping/sick, renderer notice gaze only, no position/health/reward/save change. Reject current healthy state as unavailable; source room lookup/travel guard in App. Normal tap method remains unchanged.
++
++PetPlay feedback stores source play/check-in/view with result. Announce play feedback only in healthy/unblocked mode, check-in feedback only when that control is offered, view feedback in both. Suppress stale busy messages across modes. Success resident speaks once, panel status blank. Collapse/reopen preserves relevant state. Show room clears feedback on success, no gesture replay. Existing full five-control layout tests stay applicable healthy and travel.
++
++Verify before/after unit panel callbacks, mode switches, stale feedback, unavailable-room disabled descriptions, one success announcement, no panel scheduler. Resident integration both suppression modes before a frame, one600ms clock, original deadline/repeats busy/no extra chirp/speech/node/world/tap counter changes, exact resting body/appendages, notice gaze only, OS/device still, expiration/offscreen/resume and chore/tap policies remain. Native three species x two modes, keyboard Check in/Show room, reduced-system/device still, wrong-room guard,100/200%layout portrait/landscape widths320/390/640/844/1280. Bounded screenshots + saved tables + original deadline. Sequential heavy jobs,768MBNodecap,oneworker/browser.

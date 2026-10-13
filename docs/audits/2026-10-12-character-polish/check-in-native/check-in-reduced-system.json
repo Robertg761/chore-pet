@@ -1,0 +1,9 @@
+{
+  "policy": "system",
+  "clock": {
+    "pending": 1,
+    "delivered": 15
+  },
+  "heard": "I'm still resting, but I hear you.",
+  "method": "Actual reduced preference; all animated art bytes unchanged at240ms, one finite existing clock. Expiry checked after capture."
+}

@@ -1012,6 +1012,8 @@ export default function App() {
           blocked={away ? 'away' : condition.mood === 'sick' ? 'sick' : travel.journey || resident?.id !== room.id ? 'travel' : undefined}
           onReact={action => !travel.journey && resident?.id === room.id
             ? residentControl.current?.respond(action) ?? 'unavailable' : 'unavailable'}
+          onCheckIn={() => !travel.journey && resident?.id === room.id
+            ? residentControl.current?.checkIn() ?? 'unavailable' : 'unavailable'}
           showRoomUnavailable={showRoomUnavailable} onShowRoom={showResidentRoom} />}
       </div>
 
