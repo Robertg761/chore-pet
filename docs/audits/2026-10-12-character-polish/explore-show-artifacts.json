@@ -1,0 +1,25 @@
+{
+  "files": {
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-1280-100.json": "717c615cec4e353e131f5df9cf85930ceb0d2a3f50c627ffc31024995623e13e",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-1280-100.png": "e5abf947c5e67a905641b721490f966e91c71968b7e8136b37122311d23de168",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-1280-200.json": "5a1bddf2275fbcd5c305cb98334e336055b4b7275b99b41692ad9c3893fb3d3f",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-1280-200.png": "b9bd1414d95ed6bbfacf17d98ff6f9e18fc4f822c43ed5dee5eab7a03757b43e",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-320-100.json": "69a4030f906649e2e90963bf2416ff83ca1dcf255f35f6d661ee2853ed3e4b5d",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-320-100.png": "628009ee4d28d97bf6859eb1af5ec428319dfa23e7e594c2881ba58d06329506",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-320-200.json": "b88e663b04afb19a0664d1b14e8532f44122ad5838c47a09f0238eeee51e23f6",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-320-200.png": "cf306a0d1087109b2e75b2c6248f67d2486c9ba0f4d0e7e30f4beaeea5abbda7",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-390-100.json": "c36c3e0cdec73624219b20c74564c23275992907683a32ed7c77af82b5c1b49a",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-390-100.png": "0ddb81cee114f5654791e40d98521b4124215fa3c13006e2f455953b9e16f3c7",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-844-100.json": "e43fe7488b06457a9d1f0306c623317d3d9868528bfb1253f971074cce8817f6",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-844-100.png": "778c80e5b355ea1484103d0d537118c30f46fcaa42a37eeafb6b9948d057c4c0",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-844-200.json": "f2edcc01e3ab4c80298dfd66b5fb03816f6c4eeef1663bbe7aa41ee68ac28432",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-844-200.png": "f07dafa3a0970657a79e026e6d3ae3bc7ee63068a2d95bfacf562f196f73c48c",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-controls-1280-100.png": "9618f1f430d55621f812df1efc2decd13346eaa228c91af158b550d3bacbd36a",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-controls-1280-200.png": "0303f35abe6868bfa4d76e4d270151e3983fa87fa568a37dba931d16782ffc61",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-controls-320-100.png": "e7411bb1a8e187d4c8b9a00d8ae1b9b5b9cc0a06ce5b35b5b6233e6d9ac6747d",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-controls-320-200.png": "033219869543a6520935fb85d322fb59cf08fbf1d8d4b08dce752cccf041d2f0",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-controls-390-100.png": "24334ac6384056fc768c9ee1787ea6e2e0fbc4e1c0df73be79108886d8687ec7",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-controls-844-100.png": "e1426c3d5fbe3010fb5c8e95bbeac69f2022eab0bee66a08c7178d5f2476f096",
+    "docs/audits/2026-10-12-character-polish/explore-show-captures/explore-show-controls-844-200.png": "91ace7d93d35b9d7fe2333f28b9184bac367be9cf68c1ec167a4a3ea37361106"
+  }
+}

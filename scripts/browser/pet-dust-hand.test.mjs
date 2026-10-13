@@ -67,7 +67,7 @@ for (const { species, speed, peak, minimum, reversals, reduced = false } of [
   const initial = await resident.evaluate(read), body = await resident.locator('[data-character-body]').innerHTML()
   await resident.evaluate(node => { window.__dustPet = node })
   await page.getByRole('button', { name: 'Explore together', exact: true }).click()
-  await page.getByLabel(/^Show /).selectOption('dust-shelf')
+  await page.getByRole('combobox', { name: /^Show / }).selectOption('dust-shelf')
   await page.getByRole('button', { name: 'Look together', exact: true }).click()
   const live = page.locator('.living-room [aria-live="polite"]')
   const observations = ['So many colours on those shelves.', 'I wonder what is in that red book.']

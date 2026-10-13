@@ -1,0 +1,25 @@
+{
+  "width": 1280,
+  "height": 800,
+  "rootTextPercent": 200,
+  "reduced": true,
+  "showBox": {
+    "x": 1066.125,
+    "y": 312.390625,
+    "width": 181.875,
+    "height": 60
+  },
+  "headingBox": {
+    "x": 834,
+    "y": 248.390625,
+    "width": 414,
+    "height": 124
+  },
+  "selectedId": "5d3a86d2-89b1-447a-9710-996e0306130e",
+  "feedback": "Mochi noticed the dining table from here.",
+  "camera": {
+    "x": 0,
+    "y": 0
+  },
+  "scope": "Native keyboard activation/focus/target/textfit/selectedmarker/unchanged frame-placement-speech-feedback-camera-savedtables. Frozen clock;not temporal playback."
+}

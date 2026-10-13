@@ -1,0 +1,515 @@
+diff --git c/src/App.tsx w/src/App.tsx
+index df44430..2427d19 100644
+--- c/src/App.tsx
++++ w/src/App.tsx
+@@ -729,6 +729,17 @@ export default function App() {
+   const hasWestWindow = !roomDoors.some((door) => door.side === 'west')
+   const resident = travel.position && rooms.find((candidate) => candidate.id === travel.position?.roomId)
+   const residentObjects = resident ? objects.filter((object) => object.roomId === resident.id) : []
++  const showRoomUnavailable = travel.journey ? `${pet.name} is on the way.`
++    : resident?.id !== room?.id ? `Choose ${pet.name}'s room to see them.` : undefined
++  function showResidentRoom() {
++    if (!room || travel.journey || resident?.id !== room.id) return false
++    const scene = homeStage.current?.querySelector<HTMLElement>('.home-scene')
++    const drawnPet = homeStage.current?.querySelector<SVGElement>('.room-pet[role="button"]')
++    if (!scene || !drawnPet) return false
++    scene.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' })
++    drawnPet.focus({ preventScroll: true })
++    return true
++  }
+   const stationaryPet = !travel.journey && travel.position ? {
+     tile: travel.position,
+     art: <CharacterArt species={pet.species} mood={condition.mood} pose={away ? 'sleeping' : undefined} bodyColour={pet.bodyColour} equipped={pet.equipped} look={{ eyes: pet.eyes, cheeks: pet.cheeks }} strokeScale={PET_STROKE_SCALE} />,
+@@ -986,6 +997,7 @@ export default function App() {
+       <div className="home-chores">
+         {room && roomObjects.length > 0 && <PetExplore key={`${home.id}:${room.id}`} objects={roomObjects} petName={pet.name}
+           onPreview={previewExplore}
++          onShowRoom={showResidentRoom} showRoomUnavailable={showRoomUnavailable}
+           blocked={away ? 'away' : condition.mood === 'sick' ? 'sick' : travel.journey || resident?.id !== room.id ? 'travel' : undefined}
+           onLook={objectId => !travel.journey && resident?.id === room.id
+             ? residentControl.current?.lookAt(objectId) ?? 'unavailable' : 'unavailable'} />}
+@@ -1000,17 +1012,7 @@ export default function App() {
+           blocked={away ? 'away' : condition.mood === 'sick' ? 'sick' : travel.journey || resident?.id !== room.id ? 'travel' : undefined}
+           onReact={action => !travel.journey && resident?.id === room.id
+             ? residentControl.current?.respond(action) ?? 'unavailable' : 'unavailable'}
+-          showRoomUnavailable={travel.journey ? `${pet.name} is on the way.`
+-            : resident?.id !== room.id ? `Choose ${pet.name}'s room to see them.` : undefined}
+-          onShowRoom={() => {
+-            if (travel.journey || resident?.id !== room.id) return false
+-            const scene = homeStage.current?.querySelector<HTMLElement>('.home-scene')
+-            const drawnPet = homeStage.current?.querySelector<SVGElement>('.room-pet[role="button"]')
+-            if (!scene || !drawnPet) return false
+-            scene.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' })
+-            drawnPet.focus({ preventScroll: true })
+-            return true
+-          }} />}
++          showRoomUnavailable={showRoomUnavailable} onShowRoom={showResidentRoom} />}
+       </div>
+ 
+       {!syncNote && (
+diff --git c/src/pet/PetExplore.tsx w/src/pet/PetExplore.tsx
+index 309048c..bd2fbcb 100644
+--- c/src/pet/PetExplore.tsx
++++ w/src/pet/PetExplore.tsx
+@@ -12,14 +12,17 @@ export interface PetExploreProps {
+   onLook: (objectId: string) => VisitResult
+   /** Decorative room marker only; previewing never starts a visit. */
+   onPreview?: (objectId: string | null) => void
++  onShowRoom?: () => boolean
++  showRoomUnavailable?: string
+ }
+ 
+ /** Optional room play. Selection and feedback belong to this room visit only. */
+-export function PetExplore({ objects, petName, blocked, onLook, onPreview }: PetExploreProps) {
++export function PetExplore({ objects, petName, blocked, onLook, onPreview, onShowRoom, showRoomUnavailable }: PetExploreProps) {
+   const id = useId()
+   const [open, setOpen] = useState(false)
+   const [selectedId, setSelectedId] = useState('')
+   const [feedback, setFeedback] = useState<{ objectId: string; result: VisitResult } | null>(null)
++  const [viewFailed, setViewFailed] = useState(false)
+   const names = objectNames(objects)
+   const choices = objects.flatMap(object => {
+     const entry = catalogEntry(object.catalogId)
+@@ -36,6 +39,8 @@ export function PetExplore({ objects, petName, blocked, onLook, onPreview }: Pet
+     : blocked === 'away' ? `${petName} is resting while you're away.`
+     : blocked === 'sick' ? `${petName} is resting today.`
+     : !selected ? 'Add a furnishing to explore together.' : ''
++  const viewNote = showRoomUnavailable || (blocked === 'travel' ? note : '')
++  const viewNoteId = `${id}-${viewNote === note ? 'note' : 'view-note'}`
+   const result = feedback?.objectId === selected?.object.id ? feedback?.result : null
+   const name = selected?.name.toLowerCase()
+   const message = result === 'started' ? `You invited ${petName} to look at the ${name}.`
+@@ -46,25 +51,35 @@ export function PetExplore({ objects, petName, blocked, onLook, onPreview }: Pet
+     : result === 'unavailable' ? `${petName} is on the way. Try again when they arrive.` : ''
+ 
+   return <div className="pet-explore">
+-    <button type="button" className="btn btn-quiet pet-explore-toggle" aria-expanded={open} aria-controls={`${id}-panel`}
+-      onClick={() => setOpen(value => !value)}>Explore together</button>
++    <div className="pet-explore-heading">
++      <button type="button" className="btn btn-quiet pet-explore-toggle" aria-expanded={open} aria-controls={`${id}-panel`}
++        onClick={() => setOpen(value => !value)}>Explore together</button>
++      {open && onShowRoom && <button type="button" className="btn btn-quiet pet-explore-show" aria-label={`Show room to explore with ${petName}`}
++        disabled={Boolean(viewNote)} aria-describedby={viewNote ? viewNoteId : undefined}
++        onClick={() => { if (!viewNote) setViewFailed(!onShowRoom()) }}>Show room</button>}
++    </div>
+     <div id={`${id}-panel`} className="pet-explore-panel" hidden={!open}>
+       <div className="pet-explore-row">
+         <div className="pet-explore-choice">
+           <label htmlFor={`${id}-object`}>Show {petName}</label>
+           <select id={`${id}-object`} className="field" disabled={disabled} value={selected?.object.id ?? ''}
+             aria-describedby={note ? `${id}-note` : undefined}
+-            onChange={event => { setSelectedId(event.target.value); setFeedback(null) }}>
++            onChange={event => { setSelectedId(event.target.value); setFeedback(null); setViewFailed(false) }}>
+             {choices.map(({ object, name }) => <option key={object.id} value={object.id}>{name}</option>)}
+           </select>
+         </div>
+         <button type="button" className="btn" disabled={disabled} aria-describedby={note ? `${id}-note` : undefined}
+           onClick={() => {
+-            if (!disabled && selected) setFeedback({ objectId: selected.object.id, result: onLook(selected.object.id) })
++            if (!disabled && selected) {
++              setViewFailed(false)
++              setFeedback({ objectId: selected.object.id, result: onLook(selected.object.id) })
++            }
+           }}>Look together</button>
+       </div>
+       {note && <p id={`${id}-note`} className="pet-explore-note">{note}</p>}
+-      <p className="pet-explore-feedback" role="status">{blocked ? '' : message}</p>
++      {viewNote && viewNote !== note && <p id={viewNoteId} className="pet-explore-note">{viewNote}</p>}
++      <p className="pet-explore-feedback" role="status">{viewNote ? '' : viewFailed
++        ? 'The room is unavailable right now. Try again shortly.' : blocked ? '' : message}</p>
+     </div>
+   </div>
+ }
+diff --git c/src/pet/PetExplore.css w/src/pet/PetExplore.css
+index 4c518d0..01bd87c 100644
+--- c/src/pet/PetExplore.css
++++ w/src/pet/PetExplore.css
+@@ -1,6 +1,8 @@
+ .pet-explore { flex: none; width: 100%; min-width: 0; }
+ .pet-explore :is(button, select) { scroll-margin-block: 10px; }
+-.pet-explore-toggle { min-height: 44px; padding: 8px 12px; font-size: 0.875rem; }
++.pet-explore-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 8px; min-width: 0; }
++.pet-explore-toggle { min-width: 0; max-width: 100%; min-height: 44px; padding: 8px 12px; font-size: 0.875rem; }
++.pet-explore-show { flex: none; margin-inline-start: auto; min-height: 44px; min-width: 44px; padding: 8px 12px; font-size: 0.875rem; white-space: nowrap; }
+ .pet-explore-panel { margin-top: 8px; padding: 12px; border: var(--outline); border-radius: var(--radius); background: var(--card); }
+ .pet-explore-panel[hidden] { display: none; }
+ .pet-explore-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; min-width: 0; }
+diff --git 1/src/pet/PetExplore.showRoom.test.tsx 2/src/pet/PetExplore.showRoom.test.tsx
+new file mode 100644
+index 0000000..b9fc67c
+--- /dev/null
++++ 2/src/pet/PetExplore.showRoom.test.tsx
+@@ -0,0 +1,98 @@
++// @vitest-environment jsdom
++import { act } from 'react'
++import { afterEach, expect, it, vi } from 'vitest'
++import { click, render } from '../test/react'
++import { PetExplore, type PetExploreProps } from './PetExplore'
++
++const cleanups: (() => void)[] = []
++afterEach(() => { cleanups.splice(0).forEach(cleanup => cleanup()); vi.unstubAllGlobals() })
++function mount(patch: Partial<PetExploreProps> = {}) {
++  const props: PetExploreProps = {
++    objects: [{ id: 'plant-id', roomId: 'a', catalogId: 'plant', tileX: 2, tileY: 2, rotation: 0 }],
++    petName: 'Bun', onLook: vi.fn(() => 'started' as const), onPreview: vi.fn(),
++    onShowRoom: vi.fn(() => true), ...patch,
++  }
++  const ui = render(<PetExplore {...props} />); cleanups.push(ui.unmount)
++  return { ...ui, props }
++}
++function button(container: Element, text: string) { return [...container.querySelectorAll('button')].find(node => node.textContent === text) as HTMLButtonElement | undefined }
++function open(ui: ReturnType<typeof mount>) { click(button(ui.container, 'Explore together')!) }
++
++it('offers the explicit view control only when expanded and supported', () => {
++  const ui = mount()
++  expect(button(ui.container, 'Show room')).toBeUndefined()
++  open(ui)
++  expect(button(ui.container, 'Show room')!.getAttribute('aria-label')).toBe('Show room to explore with Bun')
++  open(ui)
++  expect(button(ui.container, 'Show room')).toBeUndefined()
++  ui.rerender(<PetExplore {...ui.props} onShowRoom={undefined} />)
++  open(ui)
++  expect(button(ui.container, 'Show room')).toBeUndefined()
++})
++
++it('views without another invitation, marker update, frame, or successful announcement', () => {
++  vi.stubGlobal('requestAnimationFrame', vi.fn())
++  const ui = mount(); open(ui)
++  click(button(ui.container, 'Look together')!)
++  const heard = ui.container.querySelector('[role="status"]')!.textContent
++  const previewCount = vi.mocked(ui.props.onPreview!).mock.calls.length
++  click(button(ui.container, 'Show room')!)
++  expect(ui.props.onShowRoom).toHaveBeenCalledExactlyOnceWith()
++  expect(ui.props.onLook).toHaveBeenCalledExactlyOnceWith('plant-id')
++  expect(vi.mocked(ui.props.onPreview!).mock.calls).toHaveLength(previewCount)
++  expect(ui.container.querySelector('select')!.value).toBe('plant-id')
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe(heard)
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++})
++
++it('explains a failed view and clears that feedback on a successful retry without inviting', () => {
++  const show = vi.fn().mockReturnValueOnce(false).mockReturnValue(true)
++  const ui = mount({ onShowRoom: show }); open(ui)
++  click(button(ui.container, 'Show room')!)
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('The room is unavailable right now. Try again shortly.')
++  click(button(ui.container, 'Show room')!)
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
++  expect(ui.props.onLook).not.toHaveBeenCalled()
++})
++
++it.each(['away', 'sick'] as const)('can view a resting resident while %s keeps invitations disabled', blocked => {
++  const ui = mount({ blocked }); open(ui)
++  expect(button(ui.container, 'Look together')!.disabled).toBe(true)
++  const show = button(ui.container, 'Show room')!
++  expect(show.disabled).toBe(false)
++  click(show)
++  expect(ui.props.onShowRoom).toHaveBeenCalledOnce()
++  expect(ui.props.onLook).not.toHaveBeenCalled()
++})
++
++it('links travel explanation and refuses to view until the route is available', () => {
++  const ui = mount({ blocked: 'travel' }); open(ui)
++  const show = button(ui.container, 'Show room')!
++  expect(show.disabled).toBe(true)
++  const id = show.getAttribute('aria-describedby')!
++  expect(ui.container.querySelector(`[id="${id}"]`)!.textContent).toBe('Bun is on the way.')
++  click(show)
++  expect(ui.props.onShowRoom).not.toHaveBeenCalled()
++  act(() => ui.rerender(<PetExplore {...ui.props} blocked={undefined} />))
++  expect(show.disabled).toBe(false)
++  click(show)
++  expect(ui.props.onShowRoom).toHaveBeenCalledOnce()
++})
++
++it('explains a resident in another room independently of the resting note', () => {
++  const ui = mount({ blocked: 'away', showRoomUnavailable: "Choose Bun's room to see them." }); open(ui)
++  const show = button(ui.container, 'Show room')!
++  expect(show.disabled).toBe(true)
++  const id = show.getAttribute('aria-describedby')!
++  expect(ui.container.querySelector(`[id="${id}"]`)!.textContent).toBe("Choose Bun's room to see them.")
++  expect(ui.container.querySelector('.pet-explore-note')!.textContent).toMatch(/resting while you're away/)
++  click(show)
++  expect(ui.props.onShowRoom).not.toHaveBeenCalled()
++})
++
++it('clears failed-view feedback when starting a fresh invitation', () => {
++  const ui = mount({ onShowRoom: () => false }); open(ui)
++  click(button(ui.container, 'Show room')!)
++  click(button(ui.container, 'Look together')!)
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('You invited Bun to look at the potted plant.')
++})
+diff --git 1/scripts/browser/pet-explore-show-room.test.mjs 2/scripts/browser/pet-explore-show-room.test.mjs
+new file mode 100644
+index 0000000..f8baa7c
+--- /dev/null
++++ 2/scripts/browser/pet-explore-show-room.test.mjs
+@@ -0,0 +1,139 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, snapshot } from './helpers.mjs'
++
++const visible = node => {
++  const box = node.getBoundingClientRect()
++  let left = 0, top = 0, right = innerWidth, bottom = innerHeight
++  for (let parent = node.parentElement; parent; parent = parent.parentElement) {
++    const style = getComputedStyle(parent), clip = parent.getBoundingClientRect()
++    if (/(auto|scroll|hidden|clip)/.test(style.overflowX)) { left = Math.max(left, clip.left + parent.clientLeft); right = Math.min(right, clip.left + parent.clientLeft + parent.clientWidth) }
++    if (/(auto|scroll|hidden|clip)/.test(style.overflowY)) { top = Math.max(top, clip.top + parent.clientTop); bottom = Math.min(bottom, clip.top + parent.clientTop + parent.clientHeight) }
++  }
++  return Math.max(0, Math.min(right, box.right) - Math.max(left, box.left)) * Math.max(0, Math.min(bottom, box.bottom) - Math.max(top, box.top)) / (box.width * box.height)
++}
++
++for (const { width, height, text = 1, reduced = true } of [
++  { width: 320, height: 640 }, { width: 320, height: 640, text: 2 },
++  { width: 390, height: 664, reduced: false },
++  { width: 844, height: 390 }, { width: 844, height: 390, text: 2 },
++  { width: 1280, height: 800, reduced: false }, { width: 1280, height: 800, text: 2 },
++]) test(`Explore views the selected room at${width}x${height}/${text * 100}% text without another invitation`, async t => {
++  const page = await browserApp(t, { viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference' })
++  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
++  await page.addInitScript(() => {
++    Math.random = () => .99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__exploreShowFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__exploreShowFrames.delete(id); callback(now) })
++      window.__exploreShowFrames.add(id); return id
++    }
++    window.cancelAnimationFrame = id => { window.__exploreShowFrames.delete(id); cancel(id) }
++  })
++  await page.reload()
++  if (text === 2) await page.addStyleTag({ content: ':root{font-size:200%}' })
++  const resident = page.locator('.room-pet'); await resident.waitFor()
++  const saved = (await snapshot(page)).tables
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  const show = page.getByRole('button', { name: 'Show room to explore with Mochi', exact: true })
++  assert.equal(await show.count(), 1, 'the expanded Explore heading needs its own explicit view control')
++  const select = page.getByLabel('Show Mochi', { exact: true })
++  const options = await select.locator('option').evaluateAll(nodes => nodes.map(node => node.value))
++  await select.selectOption(options.at(-1))
++  await page.getByRole('button', { name: 'Look together', exact: true }).click()
++  const feedback = await page.locator('.pet-explore [role="status"]').textContent()
++  assert.match(feedback, reduced ? /noticed/ : /invited/)
++  const before = await resident.locator('[data-character-body]').innerHTML()
++  const position = await resident.getAttribute('transform'), heard = await page.locator('.living-room [aria-live="polite"]').textContent()
++  const camera = await page.locator('.home-scene-viewport').evaluate(node => ({ x: node.scrollLeft, y: node.scrollTop }))
++  await resident.evaluate(node => { window.__exploreShownPet = node })
++  await show.focus()
++  const box = await show.boundingBox(), heading = await page.locator('.pet-explore-heading').boundingBox()
++  assert.ok(box.width >= 44 && box.height >= 44)
++  assert.ok(box.x >= 0 && box.x + box.width <= width && box.y >= heading.y && box.y + box.height <= heading.y + heading.height + .01)
++  assert.equal(await show.evaluate(node => node.scrollWidth <= node.clientWidth), true)
++  if (process.env.CHORE_EXPLORE_SHOW_CAPTURE_DIR) {
++    await mkdir(process.env.CHORE_EXPLORE_SHOW_CAPTURE_DIR, { recursive: true })
++    await page.screenshot({ path: join(process.env.CHORE_EXPLORE_SHOW_CAPTURE_DIR, `explore-show-controls-${width}-${text * 100}.png`), fullPage: false })
++  }
++  await page.keyboard.press('Enter')
++  assert.equal(await resident.evaluate(node => node === document.activeElement && node.matches(':focus-visible') && node === window.__exploreShownPet), true)
++  assert.ok(await resident.locator('[data-character-body]').evaluate(visible) >= .95)
++  assert.equal(await resident.locator('[data-character-body]').innerHTML(), before)
++  assert.equal(await resident.getAttribute('transform'), position)
++  assert.equal(await page.locator('.living-room [aria-live="polite"]').textContent(), heard)
++  assert.equal(await page.locator('.pet-explore [role="status"]').textContent(), feedback)
++  assert.equal(await select.inputValue(), options.at(-1))
++  assert.equal(await page.locator('.room-selection').getAttribute('data-selection-object'), options.at(-1))
++  assert.deepEqual(await page.locator('.home-scene-viewport').evaluate(node => ({ x: node.scrollLeft, y: node.scrollTop })), camera)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  assert.ok(await page.evaluate(() => window.__exploreShowFrames.size) <= 1)
++  const out = process.env.CHORE_EXPLORE_SHOW_CAPTURE_DIR
++  if (out) {
++    await mkdir(out, { recursive: true })
++    await page.screenshot({ path: join(out, `explore-show-${width}-${text * 100}.png`), fullPage: false })
++    await writeFile(join(out, `explore-show-${width}-${text * 100}.json`), JSON.stringify({ width, height, rootTextPercent: text * 100, reduced, showBox: box, headingBox: heading, selectedId: options.at(-1), feedback, camera, scope: 'Native keyboard activation/focus/target/textfit/selectedmarker/unchanged frame-placement-speech-feedback-camera-savedtables. Frozen clock;not temporal playback.' }, null, 2) + '\n')
++  }
++  t.diagnostic(`Chromium ${page.context().browser().version()};explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock`)
++})
++
++for (const resting of ['away', 'sick']) test(`Explore views the ${resting} resident only in its own room`, async t => {
++  const page = await browserApp(t)
++  const firstId = await page.evaluate(resting => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
++      let firstId
++      read.onsuccess = () => {
++        const saved = read.result, tables = saved.tables, first = Object.values(tables.rooms)[0]
++        firstId = first.id
++        tables.rooms['explore-other-room'] = { ...first, id: 'explore-other-room', type: 'bedroom' }
++        tables.placed_objects['explore-other-plant'] = { id: 'explore-other-plant', roomId: 'explore-other-room', catalogId: 'plant', tileX: 3, tileY: 3, rotation: 0 }
++        const fridge = Object.values(tables.placed_objects).find(object => object.catalogId === 'fridge')
++        tables.placed_objects['blocked-door'] = { ...fridge, id: 'blocked-door', tileX: 7, tileY: 4, rotation: 0 }
++        if (resting === 'away') Object.values(tables.homes)[0].vacations = [{ start: '2000-01-01', end: '2099-12-31' }]
++        else {
++          tables.completions = {}
++          const older = new Date(Date.now() - 45 * 86400000).toISOString().slice(0, 10)
++          for (const chore of Object.values(tables.chores)) { chore.createdOn = older; chore.schedule = { kind: 'daily' } }
++        }
++        store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve(firstId) }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), resting)
++  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
++  await page.addInitScript(() => {
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__exploreShowFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__exploreShowFrames.delete(id); callback(now) })
++      window.__exploreShowFrames.add(id); return id
++    }
++    window.cancelAnimationFrame = id => { window.__exploreShowFrames.delete(id); cancel(id) }
++  })
++  await page.reload()
++  const saved = (await snapshot(page)).tables
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  const show = () => page.getByRole('button', { name: 'Show room to explore with Mochi', exact: true })
++  assert.equal(await show().isEnabled(), true)
++  assert.equal(await page.getByRole('button', { name: 'Look together', exact: true }).isDisabled(), true)
++  await page.locator('.room-controls-focus select').selectOption('explore-other-room')
++  assert.match(await page.locator('.home-scene-travel-status').textContent(), /path to Bedroom is blocked/)
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  assert.equal(await show().isDisabled(), true)
++  assert.equal(await show().evaluate(node => document.getElementById(node.getAttribute('aria-describedby')).textContent), "Choose Mochi's room to see them.")
++  await page.locator('.room-controls-focus select').selectOption(firstId)
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  assert.equal(await show().isEnabled(), true)
++  await show().focus(); await page.keyboard.press('Enter')
++  assert.equal(await page.locator('.room-pet').evaluate(node => node === document.activeElement), true)
++  assert.equal(await page.evaluate(() => window.__exploreShowFrames.size), 0)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  t.diagnostic('Actual blocked doorway; separate resting/view explanations;own room viewable with0frames;no saved changes.')
++})
+diff --git c/scripts/browser/pet-concern-follow.test.mjs w/scripts/browser/pet-concern-follow.test.mjs
+index ca7fa08..b916119 100644
+--- c/scripts/browser/pet-concern-follow.test.mjs
++++ w/scripts/browser/pet-concern-follow.test.mjs
+@@ -72,7 +72,7 @@ for (const { species, speed, peak, minimum, reversals, reduced = false } of [
+   const initial = await resident.evaluate(read), body = await resident.locator('[data-character-body]').innerHTML()
+   await resident.evaluate(node => { window.__concernPet = node })
+   await page.getByRole('button', { name: 'Explore together', exact: true }).click()
+-  await page.getByLabel(/^Show /).selectOption('concern-plant')
++  await page.getByRole('combobox', { name: /^Show / }).selectOption('concern-plant')
+   await page.getByRole('button', { name: 'Look together', exact: true }).click()
+   const live = page.locator('.living-room [aria-live="polite"]')
+   const observations = ['The plant is drooping a little. Thirsty, maybe?', 'I heard a tiny leaf sigh.']
+diff --git c/scripts/browser/pet-dust-hand.test.mjs w/scripts/browser/pet-dust-hand.test.mjs
+index bf04b03..a5835d8 100644
+--- c/scripts/browser/pet-dust-hand.test.mjs
++++ w/scripts/browser/pet-dust-hand.test.mjs
+@@ -67,7 +67,7 @@ for (const { species, speed, peak, minimum, reversals, reduced = false } of [
+   const initial = await resident.evaluate(read), body = await resident.locator('[data-character-body]').innerHTML()
+   await resident.evaluate(node => { window.__dustPet = node })
+   await page.getByRole('button', { name: 'Explore together', exact: true }).click()
+-  await page.getByLabel(/^Show /).selectOption('dust-shelf')
++  await page.getByRole('combobox', { name: /^Show / }).selectOption('dust-shelf')
+   await page.getByRole('button', { name: 'Look together', exact: true }).click()
+   const live = page.locator('.living-room [aria-live="polite"]')
+   const observations = ['So many colours on those shelves.', 'I wonder what is in that red book.']
+diff --git c/scripts/browser/pet-environment-attention.test.mjs w/scripts/browser/pet-environment-attention.test.mjs
+index c292c6a..a8c5e82 100644
+--- c/scripts/browser/pet-environment-attention.test.mjs
++++ w/scripts/browser/pet-environment-attention.test.mjs
+@@ -64,7 +64,7 @@ for (const species of ['mochi', 'bun', 'sprout']) for (const rotation of [0, 1])
+     await page.getByRole('button', { name: 'Explore together', exact: true }).click()
+     const live = page.locator('.living-room [aria-live="polite"]')
+     for (const id of ['low', 'high']) {
+-      await page.getByLabel(/^Show /).selectOption(id)
++      await page.getByRole('combobox', { name: /^Show / }).selectOption(id)
+       await page.getByRole('button', { name: 'Look together', exact: true }).click()
+       let heard = ''
+       for (let i = 0; i < 150 && !heard; i++) {
+diff --git c/scripts/browser/pet-explore-names.test.mjs w/scripts/browser/pet-explore-names.test.mjs
+index bff5476..e967c3c 100644
+--- c/scripts/browser/pet-explore-names.test.mjs
++++ w/scripts/browser/pet-explore-names.test.mjs
+@@ -72,7 +72,10 @@ test('native keyboard can identify and invite the second repeated furnishing', a
+   const saved = (await snapshot(page)).tables
+   const toggle = page.getByRole('button', { name: 'Explore together', exact: true })
+   await toggle.focus(); await page.keyboard.press('Enter'); await page.keyboard.press('Tab')
+-  const select = page.getByLabel(/^Show /)
++  const show = page.getByRole('button', { name: 'Show room to explore with Mochi', exact: true })
++  assert.equal(await show.evaluate(node => node === document.activeElement), true)
++  await page.keyboard.press('Tab')
++  const select = page.getByRole('combobox', { name: /^Show / })
+   assert.equal(await select.evaluate(node => node === document.activeElement), true)
+   assert.equal(await select.getByRole('option', { name: 'Potted plant 1', exact: true }).count(), 1)
+   assert.equal(await select.getByRole('option', { name: 'Potted plant 2', exact: true }).count(), 1)
+@@ -133,7 +136,7 @@ test('native furnishing previews preserve the current fractional walk and its on
+   const before = await resident.evaluate(node => ({ at: node.getAttribute('transform'), body: node.querySelector('[data-character-body]').outerHTML }))
+   const pending = await page.evaluate(() => [...window.__exploreFrames])
+   assert.equal(pending.length, 1)
+-  await page.getByLabel(/^Show /).focus()
++  await page.getByRole('combobox', { name: /^Show / }).focus()
+   await page.keyboard.press('End')
+   await assertTwinMarker(page)
+   assert.equal(await resident.evaluate(node => node === window.__previewPet), true)
+diff --git c/scripts/browser/pet-explore.test.mjs w/scripts/browser/pet-explore.test.mjs
+index 250db9f..e3fb4c2 100644
+--- c/scripts/browser/pet-explore.test.mjs
++++ w/scripts/browser/pet-explore.test.mjs
+@@ -45,7 +45,10 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
+     await toggle.focus()
+     await page.keyboard.press('Enter')
+     await page.keyboard.press('Tab')
+-    const select = page.getByLabel(/^Show /)
++    const show = page.getByRole('button', { name: /^Show room to explore with / })
++    assert.equal(await show.evaluate(node => node === document.activeElement), true)
++    await page.keyboard.press('Tab')
++    const select = page.getByRole('combobox', { name: /^Show / })
+     assert.equal(await select.evaluate(node => node === document.activeElement), true)
+     await page.keyboard.press('End')
+     const resident = page.locator('.room-pet')
+@@ -58,7 +61,7 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
+     assert.ok((await page.locator('.living-room [aria-live="polite"]').textContent()).trim())
+     assert.equal(await resident.getAttribute('transform'), before)
+     assert.equal(await look.evaluate(node => node === document.activeElement), true)
+-    for (const control of [toggle, select, look]) {
++    for (const control of [toggle, show, select, look]) {
+       const bounds = await control.boundingBox()
+       assert.ok(bounds.height >= 44 && bounds.width >= 44)
+       assert.ok(bounds.x >= -1 && bounds.x + bounds.width <= viewport.width + 1)
+@@ -128,7 +131,7 @@ test('an invitation joins a live step, reaches the chosen detail, coalesces repe
+   await resident.waitFor()
+   await resident.evaluate(node => { window.__explorePet = node })
+   await page.getByRole('button', { name: 'Explore together', exact: true }).click()
+-  await page.getByLabel(/^Show /).selectOption(plant.id)
++  await page.getByRole('combobox', { name: /^Show / }).selectOption(plant.id)
+   const start = await resident.evaluate(readPet)
+   let before
+   for (let i = 0; i < 100; i++) {
+@@ -161,7 +164,7 @@ test('an invitation joins a live step, reaches the chosen detail, coalesces repe
+   assert.equal(await page.evaluate(() => window.__exploreFrames.size), 1)
+   await changeReducedMotion(page, 'reduce')
+   const still = await resident.getAttribute('transform')
+-  await page.getByLabel(/^Show /).selectOption(fridge.id)
++  await page.getByRole('combobox', { name: /^Show / }).selectOption(fridge.id)
+   await page.getByRole('button', { name: 'Look together', exact: true }).click()
+   assert.match(await page.locator('.pet-explore [role="status"]').textContent(), /from here/)
+   await page.clock.runFor(300)
+diff --git c/scripts/browser/pet-rest-follow.test.mjs w/scripts/browser/pet-rest-follow.test.mjs
+index 85f7bb8..4384a8d 100644
+--- c/scripts/browser/pet-rest-follow.test.mjs
++++ w/scripts/browser/pet-rest-follow.test.mjs
+@@ -57,7 +57,7 @@ for (const { species, selector, limit, factor } of [
+     const saved = (await snapshot(page)).tables
+     await resident.evaluate(node => { window.__restPet = node })
+     await page.getByRole('button', { name: 'Explore together', exact: true }).click()
+-    await page.getByLabel(/^Show /).selectOption('rest-rug')
++    await page.getByRole('combobox', { name: /^Show / }).selectOption('rest-rug')
+     await page.getByRole('button', { name: 'Look together', exact: true }).click()
+     const live = page.locator('.living-room [aria-live="polite"]')
+     let heard = ''
+diff --git c/docs/ART.md w/docs/ART.md
+index 4c2ce20..808f547 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -199,3 +199,5 @@ In stacked home views below640px, keep at least250px of room canvas after enlarg
+ Rest together offers a quiet player response alongside the four existing choices. It uses the existing2400ms grounded environmental rest sampler, restrained appendage sway and mood face; it does not imply sitting on furniture or completing chores. Use two balanced rows in narrow default-text panels (three choices above two), a full-width rest row after four choices in wide panels, and one column when enlarged text needs it. Preserve the busy/resting rules, allow chore cheers to preempt it, and reuse the resident speech and clock. Reduced motion keeps the existing still mood. No replay after a hidden deadline. The enlarged-text scene regression also protects the recorded default dimensions and spends1400ms of Stretch offscreen before requiring completion within1600ms after return, which rules out restarting its2400ms lifetime.
+ 
+ Healthy environmental concern settles appendages in one restrained sway as the resident studies wilting leaves. Preserve the existing1800ms action, torso, arms, gaze, lifetime blink, planted feet, shadow and dialogue. Mochi stays soft, Bun retains the largest ear movement and Sprout a smaller leaf sway. Normal sick frames, reduced-motion frames and every other action remain exact. This implies no contact with the furnishing.
++
++Explore together also offers Show room while expanded. Reuse the player view action: explicitly scroll the scene into view and focus the resident without restarting an invitation, changing the chosen furnishing or clearing successful feedback. A resting resident remains viewable in its own room; travel and a different focused room have linked explanations. Keep the heading wrapping,44px targets and a distinct accessible name when both panels are open. Look together itself does not scroll the scene.

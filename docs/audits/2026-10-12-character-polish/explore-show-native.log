@@ -1,0 +1,130 @@
+✔ Explore views the selected room at320x640/100% text without another invitation (1044.812358ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the selected room at320x640/200% text without another invitation (927.526573ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the selected room at390x664/100% text without another invitation (1004.951317ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the selected room at844x390/100% text without another invitation (949.18285ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the selected room at844x390/200% text without another invitation (948.949852ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the selected room at1280x800/100% text without another invitation (1051.37135ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the selected room at1280x800/200% text without another invitation (979.612217ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the away resident only in its own room (1037.485403ms)
+ℹ Actual blocked doorway; separate resting/view explanations;own room viewable with0frames;no saved changes.
+✔ Explore views the sick resident only in its own room (961.334616ms)
+ℹ Actual blocked doorway; separate resting/view explanations;own room viewable with0frames;no saved changes.
+✖ keyboard exploration stays still and fits 320px (694.347851ms)
+✖ keyboard exploration stays still and fits 390px (647.049497ms)
+✖ keyboard exploration stays still and fits 1280px (628.436878ms)
+✖ keyboard exploration stays still and fits 640px (768.576268ms)
+✖ keyboard exploration stays still and fits 844px (751.026218ms)
+✖ an invitation joins a live step, reaches the chosen detail, coalesces repeats, and respects live reduction (807.026332ms)
+✔ Show room resumes an offscreen reaction only while its deadline remains active (3631.395564ms)
+ℹ Native offscreen 0 → live visible 1 → offscreen 0 → expired visible 0; no replay or saved changes.
+✔ Show room explains a blocked route while away and still views the resting resident's own room (921.654334ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room explains a blocked route while sick and still views the resting resident's own room (966.307175ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room preserves a live stretch and restores context at320x640 (1468.003707ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.238;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at361x664 (1466.150267ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.371;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at390x664 (1486.140781ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.520;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at640x360 (1770.578726ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at844x390 (1764.017034ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at1280x800 (1796.240463ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+ℹ tests 24
+ℹ suites 0
+ℹ pass 18
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29600.67053
+
+✖ failing tests:
+
+test at scripts/browser/pet-explore.test.mjs:37:3
+✖ keyboard exploration stays still and fits 320px (694.347851ms)
+  locator.evaluate: Error: strict mode violation: getByLabel(/^Show /) resolved to 2 elements:
+      1) <button type="button" class="btn btn-quiet pet-explore-show" aria-label="Show room to explore with Mochi">Show room</button> aka getByRole('button', { name: 'Show room to explore with' })
+      2) <select class="field" id="_r_i_-object">…</select> aka getByLabel('Show Mochi')
+  
+  Call log:
+  [2m  - waiting for getByLabel(/^Show /)[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore.test.mjs:49:31) {
+    log: [ '  - waiting for getByLabel(/^Show /)' ]
+  }
+
+test at scripts/browser/pet-explore.test.mjs:37:3
+✖ keyboard exploration stays still and fits 390px (647.049497ms)
+  locator.evaluate: Error: strict mode violation: getByLabel(/^Show /) resolved to 2 elements:
+      1) <button type="button" class="btn btn-quiet pet-explore-show" aria-label="Show room to explore with Mochi">Show room</button> aka getByRole('button', { name: 'Show room to explore with' })
+      2) <select class="field" id="_r_i_-object">…</select> aka getByLabel('Show Mochi')
+  
+  Call log:
+  [2m  - waiting for getByLabel(/^Show /)[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore.test.mjs:49:31) {
+    log: [ '  - waiting for getByLabel(/^Show /)' ]
+  }
+
+test at scripts/browser/pet-explore.test.mjs:37:3
+✖ keyboard exploration stays still and fits 1280px (628.436878ms)
+  locator.evaluate: Error: strict mode violation: getByLabel(/^Show /) resolved to 2 elements:
+      1) <button type="button" class="btn btn-quiet pet-explore-show" aria-label="Show room to explore with Mochi">Show room</button> aka getByRole('button', { name: 'Show room to explore with' })
+      2) <select class="field" id="_r_i_-object">…</select> aka getByLabel('Show Mochi')
+  
+  Call log:
+  [2m  - waiting for getByLabel(/^Show /)[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore.test.mjs:49:31) {
+    log: [ '  - waiting for getByLabel(/^Show /)' ]
+  }
+
+test at scripts/browser/pet-explore.test.mjs:37:3
+✖ keyboard exploration stays still and fits 640px (768.576268ms)
+  locator.evaluate: Error: strict mode violation: getByLabel(/^Show /) resolved to 2 elements:
+      1) <button type="button" class="btn btn-quiet pet-explore-show" aria-label="Show room to explore with A very long pet name">Show room</button> aka getByRole('button', { name: 'Show room to explore with A' })
+      2) <select class="field" id="_r_6_-object">…</select> aka getByLabel('Show A very long pet name')
+  
+  Call log:
+  [2m  - waiting for getByLabel(/^Show /)[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore.test.mjs:49:31) {
+    log: [ '  - waiting for getByLabel(/^Show /)' ]
+  }
+
+test at scripts/browser/pet-explore.test.mjs:37:3
+✖ keyboard exploration stays still and fits 844px (751.026218ms)
+  locator.evaluate: Error: strict mode violation: getByLabel(/^Show /) resolved to 2 elements:
+      1) <button type="button" class="btn btn-quiet pet-explore-show" aria-label="Show room to explore with A very long pet name">Show room</button> aka getByRole('button', { name: 'Show room to explore with A' })
+      2) <select class="field" id="_r_6_-object">…</select> aka getByLabel('Show A very long pet name')
+  
+  Call log:
+  [2m  - waiting for getByLabel(/^Show /)[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore.test.mjs:49:31) {
+    log: [ '  - waiting for getByLabel(/^Show /)' ]
+  }
+
+test at scripts/browser/pet-explore.test.mjs:107:1
+✖ an invitation joins a live step, reaches the chosen detail, coalesces repeats, and respects live reduction (807.026332ms)
+  locator.selectOption: Error: strict mode violation: getByLabel(/^Show /) resolved to 2 elements:
+      1) <button type="button" class="btn btn-quiet pet-explore-show" aria-label="Show room to explore with Mochi">Show room</button> aka getByRole('button', { name: 'Show room to explore with' })
+      2) <select class="field" id="_r_6_-object">…</select> aka getByLabel('Show Mochi')
+  
+  Call log:
+  [2m  - waiting for getByLabel(/^Show /)[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore.test.mjs:131:35) {
+    log: [ '  - waiting for getByLabel(/^Show /)' ]
+  }

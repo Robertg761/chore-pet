@@ -45,7 +45,10 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
     await toggle.focus()
     await page.keyboard.press('Enter')
     await page.keyboard.press('Tab')
-    const select = page.getByLabel(/^Show /)
+    const show = page.getByRole('button', { name: /^Show room to explore with / })
+    assert.equal(await show.evaluate(node => node === document.activeElement), true)
+    await page.keyboard.press('Tab')
+    const select = page.getByRole('combobox', { name: /^Show / })
     assert.equal(await select.evaluate(node => node === document.activeElement), true)
     await page.keyboard.press('End')
     const resident = page.locator('.room-pet')
@@ -58,7 +61,7 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 390, height: 664 }
     assert.ok((await page.locator('.living-room [aria-live="polite"]').textContent()).trim())
     assert.equal(await resident.getAttribute('transform'), before)
     assert.equal(await look.evaluate(node => node === document.activeElement), true)
-    for (const control of [toggle, select, look]) {
+    for (const control of [toggle, show, select, look]) {
       const bounds = await control.boundingBox()
       assert.ok(bounds.height >= 44 && bounds.width >= 44)
       assert.ok(bounds.x >= -1 && bounds.x + bounds.width <= viewport.width + 1)
@@ -128,7 +131,7 @@ test('an invitation joins a live step, reaches the chosen detail, coalesces repe
   await resident.waitFor()
   await resident.evaluate(node => { window.__explorePet = node })
   await page.getByRole('button', { name: 'Explore together', exact: true }).click()
-  await page.getByLabel(/^Show /).selectOption(plant.id)
+  await page.getByRole('combobox', { name: /^Show / }).selectOption(plant.id)
   const start = await resident.evaluate(readPet)
   let before
   for (let i = 0; i < 100; i++) {
@@ -161,7 +164,7 @@ test('an invitation joins a live step, reaches the chosen detail, coalesces repe
   assert.equal(await page.evaluate(() => window.__exploreFrames.size), 1)
   await changeReducedMotion(page, 'reduce')
   const still = await resident.getAttribute('transform')
-  await page.getByLabel(/^Show /).selectOption(fridge.id)
+  await page.getByRole('combobox', { name: /^Show / }).selectOption(fridge.id)
   await page.getByRole('button', { name: 'Look together', exact: true }).click()
   assert.match(await page.locator('.pet-explore [role="status"]').textContent(), /from here/)
   await page.clock.runFor(300)

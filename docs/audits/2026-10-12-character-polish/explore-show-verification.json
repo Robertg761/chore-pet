@@ -1,0 +1,163 @@
+{
+  "freeze": {
+    "baseCommit": "4af7b9824dfadafff61631b72fc1f0c2a5af83a3",
+    "sources": {
+      "src/App.tsx": "63958a74abb6ac16e890728c20eabfc7296b4c0b2a361ba68b2337f7d805a181",
+      "src/pet/PetExplore.tsx": "785ebd379165a9dfa8eb13c0c500d4260133206fdfa1600b87705234fdb08ad1",
+      "src/pet/PetExplore.css": "21a634ded88c3e74039e1780fd35dbed840d7d71110b0ccf4916aec37915146a",
+      "src/pet/PetExplore.showRoom.test.tsx": "448473258b3043c9f9e71708d708465da01c0fce13167fd658ff709b928b3cda",
+      "scripts/browser/pet-explore-show-room.test.mjs": "297a213630dfdb649d1bebe115c7844a7589313be6ab85d197f0b5fd34a1526b",
+      "scripts/browser/pet-concern-follow.test.mjs": "8ee45960c8c56dde4041cfbdaa064526f414836330ddce1a2810cdd5171a93f4",
+      "scripts/browser/pet-dust-hand.test.mjs": "a11006cae774f47738ec0ef2137961de5ddc506647ae8d2e9245aa6ad65cf804",
+      "scripts/browser/pet-environment-attention.test.mjs": "82c65ebfae72229e2ce2aa3626ea877587b02f48d6209bfc8aee7fddde8e17ee",
+      "scripts/browser/pet-explore-names.test.mjs": "38a6cd621bae2443d69429c5cddb9f83777889267eaa636674727793a1d25dd0",
+      "scripts/browser/pet-explore.test.mjs": "760ea164e885fcdeaf2fdd86062b0af1cb6e14323d81e7cf1822545c2181a827",
+      "scripts/browser/pet-rest-follow.test.mjs": "5a746d2ed116a1e12f954021d9db377552f53336e3e49f0b6b125606785e575f",
+      "docs/ART.md": "785a60e1ad1b1c1d40dfa0ff92b800a03578b6db9eb529261116e0f8da0ca4b6"
+    },
+    "unchangedSources": {
+      "src/pet/PetPlay.tsx": "aa946e4910abd666f0fea82e124d3d59bc8d6e951af808edfa6cb92e7a37b2e7",
+      "src/pet/LivingRoom.tsx": "ef72fe47fe14dd67bb78e512dd237f046730d68ebd3209ebc4c16060a380294f",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/usePetVisibility.ts": "d322342a8b624b9a534e268299f26c539a171e9511854c7cc45582f166729134",
+      "src/pet/behaviour.ts": "7e4b850de2aa14c42cbd6bafac23420e428b5564350aa1c8a7b17db9b2a915af",
+      "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+      "src/character/motion.ts": "a912e37fb61319129245da227a7dc1e9cda10390596c68089440f307a7762b15",
+      "src/room/HomeScene.tsx": "a9c1cfd48627624fc3cd6bf4039e55421c3e1682bb170cb61aea7fc01655a5ba",
+      "src/room/HomeScene.css": "bc00ad2e5bbcab611da199dfd3bff8524fbd6a21e061219a7a1c71cdbf071f04"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/explore-show-source.diff",
+      "sha256": "a381b29109b9cef0088b59568a456db422c4f8631c69ba1bbe64e5d9b7e53054"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/explore-show-artifacts.json",
+    "sha256": "97b0f00286709509e3f6d6e9a450ea91f66e659511c3a72bf7febecf727b6edc"
+  },
+  "checks": [
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/explore-show-build.log",
+      "logSha256": "544fe03a2f20387f7cbba4ffb21f76d891ca4a017f4496b082c5f2289c3384ba",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/explore-show-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/explore-show-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/explore-show-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/explore-show-focused.log",
+      "logSha256": "ab08a55ddd5cd83c62282d8b5e579cd6539394e87282103264af4f8afc7304ab",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/explore-show-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/explore-show-full.log",
+      "logSha256": "95ed211e7b0a52711561dbbd327acec1a173728ce587a68642d3d38d196874fc",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/explore-show-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "keyboard-final",
+      "log": "docs/audits/2026-10-12-character-polish/explore-show-keyboard-final.log",
+      "logSha256": "1a6eab60935965064ec95dcc647088469fb94d52c774d5df12a761bd4faf5834",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/explore-show-keyboard-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint-final",
+      "log": "docs/audits/2026-10-12-character-polish/explore-show-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/explore-show-lint-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/explore-show-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/explore-show-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-final",
+      "log": "docs/audits/2026-10-12-character-polish/explore-show-native-final.log",
+      "logSha256": "7cd77c91afe1914658da36a9bf24510b436dbc4d21d4870653f826469e86d991",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/explore-show-native-final.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native-red",
+      "log": "docs/audits/2026-10-12-character-polish/explore-show-native-red.log",
+      "logSha256": "8e915ea6edf17795564a48818674ab1ff1ca9f8bb5f661d6618ff352f16b97d5",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/explore-show-native-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/explore-show-native.log",
+      "logSha256": "387efdf271d98376f7c2d001d42e63c755ea16390bab1c8cf9a29054699c745d",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/explore-show-native.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/explore-show-red.log",
+      "logSha256": "50da6dea597f33363b77c97d030ec5ae84301d02e4d87ce98fef34894d75b524",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/explore-show-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "status": "Scoped feature verification/independent source-still review approved;ready for local checkpoint.",
+  "result": "2285tests/113files77.15s;148focused4.49s;typebuild/zero-warninglint/authoredwhitespace0. 43unique native cases pass across revised43case37pass/6Tabfixturefail59.940s plus targeted6finalkeyboard5.815s. All nine newnative and nineexistingShowroom cases pass twice. Seven newdefault/200%layout captures retain 44px+targets/nativeEnter/focus-visible/atleast95%residentvisible,unchanged selectedmarker/body/position/speech/feedback/camera/savedtables andatmost1frame. Away/sickactualblockeddoor fixtures independentlydisable view atotherroom butview ownrestingresidentwith0frames. Existingenvironment/concern/dust/rest/duplicatenames/fractionalinvitation fixtures retain all assertions after sixbroaddropdownlocators narrowed tocomboboxrole andnewviewbutton includedinTaborder. Rootinspected14PNG/7JSON.",
+  "history": "8preproductcomponentfail599ms and1missingnativecontrolfail832.8ms. Initial24native18pass/6strictselectorambiguityfail because getByLabel(/^Show /)matchesnewbuttonanddropdown. Product unchanged afterbuild; sixnativefixtures narrowed tocomboboxrole. Revised43native37pass/6Taborderfixturefail because explicitnewbuttonprecedesselector. Twofixturefiles nowassertShowroombuttonfocusbeforeTabtoselector;all originalkeyboardinvitation/fit/marker assertions retained,all6 rerunpass. No productfailure established by those fixturefailures.",
+  "limits": "NativeChromium152;7layoutsamples roottext100/200%,notbrowserzoom/physicaldevice/AT/wholeappacceptance. Frozenclock assertions verifyviewdoesnotrepaint/replaceinvitation;temporalreturn/deadline established by unchangedrealclockplayerShowroom case. Captures were collected in first18passnative subset;finalproduct App/PetExplore/CSS andnewnative source byteunchanged afterward; later changes only sixoldernativefixtureselectors/Taborder. Preexisting speech overlay covers enlarged Homeview controls in320/844text200capturedstates; disclosed separateBatch42,notcertifiedwholeapplayout. Scene/sampler/lifetime/visibility9dependencyfiles exact4af7b98. Oneheavyjob/oneChromium orVitestworker;768MBNodecap/nice10;observed5.9\u20136.2GiBavailableRAM,/tmp4.1GBfree.",
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/explore-show-review-input.json",
+    "sha256": "2061322af17fb1be70db84983871ee102411d62ccc1548485be27f708616837c"
+  },
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/explore-show-review.md",
+    "sha256": "f417ea5549d1e8a504bb43271a5851e50b27de23f979d3ac51bef19879e118f3",
+    "verdict": "Hubble approves scoped feature;no introduced findings. ExistingP2speech-control layout issue assignedBatch42,notresolvedbyfeature."
+  }
+}

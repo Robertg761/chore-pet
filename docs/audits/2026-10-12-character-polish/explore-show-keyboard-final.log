@@ -1,0 +1,21 @@
+✔ native keyboard can identify and invite the second repeated furnishing (1154.128651ms)
+ℹ Phone page scroll target:{"x":160,"y":100}
+ℹ Chromium 152.0.7977.82;native keyboard;unique names;unchanged saved tables
+✔ keyboard exploration stays still and fits 320px (787.568888ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 390px (731.392475ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 1280px (731.384555ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 640px (864.116461ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 844px (802.296566ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5815.486383

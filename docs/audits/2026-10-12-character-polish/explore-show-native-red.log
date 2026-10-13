@@ -1,0 +1,30 @@
+✖ Explore views the selected room at390x664/100% text without another invitation (832.785063ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1202.612469
+
+✖ failing tests:
+
+test at scripts/browser/pet-explore-show-room.test.mjs:23:4
+✖ Explore views the selected room at390x664/100% text without another invitation (832.785063ms)
+  AssertionError [ERR_ASSERTION]: the expanded Explore heading needs its own explicit view control
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-explore-show-room.test.mjs:42:10)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

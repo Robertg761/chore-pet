@@ -64,7 +64,7 @@ for (const species of ['mochi', 'bun', 'sprout']) for (const rotation of [0, 1])
     await page.getByRole('button', { name: 'Explore together', exact: true }).click()
     const live = page.locator('.living-room [aria-live="polite"]')
     for (const id of ['low', 'high']) {
-      await page.getByLabel(/^Show /).selectOption(id)
+      await page.getByRole('combobox', { name: /^Show / }).selectOption(id)
       await page.getByRole('button', { name: 'Look together', exact: true }).click()
       let heard = ''
       for (let i = 0; i < 150 && !heard; i++) {

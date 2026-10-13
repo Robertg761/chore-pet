@@ -72,7 +72,7 @@ for (const { species, speed, peak, minimum, reversals, reduced = false } of [
   const initial = await resident.evaluate(read), body = await resident.locator('[data-character-body]').innerHTML()
   await resident.evaluate(node => { window.__concernPet = node })
   await page.getByRole('button', { name: 'Explore together', exact: true }).click()
-  await page.getByLabel(/^Show /).selectOption('concern-plant')
+  await page.getByRole('combobox', { name: /^Show / }).selectOption('concern-plant')
   await page.getByRole('button', { name: 'Look together', exact: true }).click()
   const live = page.locator('.living-room [aria-live="polite"]')
   const observations = ['The plant is drooping a little. Thirsty, maybe?', 'I heard a tiny leaf sigh.']

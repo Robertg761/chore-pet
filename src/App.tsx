@@ -729,6 +729,17 @@ export default function App() {
   const hasWestWindow = !roomDoors.some((door) => door.side === 'west')
   const resident = travel.position && rooms.find((candidate) => candidate.id === travel.position?.roomId)
   const residentObjects = resident ? objects.filter((object) => object.roomId === resident.id) : []
+  const showRoomUnavailable = travel.journey ? `${pet.name} is on the way.`
+    : resident?.id !== room?.id ? `Choose ${pet.name}'s room to see them.` : undefined
+  function showResidentRoom() {
+    if (!room || travel.journey || resident?.id !== room.id) return false
+    const scene = homeStage.current?.querySelector<HTMLElement>('.home-scene')
+    const drawnPet = homeStage.current?.querySelector<SVGElement>('.room-pet[role="button"]')
+    if (!scene || !drawnPet) return false
+    scene.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' })
+    drawnPet.focus({ preventScroll: true })
+    return true
+  }
   const stationaryPet = !travel.journey && travel.position ? {
     tile: travel.position,
     art: <CharacterArt species={pet.species} mood={condition.mood} pose={away ? 'sleeping' : undefined} bodyColour={pet.bodyColour} equipped={pet.equipped} look={{ eyes: pet.eyes, cheeks: pet.cheeks }} strokeScale={PET_STROKE_SCALE} />,
@@ -986,6 +997,7 @@ export default function App() {
       <div className="home-chores">
         {room && roomObjects.length > 0 && <PetExplore key={`${home.id}:${room.id}`} objects={roomObjects} petName={pet.name}
           onPreview={previewExplore}
+          onShowRoom={showResidentRoom} showRoomUnavailable={showRoomUnavailable}
           blocked={away ? 'away' : condition.mood === 'sick' ? 'sick' : travel.journey || resident?.id !== room.id ? 'travel' : undefined}
           onLook={objectId => !travel.journey && resident?.id === room.id
             ? residentControl.current?.lookAt(objectId) ?? 'unavailable' : 'unavailable'} />}
@@ -1000,17 +1012,7 @@ export default function App() {
           blocked={away ? 'away' : condition.mood === 'sick' ? 'sick' : travel.journey || resident?.id !== room.id ? 'travel' : undefined}
           onReact={action => !travel.journey && resident?.id === room.id
             ? residentControl.current?.respond(action) ?? 'unavailable' : 'unavailable'}
-          showRoomUnavailable={travel.journey ? `${pet.name} is on the way.`
-            : resident?.id !== room.id ? `Choose ${pet.name}'s room to see them.` : undefined}
-          onShowRoom={() => {
-            if (travel.journey || resident?.id !== room.id) return false
-            const scene = homeStage.current?.querySelector<HTMLElement>('.home-scene')
-            const drawnPet = homeStage.current?.querySelector<SVGElement>('.room-pet[role="button"]')
-            if (!scene || !drawnPet) return false
-            scene.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' })
-            drawnPet.focus({ preventScroll: true })
-            return true
-          }} />}
+          showRoomUnavailable={showRoomUnavailable} onShowRoom={showResidentRoom} />}
       </div>
 
       {!syncNote && (

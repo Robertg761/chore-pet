@@ -1,0 +1,25 @@
+{
+  "width": 1280,
+  "height": 800,
+  "rootTextPercent": 100,
+  "reduced": false,
+  "showBox": {
+    "x": 1142.0625,
+    "y": 190.1875,
+    "width": 105.9375,
+    "height": 44
+  },
+  "headingBox": {
+    "x": 834,
+    "y": 190.1875,
+    "width": 414,
+    "height": 44
+  },
+  "selectedId": "f933a625-5312-462f-92b5-b2d6435ecf2d",
+  "feedback": "You invited Mochi to look at the dining table.",
+  "camera": {
+    "x": 0,
+    "y": 0
+  },
+  "scope": "Native keyboard activation/focus/target/textfit/selectedmarker/unchanged frame-placement-speech-feedback-camera-savedtables. Frozen clock;not temporal playback."
+}

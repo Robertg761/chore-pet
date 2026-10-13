@@ -57,7 +57,7 @@ for (const { species, selector, limit, factor } of [
     const saved = (await snapshot(page)).tables
     await resident.evaluate(node => { window.__restPet = node })
     await page.getByRole('button', { name: 'Explore together', exact: true }).click()
-    await page.getByLabel(/^Show /).selectOption('rest-rug')
+    await page.getByRole('combobox', { name: /^Show / }).selectOption('rest-rug')
     await page.getByRole('button', { name: 'Look together', exact: true }).click()
     const live = page.locator('.living-room [aria-live="polite"]')
     let heard = ''
