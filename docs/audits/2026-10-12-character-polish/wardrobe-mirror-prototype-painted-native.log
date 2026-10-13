@@ -1,0 +1,26 @@
+✔ initial Head tab keeps a readable dressed preview on a short phone (1351.425162ms)
+✔ initial wardrobe tabs and gift labels remain visible at 640/100% (1303.547542ms)
+✔ initial wardrobe tabs and gift labels remain visible at 1280/200% (1349.536644ms)
+✔ mirrored dressed mochi Rest preserves exact art and the original deadline (5700.497481ms)
+✔ mirrored dressed bun Rest preserves exact art and the original deadline (5654.738364ms)
+✔ mirrored dressed sprout Rest preserves exact art and the original deadline (5631.624091ms)
+✔ mirror control fits without covering character ink at 320x568/100% (1309.451571ms)
+✔ mirror control fits without covering character ink at 320x568/200% (1296.625612ms)
+✔ mirror control fits without covering character ink at 390x664/100% (1299.329572ms)
+✔ mirror control fits without covering character ink at 390x664/200% (1302.524339ms)
+✔ mirror control fits without covering character ink at 640x360/100% (1308.901851ms)
+✔ mirror control fits without covering character ink at 640x360/200% (1330.482859ms)
+✔ mirror control fits without covering character ink at 844x390/100% (1337.885019ms)
+✔ mirror control fits without covering character ink at 844x390/200% (1437.221035ms)
+✔ mirror control fits without covering character ink at 1280x800/100% (1343.170174ms)
+✔ mirror control fits without covering character ink at 1280x800/200% (1384.384688ms)
+✔ mirror stays available through system reduction without replay (1773.152913ms)
+✔ mirror stays available through device reduction without replay (1715.067452ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38226.575425

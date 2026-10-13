@@ -1,0 +1,41 @@
+{
+  "utc": "2026-10-13T02:30:01.733630+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "--test-name-pattern=initial Head",
+    "scripts/browser/wardrobe-mirror.test.mjs"
+  ],
+  "exitCode": 1,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "minimumObservedAvailableBytes": 4592373760,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4913360896,
+      "tmpFreeBytes": 4300931072
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4913360896,
+      "tmpFreeBytes": 4300931072
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4592373760,
+      "tmpFreeBytes": 4287401984
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "memAvailableBytes": 4684353536,
+      "tmpFreeBytes": 4300931072
+    }
+  ]
+}

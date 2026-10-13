@@ -1,0 +1,44 @@
+{
+  "utc": "2026-10-13T02:28:35.752719+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "npx",
+    "vite",
+    "build"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "minimumObservedAvailableBytes": 4846600192,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 5011275776,
+      "tmpFreeBytes": 4300898304
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 5011275776,
+      "tmpFreeBytes": 4300898304
+    },
+    {
+      "elapsedSeconds": 1.002,
+      "memAvailableBytes": 5057937408,
+      "tmpFreeBytes": 4300898304
+    },
+    {
+      "elapsedSeconds": 2.002,
+      "memAvailableBytes": 4846600192,
+      "tmpFreeBytes": 4300886016
+    },
+    {
+      "elapsedSeconds": 3.002,
+      "memAvailableBytes": 5056978944,
+      "tmpFreeBytes": 4300886016
+    }
+  ]
+}

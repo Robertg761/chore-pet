@@ -1,0 +1,101 @@
+{
+  "method": "PNG byte comparisons after item-panel correction; no perceptual or source equivalence inferred for differing files. Earlier pre-transition captures excluded from acceptance.",
+  "pairs": [
+    {
+      "name": "wardrobe-mirror-bun.png",
+      "beforeSha256": "5128d916b9888c635a264b47a406b5006cce4fa855faad230a4e09a6a3e5801c",
+      "afterSha256": "0f9c29fdac84bc32530029c94a60054bb5563a3aae184ce4fd720915c4b94818",
+      "byteExact": false
+    },
+    {
+      "name": "wardrobe-mirror-initial-head.png",
+      "beforeSha256": "4063a4fc78aff6f7edb05138614a7bb865ac9b3601e2ec48564fdc0613aecf4c",
+      "afterSha256": "4063a4fc78aff6f7edb05138614a7bb865ac9b3601e2ec48564fdc0613aecf4c",
+      "byteExact": true
+    },
+    {
+      "name": "wardrobe-mirror-layout-1280-100.png",
+      "beforeSha256": "e454899bf05d3d35c2c86abc02e64d3b764bb6e884a6af760da8e798e521e016",
+      "afterSha256": "70bc9ed2ac43ceab113edd30da73dc998d41263a6f4261d060cf60e98ce4079a",
+      "byteExact": false
+    },
+    {
+      "name": "wardrobe-mirror-layout-1280-200.png",
+      "beforeSha256": "81084090593532fef05c14e095a4d46fa756abc8cf0807a1d15ec2b261ed6ec4",
+      "afterSha256": "c3807d2a095e97c98f667f2d48fe6e0199ab9cbccef8737af06b7bf4733409c8",
+      "byteExact": false
+    },
+    {
+      "name": "wardrobe-mirror-layout-320-100.png",
+      "beforeSha256": "6e62da5b24c214c9081206425318e751edb9834854f96744f6f68ea4d2804d6d",
+      "afterSha256": "3f169d56355ef7bdb9710babebf2a318245491017d4bfa4bba2314f9609dcb9f",
+      "byteExact": false
+    },
+    {
+      "name": "wardrobe-mirror-layout-320-200.png",
+      "beforeSha256": "f2af32a32704f2e366c1e7e8a6e56364ab49b3de3cadac6b63c61631e4177d45",
+      "afterSha256": "9d1f38b8a9e49edcbb3ead4d283d86c508d4024c5d292f721a74d2a7ef6d486e",
+      "byteExact": false
+    },
+    {
+      "name": "wardrobe-mirror-layout-390-100.png",
+      "beforeSha256": "77e9c82fd9bac30f2808139753e66bc0bb19230f638f0b62ce552b861353a6c7",
+      "afterSha256": "4a422d30eae9def508ef062e74c6445d74f90d8a9a49c9def25ccf5626ce903e",
+      "byteExact": false
+    },
+    {
+      "name": "wardrobe-mirror-layout-390-200.png",
+      "beforeSha256": "96d94844d655d9e7995567f4ff0e19afa7ef7de5ab44c4d895c3ccc0c286f4f0",
+      "afterSha256": "96d94844d655d9e7995567f4ff0e19afa7ef7de5ab44c4d895c3ccc0c286f4f0",
+      "byteExact": true
+    },
+    {
+      "name": "wardrobe-mirror-layout-640-100.png",
+      "beforeSha256": "4824b98bba59c927ed911baaf04019ca052acf6994ff01e85cf87936a5abd651",
+      "afterSha256": "e787dd6c0b719fe19e474bf24bc5ad2bc11ce919e43c11d741ebd2951d41d5b6",
+      "byteExact": false
+    },
+    {
+      "name": "wardrobe-mirror-layout-640-200.png",
+      "beforeSha256": "16c8c80775416597d56c0db3beb1b251028a47de19a1248a88b1010090c3b869",
+      "afterSha256": "16c8c80775416597d56c0db3beb1b251028a47de19a1248a88b1010090c3b869",
+      "byteExact": true
+    },
+    {
+      "name": "wardrobe-mirror-layout-844-100.png",
+      "beforeSha256": "3b501744c3161de0b359d44eb0f42516fb4a2a1213f4008fc5a92c3b638de355",
+      "afterSha256": "4c31474b5deb0025d0f7cde3dd7d6ee7e2c5b160a6ab48e0a52b62f1f0b7614a",
+      "byteExact": false
+    },
+    {
+      "name": "wardrobe-mirror-layout-844-200.png",
+      "beforeSha256": "1db806d324692487927cf61a2bb662a0fa4b367e5e1b356cd30a26f8dcc0d428",
+      "afterSha256": "2cb53279568656ba43f6834231cd37f411156752dd0ffcf1734c63f98d5798bc",
+      "byteExact": false
+    },
+    {
+      "name": "wardrobe-mirror-mochi.png",
+      "beforeSha256": "5501cedaf23518cdd95110b9fd4b2e06a55dfa5d2caf6d319cd1e39062648ee6",
+      "afterSha256": "bb041328638cc59d3ce6d8ca8bf0eec35b9f4cc65083441886fbc1a65ec204d3",
+      "byteExact": false
+    },
+    {
+      "name": "wardrobe-mirror-reduced-device.png",
+      "beforeSha256": "36f67ad0fddeb30cc2c55abb6f31bb163efac1b3ee5f613f242c5d46ca596c2d",
+      "afterSha256": "a3d5ee65e6c8e8645a332cbac0f764a9ad9cae416c007272a5d83e0b88909649",
+      "byteExact": false
+    },
+    {
+      "name": "wardrobe-mirror-reduced-system.png",
+      "beforeSha256": "be5bb7b69aa85746ee0dd1ddab71fa962dfc6fc1dc2f74529354e9dbaf503058",
+      "afterSha256": "be5bb7b69aa85746ee0dd1ddab71fa962dfc6fc1dc2f74529354e9dbaf503058",
+      "byteExact": true
+    },
+    {
+      "name": "wardrobe-mirror-sprout.png",
+      "beforeSha256": "f2894a62384ef9631a7258082f0259137ca32eacfdbbe7557bf8da72ec7fda9e",
+      "afterSha256": "2a028e0be94d0870afe6e2918bb11ae255f6f2b782b12684bc8b6a56d2bfc21e",
+      "byteExact": false
+    }
+  ]
+}

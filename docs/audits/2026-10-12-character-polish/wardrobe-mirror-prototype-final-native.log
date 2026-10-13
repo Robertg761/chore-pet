@@ -1,0 +1,12 @@
+✔ initial wardrobe tabs and gift labels remain visible at 640/100% (1321.944986ms)
+✔ initial wardrobe tabs and gift labels remain visible at 1280/200% (1358.529764ms)
+✔ mirror control fits without covering character ink at 640x360/100% (1468.194486ms)
+✔ mirror control fits without covering character ink at 1280x800/200% (1408.272831ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5946.069664

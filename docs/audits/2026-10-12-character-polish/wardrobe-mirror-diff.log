@@ -1,0 +1,12 @@
+git diff --check -- src/screens/WardrobePreview.tsx
+
+git diff --check -- src/screens/Wardrobe.css
+
+git diff --no-index --check -- /dev/null src/screens/Wardrobe.mirror.test.tsx
+
+git diff --no-index --check -- /dev/null scripts/browser/wardrobe-mirror.test.mjs
+
+git diff --check -- docs/ART.md
+
+git diff --no-index --check -- /dev/null docs/audits/2026-10-12-character-polish/wardrobe-mirror-design.md
+

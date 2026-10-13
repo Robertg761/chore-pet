@@ -14,6 +14,7 @@ interface PreviewRun { action: PreviewAction; start: number }
 export function WardrobePreview({ pet }: { pet: Pet }) {
   const preview = useRef<SVGSVGElement>(null)
   const [pose, setPose] = useState<PoseName>('idle')
+  const [mirrored, setMirrored] = useState(false)
   const [run, setRun] = useState<PreviewRun | null>(null)
   const [elapsed, setElapsed] = useState(0)
   const { reducedMotion } = usePetMotion((now, reduced) => {
@@ -44,9 +45,20 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
   }
 
   return <div className="wd-stage">
-    <svg ref={preview} className="wd-preview" tabIndex={-1} viewBox="0 0 200 200" role="img" aria-label={`${pet.name} wearing ${describeOutfit(pet.equipped)}`} focusable="true">
+    <button type="button" className="btn choice wd-mirror-preview" aria-label={`Mirror preview of ${pet.name}`}
+      aria-pressed={mirrored} title="Mirror preview" onClick={() => setMirrored(value => !value)}>
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 3v18" strokeDasharray="2 3" />
+          <path d="m8 7-5 5 5 5M3 12h6m7-5 5 5-5 5m5-5h-6" />
+        </g>
+      </svg>
+    </button>
+    <svg ref={preview} className="wd-preview" tabIndex={-1} viewBox="0 0 200 200" role="img" aria-label={`${pet.name} wearing ${describeOutfit(pet.equipped)}${mirrored ? ", mirrored preview" : ""}`} focusable="true">
+      <g data-preview-facing={mirrored ? 'mirrored' : 'normal'} transform={mirrored ? 'translate(200 0) scale(-1 1)' : undefined}>
       <AnimatedCharacterArt species={pet.species} mood={pose === 'sick' ? 'sick' : 'happy'} pose={pose}
         bodyColour={pet.bodyColour} equipped={pet.equipped} look={{ eyes: pet.eyes, cheeks: pet.cheeks }} frame={frame} />
+      </g>
     </svg>
     <div className="wd-poses seg" role="group" aria-label="Pose">
       <SegThumb />

@@ -5,9 +5,10 @@
 .wd-note { margin: 0; font-size: 0.8125rem; font-weight: 700; color: var(--ink-soft); }
 
 .wd-body { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
-.wd-side { flex: none; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.wd-side { container: wardrobe-items / inline-size; flex: none; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 
 .wd-stage {
+  position: relative;
   container: wardrobe-preview / inline-size;
   flex: 1 1 0;
   min-height: 0;
@@ -21,6 +22,7 @@
   border: var(--outline);
   border-radius: var(--radius);
 }
+.wd-mirror-preview { position: absolute; top: 10px; right: 10px; z-index: 1; width: 48px; height: 48px; min-height: 48px; padding: 0; }
 .wd-show-preview { display: none; }
 .wd-preview:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; border-radius: var(--ctl-radius); }
 .wd-preview { flex: 1 1 0; min-height: 0; width: 100%; display: block; }
@@ -34,6 +36,7 @@
   .wd-motion .btn:nth-child(n+4) { grid-column: span 3; }
 }
 .wd-motion-note { max-width: 32ch; text-align: center; }
+.wd-tabs { position: sticky; top: 0; z-index: 1; flex-shrink: 0; }
 .wd-tabs .seg-btn { white-space: nowrap; }
 .wd-poses .seg-btn { padding: 0 2px; font-size: 0.875rem; }
 
@@ -130,9 +133,9 @@ button.wd-tile:active, .wd-outfit-try:active { transform: scale(0.97); }
   button.wd-tile:active, .wd-outfit-try:active { transform: none; }
 }
 
-/* Short phones: a little less panel so the pet keeps room. */
+/* Short phones keep readable character space even on the taller Head tab. */
 @media (max-height: 640px) {
-  .wd-panel { max-height: 180px; }
+  .wd-panel { max-height: 120px; }
 }
 
 /* Tablets standing up: the pet stays a sensible size and the panel gets the rest. */
@@ -207,4 +210,14 @@ button.wd-tile:active, .wd-outfit-try:active { transform: scale(0.97); }
   .wd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .wd-tile-locked .wd-tile-name { white-space: normal; }
  }
+}
+
+/* Item labels and tabs follow the actual panel width, including enlarged text. */
+@container wardrobe-items (max-width: 16rem) {
+  .wd-tabs { flex-wrap: wrap; overflow: visible; }
+  .wd-tabs .seg-btn { flex: 1 1 40%; min-width: 0; padding: 0 4px; }
+  /* Five categories use two balanced rows; six phone tabs retain two columns. */
+  .wd-tabs:has(> button:nth-of-type(5):last-child) .seg-btn { flex-basis: 26%; }
+  .wd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wd-tile-locked .wd-tile-name { white-space: normal; }
 }

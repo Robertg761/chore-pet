@@ -1,0 +1,46 @@
+{
+  "width": 320,
+  "height": 568,
+  "text": 100,
+  "view": {
+    "button": {
+      "x": 245,
+      "y": 55.59375,
+      "width": 48,
+      "height": 48,
+      "right": 293,
+      "bottom": 103.59375
+    },
+    "ink": {
+      "x": 143.9589080810547,
+      "y": 57.99398422241211,
+      "width": 32.082183837890625,
+      "height": 26.65414047241211,
+      "right": 176.0410919189453,
+      "bottom": 84.64812469482422
+    },
+    "art": {
+      "x": 27,
+      "y": 51.59375,
+      "width": 266,
+      "height": 32.40625,
+      "right": 293,
+      "bottom": 84
+    },
+    "stage": {
+      "x": 14,
+      "y": 42.59375,
+      "width": 292,
+      "height": 216.40625,
+      "right": 306,
+      "bottom": 259
+    },
+    "overlap": 0,
+    "focusVisible": true,
+    "ringClear": true,
+    "horizontalOverflow": 0,
+    "frames": 0
+  },
+  "browser": "152.0.7977.82",
+  "method": "Native Space activation and actual character body/control bounds; root text enlargement, not browser zoom. No extra movement clock or row."
+}

@@ -1,0 +1,48 @@
+✔ initial Head tab keeps a readable dressed preview on a short phone (1362.776548ms)
+✔ initial wardrobe tabs and gift labels remain visible at 640/100% (1285.327698ms)
+✔ initial wardrobe tabs and gift labels remain visible at 1280/200% (1375.882749ms)
+✔ mirrored dressed mochi Rest preserves exact art and the original deadline (5708.648465ms)
+✔ mirrored dressed bun Rest preserves exact art and the original deadline (5646.024385ms)
+✔ mirrored dressed sprout Rest preserves exact art and the original deadline (5759.39012ms)
+✔ mirror control fits without covering character ink at 320x568/100% (1299.352385ms)
+✔ mirror control fits without covering character ink at 320x568/200% (1339.326338ms)
+✔ mirror control fits without covering character ink at 390x664/100% (1297.230379ms)
+✔ mirror control fits without covering character ink at 390x664/200% (1591.757007ms)
+✔ mirror control fits without covering character ink at 640x360/100% (1764.707148ms)
+✔ mirror control fits without covering character ink at 640x360/200% (1943.712073ms)
+✔ mirror control fits without covering character ink at 844x390/100% (2007.624731ms)
+✔ mirror control fits without covering character ink at 844x390/200% (1669.34617ms)
+✔ mirror control fits without covering character ink at 1280x800/100% (1513.887464ms)
+✔ mirror control fits without covering character ink at 1280x800/200% (1688.151451ms)
+✔ mirror stays available through system reduction without replay (1973.255872ms)
+✔ mirror stays available through device reduction without replay (1894.487496ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (3389.306489ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (3171.612ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 640x360 (3122.273041ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (3167.38987ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (3275.100342ms)
+✔ wardrobe Hop live reduced motion settles the preview and does not restart when restored (1776.14862ms)
+✔ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (1783.232065ms)
+✔ wardrobe Stretch live reduced motion settles the preview and does not restart when restored (1759.884656ms)
+✔ wardrobe Rest live reduced motion settles the preview and does not restart when restored (1776.472988ms)
+✔ wardrobe mochi rests with planted feet, one finite preview and unchanged outfit (2266.046026ms)
+✔ wardrobe bun rests with planted feet, one finite preview and unchanged outfit (2357.807517ms)
+✔ wardrobe sprout rests with planted feet, one finite preview and unchanged outfit (2311.017159ms)
+✔ wardrobe Rest rows, text and keyboard outlines fit ordinary and enlarged layouts (4901.235027ms)
+✔ wardrobe Rest live system reduction settles without replay (1849.932ms)
+✔ wardrobe Rest live device reduction settles without replay (1800.889465ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at320x568/200% (2214.594565ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at390x664/200% (2164.182715ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at640x360/200% (2147.732812ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at844x390/200% (2155.747197ms)
+✔ Show wardrobe preview works during system reduction without starting a clock (1530.078003ms)
+✔ Show wardrobe preview works during device reduction without starting a clock (1538.585343ms)
+✔ ordinary wardrobe layouts retain their five controls without an extra visible view button (1580.795692ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 94769.609676

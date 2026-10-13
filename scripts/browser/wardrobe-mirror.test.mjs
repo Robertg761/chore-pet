@@ -1,0 +1,252 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { browserApp, changeReducedMotion, seedProgress, snapshot } from './helpers.mjs'
+
+const out = process.env.CHORE_WARDROBE_MIRROR_CAPTURE_DIR
+async function wardrobe(t, { species = 'mochi', width = 1280, height = 800, text = 100 } = {}) {
+  const page = await browserApp(t, { viewport: { width, height }, reducedMotion: 'no-preference' })
+  await page.evaluate(species => new Promise((resolve, reject) => {
+    const request = indexedDB.open('chore-pet', 1)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
+      const read = store.get('snapshot')
+      read.onsuccess = () => {
+        const saved = read.result, pet = Object.values(saved.tables.pets)[0]
+        pet.species = species
+        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
+        saved.outbox = {}
+        store.put(saved, 'snapshot')
+      }
+      tx.oncomplete = () => { db.close(); resolve() }
+      tx.onerror = () => { db.close(); reject(tx.error) }
+    }
+  }), species)
+  await page.reload()
+  await seedProgress(page, { unlockedItems: ['item:beanie-red', 'item:glasses', 'item:scarf', 'item:backpack'] })
+  await page.getByRole('button', { name: 'Wardrobe', exact: true }).click()
+  await page.getByRole('heading', { name: 'Dress up Mochi' }).waitFor()
+  // Finish the actual screen transition before freezing the animation clock.
+  await page.waitForFunction(() => !document.documentElement.dataset.vt)
+  await page.evaluate(text => { document.documentElement.style.fontSize = `${text}%` }, text)
+  await page.clock.install()
+  await page.clock.pauseAt(Date.now() + 1000)
+  await page.evaluate(() => {
+    const request = requestAnimationFrame, cancel = cancelAnimationFrame
+    window.__mirrorFrames = new Set()
+    window.requestAnimationFrame = callback => {
+      const id = request(time => { window.__mirrorFrames.delete(id); callback(time) })
+      window.__mirrorFrames.add(id)
+      return id
+    }
+    window.cancelAnimationFrame = id => { window.__mirrorFrames.delete(id); cancel(id) }
+  })
+  return page
+}
+async function capture(page, name, data) {
+  if (!out) return
+  await mkdir(out, { recursive: true })
+  await page.screenshot({ path: join(out, `${name}.png`) })
+  await writeFile(join(out, `${name}.json`), JSON.stringify(data, null, 2) + '\n')
+}
+async function coordinates(preview) {
+  return preview.evaluate(svg => {
+    const group = svg.querySelector('[data-preview-facing]'), m = group.transform.baseVal.consolidate()?.matrix
+    return { determinant: m ? m.a * m.d - m.b * m.c : 1,
+      feet: [...svg.querySelectorAll('[data-foot] ellipse')].map(foot => {
+        const p = new DOMPoint(+foot.getAttribute('cx'), +foot.getAttribute('cy'))
+          .matrixTransform(foot.getScreenCTM()).matrixTransform(svg.getScreenCTM().inverse())
+        return { x: p.x, y: p.y }
+      }) }
+  })
+}
+async function geometry(control) {
+  return control.evaluate(button => {
+    const stage = button.closest('.wd-stage'), preview = stage.querySelector('.wd-preview')
+    const ink = preview.querySelector('[data-character-body]') ?? preview.querySelector('.ch-animated')
+    const box = node => {
+      const r = node.getBoundingClientRect()
+      return { x: r.x, y: r.y, width: r.width, height: r.height, right: r.right, bottom: r.bottom }
+    }
+    const b = box(button), a = box(ink), art = box(preview), s = box(stage)
+    const side = document.querySelector('.wd-side'), sideBox = box(side), sideClips = /(auto|scroll|hidden|clip)/.test(getComputedStyle(side).overflowY)
+    const tabsVisible = [...side.querySelectorAll('[role="tab"]')].every(tab => !sideClips || (box(tab).y >= sideBox.y && box(tab).bottom <= sideBox.bottom))
+    const accents = preview.querySelector('[data-character-accents]')
+    const accentBoxes = Number(accents?.getAttribute('opacity')) > 0 ? [...accents.children].map(box) : []
+    const overlap = Math.max(0, Math.min(b.right, a.right) - Math.max(b.x, a.x)) * Math.max(0, Math.min(b.bottom, a.bottom) - Math.max(b.y, a.y))
+    const style = getComputedStyle(button), ring = parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset)
+    const accentOverlap = accentBoxes.reduce((total, r) => total + Math.max(0, Math.min(b.right, r.right) - Math.max(b.x, r.x)) * Math.max(0, Math.min(b.bottom, r.bottom) - Math.max(b.y, r.y)), 0)
+    // A rotated SVG group's rectangle includes empty corners. Inspect painted
+    // geometry only inside intersecting rectangles; restore exact inline styles.
+    let paintedInkSamples = 0
+    if (overlap || accentOverlap) {
+      const oldButtonStyle = button.getAttribute('style'), oldAccentStyle = accents?.getAttribute('style')
+      button.style.pointerEvents = 'none'
+      if (accentBoxes.length) accents.style.pointerEvents = 'visiblePainted'
+      try {
+        for (const r of [a, ...accentBoxes]) {
+          for (let y = Math.max(b.y, r.y) + .5; y < Math.min(b.bottom, r.bottom); y += 1) {
+            for (let x = Math.max(b.x, r.x) + .5; x < Math.min(b.right, r.right); x += 1) {
+              const painted = document.elementsFromPoint(x, y).some(hit => {
+                const part = hit.closest('[data-character-body], [data-character-accents]')
+                if (!part || part.closest('.wd-preview') !== preview) return false
+                for (let node = hit; node && node !== preview; node = node.parentElement) {
+                  if (Number(getComputedStyle(node).opacity) === 0) return false
+                }
+                return true
+              })
+              if (painted) paintedInkSamples++
+            }
+          }
+        }
+      } finally {
+        if (oldButtonStyle === null) button.removeAttribute('style'); else button.setAttribute('style', oldButtonStyle)
+        if (accents) {
+          if (oldAccentStyle === null) accents.removeAttribute('style'); else accents.setAttribute('style', oldAccentStyle)
+        }
+      }
+    }
+    return { button: b, ink: a, art, stage: s, overlap, accentOverlap, paintedInkSamples, hitTestGridPx: 1, tabsVisible, sideScrollTop: side.scrollTop, focusVisible: button.matches(':focus-visible'),
+      ringClear: b.x - ring >= s.x + 3 && b.right + ring <= s.right - 3 && b.y - ring >= s.y + 3 && b.bottom + ring <= s.bottom - 3,
+      horizontalOverflow: document.documentElement.scrollWidth - innerWidth, frames: window.__mirrorFrames.size }
+  })
+}
+
+test('initial Head tab keeps a readable dressed preview on a short phone', async t => {
+  const page = await wardrobe(t, { width: 320, height: 568 })
+  const view = await page.locator('.wd-preview').evaluate(svg => {
+    const art = svg.getBoundingClientRect(), panel = document.querySelector('.wd-panel')
+    return { art: { x: art.x, y: art.y, width: art.width, height: art.height },
+      panelHeight: panel.clientHeight, panelContentHeight: panel.scrollHeight,
+      horizontalOverflow: document.documentElement.scrollWidth - innerWidth,
+      headSelected: document.querySelector('[role="tab"][aria-selected="true"]').textContent }
+  })
+  await capture(page, 'wardrobe-mirror-initial-head', { view, browser: page.context().browser().version(), method: 'Initial Head tab at 320x568 with full dressed outfit and earned items; no mirror action needed. Tall item grid must scroll while preview stays readable.' })
+  assert.equal(view.headSelected, 'Head'); assert.equal(view.horizontalOverflow, 0)
+  assert.ok(view.art.height >= 90, JSON.stringify(view))
+  assert.ok(view.panelContentHeight > view.panelHeight, 'short phone keeps item rows accessible through the existing panel scroll')
+})
+
+for (const [width, height, text] of [[640, 360, 100], [1280, 800, 200]]) test(`initial wardrobe tabs and gift labels remain visible at ${width}/${text}%`, async t => {
+  const page = await wardrobe(t, { width, height, text })
+  const view = await page.locator('.wd-side').evaluate(side => {
+    const rect = node => { const r = node.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height, right: r.right, bottom: r.bottom } }
+    const box = rect(side), style = getComputedStyle(side)
+    const clipped = /(auto|scroll|hidden|clip)/.test(style.overflowY)
+    return { side: box, scrollTop: side.scrollTop, tabs: [...side.querySelectorAll('[role="tab"]')].map(tab => ({ label: tab.textContent, box: rect(tab), labelFits: tab.scrollWidth <= tab.clientWidth, verticallyVisible: !clipped || (rect(tab).y >= box.y && rect(tab).bottom <= box.bottom) })),
+      gifts: [...side.querySelectorAll('.wd-tile-locked .wd-tile-name')].map(label => ({ label: label.textContent, box: rect(label), tile: rect(label.closest('.wd-tile')) })),
+      horizontalOverflow: document.documentElement.scrollWidth - innerWidth }
+  })
+  await capture(page, `wardrobe-mirror-sidebar-${width}-${text}`, { width, height, text, view, browser: page.context().browser().version(), method: 'Initial wardrobe selected Head tab and all earned/locked labels before any mirror input. Tabs must remain inside the vertical scroll viewport; gift labels must fit their own tiles.' })
+  assert.equal(view.horizontalOverflow, 0)
+  assert.ok(view.tabs.every(tab => tab.verticallyVisible && tab.labelFits), JSON.stringify(view.tabs))
+  assert.ok(view.gifts.every(gift => gift.box.x >= gift.tile.x + 2 && gift.box.right <= gift.tile.right - 2), JSON.stringify(view.gifts))
+})
+
+for (const species of ['mochi', 'bun', 'sprout']) test(`mirrored dressed ${species} Rest preserves exact art and the original deadline`, async t => {
+  const page = await wardrobe(t, { species }), preview = page.locator('.wd-preview')
+  const control = page.getByRole('button', { name: 'Mirror preview of Mochi', exact: true })
+  await control.waitFor()
+  const saved = (await snapshot(page)).tables, art = await preview.locator('.ch-animated').elementHandle()
+  const grid = await page.locator('.wd-grid').elementHandle()
+  await page.getByRole('button', { name: 'Rest', exact: true }).click()
+  await page.clock.runFor(1200)
+  const before = await coordinates(preview), original = await preview.locator('.ch-animated').evaluate(n => n.outerHTML)
+  await control.focus(); await page.keyboard.press('Enter')
+  assert.equal(await control.getAttribute('aria-pressed'), 'true')
+  const mirrored = await coordinates(preview)
+  assert.equal(before.determinant, 1); assert.equal(mirrored.determinant, -1)
+  assert.equal(before.feet.length, 2)
+  before.feet.forEach((point, i) => {
+    assert.ok(Math.abs(mirrored.feet[i].x - (200 - point.x)) < .00001)
+    assert.ok(Math.abs(mirrored.feet[i].y - point.y) < .00001)
+  })
+  assert.equal(await preview.locator('.ch-animated').evaluate(n => n.outerHTML), original)
+  assert.equal(await preview.locator('.ch-animated').evaluate((n, old) => n === old, art), true)
+  assert.equal(await page.locator('.wd-grid').evaluate((n, old) => n === old, grid), true)
+  const view = await geometry(control)
+  assert.equal(view.frames, 1); assert.equal(view.overlap, 0)
+  assert.equal(view.focusVisible, true); assert.equal(view.ringClear, true)
+  await capture(page, `wardrobe-mirror-${species}`, { species, before, mirrored, view, browser: page.context().browser().version(), method: 'Native Enter at held 1200ms Rest; actual SVG contact reflection, exact sampled art and stable nodes, no saved change, original 2400ms deadline.' })
+  await page.keyboard.press('Space')
+  assert.equal(await control.getAttribute('aria-pressed'), 'false')
+  assert.deepEqual(await coordinates(preview), before)
+  await page.clock.runFor(1184)
+  assert.equal(await page.getByRole('button', { name: 'Stop rest', exact: true }).count(), 1)
+  await page.clock.runFor(32)
+  assert.equal(await page.getByRole('button', { name: 'Rest', exact: true }).isEnabled(), true)
+  assert.equal(await page.evaluate(() => window.__mirrorFrames.size), 0)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+  const clearance = []
+  for (const [action, duration] of [['Wave', 1200], ['Gentle pats', 1600], ['Hop', 1800], ['Stretch', 2400], ['Rest', 2400]]) {
+    await page.getByRole('button', { name: action, exact: true }).click()
+    let elapsed = 0
+    for (const phase of [.25, .5, .75]) {
+      await page.clock.runFor(duration * phase - elapsed); elapsed = duration * phase
+      const normal = await geometry(control), sampled = await preview.locator('.ch-animated').evaluate(n => n.outerHTML)
+      if (normal.paintedInkSamples) {
+        await capture(page, `wardrobe-mirror-clearance-failure-${species}-${action.replaceAll(' ', '-')}-${phase}`, { species, action, phase, normal })
+        t.diagnostic(JSON.stringify({ species, action, phase, normal }))
+      }
+      assert.equal(normal.paintedInkSamples, 0, JSON.stringify({ action, phase, normal }))
+      await control.click()
+      const flipped = await geometry(control)
+      assert.equal(flipped.paintedInkSamples, 0, JSON.stringify({ action, phase, flipped }))
+      assert.equal(await preview.locator('.ch-animated').evaluate(n => n.outerHTML), sampled)
+      assert.equal(flipped.frames, 1)
+      clearance.push({ action, phase, normal, flipped })
+      await control.click()
+    }
+    await page.clock.runFor(duration - elapsed + 32)
+    assert.equal(await page.evaluate(() => window.__mirrorFrames.size), 0)
+  }
+  assert.deepEqual((await snapshot(page)).tables, saved)
+  if (out) await writeFile(join(out, `wardrobe-mirror-clearance-${species}.json`), JSON.stringify({ species, samples: clearance, method: 'All five finite movements at .25/.5/.75 in both directions; body and active accents use nonintersecting rectangles where possible and native painted-geometry hit tests on a 1px grid inside any bounding overlap; exact inline styles restored, sampled child art unchanged, one clock then finite expiry. 30 configurations per species, not every frame.' }, null, 2) + '\n')
+})
+
+for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [1280, 800]]) for (const text of [100, 200]) {
+  test(`mirror control fits without covering character ink at ${width}x${height}/${text}%`, async t => {
+    const page = await wardrobe(t, { width, height, text })
+    const control = page.getByRole('button', { name: 'Mirror preview of Mochi', exact: true })
+    await control.waitFor()
+    const normal = await geometry(control)
+    assert.equal(normal.overlap, 0); assert.equal(normal.accentOverlap, 0)
+    await control.focus(); await page.keyboard.press('Space')
+    const view = await geometry(control)
+    await capture(page, `wardrobe-mirror-layout-${width}-${text}`, { width, height, text, normal, view, browser: page.context().browser().version(), method: 'Native Space activation and actual character body/control bounds; root text enlargement, not browser zoom. No extra movement clock or row.' })
+    assert.equal(await control.getAttribute('aria-pressed'), 'true')
+    assert.ok(view.button.width >= 48 && view.button.height >= 48)
+    assert.equal(view.overlap, 0); assert.equal(view.accentOverlap, 0); assert.equal(view.tabsVisible, true); assert.equal(view.focusVisible, true); assert.equal(view.ringClear, true)
+    assert.equal(view.horizontalOverflow, 0); assert.equal(view.frames, 0)
+    assert.ok(view.art.height >= 90, JSON.stringify(view))
+    assert.equal(await page.locator('.wd-motion button:visible').count(), 5)
+    assert.ok(view.button.x >= 0 && view.button.right <= width)
+  })
+}
+
+for (const policy of ['system', 'device']) test(`mirror stays available through ${policy} reduction without replay`, async t => {
+  const page = await wardrobe(t), preview = page.locator('.wd-preview')
+  const control = page.getByRole('button', { name: 'Mirror preview of Mochi', exact: true })
+  await control.waitFor()
+  const saved = (await snapshot(page)).tables
+  await page.getByRole('button', { name: 'Rest', exact: true }).click(); await page.clock.runFor(1200)
+  if (policy === 'system') await changeReducedMotion(page, 'reduce')
+  else await page.evaluate(() => { localStorage.setItem('chore-pet-reduce-motion', 'on'); window.dispatchEvent(new StorageEvent('storage', { key: 'chore-pet-reduce-motion', newValue: 'on', storageArea: localStorage })) })
+  assert.equal(await page.getByRole('button', { name: 'Rest', exact: true }).isDisabled(), true)
+  assert.equal(await page.evaluate(() => window.__mirrorFrames.size), 0)
+  assert.equal(await control.isEnabled(), true)
+  const still = await preview.locator('.ch-animated').evaluate(n => n.outerHTML)
+  await control.focus(); await page.keyboard.press('Enter')
+  assert.equal(await control.getAttribute('aria-pressed'), 'true')
+  assert.equal(await preview.locator('.ch-animated').evaluate(n => n.outerHTML), still)
+  const view = await geometry(control)
+  await capture(page, `wardrobe-mirror-reduced-${policy}`, { policy, view, browser: page.context().browser().version(), method: 'Native mirror after live reduction cancels Rest; art stays settled, zero pending preview clock and unchanged saved tables.' })
+  if (policy === 'system') await changeReducedMotion(page, 'no-preference')
+  else await page.evaluate(() => { localStorage.removeItem('chore-pet-reduce-motion'); window.dispatchEvent(new StorageEvent('storage', { key: 'chore-pet-reduce-motion', newValue: null, storageArea: localStorage })) })
+  await page.clock.runFor(3000)
+  assert.equal(await preview.locator('.ch-animated').evaluate(n => n.outerHTML), still)
+  assert.equal(await page.evaluate(() => window.__mirrorFrames.size), 0)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})

@@ -1,0 +1,75 @@
+{
+  "species": "sprout",
+  "before": {
+    "determinant": 1,
+    "feet": [
+      {
+        "x": 77.9999987357415,
+        "y": 177.99999992723014
+      },
+      {
+        "x": 122.00000127163186,
+        "y": 177.99999987315928
+      }
+    ]
+  },
+  "mirrored": {
+    "determinant": -1,
+    "feet": [
+      {
+        "x": 122.00000126425853,
+        "y": 177.99999992723014
+      },
+      {
+        "x": 77.99999872836817,
+        "y": 177.99999987315928
+      }
+    ]
+  },
+  "view": {
+    "button": {
+      "x": 605,
+      "y": 84,
+      "width": 48,
+      "height": 48,
+      "right": 653,
+      "bottom": 132
+    },
+    "ink": {
+      "x": 236.56649780273438,
+      "y": 175.16363525390625,
+      "width": 406.6969299316406,
+      "height": 379.96636962890625,
+      "right": 643.263427734375,
+      "bottom": 555.1300048828125
+    },
+    "art": {
+      "x": 223,
+      "y": 90,
+      "width": 420,
+      "height": 485,
+      "right": 643,
+      "bottom": 575
+    },
+    "stage": {
+      "x": 200,
+      "y": 71,
+      "width": 466,
+      "height": 705,
+      "right": 666,
+      "bottom": 776
+    },
+    "overlap": 0,
+    "accentOverlap": 0,
+    "paintedInkSamples": 0,
+    "hitTestGridPx": 1,
+    "tabsVisible": true,
+    "sideScrollTop": 0,
+    "focusVisible": true,
+    "ringClear": true,
+    "horizontalOverflow": 0,
+    "frames": 1
+  },
+  "browser": "152.0.7977.82",
+  "method": "Native Enter at held 1200ms Rest; actual SVG contact reflection, exact sampled art and stable nodes, no saved change, original 2400ms deadline."
+}

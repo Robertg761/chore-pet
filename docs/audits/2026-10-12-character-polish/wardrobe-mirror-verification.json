@@ -1,0 +1,372 @@
+{
+  "freeze": {
+    "baseCommit": "f5b26cf8d4ea488de528bb07c0f42a8ee2630421",
+    "sources": {
+      "src/screens/WardrobePreview.tsx": "4f80f8e079d401fc174fbd4ea3f8388940cdd467cf0217e9045cfd034612f05f",
+      "src/screens/Wardrobe.css": "1637dab126c0b951717d8e09be06536c008e45198f3a97c2f8f7fa6db0587589",
+      "src/screens/Wardrobe.mirror.test.tsx": "4cbe48092af349532247bf24439a4c966d86e6225eb7647f452b97dbfdf91632",
+      "scripts/browser/wardrobe-mirror.test.mjs": "a65969125ae1b771b1cc549b68b231a7d1607199c8165f8947c79dda1936154b",
+      "docs/ART.md": "c8ca41a39fc54605e53aff43b0d5144cbdc179c8228487c1001a6995611982e4",
+      "docs/audits/2026-10-12-character-polish/wardrobe-mirror-design.md": "50266ef67f4152d9f284f4c049879e9493c2142b8b584e140ba57d313fe472a2"
+    },
+    "unchangedSources": {
+      "src/screens/Wardrobe.tsx": "97a3e3da1d1f3451f937a74aed619f67c9703f0895d46494fc73809ab274ed5c",
+      "src/screens/wardrobeModel.ts": "54a214a753fd87347ae0b4b2089ff5829be5c4f24b369ed6b0d52560ead86ddd",
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+      "src/character/accent.tsx": "97e78bfce8b045d60a905b7ca015b36df907f89699985882442f2c82d4d97cca",
+      "src/character/motion.ts": "f32b2c67dd237fb0d07dbefabe90f7c14e861644e027803f42342d94823d36e8",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/room/shell/geometry.ts": "967f73de056add3298520e580aa172a720132b49b11dd5bcab4a8f1a4b4fd027",
+      "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+      "src/shell/SegThumb.tsx": "9c35f972813c2270237ca025a0bf07250eaf1b2f5b79cf49c1de7e79c3134eea",
+      "src/shell/controls.css": "a0d257f01716ffb9aeecc89d5903b4d92a00a5b035caba72b02c5090c1889dce",
+      "src/index.css": "28b09b668da92e49c2a13554af34e56408dcc677d21e954fbc8145262b592418",
+      "src/shell/viewTransition.ts": "04defe5d1aa6e4397b71b2873ff06ae3fb6f610e2ecf2a8a4fc4e0e4f3c82789",
+      "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+      "scripts/browser/wardrobe-motion.test.mjs": "572a222f53a43fdc4c8df29d5a6a6864b61222e4892bdad47e57697033e95195",
+      "scripts/browser/wardrobe-rest.test.mjs": "8926976d76b47d8597001305da60cb8dcf9003af46d21f0278621992f005cd96",
+      "scripts/browser/wardrobe-show.test.mjs": "772e260cabcd6c40c792347d379d35215d43c51d0825eb744d5c09d282d1f052",
+      "src/screens/Wardrobe.test.tsx": "137eb49cb21b7d5deb66296ffbf8955a12bd85358eb368e9abfb234c823f3a25",
+      "src/screens/Wardrobe.rest.test.tsx": "f5216a4894ef2dfa01ca68567f5c7c7800a6e02b8de9826b3f3421476919958b",
+      "src/screens/Wardrobe.show.test.tsx": "2d139ba0c68de07cafe6f659bb666a1172fdf160986c5d91a99a7dbe6fb1c8d2",
+      "src/screens/Wardrobe.stretch.test.tsx": "ad5924806d222c7bf3708e62cffdc8131de18877f3b8f1270e6b802b8f604074",
+      "src/screens/wardrobeModel.test.ts": "3d41f5b069f8ebf14d2652c348a5636d23c30a5f0c74a29762f2b7a392660139",
+      "src/pet/usePetMotion.test.tsx": "07474f35781bb9b3442939d6eba0da4753211092a0d423d69c88236c782de93b",
+      "src/pet/usePetMotion.preference.test.tsx": "39d4767c5b54d38a0a4335b4f1bd8553ebffdf5aa78f0103e98c77655da70f68",
+      "src/pet/motionPreference.test.ts": "646cf1e48167baf88a182b74a1f60b14bfd6d6530609e1f9da4271d9f091fdcd"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-source.diff",
+      "sha256": "35b60b8db3ec2de80aeb676ac5d10d069f689520d49d67210b65225e99f18264"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-artifacts.json",
+    "sha256": "65647be2b9bf9de678f1dac1b452256d0655500c3eb8902b862adb0d87c968eb"
+  },
+  "checks": [
+    {
+      "name": "baseline-build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-baseline-build.log",
+      "logSha256": "17e6d9d188b4850431bd689b7dfa29cc8424264f9f65653236baa608f6c37332",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-baseline-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-build.log",
+      "logSha256": "d97a932f7fbf74873ce7d9b559e9bd97dcf6c27047bb6b477c88e798f6e2fd54",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-diff.log",
+      "logSha256": "f4d0c5a456a5f14b7e434098ee82d106a36a44564d190195df3f8d92921a1e17",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "flow-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-flow-red.log",
+      "logSha256": "cc675015ba7d1c2c7e7bf6958b696e40965d8598f47526ceb00fdf3b5a63311c",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-flow-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-focused.log",
+      "logSha256": "776c706106e6e910a6412c19bab04968eb30a935abbd9fded674ec3ba447d0bc",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-full.log",
+      "logSha256": "36f3c604a5dc2318f9018f228194c305e791dbfe686dae27ddca40b6c4bedf1f",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "head-red-before-transition-wait",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-head-red-before-transition-wait.log",
+      "logSha256": "2934219a1bc31ab9acd275f707884ea244c3f8aa88a71be08860c68777608357",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-head-red-before-transition-wait.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "head-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-head-red.log",
+      "logSha256": "139a1f44b210988b91450b343b38ff98db4e0f7873d2e649ca3174185a210274",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-head-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-lint.log",
+      "logSha256": "85609bbd6c07e6c3f05beb13bbeb15e2c8267b6744f2e5d955e413cbddbde57c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-probe",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native-probe.log",
+      "logSha256": "855935ae4dc4f6deeb3f3e59d5735ebfa08dbd6cb357f8d778f9da1b98e85ab0",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native-probe.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native-red-final-fixture",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native-red-final-fixture.log",
+      "logSha256": "023ac07dd9171cd1f1fb61e35c8d3c24f1be74421548e192ca690fc9214332a8",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native-red-final-fixture.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native-red.log",
+      "logSha256": "94ac2e8a71838951f25539b5c503746ccef5773ea337c48710baafc1069d9118",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native.log",
+      "logSha256": "96066f4e305601c436b984e5addec282e80b147bc43229106ed3367810a58691",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "overlap-probe",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-overlap-probe.log",
+      "logSha256": "6aa3275e525a3695670e676123a47d63ec602ab3b77a9dcffc608ce1b8c5ba7b",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-overlap-probe.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "prototype-build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-build.log",
+      "logSha256": "ce57a9535997c439994572a0a35279847ecedca18eb1bb80ae32662fc3ffada6",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-final-build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-final-build.log",
+      "logSha256": "e34ede31b055f0348529f79b0a13d3cdf6585c638d7e1b695e468021482c0c14",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-final-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-final-native",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-final-native.log",
+      "logSha256": "4c4f086742a93b5f0a5ec5dee6cb59d0e4da13aba9fe2811c2d5708f52b36e14",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-final-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-native",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-native.log",
+      "logSha256": "06e98a14861e7f94a52484ed2536d500d0fc7fdd5184e876382ab5d73b9bc46e",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-native.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "prototype-painted-native",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native.log",
+      "logSha256": "aa157c88109143c8268884a533fb5c16c1646a5fd0d82a16e562ea5a1081cbee",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-revised-build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-revised-build.log",
+      "logSha256": "9878bb9ade6dbfc2fa838ef03568976e5f6dc49d8f1115267bb6db3455bfefa4",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-revised-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-revised-native",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-revised-native.log",
+      "logSha256": "5812e6251ac0763a276ffe0be9c5d1c00aed6cf9f73fff34c56c39e76ca7c475",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-revised-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-sidebar-build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-sidebar-build.log",
+      "logSha256": "a031528fbec2cfae7313bb89e9222a0c13abc88d47644df19ba31931f3dc8680",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-sidebar-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-sidebar-native",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-sidebar-native.log",
+      "logSha256": "64cce88436b3998f06796f9b76efdd22915a1a5e52fe27887d46e9e77ae30382",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-sidebar-native.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "prototype",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype.log",
+      "logSha256": "bf25f6e12f937206625d7272993a805ac3158aae7cd9cd270b0f6107b91128fb",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red-before-duration-correction",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-red-before-duration-correction.log",
+      "logSha256": "d00309176fc5c064afabfd53ef0a1c742da95fa05bed6541d06f84b50e560a2f",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-red-before-duration-correction.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-red.log",
+      "logSha256": "dd13a26c47e173d8121ce69c8f6522f7a27f3bf10a9cd2946bf81212bf3a1c50",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "status": "Completed scoped checks and independent static/source/still review; bound files reverified before local checkpoint.",
+  "result": {
+    "full": "2360 tests / 122 files passed, 80.05s",
+    "focused": "75 tests / 7 files passed, 6.25s",
+    "native": "40 tests passed, 94.769609676s: 18 new plus 22 existing Wardrobe regressions",
+    "build": "Production npm run build passed; existing chunk-size advisory retained",
+    "lint": "Scoped oxlint zero warnings passed",
+    "whitespace": "All six authored source files passed"
+  },
+  "visualReview": {
+    "rootFinalDirect": [
+      "layout-1280-100",
+      "layout-1280-200",
+      "layout-320-100",
+      "layout-390-200",
+      "layout-640-100",
+      "layout-640-200",
+      "layout-844-100",
+      "layout-844-200",
+      "mochi",
+      "sprout",
+      "reduced-system",
+      "reduced-device"
+    ],
+    "rootFinalByteExactToPreviouslyInspectedCandidate": [
+      "bun",
+      "initial-head",
+      "layout-320-200",
+      "layout-390-100",
+      "sidebar-1280-200",
+      "sidebar-640-100"
+    ],
+    "comparison": "Final-comparison JSON binds all 18 PNG pairs. Six byte exact; twelve differing final images directly opened. Earlier painted candidate coverage was 14 direct plus four exact to directly opened revised captures. All four final tab-row candidate PNGs directly opened.",
+    "baseline": "Proper synchronized initial Head baseline directly reviewed: 32.40625px art height. Early pre-view-transition screenshots, including stale Home capture, are diagnostic only.",
+    "clearance": "Three species, five actions, phases .25/.5/.75, both facings: 90 sampled configurations with zero painted-ink hits. Rotated Bun Hop rectangles include empty corners, so moving overlap checks sample native SVG painted geometry at 1px spacing; static layouts/held Rest require disjoint rectangles. Not exhaustive pixel/vector/temporal certification."
+  },
+  "history": {
+    "expectedFailedChecks": 11,
+    "diagnostics": "Retain first unit red with unexercised incorrect Pats duration2200; corrected unit/final source uses1600. Retain pre-transition native failures, synchronized baseline/red, partial layout/geometry failures and archived fixture/CSS revisions. Final source/tests and all final checks pass.",
+    "prototype": "Virtual transforms overrode only Preview/CSS before product edits. Historical candidates differ; archived pre-panel/pre-flow/pre-tab CSS and fixture versions retained. Current candidate files match final product exactly; virtual builds did not typecheck, final production build did. A 44rem global-flow alternative was never built/applied; final global19/34rem thresholds remain unchanged."
+  },
+  "resourceLimits": {
+    "runs": 24,
+    "minimumObservedAvailableMiB": 2921.40625,
+    "guardStops": 0,
+    "launchRejections": 0,
+    "fullSuite": "512MB Node heap, launch4096MiB, single Vitest worker; minimum observed available2921.4MiB",
+    "limitations": "Approximately one-second available-RAM and tmp snapshots. No claim of continuous, peak CPU/RSS, physical-device or actual all-plan usage certification."
+  },
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-review-input.json",
+    "sha256": "ab740bc6fcfc2838694032d1570b97f1688fdb8caae7c2b4e287add6a824ae9b"
+  },
+  "independentReview": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-independent-review.md",
+    "sha256": "05ade145e7824487d1520b90045ff77d700c2593d1a3639443ed1e14eeb646ed",
+    "verdict": "PASS; no scoped findings"
+  }
+}

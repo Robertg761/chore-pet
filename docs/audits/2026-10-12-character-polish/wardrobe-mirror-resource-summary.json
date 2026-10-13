@@ -1,0 +1,221 @@
+{
+  "method": "Sequential low-priority single worker/browser. Approximate one-second host RAM/tmp snapshots; not continuous monitoring or peak CPU/RSS certification. Node heap caps supplied through environment are not independently recorded in wrapper JSON. Only owned job groups may be stopped.",
+  "runs": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-baseline-build-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 5,
+      "minimumObservedAvailableMiB": 4622.078125,
+      "minimumObservedTmpFreeMiB": 4101.64453125,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-build-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 12,
+      "minimumObservedAvailableMiB": 3137.29296875,
+      "minimumObservedTmpFreeMiB": 4101.5859375,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-flow-red-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 6,
+      "minimumObservedAvailableMiB": 4075.24609375,
+      "minimumObservedTmpFreeMiB": 4012.00390625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-focused-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 9,
+      "minimumObservedAvailableMiB": 3436.3203125,
+      "minimumObservedTmpFreeMiB": 4099.6875,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-full-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 4096,
+      "samples": 83,
+      "minimumObservedAvailableMiB": 2921.40625,
+      "minimumObservedTmpFreeMiB": 4089.78515625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-head-red-before-transition-wait-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 4,
+      "minimumObservedAvailableMiB": 4624.4140625,
+      "minimumObservedTmpFreeMiB": 4085.02734375,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-head-red-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 4,
+      "minimumObservedAvailableMiB": 4379.62890625,
+      "minimumObservedTmpFreeMiB": 4088.78515625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-lint-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 3,
+      "minimumObservedAvailableMiB": 4306.47265625,
+      "minimumObservedTmpFreeMiB": 4101.57421875,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native-probe-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 6,
+      "minimumObservedAvailableMiB": 4434.6328125,
+      "minimumObservedTmpFreeMiB": 4024.81640625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native-red-final-fixture-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 9,
+      "minimumObservedAvailableMiB": 4181.19921875,
+      "minimumObservedTmpFreeMiB": 4025.41015625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native-red-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 9,
+      "minimumObservedAvailableMiB": 4031.1875,
+      "minimumObservedTmpFreeMiB": 4012.8359375,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 97,
+      "minimumObservedAvailableMiB": 3050.75390625,
+      "minimumObservedTmpFreeMiB": 4006.171875,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-overlap-probe-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 7,
+      "minimumObservedAvailableMiB": 3659.58984375,
+      "minimumObservedTmpFreeMiB": 4010.05078125,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-build-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 5,
+      "minimumObservedAvailableMiB": 4447.375,
+      "minimumObservedTmpFreeMiB": 4101.66015625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-final-build-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 5,
+      "minimumObservedAvailableMiB": 3299.734375,
+      "minimumObservedTmpFreeMiB": 4101.59765625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-final-native-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 8,
+      "minimumObservedAvailableMiB": 3380.3046875,
+      "minimumObservedTmpFreeMiB": 4010.140625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-native-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 22,
+      "minimumObservedAvailableMiB": 3984.6328125,
+      "minimumObservedTmpFreeMiB": 4009.05078125,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 41,
+      "minimumObservedAvailableMiB": 3181.91015625,
+      "minimumObservedTmpFreeMiB": 4006.71484375,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 5,
+      "minimumObservedAvailableMiB": 4556.05078125,
+      "minimumObservedTmpFreeMiB": 4099.89453125,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-revised-build-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 4,
+      "minimumObservedAvailableMiB": 4512.1640625,
+      "minimumObservedTmpFreeMiB": 4101.62890625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-revised-native-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 30,
+      "minimumObservedAvailableMiB": 3943.109375,
+      "minimumObservedTmpFreeMiB": 4004.83984375,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-sidebar-build-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 4,
+      "minimumObservedAvailableMiB": 4187.08203125,
+      "minimumObservedTmpFreeMiB": 4101.61328125,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-sidebar-native-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 39,
+      "minimumObservedAvailableMiB": 3553.94140625,
+      "minimumObservedTmpFreeMiB": 4007.48046875,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-red-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 4,
+      "minimumObservedAvailableMiB": 4576.00390625,
+      "minimumObservedTmpFreeMiB": 4101.54296875,
+      "resourceStopReason": null
+    }
+  ]
+}

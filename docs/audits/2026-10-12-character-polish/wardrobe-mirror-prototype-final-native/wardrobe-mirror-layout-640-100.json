@@ -1,0 +1,95 @@
+{
+  "width": 640,
+  "height": 360,
+  "text": 100,
+  "normal": {
+    "button": {
+      "x": 285,
+      "y": 57.59375,
+      "width": 48,
+      "height": 48,
+      "right": 333,
+      "bottom": 105.59375
+    },
+    "ink": {
+      "x": 164.84390258789062,
+      "y": 79.20148468017578,
+      "width": 108.31219482421875,
+      "height": 89.98664093017578,
+      "right": 273.1560974121094,
+      "bottom": 169.18812561035156
+    },
+    "art": {
+      "x": 109,
+      "y": 57.59375,
+      "width": 220,
+      "height": 109.40625,
+      "right": 329,
+      "bottom": 167
+    },
+    "stage": {
+      "x": 92,
+      "y": 44.59375,
+      "width": 254,
+      "height": 305.40625,
+      "right": 346,
+      "bottom": 350
+    },
+    "overlap": 0,
+    "accentOverlap": 0,
+    "paintedInkSamples": 0,
+    "hitTestGridPx": 1,
+    "tabsVisible": true,
+    "sideScrollTop": 0,
+    "focusVisible": false,
+    "ringClear": true,
+    "horizontalOverflow": 0,
+    "frames": 0
+  },
+  "view": {
+    "button": {
+      "x": 285,
+      "y": 57.59375,
+      "width": 48,
+      "height": 48,
+      "right": 333,
+      "bottom": 105.59375
+    },
+    "ink": {
+      "x": 164.84390258789062,
+      "y": 79.20148468017578,
+      "width": 108.31219482421875,
+      "height": 89.98664093017578,
+      "right": 273.1560974121094,
+      "bottom": 169.18812561035156
+    },
+    "art": {
+      "x": 109,
+      "y": 57.59375,
+      "width": 220,
+      "height": 109.40625,
+      "right": 329,
+      "bottom": 167
+    },
+    "stage": {
+      "x": 92,
+      "y": 44.59375,
+      "width": 254,
+      "height": 305.40625,
+      "right": 346,
+      "bottom": 350
+    },
+    "overlap": 0,
+    "accentOverlap": 0,
+    "paintedInkSamples": 0,
+    "hitTestGridPx": 1,
+    "tabsVisible": true,
+    "sideScrollTop": 0,
+    "focusVisible": true,
+    "ringClear": true,
+    "horizontalOverflow": 0,
+    "frames": 0
+  },
+  "browser": "152.0.7977.82",
+  "method": "Native Space activation and actual character body/control bounds; root text enlargement, not browser zoom. No extra movement clock or row."
+}

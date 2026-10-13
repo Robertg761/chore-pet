@@ -1,0 +1,47 @@
+✔ initial Head tab keeps a readable dressed preview on a short phone (1315.072594ms)
+✔ initial wardrobe tabs and gift labels remain visible at 640/100% (1256.350501ms)
+✔ initial wardrobe tabs and gift labels remain visible at 1280/200% (1353.338547ms)
+✔ mirrored dressed mochi Rest preserves exact art and the original deadline (5635.661055ms)
+✖ mirrored dressed bun Rest preserves exact art and the original deadline (3544.163166ms)
+✔ mirrored dressed sprout Rest preserves exact art and the original deadline (5698.345688ms)
+✔ mirror control fits without covering character ink at 320x568/100% (1286.551926ms)
+✔ mirror control fits without covering character ink at 320x568/200% (1299.528635ms)
+✔ mirror control fits without covering character ink at 390x664/100% (1315.483162ms)
+✔ mirror control fits without covering character ink at 390x664/200% (1292.06478ms)
+✔ mirror control fits without covering character ink at 640x360/100% (1305.94452ms)
+✔ mirror control fits without covering character ink at 640x360/200% (1314.413308ms)
+✔ mirror control fits without covering character ink at 844x390/100% (1303.726607ms)
+✔ mirror control fits without covering character ink at 844x390/200% (1330.608423ms)
+✔ mirror control fits without covering character ink at 1280x800/100% (1485.39192ms)
+✔ mirror control fits without covering character ink at 1280x800/200% (1387.971078ms)
+✔ mirror stays available through system reduction without replay (1780.823737ms)
+✔ mirror stays available through device reduction without replay (1745.338768ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 17
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 36024.346034
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-mirror.test.mjs:118:51
+✖ mirrored dressed bun Rest preserves exact art and the original deadline (3544.163166ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 86.88873930554837
+  - 0
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:159:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 86.88873930554837,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

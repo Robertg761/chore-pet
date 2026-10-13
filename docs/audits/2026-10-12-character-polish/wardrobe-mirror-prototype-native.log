@@ -1,0 +1,59 @@
+✔ mirrored dressed mochi Rest preserves exact art and the original deadline (2130.827095ms)
+✔ mirrored dressed bun Rest preserves exact art and the original deadline (2058.087957ms)
+✔ mirrored dressed sprout Rest preserves exact art and the original deadline (2070.204591ms)
+✖ mirror control fits without covering character ink at 320x568/100% (915.379341ms)
+✔ mirror control fits without covering character ink at 320x568/200% (949.250729ms)
+✔ mirror control fits without covering character ink at 390x664/100% (941.788417ms)
+✔ mirror control fits without covering character ink at 390x664/200% (947.924304ms)
+✔ mirror control fits without covering character ink at 640x360/100% (968.755988ms)
+✔ mirror control fits without covering character ink at 640x360/200% (979.844242ms)
+✔ mirror control fits without covering character ink at 844x390/100% (950.840414ms)
+✔ mirror control fits without covering character ink at 844x390/200% (995.58943ms)
+✔ mirror control fits without covering character ink at 1280x800/100% (1023.407721ms)
+✔ mirror control fits without covering character ink at 1280x800/200% (1032.993392ms)
+✔ mirror stays available through system reduction without replay (1744.328495ms)
+✖ mirror stays available through device reduction without replay (1687.076348ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 13
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19797.985282
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-mirror.test.mjs:117:3
+✖ mirror control fits without covering character ink at 320x568/100% (915.379341ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(view.art.height >= 80)
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:126:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-mirror.test.mjs:133:44
+✖ mirror stays available through device reduction without replay (1687.076348ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:141:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

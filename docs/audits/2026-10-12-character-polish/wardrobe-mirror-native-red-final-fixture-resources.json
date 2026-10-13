@@ -1,0 +1,66 @@
+{
+  "utc": "2026-10-13T02:30:18.150089+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "--test-name-pattern=mirrored dressed mochi",
+    "scripts/browser/wardrobe-mirror.test.mjs"
+  ],
+  "exitCode": 1,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "minimumObservedAvailableBytes": 4384305152,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4779515904,
+      "tmpFreeBytes": 4300931072
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4778917888,
+      "tmpFreeBytes": 4300931072
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4384305152,
+      "tmpFreeBytes": 4237471744
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "memAvailableBytes": 4393242624,
+      "tmpFreeBytes": 4221276160
+    },
+    {
+      "elapsedSeconds": 3.001,
+      "memAvailableBytes": 4386803712,
+      "tmpFreeBytes": 4220948480
+    },
+    {
+      "elapsedSeconds": 4.002,
+      "memAvailableBytes": 4396007424,
+      "tmpFreeBytes": 4229779456
+    },
+    {
+      "elapsedSeconds": 5.002,
+      "memAvailableBytes": 4389494784,
+      "tmpFreeBytes": 4229779456
+    },
+    {
+      "elapsedSeconds": 6.002,
+      "memAvailableBytes": 4774924288,
+      "tmpFreeBytes": 4300931072
+    },
+    {
+      "elapsedSeconds": 7.002,
+      "memAvailableBytes": 4779003904,
+      "tmpFreeBytes": 4300931072
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { browserApp, changeReducedMotion, seedProgress, snapshot } from './helpers.mjs'
+
+const out = process.env.CHORE_WARDROBE_MIRROR_CAPTURE_DIR
+async function wardrobe(t, { species = 'mochi', width = 1280, height = 800, text = 100 } = {}) {
+  const page = await browserApp(t, { viewport: { width, height }, reducedMotion: 'no-preference' })
+  await page.evaluate(species => new Promise((resolve, reject) => {
+    const request = indexedDB.open('chore-pet', 1)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
+      const read = store.get('snapshot')
+      read.onsuccess = () => {
+        const saved = read.result, pet = Object.values(saved.tables.pets)[0]
+        pet.species = species
+        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
+        saved.outbox = {}
+        store.put(saved, 'snapshot')
+      }
+      tx.oncomplete = () => { db.close(); resolve() }
+      tx.onerror = () => { db.close(); reject(tx.error) }
+    }
+  }), species)
+  await page.reload()
+  await seedProgress(page, { unlockedItems: ['item:beanie-red', 'item:glasses', 'item:scarf', 'item:backpack'] })
+  await page.getByRole('button', { name: 'Wardrobe', exact: true }).click()
+  await page.getByRole('heading', { name: 'Dress up Mochi' }).waitFor()
+  await page.evaluate(text => { document.documentElement.style.fontSize = `${text}%` }, text)
+  await page.clock.install()
+  await page.clock.pauseAt(Date.now() + 1000)
+  await page.evaluate(() => {
+    const request = requestAnimationFrame, cancel = cancelAnimationFrame
+    window.__mirrorFrames = new Set()
+    window.requestAnimationFrame = callback => {
+      const id = request(time => { window.__mirrorFrames.delete(id); callback(time) })
+      window.__mirrorFrames.add(id)
+      return id
+    }
+    window.cancelAnimationFrame = id => { window.__mirrorFrames.delete(id); cancel(id) }
+  })
+  return page
+}
+async function capture(page, name, data) {
+  if (!out) return
+  await mkdir(out, { recursive: true })
+  await page.screenshot({ path: join(out, `${name}.png`) })
+  await writeFile(join(out, `${name}.json`), JSON.stringify(data, null, 2) + '\n')
+}
+async function coordinates(preview) {
+  return preview.evaluate(svg => {
+    const group = svg.querySelector('[data-preview-facing]'), m = group.transform.baseVal.consolidate()?.matrix
+    return { determinant: m ? m.a * m.d - m.b * m.c : 1,
+      feet: [...svg.querySelectorAll('[data-foot] ellipse')].map(foot => {
+        const p = new DOMPoint(+foot.getAttribute('cx'), +foot.getAttribute('cy'))
+          .matrixTransform(foot.getScreenCTM()).matrixTransform(svg.getScreenCTM().inverse())
+        return { x: p.x, y: p.y }
+      }) }
+  })
+}
+async function geometry(control) {
+  return control.evaluate(button => {
+    const stage = button.closest('.wd-stage'), preview = stage.querySelector('.wd-preview')
+    const ink = preview.querySelector('[data-character-body]') ?? preview.querySelector('.ch-animated')
+    const box = node => {
+      const r = node.getBoundingClientRect()
+      return { x: r.x, y: r.y, width: r.width, height: r.height, right: r.right, bottom: r.bottom }
+    }
+    const b = box(button), a = box(ink), art = box(preview), s = box(stage)
+    const overlap = Math.max(0, Math.min(b.right, a.right) - Math.max(b.x, a.x)) * Math.max(0, Math.min(b.bottom, a.bottom) - Math.max(b.y, a.y))
+    const style = getComputedStyle(button), ring = parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset)
+    return { button: b, ink: a, art, stage: s, overlap, focusVisible: button.matches(':focus-visible'),
+      ringClear: b.x - ring >= s.x + 3 && b.right + ring <= s.right - 3 && b.y - ring >= s.y + 3 && b.bottom + ring <= s.bottom - 3,
+      horizontalOverflow: document.documentElement.scrollWidth - innerWidth, frames: window.__mirrorFrames.size }
+  })
+}
+
+for (const species of ['mochi', 'bun', 'sprout']) test(`mirrored dressed ${species} Rest preserves exact art and the original deadline`, async t => {
+  const page = await wardrobe(t, { species }), preview = page.locator('.wd-preview')
+  const control = page.getByRole('button', { name: 'Mirror preview of Mochi', exact: true })
+  await control.waitFor()
+  const saved = (await snapshot(page)).tables, art = await preview.locator('.ch-animated').elementHandle()
+  const grid = await page.locator('.wd-grid').elementHandle()
+  await page.getByRole('button', { name: 'Rest', exact: true }).click()
+  await page.clock.runFor(1200)
+  const before = await coordinates(preview), original = await preview.locator('.ch-animated').evaluate(n => n.outerHTML)
+  await control.focus(); await page.keyboard.press('Enter')
+  assert.equal(await control.getAttribute('aria-pressed'), 'true')
+  const mirrored = await coordinates(preview)
+  assert.equal(before.determinant, 1); assert.equal(mirrored.determinant, -1)
+  assert.equal(before.feet.length, 2)
+  before.feet.forEach((point, i) => {
+    assert.ok(Math.abs(mirrored.feet[i].x - (200 - point.x)) < .00001)
+    assert.ok(Math.abs(mirrored.feet[i].y - point.y) < .00001)
+  })
+  assert.equal(await preview.locator('.ch-animated').evaluate(n => n.outerHTML), original)
+  assert.equal(await preview.locator('.ch-animated').evaluate((n, old) => n === old, art), true)
+  assert.equal(await page.locator('.wd-grid').evaluate((n, old) => n === old, grid), true)
+  const view = await geometry(control)
+  assert.equal(view.frames, 1); assert.equal(view.overlap, 0)
+  assert.equal(view.focusVisible, true); assert.equal(view.ringClear, true)
+  await capture(page, `wardrobe-mirror-${species}`, { species, before, mirrored, view, browser: page.context().browser().version(), method: 'Native Enter at held 1200ms Rest; actual SVG contact reflection, exact sampled art and stable nodes, no saved change, original 2400ms deadline.' })
+  await page.keyboard.press('Space')
+  assert.equal(await control.getAttribute('aria-pressed'), 'false')
+  assert.deepEqual(await coordinates(preview), before)
+  await page.clock.runFor(1184)
+  assert.equal(await page.getByRole('button', { name: 'Stop rest', exact: true }).count(), 1)
+  await page.clock.runFor(32)
+  assert.equal(await page.getByRole('button', { name: 'Rest', exact: true }).isEnabled(), true)
+  assert.equal(await page.evaluate(() => window.__mirrorFrames.size), 0)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})
+
+for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [1280, 800]]) for (const text of [100, 200]) {
+  test(`mirror control fits without covering character ink at ${width}x${height}/${text}%`, async t => {
+    const page = await wardrobe(t, { width, height, text })
+    const control = page.getByRole('button', { name: 'Mirror preview of Mochi', exact: true })
+    await control.focus(); await page.keyboard.press('Space')
+    const view = await geometry(control)
+    await capture(page, `wardrobe-mirror-layout-${width}-${text}`, { width, height, text, view, browser: page.context().browser().version(), method: 'Native Space activation and actual character body/control bounds; root text enlargement, not browser zoom. No extra movement clock or row.' })
+    assert.equal(await control.getAttribute('aria-pressed'), 'true')
+    assert.ok(view.button.width >= 48 && view.button.height >= 48)
+    assert.equal(view.overlap, 0); assert.equal(view.focusVisible, true); assert.equal(view.ringClear, true)
+    assert.equal(view.horizontalOverflow, 0); assert.equal(view.frames, 0)
+    assert.ok(view.art.height >= 80, JSON.stringify(view))
+    assert.equal(await page.locator('.wd-motion button:visible').count(), 5)
+    assert.ok(view.button.x >= 0 && view.button.right <= width)
+  })
+}
+
+for (const policy of ['system', 'device']) test(`mirror stays available through ${policy} reduction without replay`, async t => {
+  const page = await wardrobe(t), preview = page.locator('.wd-preview')
+  const control = page.getByRole('button', { name: 'Mirror preview of Mochi', exact: true })
+  await control.waitFor()
+  const saved = (await snapshot(page)).tables
+  await page.getByRole('button', { name: 'Rest', exact: true }).click(); await page.clock.runFor(1200)
+  if (policy === 'system') await changeReducedMotion(page, 'reduce')
+  else await page.evaluate(() => { localStorage.setItem('chore-pet-reduce-motion', 'on'); window.dispatchEvent(new StorageEvent('storage', { key: 'chore-pet-reduce-motion', newValue: 'on', storageArea: localStorage })) })
+  assert.equal(await page.getByRole('button', { name: 'Rest', exact: true }).isDisabled(), true)
+  assert.equal(await page.evaluate(() => window.__mirrorFrames.size), 0)
+  assert.equal(await control.isEnabled(), true)
+  const still = await preview.locator('.ch-animated').evaluate(n => n.outerHTML)
+  await control.focus(); await page.keyboard.press('Enter')
+  assert.equal(await control.getAttribute('aria-pressed'), 'true')
+  assert.equal(await preview.locator('.ch-animated').evaluate(n => n.outerHTML), still)
+  const view = await geometry(control)
+  await capture(page, `wardrobe-mirror-reduced-${policy}`, { policy, view, browser: page.context().browser().version(), method: 'Native mirror after live reduction cancels Rest; art stays settled, zero pending preview clock and unchanged saved tables.' })
+  if (policy === 'system') await changeReducedMotion(page, 'no-preference')
+  else await page.evaluate(() => { localStorage.removeItem('chore-pet-reduce-motion'); window.dispatchEvent(new StorageEvent('storage', { key: 'chore-pet-reduce-motion', newValue: null, storageArea: localStorage })) })
+  await page.clock.runFor(3000)
+  assert.equal(await preview.locator('.ch-animated').evaluate(n => n.outerHTML), still)
+  assert.equal(await page.evaluate(() => window.__mirrorFrames.size), 0)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})

@@ -1,0 +1,131 @@
+{
+  "method": "Final PNG to directly reviewed current-candidate capture when available; byte equality only. Differing images require direct review. No perceptual/source/JSON equivalence inferred.",
+  "pairs": [
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-bun.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-bun.png",
+      "finalSha256": "0f9c29fdac84bc32530029c94a60054bb5563a3aae184ce4fd720915c4b94818",
+      "prototypeSha256": "0f9c29fdac84bc32530029c94a60054bb5563a3aae184ce4fd720915c4b94818",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-initial-head.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-initial-head.png",
+      "finalSha256": "4063a4fc78aff6f7edb05138614a7bb865ac9b3601e2ec48564fdc0613aecf4c",
+      "prototypeSha256": "4063a4fc78aff6f7edb05138614a7bb865ac9b3601e2ec48564fdc0613aecf4c",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-layout-1280-100.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-layout-1280-100.png",
+      "finalSha256": "8971a906d27306caf0fc22f80d19bf998115aa354155f151b6825e2a064fb157",
+      "prototypeSha256": "70bc9ed2ac43ceab113edd30da73dc998d41263a6f4261d060cf60e98ce4079a",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-layout-1280-200.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-final-native/wardrobe-mirror-layout-1280-200.png",
+      "finalSha256": "9b99c4b214953b647eac7df7482b5f965160b479202bdfc5df5553a1ecb24456",
+      "prototypeSha256": "ff802486c85b44825b164bbb3369a8360535a38f15f6da5e256c937e6de57ed8",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-layout-320-100.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-layout-320-100.png",
+      "finalSha256": "3eff81d85cf948b3725aa83ff6bc321f00f3deef4391d20fd2c029148053a48f",
+      "prototypeSha256": "3f169d56355ef7bdb9710babebf2a318245491017d4bfa4bba2314f9609dcb9f",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-layout-320-200.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-layout-320-200.png",
+      "finalSha256": "9d1f38b8a9e49edcbb3ead4d283d86c508d4024c5d292f721a74d2a7ef6d486e",
+      "prototypeSha256": "9d1f38b8a9e49edcbb3ead4d283d86c508d4024c5d292f721a74d2a7ef6d486e",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-layout-390-100.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-layout-390-100.png",
+      "finalSha256": "4a422d30eae9def508ef062e74c6445d74f90d8a9a49c9def25ccf5626ce903e",
+      "prototypeSha256": "4a422d30eae9def508ef062e74c6445d74f90d8a9a49c9def25ccf5626ce903e",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-layout-390-200.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-layout-390-200.png",
+      "finalSha256": "29aad41286791c0880d75d9e060ecc6812d6f862b01464eca91e2ef4b505bd91",
+      "prototypeSha256": "96d94844d655d9e7995567f4ff0e19afa7ef7de5ab44c4d895c3ccc0c286f4f0",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-layout-640-100.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-final-native/wardrobe-mirror-layout-640-100.png",
+      "finalSha256": "3c3fda270892326e382eef6cb6faa5b2937d07719f6dc8ae169275337139acde",
+      "prototypeSha256": "e7858f6a208daf9b3d9b208b6d2c3ac8d9cbc73e27811695d974461cf1926c73",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-layout-640-200.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-layout-640-200.png",
+      "finalSha256": "944d239fec4a3fc25831dff16306bbbfbb0353bcba7a8e671429183feb645aa0",
+      "prototypeSha256": "16c8c80775416597d56c0db3beb1b251028a47de19a1248a88b1010090c3b869",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-layout-844-100.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-layout-844-100.png",
+      "finalSha256": "f10dada103572915ff0bf2d3a044359364c7f7744ccb7b399607afc2e7b95e64",
+      "prototypeSha256": "4c31474b5deb0025d0f7cde3dd7d6ee7e2c5b160a6ab48e0a52b62f1f0b7614a",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-layout-844-200.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-layout-844-200.png",
+      "finalSha256": "c89042752648fb0c8d5f0d6848f921e8201b9d235b8b5f19456c5b3deae2d548",
+      "prototypeSha256": "2cb53279568656ba43f6834231cd37f411156752dd0ffcf1734c63f98d5798bc",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-mochi.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-mochi.png",
+      "finalSha256": "46ab3f19e90e829ac35a7333a6e9154d0c17c93114adba2fbb166d2b93b8de80",
+      "prototypeSha256": "bb041328638cc59d3ce6d8ca8bf0eec35b9f4cc65083441886fbc1a65ec204d3",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-reduced-device.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-reduced-device.png",
+      "finalSha256": "992bbefbe268a61f1c040f5ab7b621f6d910c024af4579f542de4948f0a23e20",
+      "prototypeSha256": "a3d5ee65e6c8e8645a332cbac0f764a9ad9cae416c007272a5d83e0b88909649",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-reduced-system.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-reduced-system.png",
+      "finalSha256": "f8c8d20902c286fd48e2003cf2dc672bd112310277c96cbe3992f3bc6166c41e",
+      "prototypeSha256": "be5bb7b69aa85746ee0dd1ddab71fa962dfc6fc1dc2f74529354e9dbaf503058",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-sidebar-1280-200.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-final-native/wardrobe-mirror-sidebar-1280-200.png",
+      "finalSha256": "cae7392e094a37def0a05abc3954e80b9ae1a8df610598aa4bbb29b33c15e338",
+      "prototypeSha256": "cae7392e094a37def0a05abc3954e80b9ae1a8df610598aa4bbb29b33c15e338",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-sidebar-640-100.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-final-native/wardrobe-mirror-sidebar-640-100.png",
+      "finalSha256": "347d0524d31edc807192474f2f4d73380711bb736d18ae8bfaa72591e069e832",
+      "prototypeSha256": "347d0524d31edc807192474f2f4d73380711bb736d18ae8bfaa72591e069e832",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-native/wardrobe-mirror-sprout.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-mirror-prototype-painted-native/wardrobe-mirror-sprout.png",
+      "finalSha256": "dbcf748709fcbd9eac7900338ae82916d10e12bc701d62638e015a07a0363be5",
+      "prototypeSha256": "2a028e0be94d0870afe6e2918bb11ae255f6f2b782b12684bc8b6a56d2bfc21e",
+      "byteExact": false
+    }
+  ]
+}

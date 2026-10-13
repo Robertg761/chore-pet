@@ -1,0 +1,11 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run --config /tmp/wardrobe-mirror-prototype.config.mjs src/screens/Wardrobe.mirror.test.tsx --maxWorkers=1
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  23:54:23
+   Duration  1.93s (tests 49%, transform 31%, environment 14%, import 6%)
+

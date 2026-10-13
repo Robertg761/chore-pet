@@ -1,0 +1,119 @@
+// @vitest-environment jsdom
+import { act, StrictMode } from 'react'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import type { Pet } from '../domain/types'
+import { setPetMotionReduced } from '../pet/motionPreference'
+import { click, render } from '../test/react'
+import { Wardrobe, type WardrobeProps } from './Wardrobe'
+import * as model from './wardrobeModel'
+
+const pet: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#ffcfda',
+  equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } }
+let ui: ReturnType<typeof render>, now: number, serial: number, hidden: boolean, media: MediaQueryList
+let frames: Map<number, FrameRequestCallback>, changed: ReturnType<typeof vi.fn<WardrobeProps['onChange']>>
+beforeEach(() => {
+  setPetMotionReduced(false)
+  now = 0; serial = 0; hidden = false; frames = new Map(); changed = vi.fn()
+  vi.spyOn(performance, 'now').mockImplementation(() => now)
+  vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden)
+  media = Object.assign(new EventTarget(), { matches: false, media: '(prefers-reduced-motion: reduce)' }) as MediaQueryList
+  const narrow = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
+  vi.stubGlobal('matchMedia', (query: string) => query.includes('prefers-reduced-motion') ? media : narrow)
+  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
+  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
+  vi.spyOn(model, 'itemsForSlot')
+  ui = render(<StrictMode><Wardrobe pet={pet} progress={null} onChange={changed} /></StrictMode>)
+})
+afterEach(() => { ui.unmount(); setPetMotionReduced(false); vi.restoreAllMocks(); vi.unstubAllGlobals() })
+function button(name: string) {
+  const node = [...ui.container.querySelectorAll('button')].find(node => node.textContent === name)
+  expect(node, `button ${name}`).toBeTruthy()
+  return node!
+}
+function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
+function preview() { return ui.container.querySelector('.wd-preview')! }
+
+function mirror() {
+  const node = ui.container.querySelector<HTMLButtonElement>('[aria-label="Mirror preview of Mochi"]')
+  expect(node).not.toBeNull()
+  return node!
+}
+function art() { return preview().querySelector('.ch-animated')! }
+function facing() { return preview().querySelector('[data-preview-facing]')! }
+
+it.each(['mochi', 'bun', 'sprout'] as const)('mirrors all dressed %s poses exactly once without saving or redrawing items', species => {
+  ui.rerender(<StrictMode><Wardrobe pet={{ ...pet, species }} progress={null} onChange={changed} /></StrictMode>)
+  const write = vi.spyOn(Storage.prototype, 'setItem')
+  for (const pose of ['Happy', 'Sleepy', 'Cheer', 'Poorly']) {
+    click(button(pose))
+    const node = art(), original = node.outerHTML, gridRenders = vi.mocked(model.itemsForSlot).mock.calls.length
+    const toggle = mirror()
+    expect(toggle.getAttribute('aria-pressed')).toBe('false')
+    act(() => toggle.focus()); click(toggle)
+    expect(toggle.getAttribute('aria-pressed')).toBe('true')
+    expect(facing().getAttribute('transform')).toBe('translate(200 0) scale(-1 1)')
+    expect(preview().getAttribute('aria-label')).toContain('mirrored preview')
+    expect(art()).toBe(node); expect(art().outerHTML).toBe(original)
+    expect(button(pose).getAttribute('aria-pressed')).toBe('true')
+    expect(frames.size).toBe(0); expect(document.activeElement).toBe(toggle)
+    click(toggle)
+    expect(toggle.getAttribute('aria-pressed')).toBe('false')
+    expect(facing().getAttribute('transform')).toBeNull()
+    expect(art().outerHTML).toBe(original)
+    expect(preview().getAttribute('aria-label')).not.toContain('mirrored preview')
+    expect(model.itemsForSlot).toHaveBeenCalledTimes(gridRenders)
+  }
+  expect(changed).not.toHaveBeenCalled(); expect(write).not.toHaveBeenCalled()
+})
+
+it.each([
+  { action: 'Wave', stop: 'Stop wave', deadline: 1200 },
+  { action: 'Gentle pats', stop: 'Stop pats', deadline: 1600 },
+  { action: 'Hop', stop: 'Stop hop', deadline: 1800 },
+  { action: 'Stretch', stop: 'Stop stretch', deadline: 2400 },
+  { action: 'Rest', stop: 'Stop rest', deadline: 2400 },
+])('mirrors $action without changing the sampled art or its original deadline', ({ action, stop, deadline }) => {
+  click(button(action)); frame(deadline / 2)
+  const node = art(), held = node.outerHTML, gridRenders = vi.mocked(model.itemsForSlot).mock.calls.length
+  const toggle = mirror(); click(toggle)
+  expect(toggle.disabled).toBe(false); expect(toggle.getAttribute('aria-pressed')).toBe('true')
+  expect(art()).toBe(node); expect(art().outerHTML).toBe(held); expect(frames.size).toBe(1)
+  frame(deadline - 1); expect(button(stop)).toBeTruthy(); expect(frames.size).toBe(1)
+  frame(deadline); expect(button(action)).toBeTruthy(); expect(frames.size).toBe(0)
+  expect(mirror().getAttribute('aria-pressed')).toBe('true')
+  expect(model.itemsForSlot).toHaveBeenCalledTimes(gridRenders)
+  expect(changed).not.toHaveBeenCalled()
+})
+
+it.each(['system', 'device'] as const)('keeps mirroring available through live %s reduction without replay', policy => {
+  click(button('Rest')); frame(1200); click(mirror())
+  const change = (value: boolean) => act(() => {
+    if (policy === 'device') setPetMotionReduced(value)
+    else { Object.defineProperty(media, 'matches', { value, configurable: true }); media.dispatchEvent(new Event('change')) }
+  })
+  change(true)
+  expect(frames.size).toBe(0); expect(button('Rest').disabled).toBe(true)
+  const still = art().outerHTML
+  expect(mirror().disabled).toBe(false); click(mirror())
+  expect(art().outerHTML).toBe(still); expect(frames.size).toBe(0)
+  click(mirror()); change(false); frame(5000)
+  expect(art().outerHTML).toBe(still); expect(mirror().getAttribute('aria-pressed')).toBe('true')
+  expect(frames.size).toBe(0); expect(changed).not.toHaveBeenCalled()
+})
+
+it('retains the local facing through outfit/pose changes and hidden expiry, then resets on remount', () => {
+  click(button('Rest')); frame(900); click(mirror())
+  act(() => { hidden = true; document.dispatchEvent(new Event('visibilitychange')) })
+  expect(frames.size).toBe(0)
+  ui.rerender(<StrictMode><Wardrobe pet={{ ...pet, equipped: { face: 'glasses' } }} progress={null} onChange={changed} /></StrictMode>)
+  expect(mirror().getAttribute('aria-pressed')).toBe('true')
+  expect(preview().querySelector('[data-slot="head"]')).toBeNull()
+  now = 2500
+  act(() => { hidden = false; document.dispatchEvent(new Event('visibilitychange')) }); frame(now)
+  expect(frames.size).toBe(0); expect(button('Rest')).toBeTruthy()
+  click(button('Sleepy')); expect(mirror().getAttribute('aria-pressed')).toBe('true')
+  ui.unmount()
+  ui = render(<StrictMode><Wardrobe pet={pet} progress={null} onChange={changed} /></StrictMode>)
+  expect(mirror().getAttribute('aria-pressed')).toBe('false'); expect(frames.size).toBe(0)
+  expect(changed).not.toHaveBeenCalled()
+})

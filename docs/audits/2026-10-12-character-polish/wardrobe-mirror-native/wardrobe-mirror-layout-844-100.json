@@ -1,0 +1,95 @@
+{
+  "width": 844,
+  "height": 390,
+  "text": 100,
+  "normal": {
+    "button": {
+      "x": 343.09375,
+      "y": 57.59375,
+      "width": 48,
+      "height": 48,
+      "right": 391.09375,
+      "bottom": 105.59375
+    },
+    "ink": {
+      "x": 179.040771484375,
+      "y": 85.12648010253906,
+      "width": 138.01220703125,
+      "height": 114.66165161132812,
+      "right": 317.052978515625,
+      "bottom": 199.7881317138672
+    },
+    "art": {
+      "x": 109,
+      "y": 57.59375,
+      "width": 278.09375,
+      "height": 139.40625,
+      "right": 387.09375,
+      "bottom": 197
+    },
+    "stage": {
+      "x": 92,
+      "y": 44.59375,
+      "width": 312.09375,
+      "height": 335.40625,
+      "right": 404.09375,
+      "bottom": 380
+    },
+    "overlap": 0,
+    "accentOverlap": 0,
+    "paintedInkSamples": 0,
+    "hitTestGridPx": 1,
+    "tabsVisible": true,
+    "sideScrollTop": 0,
+    "focusVisible": false,
+    "ringClear": true,
+    "horizontalOverflow": 0,
+    "frames": 0
+  },
+  "view": {
+    "button": {
+      "x": 343.09375,
+      "y": 57.59375,
+      "width": 48,
+      "height": 48,
+      "right": 391.09375,
+      "bottom": 105.59375
+    },
+    "ink": {
+      "x": 179.040771484375,
+      "y": 85.12648010253906,
+      "width": 138.01220703125,
+      "height": 114.66165161132812,
+      "right": 317.052978515625,
+      "bottom": 199.7881317138672
+    },
+    "art": {
+      "x": 109,
+      "y": 57.59375,
+      "width": 278.09375,
+      "height": 139.40625,
+      "right": 387.09375,
+      "bottom": 197
+    },
+    "stage": {
+      "x": 92,
+      "y": 44.59375,
+      "width": 312.09375,
+      "height": 335.40625,
+      "right": 404.09375,
+      "bottom": 380
+    },
+    "overlap": 0,
+    "accentOverlap": 0,
+    "paintedInkSamples": 0,
+    "hitTestGridPx": 1,
+    "tabsVisible": true,
+    "sideScrollTop": 0,
+    "focusVisible": true,
+    "ringClear": true,
+    "horizontalOverflow": 0,
+    "frames": 0
+  },
+  "browser": "152.0.7977.82",
+  "method": "Native Space activation and actual character body/control bounds; root text enlargement, not browser zoom. No extra movement clock or row."
+}

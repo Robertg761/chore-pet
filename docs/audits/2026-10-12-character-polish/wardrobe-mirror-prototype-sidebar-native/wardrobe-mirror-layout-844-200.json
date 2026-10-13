@@ -1,0 +1,91 @@
+{
+  "width": 844,
+  "height": 390,
+  "text": 200,
+  "normal": {
+    "button": {
+      "x": 763,
+      "y": 86.1875,
+      "width": 48,
+      "height": 48,
+      "right": 811,
+      "bottom": 134.1875
+    },
+    "ink": {
+      "x": 414.79998779296875,
+      "y": 117.7874984741211,
+      "width": 158.4000244140625,
+      "height": 131.60000610351562,
+      "right": 573.2000122070312,
+      "bottom": 249.38750457763672
+    },
+    "art": {
+      "x": 179,
+      "y": 86.1875,
+      "width": 630,
+      "height": 160,
+      "right": 809,
+      "bottom": 246.1875
+    },
+    "stage": {
+      "x": 164,
+      "y": 73.1875,
+      "width": 660,
+      "height": 485.1875,
+      "right": 824,
+      "bottom": 558.375
+    },
+    "overlap": 0,
+    "accentOverlap": 0,
+    "tabsVisible": true,
+    "sideScrollTop": 0,
+    "focusVisible": false,
+    "ringClear": true,
+    "horizontalOverflow": 0,
+    "frames": 0
+  },
+  "view": {
+    "button": {
+      "x": 763,
+      "y": 86.1875,
+      "width": 48,
+      "height": 48,
+      "right": 811,
+      "bottom": 134.1875
+    },
+    "ink": {
+      "x": 414.79998779296875,
+      "y": 117.7874984741211,
+      "width": 158.4000244140625,
+      "height": 131.60000610351562,
+      "right": 573.2000122070312,
+      "bottom": 249.38750457763672
+    },
+    "art": {
+      "x": 179,
+      "y": 86.1875,
+      "width": 630,
+      "height": 160,
+      "right": 809,
+      "bottom": 246.1875
+    },
+    "stage": {
+      "x": 164,
+      "y": 73.1875,
+      "width": 660,
+      "height": 485.1875,
+      "right": 824,
+      "bottom": 558.375
+    },
+    "overlap": 0,
+    "accentOverlap": 0,
+    "tabsVisible": true,
+    "sideScrollTop": 0,
+    "focusVisible": true,
+    "ringClear": true,
+    "horizontalOverflow": 0,
+    "frames": 0
+  },
+  "browser": "152.0.7977.82",
+  "method": "Native Space activation and actual character body/control bounds; root text enlargement, not browser zoom. No extra movement clock or row."
+}

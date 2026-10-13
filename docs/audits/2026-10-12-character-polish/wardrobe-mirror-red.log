@@ -1,0 +1,85 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run src/screens/Wardrobe.mirror.test.tsx --maxWorkers=1
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/screens/Wardrobe.mirror.test.tsx (11 tests | 11 failed) 454ms
+   × mirrors all dressed mochi poses exactly once without saving or redrawing items 91ms
+   × mirrors all dressed bun poses exactly once without saving or redrawing items 48ms
+   × mirrors all dressed sprout poses exactly once without saving or redrawing items 41ms
+   × mirrors Wave without changing the sampled art or its original deadline 41ms
+   × mirrors Gentle pats without changing the sampled art or its original deadline 32ms
+   × mirrors Hop without changing the sampled art or its original deadline 35ms
+   × mirrors Stretch without changing the sampled art or its original deadline 33ms
+   × mirrors Rest without changing the sampled art or its original deadline 36ms
+   × keeps mirroring available through live system reduction without replay 35ms
+   × keeps mirroring available through live device reduction without replay 30ms
+   × retains the local facing through outfit/pose changes and hidden expiry, then resets on remount 31ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/Wardrobe.mirror.test.tsx > mirrors all dressed mochi poses exactly once without saving or redrawing items
+ FAIL  src/screens/Wardrobe.mirror.test.tsx > mirrors all dressed bun poses exactly once without saving or redrawing items
+ FAIL  src/screens/Wardrobe.mirror.test.tsx > mirrors all dressed sprout poses exactly once without saving or redrawing items
+AssertionError: expected null not to be null
+ ❯ mirror src/screens/Wardrobe.mirror.test.tsx:38:20
+     36| function mirror() {
+     37|   const node = ui.container.querySelector<HTMLButtonElement>('[aria-la…
+     38|   expect(node).not.toBeNull()
+       |                    ^
+     39|   return node!
+     40| }
+ ❯ src/screens/Wardrobe.mirror.test.tsx:50:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  src/screens/Wardrobe.mirror.test.tsx > mirrors Wave without changing the sampled art or its original deadline
+ FAIL  src/screens/Wardrobe.mirror.test.tsx > mirrors Gentle pats without changing the sampled art or its original deadline
+ FAIL  src/screens/Wardrobe.mirror.test.tsx > mirrors Hop without changing the sampled art or its original deadline
+ FAIL  src/screens/Wardrobe.mirror.test.tsx > mirrors Stretch without changing the sampled art or its original deadline
+ FAIL  src/screens/Wardrobe.mirror.test.tsx > mirrors Rest without changing the sampled art or its original deadline
+AssertionError: expected null not to be null
+ ❯ mirror src/screens/Wardrobe.mirror.test.tsx:38:20
+     36| function mirror() {
+     37|   const node = ui.container.querySelector<HTMLButtonElement>('[aria-la…
+     38|   expect(node).not.toBeNull()
+       |                    ^
+     39|   return node!
+     40| }
+ ❯ src/screens/Wardrobe.mirror.test.tsx:78:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  src/screens/Wardrobe.mirror.test.tsx > keeps mirroring available through live system reduction without replay
+ FAIL  src/screens/Wardrobe.mirror.test.tsx > keeps mirroring available through live device reduction without replay
+AssertionError: expected null not to be null
+ ❯ mirror src/screens/Wardrobe.mirror.test.tsx:38:20
+     36| function mirror() {
+     37|   const node = ui.container.querySelector<HTMLButtonElement>('[aria-la…
+     38|   expect(node).not.toBeNull()
+       |                    ^
+     39|   return node!
+     40| }
+ ❯ src/screens/Wardrobe.mirror.test.tsx:89:45
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  src/screens/Wardrobe.mirror.test.tsx > retains the local facing through outfit/pose changes and hidden expiry, then resets on remount
+AssertionError: expected null not to be null
+ ❯ mirror src/screens/Wardrobe.mirror.test.tsx:38:20
+     36| function mirror() {
+     37|   const node = ui.container.querySelector<HTMLButtonElement>('[aria-la…
+     38|   expect(node).not.toBeNull()
+       |                    ^
+     39|   return node!
+     40| }
+ ❯ src/screens/Wardrobe.mirror.test.tsx:105:44
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  11 failed (11)
+   Start at  00:01:05
+   Duration  1.39s (transform 38%, tests 35%, environment 20%, import 7%)
+

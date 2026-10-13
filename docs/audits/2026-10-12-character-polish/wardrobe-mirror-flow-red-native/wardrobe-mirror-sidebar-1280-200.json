@@ -1,0 +1,159 @@
+{
+  "width": 1280,
+  "height": 800,
+  "text": 200,
+  "view": {
+    "side": {
+      "x": 741,
+      "y": 99,
+      "width": 500,
+      "height": 682,
+      "right": 1241,
+      "bottom": 781
+    },
+    "scrollTop": 0,
+    "tabs": [
+      {
+        "label": "Head",
+        "box": {
+          "x": 752,
+          "y": 110,
+          "width": 99.875,
+          "height": 44,
+          "right": 851.875,
+          "bottom": 154
+        },
+        "verticallyVisible": true
+      },
+      {
+        "label": "Face",
+        "box": {
+          "x": 855.875,
+          "y": 110,
+          "width": 87.96875,
+          "height": 44,
+          "right": 943.84375,
+          "bottom": 154
+        },
+        "verticallyVisible": true
+      },
+      {
+        "label": "Neck",
+        "box": {
+          "x": 947.84375,
+          "y": 110,
+          "width": 94.828125,
+          "height": 44,
+          "right": 1042.671875,
+          "bottom": 154
+        },
+        "verticallyVisible": true
+      },
+      {
+        "label": "Outfit",
+        "box": {
+          "x": 1046.671875,
+          "y": 110,
+          "width": 110.640625,
+          "height": 44,
+          "right": 1157.3125,
+          "bottom": 154
+        },
+        "verticallyVisible": true
+      },
+      {
+        "label": "On back",
+        "box": {
+          "x": 1161.3125,
+          "y": 110,
+          "width": 143.9375,
+          "height": 44,
+          "right": 1305.25,
+          "bottom": 154
+        },
+        "verticallyVisible": true
+      }
+    ],
+    "gifts": [
+      {
+        "label": "Locked gift. 5 chores",
+        "box": {
+          "x": 947.15625,
+          "y": 259,
+          "width": 87.6875,
+          "height": 26.390625,
+          "right": 1034.84375,
+          "bottom": 285.390625
+        },
+        "tile": {
+          "x": 946,
+          "y": 172,
+          "width": 90,
+          "height": 198.78125,
+          "right": 1036,
+          "bottom": 370.78125
+        }
+      },
+      {
+        "label": "Locked gift. 50 chores",
+        "box": {
+          "x": 1040.5625,
+          "y": 259,
+          "width": 100.890625,
+          "height": 26.390625,
+          "right": 1141.453125,
+          "bottom": 285.390625
+        },
+        "tile": {
+          "x": 1046,
+          "y": 172,
+          "width": 90,
+          "height": 198.78125,
+          "right": 1136,
+          "bottom": 370.78125
+        }
+      },
+      {
+        "label": "Locked gift. 60 chores",
+        "box": {
+          "x": 1140.5625,
+          "y": 259,
+          "width": 100.890625,
+          "height": 26.390625,
+          "right": 1241.453125,
+          "bottom": 285.390625
+        },
+        "tile": {
+          "x": 1146,
+          "y": 172,
+          "width": 90,
+          "height": 198.78125,
+          "right": 1236,
+          "bottom": 370.78125
+        }
+      },
+      {
+        "label": "Locked gift. 200 chores",
+        "box": {
+          "x": 733.953125,
+          "y": 467.78125,
+          "width": 114.09375,
+          "height": 26.390625,
+          "right": 848.046875,
+          "bottom": 494.171875
+        },
+        "tile": {
+          "x": 746,
+          "y": 380.78125,
+          "width": 90,
+          "height": 124.390625,
+          "right": 836,
+          "bottom": 505.171875
+        }
+      }
+    ],
+    "horizontalOverflow": 0
+  },
+  "browser": "152.0.7977.82",
+  "method": "Initial wardrobe selected Head tab and all earned/locked labels before any mirror input. Tabs must remain inside the vertical scroll viewport; gift labels must fit their own tiles."
+}
