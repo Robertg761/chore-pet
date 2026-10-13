@@ -1,0 +1,15 @@
+{
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/wardrobe-stretch-captures/wardrobe-stretch-1280x800.json": "c4742f97a343dda0df252af6581325e647d7305c463573baaa3dcb75e6dc6ac8",
+    "docs/audits/2026-10-12-character-polish/wardrobe-stretch-captures/wardrobe-stretch-1280x800.png": "4bfbb7a389f1402f5b974225e9cddbcd3d03036bb39554f8de0dd0d6c8c60ebb",
+    "docs/audits/2026-10-12-character-polish/wardrobe-stretch-captures/wardrobe-stretch-320x568.json": "04d56a5701bf07e41fca8045846e3ecd3420efffdf04f7d2bface6104d0c784a",
+    "docs/audits/2026-10-12-character-polish/wardrobe-stretch-captures/wardrobe-stretch-320x568.png": "de82a9fb539e3fcf6817223d88de672d40b42008d16b0394ecc8e992e20a6573",
+    "docs/audits/2026-10-12-character-polish/wardrobe-stretch-captures/wardrobe-stretch-390x664.json": "40fd3672b4766f26c346e36d6ad86558f1a72769d204ef0e503512ce8a3cf55e",
+    "docs/audits/2026-10-12-character-polish/wardrobe-stretch-captures/wardrobe-stretch-390x664.png": "2a863bf6ae58f7fc7a73fe7b2c1d9aa449277c2d36c4124e5e34d88a0e6e20a8",
+    "docs/audits/2026-10-12-character-polish/wardrobe-stretch-captures/wardrobe-stretch-640x360.json": "8b9ad892136774c653f29730fd5efc3cbef255d0a81e247af29653ac85dab04b",
+    "docs/audits/2026-10-12-character-polish/wardrobe-stretch-captures/wardrobe-stretch-640x360.png": "ca6f54dfa7f3abfb12387c7b0fc140f7a5fe72fbef13bd01dfef27d820cfdfda",
+    "docs/audits/2026-10-12-character-polish/wardrobe-stretch-captures/wardrobe-stretch-844x390.json": "0a1b0c40c6dfef2579029579daa25a12de9310fb08ff1cbd2f4ca2e90e40d85a",
+    "docs/audits/2026-10-12-character-polish/wardrobe-stretch-captures/wardrobe-stretch-844x390.png": "bc7e3c928896895e9bd0dc88285a84d8fc55fdcb823da863efdb982e9ab514ad"
+  },
+  "scope": "Five native production Mochi wardrobe stills and geometry records at stretch1200ms, default text320/390/640/844/1280; three species in integration checks. No temporal/physical-device/whole-app enlarged-text acceptance."
+}

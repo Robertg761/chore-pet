@@ -7,7 +7,7 @@ import { usePetMotion } from '../pet/usePetMotion'
 import { SegThumb } from '../shell/SegThumb'
 import { describeOutfit, WARDROBE_POSES } from './wardrobeModel'
 
-type PreviewAction = 'greet' | 'affection' | 'celebrate'
+type PreviewAction = 'greet' | 'affection' | 'celebrate' | 'stretch'
 interface PreviewRun { action: PreviewAction; start: number }
 
 /** One finite, on-demand clock, isolated from the wardrobe's item grid. */
@@ -54,6 +54,8 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
         onClick={() => toggle('affection')}>{active?.action === 'affection' ? 'Stop pats' : 'Gentle pats'}</button>
       <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'celebrate')}
         onClick={() => toggle('celebrate')}>{active?.action === 'celebrate' ? 'Stop hop' : 'Hop'}</button>
+      <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'stretch')}
+        onClick={() => toggle('stretch')}>{active?.action === 'stretch' ? 'Stop stretch' : 'Stretch'}</button>
     </div>
     {reducedMotion && <p className="wd-note wd-motion-note">Motion previews are off while reduced motion is on.</p>}
   </div>

@@ -1,0 +1,147 @@
+{
+  "freeze": {
+    "baseCommit": "1e5502580ed4dbff33a48d96a460271799ed7675",
+    "sources": {
+      "src/screens/WardrobePreview.tsx": "cb9e063e38231676f4a9f179dade756059b446970a26fc3351232db220d853b1",
+      "src/screens/Wardrobe.css": "7f35030d791baa48f03513f84227dd75f9e4c6822234048ad29e5bf5c1310883",
+      "src/screens/Wardrobe.stretch.test.tsx": "ad5924806d222c7bf3708e62cffdc8131de18877f3b8f1270e6b802b8f604074",
+      "scripts/browser/wardrobe-motion.test.mjs": "9e3f773c4ceeb2239e154e88a7ec5187761e1764d7fa9b596b2614e814e2d78c",
+      "scripts/browser/pet-motion-preference.test.mjs": "9477b805ca2a389d683da11ea3217fa4f53a969131d87429657217b54c157b23",
+      "docs/ART.md": "c53678a69b2e94c797fb711daf7b99f93588eb0f3de5b1ecb4be516606fd6f76"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-source.diff",
+      "sha256": "dca793c2d1a425eb330e971b8b736bd93ac81693ca225e63bc92a97c7fec8875"
+    },
+    "scope": "Two runtime files: existing grounded stretch action/control added to wardrobe, balanced two/four-column stage-width CSS. Original preview lifecycle and one clock unchanged. New integration file, two native regression files and ART."
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-artifacts.json",
+    "sha256": "29142716c4cd5c81fbb22f1ea2c6d8e3f4407ee69561952398331d0ffcf6053f"
+  },
+  "unchangedSources": {
+    "src/character/motion.ts": "b551fa03994d7689c27e3076e136c8457af29c5b30aa9a1dbd6b730191f077af",
+    "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+    "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+    "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+    "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+    "src/screens/Wardrobe.tsx": "97a3e3da1d1f3451f937a74aed619f67c9703f0895d46494fc73809ab274ed5c",
+    "src/screens/wardrobeModel.ts": "54a214a753fd87347ae0b4b2089ff5829be5c4f24b369ed6b0d52560ead86ddd"
+  },
+  "checks": [
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-browser.log",
+      "logSha256": "3407e5e05c44eb91b912acbdbf885e1e790dde4b919e8ef92487b106960a7a31",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-browser.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-build.log",
+      "logSha256": "a2c3b1c995db1863d0cbde6833bc7b58f20a7aadf57819c6a754d1f7d4c003d8",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "device-browser",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-device-browser.log",
+      "logSha256": "0d00dd954331aa8e4000821ad1bc59452cb7a646623cb1dfc9f8d57879a86427",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-device-browser.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-full.log",
+      "logSha256": "83a28fa4c99ca8244c0a07188a6b51f9c2c822a54d399047029d72b4544a7585",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "layout-build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-layout-build.log",
+      "logSha256": "ac4f91b73b06ce6da93114d22ceb01443f4e5e0b56be44ce4bdb2bf7830d9c78",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-layout-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "layout-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-layout-red.log",
+      "logSha256": "3537819d3f45924d43b15444dd3c0f3765d5f3ba112a60a520b06e881705e10e",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-layout-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "lint-pre-cross-tab",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-lint-pre-cross-tab.log",
+      "logSha256": "639c0f373f296ebe13e4681bb2e3eb0f46c301843d57764a68e2a06434fe0245",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-lint-pre-cross-tab.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-lint.log",
+      "logSha256": "639c0f373f296ebe13e4681bb2e3eb0f46c301843d57764a68e2a06434fe0245",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-red.log",
+      "logSha256": "963edc53681409bc5e6bb68971911534970fb9c6ecd0a450277fb324d9ab61fe",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "unit",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-unit.log",
+      "logSha256": "9db81f55e9c45e627f1417e9a7a83fbe5f42a0911841316226f4561537e0e47c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-unit.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    }
+  ],
+  "status": "Root full and native verification complete; independent source/still review pending. Immutable dispatch snapshot.",
+  "result": "2262full/110files71.70s;18Wardrobe integration/2files2.48s;8wardrobenative23.465s plus2native device cross-tab6.444s;finaltypebuild/zero-warninglint/diff0. Five publicdefault-text layouts retain balanced2+2/4rows,44targets,visiblekeyboardfocus andart109\u2013537px. Peakactualfeet drift<.000018screenpx,botharm37.72/-37.72,fulloutfit/sameart-grid/nosavedpet changes;reducedshortphoneart>=60px. Root inspectedall5PNGs.",
+  "history": "8newunitmissing-controlreds1.16s before product. Action/control added first;18unitpass. Five native3+1rowfailures10.100s beforeCSSedit. Final2/4columnCSS then8nativepass. Cross-tabexistingHopplusnewStretch retainpriorcoverage andstrengthenimmediate0frame/no-replaymarkup assertions. Originalrawfailures preserved.",
+  "limits": "Native stretch motion/layout coversMochi/oneoutfit/fiveviewports;unitcovers3species/device+system/finiteclock/deadlines/stop/busy/pose/hidden/unmount/outfitupdates/no writes. Staticstills and controllednativechecks do notcertify human temporal/physicaldevices/AT/CPU/battery orwhole-app200%text. Node768MBcap,oneworker/oneChromium,sequentialheavywork. Sharedsampler/renderer/hook/preference/Wardrobeparent/model byteexact tobase."
+}

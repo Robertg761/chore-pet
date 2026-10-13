@@ -1,0 +1,359 @@
+diff --git c/src/screens/WardrobePreview.tsx w/src/screens/WardrobePreview.tsx
+index c8b8ecd..e4f9d2d 100644
+--- c/src/screens/WardrobePreview.tsx
++++ w/src/screens/WardrobePreview.tsx
+@@ -7,7 +7,7 @@ import { usePetMotion } from '../pet/usePetMotion'
+ import { SegThumb } from '../shell/SegThumb'
+ import { describeOutfit, WARDROBE_POSES } from './wardrobeModel'
+ 
+-type PreviewAction = 'greet' | 'affection' | 'celebrate'
++type PreviewAction = 'greet' | 'affection' | 'celebrate' | 'stretch'
+ interface PreviewRun { action: PreviewAction; start: number }
+ 
+ /** One finite, on-demand clock, isolated from the wardrobe's item grid. */
+@@ -54,6 +54,8 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
+         onClick={() => toggle('affection')}>{active?.action === 'affection' ? 'Stop pats' : 'Gentle pats'}</button>
+       <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'celebrate')}
+         onClick={() => toggle('celebrate')}>{active?.action === 'celebrate' ? 'Stop hop' : 'Hop'}</button>
++      <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'stretch')}
++        onClick={() => toggle('stretch')}>{active?.action === 'stretch' ? 'Stop stretch' : 'Stretch'}</button>
+     </div>
+     {reducedMotion && <p className="wd-note wd-motion-note">Motion previews are off while reduced motion is on.</p>}
+   </div>
+diff --git c/src/screens/Wardrobe.css w/src/screens/Wardrobe.css
+index 3b0b180..c9855ec 100644
+--- c/src/screens/Wardrobe.css
++++ w/src/screens/Wardrobe.css
+@@ -8,6 +8,7 @@
+ .wd-side { flex: none; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+ 
+ .wd-stage {
++  container: wardrobe-preview / inline-size;
+   flex: 1 1 0;
+   min-height: 0;
+   min-width: 0;
+@@ -22,8 +23,11 @@
+ }
+ .wd-preview { flex: 1 1 0; min-height: 0; width: 100%; display: block; }
+ .wd-poses { align-self: stretch; }
+-.wd-motion { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: min(100%, 360px); min-width: 0; gap: 8px; flex: none; }
++.wd-motion { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: min(100%, 360px); min-width: 0; gap: 8px; flex: none; }
+ .wd-motion .btn { min-width: 44px; padding: 0 6px; line-height: 1.2; }
++@container wardrobe-preview (min-width: 20rem) {
++  .wd-motion { grid-template-columns: repeat(4, minmax(0, 1fr)); }
++}
+ .wd-motion-note { max-width: 32ch; text-align: center; }
+ .wd-tabs .seg-btn { white-space: nowrap; }
+ .wd-poses .seg-btn { padding: 0 2px; font-size: 0.875rem; }
+diff --git 1/src/screens/Wardrobe.stretch.test.tsx 2/src/screens/Wardrobe.stretch.test.tsx
+new file mode 100644
+index 0000000..2aa1f4f
+--- /dev/null
++++ 2/src/screens/Wardrobe.stretch.test.tsx
+@@ -0,0 +1,111 @@
++// @vitest-environment jsdom
++import { act, StrictMode } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import type { Pet } from '../domain/types'
++import { setPetMotionReduced } from '../pet/motionPreference'
++import { click, render } from '../test/react'
++import { Wardrobe, type WardrobeProps } from './Wardrobe'
++import * as model from './wardrobeModel'
++
++const pet: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#ffcfda',
++  equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } }
++let ui: ReturnType<typeof render>, now: number, serial: number, hidden: boolean, media: MediaQueryList
++let frames: Map<number, FrameRequestCallback>, changed: ReturnType<typeof vi.fn<WardrobeProps['onChange']>>
++beforeEach(() => {
++  setPetMotionReduced(false)
++  now = 0; serial = 0; hidden = false; frames = new Map(); changed = vi.fn()
++  vi.spyOn(performance, 'now').mockImplementation(() => now)
++  vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden)
++  media = Object.assign(new EventTarget(), { matches: false, media: '(prefers-reduced-motion: reduce)' }) as MediaQueryList
++  const narrow = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  vi.stubGlobal('matchMedia', (query: string) => query.includes('prefers-reduced-motion') ? media : narrow)
++  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
++  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
++  vi.spyOn(model, 'itemsForSlot')
++  ui = render(<StrictMode><Wardrobe pet={pet} progress={null} onChange={changed} /></StrictMode>)
++})
++afterEach(() => { ui.unmount(); setPetMotionReduced(false); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++function button(name: string) {
++  const node = [...ui.container.querySelectorAll('button')].find(node => node.textContent === name)
++  expect(node, `button ${name}`).toBeTruthy()
++  return node!
++}
++function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
++function visibility(value: boolean) { act(() => { hidden = value; document.dispatchEvent(new Event('visibilitychange')) }) }
++function preview() { return ui.container.querySelector('.wd-preview')! }
++function body() { return preview().querySelector('[data-character-body]')!.getAttribute('transform') }
++function arms() { return [...preview().querySelectorAll('[data-arm]')].map(node => node.getAttribute('transform')) }
++
++it.each(['mochi', 'bun', 'sprout'] as const)('previews a grounded dressed %s stretch for exactly2400ms without saving or redrawing items', species => {
++  ui.rerender(<StrictMode><Wardrobe pet={{ ...pet, species }} progress={null} onChange={changed} /></StrictMode>)
++  const write = vi.spyOn(Storage.prototype, 'setItem'), art = preview().querySelector('.ch-animated')
++  const neutralBody = body(), neutralArms = arms(), ground = preview().querySelector('[data-character-ground]')!.outerHTML
++  click(button('Sleepy')); click(button('Stretch'))
++  expect(button('Happy').getAttribute('aria-pressed')).toBe('true')
++  const gridRenders = vi.mocked(model.itemsForSlot).mock.calls.length
++  expect(frames.size).toBe(1)
++  frame(1200)
++  expect(body()).toMatch(/^translate\(0 0\)/)
++  expect(body()).not.toBe(neutralBody)
++  const raisedArms = arms()
++  expect(raisedArms).toHaveLength(2)
++  raisedArms.forEach((value, index) => expect(value).not.toBe(neutralArms[index]))
++  expect(preview().querySelector('[data-character-ground]')!.outerHTML).toBe(ground)
++  expect(preview().querySelector('[data-character-accents]')!.getAttribute('opacity')).toBe('0')
++  for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) expect(preview().querySelector(`[data-slot="${slot}"]`)).not.toBeNull()
++  frame(2399)
++  expect(button('Stop stretch')).toBeTruthy(); expect(frames.size).toBe(1)
++  frame(2400)
++  expect(button('Stretch')).toBeTruthy(); expect(frames.size).toBe(0)
++  expect(body()).toBe(neutralBody); expect(arms()).toEqual(neutralArms)
++  expect(preview().querySelector('.ch-animated')).toBe(art)
++  expect(model.itemsForSlot).toHaveBeenCalledTimes(gridRenders)
++  expect(changed).not.toHaveBeenCalled(); expect(write).not.toHaveBeenCalled()
++})
++
++it('keeps the stretch stop control focused, rejects competing actions and lets pose selection stop it', () => {
++  const control = button('Stretch'); act(() => control.focus()); click(control); frame(1200)
++  const at = body()
++  for (const name of ['Wave', 'Gentle pats', 'Hop']) { expect(button(name).disabled).toBe(true); click(button(name)) }
++  expect(body()).toBe(at); expect(frames.size).toBe(1)
++  expect(button('Stop stretch')).toBe(control); expect(document.activeElement).toBe(control)
++  click(control)
++  expect(button('Stretch')).toBe(control); expect(document.activeElement).toBe(control); expect(frames.size).toBe(0)
++  click(control); frame(1800); click(button('Poorly'))
++  expect(frames.size).toBe(0); expect(preview().querySelector('[data-character-pose="sick"]')).not.toBeNull()
++})
++
++it.each(['system', 'device'] as const)('settles stretch on live %s reduction without replaying', policy => {
++  const change = (value: boolean) => act(() => {
++    if (policy === 'device') setPetMotionReduced(value)
++    else { Object.defineProperty(media, 'matches', { value, configurable: true }); media.dispatchEvent(new Event('change')) }
++  })
++  click(button('Stretch')); frame(1200); change(true)
++  expect(frames.size).toBe(0)
++  for (const name of ['Wave', 'Gentle pats', 'Hop', 'Stretch']) expect(button(name).disabled).toBe(true)
++  const still = preview().innerHTML
++  frame(5000); change(false)
++  expect(button('Stretch').disabled).toBe(false); expect(frames.size).toBe(0)
++  frame(6000); expect(preview().innerHTML).toBe(still); expect(changed).not.toHaveBeenCalled()
++})
++
++it('expires hidden stretch on return and ignores a stale frame after unmount', () => {
++  click(button('Stretch')); frame(900)
++  const stale = [...frames.values()][0]
++  visibility(true); expect(frames.size).toBe(0)
++  now = 2500; visibility(false); frame(now)
++  expect(frames.size).toBe(0); expect(button('Stretch')).toBeTruthy()
++  click(button('Stretch')); expect(frames.size).toBe(1)
++  ui.unmount(); expect(frames.size).toBe(0)
++  act(() => stale(5000)); expect(frames.size).toBe(0)
++})
++
++it('updates an outfit during stretch without extending its original deadline', () => {
++  click(button('Stretch')); frame(1200)
++  ui.rerender(<StrictMode><Wardrobe pet={{ ...pet, equipped: { face: 'glasses', neck: 'scarf' } }} progress={null} onChange={changed} /></StrictMode>)
++  expect(preview().querySelector('[data-slot="head"]')).toBeNull()
++  for (const slot of ['face', 'neck']) expect(preview().querySelector(`[data-slot="${slot}"]`)).not.toBeNull()
++  expect(frames.size).toBe(1)
++  frame(2400); expect(frames.size).toBe(0); expect(button('Stretch')).toBeTruthy()
++  expect(changed).not.toHaveBeenCalled()
++})
+diff --git c/scripts/browser/wardrobe-motion.test.mjs w/scripts/browser/wardrobe-motion.test.mjs
+index 1b8f40b..14a724f 100644
+--- c/scripts/browser/wardrobe-motion.test.mjs
++++ w/scripts/browser/wardrobe-motion.test.mjs
+@@ -1,10 +1,11 @@
+ import assert from 'node:assert/strict'
+ import { test } from 'node:test'
+-import { writeFile } from 'node:fs/promises'
++import { mkdir, writeFile } from 'node:fs/promises'
+ import { join } from 'node:path'
+ import { browserApp, changeReducedMotion, seedProgress, snapshot } from './helpers.mjs'
+ 
+ const out = process.env.CHORE_PET_CAPTURE_DIR
++const stretchOut = process.env.CHORE_WARDROBE_STRETCH_CAPTURE_DIR
+ async function wardrobeApp(t, options = {}) {
+   const page = await browserApp(t, { reducedMotion: 'no-preference', ...options })
+   await seedProgress(page, { unlockedItems: ['item:beanie-red', 'item:glasses', 'item:scarf', 'item:backpack'] })
+@@ -19,6 +20,32 @@ async function wardrobeApp(t, options = {}) {
+   return page
+ }
+ 
++function focusClearance(node) {
++  const r = node.getBoundingClientRect(), s = getComputedStyle(node)
++  const ring = parseFloat(s.outlineWidth) + Math.max(0, parseFloat(s.outlineOffset))
++  let left = 0, top = 0, right = innerWidth, bottom = innerHeight
++  for (let parent = node.parentElement; parent; parent = parent.parentElement) {
++    const style = getComputedStyle(parent), clip = parent.getBoundingClientRect()
++    if (/(auto|scroll|hidden|clip)/.test(style.overflowX)) {
++      left = Math.max(left, clip.left + parent.clientLeft)
++      right = Math.min(right, clip.left + parent.clientLeft + parent.clientWidth)
++    }
++    if (/(auto|scroll|hidden|clip)/.test(style.overflowY)) {
++      top = Math.max(top, clip.top + parent.clientTop)
++      bottom = Math.min(bottom, clip.top + parent.clientTop + parent.clientHeight)
++    }
++  }
++  return { clear: r.left - ring >= left && r.right + ring <= right && r.top - ring >= top && r.bottom + ring <= bottom,
++    labelsFit: [...node.parentElement.children].every(button => button.scrollWidth <= button.clientWidth), ring }
++}
++
++async function footContacts(preview) {
++  return preview.evaluate(node => [...node.querySelectorAll('[data-foot] ellipse')].map(foot => {
++    const point = new DOMPoint(Number(foot.getAttribute('cx')), Number(foot.getAttribute('cy'))).matrixTransform(foot.getScreenCTM())
++    return { x: point.x, y: point.y }
++  }))
++}
++
+ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [1280, 800]]) {
+   test(`wardrobe finite previews stay usable and preserve the outfit at ${width}x${height}`, { timeout: 20000 }, async t => {
+     const page = await wardrobeApp(t, { viewport: { width, height } })
+@@ -26,6 +53,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
+     const preview = page.locator('.wd-preview')
+     const pats = page.getByRole('button', { name: 'Gentle pats', exact: true })
+     assert.equal(await pats.count(), 1, 'wardrobe must preview the gentle player response')
++    assert.equal(await page.getByRole('button', { name: 'Stretch', exact: true }).count(), 1, 'wardrobe offers the grounded stretch preview')
+     for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) assert.equal(await preview.locator(`[data-slot="${slot}"]`).count(), 1)
+     const art = await preview.locator('.ch-animated').elementHandle()
+     const grid = await page.locator('.wd-grid').elementHandle()
+@@ -47,8 +75,13 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
+         tabButtons: [...document.querySelectorAll('.wd-tabs [role="tab"]')].filter(node => node.offsetWidth && node.offsetHeight).map(box),
+         tabLabelsFit: [...document.querySelectorAll('.wd-tabs [role="tab"]')].filter(node => node.offsetWidth && node.offsetHeight)
+           .every(node => node.scrollWidth <= node.clientWidth),
++        movement: [...document.querySelectorAll('.wd-motion button')].map(box),
+         controls: [...document.querySelectorAll('.wd-motion button, .wd-poses button')].map(box) }
+     })
++    const rowCounts = Object.values(geometry.movement.reduce((rows, control) => {
++      const y = Math.round(control.y); rows[y] = (rows[y] ?? 0) + 1; return rows
++    }, {}))
++    assert.deepEqual(rowCounts, [390, 1280].includes(width) ? [4] : [2, 2], 'four movement controls form balanced rows for the actual stage width')
+     assert.ok(geometry.scroll <= width, `horizontal overflow: ${JSON.stringify(geometry)}`)
+     assert.ok(geometry.art.h >= 80, `preview needs readable height: ${JSON.stringify(geometry)}`)
+     assert.ok(geometry.tabButtons.length >= 5)
+@@ -85,26 +118,9 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
+     for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) assert.equal(await preview.locator(`[data-slot="${slot}"]`).count(), 1)
+     assert.equal(await page.locator('.wd-grid').evaluate((node, original) => node === original, grid), true)
+     assert.equal(await preview.locator('.ch-animated').evaluate((node, original) => node === original, art), true)
+-    const focus = await stopPats.evaluate(node => {
+-      const r = node.getBoundingClientRect(), s = getComputedStyle(node)
+-      const ring = parseFloat(s.outlineWidth) + Math.max(0, parseFloat(s.outlineOffset))
+-      let left = 0, top = 0, right = innerWidth, bottom = innerHeight
+-      for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+-        const style = getComputedStyle(parent), clip = parent.getBoundingClientRect()
+-        if (/(auto|scroll|hidden|clip)/.test(style.overflowX)) {
+-          left = Math.max(left, clip.left + parent.clientLeft)
+-          right = Math.min(right, clip.left + parent.clientLeft + parent.clientWidth)
+-        }
+-        if (/(auto|scroll|hidden|clip)/.test(style.overflowY)) {
+-          top = Math.max(top, clip.top + parent.clientTop)
+-          bottom = Math.min(bottom, clip.top + parent.clientTop + parent.clientHeight)
+-        }
+-      }
+-      return { clear: r.left - ring >= left && r.right + ring <= right && r.top - ring >= top && r.bottom + ring <= bottom,
+-        labelsFit: [...node.parentElement.children].every(button => button.scrollWidth <= button.clientWidth), ring }
+-    })
++    const focus = await stopPats.evaluate(focusClearance)
+     assert.ok(focus.ring > 0 && focus.clear, `pats focus outline must fit clipping ancestors:${JSON.stringify(focus)}`)
+-    assert.ok(focus.labelsFit, 'three movement labels must fit without horizontal text overflow')
++    assert.ok(focus.labelsFit, 'all movement labels must fit without horizontal text overflow')
+     if (out) await page.screenshot({ path: join(out, `wardrobe-pats-${width}x${height}.png`) })
+     await page.clock.runFor(784)
+     assert.equal(await page.getByRole('button', { name: 'Stop pats', exact: true }).count(), 1)
+@@ -117,11 +133,40 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
+     await page.getByRole('button', { name: 'Poorly', exact: true }).click()
+     assert.equal(await preview.locator('[data-character-pose="sick"]').count(), 1)
+     assert.equal(await page.getByRole('button', { name: 'Hop', exact: true }).isEnabled(), true)
++    const stretch = page.getByRole('button', { name: 'Stretch', exact: true })
++    await stretch.focus(); await page.keyboard.press('Enter')
++    const planted = await footContacts(preview)
++    assert.equal(planted.length, 2)
++    await page.clock.runFor(1200)
++    assert.equal(await page.getByRole('button', { name: 'Happy', exact: true }).getAttribute('aria-pressed'), 'true')
++    const stopStretch = page.getByRole('button', { name: 'Stop stretch', exact: true })
++    assert.equal(await stopStretch.evaluate(node => node === document.activeElement), true)
++    for (const name of ['Wave', 'Gentle pats', 'Hop']) assert.equal(await page.getByRole('button', { name, exact: true }).isDisabled(), true)
++    const stretchedFeet = await footContacts(preview)
++    stretchedFeet.forEach((foot, index) => assert.ok(Math.hypot(foot.x - planted[index].x, foot.y - planted[index].y) < .05, 'both stretch feet stay planted in actual screen geometry'))
++    assert.match(await preview.locator('[data-character-body]').getAttribute('transform'), /^translate\(0 0\)/)
++    const armAngles = await preview.locator('[data-arm]').evaluateAll(nodes => nodes.map(node => Number(node.getAttribute('transform').match(/rotate\(([-\d.]+)/)[1])))
++    assert.equal(armAngles.length, 2)
++    assert.ok(armAngles[0] > 20 && armAngles[1] < -20, 'both arms visibly reach the grounded stretch')
++    for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) assert.equal(await preview.locator(`[data-slot="${slot}"]`).count(), 1)
++    assert.equal(await page.locator('.wd-grid').evaluate((node, original) => node === original, grid), true)
++    assert.equal(await preview.locator('.ch-animated').evaluate((node, original) => node === original, art), true)
++    const stretchFocus = await stopStretch.evaluate(focusClearance)
++    assert.ok(stretchFocus.ring > 0 && stretchFocus.clear && stretchFocus.labelsFit, `stretch control focus/labels fit:${JSON.stringify(stretchFocus)}`)
++    if (stretchOut) {
++      await mkdir(stretchOut, { recursive: true })
++      await page.screenshot({ path: join(stretchOut, `wardrobe-stretch-${width}x${height}.png`) })
++      await writeFile(join(stretchOut, `wardrobe-stretch-${width}x${height}.json`), JSON.stringify({ width, height, geometry, rowCounts, planted, stretchedFeet, armAngles, stretchFocus, browser: page.context().browser().version(), method: 'Offline native production wardrobe; sampled stretch at1200ms, actual screen-foot contacts, keyboard focus and stage layout.' }, null, 2) + '\n')
++    }
++    await page.clock.runFor(1184)
++    assert.equal(await stopStretch.count(), 1, 'stretch retains its2400ms deadline')
++    await page.clock.runFor(32)
++    assert.equal(await page.getByRole('button', { name: 'Stretch', exact: true }).isEnabled(), true)
+     assert.deepEqual((await snapshot(page)).tables.pets, before, 'preview and pose selection must not save pet changes')
+   })
+ }
+ 
+-for (const action of ['Hop', 'Gentle pats']) test(`wardrobe ${action} live reduced motion settles the preview and does not restart when restored`, { timeout: 15000 }, async t => {
++for (const action of ['Hop', 'Gentle pats', 'Stretch']) test(`wardrobe ${action} live reduced motion settles the preview and does not restart when restored`, { timeout: 15000 }, async t => {
+   const page = await wardrobeApp(t, { viewport: { width: 320, height: 568 } })
+   const preview = page.locator('.wd-preview')
+   await page.getByRole('button', { name: action, exact: true }).click()
+diff --git c/scripts/browser/pet-motion-preference.test.mjs w/scripts/browser/pet-motion-preference.test.mjs
+index 561616f..74586d8 100644
+--- c/scripts/browser/pet-motion-preference.test.mjs
++++ w/scripts/browser/pet-motion-preference.test.mjs
+@@ -131,7 +131,7 @@ test('device off cannot override system reduction, and live system changes retai
+   assert.deepEqual((await snapshot(page)).tables, saved)
+ })
+ 
+-test('native cross-tab storage pauses a visible pet and cancels a preview without replaying it', async t => {
++for (const [action, stopAction] of [['Hop', 'Stop hop'], ['Stretch', 'Stop stretch']]) test(`native cross-tab storage pauses a visible pet and cancels ${action} without replaying it`, async t => {
+   const page = await browserApp(t, { viewport: { width: 1280, height: 800 }, reducedMotion: 'no-preference' })
+   await instrument(page)
+   const saved = (await snapshot(page)).tables
+@@ -144,17 +144,20 @@ test('native cross-tab storage pauses a visible pet and cancels a preview withou
+   assert.equal((await read(page)).pending, 0)
+   await choose('off'); await pending(page, 1)
+   await page.getByRole('button', { name: 'Wardrobe', exact: true }).click()
+-  await page.getByRole('button', { name: 'Hop', exact: true }).waitFor(); await settleView(page)
+-  await page.getByRole('button', { name: 'Hop', exact: true }).click(); await page.clock.runFor(400)
++  await page.getByRole('button', { name: action, exact: true }).waitFor(); await settleView(page)
++  await page.getByRole('button', { name: action, exact: true }).click(); await page.clock.runFor(400)
+   assert.equal((await read(page)).pending, 1)
+   await choose('on'); await pending(page, 0)
+-  assert.equal(await page.getByRole('button', { name: 'Stop hop', exact: true }).count(), 0)
+-  assert.equal(await page.getByRole('button', { name: 'Hop', exact: true }).isDisabled(), true)
++  assert.equal(await page.getByRole('button', { name: stopAction, exact: true }).count(), 0)
++  assert.equal(await page.getByRole('button', { name: action, exact: true }).isDisabled(), true)
+   assert.match(await page.locator('.wd-motion-note').textContent(), /reduced motion/)
++  const still = await page.locator('.wd-preview').innerHTML()
+   await choose('off'); await page.waitForTimeout(50)
+-  assert.equal(await page.getByRole('button', { name: 'Hop', exact: true }).isEnabled(), true)
++  assert.equal((await read(page)).pending, 0, 'restoring the device choice requests no preview frame')
++  assert.equal(await page.getByRole('button', { name: action, exact: true }).isEnabled(), true)
+   await page.clock.runFor(2000)
+   assert.equal((await read(page)).pending, 0, 'restoring motion must not replay the cancelled preview')
++  assert.equal(await page.locator('.wd-preview').innerHTML(), still)
+   const choice = await settings(page)
+   assert.equal(await choice.isChecked(), false)
+   await choose('on'); await page.waitForTimeout(50)
+diff --git c/docs/ART.md w/docs/ART.md
+index 31ceaba..5fad49f 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -156,7 +156,7 @@ The deterministic motion panel uses the production sampler and renderer. Explici
+ 
+ Use playback and real-room checks to judge grounding, clipping, interrupted motion, and gaze. Numeric continuity and SVG attachment tests support that review but do not establish visual quality by themselves.
+ 
+-The wardrobe main preview uses the sampled renderer at rest and offers finite Wave, Gentle pats and Hop controls. Pats use the same 1600ms affection as the resident, including its calmer appendage follow-through. The active control becomes its Stop button; other movements wait. Pose selection stops playback. Live reduced motion settles before paint and does not replay when restored. Three 44px-minimum controls share one row, with wrapping labels at narrow sizes. Item grids and outfit thumbnails retain their static renderers, and frame updates stay inside the preview. Previewing never saves pet changes.
++The wardrobe main preview uses the sampled renderer at rest and offers finite Wave, Gentle pats, Hop and Stretch controls. Pats use the same 1600ms affection as the resident, including its calmer appendage follow-through. The active control becomes its Stop button; other movements wait. Pose selection stops playback. Live reduced motion settles before paint and does not replay when restored. Four 44px-minimum controls form two balanced rows in narrow preview panels and one row when the panel has at least 20rem of width. Labels wrap while the character keeps a readable area. Stretch reuses the grounded 2400ms player response and the same finite preview clock, stop control and cancellation policies. Item grids and outfit thumbnails retain their static renderers, and frame updates stay inside the preview. Previewing never saves pet changes.
+ 
+ Narrow landscape views from 640 to 759px give the wardrobe item panel three wider columns and half the available width. Short item names such as Backpack fit on one line. Compact tabs retain 44px input targets and show every category without horizontal clipping, while the character and pose controls keep their own space.
+ 

@@ -1,0 +1,128 @@
+✖ wardrobe finite previews stay usable and preserve the outfit at 320x568 (1751.692588ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 390x664 (1695.842632ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 640x360 (2846.828211ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 844x390 (1672.678136ms)
+✖ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (1713.049269ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 0
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10099.891327
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-motion.test.mjs:50:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 320x568 (1751.692588ms)
+  AssertionError [ERR_ASSERTION]: four movement controls form balanced rows for the actual stage width
+  + actual - expected
+  
+    [
+  +   3,
+  +   1
+  -   2,
+  -   2
+    ]
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:84:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 3, 1 ],
+    expected: [ 2, 2 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:50:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 390x664 (1695.842632ms)
+  AssertionError [ERR_ASSERTION]: four movement controls form balanced rows for the actual stage width
+  + actual - expected
+  
+    [
+  +   3,
+  +   1
+  -   4
+    ]
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:84:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 3, 1 ],
+    expected: [ 4 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:50:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 640x360 (2846.828211ms)
+  AssertionError [ERR_ASSERTION]: four movement controls form balanced rows for the actual stage width
+  + actual - expected
+  
+    [
+  +   3,
+  +   1
+  -   2,
+  -   2
+    ]
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:84:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 3, 1 ],
+    expected: [ 2, 2 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:50:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 844x390 (1672.678136ms)
+  AssertionError [ERR_ASSERTION]: four movement controls form balanced rows for the actual stage width
+  + actual - expected
+  
+    [
+  +   3,
+  +   1
+  -   2,
+  -   2
+    ]
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:84:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 3, 1 ],
+    expected: [ 2, 2 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-motion.test.mjs:50:3
+✖ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (1713.049269ms)
+  AssertionError [ERR_ASSERTION]: four movement controls form balanced rows for the actual stage width
+  + actual - expected
+  
+    [
+  +   3,
+  +   1
+  -   4
+    ]
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-motion.test.mjs:84:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 3, 1 ],
+    expected: [ 4 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

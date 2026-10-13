@@ -1,0 +1,16 @@
+{
+  "baseCommit": "1e5502580ed4dbff33a48d96a460271799ed7675",
+  "sources": {
+    "src/screens/WardrobePreview.tsx": "cb9e063e38231676f4a9f179dade756059b446970a26fc3351232db220d853b1",
+    "src/screens/Wardrobe.css": "7f35030d791baa48f03513f84227dd75f9e4c6822234048ad29e5bf5c1310883",
+    "src/screens/Wardrobe.stretch.test.tsx": "ad5924806d222c7bf3708e62cffdc8131de18877f3b8f1270e6b802b8f604074",
+    "scripts/browser/wardrobe-motion.test.mjs": "9e3f773c4ceeb2239e154e88a7ec5187761e1764d7fa9b596b2614e814e2d78c",
+    "scripts/browser/pet-motion-preference.test.mjs": "9477b805ca2a389d683da11ea3217fa4f53a969131d87429657217b54c157b23",
+    "docs/ART.md": "c53678a69b2e94c797fb711daf7b99f93588eb0f3de5b1ecb4be516606fd6f76"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-source.diff",
+    "sha256": "dca793c2d1a425eb330e971b8b736bd93ac81693ca225e63bc92a97c7fec8875"
+  },
+  "scope": "Two runtime files: existing grounded stretch action/control added to wardrobe, balanced two/four-column stage-width CSS. Original preview lifecycle and one clock unchanged. New integration file, two native regression files and ART."
+}

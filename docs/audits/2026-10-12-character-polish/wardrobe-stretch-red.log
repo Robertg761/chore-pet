@@ -1,0 +1,126 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/screens/Wardrobe.stretch.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/screens/Wardrobe.stretch.test.tsx (8 tests | 8 failed) 363ms
+   × previews a grounded dressed mochi stretch for exactly2400ms without saving or redrawing items 128ms
+   × previews a grounded dressed bun stretch for exactly2400ms without saving or redrawing items 75ms
+   × previews a grounded dressed sprout stretch for exactly2400ms without saving or redrawing items 54ms
+   × keeps the stretch stop control focused, rejects competing actions and lets pose selection stop it 27ms
+   × settles stretch on live system reduction without replaying 19ms
+   × settles stretch on live device reduction without replaying 18ms
+   × expires hidden stretch on return and ignores a stale frame after unmount 19ms
+   × updates an outfit during stretch without extending its original deadline 21ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/Wardrobe.stretch.test.tsx > previews a grounded dressed mochi stretch for exactly2400ms without saving or redrawing items
+ FAIL  src/screens/Wardrobe.stretch.test.tsx > previews a grounded dressed bun stretch for exactly2400ms without saving or redrawing items
+ FAIL  src/screens/Wardrobe.stretch.test.tsx > previews a grounded dressed sprout stretch for exactly2400ms without saving or redrawing items
+AssertionError: button Stretch: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.stretch.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.stretch.test.tsx:43:34
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/screens/Wardrobe.stretch.test.tsx > keeps the stretch stop control focused, rejects competing actions and lets pose selection stop it
+AssertionError: button Stretch: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.stretch.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.stretch.test.tsx:67:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/screens/Wardrobe.stretch.test.tsx > settles stretch on live system reduction without replaying
+ FAIL  src/screens/Wardrobe.stretch.test.tsx > settles stretch on live device reduction without replaying
+AssertionError: button Stretch: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.stretch.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.stretch.test.tsx:83:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/screens/Wardrobe.stretch.test.tsx > expires hidden stretch on return and ignores a stale frame after unmount
+AssertionError: button Stretch: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.stretch.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.stretch.test.tsx:93:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  src/screens/Wardrobe.stretch.test.tsx > updates an outfit during stretch without extending its original deadline
+AssertionError: button Stretch: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.stretch.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.stretch.test.tsx:104:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  21:22:15
+   Duration  1.16s (tests 34%, transform 32%, environment 25%, import 8%)
+

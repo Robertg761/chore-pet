@@ -1,0 +1,12 @@
+✔ native cross-tab storage pauses a visible pet and cancels Hop without replaying it (3095.639769ms)
+ℹ One Chromium/app page plus a minimal same-origin storage-only peer; real StorageEvent, cancellation/no replay and live Settings checked state; unchanged saved tables.
+✔ native cross-tab storage pauses a visible pet and cancels Stretch without replaying it (2956.553288ms)
+ℹ One Chromium/app page plus a minimal same-origin storage-only peer; real StorageEvent, cancellation/no replay and live Settings checked state; unchanged saved tables.
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6444.086179
