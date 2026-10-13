@@ -1,0 +1,52 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/room/Room.fishGreeting.test.tsx (6 tests | 5 failed) 239ms
+   × responds only on the chosen clean tank without replacing placed art or moving the tank 83ms
+   × keeps rotation 0 on the existing placed-art wrapper 9ms
+   × keeps rotation 1 on the existing placed-art wrapper 8ms
+   × keeps rotation 2 on the existing placed-art wrapper 8ms
+   × keeps rotation 3 on the existing placed-art wrapper 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/room/Room.fishGreeting.test.tsx > responds only on the chosen clean tank without replacing placed art or moving the tank
+AssertionError: expected  to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/room/Room.fishGreeting.test.tsx:20:20
+     18|   const before = draw(), after = draw({ responseObjectId: 'tank' })
+     19|   const response = after.querySelectorAll('.room-fish-greeting')
+     20|   expect(response).toHaveLength(1)
+       |                    ^
+     21|   expect(response[0].getAttribute('data-object-id')).toBe('tank')
+     22|   expect(response[0].querySelectorAll('.fish-tail')).toHaveLength(2)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/room/Room.fishGreeting.test.tsx > keeps rotation 0 on the existing placed-art wrapper
+ FAIL  src/room/Room.fishGreeting.test.tsx > keeps rotation 1 on the existing placed-art wrapper
+ FAIL  src/room/Room.fishGreeting.test.tsx > keeps rotation 2 on the existing placed-art wrapper
+ FAIL  src/room/Room.fishGreeting.test.tsx > keeps rotation 3 on the existing placed-art wrapper
+AssertionError: expected null not to be null
+ ❯ src/room/Room.fishGreeting.test.tsx:44:24
+     42|   const document = draw({ objects: [{ ...tank, rotation }], responseOb…
+     43|   const response = document.querySelector('.room-fish-greeting')!
+     44|   expect(response).not.toBeNull()
+       |                        ^
+     45|   expect(response.getAttribute('transform')).toBeNull()
+     46|   expect(response.querySelector('g')!.getAttribute('transform')).toBe(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 1 passed (6)
+   Start at  04:15:30
+   Duration  1.11s (transform 39%, environment 30%, tests 24%, import 7%)
+

@@ -1,0 +1,574 @@
+diff --git i/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index 8a604ac..d8c5362 100644
+--- i/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -167,6 +167,8 @@ function placeBubble(node: HTMLElement | null, style: ReturnType<typeof bubbleSt
+ interface Shown {
+   state: PetState
+   pos: Tile
++  /** The semantic draw time; finite furniture effects catch up after late frames. */
++  sampledAt: number
+   /** Hold the opening dialogue seed through orient, action and settle. */
+   interactionBeat?: number
+ }
+@@ -194,11 +196,12 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+   const world = useMemo<World>(() => ({ free, mood, away, mess, interactions }), [free, mood, away, mess, interactions])
+ 
+   const [shown, setShown] = useState<Shown>(() => {
+-    const state = initialPet(initialTile ?? freeTile(solid) ?? { tx: 3, ty: 3 }, performance.now())
++    const now = performance.now()
++    const state = initialPet(initialTile ?? freeTile(solid) ?? { tx: 3, ty: 3 }, now)
+     // A resting first mount has no previously visible motion to blend out.
+     if (away) state.activity = { kind: 'sleep' }
+     else if (mood === 'sick') state.activity = { kind: 'sick' }
+-    return { state, pos: state.tile }
++    return { state, pos: state.tile, sampledAt: now }
+   })
+   const [said, setSaid] = useState<Said | null>(null)
+   const [previewId, setPreviewId] = useState<string | null>(null)
+@@ -240,7 +243,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+       ? prev.state.activity.kind === 'interact' && prev.state.activity.target === next.activity.target
+         ? prev.interactionBeat : next.beat
+       : undefined
+-    live.current = { state: next, pos, interactionBeat }
++    live.current = { state: next, pos, interactionBeat, sampledAt: t }
+     motion.current?.paint(next, t)
+     reportPosition.current?.(pos)
+     petNode.current?.setAttribute('transform', petTransform(pos))
+@@ -392,6 +395,8 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
+         neglect={neglect}
+         overdue={overdue}
+         selectedId={away || mood === 'sick' ? null : previewId}
++        responseObjectId={!away && mood !== 'sick' && a.kind === 'interact' && a.phase === 'action' && a.target.action === 'wave' ? a.target.objectId : null}
++        responseElapsedMs={a.kind === 'interact' && a.phase === 'action' ? Math.max(0, shown.sampledAt - a.start) : 0}
+         selectionMode="preview"
+         className="home-room"
+         overlay={overlay}
+diff --git i/src/room/Room.tsx w/src/room/Room.tsx
+index 767385c..f41796d 100644
+--- i/src/room/Room.tsx
++++ w/src/room/Room.tsx
+@@ -65,6 +65,10 @@ export interface RoomProps {
+   /** Days late per placed object id (objectOverdue() in ./cuePlan): breaks ties when choosing which cues show in full. */
+   overdue?: Record<string, number>
+   selectedId?: string | null
++  /** A clean tank may answer the resident's existing wave with one finite tail response. */
++  responseObjectId?: string | null
++  /** Elapsed action time on its first semantic draw; held through ordinary frames. */
++  responseElapsedMs?: number
+   /** Preview uses the same outline/chevron, stationary and without build floor fill. */
+   selectionMode?: 'build' | 'preview'
+   /** A new or moving object's preview: drawn see-through with a green or red footprint. */
+@@ -186,7 +190,7 @@ const PET_HIT = 64
+ const NO_STAGES: Record<string, MessStage> = {}
+ const NO_NEGLECT: Record<string, NeglectLevel> = {}
+ 
+-export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, overdue, selectedId, selectionMode = 'build', ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
++export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, overdue, selectedId, responseObjectId, responseElapsedMs = 0, selectionMode = 'build', ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
+   const scene = useContext(SceneContext)
+   const items: Item[] = []
+   const justPlaced = useJustPlaced(objects)
+@@ -194,12 +198,13 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT,
+   for (const o of objects) {
+     const entry = catalogEntry(o.catalogId)
+     if (!entry || o.id === hiddenId) continue
++    const greeting = o.id === responseObjectId && entry.id === 'fish-tank' && (stages[o.id] ?? 'clean') === 'clean'
+     items.push({
+       id: o.id,
+       footprint: footprintOf(o, entry),
+       layer: entry.layer,
+       draw: () => (
+-        <g key={o.id} data-object-id={o.id} className={justPlaced.has(o.id) ? 'room-obj-drop' : undefined} style={{ cursor: 'pointer' }}>
++        <g key={o.id} data-object-id={o.id} className={[justPlaced.has(o.id) && 'room-obj-drop', greeting && 'room-fish-greeting'].filter(Boolean).join(' ') || undefined} style={{ cursor: 'pointer', ...(greeting ? { '--fish-greeting-delay': `${-Math.max(0, responseElapsedMs)}ms` } : {}) }}>
+           <PlacedArt entry={entry} placement={o} stage={stages[o.id] ?? 'clean'} />
+         </g>
+       ),
+diff --git i/src/room/Room.css w/src/room/Room.css
+index 81ab532..943755d 100644
+--- i/src/room/Room.css
++++ w/src/room/Room.css
+@@ -17,3 +17,21 @@
+ @media (prefers-reduced-motion: reduce) {
+   .room-obj-drop { animation: none; }
+ }
++
++/* Only an existing1400ms wave can start this finite reply (ACTION_MS.wave).
++   The new inner tail groups leave fish placement, bodies and glass untouched. */
++.fish-tail { transform-box: fill-box; transform-origin: 100% 50%; }
++.fish-tail-yellow { --fish-tail-amplitude: -0.65; }
++.room-fish-greeting .fish-tail { animation: fish-tail-greeting 1400ms ease-in-out; animation-delay: var(--fish-greeting-delay, 0ms); }
++@keyframes fish-tail-greeting {
++  0%, 100% { transform: rotate(0deg); }
++  15% { transform: rotate(calc(var(--fish-tail-amplitude, 1) * -10deg)); }
++  30% { transform: rotate(calc(var(--fish-tail-amplitude, 1) * 8deg)); }
++  45% { transform: rotate(calc(var(--fish-tail-amplitude, 1) * -6deg)); }
++  60% { transform: rotate(calc(var(--fish-tail-amplitude, 1) * 4deg)); }
++  75% { transform: rotate(calc(var(--fish-tail-amplitude, 1) * -2deg)); }
++  88% { transform: rotate(calc(var(--fish-tail-amplitude, 1) * 1deg)); }
++}
++@media (prefers-reduced-motion: reduce) {
++  .room-fish-greeting .fish-tail { animation: none; }
++}
+diff --git i/src/room/objects/fishTank.tsx w/src/room/objects/fishTank.tsx
+index fc25da9..27e9086 100644
+--- i/src/room/objects/fishTank.tsx
++++ w/src/room/objects/fishTank.tsx
+@@ -110,7 +110,9 @@ function seaweed() {
+ function fish(x: number, y: number, body: string, flip = false, rot = 0, k = 1, key?: string | number) {
+   return (
+     <g key={key} transform={`translate(${x} ${y}) rotate(${rot}) scale(${flip ? -k : k} ${k})`} strokeWidth={2}>
+-      <path d="M-4 0 L-10.5 -5 Q-12.5 0 -10.5 5 Z" fill={mix(body, ink, 0.12)} />
++      <g className={body === warmRed ? 'fish-tail' : 'fish-tail fish-tail-yellow'}>
++        <path d="M-4 0 L-10.5 -5 Q-12.5 0 -10.5 5 Z" fill={mix(body, ink, 0.12)} />
++      </g>
+       <path d="M-2 -4 Q0 -8.5 3.5 -4.2" fill={mix(body, ink, 0.12)} />
+       <ellipse cx={0} cy={0} rx={7} ry={5.4} fill={body} />
+       <path d="M-6.5 1 Q-4 4.8 0 5.2 Q-4 7 -6.8 3.4 Z" fill={ink} opacity={0.12} stroke="none" />
+diff --git 1/src/pet/fishGreeting.test.tsx 2/src/pet/fishGreeting.test.tsx
+new file mode 100644
+index 0000000..1cea64b
+--- /dev/null
++++ 2/src/pet/fishGreeting.test.tsx
+@@ -0,0 +1,107 @@
++// @vitest-environment jsdom
++import { act, createRef, StrictMode } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import type { Pet, PlacedObject } from '../domain/types'
++import { render } from '../test/react'
++import { LivingRoom, type LivingRoomControl, type LivingRoomProps } from './LivingRoom'
++import { setPetMotionReduced } from './motionPreference'
++
++const roomRenders = vi.hoisted(() => ({ count: 0 }))
++vi.mock('../room/Room', async importOriginal => {
++  const actual = await importOriginal<typeof import('../room/Room')>()
++  return { ...actual, Room: (props: Parameters<typeof actual.Room>[0]) => {
++    roomRenders.count++; return <actual.Room {...props} />
++  } }
++})
++const pet: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#FFCFDA', equipped: {} }
++const tank: PlacedObject = { id: 'tank', roomId: 'room', catalogId: 'fish-tank', tileX: 2, tileY: 2, rotation: 0 }
++const base: LivingRoomProps = { room: { floorStyle: 'wood', wallStyle: 'cream' }, objects: [tank], stages: {}, pet, mood: 'happy', away: false, chores: [], statuses: [], initialTile: { tx: 3, ty: 2 } }
++let now: number, serial: number, hidden: boolean
++let frames: Map<number, FrameRequestCallback>, media: MediaQueryList
++let ui: ReturnType<typeof render>
++const control = createRef<LivingRoomControl>()
++const content = (extra: Partial<LivingRoomProps> = {}) => <StrictMode><LivingRoom {...base} {...extra} control={control} /></StrictMode>
++beforeEach(() => {
++  now = 0; serial = 0; hidden = false; frames = new Map(); roomRenders.count = 0
++  setPetMotionReduced(false)
++  vi.spyOn(performance, 'now').mockImplementation(() => now)
++  vi.spyOn(Math, 'random').mockReturnValue(.99)
++  vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden)
++  media = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  vi.stubGlobal('matchMedia', () => media)
++  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
++  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
++  ui = render(content())
++})
++afterEach(() => { ui.unmount(); setPetMotionReduced(false); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
++const response = () => ui.container.querySelector('.room-fish-greeting')
++function visit() { act(() => { expect(control.current!.lookAt('tank')).toBe('started') }) }
++function wave() { visit(); frame(360); expect(response()).not.toBeNull() }
++function visibility(value: boolean) { act(() => { hidden = value; document.dispatchEvent(new Event('visibilitychange')) }) }
++
++it('responds only during the existing action phase, coalesces invitations and adds no frame owner or room redraw', () => {
++  const input = JSON.stringify(base)
++  visit(); expect(response()).toBeNull()
++  frame(359); expect(response()).toBeNull()
++  frame(360); const node = response(); expect(node).not.toBeNull()
++  const renders = roomRenders.count
++  frame(500); expect(response()).toBe(node); expect(roomRenders.count).toBe(renders)
++  expect(frames.size).toBe(1)
++  act(() => { expect(control.current!.lookAt('tank')).toBe('started') })
++  expect(response()).toBe(node)
++  frame(1759); expect(response()).toBe(node)
++  frame(1760); expect(response()).toBeNull()
++  frame(1940); expect(response()).toBeNull(); expect(frames.size).toBe(1)
++  expect(JSON.stringify(base)).toBe(input)
++})
++
++it('stops the fish response when a player gesture interrupts the wave', () => {
++  wave(); frame(500)
++  act(() => { expect(control.current!.respond('greet')).toBe('started') })
++  expect(response()).toBeNull(); expect(frames.size).toBe(1)
++  frame(1800); expect(response()).toBeNull()
++})
++
++it('starts a late first action frame at the elapsed greeting phase and retains its offset on repeated invitations', () => {
++  visit(); frame(1000)
++  const node = response() as SVGGElement
++  expect(node).not.toBeNull()
++  expect(node.style.getPropertyValue('--fish-greeting-delay')).toBe('-640ms')
++  frame(1100); visit()
++  expect(response()).toBe(node)
++  expect(node.style.getPropertyValue('--fish-greeting-delay')).toBe('-640ms')
++  frame(1760); expect(response()).toBeNull()
++})
++
++it.each(['system', 'device'] as const)('stops immediately under live %s reduction and never replays on restoration', source => {
++  wave(); frame(500)
++  const reduce = (value: boolean) => act(() => {
++    if (source === 'device') setPetMotionReduced(value)
++    else { Object.defineProperty(media, 'matches', { value, configurable: true }); media.dispatchEvent(new Event('change')) }
++  })
++  reduce(true); expect(response()).toBeNull(); expect(frames.size).toBe(0)
++  reduce(false); frame(1000); expect(response()).toBeNull()
++})
++
++it.each(['sick', 'away'] as const)('clears the response when the resident becomes %s', mode => {
++  wave()
++  ui.rerender(content(mode === 'sick' ? { mood: 'sick' } : { away: true }))
++  expect(response()).toBeNull()
++  frame(480); expect(frames.size).toBe(0)
++  ui.rerender(content()); frame(1000); expect(response()).toBeNull()
++})
++
++it.each(['messy1', 'messy2', 'removed'] as const)('clears the response when the tank becomes %s', stage => {
++  wave()
++  ui.rerender(content(stage === 'removed' ? { objects: [] } : { stages: { tank: stage } }))
++  expect(response()).toBeNull()
++  frame(1000); expect(response()).toBeNull()
++})
++
++it('discards a hidden elapsed wave on the first visible frame without replay', () => {
++  wave(); frame(500)
++  visibility(true); expect(frames.size).toBe(0)
++  now = 2400; visibility(false); frame(now)
++  expect(response()).toBeNull(); expect(frames.size).toBe(1)
++})
+diff --git 1/src/room/Room.fishGreeting.test.tsx 2/src/room/Room.fishGreeting.test.tsx
+new file mode 100644
+index 0000000..daa4845
+--- /dev/null
++++ 2/src/room/Room.fishGreeting.test.tsx
+@@ -0,0 +1,47 @@
++// @vitest-environment jsdom
++import { renderToStaticMarkup } from 'react-dom/server'
++import { expect, it } from 'vitest'
++import { catalogEntry } from '../catalog/objects'
++import type { PlacedObject } from '../domain/types'
++import { Room } from './Room'
++
++const tank: PlacedObject = { id: 'tank', roomId: 'room', catalogId: 'fish-tank', tileX: 2, tileY: 2, rotation: 0 }
++const second: PlacedObject = { ...tank, id: 'second', tileX: 4 }
++const plant: PlacedObject = { ...tank, id: 'plant', catalogId: 'plant', tileX: 6 }
++const base = { room: { floorStyle: 'wood', wallStyle: 'cream' } as const, objects: [tank, second, plant] }
++function draw(extra: object = {}) {
++  const markup = renderToStaticMarkup(<Room {...base} {...extra} />)
++  return new DOMParser().parseFromString(markup, 'image/svg+xml')
++}
++
++it('responds only on the chosen clean tank without replacing placed art or moving the tank', () => {
++  const before = draw(), after = draw({ responseObjectId: 'tank' })
++  const response = after.querySelectorAll('.room-fish-greeting')
++  expect(response).toHaveLength(1)
++  expect(response[0].getAttribute('data-object-id')).toBe('tank')
++  expect(response[0].querySelectorAll('.fish-tail')).toHaveLength(2)
++  expect(response[0].querySelectorAll('.fish-tail-yellow')).toHaveLength(1)
++  for (const id of ['tank', 'second', 'plant']) {
++    const selector = `[data-object-id="${id}"] > g`
++    expect(after.querySelector(selector)!.outerHTML).toBe(before.querySelector(selector)!.outerHTML)
++  }
++})
++
++it('never responds on dirty, absent, other-furniture, hidden or ghost targets', () => {
++  for (const extra of [
++    {}, { responseObjectId: 'missing' }, { responseObjectId: 'plant' },
++    { responseObjectId: 'tank', stages: { tank: 'messy1' } },
++    { responseObjectId: 'tank', stages: { tank: 'messy2' } },
++    { responseObjectId: 'tank', hiddenId: 'tank' },
++    { responseObjectId: 'tank', objects: [] },
++    { responseObjectId: 'ghost', objects: [], ghost: { entry: catalogEntry('fish-tank')!, placement: tank, ok: true } },
++  ]) expect(draw(extra).querySelectorAll('.room-fish-greeting')).toHaveLength(0)
++})
++
++it.each([0, 1, 2, 3] as const)('keeps rotation %s on the existing placed-art wrapper', rotation => {
++  const document = draw({ objects: [{ ...tank, rotation }], responseObjectId: 'tank' })
++  const response = document.querySelector('.room-fish-greeting')!
++  expect(response).not.toBeNull()
++  expect(response.getAttribute('transform')).toBeNull()
++  expect(response.querySelector('g')!.getAttribute('transform')).toBe(`translate(195 172.5) scale(${rotation % 2 ? -0.6640625 : 0.6640625} 0.6640625)`)
++})
+diff --git 1/scripts/browser/fish-greeting.test.mjs 2/scripts/browser/fish-greeting.test.mjs
+new file mode 100644
+index 0000000..d3bac16
+--- /dev/null
++++ 2/scripts/browser/fish-greeting.test.mjs
+@@ -0,0 +1,243 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
++
++const out = process.env.CHORE_PET_FISH_CAPTURE_DIR
++async function fixture(t, { species = 'mochi', rotation = 0, system = false, device = false, width = 1280, height = 800 } = {}) {
++  const page = await browserApp(t, { viewport: { width, height }, deviceScaleFactor: 2, reducedMotion: system ? 'reduce' : 'no-preference' })
++  if (device) await page.evaluate(() => localStorage.setItem('chore-pet-reduce-motion', 'on'))
++  await page.evaluate(({ species, rotation }) => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, room = Object.values(saved.tables.rooms)[0], pet = Object.values(saved.tables.pets)[0]
++        pet.species = species; pet.bodyColour = { mochi: '#FFCFDA', bun: '#FFFFFF', sprout: '#FFD65C' }[species]
++        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++        saved.tables.placed_objects = {
++          tank: { id: 'tank', roomId: room.id, catalogId: 'fish-tank', tileX: 2, tileY: 2, rotation },
++          second: { id: 'second', roomId: room.id, catalogId: 'fish-tank', tileX: 5, tileY: 5, rotation: 0 },
++        }
++        saved.tables.chores = {}; saved.tables.completions = {}; saved.outbox = {}; store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), { species, rotation })
++  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
++  await page.addInitScript(() => {
++    Math.random = () => .99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__fishFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(time => { window.__fishFrames.delete(id); callback(time) })
++      window.__fishFrames.add(id); return id
++    }
++    window.cancelAnimationFrame = id => { window.__fishFrames.delete(id); cancel(id) }
++  })
++  await page.reload(); await page.locator('.room-pet').waitFor(); await page.clock.runFor(48)
++  return page
++}
++const frames = page => page.evaluate(() => window.__fishFrames.size)
++async function askToLook(page) {
++  const toggle = page.getByRole('button', { name: 'Explore together', exact: true })
++  if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click()
++  await page.getByRole('combobox', { name: /^Show / }).selectOption('tank')
++  await page.getByRole('button', { name: 'Look together', exact: true }).click()
++  await page.getByRole('button', { name: /^Show room to explore with / }).click()
++}
++async function invite(page) {
++  await askToLook(page)
++  for (let i = 0; i < 160; i++) {
++    if (await page.locator('.room-fish-greeting').count()) return
++    await page.clock.runFor(32)
++  }
++  assert.fail('The invited resident never reached the existing tank greeting')
++}
++async function animationState(page, time) {
++  return page.evaluate(time => {
++    const animations = window.__fishSampleEffects ??= document.getAnimations().filter(a => a.animationName === 'fish-tail-greeting')
++    for (const animation of animations) { animation.pause(); animation.currentTime = time + animation.effect.getTiming().delay }
++    const tails = [...document.querySelectorAll('[data-object-id="tank"] .fish-tail')]
++    return { time, animations: animations.map(a => ({ name: a.animationName, duration: a.effect.getTiming().duration, delay: a.effect.getTiming().delay, localTime: a.currentTime, iterations: a.effect.getTiming().iterations, objectId: a.effect.target.closest('[data-object-id]')?.getAttribute('data-object-id') })),
++      tails: tails.map(tail => {
++        const transform = getComputedStyle(tail).transform
++        const matrix = transform === 'none' ? new DOMMatrix() : new DOMMatrix(transform)
++        const own = new DOMPoint(-4, 0).matrixTransform(tail.getScreenCTM())
++        const attached = new DOMPoint(-4, 0).matrixTransform(tail.parentElement.getScreenCTM())
++        const placed = tail.closest('[data-object-id]').querySelector(':scope > g')
++        const toArt = placed.getScreenCTM().inverse().multiply(tail.getScreenCTM())
++        const point = (x, y) => new DOMPoint(x, y).matrixTransform(toArt)
++        const anchor = point(-4, 0), start = point(-10.5, -5), control = point(-12.5, 0), end = point(-10.5, 5)
++        // Independent projected glass silhouette: .08/.92 tile corners,
++        // 64x32 iso tiles, top58 and bottom25. Minimize the actual quadratic
++        // tail curve analytically against each convex edge, including stroke.
++        const glass = [[0, -55.44], [26.88, -42], [26.88, -9], [0, 4.44], [-26.88, -9], [-26.88, -42]]
++        let glassClearance = Infinity
++        for (let i = 0; i < glass.length; i++) {
++          const [x, y] = glass[i], [nx, ny] = glass[(i + 1) % glass.length], dx = nx - x, dy = ny - y
++          const distance = p => (dx * (p.y - y) - dy * (p.x - x)) / Math.hypot(dx, dy)
++          const d0 = distance(start), dc = distance(control), d1 = distance(end)
++          const a = d0 - 2 * dc + d1, b = 2 * (dc - d0), at = a > 0 ? -b / (2 * a) : -1
++          let minimum = Math.min(distance(anchor), d0, d1)
++          if (at > 0 && at < 1) minimum = Math.min(minimum, a * at * at + b * at + d0)
++          glassClearance = Math.min(glassClearance, minimum - Math.hypot(toArt.a, toArt.b))
++        }
++        const box = tail.getBoundingClientRect(), tank = tail.closest('[data-object-id]').getBoundingClientRect()
++        return { yellow: tail.classList.contains('fish-tail-yellow'), angle: Math.atan2(matrix.b, matrix.a) * 180 / Math.PI,
++          attachmentError: Math.hypot(own.x - attached.x, own.y - attached.y), glassClearance,
++          box: { x: box.x, y: box.y, right: box.right, bottom: box.bottom },
++          tank: { x: tank.x, y: tank.y, right: tank.right, bottom: tank.bottom },
++          fishTransform: tail.parentElement.getAttribute('transform') }
++      }) }
++  }, time)
++}
++async function capture(page, name, data, target) {
++  if (!out) return
++  await mkdir(out, { recursive: true })
++  if (target) await target.screenshot({ path: join(out, `${name}.png`), animations: 'allow' })
++  else await page.screenshot({ path: join(out, `${name}.png`), animations: 'allow' })
++  await writeFile(join(out, `${name}.json`), JSON.stringify({ ...data, browser: page.context().browser().version(),
++    method: 'Offline production fixture, actual finite CSS effect paused at the recorded currentTime and character fake RAF deadline. Screenshot allows the paused effect. Matrix/attachment/bounds assertions precede capture; separate test covers native real-clock completion. Not human temporal/physical-device/AT certification.' }, null, 2) + '\n')
++}
++
++for (const species of ['mochi', 'bun', 'sprout']) for (const rotation of [0, 1]) {
++  test(`${species} greets only the chosen tank with attached finite tails, rotation ${rotation}`, async t => {
++    const page = await fixture(t, { species, rotation })
++    const before = (await snapshot(page)).tables
++    await invite(page)
++    assert.equal(await page.locator('.room-fish-greeting').count(), 1)
++    assert.equal(await page.locator('.room-fish-greeting').getAttribute('data-object-id'), 'tank')
++    assert.equal(await page.locator('[data-object-id="second"]').evaluate(node => node.classList.contains('room-fish-greeting')), false)
++    await page.evaluate(() => { window.__greetingInstances = document.getAnimations().filter(a => a.animationName === 'fish-tail-greeting') })
++    await page.getByRole('button', { name: 'Look together', exact: true }).click()
++    const repeated = await page.evaluate(() => {
++      const current = document.getAnimations().filter(a => a.animationName === 'fish-tail-greeting')
++      return current.length === 2 && current.every(animation => window.__greetingInstances.includes(animation))
++    })
++    assert.equal(repeated, true, 'A repeated invitation retains the same native effects')
++    const markup = await page.locator('[data-object-id="tank"] > g').innerHTML()
++    const samples = []
++    let neutralBounds
++    for (const time of [0, 210, 420, 840, 1232, 1400]) {
++      const state = await animationState(page, time)
++      neutralBounds ??= state.tails[0].tank
++      assert.equal(state.animations.length, 2); assert.equal(state.tails.length, 2)
++      for (const animation of state.animations) {
++        assert.equal(animation.duration, 1400); assert.equal(animation.iterations, 1); assert.equal(animation.objectId, 'tank')
++      }
++      for (const tail of state.tails) {
++        assert.ok(Math.abs(tail.angle) <= (tail.yellow ? 6.5 : 10) + .001)
++        assert.ok(tail.attachmentError < .005, `Tail stays attached: ${tail.attachmentError}px`)
++        assert.ok(tail.glassClearance >= -.005, `Stroked tail stays inside glass: ${tail.glassClearance} art units`)
++        assert.ok(tail.box.x >= neutralBounds.x && tail.box.y >= neutralBounds.y && tail.box.right <= neutralBounds.right && tail.box.bottom <= neutralBounds.bottom)
++        if (time === 210) assert.ok(Math.abs(tail.angle - (tail.yellow ? 6.5 : -10)) < .001)
++        if (time === 0 || time === 1400) assert.ok(Math.abs(tail.angle) < .001)
++      }
++      assert.equal(await page.locator('[data-object-id="tank"] > g').innerHTML(), markup)
++      samples.push(state)
++    }
++    const peak = await animationState(page, 210)
++    assert.equal(await effects(page), 2, 'Retained test handles restore the actual paused peak after sampling the terminal frame')
++    await capture(page, `fish-${species}-${rotation}-detail`, { species, rotation, peak }, page.locator('[data-object-id="tank"]'))
++    if (rotation === 0) await capture(page, `fish-${species}-room`, { species, rotation, peak })
++    await page.clock.runFor(1450)
++    assert.equal(await page.locator('.room-fish-greeting').count(), 0)
++    assert.equal(await page.evaluate(() => document.getAnimations().filter(a => a.animationName === 'fish-tail-greeting').length), 0)
++    assert.equal(await frames(page), 1, 'Resident alone keeps its existing healthy idle clock')
++    assert.deepEqual((await snapshot(page)).tables, before)
++    if (out) await writeFile(join(out, `fish-${species}-${rotation}-samples.json`), JSON.stringify(samples, null, 2) + '\n')
++  })
++}
++
++const effects = page => page.evaluate(() => document.getAnimations().filter(a => a.animationName === 'fish-tail-greeting').length)
++async function cleared(page, expectedFrames) {
++  assert.equal(await page.locator('.room-fish-greeting').count(), 0)
++  assert.equal(await effects(page), 0)
++  assert.equal(await frames(page), expectedFrames)
++}
++
++test('native fish tail effects finish once on the browser clock and return to neutral', async t => {
++  const page = await fixture(t), saved = (await snapshot(page)).tables
++  await invite(page)
++  let timeout
++  await Promise.race([
++    page.evaluate(async () => {
++      const running = document.getAnimations().filter(a => a.animationName === 'fish-tail-greeting')
++      if (running.length !== 2 || running.some(a => a.playState !== 'running')) throw new Error('Two native running effects required')
++      await Promise.all(running.map(a => a.finished))
++    }),
++    new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Finite native fish response did not finish within 4s')), 4000) }),
++  ]).finally(() => clearTimeout(timeout))
++  assert.equal(await effects(page), 0)
++  assert.deepEqual(await page.locator('[data-object-id="tank"] .fish-tail').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform)), ['none', 'none'])
++  assert.equal(await frames(page), 1)
++  await page.clock.runFor(1450); await cleared(page, 1)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  t.diagnostic('Native CSS finished promises use real browser time; the separate fake resident clock only holds and then expires the semantic interaction.')
++})
++
++test('live system reduction cancels the fish response without replay', async t => {
++  const page = await fixture(t), saved = (await snapshot(page)).tables
++  await invite(page); assert.equal(await effects(page), 2)
++  await changeReducedMotion(page, 'reduce'); await cleared(page, 0)
++  await changeReducedMotion(page, 'no-preference'); await page.clock.runFor(1600)
++  await cleared(page, 1); assert.deepEqual((await snapshot(page)).tables, saved)
++})
++
++for (const preference of ['system', 'device']) test(`initial ${preference} reduction never starts fish effects`, async t => {
++  const page = await fixture(t, { [preference]: true }), saved = (await snapshot(page)).tables
++  await askToLook(page); await page.clock.runFor(2400); await cleared(page, 0)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
++
++test('real cross-tab device preference cancels fish effects without replay', async t => {
++  const page = await fixture(t), saved = (await snapshot(page)).tables
++  const peer = await page.context().newPage(), url = new URL('fish-motion-preference-probe', page.url()).href
++  await peer.route(url, route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Fish motion preference probe</title>' }))
++  await peer.goto(url); await page.bringToFront()
++  t.after(() => peer.close())
++  const choose = async value => {
++    await page.evaluate(() => { window.__fishPreference = new Promise(resolve => window.addEventListener('storage', event => {
++      if (event.key === 'chore-pet-reduce-motion') resolve(event.newValue)
++    }, { once: true })) })
++    await peer.evaluate(value => localStorage.setItem('chore-pet-reduce-motion', value), value)
++    let timeout
++    const delivered = await Promise.race([
++      page.evaluate(() => window.__fishPreference),
++      new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Native storage event not delivered within 4s')), 4000) }),
++    ]).finally(() => clearTimeout(timeout))
++    assert.equal(delivered, value)
++  }
++  await invite(page); assert.equal(await effects(page), 2)
++  await choose('on'); await cleared(page, 0)
++  await choose('off'); await page.clock.runFor(1600); await cleared(page, 1)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
++
++test('a player wave interrupts the fish greeting and leaves no queued reply', async t => {
++  const page = await fixture(t), saved = (await snapshot(page)).tables
++  await invite(page); assert.equal(await effects(page), 2)
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  await page.getByRole('button', { name: 'Wave', exact: true }).click()
++  await cleared(page, 1); await page.clock.runFor(3000); await cleared(page, 1)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
++
++for (const [width, height] of [[320, 640], [390, 664], [844, 390]]) test(`fish greeting fits ${width}x${height} with attached tails`, async t => {
++  const page = await fixture(t, { width, height }), saved = (await snapshot(page)).tables
++  await invite(page)
++  const peak = await animationState(page, 210)
++  for (const tail of peak.tails) { assert.ok(tail.attachmentError < .005); assert.ok(tail.glassClearance >= -.005) }
++  const layout = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth,
++    room: (() => { const r = document.querySelector('.home-room').getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height } })(),
++    viewport: (() => { const r = document.querySelector('.home-scene-viewport').getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height } })() }))
++  assert.ok(layout.scrollWidth <= width)
++  assert.ok(layout.viewport.width > 200 && layout.viewport.height >= 90 && layout.room.width > 0 && layout.room.height > 0)
++  await capture(page, `fish-responsive-${width}x${height}`, { width, height, layout, peak })
++  await page.clock.runFor(1450); await cleared(page, 1)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
+diff --git i/docs/ART.md w/docs/ART.md
+index a9fc267..cbd0e44 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -239,3 +239,5 @@ Change look offers a native Preview mood selector in Face: Happy, Content, Tired
+ Change look comparison thumbnails keep their resting body and open eyes still. The scoped `.cc-choice` rule stops their legacy CSS breath/blink loops under every preference, including device-local Reduce pet motion. The main sampled preview retains its finite1800ms cheer and mood/reduction policies; radio hover, focus and selection feedback retain existing behavior. Native CSS animation inventories and computed transforms verify the distinction; animation counts do not measure CPU or battery savings.
+ 
+ Change look Face options include Mirror preview and Show preview. Mirroring is a local pressed toggle that reflects the complete sampled character once about x=100, including clothes and ground, and resets when the editor reopens. Show preview scrolls the actual SVG instantly into view and focuses it without a second scroll; the image has an inset keyboard focus ring and stays outside ordinary Tab stops. Both controls preserve the current mood, look draft, frame owner and finite cheer deadline. Their row wraps at enlarged text sizes and adds no clock, listener or saved field.
++
++A clean fish tank answers the resident’s existing1400ms wave with one damped tail response. Only the selected visible tank receives the response class during the action phase. Two inner tail groups preserve the fish’s original placement, body, water and glass layers; the red tail turns at most10degrees and the yellow tail responds oppositely at65% amplitude. The effect is finite CSS, with no extra JavaScript frame owner, timer or saved field. A held negative delay catches up to the existing action phase after a late frame and stays stable on repeated invitations. Other phases/stages/objects and reduced/sick/away states remain still; interruptions remove the response. Unanimated tank renders remain pixel-identical across3stages,4rotations and2raster sizes.
+diff --git 1/docs/audits/2026-10-12-character-polish/fish-greeting-design.md 2/docs/audits/2026-10-12-character-polish/fish-greeting-design.md
+new file mode 100644
+index 0000000..fb5dc2a
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/fish-greeting-design.md
+@@ -0,0 +1,17 @@
++# Fish respond to a nearby greeting
++
++The clean fish tank already has the wave interaction profile, but its two fish remain still while the pet greets them. Add one brief tail response during that existing action phase. No new interaction command, contact/reach, route, chore/health change, speech, sound or saved state.
++
++Expose an optional responseObjectId on Room, set by LivingRoom only for an active interact/action/wave. Room additionally gates the response class to the matching visible clean fish-tank object. Orient, walking, settle, dirty stages, other furniture, hidden/ghost objects, sick/away and reduced-motion visits have no fish greeting. Keep the class on the outer placed-object wrapper so memoized PlacedArt does not redraw on pet frames; class identity across incidental parent renders/coalesced invitations does not restart CSS. Existing suppression/reduction validates and clears the interaction synchronously. OS CSS also disables the response defensively.
++
++Wrap only each fish's existing tail path in a fish-tail group; preserve the existing fish translation, rotation, scale, water/glass layers and clipping. Tail pivot is its attached right-edge midpoint (fill-box100%50%); the body ellipse covers the root. One1400ms damped CSS oscillation matches ACTION_MS.wave, returns to neutral, and never repeats. Red amplitude<=10degrees; yellow opposite<=6.5degrees. No delay beyond the finite action, no autonomous loop and no additional JS RAF/timer/subscription. Parent interaction cancellation removes the class; tiny tail motion may snap to neutral on cancellation, so measure actual visual bounds and review native samples rather than claim blended cancellation. Normal completion returns continuously to zero.
++
++Before implementation, archive unanimated tank renders for3stages/4rotations/2raster sizes and require exact pixel equality after the tail wrappers. Red tests exercise real Room and LivingRoom: only chosen clean tank/action, phase deadlines, coalescing/no extra frame owner or Room redraws, player interruption, live OS/device reduction, sick/away, stage/target changes, hidden elapsed expiry and no replay. Native tests use actual CSS animation inventory/timing/target styles, both outer rotations, stationary water/body transforms, all three pet species and exact save tables. Sample finite CSS currentTime deterministically only in disposable test contexts; separately wait for real native completion. Stills must record paused CSS sampling rather than disabling that effect. Inspect tail attachment/bounds/clipping and room/bubble clearance before one bounded independent review.
++
++Broad continuing user authorization covers this visual interaction detail. Prepare new design/red/baseline paths while creator-tools is frozen; production Room/LivingRoom/fish/CSS and ART edits wait for that checkpoint. Heavy work remains sequential/capped with2GiB reserve; no CPU/battery savings claim or physical-device/AT/human-temporal-comfort certification.
++
++Preparation correction before implementation: sick/away tests now allow the existing120ms resident join to finish before asserting0RAF, while fish response removal remains immediate. Initial10resident red cases all failed at the absent response before reaching that assertion; exact original red bytes retained. No reduction/response bound relaxed. Static candidate comparison24/24pixel+PNGexact passes, and the applied tail source hash must equal that tested candidate.
++
++Late-frame refinement: record the time of each existing semantic draw in Shown and derive one negative CSS delay from the action's absolute start. The held draw time keeps that delay stable on repeated invitations and ordinary frames. A new late-first-frame regression fails for absent -640ms offset before the fix, then passes alongside all existing phase/clock tests. No extra frame loop or timer. The first late-red command used an unsupported Vitest minWorkers option and did not run a test; the corrected distinct red-v2 command failed at the intended missing offset.
++
++Native harness investigation: the initial seven failures comprised six sampling-handle errors and an invalid landscape room-width assumption. Terminal currentTime1400 legitimately removes the effect from document.getAnimations; a fresh query could not rewind it for a peak capture. Retain test-only handles across deterministic samples, assert their actual restored native effects at the peak, and check repeated invitations before terminal sampling. The landscape camera preserves its existing189.95px room width in a424x232px viewport; enforce the existing90px canvas minimum instead of imposing a200px individual room minimum. Native real completion/reduction/cross-tab/player cancellation already passed. Initial captures are historical, not final peak evidence. Final sampling subtracts each measured native CSS delay to address the intended elapsed keyframe phase.

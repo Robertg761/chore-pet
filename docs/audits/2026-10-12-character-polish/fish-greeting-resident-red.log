@@ -1,0 +1,104 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/fishGreeting.test.tsx (10 tests | 10 failed) 384ms
+   × responds only during the existing action phase, coalesces invitations and adds no frame owner or room redraw 115ms
+   × stops the fish response when a player gesture interrupts the wave 46ms
+   × stops immediately under live system reduction and never replays on restoration 43ms
+   × stops immediately under live device reduction and never replays on restoration 39ms
+   × clears the response when the resident becomes sick 30ms
+   × clears the response when the resident becomes away 33ms
+   × clears the response when the tank becomes messy1 28ms
+   × clears the response when the tank becomes messy2 15ms
+   × clears the response when the tank becomes removed 19ms
+   × discards a hidden elapsed wave on the first visible frame without replay 14ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/fishGreeting.test.tsx > responds only during the existing action phase, coalesces invitations and adds no frame owner or room redraw
+AssertionError: expected null not to be null
+ ❯ src/pet/fishGreeting.test.tsx:47:57
+     45|   visit(); expect(response()).toBeNull()
+     46|   frame(359); expect(response()).toBeNull()
+     47|   frame(360); const node = response(); expect(node).not.toBeNull()
+       |                                                         ^
+     48|   const renders = roomRenders.count
+     49|   frame(500); expect(response()).toBe(node); expect(roomRenders.count)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/pet/fishGreeting.test.tsx > stops the fish response when a player gesture interrupts the wave
+AssertionError: expected null not to be null
+ ❯ wave src/pet/fishGreeting.test.tsx:40:63
+     38| const response = () => ui.container.querySelector('.room-fish-greeting…
+     39| function visit() { act(() => { expect(control.current!.lookAt('tank'))…
+     40| function wave() { visit(); frame(360); expect(response()).not.toBeNull…
+       |                                                               ^
+     41| function visibility(value: boolean) { act(() => { hidden = value; docu…
+     42|
+ ❯ src/pet/fishGreeting.test.tsx:60:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/pet/fishGreeting.test.tsx > stops immediately under live system reduction and never replays on restoration
+ FAIL  src/pet/fishGreeting.test.tsx > stops immediately under live device reduction and never replays on restoration
+AssertionError: expected null not to be null
+ ❯ wave src/pet/fishGreeting.test.tsx:40:63
+     38| const response = () => ui.container.querySelector('.room-fish-greeting…
+     39| function visit() { act(() => { expect(control.current!.lookAt('tank'))…
+     40| function wave() { visit(); frame(360); expect(response()).not.toBeNull…
+       |                                                               ^
+     41| function visibility(value: boolean) { act(() => { hidden = value; docu…
+     42|
+ ❯ src/pet/fishGreeting.test.tsx:67:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/pet/fishGreeting.test.tsx > clears the response when the resident becomes sick
+ FAIL  src/pet/fishGreeting.test.tsx > clears the response when the resident becomes away
+AssertionError: expected null not to be null
+ ❯ wave src/pet/fishGreeting.test.tsx:40:63
+     38| const response = () => ui.container.querySelector('.room-fish-greeting…
+     39| function visit() { act(() => { expect(control.current!.lookAt('tank'))…
+     40| function wave() { visit(); frame(360); expect(response()).not.toBeNull…
+       |                                                               ^
+     41| function visibility(value: boolean) { act(() => { hidden = value; docu…
+     42|
+ ❯ src/pet/fishGreeting.test.tsx:77:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/pet/fishGreeting.test.tsx > clears the response when the tank becomes messy1
+ FAIL  src/pet/fishGreeting.test.tsx > clears the response when the tank becomes messy2
+ FAIL  src/pet/fishGreeting.test.tsx > clears the response when the tank becomes removed
+AssertionError: expected null not to be null
+ ❯ wave src/pet/fishGreeting.test.tsx:40:63
+     38| const response = () => ui.container.querySelector('.room-fish-greeting…
+     39| function visit() { act(() => { expect(control.current!.lookAt('tank'))…
+     40| function wave() { visit(); frame(360); expect(response()).not.toBeNull…
+       |                                                               ^
+     41| function visibility(value: boolean) { act(() => { hidden = value; docu…
+     42|
+ ❯ src/pet/fishGreeting.test.tsx:84:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/pet/fishGreeting.test.tsx > discards a hidden elapsed wave on the first visible frame without replay
+AssertionError: expected null not to be null
+ ❯ wave src/pet/fishGreeting.test.tsx:40:63
+     38| const response = () => ui.container.querySelector('.room-fish-greeting…
+     39| function visit() { act(() => { expect(control.current!.lookAt('tank'))…
+     40| function wave() { visit(); frame(360); expect(response()).not.toBeNull…
+       |                                                               ^
+     41| function visibility(value: boolean) { act(() => { hidden = value; docu…
+     42|
+ ❯ src/pet/fishGreeting.test.tsx:91:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed (10)
+   Start at  04:16:33
+   Duration  1.79s (transform 52%, tests 23%, environment 17%, import 8%)
+

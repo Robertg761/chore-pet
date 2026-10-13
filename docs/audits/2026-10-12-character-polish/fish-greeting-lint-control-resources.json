@@ -1,0 +1,41 @@
+{
+  "utc": "2026-10-13T07:12:08.181237+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "python",
+    "-"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 4,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 0
+  },
+  "minimumObservedAvailableBytes": 4400037888,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4400037888,
+      "tmpFreeBytes": 4285612032
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4400037888,
+      "tmpFreeBytes": 4285612032
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4538220544,
+      "tmpFreeBytes": 4285612032
+    }
+  ]
+}

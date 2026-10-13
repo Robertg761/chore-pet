@@ -167,6 +167,8 @@ function placeBubble(node: HTMLElement | null, style: ReturnType<typeof bubbleSt
 interface Shown {
   state: PetState
   pos: Tile
+  /** The semantic draw time; finite furniture effects catch up after late frames. */
+  sampledAt: number
   /** Hold the opening dialogue seed through orient, action and settle. */
   interactionBeat?: number
 }
@@ -194,11 +196,12 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
   const world = useMemo<World>(() => ({ free, mood, away, mess, interactions }), [free, mood, away, mess, interactions])
 
   const [shown, setShown] = useState<Shown>(() => {
-    const state = initialPet(initialTile ?? freeTile(solid) ?? { tx: 3, ty: 3 }, performance.now())
+    const now = performance.now()
+    const state = initialPet(initialTile ?? freeTile(solid) ?? { tx: 3, ty: 3 }, now)
     // A resting first mount has no previously visible motion to blend out.
     if (away) state.activity = { kind: 'sleep' }
     else if (mood === 'sick') state.activity = { kind: 'sick' }
-    return { state, pos: state.tile }
+    return { state, pos: state.tile, sampledAt: now }
   })
   const [said, setSaid] = useState<Said | null>(null)
   const [previewId, setPreviewId] = useState<string | null>(null)
@@ -240,7 +243,7 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
       ? prev.state.activity.kind === 'interact' && prev.state.activity.target === next.activity.target
         ? prev.interactionBeat : next.beat
       : undefined
-    live.current = { state: next, pos, interactionBeat }
+    live.current = { state: next, pos, interactionBeat, sampledAt: t }
     motion.current?.paint(next, t)
     reportPosition.current?.(pos)
     petNode.current?.setAttribute('transform', petTransform(pos))
@@ -392,6 +395,8 @@ export function LivingRoom({ room, objects, stages, neglect, pet, mood, away, ch
         neglect={neglect}
         overdue={overdue}
         selectedId={away || mood === 'sick' ? null : previewId}
+        responseObjectId={!away && mood !== 'sick' && a.kind === 'interact' && a.phase === 'action' && a.target.action === 'wave' ? a.target.objectId : null}
+        responseElapsedMs={a.kind === 'interact' && a.phase === 'action' ? Math.max(0, shown.sampledAt - a.start) : 0}
         selectionMode="preview"
         className="home-room"
         overlay={overlay}

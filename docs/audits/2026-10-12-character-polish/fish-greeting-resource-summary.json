@@ -1,0 +1,137 @@
+{
+  "runs": 18,
+  "sampleRows": 279,
+  "minimumObservedAvailableMiB": 2585.01953125,
+  "minimumObservedTmpFreeMiB": 4001.77734375,
+  "reserveStops": 0,
+  "launchRejections": 0,
+  "rows": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-build-resources.json",
+      "samples": 12,
+      "minimumAvailableMiB": 3778.59375,
+      "minimumTmpMiB": 4087.1015625,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-build-resources.json",
+      "samples": 12,
+      "minimumAvailableMiB": 3750.8359375,
+      "minimumTmpMiB": 4087.0859375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-diff-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4212.7109375,
+      "minimumTmpMiB": 4087.08203125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-focused-resources.json",
+      "samples": 10,
+      "minimumAvailableMiB": 4217.828125,
+      "minimumTmpMiB": 4084.2734375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-full-resources.json",
+      "samples": 96,
+      "minimumAvailableMiB": 2585.01953125,
+      "minimumTmpMiB": 4074.9609375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-lint-v2-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4382.9140625,
+      "minimumTmpMiB": 4087.08203125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-lint-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4224.546875,
+      "minimumTmpMiB": 4087.08203125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-static-resources.json",
+      "samples": 6,
+      "minimumAvailableMiB": 3972.48828125,
+      "minimumTmpMiB": 4087.125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-focused-resources.json",
+      "samples": 9,
+      "minimumAvailableMiB": 4058.4296875,
+      "minimumTmpMiB": 4084.640625,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-late-red-v2-resources.json",
+      "samples": 4,
+      "minimumAvailableMiB": 4326.71875,
+      "minimumTmpMiB": 4086.94140625,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-late-red-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4357.3515625,
+      "minimumTmpMiB": 4087.09765625,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-lint-control-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4196.203125,
+      "minimumTmpMiB": 4087.078125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-native-diagnosis-resources.json",
+      "samples": 6,
+      "minimumAvailableMiB": 3770.421875,
+      "minimumTmpMiB": 4037.33203125,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-native-final-resources.json",
+      "samples": 66,
+      "minimumAvailableMiB": 3483.8359375,
+      "minimumTmpMiB": 4001.77734375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-native-initial-resources.json",
+      "samples": 26,
+      "minimumAvailableMiB": 3719.015625,
+      "minimumTmpMiB": 4020.84765625,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-resident-red-resources.json",
+      "samples": 5,
+      "minimumAvailableMiB": 4242.96875,
+      "minimumTmpMiB": 4085.02734375,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-room-red-resources.json",
+      "samples": 4,
+      "minimumAvailableMiB": 4319.67578125,
+      "minimumTmpMiB": 4086.51171875,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-static-compare-resources.json",
+      "samples": 8,
+      "minimumAvailableMiB": 3979.46484375,
+      "minimumTmpMiB": 4087.1640625,
+      "exitCode": 0
+    }
+  ],
+  "limits": "Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor."
+}

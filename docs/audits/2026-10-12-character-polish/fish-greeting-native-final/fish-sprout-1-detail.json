@@ -1,0 +1,67 @@
+{
+  "species": "sprout",
+  "rotation": 1,
+  "peak": {
+    "time": 210,
+    "animations": [
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 202,
+        "iterations": 1,
+        "objectId": "tank"
+      },
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 202,
+        "iterations": 1,
+        "objectId": "tank"
+      }
+    ],
+    "tails": [
+      {
+        "yellow": false,
+        "angle": -9.999987517730313,
+        "attachmentError": 0,
+        "glassClearance": 0.30257398444881956,
+        "box": {
+          "x": 482.7861328125,
+          "y": 395.85968017578125,
+          "right": 491.7318115234375,
+          "bottom": 406.7939147949219
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-14 -22) rotate(0) scale(1 1)"
+      },
+      {
+        "yellow": true,
+        "angle": 6.499986894643382,
+        "attachmentError": 0,
+        "glassClearance": 5.256416580231099,
+        "box": {
+          "x": 478.9368591308594,
+          "y": 383.736572265625,
+          "right": 485.54583740234375,
+          "bottom": 392.33648681640625
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-10 -35) rotate(-4) scale(0.85 0.85)"
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Offline production fixture, actual finite CSS effect paused at the recorded currentTime and character fake RAF deadline. Screenshot allows the paused effect. Matrix/attachment/bounds assertions precede capture; separate test covers native real-clock completion. Not human temporal/physical-device/AT certification."
+}

@@ -1,0 +1,73 @@
+{
+  "width": 390,
+  "height": 664,
+  "layout": {
+    "width": 390,
+    "scrollWidth": 390,
+    "room": {
+      "x": 74.75590515136719,
+      "y": 181.6621551513672,
+      "width": 240.46632385253906,
+      "height": 198.5388641357422
+    }
+  },
+  "peak": {
+    "time": 210,
+    "animations": [
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "iterations": 1,
+        "objectId": "tank"
+      },
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "iterations": 1,
+        "objectId": "tank"
+      }
+    ],
+    "tails": [
+      {
+        "yellow": false,
+        "angle": -9.999987517730313,
+        "attachmentError": 2.842170943040401e-14,
+        "glassClearance": 0.3025739844488796,
+        "box": {
+          "x": 184.2393035888672,
+          "y": 279.464599609375,
+          "right": 187.97451782226562,
+          "bottom": 284.0301208496094
+        },
+        "tank": {
+          "x": 182.93492126464844,
+          "y": 267.7887878417969,
+          "right": 207.043212890625,
+          "bottom": 302.542724609375
+        },
+        "fishTransform": "translate(-14 -22) rotate(0) scale(1 1)"
+      },
+      {
+        "yellow": true,
+        "angle": 6.499986894643382,
+        "attachmentError": 2.842170943040401e-14,
+        "glassClearance": 5.256416580231353,
+        "box": {
+          "x": 186.82220458984375,
+          "y": 274.40264892578125,
+          "right": 189.58175659179688,
+          "bottom": 277.9935302734375
+        },
+        "tank": {
+          "x": 182.93492126464844,
+          "y": 267.7887878417969,
+          "right": 207.043212890625,
+          "bottom": 302.542724609375
+        },
+        "fishTransform": "translate(-10 -35) rotate(-4) scale(0.85 0.85)"
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Offline production fixture, actual finite CSS effect paused at the recorded currentTime and character fake RAF deadline. Screenshot allows the paused effect. Matrix/attachment/bounds assertions precede capture; separate test covers native real-clock completion. Not human temporal/physical-device/AT certification."
+}

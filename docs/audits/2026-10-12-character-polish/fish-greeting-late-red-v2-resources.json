@@ -1,0 +1,53 @@
+{
+  "utc": "2026-10-13T07:03:55.051232+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "env",
+    "NODE_OPTIONS=--max-old-space-size=256",
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/pet/fishGreeting.test.tsx",
+    "-t",
+    "late first",
+    "--maxWorkers=1"
+  ],
+  "exitCode": 1,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 3,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 1
+  },
+  "minimumObservedAvailableBytes": 4536893440,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4556144640,
+      "tmpFreeBytes": 4285632512
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4556144640,
+      "tmpFreeBytes": 4285632512
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4536893440,
+      "tmpFreeBytes": 4285468672
+    },
+    {
+      "elapsedSeconds": 2.002,
+      "memAvailableBytes": 4602716160,
+      "tmpFreeBytes": 4285632512
+    }
+  ]
+}

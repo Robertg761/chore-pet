@@ -1,0 +1,120 @@
+{
+  "nativeFinal": {
+    "directlyViewed": {
+      "docs/audits/2026-10-12-character-polish/fish-greeting-native-final/fish-bun-0-detail.png": "9bd33de4a7b36dbea6f5894f786fe8e4843d4ff1b70bc14532742d9b069eda12",
+      "docs/audits/2026-10-12-character-polish/fish-greeting-native-final/fish-bun-1-detail.png": "f44059e58b6fe6b40f1cd1d15db93e9c44a7658bbf89d54d55ba62cbb5769c34",
+      "docs/audits/2026-10-12-character-polish/fish-greeting-native-final/fish-bun-room.png": "ffe82dc570f2302701ab75d73e7d31e5db8fa0a26197916682a83b4dad04d5ee",
+      "docs/audits/2026-10-12-character-polish/fish-greeting-native-final/fish-mochi-0-detail.png": "c5ae590f471700c70b242a247d24002faad1206f2b482c7f89ea29baad774286",
+      "docs/audits/2026-10-12-character-polish/fish-greeting-native-final/fish-mochi-1-detail.png": "74a6b4dee03bad9fa7a437191388d5ef019819214d1d6ff8d4c0096796d63fb5",
+      "docs/audits/2026-10-12-character-polish/fish-greeting-native-final/fish-mochi-room.png": "ce6c28005295bed919ce70a42bee8efbe613ac90c46159e64fc1838458e1f5e8",
+      "docs/audits/2026-10-12-character-polish/fish-greeting-native-final/fish-responsive-320x640.png": "8ddddc93cbc38b6b19f6ccf96e9c1e4bd7bff0588a9e4e85ac8b63598735d76f",
+      "docs/audits/2026-10-12-character-polish/fish-greeting-native-final/fish-responsive-390x664.png": "04cf82d6d1daf3b489e40ce44df29b42357fd0e4f7284de73c32e45cd0e700d2",
+      "docs/audits/2026-10-12-character-polish/fish-greeting-native-final/fish-responsive-844x390.png": "9d9c7cb12b5588c0b34efd4c496be5d933d9948f152b1aa793ca20fd40f9d4ed",
+      "docs/audits/2026-10-12-character-polish/fish-greeting-native-final/fish-sprout-0-detail.png": "d9b3f6f654a32b8de4424af0f7ceb49d970688c26bbd6120ed0c8aac1ef82f89",
+      "docs/audits/2026-10-12-character-polish/fish-greeting-native-final/fish-sprout-1-detail.png": "afbdad844f33a249628cfff7a2949bc296cec73d7426f131260099b36a795730",
+      "docs/audits/2026-10-12-character-polish/fish-greeting-native-final/fish-sprout-room.png": "99fc7673569e500d93188a3ea1c05390a584dacfe3366537940fe313e2233819"
+    },
+    "count": 12,
+    "sampledTails": 72,
+    "maximumAttachmentErrorCssPx": 8.038873388460929e-14,
+    "minimumSampledGlassStrokeClearanceArtUnits": 0.30257398444881956,
+    "maximumRedAngleDegrees": 9.999987517730313,
+    "maximumYellowAngleDegrees": 6.499986894643382,
+    "observations": "All12finalPNGs viewed directly. Tail roots attached, opposite peak tail poses within translucent tank; unchanged glass/fish bodies, placed stand and pet clothing. Pet/furniture depth overlap preserved. Room and speech fit inspected viewports after Show room at320/390phone and844x390landscape; content remains scrollable and existing camera scale preserved.",
+    "sampledPhaseCases": 36,
+    "sampledTailEffects": 72
+  },
+  "staticBaseline": {
+    "count": 24,
+    "directlyViewedUnique": 12,
+    "exactDuplicates": 12,
+    "groups": [
+      {
+        "sha256": "d87c5a2fb61e0a53ff3e115df1bc3fbf36409de9920c2b7dc46c9c6155e4bd26",
+        "direct": "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/clean-0-390.png",
+        "duplicates": [
+          "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/clean-2-390.png"
+        ]
+      },
+      {
+        "sha256": "028d9ee2b806cfaae6ee85429132862ae465bdc7b2962646fc0b48652de858e3",
+        "direct": "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/clean-0-780.png",
+        "duplicates": [
+          "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/clean-2-780.png"
+        ]
+      },
+      {
+        "sha256": "6ca771a7d3924aab033b1c333c661c5945ab0d9a1dab1a3b08fa72941371cbc6",
+        "direct": "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/clean-1-390.png",
+        "duplicates": [
+          "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/clean-3-390.png"
+        ]
+      },
+      {
+        "sha256": "1e503491321c70b8ac77a9fc09680d67a18986d39d145891da9679748d86f2f5",
+        "direct": "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/clean-1-780.png",
+        "duplicates": [
+          "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/clean-3-780.png"
+        ]
+      },
+      {
+        "sha256": "994d1ea17b9ed1a05b01a32d4a3fc0afe45ed11f5e28f4ed15881dfd4d49f014",
+        "direct": "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy1-0-390.png",
+        "duplicates": [
+          "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy1-2-390.png"
+        ]
+      },
+      {
+        "sha256": "a7b21373d337759148da485cfb8da8f8bf84f30a5ab052ad1d746562b7fd7a5b",
+        "direct": "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy1-0-780.png",
+        "duplicates": [
+          "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy1-2-780.png"
+        ]
+      },
+      {
+        "sha256": "0929dbd707887f488d64e28bc125db1393bcc64df2d7a7e50e2dde90b81202be",
+        "direct": "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy1-1-390.png",
+        "duplicates": [
+          "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy1-3-390.png"
+        ]
+      },
+      {
+        "sha256": "9446f89cf81d939feb6cb2fa0c2255cdfcd147875947a0409151492052f44567",
+        "direct": "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy1-1-780.png",
+        "duplicates": [
+          "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy1-3-780.png"
+        ]
+      },
+      {
+        "sha256": "c592b3944305b12063f55d5843f759bd0cc03318bfda54a051bf8155194075a5",
+        "direct": "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy2-0-390.png",
+        "duplicates": [
+          "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy2-2-390.png"
+        ]
+      },
+      {
+        "sha256": "d57dbebcb95cc3660d345972ba0ebaedded1080d8886f75b33b51e7d7d5be03e",
+        "direct": "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy2-0-780.png",
+        "duplicates": [
+          "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy2-2-780.png"
+        ]
+      },
+      {
+        "sha256": "ee52bc019fef62deec48c12352b57dcd9e4802cc80960bb2aab356814ccb0041",
+        "direct": "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy2-1-390.png",
+        "duplicates": [
+          "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy2-3-390.png"
+        ]
+      },
+      {
+        "sha256": "eb60e8d6c69f88bdb1fe7d145a58fa71785f9696d60dc5a66a9997efccbd356d",
+        "direct": "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy2-1-780.png",
+        "duplicates": [
+          "docs/audits/2026-10-12-character-polish/fish-greeting-static-baseline/messy2-3-780.png"
+        ]
+      }
+    ],
+    "observations": "All12unique baselinePNGfiles viewed directly at390/780roomwidths, clean/messy1/messy2and mirrored/unmirrored. Remaining12verified byte-identical rotations. Final pixel comparison independently confirms all24 current unanimated production outputs."
+  },
+  "limits": "Deterministic six-time samples and peak stills, plus separate actual native completion. Analytical quadratic/stroke clearance is per sampled phase, not continuous all-phase proof or human temporal comfort/physical-device/AT/CPU/battery certification. Historical initial peak captures are invalid sampling evidence and excluded."
+}

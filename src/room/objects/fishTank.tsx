@@ -110,7 +110,9 @@ function seaweed() {
 function fish(x: number, y: number, body: string, flip = false, rot = 0, k = 1, key?: string | number) {
   return (
     <g key={key} transform={`translate(${x} ${y}) rotate(${rot}) scale(${flip ? -k : k} ${k})`} strokeWidth={2}>
-      <path d="M-4 0 L-10.5 -5 Q-12.5 0 -10.5 5 Z" fill={mix(body, ink, 0.12)} />
+      <g className={body === warmRed ? 'fish-tail' : 'fish-tail fish-tail-yellow'}>
+        <path d="M-4 0 L-10.5 -5 Q-12.5 0 -10.5 5 Z" fill={mix(body, ink, 0.12)} />
+      </g>
       <path d="M-2 -4 Q0 -8.5 3.5 -4.2" fill={mix(body, ink, 0.12)} />
       <ellipse cx={0} cy={0} rx={7} ry={5.4} fill={body} />
       <path d="M-6.5 1 Q-4 4.8 0 5.2 Q-4 7 -6.8 3.4 Z" fill={ink} opacity={0.12} stroke="none" />

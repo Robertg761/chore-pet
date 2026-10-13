@@ -1,0 +1,314 @@
+{
+  "freeze": {
+    "baseCommit": "31338a439c4d84ddc55874ff977c2c6297b4ba33",
+    "sources": {
+      "src/pet/LivingRoom.tsx": "1bc28ca557017685a6894c6563dacc336b330606ff68b43ae27fb55f88998c89",
+      "src/room/Room.tsx": "d9db4db0da8740be2c416cfe42ed2b23af22f7206f15c6e1f91bc9644ebc405a",
+      "src/room/Room.css": "da3ed5e19bd712bfe2027862a5fb83e3804159b6815968104aef7b34d8cff77b",
+      "src/room/objects/fishTank.tsx": "d113d136388f4aa2a79ca228955ee41bea906b281308acdae265fe08c983c2ef",
+      "src/pet/fishGreeting.test.tsx": "3fac922de5ad5fe125d3dd80e4e394bc5238cd39198a077420030d531b7d0e7e",
+      "src/room/Room.fishGreeting.test.tsx": "5695f9a25fe9cd30cec979bdc3947e0e0d75262fa1fd95dba0af6fef946ca897",
+      "scripts/browser/fish-greeting.test.mjs": "d09776e4939643598ff8e8a27dd36326233dd91794766ca90c17ea4ca4da9934",
+      "docs/ART.md": "ee96c1daf08d477e60073e8727c9940a50aecdd4ae96dd68fa7bdf4e4a13e83f",
+      "docs/audits/2026-10-12-character-polish/fish-greeting-design.md": "209afb7c62276d846d3ea714ef9e130ebf2fa8974f28dd5627a9d2ec5525f127"
+    },
+    "unchangedSources": {
+      "src/pet/behaviour.ts": "288417ea27249973596ea766accb454bf5c523c2c46cf7f854240d60b6c338bd",
+      "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+      "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7",
+      "src/pet/obstacles.ts": "88b74b0d6816f01bbac28e13da3f8641e84d7969a164b4d84132d0f7ec42b62c",
+      "src/pet/pathfinding.ts": "6fbee63181ea89029cdc0cf440ae0793bc05eac906cd20939246ec8ff7b8d808",
+      "src/pet/visits.test.ts": "54e0730e2f510bdd00f26e03b15d3cd312fba21c78fcee7e29832b919cbee1e0",
+      "src/pet/interactions.test.ts": "14c60a908f3cc24a51ae06a2061065be3c5ebc8e469e5a0069ac3f965605c516",
+      "src/pet/PetIntegration.test.tsx": "ac8dfcc065582fc51aa9a45e943e3bdee15efca1516c6f8eac8fadafb7c32632",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/usePetMotion.test.tsx": "07474f35781bb9b3442939d6eba0da4753211092a0d423d69c88236c782de93b",
+      "src/pet/usePetMotion.preference.test.tsx": "39d4767c5b54d38a0a4335b4f1bd8553ebffdf5aa78f0103e98c77655da70f68",
+      "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+      "src/pet/HomeTraveler.tsx": "91b97f7918464bcb0d7caaef42e35c4e851c88492b7d9e65f74536badab82aa8",
+      "src/pet/useHomePet.ts": "75b408b50c9eed0d78745b2115f5ea5ed3b504d31785286c87e4f9ef1d6da1ba",
+      "src/pet/PetExplore.tsx": "785ebd379165a9dfa8eb13c0c500d4260133206fdfa1600b87705234fdb08ad1",
+      "src/pet/PetPlay.tsx": "70a95a6c9bc633feffd7003542188f5d2540596d6da5fb0e606c7f5d7615f27b",
+      "src/character/motion.ts": "07679d0a1f861d3bd327a5eb05b1d3b0edda9fc3b1633da53a4965a5b601173a",
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/character/items.tsx": "f06572844f4a349fef05caa7a45068f5935815f14d79daf0a76d71dc3d412c6a",
+      "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/art/color.ts": "f7dd62c6ad58d9d5f24de2e47c5ef459144aa28cedf3bf47b2636c44ba95c8ad",
+      "src/room/grid.ts": "54163bdb4d06e6895e95b3d6339937cd8d78453efa681c5635549d3680c61854",
+      "src/room/iso.ts": "358b3f784f80e57c8674d804f5cf33faf58527dbdbe12d34cf8d5624acaa86c2",
+      "src/room/shell/geometry.ts": "967f73de056add3298520e580aa172a720132b49b11dd5bcab4a8f1a4b4fd027",
+      "src/room/shell/RoomShell.tsx": "b52ab3bfdb807bdfbcee035390bd89fe6628b986b4e5ed32fe42f84b6abcb66f",
+      "src/room/HomeScene.tsx": "a9c1cfd48627624fc3cd6bf4039e55421c3e1682bb170cb61aea7fc01655a5ba",
+      "src/room/HomeScene.css": "7f57c79a20ca791e4eac3765acb5ca0a064a11fb167b5893d5c638c0d43075b1",
+      "src/room/sceneContext.ts": "ddbae656c9a12069a72b31783236e5f57b94f459875131970386e10d29ca498c",
+      "src/room/objects/index.ts": "b74c1948c79bba2c75568a84be517e0255d1bd124553197d10da191d15617e6f",
+      "src/room/objects/types.ts": "d67e8c335ebe3b92d82cede9f9ac5aa95781a33abd1f75b779b5fd7377d02c7f",
+      "src/room/objects/plant.tsx": "20e00d30efa5c5ba0ccbbfb59166c5a8b0291cd645f54ee61b3bc70fdeaa13f0",
+      "src/room/Room.selection.test.tsx": "98ae4c6ccaf8001d1aa650e71c19347a459b1b196c9c5e9504243a3fbc3c64c7",
+      "src/data/store.ts": "3a02f895c6688efb8257eec7f8ef083d6257a1e2c37cdd5b378cbe1807092733",
+      "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+      "scripts/browser/pet-environment-attention.test.mjs": "82c65ebfae72229e2ce2aa3626ea877587b02f48d6209bfc8aee7fddde8e17ee",
+      "scripts/browser/pet-explore.test.mjs": "760ea164e885fcdeaf2fdd86062b0af1cb6e14323d81e7cf1822545c2181a827",
+      "scripts/browser/pet-motion-preference.test.mjs": "9477b805ca2a389d683da11ea3217fa4f53a969131d87429657217b54c157b23",
+      "package.json": "dc9eb21d13cd583db406e856f26dcd791ae127f97591fbfc1a89298a19ff0589",
+      "package-lock.json": "596d8a0708376644b5990f28eed63fbb817f4653ee7c2a80155e37df9c53c884",
+      ".oxlintrc.json": "b4d344818a1e1bf43997e4744a9153c8eef770c98b58229cd86363dabb85ded4"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/fish-greeting-source.diff",
+      "sha256": "6a654a5058e9ebb80bc8681140ecd9762a7057b902011c0f72e9663ce6c53225"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/fish-greeting-artifacts.json",
+    "sha256": "44683b3c52eb3ba9ca6158e5bbf118caa099ad46cf6bded8d3337382664a5656"
+  },
+  "checks": [
+    {
+      "name": "fish-greeting-build",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-build.log",
+      "logSha256": "4b2497e297770bc943f21b83d49af79602be798b2dc9e5285bc34c894dceaa6f",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "fish-greeting-final-build",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-final-build.log",
+      "logSha256": "9d3e5c09963f1d439a821b2f3d32eb4c5d12914fd06893e48e892482a37268d8",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "fish-greeting-final-diff",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-final-diff.log",
+      "logSha256": "2b6d56e094b04d2405950fe247da677c4b0e39565edee05bae3214eedf3f2f6a",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "fish-greeting-final-focused",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-final-focused.log",
+      "logSha256": "0b504bdd877de51eac292d216cc642f9788ebdbf7731fcbd67f2603809ea0363",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "fish-greeting-final-full",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-final-full.log",
+      "logSha256": "83c8098ae3d7cc9464af9bf92524c01c9813f86e490d45a27d8a9eb908fb4ad0",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "fish-greeting-final-lint-v2",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-final-lint-v2.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-lint-v2.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "fish-greeting-final-lint",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-final-lint.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "fish-greeting-final-static",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-final-static.log",
+      "logSha256": "6a7655bc7a938cea98e4924da5c58b1bec85d3cba9f87350e298a0eeb452e66a",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-final-static.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "fish-greeting-focused",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-focused.log",
+      "logSha256": "0dc3137b688e49567ab13234ef11fabf08bf52e4fe2d97a359a3915844d92c37",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "fish-greeting-late-red-v2",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-late-red-v2.log",
+      "logSha256": "c2b5d411d566e8b3e8b75cefcc8155f289f1e0b9d0f69c8e79231bc100959a57",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-late-red-v2.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "fish-greeting-late-red",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-late-red.log",
+      "logSha256": "0312ae5607b980b4bb07b35fa681f432fa72371c267a37c12b1a3d5eec580a99",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-late-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "fish-greeting-lint-control",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-lint-control.log",
+      "logSha256": "7319044468efadb427849ba6acbde3f086f221b0b26516b8485d89417668c90e",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-lint-control.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "fish-greeting-native-diagnosis",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-native-diagnosis.log",
+      "logSha256": "542b87358bb0a619d66ff502eb72ac7b732717444ea7369f236ed000dce7a10f",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-native-diagnosis.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "fish-greeting-native-final",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-native-final.log",
+      "logSha256": "5571cb57edb309004310d44e6aebf8683be3c72f2ebaa70457563bf1c6311a43",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-native-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "fish-greeting-native-initial",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-native-initial.log",
+      "logSha256": "0783b6b2bd97b3570cb2d1149f7978517091f6e45b5980e138866ac78816d884",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-native-initial.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "fish-greeting-resident-red",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-resident-red.log",
+      "logSha256": "736ce0a66a9ef55291b97def99f86887842dcc1e2ce835fb79b655d13e4c4220",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-resident-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "fish-greeting-room-red",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-room-red.log",
+      "logSha256": "82e94a564858b2e946fc1aced526c3c391a39b76daa0f106b529633631c0a08c",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-room-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "fish-greeting-static-compare",
+      "log": "docs/audits/2026-10-12-character-polish/fish-greeting-static-compare.log",
+      "logSha256": "224bfa74b5f32963c593a494cf1dff93fff9f59c5654e19723bc6017d50325d7",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/fish-greeting-static-compare.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    }
+  ],
+  "results": {
+    "summary": "Finite fish greeting:245focused/7files,2520full/134files and33nativepass; productiontypecheck/build/PWA,8pathstrictlintand11authoredwhitespacepass.24/24finalstaticPNG/pixelcomparisons exact. All12finalnativePNGs directly viewed and12uniquebaselinePNGs viewed+12exactduplicates.36CSSphasecases/72tails preserveattachment and sampledglassstrokecontainment. LiveOS/device/cross-tab reduction,playerinterruption,originaldeadline/coalescing,nosavedtablechanges verified.",
+    "focused": {
+      "tests": 245,
+      "files": 7,
+      "durationSeconds": 6.75,
+      "check": "fish-greeting-final-focused"
+    },
+    "full": {
+      "tests": 2520,
+      "files": 134,
+      "durationSeconds": 92.86,
+      "check": "fish-greeting-final-full"
+    },
+    "native": {
+      "tests": 33,
+      "pass": 33,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationSeconds": 63.172788592,
+      "check": "fish-greeting-native-final",
+      "captureDirectory": "docs/audits/2026-10-12-character-polish/fish-greeting-native-final"
+    },
+    "visual": {
+      "nativePngsDirect": 12,
+      "baselinePngs": 24,
+      "baselineUniqueDirect": 12,
+      "baselineExactDuplicates": 12,
+      "staticFinalExactPixels": 24,
+      "staticFinalExactPngs": 24,
+      "phaseSamples": 36,
+      "sampledTails": 72,
+      "maximumAttachmentErrorCssPx": 8.038873388460929e-14,
+      "minimumSampledGlassStrokeClearanceArtUnits": 0.30257398444881956,
+      "manifest": "docs/audits/2026-10-12-character-polish/fish-greeting-root-visual-review.json"
+    },
+    "lint": {
+      "paths": 8,
+      "quietSuccessControl": "docs/audits/2026-10-12-character-polish/fish-greeting-lint-control.json",
+      "check": "fish-greeting-lint-control"
+    }
+  },
+  "scope": "Four productionfiles add optionalclean-tank responseonouterRoomwrapper, existingLivingRoomactionsemanticgateandhelddrawtime/negativeCSSdelay, twoinnerfish-tailwrappers, onefinite1400msdampedCSSeffect. NoextraJSRAF/timer/storage/route/contact/chore/speechchange. TwoRoom/residentunitfiles17newcases, one15casenativefile+18existingenvironment/explore/preferencecases,ART/design.6deterministicCSSphases\u00d72tails\u00d73species\u00d72rotations;actualnativefinishedpromisesandactualcross-tabStorageEvent. Threephone/landscapestills. Notcontinuousallphasegeometryproof/humantemporalcomfort/physicaldevice/AT/CPU/batterycertification.",
+  "history": "Baselinebeforeproductionedit:24sequentialSSRResvgrenders, thenexacttailcandidatepasses24/24pixels+PNGbytes, appliedcandidatehashmatches. Roomred5fail/1passandresidentred10fail(absentresponse);sick/away0RAFassertallowedexisting120msjoinbeforeimplementation,immediateclassremovalunchanged. Initial244focused/buildpass. Firstnative8pass/7fail:sixterminalsamplehandleerrors, oneincorrect200pxroomscaleassumption. Twofiltereddiagnosiscasesfailandrecordemptyeffectinventoryaftersamplingterminalframeandactual189.95pxroom/424x232canvas. Test-onlypersistenthandlesrestorepeakandcoalescingcheckedbeforeend;canvas90pxminimumused. Initialcapturesretainedashistoryandexcludedfromfinalpeakreview. Late-first-framecaseadded: firstcommandunsupported--minWorkersrejectedbeforerunningtest,correctedred-v2failsintendedmissing-640msdelay. Heldsemanticdrawtimefix+CSSnegativedelay;exactredsourcearchived. Final245focused/build/33native/full2520and24/24currentstaticpass. Lintsuccesshasemptyoutput; explicitintentionalunusedwarningprobeconfirmsnonzero1+diagnostic,exact8pathzerowarningpass. All18completeauditedpairsretained; nofailedattemptpromotedtopass.",
+  "resources": {
+    "runs": 18,
+    "sampleRows": 279,
+    "minimumObservedAvailableMiB": 2585.01953125,
+    "minimumObservedTmpFreeMiB": 4001.77734375,
+    "reserveStops": 0,
+    "launchRejections": 0,
+    "limits": "Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor."
+  },
+  "status": "Completed scoped checks and independent static/source/still review; bound files reverified before local checkpoint.",
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/fish-greeting-review-input.json",
+    "sha256": "19a4be02bebc1a9328c4ff67f306ce5808c59a2d89df00e48aa5daaad439ae73"
+  },
+  "independentReview": {
+    "path": "docs/audits/2026-10-12-character-polish/fish-greeting-independent-review.md",
+    "sha256": "cf6f84b793c839654713a556567c4fa986daf0cc2b61e2bf48b1553162a9b8ae",
+    "verdict": "PASS; no scoped findings"
+  }
+}

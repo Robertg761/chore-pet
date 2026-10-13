@@ -1,0 +1,83 @@
+{
+  "width": 320,
+  "height": 640,
+  "layout": {
+    "width": 320,
+    "scrollWidth": 320,
+    "room": {
+      "x": 39.75590896606445,
+      "y": 169.6621551513672,
+      "width": 240.46632385253906,
+      "height": 198.5388641357422
+    },
+    "viewport": {
+      "x": 16,
+      "y": 159.796875,
+      "width": 288,
+      "height": 282
+    }
+  },
+  "peak": {
+    "time": 210,
+    "animations": [
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 202,
+        "iterations": 1,
+        "objectId": "tank"
+      },
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 202,
+        "iterations": 1,
+        "objectId": "tank"
+      }
+    ],
+    "tails": [
+      {
+        "yellow": false,
+        "angle": -9.999987517730313,
+        "attachmentError": 2.842170943040401e-14,
+        "glassClearance": 0.3025739844488796,
+        "box": {
+          "x": 149.2393035888672,
+          "y": 267.464599609375,
+          "right": 152.97451782226562,
+          "bottom": 272.0301208496094
+        },
+        "tank": {
+          "x": 147.93492126464844,
+          "y": 255.78878784179688,
+          "right": 172.043212890625,
+          "bottom": 290.542724609375
+        },
+        "fishTransform": "translate(-14 -22) rotate(0) scale(1 1)"
+      },
+      {
+        "yellow": true,
+        "angle": 6.499986894643382,
+        "attachmentError": 2.842170943040401e-14,
+        "glassClearance": 5.256416580231277,
+        "box": {
+          "x": 151.82220458984375,
+          "y": 262.40264892578125,
+          "right": 154.58175659179688,
+          "bottom": 265.9935302734375
+        },
+        "tank": {
+          "x": 147.93492126464844,
+          "y": 255.78878784179688,
+          "right": 172.043212890625,
+          "bottom": 290.542724609375
+        },
+        "fishTransform": "translate(-10 -35) rotate(-4) scale(0.85 0.85)"
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Offline production fixture, actual finite CSS effect paused at the recorded currentTime and character fake RAF deadline. Screenshot allows the paused effect. Matrix/attachment/bounds assertions precede capture; separate test covers native real-clock completion. Not human temporal/physical-device/AT certification."
+}

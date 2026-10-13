@@ -1,0 +1,145 @@
+✖ mochi greets only the chosen tank with attached finite tails, rotation 0 (1594.232795ms)
+✖ mochi greets only the chosen tank with attached finite tails, rotation 1 (1425.242434ms)
+✖ bun greets only the chosen tank with attached finite tails, rotation 0 (1487.743049ms)
+✖ bun greets only the chosen tank with attached finite tails, rotation 1 (1306.54673ms)
+✖ sprout greets only the chosen tank with attached finite tails, rotation 0 (1446.661175ms)
+✖ sprout greets only the chosen tank with attached finite tails, rotation 1 (1337.476835ms)
+✔ native fish tail effects finish once on the browser clock and return to neutral (2993.347338ms)
+ℹ Native CSS finished promises use real browser time; the separate fake resident clock only holds and then expires the semantic interaction.
+✔ live system reduction cancels the fish response without replay (1629.770691ms)
+✔ initial system reduction never starts fish effects (881.95049ms)
+✔ initial device reduction never starts fish effects (838.985225ms)
+✔ real cross-tab device preference cancels fish effects without replay (1870.567522ms)
+✔ a player wave interrupts the fish greeting and leaves no queued reply (2003.165734ms)
+✔ fish greeting fits 320x640 with attached tails (1539.446737ms)
+✔ fish greeting fits 390x664 with attached tails (1604.239452ms)
+✖ fish greeting fits 844x390 with attached tails (1245.473283ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 8
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 23592.582734
+
+✖ failing tests:
+
+test at scripts/browser/fish-greeting.test.mjs:108:3
+✖ mochi greets only the chosen tank with attached finite tails, rotation 0 (1594.232795ms)
+  AssertionError [ERR_ASSERTION]: A repeated invitation retains the same native effects
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/fish-greeting.test.mjs:141:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/fish-greeting.test.mjs:108:3
+✖ mochi greets only the chosen tank with attached finite tails, rotation 1 (1425.242434ms)
+  AssertionError [ERR_ASSERTION]: A repeated invitation retains the same native effects
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/fish-greeting.test.mjs:141:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/fish-greeting.test.mjs:108:3
+✖ bun greets only the chosen tank with attached finite tails, rotation 0 (1487.743049ms)
+  AssertionError [ERR_ASSERTION]: A repeated invitation retains the same native effects
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/fish-greeting.test.mjs:141:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/fish-greeting.test.mjs:108:3
+✖ bun greets only the chosen tank with attached finite tails, rotation 1 (1306.54673ms)
+  AssertionError [ERR_ASSERTION]: A repeated invitation retains the same native effects
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/fish-greeting.test.mjs:141:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/fish-greeting.test.mjs:108:3
+✖ sprout greets only the chosen tank with attached finite tails, rotation 0 (1446.661175ms)
+  AssertionError [ERR_ASSERTION]: A repeated invitation retains the same native effects
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/fish-greeting.test.mjs:141:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/fish-greeting.test.mjs:108:3
+✖ sprout greets only the chosen tank with attached finite tails, rotation 1 (1337.476835ms)
+  AssertionError [ERR_ASSERTION]: A repeated invitation retains the same native effects
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/fish-greeting.test.mjs:141:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/fish-greeting.test.mjs:228:69
+✖ fish greeting fits 844x390 with attached tails (1245.473283ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(layout.room.width > 200 && layout.room.height > 100)
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/fish-greeting.test.mjs:235:50)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

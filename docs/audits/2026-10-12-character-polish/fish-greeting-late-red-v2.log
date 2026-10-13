@@ -1,0 +1,32 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/fishGreeting.test.tsx (11 tests | 1 failed | 10 skipped) 103ms
+   × starts a late first action frame at the elapsed greeting phase and retains its offset on repeated invitations 102ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/fishGreeting.test.tsx > starts a late first action frame at the elapsed greeting phase and retains its offset on repeated invitations
+AssertionError: expected '' to be '-640ms' // Object.is equality
+
+- Expected
++ Received
+
+- -640ms
+
+ ❯ src/pet/fishGreeting.test.tsx:70:64
+     68|   const node = response() as SVGGElement
+     69|   expect(node).not.toBeNull()
+     70|   expect(node.style.getPropertyValue('--fish-greeting-delay')).toBe('-…
+       |                                                                ^
+     71|   frame(1100); visit()
+     72|   expect(response()).toBe(node)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 skipped (11)
+   Start at  04:33:53
+   Duration  1.27s (transform 45%, environment 37%, import 9%, tests 9%)
+

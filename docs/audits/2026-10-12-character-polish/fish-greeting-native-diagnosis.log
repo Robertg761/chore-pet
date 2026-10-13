@@ -1,0 +1,48 @@
+✖ mochi greets only the chosen tank with attached finite tails, rotation 0 (1408.174744ms)
+ℹ {"beforeRepeat":{"now":4209,"active":"tank","effects":[]},"repeated":{"now":4209,"active":"tank","effects":[]}}
+✖ fish greeting fits 844x390 with attached tails (2091.040015ms)
+ℹ {"width":844,"scrollWidth":844,"room":{"x":205.01150512695312,"y":131.79273986816406,"width":189.94818115234375,"height":156.8290252685547},"viewport":{"x":88,"y":124,"width":424,"height":232}}
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3919.491405
+
+✖ failing tests:
+
+test at scripts/browser/fish-greeting.test.mjs:108:3
+✖ mochi greets only the chosen tank with attached finite tails, rotation 0 (1408.174744ms)
+  AssertionError [ERR_ASSERTION]: A repeated invitation retains the same native effects
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/fish-greeting.test.mjs:147:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/fish-greeting.test.mjs:231:69
+✖ fish greeting fits 844x390 with attached tails (2091.040015ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(layout.room.width > 200 && layout.room.height > 100)
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/fish-greeting.test.mjs:240:50)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

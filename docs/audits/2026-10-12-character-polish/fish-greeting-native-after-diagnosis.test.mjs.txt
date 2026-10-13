@@ -1,0 +1,243 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
+
+const out = process.env.CHORE_PET_FISH_CAPTURE_DIR
+async function fixture(t, { species = 'mochi', rotation = 0, system = false, device = false, width = 1280, height = 800 } = {}) {
+  const page = await browserApp(t, { viewport: { width, height }, deviceScaleFactor: 2, reducedMotion: system ? 'reduce' : 'no-preference' })
+  if (device) await page.evaluate(() => localStorage.setItem('chore-pet-reduce-motion', 'on'))
+  await page.evaluate(({ species, rotation }) => new Promise((resolve, reject) => {
+    const request = indexedDB.open('chore-pet', 1)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
+      read.onsuccess = () => {
+        const saved = read.result, room = Object.values(saved.tables.rooms)[0], pet = Object.values(saved.tables.pets)[0]
+        pet.species = species; pet.bodyColour = { mochi: '#FFCFDA', bun: '#FFFFFF', sprout: '#FFD65C' }[species]
+        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
+        saved.tables.placed_objects = {
+          tank: { id: 'tank', roomId: room.id, catalogId: 'fish-tank', tileX: 2, tileY: 2, rotation },
+          second: { id: 'second', roomId: room.id, catalogId: 'fish-tank', tileX: 5, tileY: 5, rotation: 0 },
+        }
+        saved.tables.chores = {}; saved.tables.completions = {}; saved.outbox = {}; store.put(saved, 'snapshot')
+      }
+      tx.oncomplete = () => { db.close(); resolve() }
+      tx.onerror = () => { db.close(); reject(tx.error) }
+    }
+  }), { species, rotation })
+  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
+  await page.addInitScript(() => {
+    Math.random = () => .99
+    const request = requestAnimationFrame, cancel = cancelAnimationFrame
+    window.__fishFrames = new Set()
+    window.requestAnimationFrame = callback => {
+      const id = request(time => { window.__fishFrames.delete(id); callback(time) })
+      window.__fishFrames.add(id); return id
+    }
+    window.cancelAnimationFrame = id => { window.__fishFrames.delete(id); cancel(id) }
+  })
+  await page.reload(); await page.locator('.room-pet').waitFor(); await page.clock.runFor(48)
+  return page
+}
+const frames = page => page.evaluate(() => window.__fishFrames.size)
+async function askToLook(page) {
+  const toggle = page.getByRole('button', { name: 'Explore together', exact: true })
+  if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click()
+  await page.getByRole('combobox', { name: /^Show / }).selectOption('tank')
+  await page.getByRole('button', { name: 'Look together', exact: true }).click()
+  await page.getByRole('button', { name: /^Show room to explore with / }).click()
+}
+async function invite(page) {
+  await askToLook(page)
+  for (let i = 0; i < 160; i++) {
+    if (await page.locator('.room-fish-greeting').count()) return
+    await page.clock.runFor(32)
+  }
+  assert.fail('The invited resident never reached the existing tank greeting')
+}
+async function animationState(page, time) {
+  return page.evaluate(time => {
+    const animations = window.__fishSampleEffects ??= document.getAnimations().filter(a => a.animationName === 'fish-tail-greeting')
+    for (const animation of animations) { animation.pause(); animation.currentTime = time }
+    const tails = [...document.querySelectorAll('[data-object-id="tank"] .fish-tail')]
+    return { time, animations: animations.map(a => ({ name: a.animationName, duration: a.effect.getTiming().duration, iterations: a.effect.getTiming().iterations, objectId: a.effect.target.closest('[data-object-id]')?.getAttribute('data-object-id') })),
+      tails: tails.map(tail => {
+        const transform = getComputedStyle(tail).transform
+        const matrix = transform === 'none' ? new DOMMatrix() : new DOMMatrix(transform)
+        const own = new DOMPoint(-4, 0).matrixTransform(tail.getScreenCTM())
+        const attached = new DOMPoint(-4, 0).matrixTransform(tail.parentElement.getScreenCTM())
+        const placed = tail.closest('[data-object-id]').querySelector(':scope > g')
+        const toArt = placed.getScreenCTM().inverse().multiply(tail.getScreenCTM())
+        const point = (x, y) => new DOMPoint(x, y).matrixTransform(toArt)
+        const anchor = point(-4, 0), start = point(-10.5, -5), control = point(-12.5, 0), end = point(-10.5, 5)
+        // Independent projected glass silhouette: .08/.92 tile corners,
+        // 64x32 iso tiles, top58 and bottom25. Minimize the actual quadratic
+        // tail curve analytically against each convex edge, including stroke.
+        const glass = [[0, -55.44], [26.88, -42], [26.88, -9], [0, 4.44], [-26.88, -9], [-26.88, -42]]
+        let glassClearance = Infinity
+        for (let i = 0; i < glass.length; i++) {
+          const [x, y] = glass[i], [nx, ny] = glass[(i + 1) % glass.length], dx = nx - x, dy = ny - y
+          const distance = p => (dx * (p.y - y) - dy * (p.x - x)) / Math.hypot(dx, dy)
+          const d0 = distance(start), dc = distance(control), d1 = distance(end)
+          const a = d0 - 2 * dc + d1, b = 2 * (dc - d0), at = a > 0 ? -b / (2 * a) : -1
+          let minimum = Math.min(distance(anchor), d0, d1)
+          if (at > 0 && at < 1) minimum = Math.min(minimum, a * at * at + b * at + d0)
+          glassClearance = Math.min(glassClearance, minimum - Math.hypot(toArt.a, toArt.b))
+        }
+        const box = tail.getBoundingClientRect(), tank = tail.closest('[data-object-id]').getBoundingClientRect()
+        return { yellow: tail.classList.contains('fish-tail-yellow'), angle: Math.atan2(matrix.b, matrix.a) * 180 / Math.PI,
+          attachmentError: Math.hypot(own.x - attached.x, own.y - attached.y), glassClearance,
+          box: { x: box.x, y: box.y, right: box.right, bottom: box.bottom },
+          tank: { x: tank.x, y: tank.y, right: tank.right, bottom: tank.bottom },
+          fishTransform: tail.parentElement.getAttribute('transform') }
+      }) }
+  }, time)
+}
+async function capture(page, name, data, target) {
+  if (!out) return
+  await mkdir(out, { recursive: true })
+  if (target) await target.screenshot({ path: join(out, `${name}.png`), animations: 'allow' })
+  else await page.screenshot({ path: join(out, `${name}.png`), animations: 'allow' })
+  await writeFile(join(out, `${name}.json`), JSON.stringify({ ...data, browser: page.context().browser().version(),
+    method: 'Offline production fixture, actual finite CSS effect paused at the recorded currentTime and character fake RAF deadline. Screenshot allows the paused effect. Matrix/attachment/bounds assertions precede capture; separate test covers native real-clock completion. Not human temporal/physical-device/AT certification.' }, null, 2) + '\n')
+}
+
+for (const species of ['mochi', 'bun', 'sprout']) for (const rotation of [0, 1]) {
+  test(`${species} greets only the chosen tank with attached finite tails, rotation ${rotation}`, async t => {
+    const page = await fixture(t, { species, rotation })
+    const before = (await snapshot(page)).tables
+    await invite(page)
+    assert.equal(await page.locator('.room-fish-greeting').count(), 1)
+    assert.equal(await page.locator('.room-fish-greeting').getAttribute('data-object-id'), 'tank')
+    assert.equal(await page.locator('[data-object-id="second"]').evaluate(node => node.classList.contains('room-fish-greeting')), false)
+    await page.evaluate(() => { window.__greetingInstances = document.getAnimations().filter(a => a.animationName === 'fish-tail-greeting') })
+    await page.getByRole('button', { name: 'Look together', exact: true }).click()
+    const repeated = await page.evaluate(() => {
+      const current = document.getAnimations().filter(a => a.animationName === 'fish-tail-greeting')
+      return current.length === 2 && current.every(animation => window.__greetingInstances.includes(animation))
+    })
+    assert.equal(repeated, true, 'A repeated invitation retains the same native effects')
+    const markup = await page.locator('[data-object-id="tank"] > g').innerHTML()
+    const samples = []
+    let neutralBounds
+    for (const time of [0, 210, 420, 840, 1232, 1400]) {
+      const state = await animationState(page, time)
+      neutralBounds ??= state.tails[0].tank
+      assert.equal(state.animations.length, 2); assert.equal(state.tails.length, 2)
+      for (const animation of state.animations) {
+        assert.equal(animation.duration, 1400); assert.equal(animation.iterations, 1); assert.equal(animation.objectId, 'tank')
+      }
+      for (const tail of state.tails) {
+        assert.ok(Math.abs(tail.angle) <= (tail.yellow ? 6.5 : 10) + .001)
+        assert.ok(tail.attachmentError < .005, `Tail stays attached: ${tail.attachmentError}px`)
+        assert.ok(tail.glassClearance >= -.005, `Stroked tail stays inside glass: ${tail.glassClearance} art units`)
+        assert.ok(tail.box.x >= neutralBounds.x && tail.box.y >= neutralBounds.y && tail.box.right <= neutralBounds.right && tail.box.bottom <= neutralBounds.bottom)
+        if (time === 210) assert.ok(Math.abs(tail.angle - (tail.yellow ? 6.5 : -10)) < .001)
+        if (time === 0 || time === 1400) assert.ok(Math.abs(tail.angle) < .001)
+      }
+      assert.equal(await page.locator('[data-object-id="tank"] > g').innerHTML(), markup)
+      samples.push(state)
+    }
+    const peak = await animationState(page, 210)
+    assert.equal(await effects(page), 2, 'Retained test handles restore the actual paused peak after sampling the terminal frame')
+    await capture(page, `fish-${species}-${rotation}-detail`, { species, rotation, peak }, page.locator('[data-object-id="tank"]'))
+    if (rotation === 0) await capture(page, `fish-${species}-room`, { species, rotation, peak })
+    await page.clock.runFor(1450)
+    assert.equal(await page.locator('.room-fish-greeting').count(), 0)
+    assert.equal(await page.evaluate(() => document.getAnimations().filter(a => a.animationName === 'fish-tail-greeting').length), 0)
+    assert.equal(await frames(page), 1, 'Resident alone keeps its existing healthy idle clock')
+    assert.deepEqual((await snapshot(page)).tables, before)
+    if (out) await writeFile(join(out, `fish-${species}-${rotation}-samples.json`), JSON.stringify(samples, null, 2) + '\n')
+  })
+}
+
+const effects = page => page.evaluate(() => document.getAnimations().filter(a => a.animationName === 'fish-tail-greeting').length)
+async function cleared(page, expectedFrames) {
+  assert.equal(await page.locator('.room-fish-greeting').count(), 0)
+  assert.equal(await effects(page), 0)
+  assert.equal(await frames(page), expectedFrames)
+}
+
+test('native fish tail effects finish once on the browser clock and return to neutral', async t => {
+  const page = await fixture(t), saved = (await snapshot(page)).tables
+  await invite(page)
+  let timeout
+  await Promise.race([
+    page.evaluate(async () => {
+      const running = document.getAnimations().filter(a => a.animationName === 'fish-tail-greeting')
+      if (running.length !== 2 || running.some(a => a.playState !== 'running')) throw new Error('Two native running effects required')
+      await Promise.all(running.map(a => a.finished))
+    }),
+    new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Finite native fish response did not finish within 4s')), 4000) }),
+  ]).finally(() => clearTimeout(timeout))
+  assert.equal(await effects(page), 0)
+  assert.deepEqual(await page.locator('[data-object-id="tank"] .fish-tail').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform)), ['none', 'none'])
+  assert.equal(await frames(page), 1)
+  await page.clock.runFor(1450); await cleared(page, 1)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+  t.diagnostic('Native CSS finished promises use real browser time; the separate fake resident clock only holds and then expires the semantic interaction.')
+})
+
+test('live system reduction cancels the fish response without replay', async t => {
+  const page = await fixture(t), saved = (await snapshot(page)).tables
+  await invite(page); assert.equal(await effects(page), 2)
+  await changeReducedMotion(page, 'reduce'); await cleared(page, 0)
+  await changeReducedMotion(page, 'no-preference'); await page.clock.runFor(1600)
+  await cleared(page, 1); assert.deepEqual((await snapshot(page)).tables, saved)
+})
+
+for (const preference of ['system', 'device']) test(`initial ${preference} reduction never starts fish effects`, async t => {
+  const page = await fixture(t, { [preference]: true }), saved = (await snapshot(page)).tables
+  await askToLook(page); await page.clock.runFor(2400); await cleared(page, 0)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})
+
+test('real cross-tab device preference cancels fish effects without replay', async t => {
+  const page = await fixture(t), saved = (await snapshot(page)).tables
+  const peer = await page.context().newPage(), url = new URL('fish-motion-preference-probe', page.url()).href
+  await peer.route(url, route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Fish motion preference probe</title>' }))
+  await peer.goto(url); await page.bringToFront()
+  t.after(() => peer.close())
+  const choose = async value => {
+    await page.evaluate(() => { window.__fishPreference = new Promise(resolve => window.addEventListener('storage', event => {
+      if (event.key === 'chore-pet-reduce-motion') resolve(event.newValue)
+    }, { once: true })) })
+    await peer.evaluate(value => localStorage.setItem('chore-pet-reduce-motion', value), value)
+    let timeout
+    const delivered = await Promise.race([
+      page.evaluate(() => window.__fishPreference),
+      new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Native storage event not delivered within 4s')), 4000) }),
+    ]).finally(() => clearTimeout(timeout))
+    assert.equal(delivered, value)
+  }
+  await invite(page); assert.equal(await effects(page), 2)
+  await choose('on'); await cleared(page, 0)
+  await choose('off'); await page.clock.runFor(1600); await cleared(page, 1)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})
+
+test('a player wave interrupts the fish greeting and leaves no queued reply', async t => {
+  const page = await fixture(t), saved = (await snapshot(page)).tables
+  await invite(page); assert.equal(await effects(page), 2)
+  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
+  await page.getByRole('button', { name: 'Wave', exact: true }).click()
+  await cleared(page, 1); await page.clock.runFor(3000); await cleared(page, 1)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})
+
+for (const [width, height] of [[320, 640], [390, 664], [844, 390]]) test(`fish greeting fits ${width}x${height} with attached tails`, async t => {
+  const page = await fixture(t, { width, height }), saved = (await snapshot(page)).tables
+  await invite(page)
+  const peak = await animationState(page, 210)
+  for (const tail of peak.tails) { assert.ok(tail.attachmentError < .005); assert.ok(tail.glassClearance >= -.005) }
+  const layout = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth,
+    room: (() => { const r = document.querySelector('.home-room').getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height } })(),
+    viewport: (() => { const r = document.querySelector('.home-scene-viewport').getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height } })() }))
+  assert.ok(layout.scrollWidth <= width)
+  assert.ok(layout.viewport.width > 200 && layout.viewport.height >= 90 && layout.room.width > 0 && layout.room.height > 0)
+  await capture(page, `fish-responsive-${width}x${height}`, { width, height, layout, peak })
+  await page.clock.runFor(1450); await cleared(page, 1)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})

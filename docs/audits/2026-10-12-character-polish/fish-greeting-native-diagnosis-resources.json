@@ -1,0 +1,62 @@
+{
+  "utc": "2026-10-13T07:02:11.894835+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "env",
+    "NODE_OPTIONS=--max-old-space-size=384",
+    "CHROME=/usr/bin/chromium",
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "--test-name-pattern=mochi.*rotation 0|844x390",
+    "scripts/browser/fish-greeting.test.mjs"
+  ],
+  "exitCode": 1,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 404034,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 1
+  },
+  "minimumObservedAvailableBytes": 3953573888,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4676595712,
+      "tmpFreeBytes": 4285677568
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4676595712,
+      "tmpFreeBytes": 4285677568
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4372746240,
+      "tmpFreeBytes": 4233449472
+    },
+    {
+      "elapsedSeconds": 2.003,
+      "memAvailableBytes": 4425015296,
+      "tmpFreeBytes": 4285026304
+    },
+    {
+      "elapsedSeconds": 3.003,
+      "memAvailableBytes": 3953573888,
+      "tmpFreeBytes": 4249006080
+    },
+    {
+      "elapsedSeconds": 4.043,
+      "memAvailableBytes": 4480712704,
+      "tmpFreeBytes": 4285677568
+    }
+  ]
+}

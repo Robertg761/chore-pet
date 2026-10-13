@@ -1,0 +1,40 @@
+{
+  "rows": [
+    {
+      "name": "intentional-unused-warning",
+      "command": [
+        "node",
+        "--max-old-space-size=192",
+        "node_modules/oxlint/bin/oxlint",
+        "--threads=1",
+        "--deny-warnings",
+        "/tmp/chore-pet-fish-lint-probe.mjs"
+      ],
+      "exitCode": 1,
+      "stdout": "/tmp/chore-pet-fish-lint-probe.mjs:1:7: warning eslint(no-unused-vars): Variable 'unusedFishProbe' is declared but never used. Unused variables should start with a '_'. help: Consider removing this declaration.\n",
+      "stderr": ""
+    },
+    {
+      "name": "final-eight-authored-code-paths",
+      "command": [
+        "node",
+        "--max-old-space-size=192",
+        "node_modules/oxlint/bin/oxlint",
+        "--threads=1",
+        "--deny-warnings",
+        "src/pet/LivingRoom.tsx",
+        "src/room/Room.tsx",
+        "src/room/objects/fishTank.tsx",
+        "src/pet/fishGreeting.test.tsx",
+        "src/room/Room.fishGreeting.test.tsx",
+        "scripts/browser/fish-greeting.test.mjs",
+        "docs/audits/2026-10-12-character-polish/fish-greeting-static-compare.mjs",
+        "docs/audits/2026-10-12-character-polish/fish-greeting-final-static-compare.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "note": "Installed oxlint uses quiet success output. Known warning control returns1and emits expected diagnostic; same single-thread capped CLI accepts all8finalpathswith0warnings/errors."
+}

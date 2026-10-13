@@ -65,6 +65,10 @@ export interface RoomProps {
   /** Days late per placed object id (objectOverdue() in ./cuePlan): breaks ties when choosing which cues show in full. */
   overdue?: Record<string, number>
   selectedId?: string | null
+  /** A clean tank may answer the resident's existing wave with one finite tail response. */
+  responseObjectId?: string | null
+  /** Elapsed action time on its first semantic draw; held through ordinary frames. */
+  responseElapsedMs?: number
   /** Preview uses the same outline/chevron, stationary and without build floor fill. */
   selectionMode?: 'build' | 'preview'
   /** A new or moving object's preview: drawn see-through with a green or red footprint. */
@@ -186,7 +190,7 @@ const PET_HIT = 64
 const NO_STAGES: Record<string, MessStage> = {}
 const NO_NEGLECT: Record<string, NeglectLevel> = {}
 
-export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, overdue, selectedId, selectionMode = 'build', ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
+export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, overdue, selectedId, responseObjectId, responseElapsedMs = 0, selectionMode = 'build', ghost, hiddenId, pet, overlay, width, className, svgRef, svgProps }: RoomProps) {
   const scene = useContext(SceneContext)
   const items: Item[] = []
   const justPlaced = useJustPlaced(objects)
@@ -194,12 +198,13 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT, 
   for (const o of objects) {
     const entry = catalogEntry(o.catalogId)
     if (!entry || o.id === hiddenId) continue
+    const greeting = o.id === responseObjectId && entry.id === 'fish-tank' && (stages[o.id] ?? 'clean') === 'clean'
     items.push({
       id: o.id,
       footprint: footprintOf(o, entry),
       layer: entry.layer,
       draw: () => (
-        <g key={o.id} data-object-id={o.id} className={justPlaced.has(o.id) ? 'room-obj-drop' : undefined} style={{ cursor: 'pointer' }}>
+        <g key={o.id} data-object-id={o.id} className={[justPlaced.has(o.id) && 'room-obj-drop', greeting && 'room-fish-greeting'].filter(Boolean).join(' ') || undefined} style={{ cursor: 'pointer', ...(greeting ? { '--fish-greeting-delay': `${-Math.max(0, responseElapsedMs)}ms` } : {}) }}>
           <PlacedArt entry={entry} placement={o} stage={stages[o.id] ?? 'clean'} />
         </g>
       ),

@@ -1,0 +1,59 @@
+✔ mochi greets only the chosen tank with attached finite tails, rotation 0 (1977.38176ms)
+✔ mochi greets only the chosen tank with attached finite tails, rotation 1 (1724.695227ms)
+✔ bun greets only the chosen tank with attached finite tails, rotation 0 (2005.713088ms)
+✔ bun greets only the chosen tank with attached finite tails, rotation 1 (1754.713328ms)
+✔ sprout greets only the chosen tank with attached finite tails, rotation 0 (1822.56337ms)
+✔ sprout greets only the chosen tank with attached finite tails, rotation 1 (1694.583352ms)
+✔ native fish tail effects finish once on the browser clock and return to neutral (3033.192728ms)
+ℹ Native CSS finished promises use real browser time; the separate fake resident clock only holds and then expires the semantic interaction.
+✔ live system reduction cancels the fish response without replay (1619.773095ms)
+✔ initial system reduction never starts fish effects (846.082992ms)
+✔ initial device reduction never starts fish effects (829.710763ms)
+✔ real cross-tab device preference cancels fish effects without replay (1665.815447ms)
+✔ a player wave interrupts the fish greeting and leaves no queued reply (2106.628888ms)
+✔ fish greeting fits 320x640 with attached tails (1544.3684ms)
+✔ fish greeting fits 390x664 with attached tails (1570.908454ms)
+✔ fish greeting fits 844x390 with attached tails (1617.360473ms)
+✔ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1663.284117ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1582.611074ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1615.952965ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1572.582306ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1658.852857ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1575.364479ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ keyboard exploration stays still and fits 320px (755.034051ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 390px (839.931955ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 1280px (719.989245ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 640px (833.160737ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ keyboard exploration stays still and fits 844px (838.894995ms)
+ℹ Chromium 152.0.7977.82; offline production; native keyboard and reduced motion
+✔ an invitation joins a live step, reaches the chosen detail, coalesces repeats, and respects live reduction (2153.330007ms)
+ℹ Chromium 152.0.7977.82; pose join 0.2253 room SVG units; one application rAF
+✔ device motion choice persists and keeps finite reactions still at320px (4960.542598ms)
+ℹ Chromium 152.0.7977.82; native keyboard44px choice; reload; visible resident0idle/1finite/0deadline; still markup; restored normal1; unchanged saved tables.
+✔ device motion choice persists and keeps finite reactions still at1280px (4750.791256ms)
+ℹ Chromium 152.0.7977.82; native keyboard44px choice; reload; visible resident0idle/1finite/0deadline; still markup; restored normal1; unchanged saved tables.
+✔ device off cannot override system reduction, and live system changes retain the existing clock (965.396522ms)
+✔ native cross-tab storage pauses a visible pet and cancels Hop without replaying it (2866.206382ms)
+ℹ One Chromium/app page plus a minimal same-origin storage-only peer; real StorageEvent, cancellation/no replay and live Settings checked state; unchanged saved tables.
+✔ native cross-tab storage pauses a visible pet and cancels Stretch without replaying it (2906.495757ms)
+ℹ One Chromium/app page plus a minimal same-origin storage-only peer; real StorageEvent, cancellation/no replay and live Settings checked state; unchanged saved tables.
+✔ a device-reduced gallery cheer keeps its pet still and fades before its existing deadline (3464.014293ms)
+ℹ Device on/system off: three CSS cheering pets still;36 static-fade accents end by1200ms;original finite cleanup;0RAF.
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 63172.788592

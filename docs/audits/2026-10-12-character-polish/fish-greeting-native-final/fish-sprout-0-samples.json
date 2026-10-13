@@ -1,0 +1,368 @@
+[
+  {
+    "time": 0,
+    "animations": [
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": -8,
+        "iterations": 1,
+        "objectId": "tank"
+      },
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": -8,
+        "iterations": 1,
+        "objectId": "tank"
+      }
+    ],
+    "tails": [
+      {
+        "yellow": false,
+        "angle": 0,
+        "attachmentError": 0,
+        "glassClearance": 0.38000000000005585,
+        "box": {
+          "x": 440.9809875488281,
+          "y": 395.7851867675781,
+          "right": 448.3355712890625,
+          "bottom": 405.5912780761719
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-14 -22) rotate(0) scale(1 1)"
+      },
+      {
+        "yellow": true,
+        "angle": 0,
+        "attachmentError": 0,
+        "glassClearance": 5.610507506138418,
+        "box": {
+          "x": 446.32763671875,
+          "y": 384.01544189453125,
+          "right": 453.1452331542969,
+          "bottom": 392.7663879394531
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-10 -35) rotate(-4) scale(0.85 0.85)"
+      }
+    ]
+  },
+  {
+    "time": 210,
+    "animations": [
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 202,
+        "iterations": 1,
+        "objectId": "tank"
+      },
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 202,
+        "iterations": 1,
+        "objectId": "tank"
+      }
+    ],
+    "tails": [
+      {
+        "yellow": false,
+        "angle": -9.999987517730313,
+        "attachmentError": 0,
+        "glassClearance": 0.3025739844488764,
+        "box": {
+          "x": 440.2413330078125,
+          "y": 395.85968017578125,
+          "right": 449.1869812011719,
+          "bottom": 406.7939147949219
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-14 -22) rotate(0) scale(1 1)"
+      },
+      {
+        "yellow": true,
+        "angle": 6.499986894643382,
+        "attachmentError": 0,
+        "glassClearance": 5.256416580231124,
+        "box": {
+          "x": 446.4272766113281,
+          "y": 383.736572265625,
+          "right": 453.0362854003906,
+          "bottom": 392.33648681640625
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-10 -35) rotate(-4) scale(0.85 0.85)"
+      }
+    ]
+  },
+  {
+    "time": 420,
+    "animations": [
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 412,
+        "iterations": 1,
+        "objectId": "tank"
+      },
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 412,
+        "iterations": 1,
+        "objectId": "tank"
+      }
+    ],
+    "tails": [
+      {
+        "yellow": false,
+        "angle": 7.999994819856548,
+        "attachmentError": 8.038873388460929e-14,
+        "glassClearance": 0.3307425858316767,
+        "box": {
+          "x": 440.3702087402344,
+          "y": 394.809326171875,
+          "right": 449.0179443359375,
+          "bottom": 405.5435485839844
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-14 -22) rotate(0) scale(1 1)"
+      },
+      {
+        "yellow": true,
+        "angle": -5.200003199874048,
+        "attachmentError": 5.684341886080802e-14,
+        "glassClearance": 5.9499863462364235,
+        "box": {
+          "x": 446.0172119140625,
+          "y": 384.05889892578125,
+          "right": 453.5208435058594,
+          "bottom": 393.28631591796875
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-10 -35) rotate(-4) scale(0.85 0.85)"
+      }
+    ]
+  },
+  {
+    "time": 840,
+    "animations": [
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 832,
+        "iterations": 1,
+        "objectId": "tank"
+      },
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 832,
+        "iterations": 1,
+        "objectId": "tank"
+      }
+    ],
+    "tails": [
+      {
+        "yellow": false,
+        "angle": 4.000001701562397,
+        "attachmentError": 5.684341886080802e-14,
+        "glassClearance": 0.367783074167899,
+        "box": {
+          "x": 440.6568908691406,
+          "y": 395.2840881347656,
+          "right": 448.6776123046875,
+          "bottom": 405.579345703125
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-14 -22) rotate(0) scale(1 1)"
+      },
+      {
+        "yellow": true,
+        "angle": -2.5999995612833917,
+        "attachmentError": 0,
+        "glassClearance": 5.774192771161307,
+        "box": {
+          "x": 446.16552734375,
+          "y": 384.03289794921875,
+          "right": 453.3335266113281,
+          "bottom": 393.0313720703125
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-10 -35) rotate(-4) scale(0.85 0.85)"
+      }
+    ]
+  },
+  {
+    "time": 1232,
+    "animations": [
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1224,
+        "iterations": 1,
+        "objectId": "tank"
+      },
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1224,
+        "iterations": 1,
+        "objectId": "tank"
+      }
+    ],
+    "tails": [
+      {
+        "yellow": false,
+        "angle": 0.9999993263990709,
+        "attachmentError": 8.038873388460929e-14,
+        "glassClearance": 0.3792383307801386,
+        "box": {
+          "x": 440.89654541015625,
+          "y": 395.6575927734375,
+          "right": 448.4211730957031,
+          "bottom": 405.5905456542969
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-14 -22) rotate(0) scale(1 1)"
+      },
+      {
+        "yellow": true,
+        "angle": -0.6499999562738674,
+        "attachmentError": 5.684341886080802e-14,
+        "glassClearance": 5.650274805615909,
+        "box": {
+          "x": 446.28582763671875,
+          "y": 384.01898193359375,
+          "right": 453.1923828125,
+          "bottom": 392.83355712890625
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-10 -35) rotate(-4) scale(0.85 0.85)"
+      }
+    ]
+  },
+  {
+    "time": 1400,
+    "animations": [
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1392,
+        "iterations": 1,
+        "objectId": "tank"
+      },
+      {
+        "name": "fish-tail-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1392,
+        "iterations": 1,
+        "objectId": "tank"
+      }
+    ],
+    "tails": [
+      {
+        "yellow": false,
+        "angle": 0,
+        "attachmentError": 0,
+        "glassClearance": 0.38000000000005585,
+        "box": {
+          "x": 440.9809875488281,
+          "y": 395.7851867675781,
+          "right": 448.3355712890625,
+          "bottom": 405.5912780761719
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-14 -22) rotate(0) scale(1 1)"
+      },
+      {
+        "yellow": true,
+        "angle": 0,
+        "attachmentError": 0,
+        "glassClearance": 5.610507506138418,
+        "box": {
+          "x": 446.32763671875,
+          "y": 384.01544189453125,
+          "right": 453.1452331542969,
+          "bottom": 392.7663879394531
+        },
+        "tank": {
+          "x": 437.1174011230469,
+          "y": 367.8966064453125,
+          "right": 494.8557434082031,
+          "bottom": 451.1308288574219
+        },
+        "fishTransform": "translate(-10 -35) rotate(-4) scale(0.85 0.85)"
+      }
+    ]
+  }
+]
