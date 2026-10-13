@@ -1,0 +1,10 @@
+✔ dressed bun pauses all five previews in both facings and resumes the remaining duration (10415.715391ms)
+✔ pause control stays clear and keyboard visible at 320x568/200% (2040.059527ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12841.730353

@@ -1,0 +1,113 @@
+{
+  "method": "One sequential nice10 worker/browser; approximately1s host availableRAM/tmp snapshots, not continuous or peakCPU/RSS/device certification. Inherited heap caps are not independently recorded. Only own job group may be stopped.",
+  "runs": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-build-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 12,
+      "minimumObservedAvailableMiB": 4308.078125,
+      "minimumObservedTmpFreeMiB": 4101.453125,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-focused-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 12,
+      "minimumObservedAvailableMiB": 4610.8515625,
+      "minimumObservedTmpFreeMiB": 4099.44140625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-full-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 4096,
+      "samples": 85,
+      "minimumObservedAvailableMiB": 4348.375,
+      "minimumObservedTmpFreeMiB": 4089.63671875,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-geometry-probe-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 8,
+      "minimumObservedAvailableMiB": 3772.0078125,
+      "minimumObservedTmpFreeMiB": 4013.94921875,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-lint-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 3,
+      "minimumObservedAvailableMiB": 5731.3125,
+      "minimumObservedTmpFreeMiB": 4101.42578125,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native-red-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 9,
+      "minimumObservedAvailableMiB": 3336.53125,
+      "minimumObservedTmpFreeMiB": 4082.23046875,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 152,
+      "minimumObservedAvailableMiB": 4865.2734375,
+      "minimumObservedTmpFreeMiB": 4005.1640625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native-revised-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 15,
+      "minimumObservedAvailableMiB": 4343.21484375,
+      "minimumObservedTmpFreeMiB": 4010.43359375,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-build-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 4,
+      "minimumObservedAvailableMiB": 3538.90625,
+      "minimumObservedTmpFreeMiB": 4101.4765625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 53,
+      "minimumObservedAvailableMiB": 3056.03125,
+      "minimumObservedTmpFreeMiB": 4006.0625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-unit-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 5,
+      "minimumObservedAvailableMiB": 4023.171875,
+      "minimumObservedTmpFreeMiB": 4099.703125,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-red-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 5,
+      "minimumObservedAvailableMiB": 4118.375,
+      "minimumObservedTmpFreeMiB": 4099.70703125,
+      "resourceStopReason": null
+    }
+  ]
+}

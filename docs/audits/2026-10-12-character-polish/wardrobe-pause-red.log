@@ -1,0 +1,129 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run src/screens/Wardrobe.pause.test.tsx --maxWorkers=1
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/screens/Wardrobe.pause.test.tsx (21 tests | 21 failed) 734ms
+   × starts with a disabled pause control and no preview clock 76ms
+   × holds mochi Wave exactly and resumes only its remaining movement 77ms
+   × holds mochi Gentle pats exactly and resumes only its remaining movement 59ms
+   × holds mochi Hop exactly and resumes only its remaining movement 54ms
+   × holds mochi Stretch exactly and resumes only its remaining movement 43ms
+   × holds mochi Rest exactly and resumes only its remaining movement 25ms
+   × holds bun Wave exactly and resumes only its remaining movement 24ms
+   × holds bun Gentle pats exactly and resumes only its remaining movement 28ms
+   × holds bun Hop exactly and resumes only its remaining movement 24ms
+   × holds bun Stretch exactly and resumes only its remaining movement 28ms
+   × holds bun Rest exactly and resumes only its remaining movement 26ms
+   × holds sprout Wave exactly and resumes only its remaining movement 27ms
+   × holds sprout Gentle pats exactly and resumes only its remaining movement 25ms
+   × holds sprout Hop exactly and resumes only its remaining movement 21ms
+   × holds sprout Stretch exactly and resumes only its remaining movement 26ms
+   × holds sprout Rest exactly and resumes only its remaining movement 23ms
+   × allows Stop and every static pose to cancel a paused run without replay 18ms
+   × cancels a paused preview under live system reduction and never replays it 31ms
+   × cancels a paused preview under live device reduction and never replays it 34ms
+   × keeps a paused outfit update held, preserves pause while hidden, and expires a resumed hidden run 32ms
+   × repeatedly pauses and resumes with at most one owner clock and clears on unmount 33ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 21 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/Wardrobe.pause.test.tsx > starts with a disabled pause control and no preview clock
+AssertionError: expected null not to be null
+ ❯ pauseButton src/screens/Wardrobe.pause.test.tsx:46:20
+     44| function pauseButton(paused = false) {
+     45|   const node = ui.container.querySelector<HTMLButtonElement>(`[aria-la…
+     46|   expect(node).not.toBeNull()
+       |                    ^
+     47|   return node!
+     48| }
+ ❯ src/screens/Wardrobe.pause.test.tsx:59:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/21]⎯
+
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds mochi Wave exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds mochi Gentle pats exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds mochi Hop exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds mochi Stretch exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds mochi Rest exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds bun Wave exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds bun Gentle pats exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds bun Hop exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds bun Stretch exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds bun Rest exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds sprout Wave exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds sprout Gentle pats exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds sprout Hop exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds sprout Stretch exactly and resumes only its remaining movement
+ FAIL  src/screens/Wardrobe.pause.test.tsx > holds sprout Rest exactly and resumes only its remaining movement
+AssertionError: expected null not to be null
+ ❯ pauseButton src/screens/Wardrobe.pause.test.tsx:46:20
+     44| function pauseButton(paused = false) {
+     45|   const node = ui.container.querySelector<HTMLButtonElement>(`[aria-la…
+     46|   expect(node).not.toBeNull()
+       |                    ^
+     47|   return node!
+     48| }
+ ❯ src/screens/Wardrobe.pause.test.tsx:71:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/21]⎯
+
+ FAIL  src/screens/Wardrobe.pause.test.tsx > allows Stop and every static pose to cancel a paused run without replay
+AssertionError: expected null not to be null
+ ❯ pauseButton src/screens/Wardrobe.pause.test.tsx:46:20
+     44| function pauseButton(paused = false) {
+     45|   const node = ui.container.querySelector<HTMLButtonElement>(`[aria-la…
+     46|   expect(node).not.toBeNull()
+       |                    ^
+     47|   return node!
+     48| }
+ ❯ src/screens/Wardrobe.pause.test.tsx:96:52
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/21]⎯
+
+ FAIL  src/screens/Wardrobe.pause.test.tsx > cancels a paused preview under live system reduction and never replays it
+ FAIL  src/screens/Wardrobe.pause.test.tsx > cancels a paused preview under live device reduction and never replays it
+AssertionError: expected null not to be null
+ ❯ pauseButton src/screens/Wardrobe.pause.test.tsx:46:20
+     44| function pauseButton(paused = false) {
+     45|   const node = ui.container.querySelector<HTMLButtonElement>(`[aria-la…
+     46|   expect(node).not.toBeNull()
+       |                    ^
+     47|   return node!
+     48| }
+ ❯ src/screens/Wardrobe.pause.test.tsx:105:45
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/21]⎯
+
+ FAIL  src/screens/Wardrobe.pause.test.tsx > keeps a paused outfit update held, preserves pause while hidden, and expires a resumed hidden run
+AssertionError: expected null not to be null
+ ❯ pauseButton src/screens/Wardrobe.pause.test.tsx:46:20
+     44| function pauseButton(paused = false) {
+     45|   const node = ui.container.querySelector<HTMLButtonElement>(`[aria-la…
+     46|   expect(node).not.toBeNull()
+       |                    ^
+     47|   return node!
+     48| }
+ ❯ src/screens/Wardrobe.pause.test.tsx:120:47
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/21]⎯
+
+ FAIL  src/screens/Wardrobe.pause.test.tsx > repeatedly pauses and resumes with at most one owner clock and clears on unmount
+AssertionError: expected null not to be null
+ ❯ pauseButton src/screens/Wardrobe.pause.test.tsx:46:20
+     44| function pauseButton(paused = false) {
+     45|   const node = ui.container.querySelector<HTMLButtonElement>(`[aria-la…
+     46|   expect(node).not.toBeNull()
+       |                    ^
+     47|   return node!
+     48| }
+ ❯ src/screens/Wardrobe.pause.test.tsx:142:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/21]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  21 failed (21)
+   Start at  00:35:20
+   Duration  1.98s (transform 39%, tests 39%, environment 16%, import 6%)
+

@@ -8,7 +8,7 @@ import { SegThumb } from '../shell/SegThumb'
 import { describeOutfit, WARDROBE_POSES } from './wardrobeModel'
 
 type PreviewAction = 'greet' | 'affection' | 'celebrate' | 'stretch' | 'rest'
-interface PreviewRun { action: PreviewAction; start: number }
+interface PreviewRun { action: PreviewAction; start: number; paused: boolean }
 
 /** One finite, on-demand clock, isolated from the wardrobe's item grid. */
 export function WardrobePreview({ pet }: { pet: Pet }) {
@@ -18,11 +18,11 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
   const [run, setRun] = useState<PreviewRun | null>(null)
   const [elapsed, setElapsed] = useState(0)
   const { reducedMotion } = usePetMotion((now, reduced) => {
-    if (!run) return
+    if (!run || run.paused) return
     const time = Math.max(0, now - run.start)
     if (reduced || time >= ACTION_MS[run.action]) setRun(null)
     else setElapsed(time)
-  }, run !== null, reduced => { if (reduced) setRun(null) })
+  }, run !== null && !run.paused, reduced => { if (reduced) setRun(null) })
   const active = reducedMotion ? null : run
   const frame = sampleMotion({ species: pet.species, mood: pose === 'sick' ? 'sick' : 'happy',
     action: active?.action ?? 'idle', elapsedMs: active ? elapsed : 0, distance: 0,
@@ -34,17 +34,29 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
   }
 
   function stop() { setRun(null) }
+  function pausePreview() {
+    if (reducedMotion || !run) return
+    setRun(run.paused ? { ...run, start: performance.now() - elapsed, paused: false } : { ...run, paused: true })
+  }
   function toggle(action: PreviewAction) {
     if (reducedMotion) return
     if (run?.action === action) { stop(); return }
     if (run) return
-    const next = { action, start: performance.now() }
+    const next = { action, start: performance.now(), paused: false }
     setPose('idle')
     setElapsed(0)
     setRun(next)
   }
 
   return <div className="wd-stage">
+    <button type="button" className="btn choice wd-pause-preview" disabled={reducedMotion || !active}
+      aria-label={`${active?.paused ? 'Resume' : 'Pause'} movement preview of ${pet.name}`}
+      title={active ? active.paused ? 'Resume preview' : 'Pause preview' : reducedMotion ? 'Motion previews are off' : 'Choose a movement to pause'}
+      onClick={pausePreview}>
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" fill="currentColor">
+        {active?.paused ? <path d="M8 4 20 12 8 20Z" /> : <><rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" /></>}
+      </svg>
+    </button>
     <button type="button" className="btn choice wd-mirror-preview" aria-label={`Mirror preview of ${pet.name}`}
       aria-pressed={mirrored} title="Mirror preview" onClick={() => setMirrored(value => !value)}>
       <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">

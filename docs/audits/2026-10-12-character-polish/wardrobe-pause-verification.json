@@ -1,0 +1,224 @@
+{
+  "freeze": {
+    "baseCommit": "43a88eb5a25a998d40235cfa6750c71e775e7b62",
+    "sources": {
+      "src/screens/WardrobePreview.tsx": "de2ff2e4ee668b93fa58a87625d53ae1053145801d861e877931237295d86bea",
+      "src/screens/Wardrobe.css": "41776dd90ee9202675f34116bd2c6670e45f2307677f48d30864961cc26bdeba",
+      "src/screens/Wardrobe.pause.test.tsx": "251d620b5e8cdf7789a20b44417d2db7da757c32e5f89ae68aa1702be75836df",
+      "scripts/browser/wardrobe-pause.test.mjs": "9e18de58447605b310b611e5ea7c1d20671b0666a1fb0daf5860b38f2582f4c5",
+      "scripts/browser/wardrobe-mirror.test.mjs": "1addf655e3cae868496dcc5bb661e6b51d0b43a3814d89cf2cddbe862fd7dbe4",
+      "docs/ART.md": "5ce1f5db03cf06d2e91020c87859bd9220c35c7256e04d5f71b41a9e99a4a1e0",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-design.md": "3bf336801e5d78df600c29fcba436694188821bb7eb6971e9d3ee19c26b7ac43"
+    },
+    "unchangedSources": {
+      "src/screens/Wardrobe.tsx": "97a3e3da1d1f3451f937a74aed619f67c9703f0895d46494fc73809ab274ed5c",
+      "src/screens/wardrobeModel.ts": "54a214a753fd87347ae0b4b2089ff5829be5c4f24b369ed6b0d52560ead86ddd",
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+      "src/character/accent.tsx": "97e78bfce8b045d60a905b7ca015b36df907f89699985882442f2c82d4d97cca",
+      "src/character/motion.ts": "316c7fce00a9cc638b85f7e2eb13c5980f5721b6226e424678f0575acceb21b5",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/room/shell/geometry.ts": "967f73de056add3298520e580aa172a720132b49b11dd5bcab4a8f1a4b4fd027",
+      "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+      "src/shell/SegThumb.tsx": "9c35f972813c2270237ca025a0bf07250eaf1b2f5b79cf49c1de7e79c3134eea",
+      "src/shell/controls.css": "a0d257f01716ffb9aeecc89d5903b4d92a00a5b035caba72b02c5090c1889dce",
+      "src/index.css": "28b09b668da92e49c2a13554af34e56408dcc677d21e954fbc8145262b592418",
+      "src/shell/viewTransition.ts": "04defe5d1aa6e4397b71b2873ff06ae3fb6f610e2ecf2a8a4fc4e0e4f3c82789",
+      "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+      "scripts/browser/wardrobe-motion.test.mjs": "572a222f53a43fdc4c8df29d5a6a6864b61222e4892bdad47e57697033e95195",
+      "scripts/browser/wardrobe-rest.test.mjs": "8926976d76b47d8597001305da60cb8dcf9003af46d21f0278621992f005cd96",
+      "scripts/browser/wardrobe-show.test.mjs": "772e260cabcd6c40c792347d379d35215d43c51d0825eb744d5c09d282d1f052",
+      "src/screens/Wardrobe.test.tsx": "137eb49cb21b7d5deb66296ffbf8955a12bd85358eb368e9abfb234c823f3a25",
+      "src/screens/Wardrobe.rest.test.tsx": "f5216a4894ef2dfa01ca68567f5c7c7800a6e02b8de9826b3f3421476919958b",
+      "src/screens/Wardrobe.show.test.tsx": "2d139ba0c68de07cafe6f659bb666a1172fdf160986c5d91a99a7dbe6fb1c8d2",
+      "src/screens/Wardrobe.stretch.test.tsx": "ad5924806d222c7bf3708e62cffdc8131de18877f3b8f1270e6b802b8f604074",
+      "src/screens/wardrobeModel.test.ts": "3d41f5b069f8ebf14d2652c348a5636d23c30a5f0c74a29762f2b7a392660139",
+      "src/pet/usePetMotion.test.tsx": "07474f35781bb9b3442939d6eba0da4753211092a0d423d69c88236c782de93b",
+      "src/pet/usePetMotion.preference.test.tsx": "39d4767c5b54d38a0a4335b4f1bd8553ebffdf5aa78f0103e98c77655da70f68",
+      "src/pet/motionPreference.test.ts": "646cf1e48167baf88a182b74a1f60b14bfd6d6530609e1f9da4271d9f091fdcd",
+      "src/screens/Wardrobe.mirror.test.tsx": "4cbe48092af349532247bf24439a4c966d86e6225eb7647f452b97dbfdf91632"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-source.diff",
+      "sha256": "0f75e4d88ae814493f00f6abf641fb7635a614e14db974019910c19f5562ec27"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-artifacts.json",
+    "sha256": "7cc9b262c60b26f7b9cfc532c58f9e26e0098b61b4e3368147ea80e345b050c3"
+  },
+  "checks": [
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-build.log",
+      "logSha256": "0d424b19c258e1e5b3044f9c1652667a54add85d7c86515df828bad26f45d219",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-diff.log",
+      "logSha256": "6afba0d105681590484e959e9ab2f1e2a4e0ebf378ca06c30a3703f1bba10793",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-focused.log",
+      "logSha256": "5f20fdd2f7ee22afe64100687612a78c035c24fa7f57065b6a843f10793d7a83",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-full.log",
+      "logSha256": "711eb7ca453ab51ce837ee36e0be84efda1d59783681d4ce268d19730b3250e9",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "geometry-probe",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-geometry-probe.log",
+      "logSha256": "e0a357b8e566a430cc3a970b786944cc41bba9c26fa1d1a2e09b556e32496e82",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-geometry-probe.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-lint.log",
+      "logSha256": "16e73fa6e2cb68110650e42f2e33378ceecb49b4016e494769e90f933a0358b5",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native-red.log",
+      "logSha256": "71e30c352981a9f53a28f7242e07c922f24070bad8cd8c54bc679046b5d1421e",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native-revised",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native-revised.log",
+      "logSha256": "dae7eb4cd10ebfa7678ac34a7cd06a544bc972b06e7418acd24f85abdbddfdb9",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native-revised.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native.log",
+      "logSha256": "78448c1c6ab6232182f1d4c5a9233b79f65272eb23fdf5bb6359f99137fd9bec",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-build",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-build.log",
+      "logSha256": "072f366b53d478a5022c7794de709f17a9f6e20231cf931aa1ca2e4f1540d3d6",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-native",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native.log",
+      "logSha256": "7200e193efe108711d54a3d091a5ff49a7c892c2e0d119924427fc074009c494",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "prototype-unit",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-unit.log",
+      "logSha256": "2b77fc5ffb114fd5dacc63b076c9b90822773cf451c7da9aab960aeaa2584a0e",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-unit.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/wardrobe-pause-red.log",
+      "logSha256": "9f055901be520825cb1d0927f7c82bbac31869cd8744c90c7eee557b36cad92c",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "status": "Completed scoped checks and independent static/source/still review; bound files reverified before local checkpoint.",
+  "results": {
+    "full": "2388 tests /124files passed,82.36s; single worker",
+    "focused": "121 tests /10files passed,8.92s; single worker",
+    "native": "56 tests passed,0failed/skipped/cancelled,149.449890703s; concurrency1. New16 plus40 existing Wardrobe regressions.",
+    "build": "Production tsc -b && vite build pass; existing chunk-size advisory retained",
+    "lint": "Scoped oxlint max-warnings0 pass",
+    "whitespace": "Seven authored source paths pass"
+  },
+  "visualReview": {
+    "candidate": "16 unique selected candidate PNGs directly opened:14 initial plus2 corrected-case. Original compact Rest failure and Bun Hop diagnostic directly opened too. Bound in prototype-visual-review JSON.",
+    "final": "All10 differing final PNGs directly opened; remaining6 byte-exact previously inspected selected candidate. Bound in final-comparison JSON. Sixteen final PNGs total.",
+    "nativeSampling": "45 separate runs:3 species x5 actions x3 delivered phases, each held60000 simulated ms; both corners xbothfacings=180 sampled geometry views. All zero ink hits/pausedRAF. Delivered phase discrepancy at most14ms. Actual contact reflection, exact art/grid identity and saved tables, keyboard focus and native remaining deadline within \u00b124ms. Unit tests cover exact remaining millisecond.",
+    "limits": "Native Chromium152, root text enlargement not browser zoom,1px geometry grid and sampled phases not exhaustive vector/pixel/temporal/device/comfort certification."
+  },
+  "history": {
+    "failures": "Four retained exit1 checks:21missing-control unit cases, one missing-control native red, initial native14/16 with Bun Hop style serialization and tilted Rest empty bounding corner, targeted Bun diagnostic exit1. Corrected two-case native passes.",
+    "geometryCorrection": "SVG style mutation left empty style attribute on active accents despite attempted removal. Diagnostic binds full actual/held strings and shows only this9character difference at11661,0RAF. Use exact temporary SVG pointer-events presentation-attribute restoration and reset/restore exact button styles. Apply to existing byte-identical mirror helper; archive old source and add immediate whole-art equality guard. Production paused state was unchanged by this fixture issue.",
+    "bounds": "320/200 tilted Rest rectangles overlap empty corners by about60.5px\u00b2; zero painted hits and clear direct PNG. Held movement layouts use painted geometry, while initial static Head keeps strict nonintersecting bounds.",
+    "prototype": "Virtual two-source product candidate unit/build/browser before application. Product candidate stays exact through instrumentation corrections. Virtual bundle did not typecheck; final production build did."
+  },
+  "resources": {
+    "runs": 12,
+    "minimumObservedAvailableMiB": 3056.03125,
+    "minimumObservedTmpFreeMiB": 4005.1640625,
+    "guardStops": 0,
+    "launchRejections": 0,
+    "fullSuite": "512MB Node heap supplied through environment,launch4096MiB/reserve2048MiB; minimum observed4348.4MiB. Heap caps not independently bound; snapshots not continuous/peak certification."
+  },
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-review-input.json",
+    "sha256": "ad0d3ba29038fcd56aa2dcc74ca5143b6c9bf4e157cc58a3108b232a61124aa5"
+  },
+  "independentReview": {
+    "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-independent-review.md",
+    "sha256": "3e003b56b324e5b1bba93b4c53277bb88f34a66f07c5acd2b60b05bb026530b1",
+    "verdict": "PASS; no scoped findings"
+  }
+}

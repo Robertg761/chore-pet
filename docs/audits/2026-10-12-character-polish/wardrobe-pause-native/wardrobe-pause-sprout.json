@@ -1,0 +1,213 @@
+{
+  "species": "sprout",
+  "phase": 0.5,
+  "activeElapsed": 1200,
+  "before": {
+    "determinant": 1,
+    "feet": [
+      {
+        "x": 77.9999987357415,
+        "y": 177.99999992723014
+      },
+      {
+        "x": 122.00000127163186,
+        "y": 177.99999987315928
+      }
+    ]
+  },
+  "reflected": {
+    "determinant": -1,
+    "feet": [
+      {
+        "x": 122.00000126425853,
+        "y": 177.99999992723014
+      },
+      {
+        "x": 77.99999872836817,
+        "y": 177.99999987315928
+      }
+    ]
+  },
+  "normal": {
+    "pause": {
+      "button": {
+        "x": 213,
+        "y": 84,
+        "width": 48,
+        "height": 48,
+        "right": 261,
+        "bottom": 132
+      },
+      "ink": {
+        "x": 222.739990234375,
+        "y": 175.23263549804688,
+        "width": 406.6934814453125,
+        "height": 379.8973693847656,
+        "right": 629.4334716796875,
+        "bottom": 555.1300048828125
+      },
+      "art": {
+        "x": 223,
+        "y": 90,
+        "width": 420,
+        "height": 485,
+        "right": 643,
+        "bottom": 575
+      },
+      "stage": {
+        "x": 200,
+        "y": 71,
+        "width": 466,
+        "height": 705,
+        "right": 666,
+        "bottom": 776
+      },
+      "overlap": 0,
+      "accentOverlap": 0,
+      "paintedInkSamples": 0,
+      "hitTestGridPx": 1,
+      "tabsVisible": true,
+      "sideScrollTop": 0,
+      "focusVisible": true,
+      "ringClear": true,
+      "horizontalOverflow": 0,
+      "frames": 0
+    },
+    "mirror": {
+      "button": {
+        "x": 605,
+        "y": 84,
+        "width": 48,
+        "height": 48,
+        "right": 653,
+        "bottom": 132
+      },
+      "ink": {
+        "x": 222.739990234375,
+        "y": 175.23263549804688,
+        "width": 406.6934814453125,
+        "height": 379.8973693847656,
+        "right": 629.4334716796875,
+        "bottom": 555.1300048828125
+      },
+      "art": {
+        "x": 223,
+        "y": 90,
+        "width": 420,
+        "height": 485,
+        "right": 643,
+        "bottom": 575
+      },
+      "stage": {
+        "x": 200,
+        "y": 71,
+        "width": 466,
+        "height": 705,
+        "right": 666,
+        "bottom": 776
+      },
+      "overlap": 0,
+      "accentOverlap": 0,
+      "paintedInkSamples": 0,
+      "hitTestGridPx": 1,
+      "tabsVisible": true,
+      "sideScrollTop": 0,
+      "focusVisible": false,
+      "ringClear": true,
+      "horizontalOverflow": 0,
+      "frames": 0
+    }
+  },
+  "flipped": {
+    "pause": {
+      "button": {
+        "x": 213,
+        "y": 84,
+        "width": 48,
+        "height": 48,
+        "right": 261,
+        "bottom": 132
+      },
+      "ink": {
+        "x": 236.56649780273438,
+        "y": 175.23263549804688,
+        "width": 406.6935119628906,
+        "height": 379.8973693847656,
+        "right": 643.260009765625,
+        "bottom": 555.1300048828125
+      },
+      "art": {
+        "x": 223,
+        "y": 90,
+        "width": 420,
+        "height": 485,
+        "right": 643,
+        "bottom": 575
+      },
+      "stage": {
+        "x": 200,
+        "y": 71,
+        "width": 466,
+        "height": 705,
+        "right": 666,
+        "bottom": 776
+      },
+      "overlap": 0,
+      "accentOverlap": 0,
+      "paintedInkSamples": 0,
+      "hitTestGridPx": 1,
+      "tabsVisible": true,
+      "sideScrollTop": 0,
+      "focusVisible": false,
+      "ringClear": true,
+      "horizontalOverflow": 0,
+      "frames": 0
+    },
+    "mirror": {
+      "button": {
+        "x": 605,
+        "y": 84,
+        "width": 48,
+        "height": 48,
+        "right": 653,
+        "bottom": 132
+      },
+      "ink": {
+        "x": 236.56649780273438,
+        "y": 175.23263549804688,
+        "width": 406.6935119628906,
+        "height": 379.8973693847656,
+        "right": 643.260009765625,
+        "bottom": 555.1300048828125
+      },
+      "art": {
+        "x": 223,
+        "y": 90,
+        "width": 420,
+        "height": 485,
+        "right": 643,
+        "bottom": 575
+      },
+      "stage": {
+        "x": 200,
+        "y": 71,
+        "width": 466,
+        "height": 705,
+        "right": 666,
+        "bottom": 776
+      },
+      "overlap": 0,
+      "accentOverlap": 0,
+      "paintedInkSamples": 0,
+      "hitTestGridPx": 1,
+      "tabsVisible": true,
+      "sideScrollTop": 0,
+      "focusVisible": true,
+      "ringClear": true,
+      "horizontalOverflow": 0,
+      "frames": 0
+    }
+  },
+  "browser": "152.0.7977.82",
+  "method": "Native Enter pauses the delivered Rest frame; actual local SVG contacts reflect through Mirror while both corners stay clear. Manual pause owns zero RAF."
+}

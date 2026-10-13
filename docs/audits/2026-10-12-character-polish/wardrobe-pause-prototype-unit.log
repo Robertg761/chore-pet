@@ -1,0 +1,11 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run --config /tmp/wardrobe-pause-prototype.config.mjs src/screens/Wardrobe.pause.test.tsx --maxWorkers=1
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+
+ Test Files  1 passed (1)
+      Tests  21 passed (21)
+   Start at  00:35:33
+   Duration  2.31s (tests 63%, transform 20%, environment 12%, import 4%)
+

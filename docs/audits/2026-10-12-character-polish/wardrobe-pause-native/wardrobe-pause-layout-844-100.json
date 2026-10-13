@@ -1,0 +1,139 @@
+{
+  "width": 844,
+  "height": 390,
+  "text": 100,
+  "normal": {
+    "button": {
+      "x": 105,
+      "y": 57.59375,
+      "width": 48,
+      "height": 48,
+      "right": 153,
+      "bottom": 105.59375
+    },
+    "ink": {
+      "x": 170.66441345214844,
+      "y": 85.5932388305664,
+      "width": 150.25169372558594,
+      "height": 117.57427215576172,
+      "right": 320.9161071777344,
+      "bottom": 203.16751098632812
+    },
+    "art": {
+      "x": 109,
+      "y": 57.59375,
+      "width": 278.09375,
+      "height": 139.40625,
+      "right": 387.09375,
+      "bottom": 197
+    },
+    "stage": {
+      "x": 92,
+      "y": 44.59375,
+      "width": 312.09375,
+      "height": 335.40625,
+      "right": 404.09375,
+      "bottom": 380
+    },
+    "overlap": 0,
+    "accentOverlap": 0,
+    "paintedInkSamples": 0,
+    "hitTestGridPx": 1,
+    "tabsVisible": true,
+    "sideScrollTop": 0,
+    "focusVisible": true,
+    "ringClear": true,
+    "horizontalOverflow": 0,
+    "frames": 0
+  },
+  "view": {
+    "button": {
+      "x": 105,
+      "y": 57.59375,
+      "width": 48,
+      "height": 48,
+      "right": 153,
+      "bottom": 105.59375
+    },
+    "ink": {
+      "x": 175.17764282226562,
+      "y": 85.5932388305664,
+      "width": 150.25167846679688,
+      "height": 117.57427215576172,
+      "right": 325.4293212890625,
+      "bottom": 203.16751098632812
+    },
+    "art": {
+      "x": 109,
+      "y": 57.59375,
+      "width": 278.09375,
+      "height": 139.40625,
+      "right": 387.09375,
+      "bottom": 197
+    },
+    "stage": {
+      "x": 92,
+      "y": 44.59375,
+      "width": 312.09375,
+      "height": 335.40625,
+      "right": 404.09375,
+      "bottom": 380
+    },
+    "overlap": 0,
+    "accentOverlap": 0,
+    "paintedInkSamples": 0,
+    "hitTestGridPx": 1,
+    "tabsVisible": true,
+    "sideScrollTop": 0,
+    "focusVisible": true,
+    "ringClear": true,
+    "horizontalOverflow": 0,
+    "frames": 0
+  },
+  "mirrorView": {
+    "button": {
+      "x": 343.09375,
+      "y": 57.59375,
+      "width": 48,
+      "height": 48,
+      "right": 391.09375,
+      "bottom": 105.59375
+    },
+    "ink": {
+      "x": 175.17764282226562,
+      "y": 85.5932388305664,
+      "width": 150.25167846679688,
+      "height": 117.57427215576172,
+      "right": 325.4293212890625,
+      "bottom": 203.16751098632812
+    },
+    "art": {
+      "x": 109,
+      "y": 57.59375,
+      "width": 278.09375,
+      "height": 139.40625,
+      "right": 387.09375,
+      "bottom": 197
+    },
+    "stage": {
+      "x": 92,
+      "y": 44.59375,
+      "width": 312.09375,
+      "height": 335.40625,
+      "right": 404.09375,
+      "bottom": 380
+    },
+    "overlap": 0,
+    "accentOverlap": 0,
+    "paintedInkSamples": 0,
+    "hitTestGridPx": 1,
+    "tabsVisible": true,
+    "sideScrollTop": 0,
+    "focusVisible": false,
+    "ringClear": true,
+    "horizontalOverflow": 0,
+    "frames": 0
+  },
+  "browser": "152.0.7977.82",
+  "method": "Native Space pauses Rest at1200ms; text enlargement is root font size rather than browser zoom. Overlay adds no row; paused Rest bounds may include empty tilted corners, so native painted-geometry sampling checks visible ink at both controls."
+}

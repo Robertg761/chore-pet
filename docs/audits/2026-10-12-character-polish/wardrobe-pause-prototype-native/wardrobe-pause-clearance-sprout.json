@@ -1,0 +1,3216 @@
+{
+  "species": "sprout",
+  "samples": [
+    {
+      "action": "Wave",
+      "duration": 1200,
+      "phase": 0.25,
+      "activeElapsed": 295,
+      "remaining": 905,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 77.99999915940175,
+            "y": 177.9999999298428
+          },
+          {
+            "x": 122.00000084162461,
+            "y": 177.99999992231645
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 122.0000008405983,
+            "y": 177.9999999298428
+          },
+          {
+            "x": 77.99999915837547,
+            "y": 177.99999992231645
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 238.5631866455078,
+            "y": 171.2218780517578,
+            "width": 385.28515625,
+            "height": 377.56292724609375,
+            "right": 623.8483428955078,
+            "bottom": 548.7848052978516
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 238.5631866455078,
+            "y": 171.2218780517578,
+            "width": 385.28515625,
+            "height": 377.56292724609375,
+            "right": 623.8483428955078,
+            "bottom": 548.7848052978516
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 242.15167236328125,
+            "y": 171.2218780517578,
+            "width": 385.28515625,
+            "height": 377.56292724609375,
+            "right": 627.4368286132812,
+            "bottom": 548.7848052978516
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 242.15167236328125,
+            "y": 171.2218780517578,
+            "width": 385.28515625,
+            "height": 377.56292724609375,
+            "right": 627.4368286132812,
+            "bottom": 548.7848052978516
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Wave",
+      "duration": 1200,
+      "phase": 0.5,
+      "activeElapsed": 586,
+      "remaining": 614,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 78.00000000000004,
+            "y": 178
+          },
+          {
+            "x": 122.00000000000001,
+            "y": 178
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 122.00000000000004,
+            "y": 178
+          },
+          {
+            "x": 78.00000000000004,
+            "y": 178
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 231.67616271972656,
+            "y": 164.99948120117188,
+            "width": 396.4046630859375,
+            "height": 388.7926330566406,
+            "right": 628.0808258056641,
+            "bottom": 553.7921142578125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 231.67616271972656,
+            "y": 164.99948120117188,
+            "width": 396.4046630859375,
+            "height": 388.7926330566406,
+            "right": 628.0808258056641,
+            "bottom": 553.7921142578125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 237.91920471191406,
+            "y": 164.99948120117188,
+            "width": 396.4046630859375,
+            "height": 388.7926330566406,
+            "right": 634.3238677978516,
+            "bottom": 553.7921142578125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 237.91920471191406,
+            "y": 164.99948120117188,
+            "width": 396.4046630859375,
+            "height": 388.7926330566406,
+            "right": 634.3238677978516,
+            "bottom": 553.7921142578125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Wave",
+      "duration": 1200,
+      "phase": 0.75,
+      "activeElapsed": 900,
+      "remaining": 300,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 78.00000000000004,
+            "y": 178.00000000000003
+          },
+          {
+            "x": 122.00000000000004,
+            "y": 178.00000000000003
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 122.00000000000001,
+            "y": 178.00000000000003
+          },
+          {
+            "x": 78.00000000000001,
+            "y": 178.00000000000003
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 235.66317749023438,
+            "y": 159.6842041015625,
+            "width": 387.3728942871094,
+            "height": 391.69189453125,
+            "right": 623.0360717773438,
+            "bottom": 551.3760986328125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 235.66317749023438,
+            "y": 159.6842041015625,
+            "width": 387.3728942871094,
+            "height": 391.69189453125,
+            "right": 623.0360717773438,
+            "bottom": 551.3760986328125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 242.9639434814453,
+            "y": 159.6842041015625,
+            "width": 387.37286376953125,
+            "height": 391.69189453125,
+            "right": 630.3368072509766,
+            "bottom": 551.3760986328125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 242.9639434814453,
+            "y": 159.6842041015625,
+            "width": 387.37286376953125,
+            "height": 391.69189453125,
+            "right": 630.3368072509766,
+            "bottom": 551.3760986328125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Gentle pats",
+      "duration": 1600,
+      "phase": 0.25,
+      "activeElapsed": 396,
+      "remaining": 1204,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 78.00000115456085,
+            "y": 178.00000012720315
+          },
+          {
+            "x": 121.99999884781529,
+            "y": 178.00000010977854
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 121.99999884543921,
+            "y": 178.00000012720315
+          },
+          {
+            "x": 78.00000115218474,
+            "y": 178.00000010977854
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 239.16793823242188,
+            "y": 174.95587158203125,
+            "width": 396.1869201660156,
+            "height": 376.77508544921875,
+            "right": 635.3548583984375,
+            "bottom": 551.73095703125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 239.16793823242188,
+            "y": 174.95587158203125,
+            "width": 396.1869201660156,
+            "height": 376.77508544921875,
+            "right": 635.3548583984375,
+            "bottom": 551.73095703125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 230.64515686035156,
+            "y": 174.95587158203125,
+            "width": 396.1868896484375,
+            "height": 376.77508544921875,
+            "right": 626.8320465087891,
+            "bottom": 551.73095703125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 230.64515686035156,
+            "y": 174.95587158203125,
+            "width": 396.1868896484375,
+            "height": 376.77508544921875,
+            "right": 626.8320465087891,
+            "bottom": 551.73095703125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Gentle pats",
+      "duration": 1600,
+      "phase": 0.5,
+      "activeElapsed": 800,
+      "remaining": 800,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 77.99999899176281,
+            "y": 177.9999999280734
+          },
+          {
+            "x": 122.00000097589141,
+            "y": 178.000000165276
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 122.00000100823722,
+            "y": 177.9999999280734
+          },
+          {
+            "x": 77.99999902410859,
+            "y": 178.000000165276
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 234.26438903808594,
+            "y": 168.76602172851562,
+            "width": 421.660400390625,
+            "height": 393.3904724121094,
+            "right": 655.9247894287109,
+            "bottom": 562.156494140625
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 234.26438903808594,
+            "y": 168.76602172851562,
+            "width": 421.660400390625,
+            "height": 393.3904724121094,
+            "right": 655.9247894287109,
+            "bottom": 562.156494140625
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 210.0752410888672,
+            "y": 168.76602172851562,
+            "width": 421.66033935546875,
+            "height": 393.3904724121094,
+            "right": 631.7355804443359,
+            "bottom": 562.156494140625
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 210.0752410888672,
+            "y": 168.76602172851562,
+            "width": 421.66033935546875,
+            "height": 393.3904724121094,
+            "right": 631.7355804443359,
+            "bottom": 562.156494140625
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Gentle pats",
+      "duration": 1600,
+      "phase": 0.75,
+      "activeElapsed": 1192,
+      "remaining": 408,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 77.99999999556518,
+            "y": 177.99999999852454
+          },
+          {
+            "x": 122.00000000462107,
+            "y": 177.99999999715914
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 122.00000000443485,
+            "y": 177.99999999852454
+          },
+          {
+            "x": 77.99999999537899,
+            "y": 177.99999999715914
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 237.14561462402344,
+            "y": 171.86219787597656,
+            "width": 408.334716796875,
+            "height": 385.3179931640625,
+            "right": 645.4803314208984,
+            "bottom": 557.1801910400391
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 237.14561462402344,
+            "y": 171.86219787597656,
+            "width": 408.334716796875,
+            "height": 385.3179931640625,
+            "right": 645.4803314208984,
+            "bottom": 557.1801910400391
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 220.51963806152344,
+            "y": 171.86219787597656,
+            "width": 408.334716796875,
+            "height": 385.3179931640625,
+            "right": 628.8543548583984,
+            "bottom": 557.1801910400391
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 220.51963806152344,
+            "y": 171.86219787597656,
+            "width": 408.334716796875,
+            "height": 385.3179931640625,
+            "right": 628.8543548583984,
+            "bottom": 557.1801910400391
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Hop",
+      "duration": 1800,
+      "phase": 0.25,
+      "activeElapsed": 440,
+      "remaining": 1360,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 77.9999975858154,
+            "y": 175.82635407899858
+          },
+          {
+            "x": 121.99999861344851,
+            "y": 175.82635407899858
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 122.00000241418469,
+            "y": 175.82635407899858
+          },
+          {
+            "x": 78.00000138655157,
+            "y": 175.82635407899858
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 241.23316955566406,
+            "y": 171.61700439453125,
+            "width": 383.53369140625,
+            "height": 369.87274169921875,
+            "right": 624.7668609619141,
+            "bottom": 541.48974609375
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 241.23316955566406,
+            "y": 171.61700439453125,
+            "width": 383.53369140625,
+            "height": 369.87274169921875,
+            "right": 624.7668609619141,
+            "bottom": 541.48974609375
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 241.23316955566406,
+            "y": 171.61700439453125,
+            "width": 383.53369140625,
+            "height": 369.87274169921875,
+            "right": 624.7668609619141,
+            "bottom": 541.48974609375
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 241.23316955566406,
+            "y": 171.61700439453125,
+            "width": 383.53369140625,
+            "height": 369.87274169921875,
+            "right": 624.7668609619141,
+            "bottom": 541.48974609375
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Hop",
+      "duration": 1800,
+      "phase": 0.5,
+      "activeElapsed": 894,
+      "remaining": 906,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 78.00000277203254,
+            "y": 168.32514072670065
+          },
+          {
+            "x": 122.00000104266475,
+            "y": 168.32514072670065
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 121.99999722796746,
+            "y": 168.32514072670065
+          },
+          {
+            "x": 77.99999895733525,
+            "y": 168.32514072670065
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 245.2998046875,
+            "y": 141.59884643554688,
+            "width": 375.400390625,
+            "height": 386.1643371582031,
+            "right": 620.7001953125,
+            "bottom": 527.76318359375
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 245.2998046875,
+            "y": 141.59884643554688,
+            "width": 375.400390625,
+            "height": 386.1643371582031,
+            "right": 620.7001953125,
+            "bottom": 527.76318359375
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 245.2998046875,
+            "y": 141.59884643554688,
+            "width": 375.400390625,
+            "height": 386.1643371582031,
+            "right": 620.7001953125,
+            "bottom": 527.76318359375
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 245.2998046875,
+            "y": 141.59884643554688,
+            "width": 375.400390625,
+            "height": 386.1643371582031,
+            "right": 620.7001953125,
+            "bottom": 527.76318359375
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Hop",
+      "duration": 1800,
+      "phase": 0.75,
+      "activeElapsed": 1336,
+      "remaining": 464,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 77.99999332849147,
+            "y": 178.0000087721037
+          },
+          {
+            "x": 121.99999881994891,
+            "y": 178.0000087721037
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 122.00000667150861,
+            "y": 178.0000087721037
+          },
+          {
+            "x": 78.00000118005114,
+            "y": 178.0000087721037
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 235.1942138671875,
+            "y": 179.505615234375,
+            "width": 395.611572265625,
+            "height": 365.1397705078125,
+            "right": 630.8057861328125,
+            "bottom": 544.6453857421875
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 235.1942138671875,
+            "y": 179.505615234375,
+            "width": 395.611572265625,
+            "height": 365.1397705078125,
+            "right": 630.8057861328125,
+            "bottom": 544.6453857421875
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 235.19422912597656,
+            "y": 179.505615234375,
+            "width": 395.611572265625,
+            "height": 365.1397705078125,
+            "right": 630.8058013916016,
+            "bottom": 544.6453857421875
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 235.19422912597656,
+            "y": 179.505615234375,
+            "width": 395.611572265625,
+            "height": 365.1397705078125,
+            "right": 630.8058013916016,
+            "bottom": 544.6453857421875
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Stretch",
+      "duration": 2400,
+      "phase": 0.25,
+      "activeElapsed": 586,
+      "remaining": 1814,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 78.00000426951628,
+            "y": 178.0000070571016
+          },
+          {
+            "x": 122.00000429983474,
+            "y": 178.0000070571016
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 121.99999573048377,
+            "y": 178.0000070571016
+          },
+          {
+            "x": 77.99999570016531,
+            "y": 178.0000070571016
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 245.4154052734375,
+            "y": 171.79696655273438,
+            "width": 375.169189453125,
+            "height": 375.5373840332031,
+            "right": 620.5845947265625,
+            "bottom": 547.3343505859375
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 245.4154052734375,
+            "y": 171.79696655273438,
+            "width": 375.169189453125,
+            "height": 375.5373840332031,
+            "right": 620.5845947265625,
+            "bottom": 547.3343505859375
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 245.41539001464844,
+            "y": 171.79696655273438,
+            "width": 375.169189453125,
+            "height": 375.5373840332031,
+            "right": 620.5845794677734,
+            "bottom": 547.3343505859375
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 245.41539001464844,
+            "y": 171.79696655273438,
+            "width": 375.169189453125,
+            "height": 375.5373840332031,
+            "right": 620.5845794677734,
+            "bottom": 547.3343505859375
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Stretch",
+      "duration": 2400,
+      "phase": 0.5,
+      "activeElapsed": 1188,
+      "remaining": 1212,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 78.00000128165031,
+            "y": 177.9999995535082
+          },
+          {
+            "x": 122.0000024080773,
+            "y": 177.9999995535082
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 121.99999871834969,
+            "y": 177.9999995535082
+          },
+          {
+            "x": 77.9999975919227,
+            "y": 177.9999995535082
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 244.57559204101562,
+            "y": 169.23880004882812,
+            "width": 376.8487854003906,
+            "height": 378.2867736816406,
+            "right": 621.4243774414062,
+            "bottom": 547.5255737304688
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 244.57559204101562,
+            "y": 169.23880004882812,
+            "width": 376.8487854003906,
+            "height": 378.2867736816406,
+            "right": 621.4243774414062,
+            "bottom": 547.5255737304688
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 244.57562255859375,
+            "y": 169.23880004882812,
+            "width": 376.84881591796875,
+            "height": 378.2867736816406,
+            "right": 621.4244384765625,
+            "bottom": 547.5255737304688
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 244.57562255859375,
+            "y": 169.23880004882812,
+            "width": 376.84881591796875,
+            "height": 378.2867736816406,
+            "right": 621.4244384765625,
+            "bottom": 547.5255737304688
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Stretch",
+      "duration": 2400,
+      "phase": 0.75,
+      "activeElapsed": 1792,
+      "remaining": 608,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 77.99999752551166,
+            "y": 178.0000079136188
+          },
+          {
+            "x": 121.99999816626276,
+            "y": 178.0000079136188
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 122.00000247448837,
+            "y": 178.0000079136188
+          },
+          {
+            "x": 78.0000018337373,
+            "y": 178.0000079136188
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 246.776611328125,
+            "y": 170.50779724121094,
+            "width": 372.44677734375,
+            "height": 376.96405029296875,
+            "right": 619.223388671875,
+            "bottom": 547.4718475341797
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 246.776611328125,
+            "y": 170.50779724121094,
+            "width": 372.44677734375,
+            "height": 376.96405029296875,
+            "right": 619.223388671875,
+            "bottom": 547.4718475341797
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 246.77662658691406,
+            "y": 170.50779724121094,
+            "width": 372.44677734375,
+            "height": 376.96405029296875,
+            "right": 619.2234039306641,
+            "bottom": 547.4718475341797
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 246.77662658691406,
+            "y": 170.50779724121094,
+            "width": 372.44677734375,
+            "height": 376.96405029296875,
+            "right": 619.2234039306641,
+            "bottom": 547.4718475341797
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Rest",
+      "duration": 2400,
+      "phase": 0.25,
+      "activeElapsed": 592,
+      "remaining": 1808,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 77.99999873211085,
+            "y": 177.99999990958446
+          },
+          {
+            "x": 122.00000127040529,
+            "y": 177.99999989113272
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 122.0000012678892,
+            "y": 177.99999990958446
+          },
+          {
+            "x": 77.99999872959476,
+            "y": 177.99999989113272
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 233.06686401367188,
+            "y": 182.06875610351562,
+            "width": 395.1660461425781,
+            "height": 366.6667175292969,
+            "right": 628.23291015625,
+            "bottom": 548.7354736328125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 233.06686401367188,
+            "y": 182.06875610351562,
+            "width": 395.1660461425781,
+            "height": 366.6667175292969,
+            "right": 628.23291015625,
+            "bottom": 548.7354736328125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 237.76705932617188,
+            "y": 182.06875610351562,
+            "width": 395.1660461425781,
+            "height": 366.6667175292969,
+            "right": 632.93310546875,
+            "bottom": 548.7354736328125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 237.76705932617188,
+            "y": 182.06875610351562,
+            "width": 395.1660461425781,
+            "height": 366.6667175292969,
+            "right": 632.93310546875,
+            "bottom": 548.7354736328125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Rest",
+      "duration": 2400,
+      "phase": 0.5,
+      "activeElapsed": 1200,
+      "remaining": 1200,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 77.9999987357415,
+            "y": 177.99999992723014
+          },
+          {
+            "x": 122.00000127163186,
+            "y": 177.99999987315928
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 122.00000126425853,
+            "y": 177.99999992723014
+          },
+          {
+            "x": 77.99999872836817,
+            "y": 177.99999987315928
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 222.739990234375,
+            "y": 175.23263549804688,
+            "width": 406.6934814453125,
+            "height": 379.8973693847656,
+            "right": 629.4334716796875,
+            "bottom": 555.1300048828125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 222.739990234375,
+            "y": 175.23263549804688,
+            "width": 406.6934814453125,
+            "height": 379.8973693847656,
+            "right": 629.4334716796875,
+            "bottom": 555.1300048828125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 236.56649780273438,
+            "y": 175.23263549804688,
+            "width": 406.6935119628906,
+            "height": 379.8973693847656,
+            "right": 643.260009765625,
+            "bottom": 555.1300048828125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 236.56649780273438,
+            "y": 175.23263549804688,
+            "width": 406.6935119628906,
+            "height": 379.8973693847656,
+            "right": 643.260009765625,
+            "bottom": 555.1300048828125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    },
+    {
+      "action": "Rest",
+      "duration": 2400,
+      "phase": 0.75,
+      "activeElapsed": 1800,
+      "remaining": 600,
+      "before": {
+        "determinant": 1,
+        "feet": [
+          {
+            "x": 78.000000202372,
+            "y": 178.00000013680742
+          },
+          {
+            "x": 121.99999980347202,
+            "y": 178.00000009395174
+          }
+        ]
+      },
+      "reflected": {
+        "determinant": -1,
+        "feet": [
+          {
+            "x": 121.999999797628,
+            "y": 178.00000013680742
+          },
+          {
+            "x": 78.00000019652798,
+            "y": 178.00000009395174
+          }
+        ]
+      },
+      "normal": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 228.72799682617188,
+            "y": 178.1246337890625,
+            "width": 399.4377746582031,
+            "height": 373.8328857421875,
+            "right": 628.165771484375,
+            "bottom": 551.95751953125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 228.72799682617188,
+            "y": 178.1246337890625,
+            "width": 399.4377746582031,
+            "height": 373.8328857421875,
+            "right": 628.165771484375,
+            "bottom": 551.95751953125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "flipped": {
+        "pause": {
+          "button": {
+            "x": 213,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 261,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 237.83425903320312,
+            "y": 178.1246337890625,
+            "width": 399.4377136230469,
+            "height": 373.8328857421875,
+            "right": 637.27197265625,
+            "bottom": 551.95751953125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": false,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        },
+        "mirror": {
+          "button": {
+            "x": 605,
+            "y": 84,
+            "width": 48,
+            "height": 48,
+            "right": 653,
+            "bottom": 132
+          },
+          "ink": {
+            "x": 237.83425903320312,
+            "y": 178.1246337890625,
+            "width": 399.4377136230469,
+            "height": 373.8328857421875,
+            "right": 637.27197265625,
+            "bottom": 551.95751953125
+          },
+          "art": {
+            "x": 223,
+            "y": 90,
+            "width": 420,
+            "height": 485,
+            "right": 643,
+            "bottom": 575
+          },
+          "stage": {
+            "x": 200,
+            "y": 71,
+            "width": 466,
+            "height": 705,
+            "right": 666,
+            "bottom": 776
+          },
+          "overlap": 0,
+          "accentOverlap": 0,
+          "paintedInkSamples": 0,
+          "hitTestGridPx": 1,
+          "tabsVisible": true,
+          "sideScrollTop": 0,
+          "focusVisible": true,
+          "ringClear": true,
+          "horizontalOverflow": 0,
+          "frames": 0
+        }
+      },
+      "heldClockAdvanceMs": 60000
+    }
+  ],
+  "method": "15 separate movement runs per species near .25/.5/.75 delivered phases. Each held60s, exact art/nodes, zero paused RAF, reflected contacts, two corners x two facings =60 geometry views per species; 1px painted hit sampling inside bounds only. Resume verified at remaining minus24ms and plus24ms, not exact native millisecond delivery. Exact millisecond deadline covered separately by unit tests."
+}

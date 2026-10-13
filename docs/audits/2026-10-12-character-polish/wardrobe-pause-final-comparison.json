@@ -1,0 +1,140 @@
+{
+  "method": "Exact final PNG to directly inspected selected-candidate PNG comparison. Differing final images need direct inspection. No perceptual/source/JSON equivalence inferred.",
+  "pairs": [
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-bun.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native-revised/wardrobe-pause-bun.png",
+      "finalSha256": "7051c11914f614d72591ccd85b04a0d1f12fc5c936527b709bb5c39750a882a3",
+      "prototypeSha256": "3dcc40b09b12d1b700f82cac96a6016b39b544bc1c6b8098278c0ba9c20bf5ea",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-initial-head.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-initial-head.png",
+      "finalSha256": "cafd573644a97e96a869fcd9cdb47cb4a8674d6cc95ee1d3e5f5cb1a1d7081aa",
+      "prototypeSha256": "cafd573644a97e96a869fcd9cdb47cb4a8674d6cc95ee1d3e5f5cb1a1d7081aa",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-1280-100.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-1280-100.png",
+      "finalSha256": "19648472abc4d8e74c992d515d4947f04aaa8c7a8bfe54ff90aa3667cea84fa3",
+      "prototypeSha256": "3f20b93c21e2107d5d1133c6fedc754722d9e9c8979738e2fe507274171378e6",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-1280-200.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-1280-200.png",
+      "finalSha256": "1b63f5c36e4f45612ba333dc6f77a9304d63ff7d0eb082f3d9eb08961bedd7d8",
+      "prototypeSha256": "6d1787ac3869dd9cfcf57fad3664c66379c9d40563f83e9f5ba2bca0731d1cfb",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-320-100.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-320-100.png",
+      "finalSha256": "2dfc41524c061dbb763abad851a6f9a766a66d1ceea8cb842e10ec634c528889",
+      "prototypeSha256": "136ec62933e3e6bfd73b629848d2c99628c12f0d1c96b79deeb49c115c9b3dd4",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-320-200.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native-revised/wardrobe-pause-layout-320-200.png",
+      "finalSha256": "9116674a307e1778707d674bc172a4bfa8e041bf8f008818ca54fd80111ec11c",
+      "prototypeSha256": "9863be37d0911a76a99f20cc2f82397dba1437ea650b8232093532580d0f7595",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-390-100.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-390-100.png",
+      "finalSha256": "7d702c09bbfa9af5bc9b0b67c2031cb5efebbd684e5831dbc3bb91d1358e2dc6",
+      "prototypeSha256": "7d702c09bbfa9af5bc9b0b67c2031cb5efebbd684e5831dbc3bb91d1358e2dc6",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-390-200.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-390-200.png",
+      "finalSha256": "541aeb5c02c6edec7067b780f0cd1b3a8a6385a60815f84b1be65c3e721633f2",
+      "prototypeSha256": "d3380b6616f8e0a9ec83f2fa621eb213cf355751f09cdd3eaecfb5411221a611",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-640-100.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-640-100.png",
+      "finalSha256": "82a6fad9395d94d7133f8908101368efdcbd67945ddfb9ee84b0652c7e50afd0",
+      "prototypeSha256": "8dea3205d7b2504479d82d81c856a95b123afa614624cc5e402980af58dfb865",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-640-200.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-640-200.png",
+      "finalSha256": "731b9a4f8fbb27736bd3bcb8debe9e85834758dd938ab10ac626c075ecc4d9be",
+      "prototypeSha256": "38dea2c0823cd33c06e758c551e53d69d479c864615bc5b500ca54ffb7fe4146",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-844-100.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-844-100.png",
+      "finalSha256": "6b0ff17d15f8868cfcc90947fd171cfb1529ab5d43f176583cb795f3be3294a1",
+      "prototypeSha256": "6b0ff17d15f8868cfcc90947fd171cfb1529ab5d43f176583cb795f3be3294a1",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-844-200.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-844-200.png",
+      "finalSha256": "2cd91f0e06bac301bd1637e3afdc7f3e1914a4ebf193f987342fbab9b4d2827c",
+      "prototypeSha256": "2cd91f0e06bac301bd1637e3afdc7f3e1914a4ebf193f987342fbab9b4d2827c",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-mochi.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-mochi.png",
+      "finalSha256": "1093ecb3b275cc0c6bb5fa575cf5b5874257b70928486c3aca08c7ea155bae13",
+      "prototypeSha256": "a0bc931f51e7274ee49809b9a92d78a3d56216ec99fbbf0001fb22bcbf627904",
+      "byteExact": false
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-reduced-device.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-reduced-device.png",
+      "finalSha256": "1f30337a4c3b56240abb7d1cd1be2c5c7211729a8cf2eeed7067f8f4fea49d3e",
+      "prototypeSha256": "1f30337a4c3b56240abb7d1cd1be2c5c7211729a8cf2eeed7067f8f4fea49d3e",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-reduced-system.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-reduced-system.png",
+      "finalSha256": "eb737790b2c2e8ed545bda95a26bbe9137d986d696316474ed397cd34f98a3a7",
+      "prototypeSha256": "eb737790b2c2e8ed545bda95a26bbe9137d986d696316474ed397cd34f98a3a7",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-sprout.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-sprout.png",
+      "finalSha256": "0af717cdefc76e6ea5547c6cbd329d05365ae0c362491aae169cddd5cbdff709",
+      "prototypeSha256": "b2188cb270eb22dcf37663a187addaf7bd703146f1d2e2329e47b54ec1c33b52",
+      "byteExact": false
+    }
+  ],
+  "rootVisualReview": {
+    "finalDirect": [
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-bun.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-1280-100.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-1280-200.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-320-100.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-320-200.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-390-200.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-640-100.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-640-200.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-mochi.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-sprout.png"
+    ],
+    "finalByteExactToPreviouslyDirectCandidate": [
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-initial-head.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-390-100.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-844-100.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-layout-844-200.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-reduced-device.png",
+      "docs/audits/2026-10-12-character-polish/wardrobe-pause-native/wardrobe-pause-reduced-system.png"
+    ],
+    "method": "All10 differing final PNGs directly opened; remaining6 hash-exact to selected candidate PNGs directly opened before application. Corrected-case candidate and diagnostic images also directly opened."
+  }
+}

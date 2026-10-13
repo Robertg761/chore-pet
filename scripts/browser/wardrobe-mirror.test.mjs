@@ -79,12 +79,12 @@ async function geometry(control) {
     const style = getComputedStyle(button), ring = parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset)
     const accentOverlap = accentBoxes.reduce((total, r) => total + Math.max(0, Math.min(b.right, r.right) - Math.max(b.x, r.x)) * Math.max(0, Math.min(b.bottom, r.bottom) - Math.max(b.y, r.y)), 0)
     // A rotated SVG group's rectangle includes empty corners. Inspect painted
-    // geometry only inside intersecting rectangles; restore exact inline styles.
+    // geometry only inside intersecting rectangles; restore exact button styles and SVG event attributes.
     let paintedInkSamples = 0
     if (overlap || accentOverlap) {
-      const oldButtonStyle = button.getAttribute('style'), oldAccentStyle = accents?.getAttribute('style')
+      const oldButtonStyle = button.getAttribute('style'), oldAccentEvents = accents?.getAttribute('pointer-events')
       button.style.pointerEvents = 'none'
-      if (accentBoxes.length) accents.style.pointerEvents = 'visiblePainted'
+      if (accentBoxes.length) accents.setAttribute('pointer-events', 'visiblePainted')
       try {
         for (const r of [a, ...accentBoxes]) {
           for (let y = Math.max(b.y, r.y) + .5; y < Math.min(b.bottom, r.bottom); y += 1) {
@@ -102,9 +102,10 @@ async function geometry(control) {
           }
         }
       } finally {
+        button.style.cssText = oldButtonStyle ?? ''
         if (oldButtonStyle === null) button.removeAttribute('style'); else button.setAttribute('style', oldButtonStyle)
         if (accents) {
-          if (oldAccentStyle === null) accents.removeAttribute('style'); else accents.setAttribute('style', oldAccentStyle)
+          if (oldAccentEvents === null) accents.removeAttribute('pointer-events'); else accents.setAttribute('pointer-events', oldAccentEvents)
         }
       }
     }
@@ -185,7 +186,9 @@ for (const species of ['mochi', 'bun', 'sprout']) test(`mirrored dressed ${speci
     let elapsed = 0
     for (const phase of [.25, .5, .75]) {
       await page.clock.runFor(duration * phase - elapsed); elapsed = duration * phase
+      const beforeGeometry = await preview.locator('.ch-animated').evaluate(n => n.outerHTML)
       const normal = await geometry(control), sampled = await preview.locator('.ch-animated').evaluate(n => n.outerHTML)
+      assert.equal(sampled, beforeGeometry, 'native geometry restores exact character markup')
       if (normal.paintedInkSamples) {
         await capture(page, `wardrobe-mirror-clearance-failure-${species}-${action.replaceAll(' ', '-')}-${phase}`, { species, action, phase, normal })
         t.diagnostic(JSON.stringify({ species, action, phase, normal }))

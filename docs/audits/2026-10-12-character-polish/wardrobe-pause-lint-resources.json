@@ -1,0 +1,36 @@
+{
+  "utc": "2026-10-13T03:21:45.024411+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "npx",
+    "oxlint",
+    "--max-warnings=0",
+    "src/screens/WardrobePreview.tsx",
+    "src/screens/Wardrobe.pause.test.tsx"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "minimumObservedAvailableBytes": 6009716736,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 6009716736,
+      "tmpFreeBytes": 4300656640
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 6009716736,
+      "tmpFreeBytes": 4300656640
+    },
+    {
+      "elapsedSeconds": 1.002,
+      "memAvailableBytes": 6019457024,
+      "tmpFreeBytes": 4300656640
+    }
+  ]
+}

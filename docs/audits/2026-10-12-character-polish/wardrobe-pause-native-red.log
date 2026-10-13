@@ -1,0 +1,22 @@
+✖ initial pause control is disabled without starting a clock or shrinking short-phone art (5320.35041ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5955.948681
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-pause.test.mjs:123:1
+✖ initial pause control is disabled without starting a clock or shrinking short-phone art (5320.35041ms)
+  locator.waitFor: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByRole('button', { name: 'Pause movement preview of Mochi', exact: true }) to be visible[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-pause.test.mjs:126:17) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByRole('button', { name: 'Pause movement preview of Mochi', exact: true }) to be visible" ]
+  }

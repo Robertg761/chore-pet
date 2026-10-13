@@ -1,0 +1,12 @@
+import { readFileSync } from 'node:fs'
+const candidates = {
+  '/src/screens/WardrobePreview.tsx': '/tmp/wardrobe-pause-WardrobePreview.tsx',
+  '/src/screens/Wardrobe.css': '/tmp/wardrobe-pause-Wardrobe.css',
+}
+export default {
+  plugins: [{ name: 'isolated-wardrobe-pause-candidate', enforce: 'pre', transform(code, id) {
+    const path = id.split('?')[0], candidate = candidates[path.slice(process.cwd().length)]
+    if (candidate) return { code: readFileSync(candidate, 'utf8'), map: null }
+  } }],
+  test: { environment: 'node', include: ['src/**/*.test.{ts,tsx}', 'supabase/**/*.test.ts'] },
+}

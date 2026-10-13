@@ -1,0 +1,85 @@
+{
+  "method": "16 unique selected candidate PNGs directly opened before applying:14 from initial14/16 run plus two corrected-case PNGs. Original failed compact Rest and Bun Hop diagnostic also directly opened, retained as diagnostics. Native fixture instrumentation changed; product candidate bytes did not.",
+  "files": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-initial-head.png",
+      "sha256": "cafd573644a97e96a869fcd9cdb47cb4a8674d6cc95ee1d3e5f5cb1a1d7081aa",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-1280-100.png",
+      "sha256": "3f20b93c21e2107d5d1133c6fedc754722d9e9c8979738e2fe507274171378e6",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-1280-200.png",
+      "sha256": "6d1787ac3869dd9cfcf57fad3664c66379c9d40563f83e9f5ba2bca0731d1cfb",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-320-100.png",
+      "sha256": "136ec62933e3e6bfd73b629848d2c99628c12f0d1c96b79deeb49c115c9b3dd4",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-390-100.png",
+      "sha256": "7d702c09bbfa9af5bc9b0b67c2031cb5efebbd684e5831dbc3bb91d1358e2dc6",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-390-200.png",
+      "sha256": "d3380b6616f8e0a9ec83f2fa621eb213cf355751f09cdd3eaecfb5411221a611",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-640-100.png",
+      "sha256": "8dea3205d7b2504479d82d81c856a95b123afa614624cc5e402980af58dfb865",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-640-200.png",
+      "sha256": "38dea2c0823cd33c06e758c551e53d69d479c864615bc5b500ca54ffb7fe4146",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-844-100.png",
+      "sha256": "6b0ff17d15f8868cfcc90947fd171cfb1529ab5d43f176583cb795f3be3294a1",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-layout-844-200.png",
+      "sha256": "2cd91f0e06bac301bd1637e3afdc7f3e1914a4ebf193f987342fbab9b4d2827c",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-mochi.png",
+      "sha256": "a0bc931f51e7274ee49809b9a92d78a3d56216ec99fbbf0001fb22bcbf627904",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-reduced-device.png",
+      "sha256": "1f30337a4c3b56240abb7d1cd1be2c5c7211729a8cf2eeed7067f8f4fea49d3e",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-reduced-system.png",
+      "sha256": "eb737790b2c2e8ed545bda95a26bbe9137d986d696316474ed397cd34f98a3a7",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-prototype-native/wardrobe-pause-sprout.png",
+      "sha256": "b2188cb270eb22dcf37663a187addaf7bd703146f1d2e2329e47b54ec1c33b52",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native-revised/wardrobe-pause-bun.png",
+      "sha256": "3dcc40b09b12d1b700f82cac96a6016b39b544bc1c6b8098278c0ba9c20bf5ea",
+      "directlyInspected": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wardrobe-pause-native-revised/wardrobe-pause-layout-320-200.png",
+      "sha256": "9863be37d0911a76a99f20cc2f82397dba1437ea650b8232093532580d0f7595",
+      "directlyInspected": true
+    }
+  ]
+}

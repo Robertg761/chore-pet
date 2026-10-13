@@ -1,0 +1,41 @@
+{
+  "utc": "2026-10-13T03:09:37.930784+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "npx",
+    "vite",
+    "build",
+    "--config",
+    "/tmp/wardrobe-pause-build.config.mjs"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "minimumObservedAvailableBytes": 3710812160,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 3722821632,
+      "tmpFreeBytes": 4300726272
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 3722682368,
+      "tmpFreeBytes": 4300726272
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 3710812160,
+      "tmpFreeBytes": 4300726272
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "memAvailableBytes": 3817267200,
+      "tmpFreeBytes": 4300709888
+    }
+  ]
+}
