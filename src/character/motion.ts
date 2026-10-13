@@ -77,6 +77,8 @@ const AFFECTION_FOLLOW: Record<Species, number> = { mochi: 0.45, bun: 0.55, spro
 const REST_FOLLOW: Record<Species, number> = { mochi: 0.25, bun: 0.3, sprout: 0.25 }
 // A brief sniff recoils, then settles with smaller damped appendage movement.
 const SMELL_FOLLOW: Record<Species, number> = { mochi: 0.45, bun: 0.5, sprout: 0.4 }
+// A short furniture turn makes one small settling deflection.
+const TURN_FOLLOW: Record<Species, number> = { mochi: 0.10, bun: 0.12, sprout: 0.10 }
 // Concern settles in one smaller sway while the resident studies wilting leaves.
 const CONCERN_FOLLOW: Record<Species, number> = { mochi: 0.35, bun: 0.4, sprout: 0.35 }
 
@@ -395,7 +397,9 @@ export function sampleMotion(input: MotionInput): MotionFrame {
     const followStrength = action === 'stretch' ? STRETCH[species].follow
       : action === 'rest' ? REST_FOLLOW[species]
       : calmConcern ? CONCERN_FOLLOW[species] : AFFECTION_FOLLOW[species]
-    const sway = action === 'smell' && mood !== 'sick'
+    const sway = action === 'turn' && mood !== 'sick'
+      ? Math.sin(t * Math.PI) * follow * personality.follow * TURN_FOLLOW[species] * energy
+      : action === 'smell' && mood !== 'sick'
       ? Math.sin(t * Math.PI * 3 - personality.lag + 0.5) * follow * personality.follow * SMELL_FOLLOW[species] * (1 - 0.55 * ease(t)) * energy
       : action === 'affection' || action === 'stretch' || action === 'rest' || calmConcern
       ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * followStrength * energy

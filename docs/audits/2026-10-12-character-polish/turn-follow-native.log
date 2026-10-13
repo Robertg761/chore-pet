@@ -1,0 +1,14 @@
+✔ mochi orients toward a furnishing with one small appendage deflection (1424.432569ms)
+ℹ mochi: peak0.500deg, speed6.588deg/s; 13actual SVG/RAF-time samples within orientation
+✔ bun orients toward a furnishing with one small appendage deflection (1349.25196ms)
+ℹ bun: peak1.439deg, speed18.975deg/s; 13actual SVG/RAF-time samples within orientation
+✔ sprout orients toward a furnishing with one small appendage deflection (1332.559118ms)
+ℹ sprout: peak0.360deg, speed4.744deg/s; 13actual SVG/RAF-time samples within orientation
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4488.838

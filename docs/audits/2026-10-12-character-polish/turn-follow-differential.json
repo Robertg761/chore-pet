@@ -1,0 +1,18 @@
+{
+  "method": "Exact sampled frames across3species/5moods/16actions/3durations/2motionpolicies/2facings/15phases. Only normal healthy turn appendages may differ; allotherfields/actions/sick/reduced/durations exact. Static numeric checks,not temporal acceptance.",
+  "label": "after",
+  "currentPath": "src/character/motion.ts",
+  "samples": 43200,
+  "unchanged": 42408,
+  "changed": 792,
+  "changes": {
+    "mochi/turn": 264,
+    "bun/turn": 264,
+    "sprout/turn": 264
+  },
+  "sourceSha256": {
+    "baseline": "6bbf647a8391e103951474c70438138dd3599cc28f56aeacbaa2ea1dc686284f",
+    "current": "2242e3fdb9dacb58ecaf779183916ecbba2124862f6f5083d9e3ac8a5bb95d10",
+    "runner": "099d40febb8a895627372496eb3a2de1081afc87bf39195c80cd8299fb472b0d"
+  }
+}

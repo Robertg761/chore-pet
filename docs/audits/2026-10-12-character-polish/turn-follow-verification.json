@@ -1,0 +1,195 @@
+{
+  "freeze": {
+    "baseCommit": "6a130a31e21a50dc080a079a3bf7ee1d4c401740",
+    "sources": {
+      "src/character/motion.ts": "2242e3fdb9dacb58ecaf779183916ecbba2124862f6f5083d9e3ac8a5bb95d10",
+      "src/character/motion.turn.test.ts": "834d9690242c5deedc1f8fc662d34e7b391ac4502246130016024e5afb4f8d07",
+      "scripts/browser/pet-turn-follow.test.mjs": "c85c2414c58d6d1764dc829c1b8f642a11a026b6bcff66a6615ae029e35be591",
+      "docs/ART.md": "430c76538fdedc2e84c3728f1e99413b9920689cf21bbc1aa88ba04f87cfcab9",
+      "docs/audits/2026-10-12-character-polish/capture-turn-follow.mjs": "8a939ad1f616c9680af7d6e1d6be3f42f7f88be307611d0b27de3955555038b5",
+      "docs/audits/2026-10-12-character-polish/compare-turn-follow.mjs": "099d40febb8a895627372496eb3a2de1081afc87bf39195c80cd8299fb472b0d"
+    },
+    "unchangedSources": {
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/room/shell/geometry.ts": "967f73de056add3298520e580aa172a720132b49b11dd5bcab4a8f1a4b4fd027",
+      "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+      "src/pet/LivingRoom.tsx": "ef72fe47fe14dd67bb78e512dd237f046730d68ebd3209ebc4c16060a380294f",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/behaviour.ts": "7e4b850de2aa14c42cbd6bafac23420e428b5564350aa1c8a7b17db9b2a915af",
+      "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7",
+      "src/screens/WardrobePreview.tsx": "67cfc1c5a7302f3c7d91933446fb91cb43a061a6c1c0687b746d6e34d010a3de",
+      "src/dev/MotionReview.tsx": "4a22a5c5401427337d1a2e08d0609958ad5b7267fdd2f8ac9e3eda898cafffd1",
+      "scripts/browser/pet-smell-follow.test.mjs": "05cffa0e6f80e3d28b004f9c6506300c490f7ec17bce84943b599d6338bf84d5",
+      "scripts/browser/pet-concern-follow.test.mjs": "8ee45960c8c56dde4041cfbdaa064526f414836330ddce1a2810cdd5171a93f4",
+      "scripts/browser/pet-environment-attention.test.mjs": "82c65ebfae72229e2ce2aa3626ea877587b02f48d6209bfc8aee7fddde8e17ee",
+      "scripts/browser/pet-rest-follow.test.mjs": "5a746d2ed116a1e12f954021d9db377552f53336e3e49f0b6b125606785e575f"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/turn-follow-source.diff",
+      "sha256": "7acd0dffd98056c35d454263d4efc0e5a81765a710e1d290fbf4ad513cbd6de3"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/turn-follow-artifacts.json",
+    "sha256": "2e763274cc15c74b5a025320379e202be7ed491c3f6ddbfefb3797f031468f78"
+  },
+  "checks": [
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-build.log",
+      "logSha256": "1e817d5d642f8ba761ff199284ac236a088d05ff8ddb1f01002f7aed0ee2cc03",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-capture-after.log",
+      "logSha256": "01dfc17d039231e775a397845db899169e952fd10ff97d1877be4809e12304a1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-capture-after.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-capture-before.log",
+      "logSha256": "6fbe1915e5d080510e249b934f461de854cce12e8bdeb666bcd86e6f73971520",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-capture-before.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-prototype",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-capture-prototype.log",
+      "logSha256": "0395356fcc408787d802170b5718b42f94f6fc7c14d68a615928eb5d9a3eb03f",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-capture-prototype.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "differential-prototype",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-differential-prototype.log",
+      "logSha256": "d5e5fa35503a640833e7ac8159f497796d9682459d81f6b0e696859951509527",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-differential-prototype.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "differential",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-differential.log",
+      "logSha256": "d5e5fa35503a640833e7ac8159f497796d9682459d81f6b0e696859951509527",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-differential.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-focused.log",
+      "logSha256": "d5525eef237f8fd6be30065728e180bdc9ae87a66eda97fe0d03f47a132e4088",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-full.log",
+      "logSha256": "14d849959023a0dfb1fc02bbb4d400df5b661353f74f2ed0939eecf7aa0c2c63",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-lint.log",
+      "logSha256": "7568e933113f36eafac388fc93fe6b8a426352caab529479f6baf94d26446fff",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-initial",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-native-initial.log",
+      "logSha256": "4119122ca469c2f68a699c07a496d13fd69bf15078ac4f3eef3b04b2e6d4c8b7",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-native-initial.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-red",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-native-red.log",
+      "logSha256": "16a64490479fdab8114eff57c7066912338b48d56b2a5fbe80d55bf3ab9f9fac",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-native-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-native.log",
+      "logSha256": "72e55f8fcfb3e68b523be8b8be3387c2a74044242679f6b244700c5d05b23f16",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/turn-follow-red.log",
+      "logSha256": "fbc82351614c8e1f1e503e63bd11bbd40478e487deee2446f9eed25beeb40dcb",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/turn-follow-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "status": "Completed scoped checks and independent static/source/still review; bound files reverified before local checkpoint.",
+  "result": "2315 full tests / 117 files pass in74.47s;297focused/8files13.30s;20unique native cases pass across initial20(31.127s) and strengthened3turn-trace(4.489s);production type build,zero-warning lint/authored whitespace pass. Native turn13actual SVG/RAF-time samples/species within orientation, after128ms to exclude120ms walk blend and ending320ms plus at most16ms arrival polling before360ms end. Peak/speed: Mochi .4997deg/6.588deg/s, Bun1.4391/18.975, Sprout stem .3598/4.744. No displacement sign reversal in sample window, visible original torso lean, zero action arms until handoff; actual feet drift <.00001localunits, stable world position/node/speech/tables and one clock. The unchanged finite Rest gesture follows. Seventeen neighboring sniff/concern/eye-tracking/rest native cases remain applicable from the initial broader run; only turn trace storage changed afterward. Both differential stages43200frames/42408exact/792healthyturnappendage-only. Final sampler equals archived candidate; all3final static PNG bytes and all paired samples/curves exactly match the inspected prototype.",
+  "history": "Before product: seven unit cases, six excursion/reversal failures plus one reduced pass in178ms. Three native angle-budget failures in3.891s, after successful primary-lean/feet/clock/arm/position checks; speeds are diagnostic values, before the speed assertion. Old peak/speed Mochi4.960/172.074,Bun11.996/405.060,Sprout stem3.599/122.518. Before/prototype captures made while prior Batch45 review held the sampler unchanged;5092be0 baseline bytes also exactly equal base6a130a3. Production copied the inspected archived candidate. First20native allpass; added per-sample feet/world positions and max drift to stored trace, preserving initial6artifacts/raw pair, then all3turn cases pass again with final evidence. No motion spec assertion relaxed.",
+  "limits": "Deterministic native Chromium152, frozen clock, static SVG sheets/curves and numeric sampling; no human temporal, physical-device, assistive-technology, peak-RSS/CPU/battery certification. Native orientation window excludes first128ms and covers13samples, not every frame; full-duration unit/curve checks supplement it. Sprout native measures actual stem,0.4*leftAppendage,not full leaf transform. Native final PNGs show near-end orientation; primary peak and full path are established separately by samples and static phase sheets. Root inspected6before/prototype sheets/curves and3final native PNGs;3final static PNGs byte-exact the inspected prototype. Light/happy and dark/scruffy are coupled in sheets; not every color/mood/item combination. No controller,renderer,route,contact,dialogue,world placement,clock or action duration changes. Walking corner overlay retains only turn torso/scale/gaze,so its appendages remain exact. Historical red source versions not separately archived. Resource snapshot separately bound;one heavy job/worker/browser,768MBNodecap/nice10.",
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/turn-follow-review-input.json",
+    "sha256": "66172a74b75b970b7a00f854ed0893b64236515b4d814c5b7689e35db8c7b4a1"
+  },
+  "independentReview": {
+    "path": "docs/audits/2026-10-12-character-polish/turn-follow-independent-review.md",
+    "sha256": "f8393068d69ff0518bddd5be29bc1a940013232f7693513cad96ba45f06a2bd6",
+    "verdict": "PASS; no scoped findings"
+  }
+}

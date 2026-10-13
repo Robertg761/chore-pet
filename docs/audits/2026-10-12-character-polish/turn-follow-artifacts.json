@@ -1,0 +1,33 @@
+{
+  "files": {
+    "docs/audits/2026-10-12-character-polish/turn-follow-baseline.ts.txt": "6bbf647a8391e103951474c70438138dd3599cc28f56aeacbaa2ea1dc686284f",
+    "docs/audits/2026-10-12-character-polish/turn-follow-prototype.ts.txt": "2242e3fdb9dacb58ecaf779183916ecbba2124862f6f5083d9e3ac8a5bb95d10",
+    "docs/audits/2026-10-12-character-polish/turn-follow-differential.json": "ef614ef2d5d455896ecf963e1171371dad59e7ebcc4dda8966dbb004ab684ff4",
+    "docs/audits/2026-10-12-character-polish/turn-follow-prototype-differential.json": "ec65b65ea4d73a3ac12a375c8283718b22b1367c628e6d631d5637dc2b38a388",
+    "docs/audits/2026-10-12-character-polish/turn-follow-resources.json": "2b93bae56ecd8f3d992480291d7916f96859a3489db7f93cfebe0a0b44a8d6e8",
+    "docs/audits/2026-10-12-character-polish/turn-follow-before.json": "375fbd7e0e5c17a48fa6320e971f51738ab47bfc19f474793b2eebaaaee6ed20",
+    "docs/audits/2026-10-12-character-polish/turn-follow-before-light-sizes.png": "24db3f4c5969450c93272096979add1f4d6a0418c6da51aeb932057168a253bb",
+    "docs/audits/2026-10-12-character-polish/turn-follow-before-dark-sizes.png": "5cddc504b1e57153af70587eed62ca05abdb3cb9d13301fa9e8896b0ec9083ad",
+    "docs/audits/2026-10-12-character-polish/turn-follow-before-curves.png": "d79e87b72edafd471269793126e027fdad3ef02c63cf395b99391b2fc6af5993",
+    "docs/audits/2026-10-12-character-polish/turn-follow-prototype.json": "38dd81a9569c1af46f472c81bc34b08cb42877a8dd4546e78e410be928529829",
+    "docs/audits/2026-10-12-character-polish/turn-follow-prototype-light-sizes.png": "39168643c058114cc46bc7ee499000f047f97766b2dfe0cae426cc2587746376",
+    "docs/audits/2026-10-12-character-polish/turn-follow-prototype-dark-sizes.png": "658f2c8b233997d4ed4f82d87272d576f8f8a269292a25364edb799d1728935a",
+    "docs/audits/2026-10-12-character-polish/turn-follow-prototype-curves.png": "a2a899427cf8199342111e3e26e33db6221d7652710ca5f2e30bb88b4c4bacd4",
+    "docs/audits/2026-10-12-character-polish/turn-follow-after.json": "fb52e7acff31c19d7f2a8035b0bf1149563207278762ba9e17c058fcad6dbb25",
+    "docs/audits/2026-10-12-character-polish/turn-follow-after-light-sizes.png": "39168643c058114cc46bc7ee499000f047f97766b2dfe0cae426cc2587746376",
+    "docs/audits/2026-10-12-character-polish/turn-follow-after-dark-sizes.png": "658f2c8b233997d4ed4f82d87272d576f8f8a269292a25364edb799d1728935a",
+    "docs/audits/2026-10-12-character-polish/turn-follow-after-curves.png": "a2a899427cf8199342111e3e26e33db6221d7652710ca5f2e30bb88b4c4bacd4",
+    "docs/audits/2026-10-12-character-polish/turn-follow-native/turn-follow-bun.json": "c2094249cc558d8091adc17dd564099c77601bf37dd2a35074494ec03b00c2ff",
+    "docs/audits/2026-10-12-character-polish/turn-follow-native/turn-follow-bun.png": "f34041d1318f15670af2f8e13cffd82cb1bfc95f8c248ae7c940020a9b6b844f",
+    "docs/audits/2026-10-12-character-polish/turn-follow-native/turn-follow-mochi.json": "4b7e24ba644169743a1203ac1fa2fda9356de9787f99e6a0594389d0cc555eab",
+    "docs/audits/2026-10-12-character-polish/turn-follow-native/turn-follow-mochi.png": "badfab5b25a9d52804fd798ee17119741b47b3f59456bb5501724acc179f2a0f",
+    "docs/audits/2026-10-12-character-polish/turn-follow-native/turn-follow-sprout.json": "04734129f14a20c04b4b358f03ffae01a48a77367de3a45c0d24e7ae04d0e8e3",
+    "docs/audits/2026-10-12-character-polish/turn-follow-native/turn-follow-sprout.png": "7f908873820332d0cbb096d953fa9765a8a3897cb817d151676f991ea245d914",
+    "docs/audits/2026-10-12-character-polish/turn-follow-native-initial/turn-follow-bun.json": "e9923903955afed72b84d1a3f68f0f6ce179c20d1e11a8a0a02a6b7e50b543a2",
+    "docs/audits/2026-10-12-character-polish/turn-follow-native-initial/turn-follow-bun.png": "f79c06e8c91644357324484671e43890d5e67ef2bfb5b837360b4944a146e5f3",
+    "docs/audits/2026-10-12-character-polish/turn-follow-native-initial/turn-follow-mochi.json": "21792fc75e226e26dd872adca85822eb5c9649d637636b8f7bd82d564b3bf1b8",
+    "docs/audits/2026-10-12-character-polish/turn-follow-native-initial/turn-follow-mochi.png": "73eb048c5c12e6de6a76b989334e5d9a1bd67d4474d62a01199c7fe0c74794ac",
+    "docs/audits/2026-10-12-character-polish/turn-follow-native-initial/turn-follow-sprout.json": "d5cc273f08a714675e1d1bfffc79d4601c7ee045ec9684abdaf03f1121f45edf",
+    "docs/audits/2026-10-12-character-polish/turn-follow-native-initial/turn-follow-sprout.png": "c18b79ba41594cb5fb006f725bae2f3bfb43ddc12c52c198bc23874ce592dec1"
+  }
+}

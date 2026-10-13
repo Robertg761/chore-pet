@@ -1,0 +1,7 @@
+{
+  "method": "Read-only host memory/tmpfs during sequential native checks, not peak-RSS/CPU/battery measurement. One heavy job, one worker/browser,768MBNodecap/nice10.",
+  "utc": "2026-10-13T01:25:44.451059+00:00",
+  "memoryAvailableKiB": 5430484,
+  "tmpFreeBytes": 4235661312,
+  "tmpTotalBytes": 16783474688
+}

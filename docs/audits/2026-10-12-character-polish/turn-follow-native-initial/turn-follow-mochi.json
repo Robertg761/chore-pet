@@ -1,0 +1,149 @@
+{
+  "species": "mochi",
+  "samples": [
+    {
+      "time": 992,
+      "angle": 0.47018787264823914,
+      "lean": -4.92,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    },
+    {
+      "time": 1008,
+      "angle": 0.49240389466285694,
+      "lean": -4.92,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    },
+    {
+      "time": 1024,
+      "angle": 0.49969542026519764,
+      "lean": -4.92,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    },
+    {
+      "time": 1040,
+      "angle": 0.4972609281539917,
+      "lean": -4.92,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    },
+    {
+      "time": 1056,
+      "angle": 0.48514786362648016,
+      "lean": -4.92,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    },
+    {
+      "time": 1072,
+      "angle": 0.46359193325042725,
+      "lean": -4.92,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    },
+    {
+      "time": 1088,
+      "angle": 0.43301269412040716,
+      "lean": -4.794622610949142,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    },
+    {
+      "time": 1104,
+      "angle": 0.39400538802146906,
+      "lean": -4.129170116018187,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    },
+    {
+      "time": 1120,
+      "angle": 0.34732916951179504,
+      "lean": -3.097738425176068,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    },
+    {
+      "time": 1136,
+      "angle": 0.2938926517963409,
+      "lean": -1.9364431486880456,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    },
+    {
+      "time": 1152,
+      "angle": 0.2051120549440384,
+      "lean": -0.8813998968193993,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    },
+    {
+      "time": 1168,
+      "angle": 0.09969724714756012,
+      "lean": -0.16872427983539162,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    },
+    {
+      "time": 1184,
+      "angle": 0.026951516047120094,
+      "lean": 0,
+      "arms": [
+        0,
+        0
+      ],
+      "frames": 1
+    }
+  ],
+  "peak": 0.49969542026519764,
+  "observedSpeed": 6.588425487279892,
+  "position": "translate(204.5 208.07) scale(0.33)",
+  "feet": [
+    {
+      "x": 125.9999987411976,
+      "y": 177.9999994907762
+    },
+    {
+      "x": 74.00000132398179,
+      "y": 178.0000000556663
+    }
+  ],
+  "method": "Actual invited-rug orientation, after128ms to exclude120ms walk blend,13SVG/RAF-time samples ending320ms plus at most16ms arrival polling; before360ms orientation end. Sprout measures actual stem angle,not full leaf transform."
+}
