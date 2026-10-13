@@ -1,0 +1,47 @@
+{
+  "utc": "2026-10-13T06:39:03.862654+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "--max-old-space-size=192",
+    "node_modules/oxlint/bin/oxlint",
+    "src/screens/CharacterCreator.tsx",
+    "src/screens/CreatorPreview.tsx",
+    "src/screens/CharacterCreator.tools.test.tsx",
+    "scripts/browser/creator-tools.test.mjs",
+    "--max-warnings=0"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 3,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 0
+  },
+  "minimumObservedAvailableBytes": 5093879808,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 5094105088,
+      "tmpFreeBytes": 4285681664
+    },
+    {
+      "elapsedSeconds": 0.006,
+      "memAvailableBytes": 5093879808,
+      "tmpFreeBytes": 4285681664
+    },
+    {
+      "elapsedSeconds": 1.007,
+      "memAvailableBytes": 5136203776,
+      "tmpFreeBytes": 4285681664
+    }
+  ]
+}

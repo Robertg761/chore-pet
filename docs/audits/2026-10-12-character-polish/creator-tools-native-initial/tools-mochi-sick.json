@@ -1,0 +1,115 @@
+{
+  "species": "mochi",
+  "mood": "sick",
+  "normal": {
+    "centerX": 408,
+    "body": [
+      {
+        "x": 333.63,
+        "y": 382.90999999999997
+      },
+      {
+        "x": 482.36999999999995,
+        "y": 382.90999999999997
+      },
+      {
+        "x": 333.63,
+        "y": 563.81
+      },
+      {
+        "x": 482.36999999999995,
+        "y": 563.81
+      }
+    ],
+    "ground": [
+      {
+        "x": 333.63,
+        "y": 382.90999999999997
+      },
+      {
+        "x": 482.36999999999995,
+        "y": 382.90999999999997
+      },
+      {
+        "x": 333.63,
+        "y": 563.81
+      },
+      {
+        "x": 482.36999999999995,
+        "y": 563.81
+      }
+    ],
+    "facing": "normal",
+    "slots": [
+      "face",
+      "head"
+    ],
+    "focused": false,
+    "focusVisible": false,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624,
+      "bottom": 713,
+      "right": 609
+    }
+  },
+  "reflected": {
+    "centerX": 408,
+    "body": [
+      {
+        "x": 482.37,
+        "y": 382.90999999999997
+      },
+      {
+        "x": 333.63000000000005,
+        "y": 382.90999999999997
+      },
+      {
+        "x": 482.37,
+        "y": 563.81
+      },
+      {
+        "x": 333.63000000000005,
+        "y": 563.81
+      }
+    ],
+    "ground": [
+      {
+        "x": 482.37,
+        "y": 382.90999999999997
+      },
+      {
+        "x": 333.63000000000005,
+        "y": 382.90999999999997
+      },
+      {
+        "x": 482.37,
+        "y": 563.81
+      },
+      {
+        "x": 333.63000000000005,
+        "y": 563.81
+      }
+    ],
+    "facing": "mirrored",
+    "slots": [
+      "face",
+      "head"
+    ],
+    "focused": false,
+    "focusVisible": false,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624,
+      "bottom": 713,
+      "right": 609
+    }
+  },
+  "pendingFrames": 0,
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

@@ -1,0 +1,31 @@
+{
+  "width": 390,
+  "height": 664,
+  "text": 200,
+  "controls": [
+    {
+      "label": "Mirror preview",
+      "x": 14,
+      "y": 280.1875,
+      "width": 362,
+      "height": 49,
+      "right": 376,
+      "bottom": 329.1875,
+      "focusVisible": true,
+      "textFits": true
+    },
+    {
+      "label": "Show preview",
+      "x": 14,
+      "y": 335.1875,
+      "width": 362,
+      "height": 49,
+      "right": 376,
+      "bottom": 384.1875,
+      "focusVisible": true,
+      "textFits": true
+    }
+  ],
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

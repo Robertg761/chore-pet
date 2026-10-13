@@ -1,0 +1,99 @@
+--- a/src/screens/CharacterCreator.tsx
++++ b/src/screens/CharacterCreator.tsx
+@@ -99,6 +99,7 @@
+   const wide = useWide()
+   const [part, setPart] = useState<Part>('who')
+   const [previewMood, setPreviewMood] = useState<Mood>('happy')
++  const [previewMirrored, setPreviewMirrored] = useState(false)
+   const previewMoodId = useId()
+   const tabsRef = useRef<HTMLDivElement>(null)
+   const preview = useRef<CreatorPreviewControl | null>(null)
+@@ -199,6 +200,11 @@
+           {PREVIEW_MOOD_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+         </select>
+         <p id={`${previewMoodId}-note`} className="cc-hint">See how your look appears in each mood.</p>
++        <div className="cc-preview-tools" role="group" aria-label="Character preview">
++          <button type="button" className="btn choice" aria-pressed={previewMirrored}
++            onClick={() => setPreviewMirrored(value => !value)}>Mirror preview</button>
++          <button type="button" className="btn" onClick={() => preview.current?.show()}>Show preview</button>
++        </div>
+       </section>
+       <section className="cc-section" aria-labelledby="cc-eyes-h">
+         <h2 id="cc-eyes-h">Eyes</h2>
+@@ -264,7 +270,7 @@
+ 
+       <div className="cc-body">
+         <div className="cc-stage">
+-          <CreatorPreview draft={draft} equipped={pet.equipped} control={preview} mood={previewMood}
++          <CreatorPreview draft={draft} equipped={pet.equipped} control={preview} mood={previewMood} mirrored={previewMirrored}
+             label={`${draft.name.trim() || 'Your pet'}, ${SPECIES_LABEL[species]}`} />
+ 
+           <div className="cc-field">
+--- a/src/screens/CreatorPreview.tsx
++++ b/src/screens/CreatorPreview.tsx
+@@ -1,17 +1,18 @@
+-import { useImperativeHandle, useState, type RefObject } from 'react'
++import { useImperativeHandle, useRef, useState, type RefObject } from 'react'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+ import { ACTION_MS, sampleMotion } from '../character/motion'
+ import type { Mood, Pet } from '../domain/types'
+ import { usePetMotion } from '../pet/usePetMotion'
+ import { PREVIEW_MOOD_OPTIONS, type CreatorDraft } from './creatorModel'
+ 
+-export interface CreatorPreviewControl { cheer: () => void; settle: () => void }
++export interface CreatorPreviewControl { cheer: () => void; settle: () => void; show: () => void }
+ 
+ /** Keep finite character frames out of the creator's choice grids and form. */
+-export function CreatorPreview({ draft, equipped, label, control, mood = 'happy' }: {
+-  draft: CreatorDraft; equipped: Pet['equipped']; label: string; mood?: Mood
++export function CreatorPreview({ draft, equipped, label, control, mood = 'happy', mirrored = false }: {
++  draft: CreatorDraft; equipped: Pet['equipped']; label: string; mood?: Mood; mirrored?: boolean
+   control: RefObject<CreatorPreviewControl | null>
+ }) {
++  const preview = useRef<SVGSVGElement>(null)
+   const [start, setStart] = useState<number | null>(null)
+   const [elapsed, setElapsed] = useState(0)
+   const { reducedMotion } = usePetMotion((now, reduced) => {
+@@ -21,6 +22,10 @@
+     else setElapsed(time)
+   }, start !== null && mood === 'happy', reduced => { if (reduced) setStart(null) })
+   useImperativeHandle(control, () => ({
++    show: () => {
++      preview.current?.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' })
++      preview.current?.focus({ preventScroll: true })
++    },
+     cheer: () => {
+       if (reducedMotion || mood !== 'happy' || start !== null) return
+       setElapsed(0)
+@@ -34,9 +39,11 @@
+     elapsedMs: active ? elapsed : 0, durationMs: active ? ACTION_MS.celebrate : ACTION_MS.idle,
+     distance: 0, reducedMotion: reducedMotion || !active })
+   return <div className="cc-preview">
+-    <svg width={170} height={170} viewBox="0 0 200 200" role="img" aria-label={`${label}, ${moodLabel} preview`}>
++    <svg ref={preview} tabIndex={-1} focusable="true" width={170} height={170} viewBox="0 0 200 200" role="img" aria-label={`${label}, ${moodLabel} preview${mirrored ? ", mirrored" : ""}`}>
++      <g data-preview-facing={mirrored ? 'mirrored' : 'normal'} transform={mirrored ? 'translate(200 0) scale(-1 1)' : undefined}>
+       <AnimatedCharacterArt species={draft.species} mood={mood} bodyColour={draft.bodyColour} equipped={equipped}
+         look={{ eyes: draft.eyes, cheeks: draft.cheeks }} frame={frame} />
++      </g>
+     </svg>
+   </div>
+ }
+--- a/src/screens/CharacterCreator.css
++++ b/src/screens/CharacterCreator.css
+@@ -18,6 +18,7 @@
+   padding: 4px;
+ }
+ .cc-preview svg { display: block; width: 100%; height: 100%; }
++.cc-preview svg:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; border-radius: var(--ctl-radius); }
+ 
+ .cc-field { flex: none; display: flex; flex-direction: column; gap: 4px; }
+ .cc-field-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+@@ -36,6 +37,8 @@
+ .cc-note { text-align: center; }
+ .cc-mood label { font-weight: 800; }
+ .cc-mood select { min-width: 0; min-height: 44px; max-width: 100%; }
++.cc-preview-tools { display: flex; flex-wrap: wrap; gap: 6px; }
++.cc-preview-tools .btn { flex: 1 1 8rem; min-width: 0; min-height: 44px; white-space: normal; }
+ 
+ /* Every option is a radio button; the selected one gets the accent ring. */
+ .cc-choice {

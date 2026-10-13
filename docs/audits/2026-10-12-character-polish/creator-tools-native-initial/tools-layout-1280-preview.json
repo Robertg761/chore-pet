@@ -1,0 +1,62 @@
+{
+  "width": 1280,
+  "height": 800,
+  "text": 200,
+  "revealed": {
+    "centerX": 460,
+    "body": [
+      {
+        "x": 534.37,
+        "y": 391.40999999999997
+      },
+      {
+        "x": 385.63000000000005,
+        "y": 391.40999999999997
+      },
+      {
+        "x": 534.37,
+        "y": 572.31
+      },
+      {
+        "x": 385.63000000000005,
+        "y": 572.31
+      }
+    ],
+    "ground": [
+      {
+        "x": 534.37,
+        "y": 391.40999999999997
+      },
+      {
+        "x": 385.63000000000005,
+        "y": 391.40999999999997
+      },
+      {
+        "x": 534.37,
+        "y": 572.31
+      },
+      {
+        "x": 385.63000000000005,
+        "y": 572.31
+      }
+    ],
+    "facing": "mirrored",
+    "slots": [
+      "face",
+      "head"
+    ],
+    "focused": true,
+    "focusVisible": true,
+    "box": {
+      "x": 259,
+      "y": 111,
+      "width": 402,
+      "height": 597,
+      "bottom": 708,
+      "right": 661
+    }
+  },
+  "pendingFrames": 0,
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

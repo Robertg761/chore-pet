@@ -1,0 +1,32 @@
+{
+  "utc": "2026-10-13T06:36:45.157221+00:00",
+  "command": [
+    "python3",
+    "/tmp/chore-pet-resource-check.py",
+    "--launch-mib",
+    "3840",
+    "creator-tools-full",
+    "--",
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "--max-old-space-size=384",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--maxWorkers=1"
+  ],
+  "execReportedExitCode": 143,
+  "execChunkId": "40b3d6",
+  "partialLog": {
+    "path": "docs/audits/2026-10-12-character-polish/creator-tools-full-interrupted.log.txt",
+    "sha256": "f0f8a88d2f7dc01c3745afdcfebff2cfe48c08970f574a1e1bf1e3bb53f2a373"
+  },
+  "exitSidecarPresent": false,
+  "resourceSidecarPresent": false,
+  "subsequentHostInventory": {
+    "matchingLiveWorkspaceTestOrSupervisorProcesses": [],
+    "method": "Read /proc host command vectors and cwd; restrict node/python vitest/resource-supervisor matches to this exactworkspace. No signals sent. Toolchunk384358 returned[]."
+  },
+  "scope": "Interrupted restricted/sandboxed exec, not a test result. No minimum-resource or cleanup telemetry claim for this incomplete attempt; cause not established. Current host memory snapshot after exit was4932352kBavailable and/tmp4087.14453125MiBfree. Retry uses usual approvedhost full-check execution with same384MiB/oneworker/nice10 and2GiB supervisedreserve."
+}

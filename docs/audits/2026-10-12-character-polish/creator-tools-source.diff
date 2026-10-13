@@ -1,0 +1,477 @@
+diff --git i/src/screens/CharacterCreator.tsx w/src/screens/CharacterCreator.tsx
+index a1b399d..e713036 100644
+--- i/src/screens/CharacterCreator.tsx
++++ w/src/screens/CharacterCreator.tsx
+@@ -99,6 +99,7 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
+   const wide = useWide()
+   const [part, setPart] = useState<Part>('who')
+   const [previewMood, setPreviewMood] = useState<Mood>('happy')
++  const [previewMirrored, setPreviewMirrored] = useState(false)
+   const previewMoodId = useId()
+   const tabsRef = useRef<HTMLDivElement>(null)
+   const preview = useRef<CreatorPreviewControl | null>(null)
+@@ -199,6 +200,11 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
+           {PREVIEW_MOOD_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+         </select>
+         <p id={`${previewMoodId}-note`} className="cc-hint">See how your look appears in each mood.</p>
++        <div className="cc-preview-tools" role="group" aria-label="Character preview">
++          <button type="button" className="btn choice" aria-pressed={previewMirrored}
++            onClick={() => setPreviewMirrored(value => !value)}>Mirror preview</button>
++          <button type="button" className="btn" onClick={() => preview.current?.show()}>Show preview</button>
++        </div>
+       </section>
+       <section className="cc-section" aria-labelledby="cc-eyes-h">
+         <h2 id="cc-eyes-h">Eyes</h2>
+@@ -264,7 +270,7 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
+ 
+       <div className="cc-body">
+         <div className="cc-stage">
+-          <CreatorPreview draft={draft} equipped={pet.equipped} control={preview} mood={previewMood}
++          <CreatorPreview draft={draft} equipped={pet.equipped} control={preview} mood={previewMood} mirrored={previewMirrored}
+             label={`${draft.name.trim() || 'Your pet'}, ${SPECIES_LABEL[species]}`} />
+ 
+           <div className="cc-field">
+diff --git i/src/screens/CreatorPreview.tsx w/src/screens/CreatorPreview.tsx
+index 5cc8bd3..b3d0d08 100644
+--- i/src/screens/CreatorPreview.tsx
++++ w/src/screens/CreatorPreview.tsx
+@@ -1,17 +1,18 @@
+-import { useImperativeHandle, useState, type RefObject } from 'react'
++import { useImperativeHandle, useRef, useState, type RefObject } from 'react'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+ import { ACTION_MS, sampleMotion } from '../character/motion'
+ import type { Mood, Pet } from '../domain/types'
+ import { usePetMotion } from '../pet/usePetMotion'
+ import { PREVIEW_MOOD_OPTIONS, type CreatorDraft } from './creatorModel'
+ 
+-export interface CreatorPreviewControl { cheer: () => void; settle: () => void }
++export interface CreatorPreviewControl { cheer: () => void; settle: () => void; show: () => void }
+ 
+ /** Keep finite character frames out of the creator's choice grids and form. */
+-export function CreatorPreview({ draft, equipped, label, control, mood = 'happy' }: {
+-  draft: CreatorDraft; equipped: Pet['equipped']; label: string; mood?: Mood
++export function CreatorPreview({ draft, equipped, label, control, mood = 'happy', mirrored = false }: {
++  draft: CreatorDraft; equipped: Pet['equipped']; label: string; mood?: Mood; mirrored?: boolean
+   control: RefObject<CreatorPreviewControl | null>
+ }) {
++  const preview = useRef<SVGSVGElement>(null)
+   const [start, setStart] = useState<number | null>(null)
+   const [elapsed, setElapsed] = useState(0)
+   const { reducedMotion } = usePetMotion((now, reduced) => {
+@@ -21,6 +22,10 @@ export function CreatorPreview({ draft, equipped, label, control, mood = 'happy'
+     else setElapsed(time)
+   }, start !== null && mood === 'happy', reduced => { if (reduced) setStart(null) })
+   useImperativeHandle(control, () => ({
++    show: () => {
++      preview.current?.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' })
++      preview.current?.focus({ preventScroll: true })
++    },
+     cheer: () => {
+       if (reducedMotion || mood !== 'happy' || start !== null) return
+       setElapsed(0)
+@@ -34,9 +39,11 @@ export function CreatorPreview({ draft, equipped, label, control, mood = 'happy'
+     elapsedMs: active ? elapsed : 0, durationMs: active ? ACTION_MS.celebrate : ACTION_MS.idle,
+     distance: 0, reducedMotion: reducedMotion || !active })
+   return <div className="cc-preview">
+-    <svg width={170} height={170} viewBox="0 0 200 200" role="img" aria-label={`${label}, ${moodLabel} preview`}>
++    <svg ref={preview} tabIndex={-1} focusable="true" width={170} height={170} viewBox="0 0 200 200" role="img" aria-label={`${label}, ${moodLabel} preview${mirrored ? ", mirrored" : ""}`}>
++      <g data-preview-facing={mirrored ? 'mirrored' : 'normal'} transform={mirrored ? 'translate(200 0) scale(-1 1)' : undefined}>
+       <AnimatedCharacterArt species={draft.species} mood={mood} bodyColour={draft.bodyColour} equipped={equipped}
+         look={{ eyes: draft.eyes, cheeks: draft.cheeks }} frame={frame} />
++      </g>
+     </svg>
+   </div>
+ }
+diff --git i/src/screens/CharacterCreator.css w/src/screens/CharacterCreator.css
+index 75cb299..e83d3ab 100644
+--- i/src/screens/CharacterCreator.css
++++ w/src/screens/CharacterCreator.css
+@@ -18,6 +18,7 @@
+   padding: 4px;
+ }
+ .cc-preview svg { display: block; width: 100%; height: 100%; }
++.cc-preview svg:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; border-radius: var(--ctl-radius); }
+ 
+ .cc-field { flex: none; display: flex; flex-direction: column; gap: 4px; }
+ .cc-field-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+@@ -36,6 +37,8 @@
+ .cc-note { text-align: center; }
+ .cc-mood label { font-weight: 800; }
+ .cc-mood select { min-width: 0; min-height: 44px; max-width: 100%; }
++.cc-preview-tools { display: flex; flex-wrap: wrap; gap: 6px; }
++.cc-preview-tools .btn { flex: 1 1 8rem; min-width: 0; min-height: 44px; white-space: normal; }
+ 
+ /* Every option is a radio button; the selected one gets the accent ring. */
+ .cc-choice {
+diff --git 1/src/screens/CharacterCreator.tools.test.tsx 2/src/screens/CharacterCreator.tools.test.tsx
+new file mode 100644
+index 0000000..064f469
+--- /dev/null
++++ 2/src/screens/CharacterCreator.tools.test.tsx
+@@ -0,0 +1,109 @@
++// @vitest-environment jsdom
++import { act, StrictMode } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import type { Mood, Pet, Species } from '../domain/types'
++import { click, render } from '../test/react'
++import { CharacterCreator, type PetLookPatch } from './CharacterCreator'
++
++const pet: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#FFCFDA', eyes: 'lashes', cheeks: 'hearts', equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } }
++let ui: ReturnType<typeof render>
++let now: number, serial: number
++let frames: Map<number, FrameRequestCallback>
++let media: MediaQueryList, wide: MediaQueryList
++let saved: ReturnType<typeof vi.fn<(patch: PetLookPatch) => void>>
++const closed = vi.fn()
++const content = (p = pet) => <StrictMode><CharacterCreator pet={p} onSave={saved} onClose={closed} /></StrictMode>
++
++beforeEach(() => {
++  now = 0; serial = 0; frames = new Map(); saved = vi.fn(); closed.mockClear()
++  vi.spyOn(performance, 'now').mockImplementation(() => now)
++  media = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  wide = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  vi.stubGlobal('matchMedia', (query: string) => query.includes('prefers-reduced-motion') ? media : wide)
++  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
++  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
++  ui = render(content())
++})
++afterEach(() => { ui.unmount(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++
++function button(name: string) {
++  const node = [...ui.container.querySelectorAll('button')].find(node => node.textContent === name)
++  expect(node, `button ${name}`).toBeTruthy(); return node!
++}
++const art = () => ui.container.querySelector('.cc-preview .ch-animated')!
++const image = () => ui.container.querySelector('.cc-preview svg') as SVGSVGElement
++function radio(name: string) { return ui.container.querySelector(`[role="radio"][aria-label="${name}"]`)! }
++function mood(value: Mood) {
++  const node = ui.container.querySelector('.cc-mood select') as HTMLSelectElement
++  act(() => { node.value = value; node.dispatchEvent(new Event('change', { bubbles: true })) })
++}
++function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
++function expectFacing(mirrored: boolean) {
++  const group = ui.container.querySelector('[data-preview-facing]')
++  expect(group).not.toBeNull()
++  expect(group!.getAttribute('data-preview-facing')).toBe(mirrored ? 'mirrored' : 'normal')
++  expect(group!.getAttribute('transform')).toBe(mirrored ? 'translate(200 0) scale(-1 1)' : null)
++  expect(button('Mirror preview').getAttribute('aria-pressed')).toBe(String(mirrored))
++}
++
++it.each((['mochi', 'bun', 'sprout'] as Species[]).flatMap(species => (['happy', 'content', 'meh', 'scruffy', 'sick'] as Mood[]).map(value => [species, value] as const)))('mirrors the whole %s %s preview once without changing its art or saving', (species, value) => {
++  ui.unmount(); ui = render(content({ ...pet, species }))
++  click(button('Face')); mood(value)
++  const node = art(), markup = node.innerHTML
++  expectFacing(false)
++  click(button('Mirror preview'))
++  expectFacing(true)
++  expect(art()).toBe(node); expect(art().innerHTML).toBe(markup)
++  expect(image().getAttribute('aria-label')).toContain('mirrored')
++  expect(frames.size).toBe(0); expect(saved).not.toHaveBeenCalled(); expect(closed).not.toHaveBeenCalled()
++  click(button('Mirror preview'))
++  expectFacing(false); expect(art().innerHTML).toBe(markup)
++  expect(image().getAttribute('aria-label')).not.toContain('mirrored')
++})
++
++it('mirrors and reveals an active cheer without changing its delivered frame or deadline', () => {
++  click(radio('Bun')); frame(756)
++  const node = art(), markup = node.innerHTML
++  expect(frames.size).toBe(1)
++  click(button('Face')); click(button('Mirror preview'))
++  const scroll = vi.fn(), focus = vi.fn()
++  Object.assign(image(), { scrollIntoView: scroll, focus })
++  click(button('Show preview'))
++  expect(scroll).toHaveBeenCalledExactlyOnceWith({ behavior: 'instant', block: 'center', inline: 'nearest' })
++  expect(focus).toHaveBeenCalledExactlyOnceWith({ preventScroll: true })
++  expect(art()).toBe(node); expect(art().innerHTML).toBe(markup); expect(frames.size).toBe(1)
++  frame(1799); expect(frames.size).toBe(1)
++  frame(1800); expect(frames.size).toBe(0)
++  expect(art().querySelector('[data-expression="happy"]')).not.toBeNull(); expectFacing(true)
++  expect(saved).not.toHaveBeenCalled(); expect(closed).not.toHaveBeenCalled()
++})
++
++it('reveals a static reduced preview with a programmatic focus target and no saved changes', () => {
++  act(() => { Object.defineProperty(media, 'matches', { value: true, configurable: true }); media.dispatchEvent(new Event('change')) })
++  click(button('Face')); mood('sick'); click(button('Mirror preview'))
++  const node = image(), markup = art().innerHTML, scroll = vi.fn(), focus = vi.fn()
++  Object.assign(node, { scrollIntoView: scroll, focus })
++  expect(node.getAttribute('tabindex')).toBe('-1'); expect(node.getAttribute('focusable')).toBe('true')
++  expect(button('Show preview').getAttribute('type')).toBe('button')
++  expect(button('Mirror preview').getAttribute('type')).toBe('button')
++  click(button('Show preview'))
++  expect(scroll).toHaveBeenCalledExactlyOnceWith({ behavior: 'instant', block: 'center', inline: 'nearest' })
++  expect(focus).toHaveBeenCalledExactlyOnceWith({ preventScroll: true })
++  expect(image()).toBe(node); expect(art().innerHTML).toBe(markup); expectFacing(true)
++  expect(frames.size).toBe(0); expect(saved).not.toHaveBeenCalled(); expect(closed).not.toHaveBeenCalled()
++})
++
++it('keeps preview tools local through tab, resize, mood and look edits, then resets on reopening', () => {
++  click(button('Face')); click(button('Mirror preview')); mood('meh')
++  click(button('Who')); click(radio('Bun'))
++  act(() => { Object.defineProperty(wide, 'matches', { value: true, configurable: true }); wide.dispatchEvent(new Event('change')) })
++  expectFacing(true)
++  click(radio('Sparkly')); click(radio('Hearts')); expectFacing(true)
++  expect(image().getAttribute('aria-label')).toContain('Tired')
++  expect(frames.size).toBe(0)
++  click(button('Save'))
++  expect(saved).toHaveBeenCalledExactlyOnceWith({ species: 'bun', bodyColour: '#FFFFFF', eyes: 'sparkly' })
++  ui.unmount(); ui = render(content())
++  expectFacing(false); expect(image().getAttribute('aria-label')).toContain('Happy')
++  expect(frames.size).toBe(0)
++})
+diff --git 1/scripts/browser/creator-tools.test.mjs 2/scripts/browser/creator-tools.test.mjs
+new file mode 100644
+index 0000000..627f795
+--- /dev/null
++++ 2/scripts/browser/creator-tools.test.mjs
+@@ -0,0 +1,222 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, snapshot } from './helpers.mjs'
++
++const out = process.env.CHORE_PET_TOOLS_CAPTURE_DIR
++async function creator(t, { species = 'mochi', width = 1280, height = 800, text = 100, reduced = false } = {}) {
++  const page = await browserApp(t, { viewport: { width, height }, reducedMotion: reduced ? 'reduce' : 'no-preference' })
++  await page.evaluate(species => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, pet = Object.values(saved.tables.pets)[0]
++        pet.species = species
++        pet.bodyColour = { mochi: '#FFCFDA', bun: '#FFFFFF', sprout: '#FFD65C' }[species]
++        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++        saved.outbox = {}; store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), species)
++  await page.reload()
++  await page.getByRole('button', { name: 'More', exact: true }).click()
++  await page.getByRole('button', { name: 'Change look', exact: true }).click()
++  await page.waitForFunction(() => !document.documentElement.dataset.vt)
++  await page.evaluate(text => { document.documentElement.style.fontSize = `${text}%` }, text)
++  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
++  await page.evaluate(() => {
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__toolsFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(time => { window.__toolsFrames.delete(id); callback(time) })
++      window.__toolsFrames.add(id); return id
++    }
++    window.cancelAnimationFrame = id => { window.__toolsFrames.delete(id); cancel(id) }
++  })
++  await page.clock.runFor(48)
++  const tab = page.getByRole('tab', { name: 'Face', exact: true })
++  if (await tab.count()) await tab.click()
++  return page
++}
++const mirror = page => page.getByRole('button', { name: 'Mirror preview', exact: true })
++const show = page => page.getByRole('button', { name: 'Show preview', exact: true })
++const art = page => page.locator('.cc-preview .ch-animated')
++const frames = page => page.evaluate(() => window.__toolsFrames.size)
++
++async function geometry(page) {
++  return page.locator('.cc-preview svg').evaluate(svg => {
++    const bounds = svg.getBoundingClientRect()
++    const body = svg.querySelector('[data-character-body]'), ground = svg.querySelector('[data-character-ground]')
++    const points = node => [[63, 91], [137, 91], [63, 181], [137, 181]].map(([x, y]) => {
++      const p = new DOMPoint(x, y).matrixTransform(node.getScreenCTM()); return { x: p.x, y: p.y }
++    })
++    return { centerX: bounds.x + bounds.width / 2, body: points(body), ground: points(ground),
++      facing: svg.querySelector('[data-preview-facing]')?.getAttribute('data-preview-facing'),
++      slots: [...svg.querySelectorAll('[data-slot]')].map(n => n.getAttribute('data-slot')).filter(s => s !== 'body').sort(),
++      focused: document.activeElement === svg, focusVisible: svg.matches(':focus-visible'),
++      box: { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height, bottom: bounds.bottom, right: bounds.right } }
++  })
++}
++function expectReflection(before, after) {
++  assert.equal(after.facing, 'mirrored')
++  assert.equal(after.centerX, before.centerX)
++  for (const part of ['body', 'ground']) for (let i = 0; i < 4; i++) {
++    assert.ok(Math.abs(after[part][i].x - (2 * before.centerX - before[part][i].x)) < .01, `${part} x reflects once`)
++    assert.ok(Math.abs(after[part][i].y - before[part][i].y) < .01, `${part} y stays grounded`)
++  }
++  assert.deepEqual(after.slots, before.slots)
++}
++async function capture(page, name, data, clip) {
++  if (!out) return
++  await mkdir(out, { recursive: true })
++  await page.screenshot({ path: join(out, `${name}.png`), animations: 'disabled', ...(clip ? { clip } : {}) })
++  await writeFile(join(out, `${name}.json`), JSON.stringify({ ...data, browser: page.context().browser().version(),
++    method: 'Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification.' }, null, 2) + '\n')
++}
++
++for (const species of ['mochi', 'bun', 'sprout']) {
++  test(`preview tools reflect layered ${species} in every mood without saving`, async t => {
++    const page = await creator(t, { species })
++    const before = (await snapshot(page)).tables
++    const node = await art(page).elementHandle()
++    const samples = []
++    for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick']) {
++      await page.getByRole('combobox', { name: 'Preview mood', exact: true }).selectOption(mood)
++      assert.equal(await mirror(page).getAttribute('aria-pressed'), 'false')
++      const normal = await geometry(page), markup = await art(page).innerHTML()
++      await mirror(page).focus(); await page.keyboard.press('Space')
++      const reflected = await geometry(page)
++      expectReflection(normal, reflected)
++      assert.equal(await art(page).evaluate((current, original) => current === original, node), true)
++      assert.equal(await art(page).innerHTML(), markup)
++      assert.match(await page.locator('.cc-preview svg').getAttribute('aria-label'), /mirrored/)
++      assert.equal(await frames(page), 0)
++      const data = { species, mood, normal, reflected, pendingFrames: await frames(page) }
++      samples.push(data)
++      if (mood === 'happy' || mood === 'sick') {
++        await show(page).focus(); await page.keyboard.press('Enter')
++        const box = await page.locator('.cc-preview svg').boundingBox()
++        await capture(page, `tools-${species}-${mood}`, data, box)
++      }
++      await mirror(page).focus(); await page.keyboard.press('Space')
++      assert.equal(await mirror(page).getAttribute('aria-pressed'), 'false')
++    }
++    assert.deepEqual((await snapshot(page)).tables, before)
++    if (out) await writeFile(join(out, `tools-${species}-geometry.json`), JSON.stringify(samples, null, 2) + '\n')
++  })
++}
++
++test('keyboard preview tools preserve the running cheer, draft and original deadline', async t => {
++  const page = await creator(t, { width: 390, height: 664 })
++  const before = (await snapshot(page)).tables
++  await page.getByRole('tab', { name: 'Who', exact: true }).click()
++  await page.getByRole('radio', { name: 'Bun', exact: true }).click()
++  await page.clock.runFor(756)
++  await page.getByRole('tab', { name: 'Face', exact: true }).click()
++  const markup = await art(page).innerHTML()
++  assert.equal(await frames(page), 1)
++  await mirror(page).focus(); await page.keyboard.press('Space')
++  await show(page).focus(); await page.keyboard.press('Enter')
++  assert.equal(await art(page).innerHTML(), markup)
++  assert.equal(await frames(page), 1)
++  assert.equal((await geometry(page)).focused, true)
++  await page.clock.runFor(1200)
++  assert.equal(await frames(page), 0)
++  assert.equal(await art(page).locator('[data-expression="happy"]').count(), 1)
++  assert.equal(await mirror(page).getAttribute('aria-pressed'), 'true')
++  assert.deepEqual((await snapshot(page)).tables, before)
++  await page.clock.resume()
++  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
++  assert.deepEqual((await snapshot(page)).tables, before)
++})
++
++for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [1280, 800]]) {
++  test(`preview tools are reachable and reveal focused art at ${width}x${height} enlarged text`, async t => {
++    const page = await creator(t, { width, height, text: 200 })
++    const before = (await snapshot(page)).tables
++    await page.getByRole('combobox', { name: 'Preview mood', exact: true }).selectOption('sick')
++    await page.keyboard.press('Tab')
++    const controls = []
++    for (const button of [mirror(page), show(page)]) {
++      await button.focus()
++      const rect = await button.evaluate(node => {
++        const r = node.getBoundingClientRect()
++        return { label: node.textContent, x: r.x, y: r.y, width: r.width, height: r.height, right: r.right, bottom: r.bottom,
++          focusVisible: node.matches(':focus-visible'), textFits: node.scrollWidth <= node.clientWidth && node.scrollHeight <= node.clientHeight }
++      })
++      assert.ok(rect.width >= 44 && rect.height >= 44)
++      assert.ok(rect.x >= 0 && rect.y >= 0 && rect.right <= width + .01 && rect.bottom <= height + .01)
++      assert.ok(rect.focusVisible && rect.textFits)
++      controls.push(rect)
++    }
++    await mirror(page).focus(); await page.keyboard.press('Space')
++    await capture(page, `tools-layout-${width}-controls`, { width, height, text: 200, controls })
++    await show(page).focus(); await page.keyboard.press('Enter')
++    const revealed = await geometry(page)
++    assert.equal(revealed.focused, true); assert.equal(revealed.focusVisible, true)
++    assert.equal(await page.locator('.cc-preview svg').evaluate(node => getComputedStyle(node).outlineStyle), 'solid')
++    assert.equal(await page.locator('.cc-preview svg').getAttribute('tabindex'), '-1')
++    assert.ok(revealed.box.height >= 120 && revealed.box.y >= 0 && revealed.box.bottom <= height + .01)
++    assert.ok(revealed.box.x >= 0 && revealed.box.right <= width + .01)
++    assert.equal(await frames(page), 0)
++    await capture(page, `tools-layout-${width}-preview`, { width, height, text: 200, revealed, pendingFrames: await frames(page) })
++    assert.deepEqual((await snapshot(page)).tables, before)
++  })
++}
++
++test('reduced preview tools never start motion or save a facing preference', async t => {
++  const page = await creator(t, { width: 390, reduced: true })
++  const before = (await snapshot(page)).tables
++  await mirror(page).click()
++  await show(page).click()
++  await page.clock.runFor(2200)
++  assert.equal(await frames(page), 0)
++  assert.equal(await mirror(page).getAttribute('aria-pressed'), 'true')
++  await page.getByRole('button', { name: 'Save', exact: true }).click()
++  assert.deepEqual((await snapshot(page)).tables, before)
++  await page.clock.resume()
++  await page.waitForFunction(() => !document.documentElement.dataset.vt)
++  await page.getByRole('button', { name: 'More', exact: true }).click()
++  await page.getByRole('button', { name: 'Change look', exact: true }).click()
++  await page.waitForFunction(() => !document.documentElement.dataset.vt)
++  await page.getByRole('tab', { name: 'Face', exact: true }).click()
++  assert.equal(await mirror(page).getAttribute('aria-pressed'), 'false')
++  assert.equal(await page.locator('[data-preview-facing]').getAttribute('data-preview-facing'), 'normal')
++})
++
++test('mirrored mood survives edits and resizing while Save keeps only the look', async t => {
++  const page = await creator(t, { width: 390, height: 664 })
++  const before = (await snapshot(page)).tables
++  const node = await art(page).elementHandle()
++  await mirror(page).click()
++  await page.getByRole('combobox', { name: 'Preview mood', exact: true }).selectOption('meh')
++  await page.getByRole('tab', { name: 'Who', exact: true }).click()
++  await page.getByRole('radio', { name: 'Bun', exact: true }).click()
++  await page.getByRole('tab', { name: 'Colour', exact: true }).click()
++  await page.getByRole('radio', { name: 'Sky', exact: true }).click()
++  await page.getByRole('tab', { name: 'Face', exact: true }).click()
++  await page.getByRole('radio', { name: 'Sparkly', exact: true }).click()
++  await page.getByRole('radio', { name: 'Hearts', exact: true }).click()
++  await page.setViewportSize({ width: 1280, height: 800 })
++  await page.waitForFunction(() => !document.querySelector('.cc [role="tablist"]'))
++  assert.equal(await mirror(page).getAttribute('aria-pressed'), 'true')
++  assert.equal(await page.getByRole('combobox', { name: 'Preview mood', exact: true }).inputValue(), 'meh')
++  assert.equal(await art(page).evaluate((current, original) => current === original, node), true)
++  assert.equal(await frames(page), 0)
++  await page.setViewportSize({ width: 390, height: 664 })
++  await page.getByRole('tab', { name: 'Face', exact: true }).waitFor()
++  assert.equal(await mirror(page).getAttribute('aria-pressed'), 'true')
++  await page.getByRole('button', { name: 'Save', exact: true }).click()
++  const after = (await snapshot(page)).tables
++  for (const table of ['chores', 'completions', 'progress']) assert.deepEqual(after[table], before[table])
++  const saved = Object.values(after.pets)[0], original = Object.values(before.pets)[0]
++  assert.equal(saved.species, 'bun'); assert.equal(saved.bodyColour, '#9ED8F5')
++  assert.equal(saved.eyes, 'sparkly'); assert.equal(saved.cheeks, 'hearts')
++  assert.equal(saved.name, original.name); assert.deepEqual(saved.equipped, original.equipped)
++  for (const field of ['mirrored', 'previewMood', 'mood']) assert.equal(Object.hasOwn(saved, field), false)
++})
+diff --git i/docs/ART.md w/docs/ART.md
+index 804f2e1..a9fc267 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -237,3 +237,5 @@ Change look retains a readable character and full input targets as root text gro
+ Change look offers a native Preview mood selector in Face: Happy, Content, Tired, Scruffy and Unwell. It samples the existing mood pose and clothing rules without putting mood into the look draft or saved patch. The character image names the selected expression. Choosing a mood cancels an active cheer before paint; other moods remain still while editing. Returning to Happy does not replay the old cheer, and the next eligible look change can start the existing finite cheer. Eye/cheek thumbnails retain their recognizable happy crops. Tab/resize changes preserve the preview selection; reopening resets Happy. Reduction and hidden expiry retain the existing owner. A44px field with8px scroll margin follows the editor reflow. Native checks cover all15species/mood combinations, keyboard selection, no saved-table changes, zero static pending frames, live reduction and four enlarged-text layouts; stills do not certify temporal comfort, whole-app zoom or physical devices.
+ 
+ Change look comparison thumbnails keep their resting body and open eyes still. The scoped `.cc-choice` rule stops their legacy CSS breath/blink loops under every preference, including device-local Reduce pet motion. The main sampled preview retains its finite1800ms cheer and mood/reduction policies; radio hover, focus and selection feedback retain existing behavior. Native CSS animation inventories and computed transforms verify the distinction; animation counts do not measure CPU or battery savings.
++
++Change look Face options include Mirror preview and Show preview. Mirroring is a local pressed toggle that reflects the complete sampled character once about x=100, including clothes and ground, and resets when the editor reopens. Show preview scrolls the actual SVG instantly into view and focuses it without a second scroll; the image has an inset keyboard focus ring and stays outside ordinary Tab stops. Both controls preserve the current mood, look draft, frame owner and finite cheer deadline. Their row wraps at enlarged text sizes and adds no clock, listener or saved field.
+diff --git 1/docs/audits/2026-10-12-character-polish/creator-tools-design.md 2/docs/audits/2026-10-12-character-polish/creator-tools-design.md
+new file mode 100644
+index 0000000..160219b
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/creator-tools-design.md
+@@ -0,0 +1,13 @@
++# Mirror and reach the character preview
++
++Add a two-button row beneath the Face panel mood helper: Mirror preview (aria-pressed toggle) and Show preview. Both type=button,44pxminimum, flex-wrap with ordinary text wrapping on cramped/enlarged layouts. No overlay on the character or option faces. Mirror is local parent state passed to CreatorPreview; defaults false, survives tabs/resizing/look/mood edits in this draft, resets on remount, never enters saved patches. Wrap the existing sampled art in one SVG group with translate(200 0) scale(-1 1) when mirrored. Mirror the whole character, clothing, ground and accents once; names/labels remain normal. Preserve the existing art node and single finite RAF owner/deadline.
++
++Extend the existing preview imperative handle with show(): scroll the actual SVG into view using instant/center/nearest, then focus({preventScroll:true}). The SVG becomes programmatically focusable with tabIndex=-1 and a visible inset focus ring, and its name includes mirrored state and current mood. Show preview remains available for static/reduced poses and never changes mood, draft, facing, speech, time or selection. Follow existing Wardrobe preview semantics; keep the creator tools inside Face options so they can be reached at200%root text where the preview scrolls offscreen.
++
++Prepare meaningful unit red tests in a new file while previous sources are frozen. Implement only after the thumbnail checkpoint. Verify mirror transform/art identity/clock continuity and deadline, no saved patch, allspecies/moods, Show scroll/focus arguments and image naming, tab/resize persistence and remount reset. Then verify real keyboard/space/enter actions, actual geometry/focus/instant scroll, visible target bounds, finite clocks, reduced motion, saved tables and outfit layers in one offline browser at a time. Inspect phone/landscape/desktop and200%root text stills. Resource limits remain sequential384MiBbrowser and one worker; no new animation clock, listener, storage field or library.
++
++This bounded feature is covered by the user's continuing authorization. Production changes wait for the prior creator-thumbnail review/checkpoint. No claim of full browser zoom, AT, physical-device or temporal-comfort certification.
++
++Preparation before the prior checkpoint:18unit cases fail for missing facing group/controls; one filtered native case fails waiting for the absent Mirror preview button. Exact red unit/native harness bytes are archived. Native harness later adds a resize/edit/save case and explicit Tab modality before focus-visible button measurements; final native checks must use that strengthened harness. A draft of the3production files was prepared under/tmp without changing frozen source. No prototype pass is claimed.
++
++Initial full-suite restricted exec ended143 with only its runner banner, no result, exit sidecar or resource sidecar. Partial log bytes and tool-reported termination are preserved in creator-tools-full-interrupted.log.txt and creator-tools-full-interruption.json. Subsequent host/proc inventory found no matching live workspace test/supervisor. Cause remains unestablished; no per-run resource minima claimed. Retry uses the usual approved host full-check path with unchanged384MiB/oneworker/nice10/resource reserves.

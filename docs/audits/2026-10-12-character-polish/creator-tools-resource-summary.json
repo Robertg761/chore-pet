@@ -1,0 +1,74 @@
+{
+  "runs": 9,
+  "sampleRows": 239,
+  "minimumObservedAvailableMiB": 3191.30078125,
+  "minimumObservedTmpFreeMiB": 4009.953125,
+  "reserveStops": 0,
+  "launchRejections": 0,
+  "rows": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-tools-build-resources.json",
+      "samples": 12,
+      "minimumAvailableMiB": 4241.72265625,
+      "minimumTmpMiB": 4090.53125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-tools-final-diff-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4797.515625,
+      "minimumTmpMiB": 4087.140625,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-tools-final-full-resources.json",
+      "samples": 92,
+      "minimumAvailableMiB": 3191.30078125,
+      "minimumTmpMiB": 4075.08203125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-tools-final-lint-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4857.90234375,
+      "minimumTmpMiB": 4087.14453125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-tools-focused-resources.json",
+      "samples": 9,
+      "minimumAvailableMiB": 4442.84765625,
+      "minimumTmpMiB": 4089.72265625,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-tools-harness-lint-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 5205.63671875,
+      "minimumTmpMiB": 4090.58203125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-tools-native-resources.json",
+      "samples": 103,
+      "minimumAvailableMiB": 4159.921875,
+      "minimumTmpMiB": 4009.953125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-tools-red-native-resources.json",
+      "samples": 9,
+      "minimumAvailableMiB": 4352.80078125,
+      "minimumTmpMiB": 4020.1875,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-tools-red-resources.json",
+      "samples": 5,
+      "minimumAvailableMiB": 4197.10546875,
+      "minimumTmpMiB": 4089.859375,
+      "exitCode": 1
+    }
+  ],
+  "limits": "Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor."
+}

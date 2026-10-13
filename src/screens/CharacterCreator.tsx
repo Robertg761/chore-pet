@@ -99,6 +99,7 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
   const wide = useWide()
   const [part, setPart] = useState<Part>('who')
   const [previewMood, setPreviewMood] = useState<Mood>('happy')
+  const [previewMirrored, setPreviewMirrored] = useState(false)
   const previewMoodId = useId()
   const tabsRef = useRef<HTMLDivElement>(null)
   const preview = useRef<CreatorPreviewControl | null>(null)
@@ -199,6 +200,11 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
           {PREVIEW_MOOD_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
         </select>
         <p id={`${previewMoodId}-note`} className="cc-hint">See how your look appears in each mood.</p>
+        <div className="cc-preview-tools" role="group" aria-label="Character preview">
+          <button type="button" className="btn choice" aria-pressed={previewMirrored}
+            onClick={() => setPreviewMirrored(value => !value)}>Mirror preview</button>
+          <button type="button" className="btn" onClick={() => preview.current?.show()}>Show preview</button>
+        </div>
       </section>
       <section className="cc-section" aria-labelledby="cc-eyes-h">
         <h2 id="cc-eyes-h">Eyes</h2>
@@ -264,7 +270,7 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
 
       <div className="cc-body">
         <div className="cc-stage">
-          <CreatorPreview draft={draft} equipped={pet.equipped} control={preview} mood={previewMood}
+          <CreatorPreview draft={draft} equipped={pet.equipped} control={preview} mood={previewMood} mirrored={previewMirrored}
             label={`${draft.name.trim() || 'Your pet'}, ${SPECIES_LABEL[species]}`} />
 
           <div className="cc-field">

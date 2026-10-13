@@ -1,0 +1,447 @@
+{
+  "directFinalPngs": {
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-bun-happy.png": "4d982c98ccf74ef25646517a770aff6dd2f507ef6bfd66971c4615c0325a7ba5",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-bun-sick.png": "e1c057d1d359a7859c202e34948f1f7947859d64bbddd90c68c345eb96775e5e",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-layout-1280-controls.png": "965d7176f0f2b847a28272ed63780ff4990bc4fc51b3212387e34b922c04c5ed",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-layout-1280-preview.png": "b5e6086753f63b0fc977b7cdb80ba5284e650e2c46861d6e41ac3915465e8b67",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-layout-320-controls.png": "08c161c2cee59395254a16d4c101d850454e28976bbb19708454cbea2bd18f74",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-layout-320-preview.png": "241d542f53d59b04e1f7486b16e685d4b6a60b806d72dbd922ea2161653f1ba1",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-layout-390-controls.png": "05282ab60a06b6dd6e3401f7c8ccef04d4559373c0b377f087e64b00b1f3ddbb",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-layout-390-preview.png": "411c35b039faf4b3594e195cd18cdd2c8d58b86bec2d8eb83a48fcff2cb2e62d",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-layout-640-controls.png": "f3d6a0950b0c2239754e4d4af7eb1b24937d1d96490921b3f316cde0e3d57967",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-layout-640-preview.png": "d8ec7c0177a1ae45390cff4a8bd8a87752d7663dc16a11530196a87eecc04275",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-layout-844-controls.png": "8b2f23c9d017773802051ba2c318d51f727d28871ffe43e2a1073a0f4ea34767",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-layout-844-preview.png": "7a0745d52dbdf4058bf4ff2c2134c3bd4fb6df33f7b93530861d34a36ac98f42",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-mochi-happy.png": "86877936d4aa0a0b1c8051fdd49e4df9d08e116629f612b5ad299f2d437d31a2",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-mochi-sick.png": "98b452ad0e084d28725a97628973d6d4e598bf640e8162e93cbaef8ab256f6bb",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-sprout-happy.png": "3583aa9703180b4f300ce26a610bb53fedc985b628cbebfd5b6825e957a159ae",
+    "docs/audits/2026-10-12-character-polish/creator-tools-native-initial/tools-sprout-sick.png": "ed24a734395b58e84a5313570b1459c0d6b896e93f16be60d1d173fba1ca4e50"
+  },
+  "finalPngs": 16,
+  "artSamples": 15,
+  "reflectedBodyGroundPoints": 120,
+  "maximumReflectionOrGroundYErrorCssPx": 1.1368683772161603e-13,
+  "layoutSamples": [
+    {
+      "controls": [
+        {
+          "label": "Mirror preview",
+          "x": 14,
+          "y": 456.375,
+          "width": 292,
+          "height": 49,
+          "right": 306,
+          "bottom": 505.375,
+          "focusVisible": true,
+          "textFits": true
+        },
+        {
+          "label": "Show preview",
+          "x": 14,
+          "y": 456.375,
+          "width": 292,
+          "height": 49,
+          "right": 306,
+          "bottom": 505.375,
+          "focusVisible": true,
+          "textFits": true
+        }
+      ],
+      "revealed": {
+        "centerX": 160,
+        "body": [
+          {
+            "x": 189.6,
+            "y": 249.175
+          },
+          {
+            "x": 130.39999999999998,
+            "y": 249.175
+          },
+          {
+            "x": 189.6,
+            "y": 321.175
+          },
+          {
+            "x": 130.39999999999998,
+            "y": 321.175
+          }
+        ],
+        "ground": [
+          {
+            "x": 189.6,
+            "y": 249.175
+          },
+          {
+            "x": 130.39999999999998,
+            "y": 249.175
+          },
+          {
+            "x": 189.6,
+            "y": 321.175
+          },
+          {
+            "x": 130.39999999999998,
+            "y": 321.175
+          }
+        ],
+        "facing": "mirrored",
+        "slots": [
+          "face",
+          "head"
+        ],
+        "focused": true,
+        "focusVisible": true,
+        "box": {
+          "x": 21,
+          "y": 176.375,
+          "width": 278,
+          "height": 160,
+          "bottom": 336.375,
+          "right": 299
+        }
+      },
+      "viewport": {
+        "width": 320,
+        "height": 568
+      }
+    },
+    {
+      "controls": [
+        {
+          "label": "Mirror preview",
+          "x": 14,
+          "y": 280.1875,
+          "width": 362,
+          "height": 49,
+          "right": 376,
+          "bottom": 329.1875,
+          "focusVisible": true,
+          "textFits": true
+        },
+        {
+          "label": "Show preview",
+          "x": 14,
+          "y": 335.1875,
+          "width": 362,
+          "height": 49,
+          "right": 376,
+          "bottom": 384.1875,
+          "focusVisible": true,
+          "textFits": true
+        }
+      ],
+      "revealed": {
+        "centerX": 195,
+        "body": [
+          {
+            "x": 224.6,
+            "y": 207.9875
+          },
+          {
+            "x": 165.39999999999998,
+            "y": 207.9875
+          },
+          {
+            "x": 224.6,
+            "y": 279.9875
+          },
+          {
+            "x": 165.39999999999998,
+            "y": 279.9875
+          }
+        ],
+        "ground": [
+          {
+            "x": 224.6,
+            "y": 207.9875
+          },
+          {
+            "x": 165.39999999999998,
+            "y": 207.9875
+          },
+          {
+            "x": 224.6,
+            "y": 279.9875
+          },
+          {
+            "x": 165.39999999999998,
+            "y": 279.9875
+          }
+        ],
+        "facing": "mirrored",
+        "slots": [
+          "face",
+          "head"
+        ],
+        "focused": true,
+        "focusVisible": true,
+        "box": {
+          "x": 21,
+          "y": 135.1875,
+          "width": 348,
+          "height": 160,
+          "bottom": 295.1875,
+          "right": 369
+        }
+      },
+      "viewport": {
+        "width": 390,
+        "height": 664
+      }
+    },
+    {
+      "controls": [
+        {
+          "label": "Mirror preview",
+          "x": 164,
+          "y": 155.78125,
+          "width": 456,
+          "height": 49,
+          "right": 620,
+          "bottom": 204.78125,
+          "focusVisible": true,
+          "textFits": true
+        },
+        {
+          "label": "Show preview",
+          "x": 164,
+          "y": 210.78125,
+          "width": 456,
+          "height": 49,
+          "right": 620,
+          "bottom": 259.78125,
+          "focusVisible": true,
+          "textFits": true
+        }
+      ],
+      "revealed": {
+        "centerX": 392,
+        "body": [
+          {
+            "x": 421.6,
+            "y": 172.9875
+          },
+          {
+            "x": 362.4,
+            "y": 172.9875
+          },
+          {
+            "x": 421.6,
+            "y": 244.9875
+          },
+          {
+            "x": 362.4,
+            "y": 244.9875
+          }
+        ],
+        "ground": [
+          {
+            "x": 421.6,
+            "y": 172.9875
+          },
+          {
+            "x": 362.4,
+            "y": 172.9875
+          },
+          {
+            "x": 421.6,
+            "y": 244.9875
+          },
+          {
+            "x": 362.4,
+            "y": 244.9875
+          }
+        ],
+        "facing": "mirrored",
+        "slots": [
+          "face",
+          "head"
+        ],
+        "focused": true,
+        "focusVisible": true,
+        "box": {
+          "x": 171,
+          "y": 100.1875,
+          "width": 442,
+          "height": 160,
+          "bottom": 260.1875,
+          "right": 613
+        }
+      },
+      "viewport": {
+        "width": 640,
+        "height": 360
+      }
+    },
+    {
+      "controls": [
+        {
+          "label": "Mirror preview",
+          "x": 164,
+          "y": 170.78125,
+          "width": 327,
+          "height": 49,
+          "right": 491,
+          "bottom": 219.78125,
+          "focusVisible": true,
+          "textFits": true
+        },
+        {
+          "label": "Show preview",
+          "x": 497,
+          "y": 170.78125,
+          "width": 327,
+          "height": 49,
+          "right": 824,
+          "bottom": 219.78125,
+          "focusVisible": true,
+          "textFits": true
+        }
+      ],
+      "revealed": {
+        "centerX": 494,
+        "body": [
+          {
+            "x": 523.6,
+            "y": 187.9875
+          },
+          {
+            "x": 464.4,
+            "y": 187.9875
+          },
+          {
+            "x": 523.6,
+            "y": 259.9875
+          },
+          {
+            "x": 464.4,
+            "y": 259.9875
+          }
+        ],
+        "ground": [
+          {
+            "x": 523.6,
+            "y": 187.9875
+          },
+          {
+            "x": 464.4,
+            "y": 187.9875
+          },
+          {
+            "x": 523.6,
+            "y": 259.9875
+          },
+          {
+            "x": 464.4,
+            "y": 259.9875
+          }
+        ],
+        "facing": "mirrored",
+        "slots": [
+          "face",
+          "head"
+        ],
+        "focused": true,
+        "focusVisible": true,
+        "box": {
+          "x": 171,
+          "y": 115.1875,
+          "width": 646,
+          "height": 160,
+          "bottom": 275.1875,
+          "right": 817
+        }
+      },
+      "viewport": {
+        "width": 844,
+        "height": 390
+      }
+    },
+    {
+      "controls": [
+        {
+          "label": "Mirror preview",
+          "x": 696,
+          "y": 645.78125,
+          "width": 267,
+          "height": 49,
+          "right": 963,
+          "bottom": 694.78125,
+          "focusVisible": true,
+          "textFits": true
+        },
+        {
+          "label": "Show preview",
+          "x": 969,
+          "y": 645.78125,
+          "width": 267,
+          "height": 49,
+          "right": 1236,
+          "bottom": 694.78125,
+          "focusVisible": true,
+          "textFits": true
+        }
+      ],
+      "revealed": {
+        "centerX": 460,
+        "body": [
+          {
+            "x": 534.37,
+            "y": 391.40999999999997
+          },
+          {
+            "x": 385.63000000000005,
+            "y": 391.40999999999997
+          },
+          {
+            "x": 534.37,
+            "y": 572.31
+          },
+          {
+            "x": 385.63000000000005,
+            "y": 572.31
+          }
+        ],
+        "ground": [
+          {
+            "x": 534.37,
+            "y": 391.40999999999997
+          },
+          {
+            "x": 385.63000000000005,
+            "y": 391.40999999999997
+          },
+          {
+            "x": 534.37,
+            "y": 572.31
+          },
+          {
+            "x": 385.63000000000005,
+            "y": 572.31
+          }
+        ],
+        "facing": "mirrored",
+        "slots": [
+          "face",
+          "head"
+        ],
+        "focused": true,
+        "focusVisible": true,
+        "box": {
+          "x": 259,
+          "y": 111,
+          "width": 402,
+          "height": 597,
+          "bottom": 708,
+          "right": 661
+        }
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      }
+    }
+  ],
+  "scope": "All16currentPNGs directly viewed:6speciesHappy/Unwell layered artSVGclips plus10enlarged controls/revealed-art stills. Fifteen species/mood matrix samples independently recomputed for one horizontal reflection, unchangedgroundY/slot lists and0trackedframes. Five enlarged layouts have10reachable44px/text-fitting/focus-visiblecontrols plus5focusedpreviewSVGs >=120px wholly withinviewport. Mirrorpressedaccentring distinctfromkeyboardinkoutline; previewfocusringvisible. Settledstill/nativefakeclock/source evidence, not human temporalcomfort/AT/physicaldevice/fullbrowserzoom certification; noCPU/batteryclaim."
+}

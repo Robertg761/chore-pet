@@ -1,0 +1,118 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/screens/CharacterCreator.tools.test.tsx (18 tests | 18 failed) 1213ms
+   × mirrors the whole mochi happy preview once without changing its art or saving 199ms
+   × mirrors the whole mochi content preview once without changing its art or saving 163ms
+   × mirrors the whole mochi meh preview once without changing its art or saving 63ms
+   × mirrors the whole mochi scruffy preview once without changing its art or saving 68ms
+   × mirrors the whole mochi sick preview once without changing its art or saving 58ms
+   × mirrors the whole bun happy preview once without changing its art or saving 49ms
+   × mirrors the whole bun content preview once without changing its art or saving 59ms
+   × mirrors the whole bun meh preview once without changing its art or saving 55ms
+   × mirrors the whole bun scruffy preview once without changing its art or saving 64ms
+   × mirrors the whole bun sick preview once without changing its art or saving 55ms
+   × mirrors the whole sprout happy preview once without changing its art or saving 48ms
+   × mirrors the whole sprout content preview once without changing its art or saving 54ms
+   × mirrors the whole sprout meh preview once without changing its art or saving 55ms
+   × mirrors the whole sprout scruffy preview once without changing its art or saving 54ms
+   × mirrors the whole sprout sick preview once without changing its art or saving 55ms
+   × mirrors and reveals an active cheer without changing its delivered frame or deadline 43ms
+   × reveals a static reduced preview with a programmatic focus target and no saved changes 42ms
+   × keeps preview tools local through tab, resize, mood and look edits, then resets on reopening 27ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 18 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole mochi happy preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole mochi content preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole mochi meh preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole mochi scruffy preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole mochi sick preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole bun happy preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole bun content preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole bun meh preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole bun scruffy preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole bun sick preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole sprout happy preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole sprout content preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole sprout meh preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole sprout scruffy preview once without changing its art or saving
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors the whole sprout sick preview once without changing its art or saving
+AssertionError: expected null not to be null
+ ❯ expectFacing src/screens/CharacterCreator.tools.test.tsx:43:21
+     41| function expectFacing(mirrored: boolean) {
+     42|   const group = ui.container.querySelector('[data-preview-facing]')
+     43|   expect(group).not.toBeNull()
+       |                     ^
+     44|   expect(group!.getAttribute('data-preview-facing')).toBe(mirrored ? '…
+     45|   expect(group!.getAttribute('transform')).toBe(mirrored ? 'translate(…
+ ❯ src/screens/CharacterCreator.tools.test.tsx:53:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/18]⎯
+
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > mirrors and reveals an active cheer without changing its delivered frame or deadline
+AssertionError: button Mirror preview: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/CharacterCreator.tools.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy(); return node!
+       |                                  ^
+     32| }
+     33| const art = () => ui.container.querySelector('.cc-preview .ch-animated…
+ ❯ src/screens/CharacterCreator.tools.test.tsx:68:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/18]⎯
+
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > reveals a static reduced preview with a programmatic focus target and no saved changes
+AssertionError: button Mirror preview: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/CharacterCreator.tools.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy(); return node!
+       |                                  ^
+     32| }
+     33| const art = () => ui.container.querySelector('.cc-preview .ch-animated…
+ ❯ src/screens/CharacterCreator.tools.test.tsx:83:46
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/18]⎯
+
+ FAIL  src/screens/CharacterCreator.tools.test.tsx > keeps preview tools local through tab, resize, mood and look edits, then resets on reopening
+AssertionError: button Mirror preview: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/CharacterCreator.tools.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy(); return node!
+       |                                  ^
+     32| }
+     33| const art = () => ui.container.querySelector('.cc-preview .ch-animated…
+ ❯ src/screens/CharacterCreator.tools.test.tsx:97:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/18]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  18 failed (18)
+   Start at  03:46:51
+   Duration  2.26s (tests 56%, environment 25%, transform 15%, import 3%)
+

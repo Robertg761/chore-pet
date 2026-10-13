@@ -1,0 +1,22 @@
+✖ preview tools reflect layered mochi in every mood without saving (6262.905684ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6910.190675
+
+✖ failing tests:
+
+test at scripts/browser/creator-tools.test.mjs:83:3
+✖ preview tools reflect layered mochi in every mood without saving (6262.905684ms)
+  locator.getAttribute: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByRole('button', { name: 'Mirror preview', exact: true })[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-tools.test.mjs:90:39) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByRole('button', { name: 'Mirror preview', exact: true })" ]
+  }
