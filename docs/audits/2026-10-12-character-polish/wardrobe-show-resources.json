@@ -1,0 +1,7 @@
+{
+  "method": "Read-only memory and tmpfs snapshot during sequential full-suite job; not peak-RSS/CPU/battery measurement. Heavy jobs use one worker/browser, nice10 and 768MB Node cap.",
+  "utc": "2026-10-13T01:20:23.264993+00:00",
+  "memoryAvailableKiB": 5802512,
+  "tmpFreeBytes": 4298641408,
+  "tmpTotalBytes": 16783474688
+}

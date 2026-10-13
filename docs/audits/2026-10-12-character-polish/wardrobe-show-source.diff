@@ -1,0 +1,281 @@
+diff --git i/src/screens/WardrobePreview.tsx w/src/screens/WardrobePreview.tsx
+index 445dd9d..efa6c69 100644
+--- i/src/screens/WardrobePreview.tsx
++++ w/src/screens/WardrobePreview.tsx
+@@ -1,4 +1,4 @@
+-import { useState } from 'react'
++import { useRef, useState } from 'react'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+ import { ACTION_MS, sampleMotion } from '../character/motion'
+ import type { PoseName } from '../character/poses'
+@@ -12,6 +12,7 @@ interface PreviewRun { action: PreviewAction; start: number }
+ 
+ /** One finite, on-demand clock, isolated from the wardrobe's item grid. */
+ export function WardrobePreview({ pet }: { pet: Pet }) {
++  const preview = useRef<SVGSVGElement>(null)
+   const [pose, setPose] = useState<PoseName>('idle')
+   const [run, setRun] = useState<PreviewRun | null>(null)
+   const [elapsed, setElapsed] = useState(0)
+@@ -26,6 +27,11 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
+     action: active?.action ?? 'idle', elapsedMs: active ? elapsed : 0, distance: 0,
+     durationMs: active ? ACTION_MS[active.action] : ACTION_MS.idle, reducedMotion: reducedMotion || !active })
+ 
++  function showPreview() {
++    preview.current?.scrollIntoView({ block: 'center', behavior: 'instant' })
++    preview.current?.focus({ preventScroll: true })
++  }
++
+   function stop() { setRun(null) }
+   function toggle(action: PreviewAction) {
+     if (reducedMotion) return
+@@ -38,7 +44,7 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
+   }
+ 
+   return <div className="wd-stage">
+-    <svg className="wd-preview" viewBox="0 0 200 200" role="img" aria-label={`${pet.name} wearing ${describeOutfit(pet.equipped)}`} focusable="false">
++    <svg ref={preview} className="wd-preview" tabIndex={-1} viewBox="0 0 200 200" role="img" aria-label={`${pet.name} wearing ${describeOutfit(pet.equipped)}`} focusable="true">
+       <AnimatedCharacterArt species={pet.species} mood={pose === 'sick' ? 'sick' : 'happy'} pose={pose}
+         bodyColour={pet.bodyColour} equipped={pet.equipped} look={{ eyes: pet.eyes, cheeks: pet.cheeks }} frame={frame} />
+     </svg>
+@@ -59,6 +65,7 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
+       <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'rest')}
+         onClick={() => toggle('rest')}>{active?.action === 'rest' ? 'Stop rest' : 'Rest'}</button>
+     </div>
++    <button type="button" className="btn btn-sm btn-quiet wd-show-preview" aria-label={`Show preview of ${pet.name}`} onClick={showPreview}>Show preview</button>
+     {reducedMotion && <p className="wd-note wd-motion-note">Motion previews are off while reduced motion is on.</p>}
+   </div>
+ }
+diff --git i/src/screens/Wardrobe.css w/src/screens/Wardrobe.css
+index e642215..65a5e4f 100644
+--- i/src/screens/Wardrobe.css
++++ w/src/screens/Wardrobe.css
+@@ -21,6 +21,8 @@
+   border: var(--outline);
+   border-radius: var(--radius);
+ }
++.wd-show-preview { display: none; }
++.wd-preview:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; border-radius: var(--ctl-radius); }
+ .wd-preview { flex: 1 1 0; min-height: 0; width: 100%; display: block; }
+ .wd-poses { align-self: stretch; }
+ .wd-motion { display: grid; grid-template-columns: minmax(0, 1fr); width: min(100%, 360px); min-width: 0; gap: 8px; flex: none; }
+@@ -181,6 +183,7 @@ button.wd-tile:active, .wd-outfit-try:active { transform: scale(0.97); }
+   .wd-body { flex: none; flex-direction: column; }
+   .wd-stage { flex: none; max-height: none; padding: 10px 12px 12px; gap: 8px; }
+   .wd-preview { flex: none; height: 160px; min-height: 160px; }
++  .wd-show-preview { display: inline-flex; flex: none; }
+   .wd-side { flex: none; min-height: 0; overflow: visible; padding: 0; margin: 0; }
+   .wd-panel { flex: none; max-height: none; overflow: visible; padding: 5px; margin: -5px; }
+   .wd-poses, .wd-tabs { width: 100%; flex-wrap: wrap; overflow: visible; }
+@@ -196,6 +199,7 @@ button.wd-tile:active, .wd-outfit-try:active { transform: scale(0.97); }
+   .wd-body { flex: none; flex-direction: column; }
+   .wd-stage { flex: none; max-height: none; padding: 10px 12px 12px; gap: 8px; }
+   .wd-preview { flex: none; height: 160px; min-height: 160px; }
++  .wd-show-preview { display: inline-flex; flex: none; }
+   .wd-side { flex: none; min-height: 0; overflow: visible; padding: 0; margin: 0; }
+   .wd-panel { flex: none; max-height: none; overflow: visible; padding: 5px; margin: -5px; }
+   .wd-poses, .wd-tabs { width: 100%; flex-wrap: wrap; overflow: visible; }
+diff --git 1/src/screens/Wardrobe.show.test.tsx 2/src/screens/Wardrobe.show.test.tsx
+new file mode 100644
+index 0000000..1e4cf9f
+--- /dev/null
++++ 2/src/screens/Wardrobe.show.test.tsx
+@@ -0,0 +1,88 @@
++// @vitest-environment jsdom
++import { act, StrictMode } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import type { Pet } from '../domain/types'
++import { setPetMotionReduced } from '../pet/motionPreference'
++import { click, render } from '../test/react'
++import { Wardrobe, type WardrobeProps } from './Wardrobe'
++import * as model from './wardrobeModel'
++
++const pet: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#ffcfda',
++  equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } }
++let ui: ReturnType<typeof render>, now: number, serial: number, hidden: boolean, media: MediaQueryList
++let frames: Map<number, FrameRequestCallback>, changed: ReturnType<typeof vi.fn<WardrobeProps['onChange']>>
++beforeEach(() => {
++  setPetMotionReduced(false)
++  now = 0; serial = 0; hidden = false; frames = new Map(); changed = vi.fn()
++  vi.spyOn(performance, 'now').mockImplementation(() => now)
++  vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden)
++  media = Object.assign(new EventTarget(), { matches: false, media: '(prefers-reduced-motion: reduce)' }) as MediaQueryList
++  const narrow = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  vi.stubGlobal('matchMedia', (query: string) => query.includes('prefers-reduced-motion') ? media : narrow)
++  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
++  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
++  vi.spyOn(model, 'itemsForSlot')
++  ui = render(<StrictMode><Wardrobe pet={pet} progress={null} onChange={changed} /></StrictMode>)
++})
++afterEach(() => { ui.unmount(); setPetMotionReduced(false); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++function button(name: string) {
++  const node = [...ui.container.querySelectorAll('button')].find(node => node.textContent === name)
++  expect(node, `button ${name}`).toBeTruthy()
++  return node!
++}
++function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
++function preview() { return ui.container.querySelector('.wd-preview')! }
++
++function mockView() {
++  const svg = preview()
++  const scroll = vi.fn(), focus = vi.fn()
++  Object.defineProperty(svg, 'scrollIntoView', { configurable: true, value: scroll })
++  Object.defineProperty(svg, 'focus', { configurable: true, value: focus })
++  return { svg, scroll, focus }
++}
++
++it.each([{ action: 'Wave', stop: 'Stop wave', deadline: 1200 }, { action: 'Rest', stop: 'Stop rest', deadline: 2400 }])('shows the current $action preview without changing its original deadline or outfit', ({ action, stop, deadline }) => {
++  const view = mockView(), art = preview().querySelector('.ch-animated')
++  const write = vi.spyOn(Storage.prototype, 'setItem')
++  click(button(action)); frame(deadline / 2)
++  const gridRenders = vi.mocked(model.itemsForSlot).mock.calls.length
++  const at = preview().innerHTML
++  const show = button('Show preview')
++  expect(show.getAttribute('aria-label')).toBe('Show preview of Mochi')
++  expect(show.disabled).toBe(false)
++  click(show)
++  expect(view.scroll).toHaveBeenCalledExactlyOnceWith({ block: 'center', behavior: 'instant' })
++  expect(view.focus).toHaveBeenCalledExactlyOnceWith({ preventScroll: true })
++  expect(view.scroll.mock.invocationCallOrder[0]).toBeLessThan(view.focus.mock.invocationCallOrder[0])
++  expect(preview().getAttribute('tabindex')).toBe('-1')
++  expect(preview().innerHTML).toBe(at)
++  expect(preview().querySelector('.ch-animated')).toBe(art)
++  expect(frames.size).toBe(1)
++  frame(deadline - 1); expect(button(stop)).toBeTruthy()
++  frame(deadline); expect(button(action)).toBeTruthy(); expect(frames.size).toBe(0)
++  expect(model.itemsForSlot).toHaveBeenCalledTimes(gridRenders)
++  expect(changed).not.toHaveBeenCalled(); expect(write).not.toHaveBeenCalled()
++})
++
++it('shows an idle outfit without changing the selected pose or starting a preview clock', () => {
++  click(button('Sleepy'))
++  const view = mockView(), at = preview().innerHTML
++  click(button('Show preview'))
++  expect(view.scroll).toHaveBeenCalledOnce(); expect(view.focus).toHaveBeenCalledOnce()
++  expect(preview().innerHTML).toBe(at); expect(button('Sleepy').getAttribute('aria-pressed')).toBe('true')
++  expect(frames.size).toBe(0); expect(changed).not.toHaveBeenCalled()
++})
++
++it.each(['system', 'device'] as const)('can show the settled preview under %s reduction without replaying', policy => {
++  click(button('Rest')); frame(1200)
++  act(() => {
++    if (policy === 'device') setPetMotionReduced(true)
++    else { Object.defineProperty(media, 'matches', { value: true, configurable: true }); media.dispatchEvent(new Event('change')) }
++  })
++  const view = mockView(), still = preview().innerHTML
++  expect(button('Rest').disabled).toBe(true)
++  const show = button('Show preview'); expect(show.disabled).toBe(false); click(show)
++  expect(view.scroll).toHaveBeenCalledOnce(); expect(view.focus).toHaveBeenCalledOnce()
++  expect(frames.size).toBe(0); frame(5000)
++  expect(preview().innerHTML).toBe(still); expect(changed).not.toHaveBeenCalled()
++})
+diff --git 1/scripts/browser/wardrobe-show.test.mjs 2/scripts/browser/wardrobe-show.test.mjs
+new file mode 100644
+index 0000000..1f0baba
+--- /dev/null
++++ 2/scripts/browser/wardrobe-show.test.mjs
+@@ -0,0 +1,71 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, changeReducedMotion, seedProgress, snapshot } from './helpers.mjs'
++const out=process.env.CHORE_WARDROBE_SHOW_CAPTURE_DIR
++async function wardrobe(t,viewport,text=200){
++ const page=await browserApp(t,{viewport,reducedMotion:'no-preference'})
++ await seedProgress(page,{unlockedItems:['item:beanie-red','item:glasses','item:scarf','item:backpack']})
++ await page.getByRole('button',{name:'Wardrobe',exact:true}).click();await page.getByRole('heading',{name:'Dress up Mochi'}).waitFor()
++ for(const[slot,name]of[['Head','Red beanie'],['Face','Round glasses'],['Neck','Scarf'],['Outfit','Overalls'],['On back','Backpack']]){
++  await page.getByRole('tab',{name:slot,exact:true}).click();await page.getByRole('button',{name,exact:true}).click()
++ }
++ await page.evaluate(text=>document.documentElement.style.fontSize=`${text}%`,text)
++ await page.clock.install();await page.clock.pauseAt(Date.now()+1000)
++ await page.evaluate(()=>{
++  const request=requestAnimationFrame,cancel=cancelAnimationFrame;window.__showFrames=new Set()
++  window.requestAnimationFrame=fn=>{let id;id=request(time=>{window.__showFrames.delete(id);fn(time)});window.__showFrames.add(id);return id}
++  window.cancelAnimationFrame=id=>{window.__showFrames.delete(id);cancel(id)}
++ })
++ return page
++}
++async function geometry(preview){return preview.evaluate(node=>{
++ const body=node.querySelector('[data-character-body]'),b=body.getBoundingClientRect(),r=node.getBoundingClientRect(),s=getComputedStyle(node)
++ let left=0,right=innerWidth,top=0,bottom=innerHeight
++ for(let p=node.parentElement;p;p=p.parentElement){const c=p.getBoundingClientRect(),style=getComputedStyle(p)
++  if(/(auto|scroll|hidden|clip)/.test(style.overflowX)){left=Math.max(left,c.left+p.clientLeft);right=Math.min(right,c.left+p.clientLeft+p.clientWidth)}
++  if(/(auto|scroll|hidden|clip)/.test(style.overflowY)){top=Math.max(top,c.top+p.clientTop);bottom=Math.min(bottom,c.top+p.clientTop+p.clientHeight)}
++ }
++ const visible=Math.max(0,Math.min(b.right,right)-Math.max(b.left,left))*Math.max(0,Math.min(b.bottom,bottom)-Math.max(b.top,top))
++ const ring=parseFloat(s.outlineWidth),offset=parseFloat(s.outlineOffset)
++ return {body:{x:b.x,y:b.y,w:b.width,h:b.height},art:{x:r.x,y:r.y,w:r.width,h:r.height},fraction:b.width*b.height?visible/(b.width*b.height):0,focused:node===document.activeElement,focusVisible:node.matches(':focus-visible'),ring,offset,outlineClear:r.left-ring-offset>=left&&r.right+ring+offset<=right&&r.top-ring-offset>=top&&r.bottom+ring+offset<=bottom,frames:window.__showFrames.size}
++})}
++async function capture(page,name,value){if(!out)return;await mkdir(out,{recursive:true});await page.screenshot({path:join(out,`${name}.png`)});await writeFile(join(out,`${name}.json`),JSON.stringify(value,null,2)+'\n')}
++for(const[width,height]of[[320,568],[390,664],[640,360],[844,390]])test(`Show wardrobe preview preserves the offscreen Rest deadline at${width}x${height}/200%`,{timeout:20000},async t=>{
++ const page=await wardrobe(t,{width,height}),preview=page.locator('.wd-preview'),before=(await snapshot(page)).tables
++ const art=await preview.locator('.ch-animated').elementHandle(),grid=await page.locator('.wd-grid').elementHandle()
++ const rest=page.getByRole('button',{name:'Rest',exact:true});await rest.focus();await page.keyboard.press('Enter');await page.clock.runFor(1400)
++ const offscreen=await geometry(preview);assert.ok(offscreen.fraction<.01,`fixture must establish actually offscreen art:${JSON.stringify(offscreen)}`)
++ const show=page.getByRole('button',{name:'Show preview of Mochi',exact:true});assert.equal(await show.count(),1,'enlarged wardrobe offers explicit Show preview')
++ const frame=await preview.innerHTML();await page.keyboard.press('Tab');assert.equal(await show.evaluate(n=>n===document.activeElement),true)
++ await page.keyboard.press('Enter');const visible=await geometry(preview)
++ assert.ok(visible.fraction>=.95,JSON.stringify(visible));assert.ok(visible.focused&&visible.focusVisible&&visible.ring>0&&visible.outlineClear,JSON.stringify(visible))
++ assert.equal(visible.frames,1);assert.equal(await preview.innerHTML(),frame,'viewing preserves the exact sampled frame')
++ assert.equal(await preview.locator('.ch-animated').evaluate((n,old)=>n===old,art),true);assert.equal(await page.locator('.wd-grid').evaluate((n,old)=>n===old,grid),true)
++ assert.equal(await page.getByRole('button',{name:'Stop rest',exact:true}).count(),1)
++ await capture(page,`wardrobe-show-${width}`,{width,height,text:200,offscreen,visible,browser:page.context().browser().version(),method:'Production native keyboard Show preview during offscreen Rest at1400ms; actual character ink/clipping geometry, SVG focus, stable frame/nodes/tables and original2400ms expiry.'})
++ await page.clock.runFor(984);assert.equal(await page.getByRole('button',{name:'Stop rest',exact:true}).count(),1)
++ await page.clock.runFor(32);assert.equal(await rest.isEnabled(),true);assert.equal(await page.evaluate(()=>window.__showFrames.size),0,'original deadline expires without replay')
++ assert.deepEqual((await snapshot(page)).tables,before)
++})
++for(const policy of['system','device'])test(`Show wardrobe preview works during ${policy} reduction without starting a clock`,{timeout:20000},async t=>{
++ const page=await wardrobe(t,{width:320,height:568}),preview=page.locator('.wd-preview'),before=(await snapshot(page)).tables
++ if(policy==='system')await changeReducedMotion(page,'reduce')
++ else await page.evaluate(()=>{localStorage.setItem('chore-pet-reduce-motion','on');window.dispatchEvent(new StorageEvent('storage',{key:'chore-pet-reduce-motion',newValue:'on',storageArea:localStorage}))})
++ const show=page.getByRole('button',{name:'Show preview of Mochi',exact:true});assert.equal(await show.isEnabled(),true)
++ await show.focus();await page.keyboard.press('Space');const visible=await geometry(preview)
++ assert.ok(visible.fraction>=.95&&visible.focused&&visible.focusVisible&&visible.ring>0&&visible.outlineClear,JSON.stringify(visible));assert.equal(visible.frames,0)
++ const still=await preview.innerHTML();await page.clock.runFor(3000);assert.equal(await preview.innerHTML(),still);assert.deepEqual((await snapshot(page)).tables,before)
++ await capture(page,`wardrobe-show-reduced-${policy}`,{policy,visible,browser:page.context().browser().version(),method:'Production native Show preview with settled reduced motion; actual art visibility/focus, zero pending preview frames, unchanged saved tables.'})
++})
++test('ordinary wardrobe layouts retain their five controls without an extra visible view button',{timeout:20000},async t=>{
++ const page=await wardrobe(t,{width:320,height:568},100),samples=[]
++ for(const[width,height]of[[320,568],[390,664],[640,360],[844,390],[1280,800]]){
++  await page.setViewportSize({width,height});assert.equal(await page.getByRole('button',{name:'Show preview of Mochi',exact:true}).count(),0)
++  assert.equal(await page.locator('.wd-motion button:visible').count(),5)
++  const art=await page.locator('.wd-preview').boundingBox();assert.ok(art.height>=80)
++  samples.push({width,height,art})
++ }
++ if(out){await mkdir(out,{recursive:true});await writeFile(join(out,'wardrobe-show-default-layouts.json'),JSON.stringify({samples,browser:page.context().browser().version(),method:'Five ordinary layouts; no extra visible Show preview control and readable art.'},null,2)+'\n')}
++})
+diff --git i/docs/ART.md w/docs/ART.md
+index 60724f6..4a3deef 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -207,3 +207,5 @@ Home speech belongs in the canvas layer below the actual view and compact door c
+ Healthy smell reactions retain their1600ms lean-back and hand gesture while smaller appendage arcs recoil and settle. Use damped follow-through with Bun largest, Mochi soft and Sprout restrained. Cancel lateral torso translation at both horizontal ground contacts so the feet stay planted. Preserve primary torso/arms/gaze/expression/blinks/shadow and all other actions, sick/reduced frames, routing and dialogue.
+ 
+ Wardrobe Rest uses the same grounded 2400ms reaction as the resident and environmental rest, with the existing finite preview clock. It retains outfit slots and feet, adds no reward accent, and follows Stop, pose cancellation, outfit updates, hidden deadlines and system/device motion reduction. Five movement choices use balanced 3+2 rows when labels fit; cramped enlarged text switches the wardrobe to page scrolling with readable art and wrapped pose/category controls.
++
++In cramped wardrobe page-flow layouts, Show preview scrolls instantly to the current character image and focuses it with an inset outline. It remains available during movement or reduced motion. Viewing preserves the sampled frame, pose, original finite deadline, outfit and item grid; it starts no animation or save operation. Ordinary layouts keep the same five movement choices.
+diff --git 1/docs/audits/2026-10-12-character-polish/compare-wardrobe-show.mjs 2/docs/audits/2026-10-12-character-polish/compare-wardrobe-show.mjs
+new file mode 100644
+index 0000000..34942ec
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/compare-wardrobe-show.mjs
+@@ -0,0 +1,18 @@
++// Retain exact ordinary wardrobe geometry after adding the cramped-layout view control.
++import assert from 'node:assert/strict'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const out='docs/audits/2026-10-12-character-polish'
++const oldPath=`${out}/wardrobe-rest-native/wardrobe-rest-layouts.json`, newPath=`${out}/wardrobe-show-native/wardrobe-show-default-layouts.json`
++const before=JSON.parse(await readFile(oldPath)), after=JSON.parse(await readFile(newPath))
++assert.equal(after.samples.length,5)
++for(const sample of after.samples){
++ const baseline=before.samples.find(x=>x.width===sample.width&&x.height===sample.height&&x.text===100)
++ assert.ok(baseline)
++ const {x,y,w,h}=baseline.geometry.art
++ assert.deepEqual(sample.art,{x,y,width:w,height:h},`ordinary SVG geometry at${sample.width}x${sample.height}`)
++}
++const sha=bytes=>createHash('sha256').update(bytes).digest('hex')
++const paths=[oldPath,newPath,'src/screens/WardrobePreview.tsx','src/screens/Wardrobe.css','scripts/browser/wardrobe-show.test.mjs',`${out}/compare-wardrobe-show.mjs`]
++await writeFile(`${out}/wardrobe-show-comparison.json`,JSON.stringify({method:'Five final ordinary native wardrobe SVG rectangles exactly match the accepted Batch44 geometry. Does not claim whole-screen or pixel equivalence.',samples:after.samples,sourceAndArtifactSha256:Object.fromEntries(await Promise.all(paths.map(async p=>[p,sha(await readFile(p))])))},null,2)+'\n')
++console.log('All five ordinary wardrobe SVG rectangles exactly preserved')

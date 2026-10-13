@@ -1,0 +1,30 @@
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (3305.861047ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (3209.183327ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 640x360 (4335.875068ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (3170.756077ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (3222.395093ms)
+✔ wardrobe Hop live reduced motion settles the preview and does not restart when restored (1748.265115ms)
+✔ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (1791.399495ms)
+✔ wardrobe Stretch live reduced motion settles the preview and does not restart when restored (1788.966827ms)
+✔ wardrobe Rest live reduced motion settles the preview and does not restart when restored (1903.929406ms)
+✔ wardrobe mochi rests with planted feet, one finite preview and unchanged outfit (2246.18782ms)
+✔ wardrobe bun rests with planted feet, one finite preview and unchanged outfit (2329.079472ms)
+✔ wardrobe sprout rests with planted feet, one finite preview and unchanged outfit (2288.566576ms)
+✔ wardrobe Rest rows, text and keyboard outlines fit ordinary and enlarged layouts (4948.695656ms)
+✔ wardrobe Rest live system reduction settles without replay (1917.640488ms)
+✔ wardrobe Rest live device reduction settles without replay (1841.222392ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at320x568/200% (2276.803136ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at390x664/200% (2425.646103ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at640x360/200% (3339.387785ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at844x390/200% (2219.571091ms)
+✔ Show wardrobe preview works during system reduction without starting a clock (1599.736613ms)
+✔ Show wardrobe preview works during device reduction without starting a clock (1664.345992ms)
+✔ ordinary wardrobe layouts retain their five controls without an extra visible view button (1586.489081ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 56328.694865

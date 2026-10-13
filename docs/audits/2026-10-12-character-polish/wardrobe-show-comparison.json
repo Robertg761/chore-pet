@@ -1,0 +1,63 @@
+{
+  "method": "Five final ordinary native wardrobe SVG rectangles exactly match the accepted Batch44 geometry. Does not claim whole-screen or pixel equivalence.",
+  "samples": [
+    {
+      "width": 320,
+      "height": 568,
+      "art": {
+        "x": 27,
+        "y": 51.59375,
+        "width": 266,
+        "height": 116.015625
+      }
+    },
+    {
+      "width": 390,
+      "height": 664,
+      "art": {
+        "x": 27,
+        "y": 51.59375,
+        "width": 336,
+        "height": 210.015625
+      }
+    },
+    {
+      "width": 640,
+      "height": 360,
+      "art": {
+        "x": 109,
+        "y": 57.59375,
+        "width": 220,
+        "height": 109.40625
+      }
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "art": {
+        "x": 109,
+        "y": 57.59375,
+        "width": 278.09375,
+        "height": 139.40625
+      }
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "art": {
+        "x": 223,
+        "y": 90,
+        "width": 420,
+        "height": 485
+      }
+    }
+  ],
+  "sourceAndArtifactSha256": {
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-native/wardrobe-rest-layouts.json": "7bc439a56f2bb7010b757f0770f6b6bd6e906546fc9cb01d34e58f4a62108741",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-default-layouts.json": "a12f941766967b65a23c3e70c07684fe06b039189c1aeac9cd2ab7382c86d26b",
+    "src/screens/WardrobePreview.tsx": "67cfc1c5a7302f3c7d91933446fb91cb43a061a6c1c0687b746d6e34d010a3de",
+    "src/screens/Wardrobe.css": "a3a6bde5fb4cbdfd0c579ce6bd51335203c6abd848d788c16ae7aa510025c372",
+    "scripts/browser/wardrobe-show.test.mjs": "772e260cabcd6c40c792347d379d35215d43c51d0825eb744d5c09d282d1f052",
+    "docs/audits/2026-10-12-character-polish/compare-wardrobe-show.mjs": "378c5fc3a50608b96de756b77ad1b9250e3361f1a6c6631fe7db5c93cff0b73b"
+  }
+}

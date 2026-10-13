@@ -1,0 +1,26 @@
+{
+  "policy": "system",
+  "visible": {
+    "body": {
+      "x": 80.80000305175781,
+      "y": 172.97500610351562,
+      "w": 158.39999389648438,
+      "h": 131.60000610351562
+    },
+    "art": {
+      "x": 29,
+      "y": 141.375,
+      "w": 262,
+      "h": 160
+    },
+    "fraction": 1,
+    "focused": true,
+    "focusVisible": true,
+    "ring": 3,
+    "offset": -3,
+    "outlineClear": true,
+    "frames": 0
+  },
+  "browser": "152.0.7977.82",
+  "method": "Production native Show preview with settled reduced motion; actual art visibility/focus, zero pending preview frames, unchanged saved tables."
+}

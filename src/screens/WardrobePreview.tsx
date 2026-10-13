@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
 import { ACTION_MS, sampleMotion } from '../character/motion'
 import type { PoseName } from '../character/poses'
@@ -12,6 +12,7 @@ interface PreviewRun { action: PreviewAction; start: number }
 
 /** One finite, on-demand clock, isolated from the wardrobe's item grid. */
 export function WardrobePreview({ pet }: { pet: Pet }) {
+  const preview = useRef<SVGSVGElement>(null)
   const [pose, setPose] = useState<PoseName>('idle')
   const [run, setRun] = useState<PreviewRun | null>(null)
   const [elapsed, setElapsed] = useState(0)
@@ -26,6 +27,11 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
     action: active?.action ?? 'idle', elapsedMs: active ? elapsed : 0, distance: 0,
     durationMs: active ? ACTION_MS[active.action] : ACTION_MS.idle, reducedMotion: reducedMotion || !active })
 
+  function showPreview() {
+    preview.current?.scrollIntoView({ block: 'center', behavior: 'instant' })
+    preview.current?.focus({ preventScroll: true })
+  }
+
   function stop() { setRun(null) }
   function toggle(action: PreviewAction) {
     if (reducedMotion) return
@@ -38,7 +44,7 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
   }
 
   return <div className="wd-stage">
-    <svg className="wd-preview" viewBox="0 0 200 200" role="img" aria-label={`${pet.name} wearing ${describeOutfit(pet.equipped)}`} focusable="false">
+    <svg ref={preview} className="wd-preview" tabIndex={-1} viewBox="0 0 200 200" role="img" aria-label={`${pet.name} wearing ${describeOutfit(pet.equipped)}`} focusable="true">
       <AnimatedCharacterArt species={pet.species} mood={pose === 'sick' ? 'sick' : 'happy'} pose={pose}
         bodyColour={pet.bodyColour} equipped={pet.equipped} look={{ eyes: pet.eyes, cheeks: pet.cheeks }} frame={frame} />
     </svg>
@@ -59,6 +65,7 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
       <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'rest')}
         onClick={() => toggle('rest')}>{active?.action === 'rest' ? 'Stop rest' : 'Rest'}</button>
     </div>
+    <button type="button" className="btn btn-sm btn-quiet wd-show-preview" aria-label={`Show preview of ${pet.name}`} onClick={showPreview}>Show preview</button>
     {reducedMotion && <p className="wd-note wd-motion-note">Motion previews are off while reduced motion is on.</p>}
   </div>
 }

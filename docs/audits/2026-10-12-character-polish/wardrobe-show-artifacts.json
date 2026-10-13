@@ -1,0 +1,20 @@
+{
+  "files": {
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-320.json": "0b99103733a8ad002143a1a60ab47f11ec705fdc3538344d6fd320dd983970e8",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-320.png": "d7790f3d9c9e24b86615ac423e5156429cbab6c1e4c321c4eadcc18dfdde3a49",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-390.json": "d61019f4b39a00ba3eda6c3bd986b3bd4a86bdf0d379a406b1f994be19987fd3",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-390.png": "1d7d08c506b4670f8572c550fde454e779d019256cc312172c81b96e52a98179",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-640.json": "b014b63d94539b6a26653a742f819f94579f96a1ad12af75a2f74654afede32b",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-640.png": "f4f8012538045261ba3f009a8bf0ebd44f3c7875dcabfb8ee18d420a9c5e0db4",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-844.json": "937c691287173e258d80ab6278147db12ddb6f4d5f27f6fc215eb940cc4629cf",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-844.png": "bca1e477609f2fadc8ed382d3fb425a33e19e0fb335b44f1154623a17d092d52",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-default-layouts.json": "a12f941766967b65a23c3e70c07684fe06b039189c1aeac9cd2ab7382c86d26b",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-reduced-device.json": "641ed49f4b5f797e0f571b26e50807b649712b8979bffd4c743d406b64fa69a5",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-reduced-device.png": "10f72e173794324e5bfef3cd6a1319d37539ffe4f663efaa2b894b47383ffd18",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-reduced-system.json": "497e05b97ab49c4180a256f5ed5230558162dd642d8744e5c5f1a2731f81bf60",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-native/wardrobe-show-reduced-system.png": "e91b76c0f51477c87b5f68b68d51979a0ef5734bd0ae654a252f085cd890e17f",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-resources.json": "2e668991ab0bdd9a071e44797965ce1f0d0e07604357f335e71666845fc3a074",
+    "docs/audits/2026-10-12-character-polish/wardrobe-show-comparison.json": "753c9b613a19826927e647d4c44718c0caa13df85a9950adc1753be5139b9b36",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-native/wardrobe-rest-layouts.json": "7bc439a56f2bb7010b757f0770f6b6bd6e906546fc9cb01d34e58f4a62108741"
+  }
+}

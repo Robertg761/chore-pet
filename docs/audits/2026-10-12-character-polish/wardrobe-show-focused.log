@@ -1,0 +1,14 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/screens/Wardrobe.show.test.tsx src/screens/Wardrobe.rest.test.tsx src/screens/Wardrobe.stretch.test.tsx src/screens/Wardrobe.test.tsx src/pet/usePetMotion.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+
+ Test Files  5 passed (5)
+      Tests  51 passed (51)
+   Start at  22:47:27
+   Duration  4.76s (tests 51%, environment 30%, transform 11%, import 8%)
+
+    Isolate  5 workers spawned · ~339ms startup each (spawn + environment, per file)
+             at least ~1.36s faster with isolate: false — reuses workers across files instead of one per file
+

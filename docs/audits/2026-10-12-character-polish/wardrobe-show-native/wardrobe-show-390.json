@@ -1,0 +1,49 @@
+{
+  "width": 390,
+  "height": 664,
+  "text": 200,
+  "offscreen": {
+    "body": {
+      "x": 106.18624114990234,
+      "y": -173.48928833007812,
+      "w": 172.44757080078125,
+      "h": 134.94288635253906
+    },
+    "art": {
+      "x": 29,
+      "y": -205.625,
+      "w": 332,
+      "h": 160
+    },
+    "fraction": 0,
+    "focused": false,
+    "focusVisible": false,
+    "ring": 3,
+    "offset": 0,
+    "outlineClear": false,
+    "frames": 1
+  },
+  "visible": {
+    "body": {
+      "x": 106.18624114990234,
+      "y": 173.51071166992188,
+      "w": 172.44757080078125,
+      "h": 134.94290161132812
+    },
+    "art": {
+      "x": 29,
+      "y": 141.375,
+      "w": 332,
+      "h": 160
+    },
+    "fraction": 1,
+    "focused": true,
+    "focusVisible": true,
+    "ring": 3,
+    "offset": -3,
+    "outlineClear": true,
+    "frames": 1
+  },
+  "browser": "152.0.7977.82",
+  "method": "Production native keyboard Show preview during offscreen Rest at1400ms; actual character ink/clipping geometry, SVG focus, stable frame/nodes/tables and original2400ms expiry."
+}

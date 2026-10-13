@@ -1,0 +1,82 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/screens/Wardrobe.show.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/screens/Wardrobe.show.test.tsx (5 tests | 5 failed) 303ms
+   × shows the current Wave preview without changing its original deadline or outfit 104ms
+   × shows the current Rest preview without changing its original deadline or outfit 60ms
+   × shows an idle outfit without changing the selected pose or starting a preview clock 42ms
+   × can show the settled preview under system reduction without replaying 53ms
+   × can show the settled preview under device reduction without replaying 44ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/Wardrobe.show.test.tsx > shows the current Wave preview without changing its original deadline or outfit
+ FAIL  src/screens/Wardrobe.show.test.tsx > shows the current Rest preview without changing its original deadline or outfit
+AssertionError: button Show preview: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.show.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.show.test.tsx:53:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/screens/Wardrobe.show.test.tsx > shows an idle outfit without changing the selected pose or starting a preview clock
+AssertionError: button Show preview: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.show.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.show.test.tsx:73:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/screens/Wardrobe.show.test.tsx > can show the settled preview under system reduction without replaying
+ FAIL  src/screens/Wardrobe.show.test.tsx > can show the settled preview under device reduction without replaying
+AssertionError: button Show preview: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.show.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.show.test.tsx:87:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  22:43:50
+   Duration  1.26s (transform 41%, tests 26%, environment 24%, import 8%)
+
