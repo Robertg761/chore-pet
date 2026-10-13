@@ -1,0 +1,94 @@
+{
+  "utc": "2026-10-13T07:25:23.949012+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "env",
+    "NODE_OPTIONS=--max-old-space-size=512",
+    "npm",
+    "run",
+    "build"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 4,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 0
+  },
+  "minimumObservedAvailableBytes": 3868446720,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4416421888,
+      "tmpFreeBytes": 4285566976
+    },
+    {
+      "elapsedSeconds": 0.009,
+      "memAvailableBytes": 4416421888,
+      "tmpFreeBytes": 4285566976
+    },
+    {
+      "elapsedSeconds": 1.009,
+      "memAvailableBytes": 4167581696,
+      "tmpFreeBytes": 4285566976
+    },
+    {
+      "elapsedSeconds": 2.009,
+      "memAvailableBytes": 3964436480,
+      "tmpFreeBytes": 4285566976
+    },
+    {
+      "elapsedSeconds": 3.01,
+      "memAvailableBytes": 3947524096,
+      "tmpFreeBytes": 4285566976
+    },
+    {
+      "elapsedSeconds": 4.01,
+      "memAvailableBytes": 3868446720,
+      "tmpFreeBytes": 4285566976
+    },
+    {
+      "elapsedSeconds": 5.01,
+      "memAvailableBytes": 4050448384,
+      "tmpFreeBytes": 4285566976
+    },
+    {
+      "elapsedSeconds": 6.01,
+      "memAvailableBytes": 4176986112,
+      "tmpFreeBytes": 4285566976
+    },
+    {
+      "elapsedSeconds": 7.011,
+      "memAvailableBytes": 4148957184,
+      "tmpFreeBytes": 4285566976
+    },
+    {
+      "elapsedSeconds": 8.011,
+      "memAvailableBytes": 4131065856,
+      "tmpFreeBytes": 4285566976
+    },
+    {
+      "elapsedSeconds": 9.011,
+      "memAvailableBytes": 4684394496,
+      "tmpFreeBytes": 4285566976
+    },
+    {
+      "elapsedSeconds": 10.011,
+      "memAvailableBytes": 4511363072,
+      "tmpFreeBytes": 4285562880
+    },
+    {
+      "elapsedSeconds": 11.012,
+      "memAvailableBytes": 4741013504,
+      "tmpFreeBytes": 4285554688
+    }
+  ]
+}

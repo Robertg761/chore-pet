@@ -1,0 +1,117 @@
+{
+  "runs": 15,
+  "sampleRows": 444,
+  "minimumObservedAvailableMiB": 3539.37890625,
+  "minimumObservedTmpFreeMiB": 3999.921875,
+  "reserveStops": 0,
+  "signalInterruptions": 1,
+  "launchRejections": 0,
+  "rows": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-build-v2-resources.json",
+      "samples": 13,
+      "minimumAvailableMiB": 3689.23828125,
+      "minimumTmpMiB": 4087.0234375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-build-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4216.26171875,
+      "minimumTmpMiB": 4087.03515625,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-final-diff-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 5439.4140625,
+      "minimumTmpMiB": 4086.3671875,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-final-full-retry-resources.json",
+      "samples": 96,
+      "minimumAvailableMiB": 3549.3046875,
+      "minimumTmpMiB": 4074.26171875,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-final-full-resources.json",
+      "samples": 15,
+      "minimumAvailableMiB": 3539.37890625,
+      "minimumTmpMiB": 4086.43359375,
+      "exitCode": 143
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-final-lint-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4623.40234375,
+      "minimumTmpMiB": 4086.37890625,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-final-static-resources.json",
+      "samples": 8,
+      "minimumAvailableMiB": 4893.5234375,
+      "minimumTmpMiB": 4086.42578125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-focused-resources.json",
+      "samples": 11,
+      "minimumAvailableMiB": 3970.609375,
+      "minimumTmpMiB": 4084.50390625,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-native-bounds-diagnosis-resources.json",
+      "samples": 4,
+      "minimumAvailableMiB": 4076.68359375,
+      "minimumTmpMiB": 4030.3515625,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-native-final-resources.json",
+      "samples": 90,
+      "minimumAvailableMiB": 3658.6171875,
+      "minimumTmpMiB": 3999.921875,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-native-initial-resources.json",
+      "samples": 85,
+      "minimumAvailableMiB": 3698.92578125,
+      "minimumTmpMiB": 4001.671875,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-native-paired-resources.json",
+      "samples": 92,
+      "minimumAvailableMiB": 4391.27734375,
+      "minimumTmpMiB": 4003.4453125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-pivot-probe-resources.json",
+      "samples": 4,
+      "minimumAvailableMiB": 4030.03125,
+      "minimumTmpMiB": 4087.09375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-red-resources.json",
+      "samples": 5,
+      "minimumAvailableMiB": 3741.52734375,
+      "minimumTmpMiB": 4084.953125,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/plant-greeting-static-compare-resources.json",
+      "samples": 12,
+      "minimumAvailableMiB": 3799.4375,
+      "minimumTmpMiB": 4087.1015625,
+      "exitCode": 0
+    }
+  ],
+  "limits": "Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor."
+}

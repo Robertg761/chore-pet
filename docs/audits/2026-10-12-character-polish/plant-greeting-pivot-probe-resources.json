@@ -1,0 +1,49 @@
+{
+  "utc": "2026-10-13T07:22:28.598712+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "env",
+    "CHROME=/usr/bin/chromium",
+    "node",
+    "--max-old-space-size=384",
+    "docs/audits/2026-10-12-character-polish/plant-greeting-pivot-probe.mjs"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 442042,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 0
+  },
+  "minimumObservedAvailableBytes": 4225794048,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4225794048,
+      "tmpFreeBytes": 4285628416
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4225794048,
+      "tmpFreeBytes": 4285628416
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4232454144,
+      "tmpFreeBytes": 4285628416
+    },
+    {
+      "elapsedSeconds": 2.023,
+      "memAvailableBytes": 4251480064,
+      "tmpFreeBytes": 4285628416
+    }
+  ]
+}

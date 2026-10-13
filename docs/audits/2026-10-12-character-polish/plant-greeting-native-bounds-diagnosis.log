@@ -1,0 +1,26 @@
+✖ mochi greets only the chosen plant with individually rooted finite leaves, rotation 0 (1326.162726ms)
+ℹ {"time":0,"clearance":[{"coarse":14.171947048310713,"exact":17.25158889140637},{"coarse":11.887137709365689,"exact":15.6388499940199},{"coarse":-0.14009429835206078,"exact":4.490976558900101},{"coarse":-0.14009354684655762,"exact":4.4909765588999875},{"coarse":2.5212470769870805,"exact":4.605056986454045},{"coarse":2.5212470769870237,"exact":4.605056986453988},{"coarse":17.346535589600833,"exact":20.61558609663559},{"coarse":16.575209970157758,"exact":19.99009728895342}]}
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1699.611108
+
+✖ failing tests:
+
+test at scripts/browser/plant-greeting.test.mjs:136:3
+✖ mochi greets only the chosen plant with individually rooted finite leaves, rotation 0 (1326.162726ms)
+  AssertionError [ERR_ASSERTION]: Stroked leaf stays inside fixed plant art bounds: -0.14009429835206078 art units
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/plant-greeting.test.mjs:162:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

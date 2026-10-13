@@ -1,0 +1,587 @@
+diff --git i/src/room/Room.tsx w/src/room/Room.tsx
+index f41796d..0c4c8c3 100644
+--- i/src/room/Room.tsx
++++ w/src/room/Room.tsx
+@@ -65,7 +65,7 @@ export interface RoomProps {
+   /** Days late per placed object id (objectOverdue() in ./cuePlan): breaks ties when choosing which cues show in full. */
+   overdue?: Record<string, number>
+   selectedId?: string | null
+-  /** A clean tank may answer the resident's existing wave with one finite tail response. */
++  /** A clean tank or plant may answer the resident's wave with one finite response. */
+   responseObjectId?: string | null
+   /** Elapsed action time on its first semantic draw; held through ordinary frames. */
+   responseElapsedMs?: number
+@@ -198,13 +198,14 @@ export function Room({ room, objects, stages = NO_STAGES, neglect = NO_NEGLECT,
+   for (const o of objects) {
+     const entry = catalogEntry(o.catalogId)
+     if (!entry || o.id === hiddenId) continue
+-    const greeting = o.id === responseObjectId && entry.id === 'fish-tank' && (stages[o.id] ?? 'clean') === 'clean'
++    const greetingKind = entry.id === 'fish-tank' ? 'fish' : entry.id === 'plant' ? 'plant' : null
++    const greeting = greetingKind && o.id === responseObjectId && (stages[o.id] ?? 'clean') === 'clean'
+     items.push({
+       id: o.id,
+       footprint: footprintOf(o, entry),
+       layer: entry.layer,
+       draw: () => (
+-        <g key={o.id} data-object-id={o.id} className={[justPlaced.has(o.id) && 'room-obj-drop', greeting && 'room-fish-greeting'].filter(Boolean).join(' ') || undefined} style={{ cursor: 'pointer', ...(greeting ? { '--fish-greeting-delay': `${-Math.max(0, responseElapsedMs)}ms` } : {}) }}>
++        <g key={o.id} data-object-id={o.id} className={[justPlaced.has(o.id) && 'room-obj-drop', greeting && `room-${greetingKind}-greeting`].filter(Boolean).join(' ') || undefined} style={{ cursor: 'pointer', ...(greeting ? { [`--${greetingKind}-greeting-delay`]: `${-Math.max(0, responseElapsedMs)}ms` } : {}) }}>
+           <PlacedArt entry={entry} placement={o} stage={stages[o.id] ?? 'clean'} />
+         </g>
+       ),
+diff --git i/src/room/Room.css w/src/room/Room.css
+index 943755d..ad0d819 100644
+--- i/src/room/Room.css
++++ w/src/room/Room.css
+@@ -35,3 +35,16 @@
+ @media (prefers-reduced-motion: reduce) {
+   .room-fish-greeting .fish-tail { animation: none; }
+ }
++
++/* A clean plant answers the same finite wave, keeping every leaf root fixed. */
++.plant-leaf-response { transform-box: view-box; transform-origin: 0px 0px; }
++.plant-leaf-secondary { --plant-leaf-amplitude: 0.7; }
++.room-plant-greeting .plant-leaf-response { animation: plant-leaf-greeting 1400ms ease-in-out; animation-delay: var(--plant-greeting-delay, 0ms); }
++@keyframes plant-leaf-greeting {
++  0%, 100% { transform: rotate(0deg); }
++  20% { transform: rotate(calc(var(--plant-leaf-amplitude, 1) * 1.5deg)); }
++  40% { transform: rotate(calc(var(--plant-leaf-amplitude, 1) * -1deg)); }
++  60% { transform: rotate(calc(var(--plant-leaf-amplitude, 1) * 0.5deg)); }
++  80% { transform: rotate(calc(var(--plant-leaf-amplitude, 1) * -0.2deg)); }
++}
++@media (prefers-reduced-motion: reduce) { .room-plant-greeting .plant-leaf-response { animation: none; } }
+diff --git i/src/room/objects/plant.tsx w/src/room/objects/plant.tsx
+index 7b936a9..591658a 100644
+--- i/src/room/objects/plant.tsx
++++ w/src/room/objects/plant.tsx
+@@ -25,17 +25,22 @@ export type LeafColours = { light: string; dark: string }
+  * leans right; `bend` curves the tip sideways (px). `flat` squashes it into
+  * the floor plane (a fallen leaf).
+  */
+-export function leafShape(x: number, y: number, rot: number, len: number, bend: number, c: LeafColours, key?: string | number, flat = false) {
++export function leafShape(x: number, y: number, rot: number, len: number, bend: number, c: LeafColours, key?: string | number, flat = false, response?: 'primary' | 'secondary') {
+   const w = len * 0.3
+   const right = `C${w + bend * 0.2} ${-len * 0.2} ${w + bend * 0.7} ${-len * 0.75} ${bend} ${-len}`
+   const left = `C${-w + bend * 0.7} ${-len * 0.75} ${-w + bend * 0.2} ${-len * 0.2} 0 0`
+   const tf = flat ? `translate(${x} ${y}) scale(1 0.5) rotate(${rot})` : `translate(${x} ${y}) rotate(${rot})`
+-  return (
+-    <g key={key} transform={tf} strokeWidth={2}>
++  const art = (
++    <>
+       <path d={`M0 0 ${right} ${left} Z`} fill={c.light} />
+       <path d={`M0 0 ${right} Q${bend * 0.5} ${-len * 0.5} 0 0 Z`} fill={c.dark} stroke="none" />
+       <path d={`M0 0 ${right} ${left} Z`} fill="none" />
+       <path d={`M0 -1 Q${bend * 0.45} ${-len * 0.45} ${bend * 0.9} ${-len * 0.82}`} fill="none" stroke={ink} strokeWidth={1.2} opacity={0.35} />
++    </>
++  )
++  return (
++    <g key={key} transform={tf} strokeWidth={2}>
++      {response ? <g className={`plant-leaf-response${response === 'secondary' ? ' plant-leaf-secondary' : ''}`}>{art}</g> : art}
+     </g>
+   )
+ }
+@@ -68,8 +73,8 @@ interface Spec {
+   colours?: LeafColours
+ }
+ 
+-function leaves(specs: Spec[], colours: LeafColours) {
+-  return <g>{specs.map((s, i) => leafShape((s.dx ?? 0), -9, s.rot, s.len, s.bend, s.colours ?? colours, i))}</g>
++function leaves(specs: Spec[], colours: LeafColours, respond = false) {
++  return <g>{specs.map((s, i) => leafShape((s.dx ?? 0), -9, s.rot, s.len, s.bend, s.colours ?? colours, i, false, respond ? (i % 2 ? 'secondary' : 'primary') : undefined))}</g>
+ }
+ 
+ const CLEAN: Spec[] = [
+@@ -147,7 +152,7 @@ export const plantArt: ObjectArt = {
+   render: (stage: MessStage) => (
+     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
+       {pot(stage === 'messy2' ? DRY_SOIL : SOIL, stage === 'messy2')}
+-      {stage === 'clean' && leaves(CLEAN, FRESH)}
++      {stage === 'clean' && leaves(CLEAN, FRESH, true)}
+       {stage === 'messy1' && leaves(DROOPY, FRESH)}
+       {stage === 'messy2' && leaves(WILTED, TIRED)}
+       {stage === 'messy1' && messy1()}
+diff --git 1/src/pet/plantGreeting.test.tsx 2/src/pet/plantGreeting.test.tsx
+new file mode 100644
+index 0000000..c7d726d
+--- /dev/null
++++ 2/src/pet/plantGreeting.test.tsx
+@@ -0,0 +1,107 @@
++// @vitest-environment jsdom
++import { act, createRef, StrictMode } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import type { Pet, PlacedObject } from '../domain/types'
++import { render } from '../test/react'
++import { LivingRoom, type LivingRoomControl, type LivingRoomProps } from './LivingRoom'
++import { setPetMotionReduced } from './motionPreference'
++
++const roomRenders = vi.hoisted(() => ({ count: 0 }))
++vi.mock('../room/Room', async importOriginal => {
++  const actual = await importOriginal<typeof import('../room/Room')>()
++  return { ...actual, Room: (props: Parameters<typeof actual.Room>[0]) => {
++    roomRenders.count++; return <actual.Room {...props} />
++  } }
++})
++const pet: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#FFCFDA', equipped: {} }
++const plant: PlacedObject = { id: 'plant', roomId: 'room', catalogId: 'plant', tileX: 2, tileY: 2, rotation: 0 }
++const base: LivingRoomProps = { room: { floorStyle: 'wood', wallStyle: 'cream' }, objects: [plant], stages: {}, pet, mood: 'happy', away: false, chores: [], statuses: [], initialTile: { tx: 3, ty: 2 } }
++let now: number, serial: number, hidden: boolean
++let frames: Map<number, FrameRequestCallback>, media: MediaQueryList
++let ui: ReturnType<typeof render>
++const control = createRef<LivingRoomControl>()
++const content = (extra: Partial<LivingRoomProps> = {}) => <StrictMode><LivingRoom {...base} {...extra} control={control} /></StrictMode>
++beforeEach(() => {
++  now = 0; serial = 0; hidden = false; frames = new Map(); roomRenders.count = 0
++  setPetMotionReduced(false)
++  vi.spyOn(performance, 'now').mockImplementation(() => now)
++  vi.spyOn(Math, 'random').mockReturnValue(.99)
++  vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden)
++  media = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  vi.stubGlobal('matchMedia', () => media)
++  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
++  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
++  ui = render(content())
++})
++afterEach(() => { ui.unmount(); setPetMotionReduced(false); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
++const response = () => ui.container.querySelector('.room-plant-greeting')
++function visit() { act(() => { expect(control.current!.lookAt('plant')).toBe('started') }) }
++function wave() { visit(); frame(360); expect(response()).not.toBeNull() }
++function visibility(value: boolean) { act(() => { hidden = value; document.dispatchEvent(new Event('visibilitychange')) }) }
++
++it('responds only during the existing action phase, coalesces invitations and adds no frame owner or room redraw', () => {
++  const input = JSON.stringify(base)
++  visit(); expect(response()).toBeNull()
++  frame(359); expect(response()).toBeNull()
++  frame(360); const node = response(); expect(node).not.toBeNull()
++  const renders = roomRenders.count
++  frame(500); expect(response()).toBe(node); expect(roomRenders.count).toBe(renders)
++  expect(frames.size).toBe(1)
++  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
++  expect(response()).toBe(node)
++  frame(1759); expect(response()).toBe(node)
++  frame(1760); expect(response()).toBeNull()
++  frame(1940); expect(response()).toBeNull(); expect(frames.size).toBe(1)
++  expect(JSON.stringify(base)).toBe(input)
++})
++
++it('stops the plant response when a player gesture interrupts the wave', () => {
++  wave(); frame(500)
++  act(() => { expect(control.current!.respond('greet')).toBe('started') })
++  expect(response()).toBeNull(); expect(frames.size).toBe(1)
++  frame(1800); expect(response()).toBeNull()
++})
++
++it('starts a late first action frame at the elapsed greeting phase and retains its offset on repeated invitations', () => {
++  visit(); frame(1000)
++  const node = response() as SVGGElement
++  expect(node).not.toBeNull()
++  expect(node.style.getPropertyValue('--plant-greeting-delay')).toBe('-640ms')
++  frame(1100); visit()
++  expect(response()).toBe(node)
++  expect(node.style.getPropertyValue('--plant-greeting-delay')).toBe('-640ms')
++  frame(1760); expect(response()).toBeNull()
++})
++
++it.each(['system', 'device'] as const)('stops immediately under live %s reduction and never replays on restoration', source => {
++  wave(); frame(500)
++  const reduce = (value: boolean) => act(() => {
++    if (source === 'device') setPetMotionReduced(value)
++    else { Object.defineProperty(media, 'matches', { value, configurable: true }); media.dispatchEvent(new Event('change')) }
++  })
++  reduce(true); expect(response()).toBeNull(); expect(frames.size).toBe(0)
++  reduce(false); frame(1000); expect(response()).toBeNull()
++})
++
++it.each(['sick', 'away'] as const)('clears the response when the resident becomes %s', mode => {
++  wave()
++  ui.rerender(content(mode === 'sick' ? { mood: 'sick' } : { away: true }))
++  expect(response()).toBeNull()
++  frame(480); expect(frames.size).toBe(0)
++  ui.rerender(content()); frame(1000); expect(response()).toBeNull()
++})
++
++it.each(['messy1', 'messy2', 'removed'] as const)('clears the response when the plant becomes %s', stage => {
++  wave()
++  ui.rerender(content(stage === 'removed' ? { objects: [] } : { stages: { plant: stage } }))
++  expect(response()).toBeNull()
++  frame(1000); expect(response()).toBeNull()
++})
++
++it('discards a hidden elapsed wave on the first visible frame without replay', () => {
++  wave(); frame(500)
++  visibility(true); expect(frames.size).toBe(0)
++  now = 2400; visibility(false); frame(now)
++  expect(response()).toBeNull(); expect(frames.size).toBe(1)
++})
+diff --git 1/src/room/Room.plantGreeting.test.tsx 2/src/room/Room.plantGreeting.test.tsx
+new file mode 100644
+index 0000000..177748e
+--- /dev/null
++++ 2/src/room/Room.plantGreeting.test.tsx
+@@ -0,0 +1,43 @@
++// @vitest-environment jsdom
++import { renderToStaticMarkup } from 'react-dom/server'
++import { expect, it } from 'vitest'
++import { catalogEntry } from '../catalog/objects'
++import type { PlacedObject } from '../domain/types'
++import { Room } from './Room'
++
++const plant: PlacedObject = { id: 'plant', roomId: 'room', catalogId: 'plant', tileX: 2, tileY: 2, rotation: 0 }
++const second: PlacedObject = { ...plant, id: 'second', tileX: 4 }
++const fish: PlacedObject = { ...plant, id: 'fish', catalogId: 'fish-tank', tileX: 6 }
++const base = { room: { floorStyle: 'wood', wallStyle: 'cream' } as const, objects: [plant, second, fish] }
++function draw(extra: object = {}) {
++  return new DOMParser().parseFromString(renderToStaticMarkup(<Room {...base} {...extra} />), 'image/svg+xml')
++}
++it('responds only on the chosen clean plant with eight individually rooted leaves and unchanged placed art', () => {
++  const before = draw(), after = draw({ responseObjectId: 'plant', responseElapsedMs: 640 })
++  const response = after.querySelectorAll('.room-plant-greeting')
++  expect(response).toHaveLength(1)
++  expect(response[0].getAttribute('data-object-id')).toBe('plant')
++  expect(response[0].getAttribute('style')).toContain('--plant-greeting-delay:-640ms')
++  expect(response[0].querySelectorAll('.plant-leaf-response')).toHaveLength(8)
++  expect(response[0].querySelectorAll('.plant-leaf-secondary')).toHaveLength(4)
++  expect(after.querySelectorAll('.room-fish-greeting')).toHaveLength(0)
++  for (const id of ['plant', 'second', 'fish']) {
++    const selector = `[data-object-id="${id}"] > g`
++    expect(after.querySelector(selector)!.outerHTML).toBe(before.querySelector(selector)!.outerHTML)
++  }
++})
++it('leaves dirty, unknown, hidden, removed and ghost plants still while fish keep their own response', () => {
++  for (const extra of [{}, { responseObjectId: 'missing' }, { responseObjectId: 'fish' },
++    { responseObjectId: 'plant', stages: { plant: 'messy1' } }, { responseObjectId: 'plant', stages: { plant: 'messy2' } },
++    { responseObjectId: 'plant', hiddenId: 'plant' }, { responseObjectId: 'plant', objects: [] },
++    { responseObjectId: 'ghost', objects: [], ghost: { entry: catalogEntry('plant')!, placement: plant, ok: true } },
++  ]) expect(draw(extra).querySelectorAll('.room-plant-greeting')).toHaveLength(0)
++  expect(draw({ responseObjectId: 'fish' }).querySelectorAll('.room-fish-greeting')).toHaveLength(1)
++  for (const stage of ['messy1', 'messy2']) expect(draw({ stages: { plant: stage, second: stage } }).querySelectorAll('.plant-leaf-response')).toHaveLength(0)
++})
++it.each([0, 1, 2, 3] as const)('preserves the placed wrapper at rotation%s', rotation => {
++  const document = draw({ objects: [{ ...plant, rotation }], responseObjectId: 'plant' })
++  const response = document.querySelector('.room-plant-greeting')!
++  expect(response).not.toBeNull(); expect(response.getAttribute('transform')).toBeNull()
++  expect(response.querySelector('g')!.getAttribute('transform')).toBe(`translate(195 172.5) scale(${rotation % 2 ? -0.6640625 : 0.6640625} 0.6640625)`)
++})
+diff --git 1/scripts/browser/plant-greeting.test.mjs 2/scripts/browser/plant-greeting.test.mjs
+new file mode 100644
+index 0000000..9a0da0f
+--- /dev/null
++++ 2/scripts/browser/plant-greeting.test.mjs
+@@ -0,0 +1,285 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
++
++const out = process.env.CHORE_PET_PLANT_CAPTURE_DIR
++async function fixture(t, { species = 'mochi', rotation = 0, system = false, device = false, width = 1280, height = 800 } = {}) {
++  const page = await browserApp(t, { viewport: { width, height }, deviceScaleFactor: 2, reducedMotion: system ? 'reduce' : 'no-preference' })
++  if (device) await page.evaluate(() => localStorage.setItem('chore-pet-reduce-motion', 'on'))
++  await page.evaluate(({ species, rotation }) => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, room = Object.values(saved.tables.rooms)[0], pet = Object.values(saved.tables.pets)[0]
++        pet.species = species; pet.bodyColour = { mochi: '#FFCFDA', bun: '#FFFFFF', sprout: '#FFD65C' }[species]
++        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++        saved.tables.placed_objects = {
++          plant: { id: 'plant', roomId: room.id, catalogId: 'plant', tileX: 2, tileY: 2, rotation },
++          second: { id: 'second', roomId: room.id, catalogId: 'plant', tileX: 5, tileY: 5, rotation: 0 },
++        }
++        saved.tables.chores = {}; saved.tables.completions = {}; saved.outbox = {}; store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), { species, rotation })
++  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
++  await page.addInitScript(() => {
++    Math.random = () => .99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__plantFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(time => { window.__plantFrames.delete(id); window.__plantLastFrameTime = time; callback(time) })
++      window.__plantFrames.add(id); return id
++    }
++    window.cancelAnimationFrame = id => { window.__plantFrames.delete(id); cancel(id) }
++  })
++  await page.reload(); await page.locator('.room-pet').waitFor(); await page.clock.runFor(48)
++  return page
++}
++const frames = page => page.evaluate(() => window.__plantFrames.size)
++async function askToLook(page) {
++  const toggle = page.getByRole('button', { name: 'Explore together', exact: true })
++  if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click()
++  await page.getByRole('combobox', { name: /^Show / }).selectOption('plant')
++  await page.getByRole('button', { name: 'Look together', exact: true }).click()
++  await page.getByRole('button', { name: /^Show room to explore with / }).click()
++}
++async function invite(page) {
++  await askToLook(page)
++  for (let i = 0; i < 320; i++) {
++    if (await page.locator('.room-plant-greeting').count()) {
++      await page.evaluate(() => {
++        const effect = document.getAnimations().find(a => a.animationName === 'plant-leaf-greeting')
++        window.__plantGreetingStart = window.__plantLastFrameTime + effect.effect.getTiming().delay
++      })
++      return
++    }
++    await page.clock.runFor(16)
++  }
++  assert.fail('The invited resident never reached the existing plant greeting')
++}
++async function pairedPeak(page, time) {
++  const advance = await page.evaluate(time => Math.max(0, window.__plantGreetingStart + time - performance.now()), time)
++  await page.clock.runFor(advance)
++  const state = await animationState(page, time)
++  state.resident = await page.evaluate(() => ({ now: performance.now(), frameTime: window.__plantLastFrameTime,
++    phaseStart: window.__plantGreetingStart, elapsedMs: window.__plantLastFrameTime - window.__plantGreetingStart,
++    body: document.querySelector('.room-pet [data-character-body]').getAttribute('transform') }))
++  assert.ok(time - state.resident.elapsedMs >= -.001 && time - state.resident.elapsedMs <= 16.001,
++    `Resident ${state.resident.elapsedMs}ms and foliage ${time}ms remain within one16msfakeframe`)
++  return state
++}
++async function animationState(page, time) {
++  return page.evaluate(time => {
++    const animations = window.__plantSampleEffects ??= document.getAnimations().filter(a => a.animationName === 'plant-leaf-greeting')
++    for (const animation of animations) { animation.pause(); animation.currentTime = time + animation.effect.getTiming().delay }
++    const leaves = [...document.querySelectorAll('[data-object-id="plant"] .plant-leaf-response')]
++    return { time, animations: animations.map(a => ({ name: a.animationName, duration: a.effect.getTiming().duration, delay: a.effect.getTiming().delay, localTime: a.currentTime, iterations: a.effect.getTiming().iterations, objectId: a.effect.target.closest('[data-object-id]')?.getAttribute('data-object-id') })),
++      leaves: leaves.map(leaf => {
++        const transform = getComputedStyle(leaf).transform
++        const matrix = transform === 'none' ? new DOMMatrix() : new DOMMatrix(transform)
++        const own = new DOMPoint(0, 0).matrixTransform(leaf.getScreenCTM())
++        const attached = new DOMPoint(0, 0).matrixTransform(leaf.parentElement.getScreenCTM())
++        const placed = leaf.closest('[data-object-id]').querySelector(':scope > g')
++        const toArt = placed.getScreenCTM().inverse().multiply(leaf.getScreenCTM())
++        const localBox = leaf.getBBox(), radius = Math.hypot(toArt.a, toArt.b)
++        // The transformed native fill bbox conservatively contains all four
++        // leaf paths. Add their maximum one-unit local stroke radius and compare
++        // against the fixed authored plant art bounds, never a live parent union.
++        const corners = [[localBox.x, localBox.y], [localBox.x + localBox.width, localBox.y], [localBox.x + localBox.width, localBox.y + localBox.height], [localBox.x, localBox.y + localBox.height]]
++          .map(([x, y]) => new DOMPoint(x, y).matrixTransform(toArt))
++        const coarseBboxClearance = Math.min(...corners.flatMap(p => [p.x + 36, 36 - p.x, p.y + 88, 36 - p.y])) - radius
++        const point = (x, y) => new DOMPoint(x, y).matrixTransform(toArt)
++        // Minimize the actual transformed cubic/quadratic paths along both
++        // art axes. Rotated bbox corners include empty, unpainted space.
++        function extrema(p0, p1, p2, p3) {
++          const a = -p0 + 3 * p1 - 3 * p2 + p3, b = 3 * p0 - 6 * p1 + 3 * p2, c = -3 * p0 + 3 * p1
++          const roots = [0, 1], A = 3 * a, B = 2 * b
++          if (Math.abs(A) < 1e-12) { if (Math.abs(B) >= 1e-12) roots.push(-c / B) }
++          else {
++            const discriminant = B * B - 4 * A * c
++            if (discriminant >= 0) { const d = Math.sqrt(discriminant); roots.push((-B - d) / (2 * A), (-B + d) / (2 * A)) }
++          }
++          return roots.filter(t => t >= 0 && t <= 1).map(t => ((a * t + b) * t + c) * t + p0)
++        }
++        let artClearance = Infinity
++        for (const path of leaf.querySelectorAll('path')) {
++          const tokens = path.getAttribute('d').match(/[MCQZ]|[-+]?(?:\d*\.?\d+)(?:[eE][-+]?\d+)?/g)
++          let i = 0, current, first
++          const readPoint = () => point(Number(tokens[i++]), Number(tokens[i++]))
++          const style = getComputedStyle(path), stroke = style.stroke === 'none' ? 0 : Number.parseFloat(style.strokeWidth) * radius / 2
++          const include = points => {
++            const xs = extrema(...points.map(p => p.x)), ys = extrema(...points.map(p => p.y))
++            artClearance = Math.min(artClearance, ...xs.flatMap(x => [x + 36 - stroke, 36 - x - stroke]), ...ys.flatMap(y => [y + 88 - stroke, 36 - y - stroke]))
++          }
++          while (i < tokens.length) {
++            const command = tokens[i++]
++            if (command === 'M') { current = readPoint(); first = current }
++            else if (command === 'C') {
++              const c1 = readPoint(), c2 = readPoint(), end = readPoint()
++              include([current, c1, c2, end]); current = end
++            } else if (command === 'Q') {
++              const control = readPoint(), end = readPoint()
++              include([current, { x: current.x + 2 * (control.x - current.x) / 3, y: current.y + 2 * (control.y - current.y) / 3 },
++                { x: end.x + 2 * (control.x - end.x) / 3, y: end.y + 2 * (control.y - end.y) / 3 }, end]); current = end
++            } else if (command === 'Z') { include([current, current, first, first]); current = first }
++            else throw new Error(`Unexpected leaf path command ${command}`)
++          }
++        }
++        const box = leaf.getBoundingClientRect(), plant = leaf.closest('[data-object-id]').getBoundingClientRect()
++        return { secondary: leaf.classList.contains('plant-leaf-secondary'), angle: Math.atan2(matrix.b, matrix.a) * 180 / Math.PI,
++          attachmentError: Math.hypot(own.x - attached.x, own.y - attached.y), coarseBboxClearance, artClearance,
++          box: { x: box.x, y: box.y, right: box.right, bottom: box.bottom },
++          plant: { x: plant.x, y: plant.y, right: plant.right, bottom: plant.bottom },
++          plantTransform: leaf.parentElement.getAttribute('transform') }
++      }) }
++  }, time)
++}
++async function capture(page, name, data, target) {
++  if (!out) return
++  await mkdir(out, { recursive: true })
++  if (target) await target.screenshot({ path: join(out, `${name}.png`), animations: 'allow' })
++  else await page.screenshot({ path: join(out, `${name}.png`), animations: 'allow' })
++  await writeFile(join(out, `${name}.json`), JSON.stringify({ ...data, browser: page.context().browser().version(),
++    method: 'Offline production fixture. Actual finite CSS effect paused at recorded phase, resident fake RAF advanced to that same action phase within one16msframe, with explicit elapsed/body metadata. Screenshot allows paused CSS. Matrix/attachment/painted-curve bounds assertions precede capture; separate test covers native real-clock completion. Not human temporal/physical-device/AT certification.' }, null, 2) + '\n')
++}
++
++for (const species of ['mochi', 'bun', 'sprout']) for (const rotation of [0, 1]) {
++  test(`${species} greets only the chosen plant with individually rooted finite leaves, rotation ${rotation}`, async t => {
++    const page = await fixture(t, { species, rotation })
++    const before = (await snapshot(page)).tables
++    await invite(page)
++    assert.equal(await page.locator('.room-plant-greeting').count(), 1)
++    assert.equal(await page.locator('.room-plant-greeting').getAttribute('data-object-id'), 'plant')
++    assert.equal(await page.locator('[data-object-id="second"]').evaluate(node => node.classList.contains('room-plant-greeting')), false)
++    await page.evaluate(() => { window.__greetingInstances = document.getAnimations().filter(a => a.animationName === 'plant-leaf-greeting') })
++    await page.getByRole('button', { name: 'Look together', exact: true }).click()
++    const repeated = await page.evaluate(() => {
++      const current = document.getAnimations().filter(a => a.animationName === 'plant-leaf-greeting')
++      return current.length === 8 && current.every(animation => window.__greetingInstances.includes(animation))
++    })
++    assert.equal(repeated, true, 'A repeated invitation retains the same native effects')
++    const markup = await page.locator('[data-object-id="plant"] > g').innerHTML()
++    const samples = []
++    for (const time of [0, 140, 280, 560, 840, 1120, 1400]) {
++      const state = await animationState(page, time)
++      assert.equal(state.animations.length, 8); assert.equal(state.leaves.length, 8)
++      for (const animation of state.animations) {
++        assert.equal(animation.duration, 1400); assert.equal(animation.iterations, 1); assert.equal(animation.objectId, 'plant')
++      }
++      for (const leaf of state.leaves) {
++        assert.ok(Math.abs(leaf.angle) <= (leaf.secondary ? 1.05 : 1.5) + .001)
++        assert.ok(leaf.attachmentError < .005, `Leaf stays rooted: ${leaf.attachmentError}px`)
++        assert.ok(leaf.artClearance >= -.005, `Stroked leaf stays inside fixed plant art bounds: ${leaf.artClearance} art units`)
++        if (time === 280) assert.ok(Math.abs(leaf.angle - (leaf.secondary ? 1.05 : 1.5)) < .001)
++        if (time === 0 || time === 1400) assert.ok(Math.abs(leaf.angle) < .001)
++      }
++      assert.equal(await page.locator('[data-object-id="plant"] > g').innerHTML(), markup)
++      samples.push(state)
++    }
++    const peak = await pairedPeak(page, 280)
++    assert.equal(await effects(page), 8, 'Retained test handles restore the actual paused peak after sampling the terminal frame')
++    await capture(page, `plant-${species}-${rotation}-detail`, { species, rotation, peak }, page.locator('[data-object-id="plant"]'))
++    if (rotation === 0) await capture(page, `plant-${species}-room`, { species, rotation, peak })
++    await page.clock.runFor(1450)
++    assert.equal(await page.locator('.room-plant-greeting').count(), 0)
++    assert.equal(await page.evaluate(() => document.getAnimations().filter(a => a.animationName === 'plant-leaf-greeting').length), 0)
++    assert.equal(await frames(page), 1, 'Resident alone keeps its existing healthy idle clock')
++    assert.deepEqual((await snapshot(page)).tables, before)
++    if (out) await writeFile(join(out, `plant-${species}-${rotation}-samples.json`), JSON.stringify(samples, null, 2) + '\n')
++  })
++}
++
++const effects = page => page.evaluate(() => document.getAnimations().filter(a => a.animationName === 'plant-leaf-greeting').length)
++async function cleared(page, expectedFrames) {
++  assert.equal(await page.locator('.room-plant-greeting').count(), 0)
++  assert.equal(await effects(page), 0)
++  assert.equal(await frames(page), expectedFrames)
++}
++
++test('native plant leaf effects finish once on the browser clock and return to neutral', async t => {
++  const page = await fixture(t), saved = (await snapshot(page)).tables
++  await invite(page)
++  let timeout
++  await Promise.race([
++    page.evaluate(async () => {
++      const running = document.getAnimations().filter(a => a.animationName === 'plant-leaf-greeting')
++      if (running.length !== 8 || running.some(a => a.playState !== 'running')) throw new Error('Eight native running effects required')
++      await Promise.all(running.map(a => a.finished))
++    }),
++    new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Finite native plant response did not finish within 4s')), 4000) }),
++  ]).finally(() => clearTimeout(timeout))
++  assert.equal(await effects(page), 0)
++  assert.deepEqual(await page.locator('[data-object-id="plant"] .plant-leaf-response').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform)), Array(8).fill('none'))
++  assert.equal(await frames(page), 1)
++  await page.clock.runFor(1450); await cleared(page, 1)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  t.diagnostic('Native CSS finished promises use real browser time; the separate fake resident clock only holds and then expires the semantic interaction.')
++})
++
++test('live system reduction cancels the plant response without replay', async t => {
++  const page = await fixture(t), saved = (await snapshot(page)).tables
++  await invite(page); assert.equal(await effects(page), 8)
++  await changeReducedMotion(page, 'reduce'); await cleared(page, 0)
++  await changeReducedMotion(page, 'no-preference'); await page.clock.runFor(1600)
++  await cleared(page, 1); assert.deepEqual((await snapshot(page)).tables, saved)
++})
++
++for (const preference of ['system', 'device']) test(`initial ${preference} reduction never starts plant effects`, async t => {
++  const page = await fixture(t, { [preference]: true }), saved = (await snapshot(page)).tables
++  await askToLook(page); await page.clock.runFor(2400); await cleared(page, 0)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
++
++test('real cross-tab device preference cancels plant effects without replay', async t => {
++  const page = await fixture(t), saved = (await snapshot(page)).tables
++  const peer = await page.context().newPage(), url = new URL('plant-motion-preference-probe', page.url()).href
++  await peer.route(url, route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Fish motion preference probe</title>' }))
++  await peer.goto(url); await page.bringToFront()
++  t.after(() => peer.close())
++  const choose = async value => {
++    await page.evaluate(() => { window.__plantPreference = new Promise(resolve => window.addEventListener('storage', event => {
++      if (event.key === 'chore-pet-reduce-motion') resolve(event.newValue)
++    }, { once: true })) })
++    await peer.evaluate(value => localStorage.setItem('chore-pet-reduce-motion', value), value)
++    let timeout
++    const delivered = await Promise.race([
++      page.evaluate(() => window.__plantPreference),
++      new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Native storage event not delivered within 4s')), 4000) }),
++    ]).finally(() => clearTimeout(timeout))
++    assert.equal(delivered, value)
++  }
++  await invite(page); assert.equal(await effects(page), 8)
++  await choose('on'); await cleared(page, 0)
++  await choose('off'); await page.clock.runFor(1600); await cleared(page, 1)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
++
++test('a player wave interrupts the plant greeting and leaves no queued reply', async t => {
++  const page = await fixture(t), saved = (await snapshot(page)).tables
++  await invite(page); assert.equal(await effects(page), 8)
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  await page.getByRole('button', { name: 'Wave', exact: true }).click()
++  await cleared(page, 1); await page.clock.runFor(3000); await cleared(page, 1)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
++
++for (const [width, height] of [[320, 640], [390, 664], [844, 390]]) test(`plant greeting fits ${width}x${height} with attached leaves`, async t => {
++  const page = await fixture(t, { width, height }), saved = (await snapshot(page)).tables
++  await invite(page)
++  const peak = await pairedPeak(page, 280)
++  for (const leaf of peak.leaves) { assert.ok(leaf.attachmentError < .005); assert.ok(leaf.artClearance >= -.005) }
++  const layout = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth,
++    room: (() => { const r = document.querySelector('.home-room').getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height } })(),
++    viewport: (() => { const r = document.querySelector('.home-scene-viewport').getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height } })() }))
++  assert.ok(layout.scrollWidth <= width)
++  assert.ok(layout.viewport.width > 200 && layout.viewport.height >= 90 && layout.room.width > 0 && layout.room.height > 0)
++  await capture(page, `plant-responsive-${width}x${height}`, { width, height, layout, peak })
++  await page.clock.runFor(1450); await cleared(page, 1)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
+diff --git i/docs/ART.md w/docs/ART.md
+index cbd0e44..28f0a9b 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -241,3 +241,5 @@ Change look comparison thumbnails keep their resting body and open eyes still. T
+ Change look Face options include Mirror preview and Show preview. Mirroring is a local pressed toggle that reflects the complete sampled character once about x=100, including clothes and ground, and resets when the editor reopens. Show preview scrolls the actual SVG instantly into view and focuses it without a second scroll; the image has an inset keyboard focus ring and stays outside ordinary Tab stops. Both controls preserve the current mood, look draft, frame owner and finite cheer deadline. Their row wraps at enlarged text sizes and adds no clock, listener or saved field.
+ 
+ A clean fish tank answers the resident’s existing1400ms wave with one damped tail response. Only the selected visible tank receives the response class during the action phase. Two inner tail groups preserve the fish’s original placement, body, water and glass layers; the red tail turns at most10degrees and the yellow tail responds oppositely at65% amplitude. The effect is finite CSS, with no extra JavaScript frame owner, timer or saved field. A held negative delay catches up to the existing action phase after a late frame and stays stable on repeated invitations. Other phases/stages/objects and reduced/sick/away states remain still; interruptions remove the response. Unanimated tank renders remain pixel-identical across3stages,4rotations and2raster sizes.
++
++A clean potted plant sways briefly when the resident waves at it. Each of its eight leaves stays rooted at the original soil attachment. The largest turn is 1.5 degrees; four leaves use 70% of that amplitude. The 1400 ms CSS response follows the existing action deadline and catches up after a late frame. It stops on interruption or reduced motion. Pots, dirty foliage, fallen leaves and fish tank seaweed retain their original art. The response adds no JavaScript frame loop, timer, listener or saved field. Static plant and fish renders match the baseline in all 48 stage, rotation and raster comparisons.
+diff --git 1/docs/audits/2026-10-12-character-polish/plant-greeting-design.md 2/docs/audits/2026-10-12-character-polish/plant-greeting-design.md
+new file mode 100644
+index 0000000..82cf9fa
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/plant-greeting-design.md
+@@ -0,0 +1,17 @@
++A clean potted plant gives one small leaf sway when the resident performs its existing wave. Its eight visible leaves keep their individual roots at the original dx,-9 soil attachments. Pots, shadows, leaf paths, dirty foliage, fallen leaves and watering hints retain their original art. Each clean leaf gets an inner responsive group inside its existing translation and rotation. Shared leafShape callers keep their original unwrapped paths unless the optional response flag is set. There is no added UI, contact, reach, sound, dialogue, route, chore or save change.
++
++Reuse Room.responseObjectId and responseElapsedMs with the held semantic draw timestamp introduced in B61. Only the matching visible clean plant receives room-plant-greeting and its own held negative delay. Fish retain their separate response. Eight CSS transforms run once for 1400 ms, with a damped maximum turn of 1.5 degrees and four secondary leaves at 70% amplitude. Each root stays fixed and normal completion returns to zero. Cancellation settles the small angles immediately. OS CSS reduction and the existing device, sick, away and interaction cancellation rules suppress the effect. There is no new JavaScript frame loop, timer, subscription or state field.
++
++Before production edits, 17 Room/resident tests produced 16 expected missing-response failures and one passing nonresponse guard. Exact red source bytes are archived. A copied fish-related test title was corrected afterward; no assertion changed. Static Vite SSR/Resvg comparisons covered plant and fish tank, three stages, four rotations and two raster widths. All 48 candidate pixel buffers and PNG files matched their pre-edit baselines. An isolated offline native probe checked 224 leaf roots at seven phases, eight roots and four outer rotations. Maximum attachment error was zero. This probe injected the class into candidate SVG and was a geometry experiment, not integrated app verification.
++
++Production edits waited for B61 independent PASS and local checkpoint. Applied leaf source and CSS bytes match the pixel-compared candidate and root-probed CSS hashes. The first focused run passed 262 tests in nine files. The first build command used a nonexistent node_modules/npm path and failed before starting a build. The corrected repository npm run build command passed; the first error remains archived.
++
++The initial integrated native run passed 39 of 48 cases. Nine foliage bounds assertions failed, including the neutral frame. A distinct one-case diagnosis kept the old assertion and recorded both methods. Rotated local bbox corners reported -0.140094 art units, while exact transformed cubic and quadratic path extrema reported +4.490977 units for the same leaves. The box included empty corners. The final method minimizes every actual cubic, quadratic and closing-line path along both fixed authored art axes, with actual per-path stroke widths and uniform local/art matrix scale. Bounds and tolerances remain unchanged. Coarse bbox values remain diagnostic metadata. No production art or motion changed to satisfy this correction. Both failed harness versions are archived.
++
++The first green integrated run passed all 48 cases in 87.280788114 seconds. It measured seven phases across three species and two rotations, checked root attachment and painted curve bounds, native timing and completion, coalescing, deadlines, live system/device/cross-tab reduction, player interruption and unchanged saved tables. Its first-green stills sampled the CSS peak while the resident fake clock was near action entry. They are retained foliage evidence, not same-phase character captures. The refined final captures advance the resident fake clock to the same 280 ms phase, record actual last RAF time and body transform, and require alignment within one 16 ms frame. This instrumentation is test-only and uses a distinct capture directory.
++
++The first full-suite attempt received SIGTERM. The supervisor completed with exit 143 and valid log, exit and resource sidecars. It cleaned its owned processes with no remaining live members. Memory stayed above reserve; the termination cause is unknown. This is an interrupted attempt, not a failing test or reserve stop. The separate retry passed all 2537 tests across 136 files in 93.29 seconds. Preserve the signal evidence as an explicitly interrupted run and never promote exit 143 to PASS.
++
++The continuing user request authorizes this bounded environment detail. Heavy checks remain sequential and capped with a 2 GiB run reserve, and full-suite launches require 4 GiB available headroom. Freeze current sources and evidence for one bounded independent source and still review before a local checkpoint. Sampled geometry and native completion do not certify continuous all-phase geometry, physical devices, assistive technology, human temporal comfort, CPU usage or battery savings.
++
++The final paired native run passed all 48 cases in 89.537874622 seconds. All 12 final paired PNGs were directly reviewed. Seven phase samples across six species/rotation cases cover 336 leaf transforms, with maximum root error 0 CSS px and minimum sampled painted stroke clearance 4.045278569168222 art units. All 12 capture records align the resident within 0 ms of the leaf peak. Final current production static verification again passed all 48 exact pixel and PNG comparisons. The 12 unique plant baseline images were directly reviewed; their 12 duplicates and all 24 previously reviewed fish files were checked byte for byte. The final eight-path strict single-thread lint passed with no diagnostics.

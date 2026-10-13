@@ -1,0 +1,41 @@
+{
+  "utc": "2026-10-13T07:46:27.900946+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "python3",
+    "/tmp/plant-greeting-white.py"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 3,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 0
+  },
+  "minimumObservedAvailableBytes": 5703639040,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 5703639040,
+      "tmpFreeBytes": 4284866560
+    },
+    {
+      "elapsedSeconds": 0.002,
+      "memAvailableBytes": 5707730944,
+      "tmpFreeBytes": 4284866560
+    },
+    {
+      "elapsedSeconds": 1.003,
+      "memAvailableBytes": 5844951040,
+      "tmpFreeBytes": 4284866560
+    }
+  ]
+}

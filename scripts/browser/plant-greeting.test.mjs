@@ -1,0 +1,285 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
+
+const out = process.env.CHORE_PET_PLANT_CAPTURE_DIR
+async function fixture(t, { species = 'mochi', rotation = 0, system = false, device = false, width = 1280, height = 800 } = {}) {
+  const page = await browserApp(t, { viewport: { width, height }, deviceScaleFactor: 2, reducedMotion: system ? 'reduce' : 'no-preference' })
+  if (device) await page.evaluate(() => localStorage.setItem('chore-pet-reduce-motion', 'on'))
+  await page.evaluate(({ species, rotation }) => new Promise((resolve, reject) => {
+    const request = indexedDB.open('chore-pet', 1)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
+      read.onsuccess = () => {
+        const saved = read.result, room = Object.values(saved.tables.rooms)[0], pet = Object.values(saved.tables.pets)[0]
+        pet.species = species; pet.bodyColour = { mochi: '#FFCFDA', bun: '#FFFFFF', sprout: '#FFD65C' }[species]
+        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
+        saved.tables.placed_objects = {
+          plant: { id: 'plant', roomId: room.id, catalogId: 'plant', tileX: 2, tileY: 2, rotation },
+          second: { id: 'second', roomId: room.id, catalogId: 'plant', tileX: 5, tileY: 5, rotation: 0 },
+        }
+        saved.tables.chores = {}; saved.tables.completions = {}; saved.outbox = {}; store.put(saved, 'snapshot')
+      }
+      tx.oncomplete = () => { db.close(); resolve() }
+      tx.onerror = () => { db.close(); reject(tx.error) }
+    }
+  }), { species, rotation })
+  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
+  await page.addInitScript(() => {
+    Math.random = () => .99
+    const request = requestAnimationFrame, cancel = cancelAnimationFrame
+    window.__plantFrames = new Set()
+    window.requestAnimationFrame = callback => {
+      const id = request(time => { window.__plantFrames.delete(id); window.__plantLastFrameTime = time; callback(time) })
+      window.__plantFrames.add(id); return id
+    }
+    window.cancelAnimationFrame = id => { window.__plantFrames.delete(id); cancel(id) }
+  })
+  await page.reload(); await page.locator('.room-pet').waitFor(); await page.clock.runFor(48)
+  return page
+}
+const frames = page => page.evaluate(() => window.__plantFrames.size)
+async function askToLook(page) {
+  const toggle = page.getByRole('button', { name: 'Explore together', exact: true })
+  if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click()
+  await page.getByRole('combobox', { name: /^Show / }).selectOption('plant')
+  await page.getByRole('button', { name: 'Look together', exact: true }).click()
+  await page.getByRole('button', { name: /^Show room to explore with / }).click()
+}
+async function invite(page) {
+  await askToLook(page)
+  for (let i = 0; i < 320; i++) {
+    if (await page.locator('.room-plant-greeting').count()) {
+      await page.evaluate(() => {
+        const effect = document.getAnimations().find(a => a.animationName === 'plant-leaf-greeting')
+        window.__plantGreetingStart = window.__plantLastFrameTime + effect.effect.getTiming().delay
+      })
+      return
+    }
+    await page.clock.runFor(16)
+  }
+  assert.fail('The invited resident never reached the existing plant greeting')
+}
+async function pairedPeak(page, time) {
+  const advance = await page.evaluate(time => Math.max(0, window.__plantGreetingStart + time - performance.now()), time)
+  await page.clock.runFor(advance)
+  const state = await animationState(page, time)
+  state.resident = await page.evaluate(() => ({ now: performance.now(), frameTime: window.__plantLastFrameTime,
+    phaseStart: window.__plantGreetingStart, elapsedMs: window.__plantLastFrameTime - window.__plantGreetingStart,
+    body: document.querySelector('.room-pet [data-character-body]').getAttribute('transform') }))
+  assert.ok(time - state.resident.elapsedMs >= -.001 && time - state.resident.elapsedMs <= 16.001,
+    `Resident ${state.resident.elapsedMs}ms and foliage ${time}ms remain within one16msfakeframe`)
+  return state
+}
+async function animationState(page, time) {
+  return page.evaluate(time => {
+    const animations = window.__plantSampleEffects ??= document.getAnimations().filter(a => a.animationName === 'plant-leaf-greeting')
+    for (const animation of animations) { animation.pause(); animation.currentTime = time + animation.effect.getTiming().delay }
+    const leaves = [...document.querySelectorAll('[data-object-id="plant"] .plant-leaf-response')]
+    return { time, animations: animations.map(a => ({ name: a.animationName, duration: a.effect.getTiming().duration, delay: a.effect.getTiming().delay, localTime: a.currentTime, iterations: a.effect.getTiming().iterations, objectId: a.effect.target.closest('[data-object-id]')?.getAttribute('data-object-id') })),
+      leaves: leaves.map(leaf => {
+        const transform = getComputedStyle(leaf).transform
+        const matrix = transform === 'none' ? new DOMMatrix() : new DOMMatrix(transform)
+        const own = new DOMPoint(0, 0).matrixTransform(leaf.getScreenCTM())
+        const attached = new DOMPoint(0, 0).matrixTransform(leaf.parentElement.getScreenCTM())
+        const placed = leaf.closest('[data-object-id]').querySelector(':scope > g')
+        const toArt = placed.getScreenCTM().inverse().multiply(leaf.getScreenCTM())
+        const localBox = leaf.getBBox(), radius = Math.hypot(toArt.a, toArt.b)
+        // The transformed native fill bbox conservatively contains all four
+        // leaf paths. Add their maximum one-unit local stroke radius and compare
+        // against the fixed authored plant art bounds, never a live parent union.
+        const corners = [[localBox.x, localBox.y], [localBox.x + localBox.width, localBox.y], [localBox.x + localBox.width, localBox.y + localBox.height], [localBox.x, localBox.y + localBox.height]]
+          .map(([x, y]) => new DOMPoint(x, y).matrixTransform(toArt))
+        const coarseBboxClearance = Math.min(...corners.flatMap(p => [p.x + 36, 36 - p.x, p.y + 88, 36 - p.y])) - radius
+        const point = (x, y) => new DOMPoint(x, y).matrixTransform(toArt)
+        // Minimize the actual transformed cubic/quadratic paths along both
+        // art axes. Rotated bbox corners include empty, unpainted space.
+        function extrema(p0, p1, p2, p3) {
+          const a = -p0 + 3 * p1 - 3 * p2 + p3, b = 3 * p0 - 6 * p1 + 3 * p2, c = -3 * p0 + 3 * p1
+          const roots = [0, 1], A = 3 * a, B = 2 * b
+          if (Math.abs(A) < 1e-12) { if (Math.abs(B) >= 1e-12) roots.push(-c / B) }
+          else {
+            const discriminant = B * B - 4 * A * c
+            if (discriminant >= 0) { const d = Math.sqrt(discriminant); roots.push((-B - d) / (2 * A), (-B + d) / (2 * A)) }
+          }
+          return roots.filter(t => t >= 0 && t <= 1).map(t => ((a * t + b) * t + c) * t + p0)
+        }
+        let artClearance = Infinity
+        for (const path of leaf.querySelectorAll('path')) {
+          const tokens = path.getAttribute('d').match(/[MCQZ]|[-+]?(?:\d*\.?\d+)(?:[eE][-+]?\d+)?/g)
+          let i = 0, current, first
+          const readPoint = () => point(Number(tokens[i++]), Number(tokens[i++]))
+          const style = getComputedStyle(path), stroke = style.stroke === 'none' ? 0 : Number.parseFloat(style.strokeWidth) * radius / 2
+          const include = points => {
+            const xs = extrema(...points.map(p => p.x)), ys = extrema(...points.map(p => p.y))
+            artClearance = Math.min(artClearance, ...xs.flatMap(x => [x + 36 - stroke, 36 - x - stroke]), ...ys.flatMap(y => [y + 88 - stroke, 36 - y - stroke]))
+          }
+          while (i < tokens.length) {
+            const command = tokens[i++]
+            if (command === 'M') { current = readPoint(); first = current }
+            else if (command === 'C') {
+              const c1 = readPoint(), c2 = readPoint(), end = readPoint()
+              include([current, c1, c2, end]); current = end
+            } else if (command === 'Q') {
+              const control = readPoint(), end = readPoint()
+              include([current, { x: current.x + 2 * (control.x - current.x) / 3, y: current.y + 2 * (control.y - current.y) / 3 },
+                { x: end.x + 2 * (control.x - end.x) / 3, y: end.y + 2 * (control.y - end.y) / 3 }, end]); current = end
+            } else if (command === 'Z') { include([current, current, first, first]); current = first }
+            else throw new Error(`Unexpected leaf path command ${command}`)
+          }
+        }
+        const box = leaf.getBoundingClientRect(), plant = leaf.closest('[data-object-id]').getBoundingClientRect()
+        return { secondary: leaf.classList.contains('plant-leaf-secondary'), angle: Math.atan2(matrix.b, matrix.a) * 180 / Math.PI,
+          attachmentError: Math.hypot(own.x - attached.x, own.y - attached.y), coarseBboxClearance, artClearance,
+          box: { x: box.x, y: box.y, right: box.right, bottom: box.bottom },
+          plant: { x: plant.x, y: plant.y, right: plant.right, bottom: plant.bottom },
+          plantTransform: leaf.parentElement.getAttribute('transform') }
+      }) }
+  }, time)
+}
+async function capture(page, name, data, target) {
+  if (!out) return
+  await mkdir(out, { recursive: true })
+  if (target) await target.screenshot({ path: join(out, `${name}.png`), animations: 'allow' })
+  else await page.screenshot({ path: join(out, `${name}.png`), animations: 'allow' })
+  await writeFile(join(out, `${name}.json`), JSON.stringify({ ...data, browser: page.context().browser().version(),
+    method: 'Offline production fixture. Actual finite CSS effect paused at recorded phase, resident fake RAF advanced to that same action phase within one16msframe, with explicit elapsed/body metadata. Screenshot allows paused CSS. Matrix/attachment/painted-curve bounds assertions precede capture; separate test covers native real-clock completion. Not human temporal/physical-device/AT certification.' }, null, 2) + '\n')
+}
+
+for (const species of ['mochi', 'bun', 'sprout']) for (const rotation of [0, 1]) {
+  test(`${species} greets only the chosen plant with individually rooted finite leaves, rotation ${rotation}`, async t => {
+    const page = await fixture(t, { species, rotation })
+    const before = (await snapshot(page)).tables
+    await invite(page)
+    assert.equal(await page.locator('.room-plant-greeting').count(), 1)
+    assert.equal(await page.locator('.room-plant-greeting').getAttribute('data-object-id'), 'plant')
+    assert.equal(await page.locator('[data-object-id="second"]').evaluate(node => node.classList.contains('room-plant-greeting')), false)
+    await page.evaluate(() => { window.__greetingInstances = document.getAnimations().filter(a => a.animationName === 'plant-leaf-greeting') })
+    await page.getByRole('button', { name: 'Look together', exact: true }).click()
+    const repeated = await page.evaluate(() => {
+      const current = document.getAnimations().filter(a => a.animationName === 'plant-leaf-greeting')
+      return current.length === 8 && current.every(animation => window.__greetingInstances.includes(animation))
+    })
+    assert.equal(repeated, true, 'A repeated invitation retains the same native effects')
+    const markup = await page.locator('[data-object-id="plant"] > g').innerHTML()
+    const samples = []
+    for (const time of [0, 140, 280, 560, 840, 1120, 1400]) {
+      const state = await animationState(page, time)
+      assert.equal(state.animations.length, 8); assert.equal(state.leaves.length, 8)
+      for (const animation of state.animations) {
+        assert.equal(animation.duration, 1400); assert.equal(animation.iterations, 1); assert.equal(animation.objectId, 'plant')
+      }
+      for (const leaf of state.leaves) {
+        assert.ok(Math.abs(leaf.angle) <= (leaf.secondary ? 1.05 : 1.5) + .001)
+        assert.ok(leaf.attachmentError < .005, `Leaf stays rooted: ${leaf.attachmentError}px`)
+        assert.ok(leaf.artClearance >= -.005, `Stroked leaf stays inside fixed plant art bounds: ${leaf.artClearance} art units`)
+        if (time === 280) assert.ok(Math.abs(leaf.angle - (leaf.secondary ? 1.05 : 1.5)) < .001)
+        if (time === 0 || time === 1400) assert.ok(Math.abs(leaf.angle) < .001)
+      }
+      assert.equal(await page.locator('[data-object-id="plant"] > g').innerHTML(), markup)
+      samples.push(state)
+    }
+    const peak = await pairedPeak(page, 280)
+    assert.equal(await effects(page), 8, 'Retained test handles restore the actual paused peak after sampling the terminal frame')
+    await capture(page, `plant-${species}-${rotation}-detail`, { species, rotation, peak }, page.locator('[data-object-id="plant"]'))
+    if (rotation === 0) await capture(page, `plant-${species}-room`, { species, rotation, peak })
+    await page.clock.runFor(1450)
+    assert.equal(await page.locator('.room-plant-greeting').count(), 0)
+    assert.equal(await page.evaluate(() => document.getAnimations().filter(a => a.animationName === 'plant-leaf-greeting').length), 0)
+    assert.equal(await frames(page), 1, 'Resident alone keeps its existing healthy idle clock')
+    assert.deepEqual((await snapshot(page)).tables, before)
+    if (out) await writeFile(join(out, `plant-${species}-${rotation}-samples.json`), JSON.stringify(samples, null, 2) + '\n')
+  })
+}
+
+const effects = page => page.evaluate(() => document.getAnimations().filter(a => a.animationName === 'plant-leaf-greeting').length)
+async function cleared(page, expectedFrames) {
+  assert.equal(await page.locator('.room-plant-greeting').count(), 0)
+  assert.equal(await effects(page), 0)
+  assert.equal(await frames(page), expectedFrames)
+}
+
+test('native plant leaf effects finish once on the browser clock and return to neutral', async t => {
+  const page = await fixture(t), saved = (await snapshot(page)).tables
+  await invite(page)
+  let timeout
+  await Promise.race([
+    page.evaluate(async () => {
+      const running = document.getAnimations().filter(a => a.animationName === 'plant-leaf-greeting')
+      if (running.length !== 8 || running.some(a => a.playState !== 'running')) throw new Error('Eight native running effects required')
+      await Promise.all(running.map(a => a.finished))
+    }),
+    new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Finite native plant response did not finish within 4s')), 4000) }),
+  ]).finally(() => clearTimeout(timeout))
+  assert.equal(await effects(page), 0)
+  assert.deepEqual(await page.locator('[data-object-id="plant"] .plant-leaf-response').evaluateAll(nodes => nodes.map(node => getComputedStyle(node).transform)), Array(8).fill('none'))
+  assert.equal(await frames(page), 1)
+  await page.clock.runFor(1450); await cleared(page, 1)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+  t.diagnostic('Native CSS finished promises use real browser time; the separate fake resident clock only holds and then expires the semantic interaction.')
+})
+
+test('live system reduction cancels the plant response without replay', async t => {
+  const page = await fixture(t), saved = (await snapshot(page)).tables
+  await invite(page); assert.equal(await effects(page), 8)
+  await changeReducedMotion(page, 'reduce'); await cleared(page, 0)
+  await changeReducedMotion(page, 'no-preference'); await page.clock.runFor(1600)
+  await cleared(page, 1); assert.deepEqual((await snapshot(page)).tables, saved)
+})
+
+for (const preference of ['system', 'device']) test(`initial ${preference} reduction never starts plant effects`, async t => {
+  const page = await fixture(t, { [preference]: true }), saved = (await snapshot(page)).tables
+  await askToLook(page); await page.clock.runFor(2400); await cleared(page, 0)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})
+
+test('real cross-tab device preference cancels plant effects without replay', async t => {
+  const page = await fixture(t), saved = (await snapshot(page)).tables
+  const peer = await page.context().newPage(), url = new URL('plant-motion-preference-probe', page.url()).href
+  await peer.route(url, route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Fish motion preference probe</title>' }))
+  await peer.goto(url); await page.bringToFront()
+  t.after(() => peer.close())
+  const choose = async value => {
+    await page.evaluate(() => { window.__plantPreference = new Promise(resolve => window.addEventListener('storage', event => {
+      if (event.key === 'chore-pet-reduce-motion') resolve(event.newValue)
+    }, { once: true })) })
+    await peer.evaluate(value => localStorage.setItem('chore-pet-reduce-motion', value), value)
+    let timeout
+    const delivered = await Promise.race([
+      page.evaluate(() => window.__plantPreference),
+      new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('Native storage event not delivered within 4s')), 4000) }),
+    ]).finally(() => clearTimeout(timeout))
+    assert.equal(delivered, value)
+  }
+  await invite(page); assert.equal(await effects(page), 8)
+  await choose('on'); await cleared(page, 0)
+  await choose('off'); await page.clock.runFor(1600); await cleared(page, 1)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})
+
+test('a player wave interrupts the plant greeting and leaves no queued reply', async t => {
+  const page = await fixture(t), saved = (await snapshot(page)).tables
+  await invite(page); assert.equal(await effects(page), 8)
+  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
+  await page.getByRole('button', { name: 'Wave', exact: true }).click()
+  await cleared(page, 1); await page.clock.runFor(3000); await cleared(page, 1)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})
+
+for (const [width, height] of [[320, 640], [390, 664], [844, 390]]) test(`plant greeting fits ${width}x${height} with attached leaves`, async t => {
+  const page = await fixture(t, { width, height }), saved = (await snapshot(page)).tables
+  await invite(page)
+  const peak = await pairedPeak(page, 280)
+  for (const leaf of peak.leaves) { assert.ok(leaf.attachmentError < .005); assert.ok(leaf.artClearance >= -.005) }
+  const layout = await page.evaluate(() => ({ width: innerWidth, scrollWidth: document.documentElement.scrollWidth,
+    room: (() => { const r = document.querySelector('.home-room').getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height } })(),
+    viewport: (() => { const r = document.querySelector('.home-scene-viewport').getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height } })() }))
+  assert.ok(layout.scrollWidth <= width)
+  assert.ok(layout.viewport.width > 200 && layout.viewport.height >= 90 && layout.room.width > 0 && layout.room.height > 0)
+  await capture(page, `plant-responsive-${width}x${height}`, { width, height, layout, peak })
+  await page.clock.runFor(1450); await cleared(page, 1)
+  assert.deepEqual((await snapshot(page)).tables, saved)
+})

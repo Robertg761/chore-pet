@@ -25,17 +25,22 @@ export type LeafColours = { light: string; dark: string }
  * leans right; `bend` curves the tip sideways (px). `flat` squashes it into
  * the floor plane (a fallen leaf).
  */
-export function leafShape(x: number, y: number, rot: number, len: number, bend: number, c: LeafColours, key?: string | number, flat = false) {
+export function leafShape(x: number, y: number, rot: number, len: number, bend: number, c: LeafColours, key?: string | number, flat = false, response?: 'primary' | 'secondary') {
   const w = len * 0.3
   const right = `C${w + bend * 0.2} ${-len * 0.2} ${w + bend * 0.7} ${-len * 0.75} ${bend} ${-len}`
   const left = `C${-w + bend * 0.7} ${-len * 0.75} ${-w + bend * 0.2} ${-len * 0.2} 0 0`
   const tf = flat ? `translate(${x} ${y}) scale(1 0.5) rotate(${rot})` : `translate(${x} ${y}) rotate(${rot})`
-  return (
-    <g key={key} transform={tf} strokeWidth={2}>
+  const art = (
+    <>
       <path d={`M0 0 ${right} ${left} Z`} fill={c.light} />
       <path d={`M0 0 ${right} Q${bend * 0.5} ${-len * 0.5} 0 0 Z`} fill={c.dark} stroke="none" />
       <path d={`M0 0 ${right} ${left} Z`} fill="none" />
       <path d={`M0 -1 Q${bend * 0.45} ${-len * 0.45} ${bend * 0.9} ${-len * 0.82}`} fill="none" stroke={ink} strokeWidth={1.2} opacity={0.35} />
+    </>
+  )
+  return (
+    <g key={key} transform={tf} strokeWidth={2}>
+      {response ? <g className={`plant-leaf-response${response === 'secondary' ? ' plant-leaf-secondary' : ''}`}>{art}</g> : art}
     </g>
   )
 }
@@ -68,8 +73,8 @@ interface Spec {
   colours?: LeafColours
 }
 
-function leaves(specs: Spec[], colours: LeafColours) {
-  return <g>{specs.map((s, i) => leafShape((s.dx ?? 0), -9, s.rot, s.len, s.bend, s.colours ?? colours, i))}</g>
+function leaves(specs: Spec[], colours: LeafColours, respond = false) {
+  return <g>{specs.map((s, i) => leafShape((s.dx ?? 0), -9, s.rot, s.len, s.bend, s.colours ?? colours, i, false, respond ? (i % 2 ? 'secondary' : 'primary') : undefined))}</g>
 }
 
 const CLEAN: Spec[] = [
@@ -147,7 +152,7 @@ export const plantArt: ObjectArt = {
   render: (stage: MessStage) => (
     <g stroke={ink} strokeWidth={ROOM_STROKE} strokeLinejoin="round" strokeLinecap="round">
       {pot(stage === 'messy2' ? DRY_SOIL : SOIL, stage === 'messy2')}
-      {stage === 'clean' && leaves(CLEAN, FRESH)}
+      {stage === 'clean' && leaves(CLEAN, FRESH, true)}
       {stage === 'messy1' && leaves(DROOPY, FRESH)}
       {stage === 'messy2' && leaves(WILTED, TIRED)}
       {stage === 'messy1' && messy1()}

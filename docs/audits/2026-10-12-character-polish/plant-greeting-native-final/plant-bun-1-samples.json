@@ -1,0 +1,1619 @@
+[
+  {
+    "time": 0,
+    "animations": [
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": -8,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": -8,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": -8,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": -8,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": -8,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": -8,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": -8,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": -8,
+        "iterations": 1,
+        "objectId": "plant"
+      }
+    ],
+    "leaves": [
+      {
+        "secondary": false,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": 14.171947048310656,
+        "artClearance": 17.251588891406314,
+        "box": {
+          "x": 459.6585998535156,
+          "y": 369.4831848144531,
+          "right": 486.4107666015625,
+          "bottom": 415.3705749511719
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-2 -9) rotate(-10)"
+      },
+      {
+        "secondary": true,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": 11.887137709365746,
+        "artClearance": 15.638849994019957,
+        "box": {
+          "x": 443.32183837890625,
+          "y": 367.47265625,
+          "right": 472.68719482421875,
+          "bottom": 415.8433837890625
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(2 -9) rotate(12)"
+      },
+      {
+        "secondary": false,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": -0.14009429835217446,
+        "artClearance": 4.4909765588999875,
+        "box": {
+          "x": 463.9346008300781,
+          "y": 380.1707763671875,
+          "right": 500.4453125,
+          "bottom": 420.1360168457031
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-3 -9) rotate(-38)"
+      },
+      {
+        "secondary": true,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": -0.14009354684644393,
+        "artClearance": 4.490976558900101,
+        "box": {
+          "x": 431.52783203125,
+          "y": 380.1707763671875,
+          "right": 468.0385437011719,
+          "bottom": 420.1360168457031
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(3 -9) rotate(38)"
+      },
+      {
+        "secondary": false,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.5212470769870237,
+        "artClearance": 4.605056986453988,
+        "box": {
+          "x": 467.6801452636719,
+          "y": 395.3191833496094,
+          "right": 497.8355712890625,
+          "bottom": 420.86431884765625
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-4 -9) rotate(-58)"
+      },
+      {
+        "secondary": true,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.5212470769870805,
+        "artClearance": 4.605056986454045,
+        "box": {
+          "x": 434.1375732421875,
+          "y": 395.3191833496094,
+          "right": 464.2929992675781,
+          "bottom": 420.86431884765625
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(4 -9) rotate(58)"
+      },
+      {
+        "secondary": false,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": 17.346535589600776,
+        "artClearance": 20.615586096635532,
+        "box": {
+          "x": 462.2380676269531,
+          "y": 386.9769287109375,
+          "right": 483.2977600097656,
+          "bottom": 416.02691650390625
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-1 -9) rotate(-22)"
+      },
+      {
+        "secondary": true,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": 16.575209970157815,
+        "artClearance": 19.99009728895348,
+        "box": {
+          "x": 447.9190368652344,
+          "y": 387.17413330078125,
+          "right": 469.6654968261719,
+          "bottom": 416.2491149902344
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(1 -9) rotate(24)"
+      }
+    ]
+  },
+  {
+    "time": 140,
+    "animations": [
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 132,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 132,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 132,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 132,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 132,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 132,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 132,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 132,
+        "iterations": 1,
+        "objectId": "plant"
+      }
+    ],
+    "leaves": [
+      {
+        "secondary": false,
+        "angle": 0.7500004993951864,
+        "attachmentError": 0,
+        "coarseBboxClearance": 14.714931069030026,
+        "artClearance": 17.600072029457433,
+        "box": {
+          "x": 459.6401672363281,
+          "y": 369.49737548828125,
+          "right": 485.8783264160156,
+          "bottom": 415.226806640625
+        },
+        "plant": {
+          "x": 431.2243347167969,
+          "y": 367.3952331542969,
+          "right": 500.5303039550781,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-2 -9) rotate(-10)"
+      },
+      {
+        "secondary": true,
+        "angle": 0.524999990404651,
+        "attachmentError": 0,
+        "coarseBboxClearance": 11.49823646108652,
+        "artClearance": 15.377810737010346,
+        "box": {
+          "x": 442.94049072265625,
+          "y": 367.4811706542969,
+          "right": 472.6699523925781,
+          "bottom": 415.9470520019531
+        },
+        "plant": {
+          "x": 431.2243347167969,
+          "y": 367.3952331542969,
+          "right": 500.5303039550781,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(2 -9) rotate(12)"
+      },
+      {
+        "secondary": false,
+        "angle": 0.7500004993951864,
+        "attachmentError": 0,
+        "coarseBboxClearance": 0.16518724318227407,
+        "artClearance": 4.81133878834596,
+        "box": {
+          "x": 463.8839416503906,
+          "y": 379.938720703125,
+          "right": 500.14593505859375,
+          "bottom": 420.023193359375
+        },
+        "plant": {
+          "x": 431.2243347167969,
+          "y": 367.3952331542969,
+          "right": 500.5303039550781,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-3 -9) rotate(-38)"
+      },
+      {
+        "secondary": true,
+        "angle": 0.524999990404651,
+        "attachmentError": 0,
+        "coarseBboxClearance": -0.3505170172563796,
+        "artClearance": 4.267707432311852,
+        "box": {
+          "x": 431.32147216796875,
+          "y": 380.33660888671875,
+          "right": 468.0025939941406,
+          "bottom": 420.21429443359375
+        },
+        "plant": {
+          "x": 431.2243347167969,
+          "y": 367.3952331542969,
+          "right": 500.5303039550781,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(3 -9) rotate(38)"
+      },
+      {
+        "secondary": false,
+        "angle": 0.7500004993951864,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.6187528047095867,
+        "artClearance": 4.746035280156988,
+        "box": {
+          "x": 467.6336364746094,
+          "y": 395.0451354980469,
+          "right": 497.7399597167969,
+          "bottom": 420.8029479980469
+        },
+        "plant": {
+          "x": 431.2243347167969,
+          "y": 367.3952331542969,
+          "right": 500.5303039550781,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-4 -9) rotate(-58)"
+      },
+      {
+        "secondary": true,
+        "angle": 0.524999990404651,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.4558955212439315,
+        "artClearance": 4.509061744040679,
+        "box": {
+          "x": 434.0734558105469,
+          "y": 395.5129089355469,
+          "right": 464.26019287109375,
+          "bottom": 420.90655517578125
+        },
+        "plant": {
+          "x": 431.2243347167969,
+          "y": 367.3952331542969,
+          "right": 500.5303039550781,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(4 -9) rotate(58)"
+      },
+      {
+        "secondary": false,
+        "angle": 0.7500004993951864,
+        "attachmentError": 0,
+        "coarseBboxClearance": 17.641064578315277,
+        "artClearance": 20.849128462287545,
+        "box": {
+          "x": 462.2134704589844,
+          "y": 386.9112548828125,
+          "right": 483.0089111328125,
+          "bottom": 415.9427490234375
+        },
+        "plant": {
+          "x": 431.2243347167969,
+          "y": 367.3952331542969,
+          "right": 500.5303039550781,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-1 -9) rotate(-22)"
+      },
+      {
+        "secondary": true,
+        "angle": 0.524999990404651,
+        "attachmentError": 0,
+        "coarseBboxClearance": 16.376217315088084,
+        "artClearance": 19.82536837203743,
+        "box": {
+          "x": 447.7239074707031,
+          "y": 387.2312316894531,
+          "right": 469.6462707519531,
+          "bottom": 416.306884765625
+        },
+        "plant": {
+          "x": 431.2243347167969,
+          "y": 367.3952331542969,
+          "right": 500.5303039550781,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(1 -9) rotate(24)"
+      }
+    ]
+  },
+  {
+    "time": 280,
+    "animations": [
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      }
+    ],
+    "leaves": [
+      {
+        "secondary": false,
+        "angle": 1.4999977205181305,
+        "attachmentError": 0,
+        "coarseBboxClearance": 15.261048142178929,
+        "artClearance": 17.94574286702492,
+        "box": {
+          "x": 459.6231689453125,
+          "y": 369.51910400390625,
+          "right": 485.3427734375,
+          "bottom": 415.082763671875
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-2 -9) rotate(-10)"
+      },
+      {
+        "secondary": true,
+        "angle": 1.0499982899969442,
+        "attachmentError": 0,
+        "coarseBboxClearance": 11.111140492034387,
+        "artClearance": 15.115533747821047,
+        "box": {
+          "x": 442.5609130859375,
+          "y": 367.4935302734375,
+          "right": 472.6520080566406,
+          "bottom": 416.0505065917969
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(2 -9) rotate(12)"
+      },
+      {
+        "secondary": false,
+        "angle": 1.4999977205181305,
+        "attachmentError": 0,
+        "coarseBboxClearance": 0.47592351599652005,
+        "artClearance": 5.133286741535862,
+        "box": {
+          "x": 463.83416748046875,
+          "y": 379.7123718261719,
+          "right": 499.84124755859375,
+          "bottom": 419.90924072265625
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-3 -9) rotate(-38)"
+      },
+      {
+        "secondary": true,
+        "angle": 1.0499982899969442,
+        "attachmentError": 0,
+        "coarseBboxClearance": -0.5582243515572428,
+        "artClearance": 4.045278569168335,
+        "box": {
+          "x": 431.1177978515625,
+          "y": 380.5052490234375,
+          "right": 467.9662170410156,
+          "bottom": 420.2920227050781
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(3 -9) rotate(38)"
+      },
+      {
+        "secondary": false,
+        "angle": 1.4999977205181305,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.7211215130319886,
+        "artClearance": 4.8915120555589375,
+        "box": {
+          "x": 467.5875549316406,
+          "y": 394.77423095703125,
+          "right": 497.63958740234375,
+          "bottom": 420.7402648925781
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-4 -9) rotate(-58)"
+      },
+      {
+        "secondary": true,
+        "angle": 1.0499982899969442,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.3929405167779834,
+        "artClearance": 4.41529066991253,
+        "box": {
+          "x": 434.0117492675781,
+          "y": 395.7080993652344,
+          "right": 464.2272644042969,
+          "bottom": 420.9481506347656
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(4 -9) rotate(58)"
+      },
+      {
+        "secondary": false,
+        "angle": 1.4999977205181305,
+        "attachmentError": 0,
+        "coarseBboxClearance": 17.93839658639825,
+        "artClearance": 21.082012229977536,
+        "box": {
+          "x": 462.1896667480469,
+          "y": 386.85015869140625,
+          "right": 482.71734619140625,
+          "bottom": 415.858154296875
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-1 -9) rotate(-22)"
+      },
+      {
+        "secondary": true,
+        "angle": 1.0499982899969442,
+        "attachmentError": 0,
+        "coarseBboxClearance": 16.178704345567226,
+        "artClearance": 19.660460010911905,
+        "box": {
+          "x": 447.53021240234375,
+          "y": 387.29052734375,
+          "right": 469.626708984375,
+          "bottom": 416.3644104003906
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(1 -9) rotate(24)"
+      }
+    ]
+  },
+  {
+    "time": 560,
+    "animations": [
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 552,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 552,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 552,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 552,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 552,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 552,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 552,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 552,
+        "iterations": 1,
+        "objectId": "plant"
+      }
+    ],
+    "leaves": [
+      {
+        "secondary": false,
+        "angle": -0.9999993263990709,
+        "attachmentError": 0,
+        "coarseBboxClearance": 13.453002717402313,
+        "artClearance": 16.78273410297589,
+        "box": {
+          "x": 459.6853942871094,
+          "y": 369.4759826660156,
+          "right": 487.11578369140625,
+          "bottom": 415.5617370605469
+        },
+        "plant": {
+          "x": 431.44830322265625,
+          "y": 367.2231750488281,
+          "right": 501.0210876464844,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-2 -9) rotate(-10)"
+      },
+      {
+        "secondary": true,
+        "angle": -0.7000002109033912,
+        "attachmentError": 0,
+        "coarseBboxClearance": 12.408424462176889,
+        "artClearance": 15.984915112156475,
+        "box": {
+          "x": 443.8330383300781,
+          "y": 367.46734619140625,
+          "right": 472.70904541015625,
+          "bottom": 415.704833984375
+        },
+        "plant": {
+          "x": 431.44830322265625,
+          "y": 367.2231750488281,
+          "right": 501.0210876464844,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(2 -9) rotate(12)"
+      },
+      {
+        "secondary": false,
+        "angle": -0.9999993263990709,
+        "attachmentError": 0,
+        "coarseBboxClearance": -0.5385609423092744,
+        "artClearance": 4.066425367964509,
+        "box": {
+          "x": 464.0034484863281,
+          "y": 380.48907470703125,
+          "right": 500.8360595703125,
+          "bottom": 420.2846374511719
+        },
+        "plant": {
+          "x": 431.44830322265625,
+          "y": 367.2231750488281,
+          "right": 501.0210876464844,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-3 -9) rotate(-38)"
+      },
+      {
+        "secondary": true,
+        "angle": -0.7000002109033912,
+        "attachmentError": 0,
+        "coarseBboxClearance": 0.14466561264654842,
+        "artClearance": 4.789931121805061,
+        "box": {
+          "x": 431.80706787109375,
+          "y": 379.9539794921875,
+          "right": 468.0858459472656,
+          "bottom": 420.0307312011719
+        },
+        "plant": {
+          "x": 431.44830322265625,
+          "y": 367.2231750488281,
+          "right": 501.0210876464844,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(3 -9) rotate(38)"
+      },
+      {
+        "secondary": false,
+        "angle": -0.9999993263990709,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.398832832614886,
+        "artClearance": 4.424125205790524,
+        "box": {
+          "x": 467.74273681640625,
+          "y": 395.689453125,
+          "right": 497.95562744140625,
+          "bottom": 420.9441833496094
+        },
+        "plant": {
+          "x": 431.44830322265625,
+          "y": 367.2231750488281,
+          "right": 501.0210876464844,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-4 -9) rotate(-58)"
+      },
+      {
+        "secondary": true,
+        "angle": -0.7000002109033912,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.612100940860813,
+        "artClearance": 4.7364965031431545,
+        "box": {
+          "x": 434.2266540527344,
+          "y": 395.0633239746094,
+          "right": 464.3363952636719,
+          "bottom": 420.80706787109375
+        },
+        "plant": {
+          "x": 431.44830322265625,
+          "y": 367.2231750488281,
+          "right": 501.0210876464844,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(4 -9) rotate(58)"
+      },
+      {
+        "secondary": false,
+        "angle": -0.9999993263990709,
+        "attachmentError": 0,
+        "coarseBboxClearance": 16.95827767863871,
+        "artClearance": 20.303287908675564,
+        "box": {
+          "x": 462.27215576171875,
+          "y": 387.071533203125,
+          "right": 483.678466796875,
+          "bottom": 416.138427734375
+        },
+        "plant": {
+          "x": 431.44830322265625,
+          "y": 367.2231750488281,
+          "right": 501.0210876464844,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-1 -9) rotate(-22)"
+      },
+      {
+        "secondary": true,
+        "angle": -0.7000002109033912,
+        "attachmentError": 0,
+        "coarseBboxClearance": 16.84280634872146,
+        "artClearance": 20.209417206932066,
+        "box": {
+          "x": 448.1814270019531,
+          "y": 387.1014404296875,
+          "right": 469.69049072265625,
+          "bottom": 416.1717224121094
+        },
+        "plant": {
+          "x": 431.44830322265625,
+          "y": 367.2231750488281,
+          "right": 501.0210876464844,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(1 -9) rotate(24)"
+      }
+    ]
+  },
+  {
+    "time": 840,
+    "animations": [
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 832,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 832,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 832,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 832,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 832,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 832,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 832,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 832,
+        "iterations": 1,
+        "objectId": "plant"
+      }
+    ],
+    "leaves": [
+      {
+        "secondary": false,
+        "angle": 0.5000002194469105,
+        "attachmentError": 0,
+        "coarseBboxClearance": 14.533583672875615,
+        "artClearance": 17.484218820803886,
+        "box": {
+          "x": 459.6461486816406,
+          "y": 369.4918212890625,
+          "right": 486.05615234375,
+          "bottom": 415.2747802734375
+        },
+        "plant": {
+          "x": 431.3252258300781,
+          "y": 367.4206237792969,
+          "right": 500.5025634765625,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-2 -9) rotate(-10)"
+      },
+      {
+        "secondary": true,
+        "angle": 0.3499998682209343,
+        "attachmentError": 0,
+        "coarseBboxClearance": 11.627671233283571,
+        "artClearance": 15.464963125311844,
+        "box": {
+          "x": 443.0674133300781,
+          "y": 367.4779052734375,
+          "right": 472.67578125,
+          "bottom": 415.9125061035156
+        },
+        "plant": {
+          "x": 431.3252258300781,
+          "y": 367.4206237792969,
+          "right": 500.5025634765625,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(2 -9) rotate(12)"
+      },
+      {
+        "secondary": false,
+        "angle": 0.5000002194469105,
+        "attachmentError": 0,
+        "coarseBboxClearance": 0.06281804563423043,
+        "artClearance": 4.704371392115526,
+        "box": {
+          "x": 463.9007263183594,
+          "y": 380.01544189453125,
+          "right": 500.246337890625,
+          "bottom": 420.0609130859375
+        },
+        "plant": {
+          "x": 431.3252258300781,
+          "y": 367.4206237792969,
+          "right": 500.5025634765625,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-3 -9) rotate(-38)"
+      },
+      {
+        "secondary": true,
+        "angle": 0.3499998682209343,
+        "attachmentError": 0,
+        "coarseBboxClearance": -0.28067678558440423,
+        "artClearance": 4.342038381253715,
+        "box": {
+          "x": 431.3899841308594,
+          "y": 380.2810363769531,
+          "right": 468.0146179199219,
+          "bottom": 420.1882629394531
+        },
+        "plant": {
+          "x": 431.3252258300781,
+          "y": 367.4206237792969,
+          "right": 500.5025634765625,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(3 -9) rotate(38)"
+      },
+      {
+        "secondary": false,
+        "angle": 0.5000002194469105,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.585709722075684,
+        "artClearance": 4.698541475505028,
+        "box": {
+          "x": 467.64910888671875,
+          "y": 395.1361389160156,
+          "right": 497.7723693847656,
+          "bottom": 420.82354736328125
+        },
+        "plant": {
+          "x": 431.3252258300781,
+          "y": 367.4206237792969,
+          "right": 500.5025634765625,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-4 -9) rotate(-58)"
+      },
+      {
+        "secondary": true,
+        "angle": 0.3499998682209343,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.477413356504748,
+        "artClearance": 4.540813422543955,
+        "box": {
+          "x": 434.0945739746094,
+          "y": 395.4481506347656,
+          "right": 464.2711486816406,
+          "bottom": 420.8925476074219
+        },
+        "plant": {
+          "x": 431.3252258300781,
+          "y": 367.4206237792969,
+          "right": 500.5025634765625,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(4 -9) rotate(58)"
+      },
+      {
+        "secondary": false,
+        "angle": 0.5000002194469105,
+        "attachmentError": 0,
+        "coarseBboxClearance": 17.542574300032097,
+        "artClearance": 20.771350865160755,
+        "box": {
+          "x": 462.2215881347656,
+          "y": 386.9326477050781,
+          "right": 483.1054992675781,
+          "bottom": 415.9708557128906
+        },
+        "plant": {
+          "x": 431.3252258300781,
+          "y": 367.4206237792969,
+          "right": 500.5025634765625,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-1 -9) rotate(-22)"
+      },
+      {
+        "secondary": true,
+        "angle": 0.3499998682209343,
+        "attachmentError": 0,
+        "coarseBboxClearance": 16.44238461311697,
+        "artClearance": 19.880299076415376,
+        "box": {
+          "x": 447.7887878417969,
+          "y": 387.2119445800781,
+          "right": 469.6527404785156,
+          "bottom": 416.28765869140625
+        },
+        "plant": {
+          "x": 431.3252258300781,
+          "y": 367.4206237792969,
+          "right": 500.5025634765625,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(1 -9) rotate(24)"
+      }
+    ]
+  },
+  {
+    "time": 1120,
+    "animations": [
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1112,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1112,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1112,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1112,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1112,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1112,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1112,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1112,
+        "iterations": 1,
+        "objectId": "plant"
+      }
+    ],
+    "leaves": [
+      {
+        "secondary": false,
+        "angle": -0.19999990044575186,
+        "attachmentError": 0,
+        "coarseBboxClearance": 14.027692332045227,
+        "artClearance": 17.15819713762599,
+        "box": {
+          "x": 459.66375732421875,
+          "y": 369.480712890625,
+          "right": 486.55224609375,
+          "bottom": 415.40887451171875
+        },
+        "plant": {
+          "x": 431.51153564453125,
+          "y": 367.4222412109375,
+          "right": 500.5612487792969,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-2 -9) rotate(-10)"
+      },
+      {
+        "secondary": true,
+        "angle": -0.14000008678554884,
+        "attachmentError": 0,
+        "coarseBboxClearance": 11.991145437458666,
+        "artClearance": 15.708246843076473,
+        "box": {
+          "x": 443.4238586425781,
+          "y": 367.4710693359375,
+          "right": 472.6916809082031,
+          "bottom": 415.815673828125
+        },
+        "plant": {
+          "x": 431.51153564453125,
+          "y": 367.4222412109375,
+          "right": 500.5612487792969,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(2 -9) rotate(12)"
+      },
+      {
+        "secondary": false,
+        "angle": -0.19999990044575186,
+        "attachmentError": 0,
+        "coarseBboxClearance": -0.22057476910731566,
+        "artClearance": 4.4058242119180235,
+        "box": {
+          "x": 463.9482421875,
+          "y": 380.233642578125,
+          "right": 500.52423095703125,
+          "bottom": 420.1658935546875
+        },
+        "plant": {
+          "x": 431.51153564453125,
+          "y": 367.4222412109375,
+          "right": 500.5612487792969,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-3 -9) rotate(-38)"
+      },
+      {
+        "secondary": true,
+        "angle": -0.14000008678554884,
+        "attachmentError": 0,
+        "coarseBboxClearance": -0.08352414528701502,
+        "artClearance": 4.550653615013488,
+        "box": {
+          "x": 431.5832824707031,
+          "y": 380.12701416015625,
+          "right": 468.0480651855469,
+          "bottom": 420.1150207519531
+        },
+        "plant": {
+          "x": 431.51153564453125,
+          "y": 367.4222412109375,
+          "right": 500.5612487792969,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(3 -9) rotate(38)"
+      },
+      {
+        "secondary": false,
+        "angle": -0.19999990044575186,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.496069004431149,
+        "artClearance": 4.5682256188843695,
+        "box": {
+          "x": 467.6925964355469,
+          "y": 395.3927917480469,
+          "right": 497.8602600097656,
+          "bottom": 420.8804931640625
+        },
+        "plant": {
+          "x": 431.51153564453125,
+          "y": 367.4222412109375,
+          "right": 500.5612487792969,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-4 -9) rotate(-58)"
+      },
+      {
+        "secondary": true,
+        "angle": -0.14000008678554884,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.5390782139470076,
+        "artClearance": 4.6310303309728305,
+        "box": {
+          "x": 434.1550598144531,
+          "y": 395.2677917480469,
+          "right": 464.30169677734375,
+          "bottom": 420.85296630859375
+        },
+        "plant": {
+          "x": 431.51153564453125,
+          "y": 367.4222412109375,
+          "right": 500.5612487792969,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(4 -9) rotate(58)"
+      },
+      {
+        "secondary": false,
+        "angle": -0.19999990044575186,
+        "attachmentError": 0,
+        "coarseBboxClearance": 17.268474375852765,
+        "artClearance": 20.553205478271085,
+        "box": {
+          "x": 462.2447814941406,
+          "y": 386.99517822265625,
+          "right": 483.3742980957031,
+          "bottom": 416.0492858886719
+        },
+        "plant": {
+          "x": 431.51153564453125,
+          "y": 367.4222412109375,
+          "right": 500.5612487792969,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-1 -9) rotate(-22)"
+      },
+      {
+        "secondary": true,
+        "angle": -0.14000008678554884,
+        "attachmentError": 0,
+        "coarseBboxClearance": 16.62852245157034,
+        "artClearance": 20.03399177957874,
+        "box": {
+          "x": 447.9713134765625,
+          "y": 387.1593017578125,
+          "right": 469.6705627441406,
+          "bottom": 416.2336730957031
+        },
+        "plant": {
+          "x": 431.51153564453125,
+          "y": 367.4222412109375,
+          "right": 500.5612487792969,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(1 -9) rotate(24)"
+      }
+    ]
+  },
+  {
+    "time": 1400,
+    "animations": [
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1392,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1392,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1392,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1392,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1392,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1392,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1392,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 1392,
+        "iterations": 1,
+        "objectId": "plant"
+      }
+    ],
+    "leaves": [
+      {
+        "secondary": false,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": 14.171947048310656,
+        "artClearance": 17.251588891406314,
+        "box": {
+          "x": 459.6585998535156,
+          "y": 369.4831848144531,
+          "right": 486.4107666015625,
+          "bottom": 415.3705749511719
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-2 -9) rotate(-10)"
+      },
+      {
+        "secondary": true,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": 11.887137709365746,
+        "artClearance": 15.638849994019957,
+        "box": {
+          "x": 443.32183837890625,
+          "y": 367.47265625,
+          "right": 472.68719482421875,
+          "bottom": 415.8433837890625
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(2 -9) rotate(12)"
+      },
+      {
+        "secondary": false,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": -0.14009429835217446,
+        "artClearance": 4.4909765588999875,
+        "box": {
+          "x": 463.9346008300781,
+          "y": 380.1707763671875,
+          "right": 500.4453125,
+          "bottom": 420.1360168457031
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-3 -9) rotate(-38)"
+      },
+      {
+        "secondary": true,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": -0.14009354684644393,
+        "artClearance": 4.490976558900101,
+        "box": {
+          "x": 431.52783203125,
+          "y": 380.1707763671875,
+          "right": 468.0385437011719,
+          "bottom": 420.1360168457031
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(3 -9) rotate(38)"
+      },
+      {
+        "secondary": false,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.5212470769870237,
+        "artClearance": 4.605056986453988,
+        "box": {
+          "x": 467.6801452636719,
+          "y": 395.3191833496094,
+          "right": 497.8355712890625,
+          "bottom": 420.86431884765625
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-4 -9) rotate(-58)"
+      },
+      {
+        "secondary": true,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.5212470769870805,
+        "artClearance": 4.605056986454045,
+        "box": {
+          "x": 434.1375732421875,
+          "y": 395.3191833496094,
+          "right": 464.2929992675781,
+          "bottom": 420.86431884765625
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(4 -9) rotate(58)"
+      },
+      {
+        "secondary": false,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": 17.346535589600776,
+        "artClearance": 20.615586096635532,
+        "box": {
+          "x": 462.2380676269531,
+          "y": 386.9769287109375,
+          "right": 483.2977600097656,
+          "bottom": 416.02691650390625
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-1 -9) rotate(-22)"
+      },
+      {
+        "secondary": true,
+        "angle": 0,
+        "attachmentError": 0,
+        "coarseBboxClearance": 16.575209970157815,
+        "artClearance": 19.99009728895348,
+        "box": {
+          "x": 447.9190368652344,
+          "y": 387.17413330078125,
+          "right": 469.6654968261719,
+          "bottom": 416.2491149902344
+        },
+        "plant": {
+          "x": 431.52783203125,
+          "y": 367.47265625,
+          "right": 500.4453125,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(1 -9) rotate(24)"
+      }
+    ]
+  }
+]

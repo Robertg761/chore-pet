@@ -1,0 +1,237 @@
+{
+  "species": "bun",
+  "rotation": 1,
+  "peak": {
+    "time": 280,
+    "animations": [
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      },
+      {
+        "name": "plant-leaf-greeting",
+        "duration": 1400,
+        "delay": -8,
+        "localTime": 272,
+        "iterations": 1,
+        "objectId": "plant"
+      }
+    ],
+    "leaves": [
+      {
+        "secondary": false,
+        "angle": 1.4999977205181305,
+        "attachmentError": 0,
+        "coarseBboxClearance": 15.261048142178929,
+        "artClearance": 17.94574286702492,
+        "box": {
+          "x": 459.6231689453125,
+          "y": 369.51910400390625,
+          "right": 485.3427734375,
+          "bottom": 415.082763671875
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-2 -9) rotate(-10)"
+      },
+      {
+        "secondary": true,
+        "angle": 1.0499982899969442,
+        "attachmentError": 0,
+        "coarseBboxClearance": 11.111140492034387,
+        "artClearance": 15.115533747821047,
+        "box": {
+          "x": 442.5609130859375,
+          "y": 367.4935302734375,
+          "right": 472.6520080566406,
+          "bottom": 416.0505065917969
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(2 -9) rotate(12)"
+      },
+      {
+        "secondary": false,
+        "angle": 1.4999977205181305,
+        "attachmentError": 0,
+        "coarseBboxClearance": 0.47592351599652005,
+        "artClearance": 5.133286741535862,
+        "box": {
+          "x": 463.83416748046875,
+          "y": 379.7123718261719,
+          "right": 499.84124755859375,
+          "bottom": 419.90924072265625
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-3 -9) rotate(-38)"
+      },
+      {
+        "secondary": true,
+        "angle": 1.0499982899969442,
+        "attachmentError": 0,
+        "coarseBboxClearance": -0.5582243515572428,
+        "artClearance": 4.045278569168335,
+        "box": {
+          "x": 431.1177978515625,
+          "y": 380.5052490234375,
+          "right": 467.9662170410156,
+          "bottom": 420.2920227050781
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(3 -9) rotate(38)"
+      },
+      {
+        "secondary": false,
+        "angle": 1.4999977205181305,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.7211215130319886,
+        "artClearance": 4.8915120555589375,
+        "box": {
+          "x": 467.5875549316406,
+          "y": 394.77423095703125,
+          "right": 497.63958740234375,
+          "bottom": 420.7402648925781
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-4 -9) rotate(-58)"
+      },
+      {
+        "secondary": true,
+        "angle": 1.0499982899969442,
+        "attachmentError": 0,
+        "coarseBboxClearance": 2.3929405167779834,
+        "artClearance": 4.41529066991253,
+        "box": {
+          "x": 434.0117492675781,
+          "y": 395.7080993652344,
+          "right": 464.2272644042969,
+          "bottom": 420.9481506347656
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(4 -9) rotate(58)"
+      },
+      {
+        "secondary": false,
+        "angle": 1.4999977205181305,
+        "attachmentError": 0,
+        "coarseBboxClearance": 17.93839658639825,
+        "artClearance": 21.082012229977536,
+        "box": {
+          "x": 462.1896667480469,
+          "y": 386.85015869140625,
+          "right": 482.71734619140625,
+          "bottom": 415.858154296875
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(-1 -9) rotate(-22)"
+      },
+      {
+        "secondary": true,
+        "angle": 1.0499982899969442,
+        "attachmentError": 0,
+        "coarseBboxClearance": 16.178704345567226,
+        "artClearance": 19.660460010911905,
+        "box": {
+          "x": 447.53021240234375,
+          "y": 387.29052734375,
+          "right": 469.626708984375,
+          "bottom": 416.3644104003906
+        },
+        "plant": {
+          "x": 430.92352294921875,
+          "y": 367.3216552734375,
+          "right": 500.6098937988281,
+          "bottom": 446.77691650390625
+        },
+        "plantTransform": "translate(1 -9) rotate(24)"
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Offline production fixture, actual finite CSS effect paused at the recorded currentTime and character fake RAF deadline. Screenshot allows the paused effect. Matrix/attachment/bounds assertions precede capture; separate test covers native real-clock completion. Not human temporal/physical-device/AT certification."
+}

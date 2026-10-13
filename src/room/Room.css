@@ -35,3 +35,16 @@
 @media (prefers-reduced-motion: reduce) {
   .room-fish-greeting .fish-tail { animation: none; }
 }
+
+/* A clean plant answers the same finite wave, keeping every leaf root fixed. */
+.plant-leaf-response { transform-box: view-box; transform-origin: 0px 0px; }
+.plant-leaf-secondary { --plant-leaf-amplitude: 0.7; }
+.room-plant-greeting .plant-leaf-response { animation: plant-leaf-greeting 1400ms ease-in-out; animation-delay: var(--plant-greeting-delay, 0ms); }
+@keyframes plant-leaf-greeting {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(calc(var(--plant-leaf-amplitude, 1) * 1.5deg)); }
+  40% { transform: rotate(calc(var(--plant-leaf-amplitude, 1) * -1deg)); }
+  60% { transform: rotate(calc(var(--plant-leaf-amplitude, 1) * 0.5deg)); }
+  80% { transform: rotate(calc(var(--plant-leaf-amplitude, 1) * -0.2deg)); }
+}
+@media (prefers-reduced-motion: reduce) { .room-plant-greeting .plant-leaf-response { animation: none; } }

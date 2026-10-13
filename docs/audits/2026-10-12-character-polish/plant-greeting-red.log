@@ -1,0 +1,160 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/plantGreeting.test.tsx (11 tests | 11 failed) 395ms
+   × responds only during the existing action phase, coalesces invitations and adds no frame owner or room redraw 97ms
+   × stops the fish response when a player gesture interrupts the wave 56ms
+   × starts a late first action frame at the elapsed greeting phase and retains its offset on repeated invitations 48ms
+   × stops immediately under live system reduction and never replays on restoration 35ms
+   × stops immediately under live device reduction and never replays on restoration 37ms
+   × clears the response when the resident becomes sick 34ms
+   × clears the response when the resident becomes away 25ms
+   × clears the response when the plant becomes messy1 21ms
+   × clears the response when the plant becomes messy2 17ms
+   × clears the response when the plant becomes removed 12ms
+   × discards a hidden elapsed wave on the first visible frame without replay 13ms
+ ❯ src/room/Room.plantGreeting.test.tsx (6 tests | 5 failed) 228ms
+   × responds only on the chosen clean plant with eight individually rooted leaves and unchanged placed art 67ms
+   × preserves the placed wrapper at rotation0 7ms
+   × preserves the placed wrapper at rotation1 6ms
+   × preserves the placed wrapper at rotation2 6ms
+   × preserves the placed wrapper at rotation3 6ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 16 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/plantGreeting.test.tsx > responds only during the existing action phase, coalesces invitations and adds no frame owner or room redraw
+AssertionError: expected null not to be null
+ ❯ src/pet/plantGreeting.test.tsx:47:57
+     45|   visit(); expect(response()).toBeNull()
+     46|   frame(359); expect(response()).toBeNull()
+     47|   frame(360); const node = response(); expect(node).not.toBeNull()
+       |                                                         ^
+     48|   const renders = roomRenders.count
+     49|   frame(500); expect(response()).toBe(node); expect(roomRenders.count)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/16]⎯
+
+ FAIL  src/pet/plantGreeting.test.tsx > stops the fish response when a player gesture interrupts the wave
+AssertionError: expected null not to be null
+ ❯ wave src/pet/plantGreeting.test.tsx:40:63
+     38| const response = () => ui.container.querySelector('.room-plant-greetin…
+     39| function visit() { act(() => { expect(control.current!.lookAt('plant')…
+     40| function wave() { visit(); frame(360); expect(response()).not.toBeNull…
+       |                                                               ^
+     41| function visibility(value: boolean) { act(() => { hidden = value; docu…
+     42|
+ ❯ src/pet/plantGreeting.test.tsx:60:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/16]⎯
+
+ FAIL  src/pet/plantGreeting.test.tsx > starts a late first action frame at the elapsed greeting phase and retains its offset on repeated invitations
+AssertionError: expected null not to be null
+ ❯ src/pet/plantGreeting.test.tsx:69:20
+     67|   visit(); frame(1000)
+     68|   const node = response() as SVGGElement
+     69|   expect(node).not.toBeNull()
+       |                    ^
+     70|   expect(node.style.getPropertyValue('--plant-greeting-delay')).toBe('…
+     71|   frame(1100); visit()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/16]⎯
+
+ FAIL  src/pet/plantGreeting.test.tsx > stops immediately under live system reduction and never replays on restoration
+ FAIL  src/pet/plantGreeting.test.tsx > stops immediately under live device reduction and never replays on restoration
+AssertionError: expected null not to be null
+ ❯ wave src/pet/plantGreeting.test.tsx:40:63
+     38| const response = () => ui.container.querySelector('.room-plant-greetin…
+     39| function visit() { act(() => { expect(control.current!.lookAt('plant')…
+     40| function wave() { visit(); frame(360); expect(response()).not.toBeNull…
+       |                                                               ^
+     41| function visibility(value: boolean) { act(() => { hidden = value; docu…
+     42|
+ ❯ src/pet/plantGreeting.test.tsx:78:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/16]⎯
+
+ FAIL  src/pet/plantGreeting.test.tsx > clears the response when the resident becomes sick
+ FAIL  src/pet/plantGreeting.test.tsx > clears the response when the resident becomes away
+AssertionError: expected null not to be null
+ ❯ wave src/pet/plantGreeting.test.tsx:40:63
+     38| const response = () => ui.container.querySelector('.room-plant-greetin…
+     39| function visit() { act(() => { expect(control.current!.lookAt('plant')…
+     40| function wave() { visit(); frame(360); expect(response()).not.toBeNull…
+       |                                                               ^
+     41| function visibility(value: boolean) { act(() => { hidden = value; docu…
+     42|
+ ❯ src/pet/plantGreeting.test.tsx:88:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/16]⎯
+
+ FAIL  src/pet/plantGreeting.test.tsx > clears the response when the plant becomes messy1
+ FAIL  src/pet/plantGreeting.test.tsx > clears the response when the plant becomes messy2
+ FAIL  src/pet/plantGreeting.test.tsx > clears the response when the plant becomes removed
+AssertionError: expected null not to be null
+ ❯ wave src/pet/plantGreeting.test.tsx:40:63
+     38| const response = () => ui.container.querySelector('.room-plant-greetin…
+     39| function visit() { act(() => { expect(control.current!.lookAt('plant')…
+     40| function wave() { visit(); frame(360); expect(response()).not.toBeNull…
+       |                                                               ^
+     41| function visibility(value: boolean) { act(() => { hidden = value; docu…
+     42|
+ ❯ src/pet/plantGreeting.test.tsx:96:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/16]⎯
+
+ FAIL  src/pet/plantGreeting.test.tsx > discards a hidden elapsed wave on the first visible frame without replay
+AssertionError: expected null not to be null
+ ❯ wave src/pet/plantGreeting.test.tsx:40:63
+     38| const response = () => ui.container.querySelector('.room-plant-greetin…
+     39| function visit() { act(() => { expect(control.current!.lookAt('plant')…
+     40| function wave() { visit(); frame(360); expect(response()).not.toBeNull…
+       |                                                               ^
+     41| function visibility(value: boolean) { act(() => { hidden = value; docu…
+     42|
+ ❯ src/pet/plantGreeting.test.tsx:103:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/16]⎯
+
+ FAIL  src/room/Room.plantGreeting.test.tsx > responds only on the chosen clean plant with eight individually rooted leaves and unchanged placed art
+AssertionError: expected  to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/room/Room.plantGreeting.test.tsx:18:20
+     16|   const before = draw(), after = draw({ responseObjectId: 'plant', res…
+     17|   const response = after.querySelectorAll('.room-plant-greeting')
+     18|   expect(response).toHaveLength(1)
+       |                    ^
+     19|   expect(response[0].getAttribute('data-object-id')).toBe('plant')
+     20|   expect(response[0].getAttribute('style')).toContain('--plant-greetin…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/16]⎯
+
+ FAIL  src/room/Room.plantGreeting.test.tsx > preserves the placed wrapper at rotation0
+ FAIL  src/room/Room.plantGreeting.test.tsx > preserves the placed wrapper at rotation1
+ FAIL  src/room/Room.plantGreeting.test.tsx > preserves the placed wrapper at rotation2
+ FAIL  src/room/Room.plantGreeting.test.tsx > preserves the placed wrapper at rotation3
+AssertionError: expected null not to be null
+ ❯ src/room/Room.plantGreeting.test.tsx:41:24
+     39|   const document = draw({ objects: [{ ...plant, rotation }], responseO…
+     40|   const response = document.querySelector('.room-plant-greeting')!
+     41|   expect(response).not.toBeNull(); expect(response.getAttribute('trans…
+       |                        ^
+     42|   expect(response.querySelector('g')!.getAttribute('transform')).toBe(…
+     43| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/16]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  16 failed | 1 passed (17)
+   Start at  04:46:00
+   Duration  2.00s (tests 35%, transform 28%, environment 28%, import 9%)
+
+    Isolate  2 workers spawned · ~336ms startup each (spawn + environment, per file)
+             at least ~336ms faster with isolate: false — reuses workers across files instead of one per file
+

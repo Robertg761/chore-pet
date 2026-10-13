@@ -1,0 +1,1290 @@
+{
+  "sourceSha256": "4b378f476216b5d3658a229c3af9cd645b863ce89f945c6e49370549a33c19bc",
+  "cssSha256": "cba12d0028d5c19afe332a2d4a3430284e90cd9c43c290ccb0115e5fbad5a229",
+  "browser": "Native local Chromium",
+  "roots": 224,
+  "maximumAttachmentErrorCssPx": 0,
+  "rows": [
+    {
+      "rotation": 0,
+      "samples": [
+        {
+          "time": 0,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 140,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 280,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 560,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 840,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 1120,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 1400,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rotation": 1,
+      "samples": [
+        {
+          "time": 0,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 140,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 280,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 560,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 840,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 1120,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 1400,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rotation": 2,
+      "samples": [
+        {
+          "time": 0,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 140,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 280,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 560,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 840,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 1120,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 1400,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rotation": 3,
+      "samples": [
+        {
+          "time": 0,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(1, 0, 0, 1, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 140,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999914, 0.0130896, -0.0130896, 0.999914, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999958, 0.00916285, -0.00916285, 0.999958, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 280,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999657, 0.0261769, -0.0261769, 0.999657, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999832, 0.0183249, -0.0183249, 0.999832, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 560,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999848, -0.0174524, 0.0174524, 0.999848, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999925, -0.012217, 0.012217, 0.999925, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 840,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999962, 0.00872654, -0.00872654, 0.999962, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999981, 0.00610861, -0.00610861, 0.999981, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 1120,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999994, -0.00349065, 0.00349065, 0.999994, 0, 0)"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "matrix(0.999997, -0.00244346, 0.00244346, 0.999997, 0, 0)"
+            }
+          ]
+        },
+        {
+          "time": 1400,
+          "roots": [
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            },
+            {
+              "error": 0,
+              "origin": "0px 0px",
+              "transform": "none"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "method": "Isolated candidate SSR SVG and proposed CSS in offline disposable Chromium. Probe injects the response class because frozen production Room does not yet support plants. Geometry experiment only, not integrated app verification."
+}
