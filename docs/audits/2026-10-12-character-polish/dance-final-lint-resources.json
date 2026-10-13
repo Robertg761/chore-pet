@@ -1,0 +1,63 @@
+{
+  "utc": "2026-10-13T05:15:43.347520+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "--max-old-space-size=192",
+    "node_modules/oxlint/bin/oxlint",
+    "src/character/motion.ts",
+    "src/character/motion.dance.test.ts",
+    "src/content/petLines.ts",
+    "src/pet/behaviour.ts",
+    "src/pet/behaviour.dance.test.ts",
+    "src/pet/LivingRoom.tsx",
+    "src/pet/PetPlay.tsx",
+    "src/pet/PetPlay.test.tsx",
+    "src/pet/PetPlay.checkIn.test.tsx",
+    "src/pet/PetIntegration.test.tsx",
+    "src/screens/WardrobePreview.tsx",
+    "src/screens/Wardrobe.test.tsx",
+    "scripts/browser/pet-dance.test.mjs",
+    "scripts/browser/pet-play.test.mjs",
+    "scripts/browser/pet-play-layout.test.mjs",
+    "scripts/browser/wardrobe-motion.test.mjs",
+    "scripts/browser/wardrobe-rest.test.mjs",
+    "scripts/browser/wardrobe-show.test.mjs",
+    "scripts/browser/wardrobe-mirror.test.mjs",
+    "scripts/browser/wardrobe-pause.test.mjs",
+    "--max-warnings=0"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 3,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 0
+  },
+  "minimumObservedAvailableBytes": 4212867072,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4212867072,
+      "tmpFreeBytes": 4289462272
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4212867072,
+      "tmpFreeBytes": 4289462272
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4377714688,
+      "tmpFreeBytes": 4289462272
+    }
+  ]
+}

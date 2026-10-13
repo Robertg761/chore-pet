@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { catalogEntry } from '../catalog/objects'
 import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
 import { ACTION_MS } from '../character/motion'
-import { AFFECTION_LINES, CAUGHT_UP_LINES, CHECK_IN_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, REST_LINES, STRETCH_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
+import { AFFECTION_LINES, CAUGHT_UP_LINES, CHECK_IN_LINES, DANCE_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, REST_LINES, STRETCH_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
 import { messiestObject } from '../domain/mess'
 import type { NeglectLevel } from '../domain/neglect'
 import type { ChoreStatus } from '../domain/schedule'
@@ -75,7 +75,7 @@ export interface LivingRoomControl {
   preview: (objectId: string | null) => void
 }
 
-const PLAYER_LINES: Record<PlayerGesture, string[]> = { greet: GREETING_LINES, affection: AFFECTION_LINES, hop: HOP_LINES, stretch: STRETCH_LINES, rest: REST_LINES }
+const PLAYER_LINES: Record<PlayerGesture, string[]> = { greet: GREETING_LINES, affection: AFFECTION_LINES, hop: HOP_LINES, stretch: STRETCH_LINES, rest: REST_LINES, dance: DANCE_LINES }
 
 function objectDialogue({ objects, stages, neglect, chores }: Pick<LivingRoomProps, 'objects' | 'stages' | 'neglect' | 'chores'>, objectId: string, seed: number): string | null {
   const target = objects.find(object => object.id === objectId)

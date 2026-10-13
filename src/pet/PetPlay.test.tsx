@@ -4,7 +4,7 @@ import { click, render } from '../test/react'
 import { PetPlay, type PetPlayProps } from './PetPlay'
 
 const cleanups: (() => void)[] = []
-afterEach(() => { cleanups.splice(0).forEach(fn => fn()); vi.unstubAllGlobals() })
+afterEach(() => { cleanups.splice(0).forEach(fn => fn()); vi.restoreAllMocks(); vi.unstubAllGlobals() })
 function mount(patch: Partial<PetPlayProps> = {}) {
   const props: PetPlayProps = { petName: 'Bun', onReact: vi.fn(() => 'started' as const), ...patch }
   const ui = render(<PetPlay {...props} />); cleanups.push(ui.unmount)
@@ -107,7 +107,7 @@ it('starts collapsed and sends only explicit choices without creating scheduling
 it.each(['travel', 'away', 'sick'] as const)('explains and blocks play while %s', blocked => {
   const ui = mount({ blocked })
   click(button(ui.container, 'Spend time together'))
-  for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together']) {
+  for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together', 'Dance together']) {
     expect((button(ui.container, label) as HTMLButtonElement).disabled).toBe(true)
     click(button(ui.container, label))
   }
@@ -143,5 +143,30 @@ it('offers a quiet rest without starting a panel clock or duplicating successful
   click(rest)
   expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
   expect(requestAnimationFrame).not.toHaveBeenCalled()
-  expect([...ui.container.querySelectorAll('.pet-play-actions button')].map(node => node.textContent)).toEqual(['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together'])
+  expect([...ui.container.querySelectorAll('.pet-play-actions button')].map(node => node.textContent)).toEqual(['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together', 'Dance together'])
+})
+
+it('delegates Dance together without creating a second clock, write or success announcement', () => {
+  vi.stubGlobal('requestAnimationFrame', vi.fn())
+  const write = vi.spyOn(Storage.prototype, 'setItem')
+  const ui = mount()
+  click(button(ui.container, 'Spend time together'))
+  const control = button(ui.container, 'Dance together')
+  expect(control).toBeDefined()
+  click(control)
+  expect(ui.props.onReact).toHaveBeenCalledExactlyOnceWith('dance')
+  expect(requestAnimationFrame).not.toHaveBeenCalled()
+  expect(write).not.toHaveBeenCalled()
+  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
+  write.mockRestore()
+})
+
+it.each(['travel', 'away', 'sick'] as const)('declines a dance while %s without calling the resident', blocked => {
+  const ui = mount({ blocked })
+  click(button(ui.container, 'Spend time together'))
+  const control = button(ui.container, 'Dance together')
+  expect(control).toBeDefined()
+  expect(control.disabled).toBe(true)
+  click(control)
+  expect(ui.props.onReact).not.toHaveBeenCalled()
 })

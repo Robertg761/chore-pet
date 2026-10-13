@@ -118,7 +118,7 @@ async function geometry(control) {
 const pauseName = 'Pause movement preview of Mochi', resumeName = 'Resume movement preview of Mochi'
 const actions = [
   ['Wave', 'Stop wave', 1200], ['Gentle pats', 'Stop pats', 1600], ['Hop', 'Stop hop', 1800],
-  ['Stretch', 'Stop stretch', 2400], ['Rest', 'Stop rest', 2400],
+  ['Stretch', 'Stop stretch', 2400], ['Rest', 'Stop rest', 2400], ['Dance', 'Stop dance', 2800],
 ]
 
 test('initial pause control is disabled without starting a clock or shrinking short-phone art', async t => {
@@ -133,7 +133,7 @@ test('initial pause control is disabled without starting a clock or shrinking sh
   assert.equal(view.horizontalOverflow, 0)
 })
 
-for (const species of ['mochi', 'bun', 'sprout']) test(`dressed ${species} pauses all five previews in both facings and resumes the remaining duration`, async t => {
+for (const species of ['mochi', 'bun', 'sprout']) test(`dressed ${species} pauses all six previews in both facings and resumes the remaining duration`, async t => {
   const page = await wardrobe(t, { species }), preview = page.locator('.wd-preview')
   await page.getByRole('button', { name: pauseName, exact: true }).waitFor()
   const saved = (await snapshot(page)).tables
@@ -197,7 +197,7 @@ for (const species of ['mochi', 'bun', 'sprout']) test(`dressed ${species} pause
     clearance.push({ action, duration, phase, activeElapsed, remaining, before, reflected, normal, flipped, heldClockAdvanceMs: 60000 })
   }
   assert.deepEqual((await snapshot(page)).tables, saved)
-  if (out) await writeFile(join(out, `wardrobe-pause-clearance-${species}.json`), JSON.stringify({ species, samples: clearance, method: '15 separate movement runs per species near .25/.5/.75 delivered phases. Each held60s, exact art/nodes, zero paused RAF, reflected contacts, two corners x two facings =60 geometry views per species; 1px painted hit sampling inside bounds only; SVG pointer-events presentation attributes and exact button inline styles restored. Resume verified at remaining minus24ms and plus24ms, not exact native millisecond delivery. Exact millisecond deadline covered separately by unit tests.' }, null, 2)+'\n')
+  if (out) await writeFile(join(out, `wardrobe-pause-clearance-${species}.json`), JSON.stringify({ species, samples: clearance, method: '18 separate movement runs per species near .25/.5/.75 delivered phases. Each held60s, exact art/nodes, zero paused RAF, reflected contacts, two corners x two facings =72 geometry views per species; 1px painted hit sampling inside bounds only; SVG pointer-events presentation attributes and exact button inline styles restored. Resume verified at remaining minus24ms and plus24ms, not exact native millisecond delivery. Exact millisecond deadline covered separately by unit tests.' }, null, 2)+'\n')
 })
 
 for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [1280, 800]]) for (const text of [100, 200]) {
@@ -218,7 +218,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
       assert.equal(sample.ringClear, true); assert.equal(sample.frames, 0); assert.equal(sample.horizontalOverflow, 0)
     }
     assert.equal(view.focusVisible, true); assert.equal(view.tabsVisible, true)
-    assert.ok(view.art.height >= 90); assert.equal(await page.locator('.wd-motion button:visible').count(), 5)
+    assert.ok(view.art.height >= 90); assert.equal(await page.locator('.wd-motion button:visible').count(), 6)
     await page.keyboard.press('Enter'); assert.equal(await page.evaluate(() => window.__pauseFrames.size), 1)
     await page.clock.runFor(1248); assert.equal(await page.evaluate(() => window.__pauseFrames.size), 0)
   })

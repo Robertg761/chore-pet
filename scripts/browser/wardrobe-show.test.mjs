@@ -59,11 +59,11 @@ for(const policy of['system','device'])test(`Show wardrobe preview works during 
  const still=await preview.innerHTML();await page.clock.runFor(3000);assert.equal(await preview.innerHTML(),still);assert.deepEqual((await snapshot(page)).tables,before)
  await capture(page,`wardrobe-show-reduced-${policy}`,{policy,visible,browser:page.context().browser().version(),method:'Production native Show preview with settled reduced motion; actual art visibility/focus, zero pending preview frames, unchanged saved tables.'})
 })
-test('ordinary wardrobe layouts retain their five controls without an extra visible view button',{timeout:20000},async t=>{
+test('ordinary wardrobe layouts retain their six controls without an extra visible view button',{timeout:20000},async t=>{
  const page=await wardrobe(t,{width:320,height:568},100),samples=[]
  for(const[width,height]of[[320,568],[390,664],[640,360],[844,390],[1280,800]]){
   await page.setViewportSize({width,height});assert.equal(await page.getByRole('button',{name:'Show preview of Mochi',exact:true}).count(),0)
-  assert.equal(await page.locator('.wd-motion button:visible').count(),5)
+  assert.equal(await page.locator('.wd-motion button:visible').count(),6)
   const art=await page.locator('.wd-preview').boundingBox();assert.ok(art.height>=80)
   samples.push({width,height,art})
  }

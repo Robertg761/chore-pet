@@ -107,12 +107,14 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 361, height: 664 }
       const boxes = await Promise.all([wave, pats, hop, stretch, rest].map(control => control.boundingBox()))
       assert.ok(boxes.slice(0, 3).every(box => Math.abs(box.y - boxes[0].y) < .5))
       assert.ok(Math.abs(boxes[3].y - boxes[4].y) < .5)
-      assert.ok(boxes[3].y >= boxes[0].y + boxes[0].height + 8, 'narrow player panels retain two rows with three choices above two')
+      assert.ok(boxes[3].y >= boxes[0].y + boxes[0].height + 8, 'narrow player panels retain two rows with three choices above three')
       assert.ok(Math.abs(boxes[3].width - boxes[4].width) < .5)
     }
     if (viewport.width === 1280) {
-      const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
-      assert.ok(boxes.every(box => Math.abs(box.y - boxes[0].y) < .5), 'the wide player panel fits all four controls in one row')
+      const rest = page.getByRole('button', { name: 'Rest together', exact: true }), dance = page.getByRole('button', { name: 'Dance together', exact: true })
+      const boxes = await Promise.all([wave, pats, hop, stretch, rest, dance].map(control => control.boundingBox()))
+      assert.ok(boxes.slice(0, 3).every(box => Math.abs(box.y - boxes[0].y) < .5), 'the wide panel fits three choices in the first row')
+      assert.ok(boxes.slice(3).every(box => Math.abs(box.y - boxes[3].y) < .5), 'the wide panel fits three choices in the second row')
     }
     const room = await page.locator('.home-scene .home-room').boundingBox()
     assert.ok(room.height >= originalRoom.height - .5, 'expanded player choices must preserve room size')

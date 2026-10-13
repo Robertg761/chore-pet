@@ -101,7 +101,7 @@ test('wardrobe Rest rows, text and keyboard outlines fit ordinary and enlarged l
     assert.ok(geometry.art.h>=80,`readable preview:${JSON.stringify({width,height,text,geometry})}`)
     for(const c of geometry.controls){assert.ok(c.w>=44&&c.h>=44,JSON.stringify(c));assert.ok(c.fits,JSON.stringify(c));assert.ok(c.x>=0&&c.right<=width,JSON.stringify(c));assert.ok(c.y>=geometry.stage.y&&c.bottom<=geometry.stage.bottom,JSON.stringify(c))}
     const rows=Object.values(geometry.controls.reduce((a,c)=>{const y=Math.round(c.y);a[y]=(a[y]??0)+1;return a},{}))
-    assert.ok(JSON.stringify(rows)==='[3,2]' || text===200 && JSON.stringify(rows)==='[1,1,1,1,1]',`balanced rows or a single column for enlarged text:${JSON.stringify({width,height,text,rows})}`)
+    assert.ok(JSON.stringify(rows)==='[3,3]' || text===200 && JSON.stringify(rows)==='[1,1,1,1,1,1]',`balanced rows or a single column for enlarged text:${JSON.stringify({width,height,text,rows})}`)
     const focus=await page.getByRole('button',{name:'Stop rest',exact:true}).evaluate(focusGeometry)
     assert.ok(focus.focusVisible&&focus.ring>0&&focus.clear,JSON.stringify({width,height,text,focus}))
     const sample={width,height,text,geometry,rows,focus};samples.push(sample)

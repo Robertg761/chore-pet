@@ -1,0 +1,179 @@
+{
+  "runs": 24,
+  "sampleRows": 702,
+  "minimumObservedAvailableMiB": 2623.7734375,
+  "minimumObservedTmpFreeMiB": 3995.203125,
+  "reserveStops": 0,
+  "launchRejections": 2,
+  "rows": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-character-capture-resources.json",
+      "samples": 8,
+      "minimumAvailableMiB": 4145.41796875,
+      "minimumTmpMiB": 4090.765625,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-character-final-capture-resources.json",
+      "samples": 8,
+      "minimumAvailableMiB": 3983.109375,
+      "minimumTmpMiB": 4090.75390625,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-existing-action-compare-v2-resources.json",
+      "samples": 33,
+      "minimumAvailableMiB": 3597.88671875,
+      "minimumTmpMiB": 4090.75,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-existing-action-compare-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4140.55859375,
+      "minimumTmpMiB": 4090.75,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-final-build-resources.json",
+      "samples": 12,
+      "minimumAvailableMiB": 4245.45703125,
+      "minimumTmpMiB": 4090.7734375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-final-diff-v2-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4407.109375,
+      "minimumTmpMiB": 4090.74609375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-final-diff-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4096.5703125,
+      "minimumTmpMiB": 4090.75,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-final-focused-v2-resources.json",
+      "samples": 9,
+      "minimumAvailableMiB": 4226.4140625,
+      "minimumTmpMiB": 4087.77734375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-final-focused-resources.json",
+      "samples": 9,
+      "minimumAvailableMiB": 4566.36328125,
+      "minimumTmpMiB": 4087.3671875,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-final-full-v2-resources.json",
+      "samples": 2,
+      "minimumAvailableMiB": 4087.82421875,
+      "minimumTmpMiB": 4090.7890625,
+      "exitCode": 125
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-final-full-v3-resources.json",
+      "samples": 88,
+      "minimumAvailableMiB": 2623.7734375,
+      "minimumTmpMiB": 4078.796875,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-final-full-resources.json",
+      "samples": 2,
+      "minimumAvailableMiB": 4067.89453125,
+      "minimumTmpMiB": 4090.79296875,
+      "exitCode": 125
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-final-lint-v2-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4640.359375,
+      "minimumTmpMiB": 4090.74609375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-final-lint-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4017.703125,
+      "minimumTmpMiB": 4090.75,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-final-native-v3-resources.json",
+      "samples": 198,
+      "minimumAvailableMiB": 3673.30078125,
+      "minimumTmpMiB": 3996.2734375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-final-native-resources.json",
+      "samples": 190,
+      "minimumAvailableMiB": 3978.14453125,
+      "minimumTmpMiB": 3995.203125,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-full-capped-resources.json",
+      "samples": 87,
+      "minimumAvailableMiB": 2845.734375,
+      "minimumTmpMiB": 4078.76953125,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-implemented-unit-resources.json",
+      "samples": 9,
+      "minimumAvailableMiB": 4725.40234375,
+      "minimumTmpMiB": 4087.33203125,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-player-native-resources.json",
+      "samples": 11,
+      "minimumAvailableMiB": 3962.08984375,
+      "minimumTmpMiB": 4021.328125,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-prototype-settled-unit-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4357.26953125,
+      "minimumTmpMiB": 4090.828125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-prototype-slow-unit-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4573.671875,
+      "minimumTmpMiB": 4090.828125,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-prototype-unit-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4562.96484375,
+      "minimumTmpMiB": 4090.828125,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-red-resources.json",
+      "samples": 4,
+      "minimumAvailableMiB": 4470.02734375,
+      "minimumTmpMiB": 4090.4375,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-ui-red-resources.json",
+      "samples": 8,
+      "minimumAvailableMiB": 4654.0,
+      "minimumTmpMiB": 4088.0546875,
+      "exitCode": 1
+    }
+  ],
+  "limits": "Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor."
+}

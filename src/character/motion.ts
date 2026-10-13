@@ -1,7 +1,7 @@
 import type { Mood, Species } from '../domain/types'
 
 export type MotionAction =
-  | 'idle' | 'walk' | 'turn' | 'greet' | 'affection' | 'stretch' | 'celebrate' | 'celebrate-big'
+  | 'idle' | 'walk' | 'turn' | 'greet' | 'affection' | 'stretch' | 'dance' | 'celebrate' | 'celebrate-big'
   | 'notice' | 'inspect' | 'wave' | 'reach' | 'rest' | 'dust' | 'smell' | 'concern'
 
 /** Projected route point in unmirrored character SVG units, including past corners. */
@@ -58,7 +58,7 @@ export interface MotionFrame {
 }
 
 export const ACTION_MS: Record<MotionAction, number> = {
-  idle: 4000, walk: 900, turn: 360, greet: 1200, affection: 1600, stretch: 2400,
+  idle: 4000, walk: 900, turn: 360, greet: 1200, affection: 1600, stretch: 2400, dance: 2800,
   celebrate: 1800, 'celebrate-big': 2200, notice: 600, inspect: 1800,
   wave: 1400, reach: 1600, rest: 2400, dust: 1400, smell: 1600, concern: 1800,
 }
@@ -89,6 +89,13 @@ const GREET_FOLLOW: Record<Species, number> = { mochi: 0.55, bun: 0.6, sprout: 0
 const WAVE_FOLLOW: Record<Species, number> = { mochi: 0.4, bun: 0.45, sprout: 0.35 }
 // Concern settles in one smaller sway while the resident studies wilting leaves.
 const CONCERN_FOLLOW: Record<Species, number> = { mochi: 0.35, bun: 0.4, sprout: 0.35 }
+
+// Gentle dance shares the species rhythm with smaller delayed follow-through.
+const DANCE: Record<Species, { arms: number; follow: number }> = {
+  mochi: { arms: 14, follow: 0.25 },
+  bun: { arms: 18, follow: 0.3 },
+  sprout: { arms: 12, follow: 0.22 },
+}
 
 const STRETCH: Record<Species, { arms: number; extension: number; follow: number }> = {
   mochi: { arms: 46, extension: 0.022, follow: 0.2 },
@@ -146,7 +153,7 @@ function expressionFor(action: MotionAction, mood: Mood): MotionFrame['expressio
   // The resting face keeps its sick art; alert only lets notice gaze reach it.
   if (mood === 'sick') return action === 'notice' ? 'alert' : 'mood'
   switch (action) {
-    case 'greet': case 'affection': case 'stretch': case 'celebrate': case 'celebrate-big': case 'wave':
+    case 'greet': case 'affection': case 'stretch': case 'dance': case 'celebrate': case 'celebrate-big': case 'wave':
       return 'pleased'
     case 'notice': case 'inspect': case 'reach': case 'dust': case 'smell': case 'concern':
       return 'alert'
@@ -319,6 +326,18 @@ export function sampleMotion(input: MotionInput): MotionFrame {
         frame.gazeY = -1.2 * attention
         break
       }
+      case 'dance': {
+        const held = envelope(t, 0, 0.25, 0.75, 1)
+        const rhythm = Math.sin(t * Math.PI * 4)
+        const hand = 7 * Math.sin(t * Math.PI * 4 - 0.35)
+        compression = 0.012 * Math.sin(t * Math.PI * 2) ** 2 * held
+        frame.bodyX = 2.5 * rhythm * held
+        frame.lean = 4.5 * rhythm * held
+        frame.leftArm = (DANCE[species].arms + hand) * held
+        frame.rightArm = (-DANCE[species].arms + hand) * held
+        frame.gazeX = 0.65 * rhythm * held
+        break
+      }
       case 'celebrate': case 'celebrate-big': {
         const big = action === 'celebrate-big'
         const lift = envelope(t, 0.18, 0.42, 0.42, 0.68)
@@ -388,8 +407,8 @@ export function sampleMotion(input: MotionInput): MotionFrame {
 
     frame.bodyX *= amplitude
     frame.bodyY *= amplitude
-    // Recoil moves the torso while both ground contacts stay fixed.
-    if (action === 'smell' && mood !== 'sick') frame.leftGroundX = frame.rightGroundX = -frame.bodyX
+    // Recoil and the grounded dance shift the torso above fixed contacts.
+    if ((action === 'smell' || action === 'dance') && mood !== 'sick') frame.leftGroundX = frame.rightGroundX = -frame.bodyX
     frame.lean *= amplitude
     frame.leftArm *= amplitude
     frame.rightArm *= amplitude
@@ -411,7 +430,9 @@ export function sampleMotion(input: MotionInput): MotionFrame {
       : calmWave ? WAVE_FOLLOW[species]
       : calmInspect ? INSPECT_FOLLOW[species]
       : calmConcern ? CONCERN_FOLLOW[species] : AFFECTION_FOLLOW[species]
-    const sway = action === 'notice' && mood !== 'sick'
+    const sway = action === 'dance'
+      ? Math.sin(t * Math.PI * 4 - personality.lag + 0.5) * follow * personality.follow * DANCE[species].follow * energy
+      : action === 'notice' && mood !== 'sick'
       ? Math.sin(t * Math.PI) * follow * personality.follow * NOTICE_FOLLOW[species] * energy
       : action === 'turn' && mood !== 'sick'
       ? Math.sin(t * Math.PI) * follow * personality.follow * TURN_FOLLOW[species] * energy

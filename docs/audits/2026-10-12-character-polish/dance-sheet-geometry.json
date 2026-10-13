@@ -1,0 +1,77 @@
+{
+  "sheets": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-character-sheets/bun-default.png",
+      "size": [
+        1200,
+        2376
+      ],
+      "largeArtCells": 60,
+      "nativeSamples": 6,
+      "largeCellTopOrSideInkSamples": 0,
+      "nativeLastArtBottom": 2360,
+      "lastLabelBaseline": 2372
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-character-sheets/bun-ink.png",
+      "size": [
+        1200,
+        2376
+      ],
+      "largeArtCells": 60,
+      "nativeSamples": 6,
+      "largeCellTopOrSideInkSamples": 0,
+      "nativeLastArtBottom": 2360,
+      "lastLabelBaseline": 2372
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-character-sheets/mochi-default.png",
+      "size": [
+        1200,
+        2376
+      ],
+      "largeArtCells": 60,
+      "nativeSamples": 6,
+      "largeCellTopOrSideInkSamples": 0,
+      "nativeLastArtBottom": 2360,
+      "lastLabelBaseline": 2372
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-character-sheets/mochi-ink.png",
+      "size": [
+        1200,
+        2376
+      ],
+      "largeArtCells": 60,
+      "nativeSamples": 6,
+      "largeCellTopOrSideInkSamples": 0,
+      "nativeLastArtBottom": 2360,
+      "lastLabelBaseline": 2372
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-character-sheets/sprout-default.png",
+      "size": [
+        1200,
+        2376
+      ],
+      "largeArtCells": 60,
+      "nativeSamples": 6,
+      "largeCellTopOrSideInkSamples": 0,
+      "nativeLastArtBottom": 2360,
+      "lastLabelBaseline": 2372
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-character-sheets/sprout-ink.png",
+      "size": [
+        1200,
+        2376
+      ],
+      "largeArtCells": 60,
+      "nativeSamples": 6,
+      "largeCellTopOrSideInkSamples": 0,
+      "nativeLastArtBottom": 2360,
+      "lastLabelBaseline": 2372
+    }
+  ],
+  "method": "Read-only PNG dimensions and uniform-background edge checks:top/left/right of each200x200largecell; no all-pixel occlusion or temporal-comfort inference.11rows fit2376px;height2300initialsheets clipped the native row and are retained as historical diagnostics."
+}

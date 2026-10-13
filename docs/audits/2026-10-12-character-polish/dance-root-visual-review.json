@@ -1,0 +1,235 @@
+{
+  "directRootPngs": {
+    "docs/audits/2026-10-12-character-polish/dance-character-sheets/mochi-default.png": "6b725e2bfefe574a62b1ac88905b34652a5b82c49936dceba51a25b99d13577d",
+    "docs/audits/2026-10-12-character-polish/dance-character-sheets/mochi-ink.png": "1079a1bff580976a336d49433c9acb2b38de46ef528247f3119edfd301d6940c",
+    "docs/audits/2026-10-12-character-polish/dance-character-sheets/bun-default.png": "c15d7e1d9b1a57bb78a8953097cc090f5be306b77a5642bd696cd92994c52476",
+    "docs/audits/2026-10-12-character-polish/dance-character-sheets/bun-ink.png": "23bac20f42253bdea156cf8969d5cd66201a28665ae0b9fa8f0f2ef9e6ff32ce",
+    "docs/audits/2026-10-12-character-polish/dance-character-sheets/sprout-default.png": "83b1445ee919f64462500f57fc0f304cc40ef900dd371639435356cd6d150a1c",
+    "docs/audits/2026-10-12-character-polish/dance-character-sheets/sprout-ink.png": "bda29e21d259368d5b08ee6e37a983ae760d186cff95e6b9a4bfbea10ba3f8d0",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-player/dance-mochi.png": "4973688c07a372eb2d9913f1901d80820463aceb0ee9137b0e5170ff4cdc7024",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-player/dance-bun.png": "de66be7242a4894ea015806f7bd4848ad754a000a9ac78143e6311e6e846e374",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-player/dance-sprout.png": "5f2a9feeed17de47f064042874651c01c104aca722356df9dbc6b4e53d4e7d33",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-layout/panel-320-100.png": "eb36e6f7dea5c3a193e65bd5a61b583249ae0f9e7ca3c938a117824cfcb958b8",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-layout/panel-320-200.png": "b52b8a17cb72aab9391ed809240a60c808eddd78f8d3524c97143332e356a2fd",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-layout/panel-375-100.png": "e8028f24edf09f3ad954c4254decab788f6eab0be8757755b3e70be55b514672",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-layout/panel-844-100.png": "dc130d57e448e4cb264c11d2d75bdc73fb2b8097246b48dcd4e5fa490df2f392",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-layout/panel-844-200.png": "cfd898aa6e40ef9c72ff941f0874392f2c2f69b7cd47329085bce4418e24d9f4",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-layout/panel-1280-100.png": "d06c199d87726b66d99fa4c54aa8c7ca2499ab49cb97d8c7bfd1bb3c9bafee64",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-layout/panel-1280-200.png": "ed2f0baee2131ca2ae1912d4ba89872a0d79b462e094cb219b7f801b3fcf43a1",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-320x568.png": "d470884b8110e0b99bbc65229506aeb8649ab6e6facbb23d794f2f20ac23010c",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-pats-320x568.png": "f5aacf2579c3b18b3cb216ebfc574cca1bc0d5fa725987c0640ce7df521b1e74",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-390x664.png": "f620717a9dc1a93d7664d9536dc1475a3eec0892652bee9896c8c2eb8bb55e25",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-pats-390x664.png": "a213528c06703fd2114c5200f4c5becec720f0baf541527fbd788088cdf3f305",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-640x360.png": "3e742f8f93591686c73240e66bcc1f94581d893131b070b3f8aa6e5abb9a2a78",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-pats-640x360.png": "5fe7a7433aecb3bf5bb1d202c84ea207877f8eae30553de1f8c293b0c37e5352",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-844x390.png": "129a17054cf3714a7ece9e0cb70f3da2b14bb5ccf13e5765d4718e98c649e65f",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-pats-844x390.png": "0a9567d2fc15c61cc622a9416fb3d6606847415cfc22e9f91ff1e6920230ed12",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-1280x800.png": "143dcb36ad0ac9f8ad0442d1148b87e0b0b62789cdfc4cb5486e594eaf9ddfbe",
+    "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-pats-1280x800.png": "8e577c9b8e5464f2c35076cf0c6e2859456792a0f4a68eabd896166009b26f25"
+  },
+  "count": 26,
+  "scope": "All26 final PNGs directly viewed:6character sheets,3nativeplayer,7playerlayouts,10wardrobeWave/Pats layouts.396sampledcharacterart instances across6sheets; sampled geometry/stills are not temporal comfort certification.",
+  "nativeContacts": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-native-v3-player/dance-bun.json",
+      "species": "bun",
+      "sampleFrames": 13,
+      "maximumScreenContactDriftPx": 2.3686196815242793e-06
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-native-v3-player/dance-mochi.json",
+      "species": "mochi",
+      "sampleFrames": 13,
+      "maximumScreenContactDriftPx": 2.9178042784573642e-06
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-native-v3-player/dance-sprout.json",
+      "species": "sprout",
+      "sampleFrames": 13,
+      "maximumScreenContactDriftPx": 2.320294567773465e-06
+    }
+  ],
+  "playerLayouts": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 640
+      },
+      "rootTextPercent": 100,
+      "rows": [
+        3,
+        3
+      ]
+    },
+    {
+      "viewport": {
+        "width": 375,
+        "height": 664
+      },
+      "rootTextPercent": 100,
+      "rows": [
+        3,
+        3
+      ]
+    },
+    {
+      "viewport": {
+        "width": 640,
+        "height": 360
+      },
+      "rootTextPercent": 100,
+      "rows": [
+        3,
+        3
+      ]
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "rootTextPercent": 100,
+      "rows": [
+        3,
+        3
+      ]
+    },
+    {
+      "viewport": {
+        "width": 900,
+        "height": 800
+      },
+      "rootTextPercent": 100,
+      "rows": [
+        3,
+        3
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1024,
+        "height": 800
+      },
+      "rootTextPercent": 100,
+      "rows": [
+        3,
+        3
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "rootTextPercent": 100,
+      "rows": [
+        3,
+        3
+      ]
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 640
+      },
+      "rootTextPercent": 200,
+      "rows": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "rootTextPercent": 200,
+      "rows": [
+        3,
+        3
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "rootTextPercent": 200,
+      "rows": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "wardrobeLayouts": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-1280x800.json",
+      "viewport": [
+        1280,
+        800
+      ],
+      "rows": [
+        3,
+        3
+      ],
+      "artHeight": 485
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-320x568.json",
+      "viewport": [
+        320,
+        568
+      ],
+      "rows": [
+        3,
+        3
+      ],
+      "artHeight": 116.015625
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-390x664.json",
+      "viewport": [
+        390,
+        664
+      ],
+      "rows": [
+        3,
+        3
+      ],
+      "artHeight": 210.015625
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-640x360.json",
+      "viewport": [
+        640,
+        360
+      ],
+      "rows": [
+        3,
+        3
+      ],
+      "artHeight": 109.40625
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/dance-native-v3-preview/wardrobe-844x390.json",
+      "viewport": [
+        844,
+        390
+      ],
+      "rows": [
+        3,
+        3
+      ],
+      "artHeight": 139.40625
+    }
+  ],
+  "methods": "Recomputed saved geometry, no live DOM/hit identity reconstruction. Native scripts separately assert keyboard focus/clipping and paused/mirrored clocks. Root-font enlargement is not browserzoom. First sheet attempt clipped native row and is retained as a diagnostic, not counted in final direct review."
+}

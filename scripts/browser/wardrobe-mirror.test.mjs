@@ -181,7 +181,7 @@ for (const species of ['mochi', 'bun', 'sprout']) test(`mirrored dressed ${speci
   assert.equal(await page.evaluate(() => window.__mirrorFrames.size), 0)
   assert.deepEqual((await snapshot(page)).tables, saved)
   const clearance = []
-  for (const [action, duration] of [['Wave', 1200], ['Gentle pats', 1600], ['Hop', 1800], ['Stretch', 2400], ['Rest', 2400]]) {
+  for (const [action, duration] of [['Wave', 1200], ['Gentle pats', 1600], ['Hop', 1800], ['Stretch', 2400], ['Rest', 2400], ['Dance', 2800]]) {
     await page.getByRole('button', { name: action, exact: true }).click()
     let elapsed = 0
     for (const phase of [.25, .5, .75]) {
@@ -206,7 +206,7 @@ for (const species of ['mochi', 'bun', 'sprout']) test(`mirrored dressed ${speci
     assert.equal(await page.evaluate(() => window.__mirrorFrames.size), 0)
   }
   assert.deepEqual((await snapshot(page)).tables, saved)
-  if (out) await writeFile(join(out, `wardrobe-mirror-clearance-${species}.json`), JSON.stringify({ species, samples: clearance, method: 'All five finite movements at .25/.5/.75 in both directions; body and active accents use nonintersecting rectangles where possible and native painted-geometry hit tests on a 1px grid inside any bounding overlap; exact inline styles restored, sampled child art unchanged, one clock then finite expiry. 30 configurations per species, not every frame.' }, null, 2) + '\n')
+  if (out) await writeFile(join(out, `wardrobe-mirror-clearance-${species}.json`), JSON.stringify({ species, samples: clearance, method: 'All six finite movements at .25/.5/.75 in both directions; body and active accents use nonintersecting rectangles where possible and native painted-geometry hit tests on a 1px grid inside any bounding overlap; exact inline styles restored, sampled child art unchanged, one clock then finite expiry. 36 configurations per species, not every frame.' }, null, 2) + '\n')
 })
 
 for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [1280, 800]]) for (const text of [100, 200]) {
@@ -224,7 +224,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
     assert.equal(view.overlap, 0); assert.equal(view.accentOverlap, 0); assert.equal(view.tabsVisible, true); assert.equal(view.focusVisible, true); assert.equal(view.ringClear, true)
     assert.equal(view.horizontalOverflow, 0); assert.equal(view.frames, 0)
     assert.ok(view.art.height >= 90, JSON.stringify(view))
-    assert.equal(await page.locator('.wd-motion button:visible').count(), 5)
+    assert.equal(await page.locator('.wd-motion button:visible').count(), 6)
     assert.ok(view.button.x >= 0 && view.button.right <= width)
   })
 }

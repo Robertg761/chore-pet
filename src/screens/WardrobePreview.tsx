@@ -7,7 +7,7 @@ import { usePetMotion } from '../pet/usePetMotion'
 import { SegThumb } from '../shell/SegThumb'
 import { describeOutfit, WARDROBE_POSES } from './wardrobeModel'
 
-type PreviewAction = 'greet' | 'affection' | 'celebrate' | 'stretch' | 'rest'
+type PreviewAction = 'greet' | 'affection' | 'celebrate' | 'stretch' | 'rest' | 'dance'
 interface PreviewRun { action: PreviewAction; start: number; paused: boolean }
 
 /** One finite, on-demand clock, isolated from the wardrobe's item grid. */
@@ -88,6 +88,8 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
         onClick={() => toggle('stretch')}>{active?.action === 'stretch' ? 'Stop stretch' : 'Stretch'}</button>
       <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'rest')}
         onClick={() => toggle('rest')}>{active?.action === 'rest' ? 'Stop rest' : 'Rest'}</button>
+      <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'dance')}
+        onClick={() => toggle('dance')}>{active?.action === 'dance' ? 'Stop dance' : 'Dance'}</button>
     </div>
     <button type="button" className="btn btn-sm btn-quiet wd-show-preview" aria-label={`Show preview of ${pet.name}`} onClick={showPreview}>Show preview</button>
     {reducedMotion && <p className="wd-note wd-motion-note">Motion previews are off while reduced motion is on.</p>}

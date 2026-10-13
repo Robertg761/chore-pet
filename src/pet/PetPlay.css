@@ -7,7 +7,6 @@
 .pet-play-panel[hidden] { display: none; }
 .pet-play-actions { display: flex; flex-wrap: wrap; gap: 10px; min-width: 0; }
 .pet-play-actions .btn { flex: 1 1 5em; min-height: 48px; padding: 3px 6px; font-size: 0.875rem; }
-.pet-play-actions .pet-play-rest { flex-basis: 100%; grid-column: 1 / -1; }
 .pet-play-note, .pet-play-feedback { margin: 8px 0 0; font-size: 0.875rem; font-weight: 700; overflow-wrap: anywhere; }
 .pet-play-note { color: var(--ink-soft); }
 .pet-play-feedback:empty { margin: 0; }
@@ -22,13 +21,6 @@
   .pet-play-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
   .pet-play-actions .btn { grid-column: auto; }
   @container pet-play (min-width: 15rem) {
-    .pet-play-actions { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-    .pet-play-actions .btn { grid-column: span 2; }
-    .pet-play-actions .btn:nth-child(n + 4) { grid-column: span 3; }
-  }
-  @container pet-play (min-width: 24rem) {
-    .pet-play-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .pet-play-actions .btn, .pet-play-actions .btn:nth-child(n + 4) { grid-column: auto; }
-    .pet-play-actions .btn.pet-play-rest { grid-column: 1 / -1; }
+    .pet-play-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
 }

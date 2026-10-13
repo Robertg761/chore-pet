@@ -1,0 +1,27 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/motion.dance.test.ts (22 tests | 1 failed) 260ms
+   ❯ bun grounded dance (7)
+     × makes two measured sways with small hands and appendages, settling without a snap 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/motion.dance.test.ts > bun grounded dance > makes two measured sways with small hands and appendages, settling without a snap
+AssertionError: expected 0.16087796515282846 to be less than 0.15
+ ❯ src/character/motion.dance.test.ts:47:27
+     45|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+     46|       expect(Math.max(...velocity)).toBeLessThan(speed)
+     47|       expect(velocity[0]).toBeLessThan(.15); expect(velocity.at(-1)).t…
+       |                           ^
+     48|     }
+     49|     expect(frames[1176].pleasedWeight).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 21 passed (22)
+   Start at  02:30:18
+   Duration  398ms (tests 85%, transform 11%, import 3%, worker 1%)
+

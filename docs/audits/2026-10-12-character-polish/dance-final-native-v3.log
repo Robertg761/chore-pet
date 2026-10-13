@@ -1,0 +1,92 @@
+✔ keyboard mochi dance keeps both screen contacts and its original deadline (1712.921137ms)
+✔ keyboard bun dance keeps both screen contacts and its original deadline (1474.008827ms)
+✔ keyboard sprout dance keeps both screen contacts and its original deadline (1431.350812ms)
+✔ an enlarged-text offscreen dance stays still and expires without replay (3898.341678ms)
+✔ player rows stay balanced and readable with default text in narrow panels (1706.916847ms)
+ℹ Chromium 152.0.7977.82; 7layouts; six choices in3+3rows/large-text1column, readable targets and focus, unchanged saved tables.
+✔ player rows stay balanced and readable with 200% text in narrow panels (1218.623545ms)
+ℹ Chromium 152.0.7977.82; 3layouts; six choices in3+3rows/large-text1column, readable targets and focus, unchanged saved tables.
+✔ native player choices stay still and fit 320px (2847.515218ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 361px (2664.332369ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 375px (2613.723106ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2581.977709ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2633.845079ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2600.675908ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2645.018795ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (861.717698ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2249.119238ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1662.759136ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ initial Head tab keeps a readable dressed preview on a short phone (1459.403084ms)
+✔ initial wardrobe tabs and gift labels remain visible at 640/100% (1264.331856ms)
+✔ initial wardrobe tabs and gift labels remain visible at 1280/200% (1295.524888ms)
+✔ mirrored dressed mochi Rest preserves exact art and the original deadline (6609.023166ms)
+✔ mirrored dressed bun Rest preserves exact art and the original deadline (6848.793595ms)
+✔ mirrored dressed sprout Rest preserves exact art and the original deadline (6817.56825ms)
+✔ mirror control fits without covering character ink at 320x568/100% (1264.572123ms)
+✔ mirror control fits without covering character ink at 320x568/200% (1281.43977ms)
+✔ mirror control fits without covering character ink at 390x664/100% (1363.466242ms)
+✔ mirror control fits without covering character ink at 390x664/200% (1292.678845ms)
+✔ mirror control fits without covering character ink at 640x360/100% (1292.011722ms)
+✔ mirror control fits without covering character ink at 640x360/200% (1393.113959ms)
+✔ mirror control fits without covering character ink at 844x390/100% (1295.653135ms)
+✔ mirror control fits without covering character ink at 844x390/200% (1305.212327ms)
+✔ mirror control fits without covering character ink at 1280x800/100% (1317.784069ms)
+✔ mirror control fits without covering character ink at 1280x800/200% (1316.120825ms)
+✔ mirror stays available through system reduction without replay (1712.10143ms)
+✔ mirror stays available through device reduction without replay (1738.960365ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (3286.560156ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (3223.290031ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 640x360 (3365.484608ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (3237.10451ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (3281.565384ms)
+✔ wardrobe Hop live reduced motion settles the preview and does not restart when restored (1781.561009ms)
+✔ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (1784.40766ms)
+✔ wardrobe Stretch live reduced motion settles the preview and does not restart when restored (1766.487133ms)
+✔ wardrobe Rest live reduced motion settles the preview and does not restart when restored (1866.415172ms)
+✔ wardrobe Dance live reduced motion settles the preview and does not restart when restored (1769.092375ms)
+✔ initial pause control is disabled without starting a clock or shrinking short-phone art (1290.122409ms)
+✔ dressed mochi pauses all six previews in both facings and resumes the remaining duration (12654.163763ms)
+✔ dressed bun pauses all six previews in both facings and resumes the remaining duration (12821.066751ms)
+✔ dressed sprout pauses all six previews in both facings and resumes the remaining duration (12560.379102ms)
+✔ pause control stays clear and keyboard visible at 320x568/100% (1932.799872ms)
+✔ pause control stays clear and keyboard visible at 320x568/200% (1933.086977ms)
+✔ pause control stays clear and keyboard visible at 390x664/100% (1916.040981ms)
+✔ pause control stays clear and keyboard visible at 390x664/200% (1924.020489ms)
+✔ pause control stays clear and keyboard visible at 640x360/100% (2062.367316ms)
+✔ pause control stays clear and keyboard visible at 640x360/200% (1960.10081ms)
+✔ pause control stays clear and keyboard visible at 844x390/100% (2204.678502ms)
+✔ pause control stays clear and keyboard visible at 844x390/200% (1925.805291ms)
+✔ pause control stays clear and keyboard visible at 1280x800/100% (1990.996054ms)
+✔ pause control stays clear and keyboard visible at 1280x800/200% (2004.868373ms)
+✔ live system reduction cancels a paused preview without replay (1764.43872ms)
+✔ live device reduction cancels a paused preview without replay (1684.448297ms)
+✔ wardrobe mochi rests with planted feet, one finite preview and unchanged outfit (2249.75816ms)
+✔ wardrobe bun rests with planted feet, one finite preview and unchanged outfit (2290.373084ms)
+✔ wardrobe sprout rests with planted feet, one finite preview and unchanged outfit (2276.227919ms)
+✔ wardrobe Rest rows, text and keyboard outlines fit ordinary and enlarged layouts (4897.60643ms)
+✔ wardrobe Rest live system reduction settles without replay (1919.969379ms)
+✔ wardrobe Rest live device reduction settles without replay (1988.35851ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at320x568/200% (2203.483101ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at390x664/200% (2166.498479ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at640x360/200% (2183.832091ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at844x390/200% (2159.429531ms)
+✔ Show wardrobe preview works during system reduction without starting a clock (1551.383045ms)
+✔ Show wardrobe preview works during device reduction without starting a clock (1506.793181ms)
+✔ ordinary wardrobe layouts retain their six controls without an extra visible view button (1597.698212ms)
+ℹ tests 73
+ℹ suites 0
+ℹ pass 73
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 195701.237401

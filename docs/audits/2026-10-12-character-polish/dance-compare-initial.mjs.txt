@@ -1,0 +1,28 @@
+import { createServer } from 'vite'
+import React from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { readFile, writeFile } from 'node:fs/promises'
+import { execFileSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
+import path from 'node:path'
+const h = React.createElement, hash = x => createHash('sha256').update(x).digest('hex'), base = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
+const old = execFileSync('git', ['show', `${base}:src/character/motion.ts`], { encoding: 'utf8' }), current = await readFile('src/character/motion.ts', 'utf8'), out = 'docs/audits/2026-10-12-character-polish'
+await writeFile(`${out}/dance-baseline-motion.ts.txt`, old)
+async function collect(source, compare) {
+ const server = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom', plugins: [{ name: 'declared-motion-source', enforce: 'pre', load(id) { if (id.split('?')[0] === path.resolve('src/character/motion.ts')) return source } }] })
+ try {
+  const { sampleMotion, ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts'), { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
+  const actions = Object.keys(ACTION_MS).filter(action => action !== 'dance'), rows = []; let index = 0
+  for (const species of ['mochi', 'bun', 'sprout']) for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick']) for (const action of actions) for (const phase of [0, .04, .1, .18, .25, .42, .5, .65, .76, .88, .96, .999, 1]) for (const facing of [1, -1]) for (const reducedMotion of [false, true]) {
+   const input = { species, mood, action, elapsedMs: ACTION_MS[action] * phase, durationMs: ACTION_MS[action], distance: 1.37, facing, reducedMotion, blinkMs: 3080 }
+   const frame = sampleMotion(input), svg = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 200 200' }, h('g', { transform: facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined }, h(AnimatedCharacterArt, { species, mood, bodyColour: '#ffcfda', equipped: { head: 'beanie-red', face: 'heart-glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }, frame }))))
+   const row = { frame: hash(JSON.stringify(frame)), svg: hash(svg) }
+   if (compare && (compare[index].frame !== row.frame || compare[index].svg !== row.svg)) throw Error(`Unexpected change ${JSON.stringify(input)}`)
+   rows.push(row); index++
+  }
+  return rows
+ } finally { await server.close() }
+}
+const before = await collect(old), after = await collect(current, before)
+const result = { baseCommit: base, baselineMotionSha256: hash(old), currentMotionSha256: hash(current), comparisons: before.length, exactFrames: after.length, exactRenderedSvg: after.length, unexpected: 0, method: 'Two sequential isolated Vite servers;only motion module overridden.16establishedactions x3species x5moods x13phases x2facings x2reduced, fixed blink3080 and route distance1.37, combinedoutfit. Compare whole frame JSON and rendered SVG hashes. Newdance excluded. Finite samples and identity checks do not certify temporal/pixel comfort or physicaldevices.' }
+await writeFile(`${out}/dance-existing-action-differential.json`, JSON.stringify(result, null, 2) + '\n'); console.log(JSON.stringify(result))

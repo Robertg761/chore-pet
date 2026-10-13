@@ -1,0 +1,6 @@
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
+export default {
+ plugins:[{name:'isolated-dance-motion',enforce:'pre',load(id){if(id.split('?')[0]===path.resolve('src/character/motion.ts'))return readFileSync('/tmp/dance-motion.ts','utf8')}}],
+ test:{include:['src/character/motion.dance.test.ts'],maxWorkers:1}
+}

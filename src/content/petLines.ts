@@ -226,6 +226,12 @@ export const STRETCH_LINES: string[] = [
   'A little stretch, then a breather.',
 ]
 
+export const DANCE_LINES: string[] = [
+  'A little dance with you.',
+  'Sway, sway. Together!',
+  'I like our little rhythm.',
+]
+
 /** Celebrations when a chore gets done. Lines starting with {chore} are capitalised. */
 export const DONE_LINES: string[] = [
   'Sparkly!',

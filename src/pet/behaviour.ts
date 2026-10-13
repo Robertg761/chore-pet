@@ -8,7 +8,7 @@ import { besideTiles, findPath, type Tile } from './pathfinding'
 
 // Keep the old public pathfinding imports valid without a behaviour/interaction cycle.
 export { besideTiles, findPath, type Tile } from './pathfinding'
-export type PlayerGesture = 'greet' | 'affection' | 'hop' | 'stretch' | 'rest'
+export type PlayerGesture = 'greet' | 'affection' | 'hop' | 'stretch' | 'rest' | 'dance'
 export type ReactionKind = 'tap' | PlayerGesture | 'celebrate' | 'celebrate-big'
 type ReactionAction = PlayerGesture | 'celebrate' | 'celebrate-big'
 export type Walk = {

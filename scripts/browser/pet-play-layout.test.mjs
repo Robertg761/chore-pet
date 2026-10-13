@@ -33,11 +33,10 @@ for (const large of [false, true]) test(`player rows stay balanced and readable 
       const row = rows.find(row => Math.abs(row.y - box.y) < .5)
       if (row) row.count++; else rows.push({ y: box.y, count: 1 })
     }
-    assert.ok(['1,1,1,1,1', '3,2', '4,1'].includes(rows.map(row => row.count).join(',')), `balanced rows at${viewport.width}px/${large ? 200 : 100}%: ${rows.map(row => row.count)}`)
-    if(rows.length===2&&rows[0].count===4)assert.ok(Math.abs(actions.at(-1).width-layout.actionsWidth)<1,'wide Rest together spans the complete action row')
-    if(rows.length===2&&rows[0].count===3){
-      assert.ok(Math.abs(actions[3].width-actions[4].width)<.5,'the two quiet choices share the second row evenly')
-      assert.ok(Math.abs(actions[3].width+actions[4].width+10-layout.actionsWidth)<1,'the quiet row fills the panel')
+    assert.ok(['1,1,1,1,1,1', '3,3'].includes(rows.map(row => row.count).join(',')), `balanced rows at${viewport.width}px/${large ? 200 : 100}%: ${rows.map(row => row.count)}`)
+    if (rows.length === 2) {
+      assert.ok(actions.every(box => Math.abs(box.width - actions[0].width) < .5), 'all six choices share equal widths')
+      assert.ok(Math.abs(actions[3].width + actions[4].width + actions[5].width + 20 - layout.actionsWidth) < 1, 'the quiet and dance row fills the panel')
     }
     for (const box of layout.boxes) {
       assert.ok(box.width >= 44 && box.height >= 44, `${box.label} retains a44px target`)
@@ -46,7 +45,7 @@ for (const large of [false, true]) test(`player rows stay balanced and readable 
     }
     assert.ok(layout.scrollWidth <= layout.clientWidth + 1, 'the player panel has no horizontal overflow')
     if (!large) assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
-    for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together']) {
+    for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together', 'Dance together']) {
       const control = page.getByRole('button', { name: label, exact: true })
       await page.keyboard.press('Tab')
       assert.equal(await control.evaluate(node => node === document.activeElement && node.matches(':focus-visible')), true, 'native tab order retains a visible focus ring')
@@ -70,5 +69,5 @@ for (const large of [false, true]) test(`player rows stay balanced and readable 
   }
   assert.deepEqual((await snapshot(page)).tables, saved)
   if (process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR) await writeFile(join(process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR, `panel-${large ? 200 : 100}.json`), JSON.stringify({ samples, scope: 'Native player panel rows, actual label rectangles, target and focus bounds; large text changes root font size, not browser zoom or whole-app accessibility certification.' }, null, 2) + '\n')
-  t.diagnostic(`Chromium ${page.context().browser().version()}; ${samples.length}layouts; compact3+2/wide4+1/large-text1column, readable targets and focus, unchanged saved tables.`)
+  t.diagnostic(`Chromium ${page.context().browser().version()}; ${samples.length}layouts; six choices in3+3rows/large-text1column, readable targets and focus, unchanged saved tables.`)
 })

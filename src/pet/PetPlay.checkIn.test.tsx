@@ -39,11 +39,11 @@ it.each(['away', 'sick'] as const)('explains a %s Check in that requires the res
   expect(ui.props.onCheckIn).not.toHaveBeenCalled()
 })
 
-it.each([undefined, 'travel'] as const)('retains the regular five choices when mode is %s', blocked => {
+it.each([undefined, 'travel'] as const)('retains the regular six choices when mode is %s', blocked => {
   const ui = mount({ blocked })
   expect(ui.button('Check in')).toBeUndefined()
   const buttons = [...ui.container.querySelectorAll('.pet-play-actions button')] as HTMLButtonElement[]
-  expect(buttons.map(node => node.textContent)).toEqual(['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together'])
+  expect(buttons.map(node => node.textContent)).toEqual(['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together', 'Dance together'])
   expect(buttons.every(node => node.disabled === Boolean(blocked))).toBe(true)
   click(ui.button('Wave'))
   expect(ui.props.onReact).toHaveBeenCalledTimes(blocked ? 0 : 1)

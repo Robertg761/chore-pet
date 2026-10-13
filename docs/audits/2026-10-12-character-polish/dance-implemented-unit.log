@@ -1,0 +1,56 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (110 tests | 1 failed) 1930ms
+   × keeps reduced dance still through its deadline and expires it offscreen without replay 12ms
+ ❯ src/pet/PetPlay.test.tsx (20 tests | 1 failed) 98ms
+   × offers a quiet rest without starting a panel clock or duplicating successful speech 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps reduced dance still through its deadline and expires it offscreen without replay
+AssertionError: expected null not to be null
+ ❯ src/pet/PetIntegration.test.tsx:1309:73
+    1307|   frame(100)
+    1308|   const still = art(ui.container).innerHTML
+    1309|   expect(ui.container.querySelector('[data-expression="content"]')).no…
+       |                                                                         ^
+    1310|   frame(2799)
+    1311|   expect(art(ui.container).innerHTML).toBe(still)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > offers a quiet rest without starting a panel clock or duplicating successful speech
+AssertionError: expected [ 'Wave', 'Gentle pats', …(4) ] to deeply equal [ 'Wave', 'Gentle pats', …(3) ]
+
+- Expected
++ Received
+
+@@ -2,6 +2,7 @@
+    "Wave",
+    "Gentle pats",
+    "Happy hop",
+    "Stretch together",
+    "Rest together",
++   "Dance together",
+  ]
+
+ ❯ src/pet/PetPlay.test.tsx:146:104
+    144|   expect(ui.container.querySelector('[role="status"]')!.textContent).t…
+    145|   expect(requestAnimationFrame).not.toHaveBeenCalled()
+    146|   expect([...ui.container.querySelectorAll('.pet-play-actions button')…
+       |                                                                                                        ^
+    147| })
+    148|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 4 passed (6)
+      Tests  2 failed | 180 passed (182)
+   Start at  02:32:21
+   Duration  5.73s (tests 60%, environment 19%, transform 15%, import 6%)
+
+    Isolate  6 workers spawned · ~243ms startup each (spawn + environment, per file)
+             at least ~1.21s faster with isolate: false — reuses workers across files instead of one per file
+

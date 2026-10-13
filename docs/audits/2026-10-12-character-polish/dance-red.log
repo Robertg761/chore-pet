@@ -1,0 +1,290 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/motion.dance.test.ts (22 tests | 19 failed) 293ms
+   × has a finite 2800ms invitation with neutral geometry at both ends and invalid-time guards 5ms
+   ❯ mochi grounded dance (7)
+     × keeps both feet planted and accents/shadow quiet for happy 31ms
+     × keeps both feet planted and accents/shadow quiet for content 23ms
+     × keeps both feet planted and accents/shadow quiet for meh 22ms
+     × keeps both feet planted and accents/shadow quiet for scruffy 23ms
+     × makes two measured sways with small hands and appendages, settling without a snap 3ms
+     × keeps reduced motion still and preserves the semantic smile until its finite end 2ms
+   ❯ bun grounded dance (7)
+     × keeps both feet planted and accents/shadow quiet for happy 24ms
+     × keeps both feet planted and accents/shadow quiet for content 21ms
+     × keeps both feet planted and accents/shadow quiet for meh 21ms
+     × keeps both feet planted and accents/shadow quiet for scruffy 23ms
+     × makes two measured sways with small hands and appendages, settling without a snap 2ms
+     × keeps reduced motion still and preserves the semantic smile until its finite end 1ms
+   ❯ sprout grounded dance (7)
+     × keeps both feet planted and accents/shadow quiet for happy 22ms
+     × keeps both feet planted and accents/shadow quiet for content 22ms
+     × keeps both feet planted and accents/shadow quiet for meh 21ms
+     × keeps both feet planted and accents/shadow quiet for scruffy 21ms
+     × makes two measured sways with small hands and appendages, settling without a snap 1ms
+     × keeps reduced motion still and preserves the semantic smile until its finite end 1ms
+ ❯ src/pet/behaviour.dance.test.ts (6 tests | 2 failed) 14ms
+   × invites a finite dance from a fractional walk without relocating or changing tap alternation 8ms
+   × keeps all explicit choices busy with no deadline extension, queue or tap count change 3ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 21 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/motion.dance.test.ts > has a finite 2800ms invitation with neutral geometry at both ends and invalid-time guards
+AssertionError: expected undefined to be 2800 // Object.is equality
+
+- Expected:
+2800
+
++ Received:
+undefined
+
+ ❯ src/character/motion.dance.test.ts:10:28
+      8|
+      9| it('has a finite 2800ms invitation with neutral geometry at both ends …
+     10|   expect(ACTION_MS[dance]).toBe(2800)
+       |                            ^
+     11|   for (const species of ['mochi', 'bun', 'sprout'] as const) {
+     12|     const neutral = at(species, 0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/21]⎯
+
+ FAIL  src/character/motion.dance.test.ts > mochi grounded dance > keeps both feet planted and accents/shadow quiet for happy
+ FAIL  src/character/motion.dance.test.ts > mochi grounded dance > keeps both feet planted and accents/shadow quiet for content
+ FAIL  src/character/motion.dance.test.ts > mochi grounded dance > keeps both feet planted and accents/shadow quiet for meh
+ FAIL  src/character/motion.dance.test.ts > mochi grounded dance > keeps both feet planted and accents/shadow quiet for scruffy
+ FAIL  src/character/motion.dance.test.ts > bun grounded dance > keeps both feet planted and accents/shadow quiet for happy
+ FAIL  src/character/motion.dance.test.ts > bun grounded dance > keeps both feet planted and accents/shadow quiet for content
+ FAIL  src/character/motion.dance.test.ts > bun grounded dance > keeps both feet planted and accents/shadow quiet for meh
+ FAIL  src/character/motion.dance.test.ts > bun grounded dance > keeps both feet planted and accents/shadow quiet for scruffy
+ FAIL  src/character/motion.dance.test.ts > sprout grounded dance > keeps both feet planted and accents/shadow quiet for happy
+ FAIL  src/character/motion.dance.test.ts > sprout grounded dance > keeps both feet planted and accents/shadow quiet for content
+ FAIL  src/character/motion.dance.test.ts > sprout grounded dance > keeps both feet planted and accents/shadow quiet for meh
+ FAIL  src/character/motion.dance.test.ts > sprout grounded dance > keeps both feet planted and accents/shadow quiet for scruffy
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/character/motion.dance.test.ts:33:20
+     31|       moving ||= Math.abs(f.bodyX) > .5
+     32|     }
+     33|     expect(moving).toBe(true)
+       |                    ^
+     34|   })
+     35|   it('makes two measured sways with small hands and appendages, settli…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/21]⎯
+
+ FAIL  src/character/motion.dance.test.ts > mochi grounded dance > makes two measured sways with small hands and appendages, settling without a snap
+ FAIL  src/character/motion.dance.test.ts > bun grounded dance > makes two measured sways with small hands and appendages, settling without a snap
+ FAIL  src/character/motion.dance.test.ts > sprout grounded dance > makes two measured sways with small hands and appendages, settling without a snap
+AssertionError: expected [] to have a length of 3 but got +0
+
+- Expected
++ Received
+
+- 3
++ 0
+
+ ❯ src/character/motion.dance.test.ts:38:87
+     36|     const frames = Array.from({ length: 2801 }, (_, ms) => at(species,…
+     37|     const x = frames.map(f => f.bodyX).filter(value => Math.abs(value)…
+     38|     expect(x.filter((value, i) => i > 0 && Math.sign(value) !== Math.s…
+       |                                                                                       ^
+     39|     for (const [field, max, speed] of [
+     40|       ['bodyX', 2.5, 14], ['lean', 4.5, 25], ['leftArm', 27, 130], ['r…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/21]⎯
+
+ FAIL  src/character/motion.dance.test.ts > mochi grounded dance > keeps reduced motion still and preserves the semantic smile until its finite end
+ FAIL  src/character/motion.dance.test.ts > bun grounded dance > keeps reduced motion still and preserves the semantic smile until its finite end
+ FAIL  src/character/motion.dance.test.ts > sprout grounded dance > keeps reduced motion still and preserves the semantic smile until its finite end
+AssertionError: expected { bodyX: +0, bodyY: +0, …(21) } to deeply equal { bodyX: +0, bodyY: +0, …(21) }
+
+- Expected
++ Received
+
+@@ -1,20 +1,20 @@
+  {
+    "accentOpacity": 0,
+    "bodyX": 0,
+    "bodyY": 0,
+-   "expression": "pleased",
++   "expression": "mood",
+    "eyeOpen": 1,
+    "gazeX": 0,
+    "gazeY": 0,
+    "lean": 0,
+    "leftAppendage": 0,
+    "leftArm": 0,
+    "leftFoot": 0,
+    "leftGroundX": 0,
+    "leftGroundY": 0,
+-   "pleasedWeight": 1,
++   "pleasedWeight": 0,
+    "rightAppendage": 0,
+    "rightArm": 0,
+    "rightFoot": 0,
+    "rightGroundX": 0,
+    "rightGroundY": 0,
+
+ ❯ src/character/motion.dance.test.ts:55:46
+     53|     const neutral = at(species, 0)
+     54|     for (const ms of [1, 280, 700, 1400, 2100, 2799]) {
+     55|       expect(at(species, ms, 'happy', true)).toEqual({ ...neutral, exp…
+       |                                              ^
+     56|     }
+     57|     expect(at(species, 2800, 'happy', true)).toEqual(neutral)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/21]⎯
+
+ FAIL  src/pet/behaviour.dance.test.ts > invites a finite dance from a fractional walk without relocating or changing tap alternation
+AssertionError: expected { Object (kind, action, ...) } to match object { Object (kind, action, ...) }
+
+- Expected
++ Received
+
+  {
+    "action": "dance",
+    "kind": "react",
+    "start": 137,
+-   "until": 2937,
++   "until": NaN,
+  }
+
+ ❯ src/pet/behaviour.dance.test.ts:11:28
+      9|   const moving: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), react…
+     10|   const started = react(moving, 137, dance)
+     11|   expect(started.activity).toMatchObject({ kind: 'react', action: 'dan…
+       |                            ^
+     12|   expect(positionAt(started, 137)).toEqual(positionAt(moving, 137))
+     13|   expect(started.reactions).toBe(3)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/21]⎯
+
+ FAIL  src/pet/behaviour.dance.test.ts > keeps all explicit choices busy with no deadline extension, queue or tap count change
+AssertionError: expected { tile: { tx: 2, ty: 2 }, …(9) } to be { tile: { tx: 2, ty: 2 }, …(9) } // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,13 +1,13 @@
+  {
+    "activity": {
+      "action": "dance",
+      "kind": "react",
+-     "start": 100,
++     "start": 110,
+      "until": NaN,
+    },
+-   "beat": 1,
++   "beat": 2,
+    "facing": 1,
+    "noticeStart": undefined,
+    "pendingTap": false,
+    "position": undefined,
+    "reactions": 0,
+@@ -15,11 +15,13 @@
+    "tile": {
+      "tx": 2,
+      "ty": 2,
+    },
+    "transition": {
+-     "layers": [
++     "groundReleases": [
++       {
++         "from": [
+            {
+              "snapshot": {
+                "activity": {
+                  "kind": "idle",
+                  "start": 0,
+@@ -35,8 +37,67 @@
+                },
+              },
+              "weight": 1,
+            },
+          ],
++         "progress": 0.019675925925925927,
++         "to": {
++           "activity": {
++             "action": "dance",
++             "kind": "react",
+              "start": 100,
++             "until": NaN,
++           },
++           "at": 110,
++           "facing": 1,
++           "noticeStart": undefined,
++           "position": undefined,
++           "tile": {
++             "tx": 2,
++             "ty": 2,
++           },
++         },
++         "weight": 1,
++       },
++     ],
++     "layers": [
++       {
++         "snapshot": {
++           "activity": {
++             "kind": "idle",
++             "start": 0,
++             "until": 1500,
++           },
++           "at": 100,
++           "facing": 1,
++           "noticeStart": undefined,
++           "position": undefined,
++           "tile": {
++             "tx": 2,
++             "ty": 2,
++           },
++         },
++         "weight": 0.9803240740740741,
++       },
++       {
++         "snapshot": {
++           "activity": {
++             "action": "dance",
++             "kind": "react",
++             "start": 100,
++             "until": NaN,
++           },
++           "at": 110,
++           "facing": 1,
++           "noticeStart": undefined,
++           "position": undefined,
++           "tile": {
++             "tx": 2,
++             "ty": 2,
++           },
++         },
++         "weight": 0.019675925925925927,
++       },
++     ],
++     "start": 110,
+    },
+  }
+
+ ❯ src/pet/behaviour.dance.test.ts:28:165
+     26| it('keeps all explicit choices busy with no deadline extension, queue …
+     27|   const started = react(initialPet({ tx: 2, ty: 2 }, 0), 100, dance)
+     28|   for (let n = 1; n <= 20; n++) for (const action of [dance, 'greet', …
+       |                                                                                                                                                                     ^
+     29|   expect(started.pendingTap).toBe(false)
+     30|   const expired = step(started, world, 10000, () => .99)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/21]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  21 failed | 7 passed (28)
+   Start at  02:28:59
+   Duration  772ms (tests 53%, transform 38%, import 7%, worker 1%)
+

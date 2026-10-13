@@ -1,0 +1,36 @@
+import { createServer } from 'vite'
+import React from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { Resvg } from '@resvg/resvg-js'
+import { readFile, writeFile, mkdir } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
+import path from 'node:path'
+const h = React.createElement, out = path.resolve('docs/audits/2026-10-12-character-polish/dance-character-sheets')
+await mkdir(out, { recursive: true })
+const server = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
+try {
+ const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
+ const { sampleMotion, ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts')
+ const { PALETTE, SPECIES_COLOUR } = await server.ssrLoadModule('/src/art/palette.ts')
+ const phases = [0, .125, .375, .625, .875, 1], manifest = { method: 'Production sampler/React/Resvg,2800ms dance. Sixphase views with groundline182;5moods x2facings x2colors x3species, plus native60px/25px happy samples. No browser clock/device or temporal comfort claim.', sources: {}, sheets: [] }
+ for (const p of ['src/character/motion.ts', 'src/character/AnimatedCharacter.tsx', 'src/character/items/extras.tsx']) manifest.sources[p] = createHash('sha256').update(await readFile(p)).digest('hex')
+ for (const species of ['mochi', 'bun', 'sprout']) for (const dark of [false, true]) {
+  const art = [], text = [], rows = [], width = 1200, height = 2300, rowHeight = 216
+  const equipped = dark ? { head: 'bow', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } : { head: 'beanie-red', face: 'heart-glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
+  const place = (mood, facing, phase, col, row, size = 200) => {
+   const frame = sampleMotion({ species, mood, action: 'dance', elapsedMs: ACTION_MS.dance * phase, durationMs: ACTION_MS.dance, distance: 0, reducedMotion: false, blinkMs: 0 })
+   const x = col * 200 + (200 - size) / 2, y = row * rowHeight + 200 - size
+   art.push(h('g', { key: `art-${row}-${col}`, transform: `translate(${x} ${y}) scale(${size / 200})` }, h('path', { d: 'M8 182H192', stroke: '#8bacc7', strokeWidth: 1, strokeDasharray: '3 3' }), h('g', { transform: facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined }, h(AnimatedCharacterArt, { species, mood, bodyColour: dark ? PALETTE.ink : SPECIES_COLOUR[species], equipped, frame, strokeScale: size === 25 ? 1.6 : 1 }))))
+   text.push(h('text', { key: `text-${row}-${col}`, x: col * 200 + 4, y: row * rowHeight + 212, fill: PALETTE.ink, fontSize: 11 }, `${mood} ${facing === -1 ? 'left' : 'right'} ${Math.round(phase * 2800)}ms ${size}px`))
+   rows.push({ mood, facing, phase, elapsedMs: phase * 2800, size, frame })
+  }
+  let row = 0
+  for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick']) for (const facing of [1, -1]) { phases.forEach((phase, col) => place(mood, facing, phase, col, row)); row++ }
+  for (const [col, size] of [60, 60, 60, 25, 25, 25].entries()) place('happy', col % 2 ? -1 : 1, [.125, .375, .625][col % 3], col, row, size)
+  const svg = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width, height, viewBox: `0 0 ${width} ${height}` }, h('rect', { width, height, fill: PALETTE.ground }), art, text))
+  const name = `${species}-${dark ? 'ink' : 'default'}.png`, png = new Resvg(svg).render().asPng()
+  await writeFile(path.join(out, name), png); manifest.sheets.push({ name, samples: rows.length, sha256: createHash('sha256').update(png).digest('hex'), rows })
+ }
+ await writeFile(path.join(out, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n')
+ console.log(manifest.sheets.length, 'sheets,', manifest.sheets.reduce((n, x) => n + x.samples, 0), 'sampled characters')
+} finally { await server.close() }

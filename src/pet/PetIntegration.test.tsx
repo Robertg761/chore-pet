@@ -1269,3 +1269,56 @@ it('keeps reduced rest grounded through its deadline and expires an offscreen re
   expect(frames.size).toBe(0)
   expect(art(ui.container).innerHTML).toBe(still)
 })
+
+it.each(['mochi', 'bun', 'sprout'] as const)('dances a moving %s at its drawn position with one finite clock and chore priority', species => {
+  const control = createRef<LivingRoomControl>()
+  const dance = 'dance' as Parameters<LivingRoomControl['respond']>[0]
+  const scene = { ...props, pet: { ...pet, species }, mood: 'happy' as const, objects: [plant], control, initialTile: { tx: 7, ty: 7 } }
+  const ui = mount(<StrictMode><LivingRoom {...scene} /></StrictMode>)
+  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
+  frame(137)
+  const resident = ui.container.querySelector('.room-pet')!, node = art(ui.container), position = resident.getAttribute('transform')
+  act(() => { expect(control.current!.respond(dance)).toBe('started') })
+  expect(resident.getAttribute('transform')).toBe(position)
+  const heard = ui.container.querySelector('[aria-live]')!.textContent
+  expect(heard).toMatch(/dance|sway|rhythm/i)
+  frame(1200)
+  expect(resident.getAttribute('transform')).toBe(position)
+  const expected = motionFor({ ...initialPet(scene.initialTile, 137), activity: { kind: 'react', action: dance, start: 137, until: 2937 } }, 1200, species, 'happy', false).frame
+  const left = Number(node.querySelector('[data-arm="left"]')!.getAttribute('transform')!.match(/rotate\(([^ ]+)/)![1])
+  expect(left).toBeCloseTo(expected.leftArm, 8)
+  expect(left).toBeGreaterThan(3)
+  for (let n = 0; n < 10; n++) act(() => { expect(control.current!.respond(dance)).toBe('busy') })
+  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
+  expect(frames.size).toBe(1)
+  ui.rerender(<StrictMode><LivingRoom {...scene} celebrate={{ key: 501, choreName: 'Water plant' }} /></StrictMode>)
+  expect(ui.container.querySelector('[aria-live]')!.textContent).not.toBe(heard)
+  act(() => { expect(control.current!.respond(dance)).toBe('busy') })
+  expect(art(ui.container)).toBe(node)
+})
+
+it('keeps reduced dance still through its deadline and expires it offscreen without replay', () => {
+  const visibility = observeResident()
+  Object.defineProperty(media, 'matches', { value: true, configurable: true })
+  const control = createRef<LivingRoomControl>()
+  const dance = 'dance' as Parameters<LivingRoomControl['respond']>[0]
+  const ui = mount(<LivingRoom {...props} mood="content" control={control} />)
+  act(() => { expect(control.current!.respond(dance)).toBe('started') })
+  frame(100)
+  const still = art(ui.container).innerHTML
+  expect(ui.container.querySelector('[data-expression="cheering"]')).not.toBeNull()
+  frame(2799)
+  expect(art(ui.container).innerHTML).toBe(still)
+  expect(frames.size).toBe(1)
+  frame(2800)
+  expect(frames.size).toBe(0)
+  expect(ui.container.querySelector('[data-expression="content"]')).not.toBeNull()
+  const settled = art(ui.container).innerHTML
+  visibility.show(false)
+  act(() => { expect(control.current!.respond(dance)).toBe('started') })
+  expect(frames.size).toBe(0)
+  now = 5700
+  visibility.show(true)
+  expect(frames.size).toBe(0)
+  expect(art(ui.container).innerHTML).toBe(settled)
+})

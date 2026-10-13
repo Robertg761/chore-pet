@@ -1,0 +1,55 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/motion.dance.test.ts (22 tests | 3 failed) 257ms
+   ❯ mochi grounded dance (7)
+     × makes two measured sways with small hands and appendages, settling without a snap 6ms
+   ❯ bun grounded dance (7)
+     × makes two measured sways with small hands and appendages, settling without a snap 3ms
+   ❯ sprout grounded dance (7)
+     × makes two measured sways with small hands and appendages, settling without a snap 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/motion.dance.test.ts > mochi grounded dance > makes two measured sways with small hands and appendages, settling without a snap
+AssertionError: expected 0.20035532264505554 to be less than 0.15
+ ❯ src/character/motion.dance.test.ts:47:27
+     45|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+     46|       expect(Math.max(...velocity)).toBeLessThan(speed)
+     47|       expect(velocity[0]).toBeLessThan(.15); expect(velocity.at(-1)).t…
+       |                           ^
+     48|     }
+     49|     expect(frames[1176].pleasedWeight).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/character/motion.dance.test.ts > bun grounded dance > makes two measured sways with small hands and appendages, settling without a snap
+AssertionError: expected 0.2332687869595603 to be less than 0.15
+ ❯ src/character/motion.dance.test.ts:47:27
+     45|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+     46|       expect(Math.max(...velocity)).toBeLessThan(speed)
+     47|       expect(velocity[0]).toBeLessThan(.15); expect(velocity.at(-1)).t…
+       |                           ^
+     48|     }
+     49|     expect(frames[1176].pleasedWeight).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/character/motion.dance.test.ts > sprout grounded dance > makes two measured sways with small hands and appendages, settling without a snap
+AssertionError: expected 0.15442954213000576 to be less than 0.15
+ ❯ src/character/motion.dance.test.ts:47:27
+     45|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+     46|       expect(Math.max(...velocity)).toBeLessThan(speed)
+     47|       expect(velocity[0]).toBeLessThan(.15); expect(velocity.at(-1)).t…
+       |                           ^
+     48|     }
+     49|     expect(frames[1176].pleasedWeight).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 19 passed (22)
+   Start at  02:29:55
+   Duration  431ms (tests 77%, transform 19%, import 3%, worker 1%)
+

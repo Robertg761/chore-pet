@@ -226,3 +226,61 @@ it('pauses hidden pats, expires on return and ignores callbacks after unmount', 
   act(() => stale(3000))
   expect(frames.size).toBe(0)
 })
+
+it('previews and pauses the grounded dance on the same isolated subtree and resumes only its remaining duration', () => {
+  const write = vi.spyOn(Storage.prototype, 'setItem'), node = preview().querySelector('.ch-animated')
+  const control = button('Dance'), neutral = body()
+  act(() => control.focus()); click(control); frame(1176)
+  const renders = vi.mocked(model.itemsForSlot).mock.calls.length
+  expect(body()).not.toBe(neutral)
+  expect(preview().querySelector('[data-character-accents]')!.getAttribute('opacity')).toBe('0')
+  expect(button('Stop dance')).toBe(control); expect(document.activeElement).toBe(control)
+  expect(button('Wave').disabled).toBe(true); expect(button('Rest').disabled).toBe(true)
+  const pause = ui.container.querySelector('.wd-pause-preview')!
+  click(pause)
+  const held = preview().querySelector('.ch-animated')!.outerHTML
+  expect(frames.size).toBe(0)
+  click(ui.container.querySelector('.wd-mirror-preview')!)
+  expect(preview().querySelector('[data-preview-facing]')!.getAttribute('data-preview-facing')).toBe('mirrored')
+  frame(60000)
+  expect(preview().querySelector('.ch-animated')!.outerHTML).toBe(held)
+  expect(frames.size).toBe(0)
+  click(pause)
+  expect(frames.size).toBe(1)
+  frame(61623); expect(button('Stop dance')).toBe(control)
+  frame(61624); expect(button('Dance')).toBe(control)
+  expect(frames.size).toBe(0); expect(body()).toBe(neutral)
+  expect(preview().querySelector('.ch-animated')).toBe(node)
+  expect(model.itemsForSlot).toHaveBeenCalledTimes(renders)
+  expect(changed).not.toHaveBeenCalled(); expect(write).not.toHaveBeenCalled()
+})
+
+it('lets Stop and a static pose cancel dance without leaving callbacks', () => {
+  click(button('Dance')); frame(600)
+  click(button('Stop dance')); expect(frames.size).toBe(0)
+  click(button('Dance')); frame(1000)
+  click(button('Sleepy')); expect(frames.size).toBe(0)
+  expect(preview().querySelector('[data-character-pose="sleeping"]')).not.toBeNull()
+  click(button('Dance')); expect(button('Happy').getAttribute('aria-pressed')).toBe('true')
+  expect(frames.size).toBe(1)
+  ui.unmount(); expect(frames.size).toBe(0)
+})
+
+it('cancels a held dance immediately on live reduction and never replays it', () => {
+  click(button('Dance')); frame(800)
+  click(ui.container.querySelector('.wd-pause-preview')!)
+  expect(frames.size).toBe(0)
+  preference(true)
+  expect(button('Dance').disabled).toBe(true)
+  expect(body()).toMatch(/^translate\(0 0\)/)
+  expect(frames.size).toBe(0)
+  preference(false)
+  expect(button('Dance').disabled).toBe(false); expect(frames.size).toBe(0)
+})
+
+it('expires an unpaused hidden dance by its absolute deadline and does not replay', () => {
+  click(button('Dance')); frame(700)
+  visibility(true); expect(frames.size).toBe(0)
+  now = 10000; visibility(false); frame(now)
+  expect(button('Dance')).toBeTruthy(); expect(frames.size).toBe(0)
+})

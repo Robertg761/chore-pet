@@ -65,8 +65,10 @@ export function PetPlay({ petName, blocked, onReact, onCheckIn, onShowRoom, show
           onClick={() => choose('hop')}>Happy hop</button>
         <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
           onClick={() => choose('stretch')}>Stretch together</button>
-        <button type="button" className="btn pet-play-rest" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
+        <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
           onClick={() => choose('rest')}>Rest together</button>
+        <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
+          onClick={() => choose('dance')}>Dance together</button>
         </>}
       </div>
       {note && <p id={`${id}-note`} className="pet-play-note">{restingNote}</p>}

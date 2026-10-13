@@ -81,7 +81,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
     const rowCounts = Object.values(geometry.movement.reduce((rows, control) => {
       const y = Math.round(control.y); rows[y] = (rows[y] ?? 0) + 1; return rows
     }, {}))
-    assert.deepEqual(rowCounts, [3, 2], 'five movement controls form two balanced rows for the actual stage width')
+    assert.deepEqual(rowCounts, [3, 3], 'six movement controls form two balanced rows for the actual stage width')
     assert.ok(geometry.scroll <= width, `horizontal overflow: ${JSON.stringify(geometry)}`)
     assert.ok(geometry.art.h >= 80, `preview needs readable height: ${JSON.stringify(geometry)}`)
     assert.ok(geometry.tabButtons.length >= 5)
@@ -166,7 +166,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
   })
 }
 
-for (const action of ['Hop', 'Gentle pats', 'Stretch', 'Rest']) test(`wardrobe ${action} live reduced motion settles the preview and does not restart when restored`, { timeout: 15000 }, async t => {
+for (const action of ['Hop', 'Gentle pats', 'Stretch', 'Rest', 'Dance']) test(`wardrobe ${action} live reduced motion settles the preview and does not restart when restored`, { timeout: 15000 }, async t => {
   const page = await wardrobeApp(t, { viewport: { width: 320, height: 568 } })
   const preview = page.locator('.wd-preview')
   await page.getByRole('button', { name: action, exact: true }).click()

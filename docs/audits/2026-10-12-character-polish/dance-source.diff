@@ -1,0 +1,943 @@
+diff --git i/src/character/motion.ts w/src/character/motion.ts
+index 2b1bd27..4d3a62c 100644
+--- i/src/character/motion.ts
++++ w/src/character/motion.ts
+@@ -1,7 +1,7 @@
+ import type { Mood, Species } from '../domain/types'
+ 
+ export type MotionAction =
+-  | 'idle' | 'walk' | 'turn' | 'greet' | 'affection' | 'stretch' | 'celebrate' | 'celebrate-big'
++  | 'idle' | 'walk' | 'turn' | 'greet' | 'affection' | 'stretch' | 'dance' | 'celebrate' | 'celebrate-big'
+   | 'notice' | 'inspect' | 'wave' | 'reach' | 'rest' | 'dust' | 'smell' | 'concern'
+ 
+ /** Projected route point in unmirrored character SVG units, including past corners. */
+@@ -58,7 +58,7 @@ export interface MotionFrame {
+ }
+ 
+ export const ACTION_MS: Record<MotionAction, number> = {
+-  idle: 4000, walk: 900, turn: 360, greet: 1200, affection: 1600, stretch: 2400,
++  idle: 4000, walk: 900, turn: 360, greet: 1200, affection: 1600, stretch: 2400, dance: 2800,
+   celebrate: 1800, 'celebrate-big': 2200, notice: 600, inspect: 1800,
+   wave: 1400, reach: 1600, rest: 2400, dust: 1400, smell: 1600, concern: 1800,
+ }
+@@ -90,6 +90,13 @@ const WAVE_FOLLOW: Record<Species, number> = { mochi: 0.4, bun: 0.45, sprout: 0.
+ // Concern settles in one smaller sway while the resident studies wilting leaves.
+ const CONCERN_FOLLOW: Record<Species, number> = { mochi: 0.35, bun: 0.4, sprout: 0.35 }
+ 
++// Gentle dance shares the species rhythm with smaller delayed follow-through.
++const DANCE: Record<Species, { arms: number; follow: number }> = {
++  mochi: { arms: 14, follow: 0.25 },
++  bun: { arms: 18, follow: 0.3 },
++  sprout: { arms: 12, follow: 0.22 },
++}
++
+ const STRETCH: Record<Species, { arms: number; extension: number; follow: number }> = {
+   mochi: { arms: 46, extension: 0.022, follow: 0.2 },
+   bun: { arms: 58, extension: 0.032, follow: 0.25 },
+@@ -146,7 +153,7 @@ function expressionFor(action: MotionAction, mood: Mood): MotionFrame['expressio
+   // The resting face keeps its sick art; alert only lets notice gaze reach it.
+   if (mood === 'sick') return action === 'notice' ? 'alert' : 'mood'
+   switch (action) {
+-    case 'greet': case 'affection': case 'stretch': case 'celebrate': case 'celebrate-big': case 'wave':
++    case 'greet': case 'affection': case 'stretch': case 'dance': case 'celebrate': case 'celebrate-big': case 'wave':
+       return 'pleased'
+     case 'notice': case 'inspect': case 'reach': case 'dust': case 'smell': case 'concern':
+       return 'alert'
+@@ -319,6 +326,18 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+         frame.gazeY = -1.2 * attention
+         break
+       }
++      case 'dance': {
++        const held = envelope(t, 0, 0.25, 0.75, 1)
++        const rhythm = Math.sin(t * Math.PI * 4)
++        const hand = 7 * Math.sin(t * Math.PI * 4 - 0.35)
++        compression = 0.012 * Math.sin(t * Math.PI * 2) ** 2 * held
++        frame.bodyX = 2.5 * rhythm * held
++        frame.lean = 4.5 * rhythm * held
++        frame.leftArm = (DANCE[species].arms + hand) * held
++        frame.rightArm = (-DANCE[species].arms + hand) * held
++        frame.gazeX = 0.65 * rhythm * held
++        break
++      }
+       case 'celebrate': case 'celebrate-big': {
+         const big = action === 'celebrate-big'
+         const lift = envelope(t, 0.18, 0.42, 0.42, 0.68)
+@@ -388,8 +407,8 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+ 
+     frame.bodyX *= amplitude
+     frame.bodyY *= amplitude
+-    // Recoil moves the torso while both ground contacts stay fixed.
+-    if (action === 'smell' && mood !== 'sick') frame.leftGroundX = frame.rightGroundX = -frame.bodyX
++    // Recoil and the grounded dance shift the torso above fixed contacts.
++    if ((action === 'smell' || action === 'dance') && mood !== 'sick') frame.leftGroundX = frame.rightGroundX = -frame.bodyX
+     frame.lean *= amplitude
+     frame.leftArm *= amplitude
+     frame.rightArm *= amplitude
+@@ -411,7 +430,9 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+       : calmWave ? WAVE_FOLLOW[species]
+       : calmInspect ? INSPECT_FOLLOW[species]
+       : calmConcern ? CONCERN_FOLLOW[species] : AFFECTION_FOLLOW[species]
+-    const sway = action === 'notice' && mood !== 'sick'
++    const sway = action === 'dance'
++      ? Math.sin(t * Math.PI * 4 - personality.lag + 0.5) * follow * personality.follow * DANCE[species].follow * energy
++      : action === 'notice' && mood !== 'sick'
+       ? Math.sin(t * Math.PI) * follow * personality.follow * NOTICE_FOLLOW[species] * energy
+       : action === 'turn' && mood !== 'sick'
+       ? Math.sin(t * Math.PI) * follow * personality.follow * TURN_FOLLOW[species] * energy
+diff --git 1/src/character/motion.dance.test.ts 2/src/character/motion.dance.test.ts
+new file mode 100644
+index 0000000..34a2bb9
+--- /dev/null
++++ 2/src/character/motion.dance.test.ts
+@@ -0,0 +1,64 @@
++import { describe, expect, it } from 'vitest'
++import { ACTION_MS, sampleMotion, type MotionAction } from './motion'
++import type { Mood, Species } from '../domain/types'
++
++const dance = 'dance' as MotionAction
++const at = (species: Species, elapsedMs: number, mood: Mood = 'happy', reducedMotion = false, durationMs = 2800) =>
++  sampleMotion({ species, mood, action: dance, elapsedMs, durationMs, distance: 0, reducedMotion, blinkMs: 0 })
++
++it('has a finite 2800ms invitation with neutral geometry at both ends and invalid-time guards', () => {
++  expect(ACTION_MS[dance]).toBe(2800)
++  for (const species of ['mochi', 'bun', 'sprout'] as const) {
++    const neutral = at(species, 0)
++    for (const ms of [-1, NaN, -Infinity, 2800, 2801, Infinity]) expect(at(species, ms)).toEqual(neutral)
++    expect(at(species, 500, 'happy', false, 0)).toEqual(neutral)
++    expect(at(species, 500, 'happy', false, NaN)).toEqual(at(species, 500))
++  }
++})
++
++describe.each(['mochi', 'bun', 'sprout'] as const)('%s grounded dance', species => {
++  it.each(['happy', 'content', 'meh', 'scruffy'] as const)('keeps both feet planted and accents/shadow quiet for %s', mood => {
++    let moving = false
++    for (let ms = 0; ms <= 2800; ms += 5) {
++      const f = at(species, ms, mood)
++      expect(f.bodyY).toBe(0)
++      expect(f.leftFoot).toBe(0); expect(f.rightFoot).toBe(0)
++      expect(f.bodyX + (f.leftGroundX ?? 0)).toBeCloseTo(0, 12)
++      expect(f.bodyX + (f.rightGroundX ?? 0)).toBeCloseTo(0, 12)
++      expect(f.leftGroundY).toBe(0); expect(f.rightGroundY).toBe(0)
++      expect(f.accentOpacity).toBe(0)
++      expect(f.shadowScale).toBe(1); expect(f.shadowOpacity).toBe(1)
++      moving ||= Math.abs(f.bodyX) > .5
++    }
++    expect(moving).toBe(true)
++  })
++  it('makes two measured sways with small hands and appendages, settling without a snap', () => {
++    const frames = Array.from({ length: 2801 }, (_, ms) => at(species, ms))
++    const x = frames.map(f => f.bodyX).filter(value => Math.abs(value) > 1e-6)
++    expect(x.filter((value, i) => i > 0 && Math.sign(value) !== Math.sign(x[i - 1]))).toHaveLength(3)
++    for (const [field, max, speed] of [
++      ['bodyX', 2.5, 14], ['lean', 4.5, 25], ['leftArm', 27, 130], ['rightArm', 27, 130],
++      ['leftAppendage', 3.7, 24], ['rightAppendage', 3, 20],
++    ] as const) {
++      const values = frames.map(f => f[field])
++      expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(max + 1e-9)
++      const velocity = values.slice(1).map((value, i) => Math.abs(value - values[i]) * 1000)
++      expect(Math.max(...velocity)).toBeLessThan(speed)
++      expect(velocity[0]).toBeLessThan(.15); expect(velocity.at(-1)).toBeLessThan(.15)
++    }
++    expect(frames[1176].pleasedWeight).toBe(1)
++    expect(frames[1176].expression).toBe('pleased')
++  })
++  it('keeps reduced motion still and preserves the semantic smile until its finite end', () => {
++    const neutral = at(species, 0)
++    for (const ms of [1, 280, 700, 1400, 2100, 2799]) {
++      expect(at(species, ms, 'happy', true)).toEqual({ ...neutral, expression: 'pleased', pleasedWeight: 1 })
++    }
++    expect(at(species, 2800, 'happy', true)).toEqual(neutral)
++  })
++  it('uses the same normalized movement across finite duration overrides', () => {
++    for (const duration of [1400, 2800, 5600]) for (const phase of [.08, .25, .42, .65, .88]) {
++      expect(at(species, duration * phase, 'happy', false, duration)).toEqual(at(species, 2800 * phase))
++    }
++  })
++})
+diff --git i/src/character/motion.test.ts w/src/character/motion.test.ts
+index d2d30a4..6fee5d4 100644
+--- i/src/character/motion.test.ts
++++ w/src/character/motion.test.ts
+@@ -3,7 +3,7 @@ import { SPECIES, type Mood } from '../domain/types'
+ import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionAction, type MotionFrame, type MotionInput } from './motion'
+ 
+ const actions: MotionAction[] = [
+-  'idle', 'walk', 'turn', 'greet', 'affection', 'stretch', 'celebrate', 'celebrate-big',
++  'idle', 'walk', 'turn', 'greet', 'affection', 'stretch', 'dance', 'celebrate', 'celebrate-big',
+   'notice', 'inspect', 'wave', 'reach', 'rest', 'dust', 'smell', 'concern',
+ ]
+ const moods: Mood[] = ['happy', 'content', 'meh', 'scruffy', 'sick']
+@@ -23,7 +23,7 @@ const numbers = (frame: MotionFrame): number[] => Object.values(frame).filter((v
+ describe('motion vocabulary', () => {
+   it('provides every action duration and the agreed player reaction timing', () => {
+     expect(Object.keys(ACTION_MS).sort()).toEqual([...actions].sort())
+-    expect(ACTION_MS).toMatchObject({ greet: 1200, affection: 1600, stretch: 2400, celebrate: 1800, 'celebrate-big': 2200 })
++    expect(ACTION_MS).toMatchObject({ greet: 1200, affection: 1600, stretch: 2400, dance: 2800, celebrate: 1800, 'celebrate-big': 2200 })
+     expect(Object.values(ACTION_MS).every((ms) => Number.isFinite(ms) && ms > 0)).toBe(true)
+   })
+ 
+diff --git i/src/content/petLines.ts w/src/content/petLines.ts
+index 7e56dc7..d485f7b 100644
+--- i/src/content/petLines.ts
++++ w/src/content/petLines.ts
+@@ -226,6 +226,12 @@ export const STRETCH_LINES: string[] = [
+   'A little stretch, then a breather.',
+ ]
+ 
++export const DANCE_LINES: string[] = [
++  'A little dance with you.',
++  'Sway, sway. Together!',
++  'I like our little rhythm.',
++]
++
+ /** Celebrations when a chore gets done. Lines starting with {chore} are capitalised. */
+ export const DONE_LINES: string[] = [
+   'Sparkly!',
+diff --git i/src/pet/behaviour.ts w/src/pet/behaviour.ts
+index 2dc7822..ce04519 100644
+--- i/src/pet/behaviour.ts
++++ w/src/pet/behaviour.ts
+@@ -8,7 +8,7 @@ import { besideTiles, findPath, type Tile } from './pathfinding'
+ 
+ // Keep the old public pathfinding imports valid without a behaviour/interaction cycle.
+ export { besideTiles, findPath, type Tile } from './pathfinding'
+-export type PlayerGesture = 'greet' | 'affection' | 'hop' | 'stretch' | 'rest'
++export type PlayerGesture = 'greet' | 'affection' | 'hop' | 'stretch' | 'rest' | 'dance'
+ export type ReactionKind = 'tap' | PlayerGesture | 'celebrate' | 'celebrate-big'
+ type ReactionAction = PlayerGesture | 'celebrate' | 'celebrate-big'
+ export type Walk = {
+diff --git 1/src/pet/behaviour.dance.test.ts 2/src/pet/behaviour.dance.test.ts
+new file mode 100644
+index 0000000..4939268
+--- /dev/null
++++ 2/src/pet/behaviour.dance.test.ts
+@@ -0,0 +1,54 @@
++import { expect, it } from 'vitest'
++import { ACTION_MS } from '../character/motion'
++import { motionFor } from './activityMotion'
++import { initialPet, positionAt, react, step, tap, type PetState, type ReactionKind, type World } from './behaviour'
++const dance = 'dance' as ReactionKind
++const world: World = { free: () => true, mood: 'happy', away: false, mess: null }
++
++it('invites a finite dance from a fractional walk without relocating or changing tap alternation', () => {
++  const moving: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), reactions: 3, activity: { kind: 'walk', path: [{ tx: 3, ty: 2 }], stepStart: 0, then: 'idle' } }
++  const started = react(moving, 137, dance)
++  expect(started.activity).toMatchObject({ kind: 'react', action: 'dance', start: 137, until: 2937 })
++  expect(positionAt(started, 137)).toEqual(positionAt(moving, 137))
++  expect(started.reactions).toBe(3)
++  for (const species of ['mochi', 'bun', 'sprout'] as const) {
++    expect(motionFor(started, 137, species, 'happy', false).frame).toEqual(motionFor(moving, 137, species, 'happy', false).frame)
++    const sample = motionFor(started, 837, species, 'happy', false)
++    expect(sample).toMatchObject({ action: 'dance', durationMs: 2800, frame: { bodyY: 0, leftFoot: 0, rightFoot: 0, accentOpacity: 0, shadowScale: 1, shadowOpacity: 1 } })
++  }
++  expect(step(started, world, 2936, () => .99)).toBe(started)
++  const settled = step(started, world, 2937, () => .99)
++  expect(settled.activity.kind).toBe('walk')
++  expect(positionAt(settled, 2937)).toEqual(positionAt(started, 2937))
++  expect(tap(settled, 3000).activity).toMatchObject({ kind: 'react', action: 'affection' })
++})
++
++it('keeps all explicit choices busy with no deadline extension, queue or tap count change', () => {
++  const started = react(initialPet({ tx: 2, ty: 2 }, 0), 100, dance)
++  for (let n = 1; n <= 20; n++) for (const action of [dance, 'greet', 'affection', 'hop', 'stretch', 'rest'] as const) expect(react(started, 100 + n * 10, action)).toBe(started)
++  expect(started.pendingTap).toBe(false)
++  const expired = step(started, world, 10000, () => .99)
++  expect(expired.activity.kind).toBe('idle')
++  expect(expired.pendingTap).toBe(false)
++  expect(expired.reactions).toBe(0)
++})
++
++it.each(['celebrate', 'celebrate-big'] as const)('lets %s interrupt dance and declines a dance during that cheer', action => {
++  const initial = initialPet({ tx: 2, ty: 2 }, 0)
++  const started = react(initial, 100, dance)
++  const cheer = react(started, 800, action)
++  expect(cheer.activity).toMatchObject({ kind: 'react', action, until: 800 + ACTION_MS[action] })
++  expect(positionAt(cheer, 800)).toEqual(positionAt(started, 800))
++  expect(react(cheer, 900, dance)).toBe(cheer)
++  expect(cheer.pendingTap).toBe(false)
++  expect(step(cheer, world, 10000, () => .99).activity.kind).toBe('idle')
++})
++
++it.each(['sleep', 'sick'] as const)('keeps legacy %s reaction at the existing gaze-only notice', kind => {
++  const state: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), activity: { kind } }
++  const next = react(state, 100, dance)
++  expect(next.activity).toBe(state.activity)
++  expect(next.noticeStart).toBe(100)
++  expect(next.reactions).toBe(state.reactions)
++  expect(react(next, 200, dance)).toBe(next)
++})
+diff --git i/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index 9cfb2b9..8a604ac 100644
+--- i/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
+ import { catalogEntry } from '../catalog/objects'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+ import { ACTION_MS } from '../character/motion'
+-import { AFFECTION_LINES, CAUGHT_UP_LINES, CHECK_IN_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, REST_LINES, STRETCH_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
++import { AFFECTION_LINES, CAUGHT_UP_LINES, CHECK_IN_LINES, DANCE_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, REST_LINES, STRETCH_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
+ import { messiestObject } from '../domain/mess'
+ import type { NeglectLevel } from '../domain/neglect'
+ import type { ChoreStatus } from '../domain/schedule'
+@@ -75,7 +75,7 @@ export interface LivingRoomControl {
+   preview: (objectId: string | null) => void
+ }
+ 
+-const PLAYER_LINES: Record<PlayerGesture, string[]> = { greet: GREETING_LINES, affection: AFFECTION_LINES, hop: HOP_LINES, stretch: STRETCH_LINES, rest: REST_LINES }
++const PLAYER_LINES: Record<PlayerGesture, string[]> = { greet: GREETING_LINES, affection: AFFECTION_LINES, hop: HOP_LINES, stretch: STRETCH_LINES, rest: REST_LINES, dance: DANCE_LINES }
+ 
+ function objectDialogue({ objects, stages, neglect, chores }: Pick<LivingRoomProps, 'objects' | 'stages' | 'neglect' | 'chores'>, objectId: string, seed: number): string | null {
+   const target = objects.find(object => object.id === objectId)
+diff --git i/src/pet/PetPlay.tsx w/src/pet/PetPlay.tsx
+index af8cbba..9799a62 100644
+--- i/src/pet/PetPlay.tsx
++++ w/src/pet/PetPlay.tsx
+@@ -65,8 +65,10 @@ export function PetPlay({ petName, blocked, onReact, onCheckIn, onShowRoom, show
+           onClick={() => choose('hop')}>Happy hop</button>
+         <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
+           onClick={() => choose('stretch')}>Stretch together</button>
+-        <button type="button" className="btn pet-play-rest" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
++        <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
+           onClick={() => choose('rest')}>Rest together</button>
++        <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
++          onClick={() => choose('dance')}>Dance together</button>
+         </>}
+       </div>
+       {note && <p id={`${id}-note`} className="pet-play-note">{restingNote}</p>}
+diff --git i/src/pet/PetPlay.css w/src/pet/PetPlay.css
+index 4460568..61678d3 100644
+--- i/src/pet/PetPlay.css
++++ w/src/pet/PetPlay.css
+@@ -7,7 +7,6 @@
+ .pet-play-panel[hidden] { display: none; }
+ .pet-play-actions { display: flex; flex-wrap: wrap; gap: 10px; min-width: 0; }
+ .pet-play-actions .btn { flex: 1 1 5em; min-height: 48px; padding: 3px 6px; font-size: 0.875rem; }
+-.pet-play-actions .pet-play-rest { flex-basis: 100%; grid-column: 1 / -1; }
+ .pet-play-note, .pet-play-feedback { margin: 8px 0 0; font-size: 0.875rem; font-weight: 700; overflow-wrap: anywhere; }
+ .pet-play-note { color: var(--ink-soft); }
+ .pet-play-feedback:empty { margin: 0; }
+@@ -22,13 +21,6 @@
+   .pet-play-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
+   .pet-play-actions .btn { grid-column: auto; }
+   @container pet-play (min-width: 15rem) {
+-    .pet-play-actions { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+-    .pet-play-actions .btn { grid-column: span 2; }
+-    .pet-play-actions .btn:nth-child(n + 4) { grid-column: span 3; }
+-  }
+-  @container pet-play (min-width: 24rem) {
+-    .pet-play-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+-    .pet-play-actions .btn, .pet-play-actions .btn:nth-child(n + 4) { grid-column: auto; }
+-    .pet-play-actions .btn.pet-play-rest { grid-column: 1 / -1; }
++    .pet-play-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+   }
+ }
+diff --git i/src/pet/PetPlay.test.tsx w/src/pet/PetPlay.test.tsx
+index e3b338b..929e5a8 100644
+--- i/src/pet/PetPlay.test.tsx
++++ w/src/pet/PetPlay.test.tsx
+@@ -4,7 +4,7 @@ import { click, render } from '../test/react'
+ import { PetPlay, type PetPlayProps } from './PetPlay'
+ 
+ const cleanups: (() => void)[] = []
+-afterEach(() => { cleanups.splice(0).forEach(fn => fn()); vi.unstubAllGlobals() })
++afterEach(() => { cleanups.splice(0).forEach(fn => fn()); vi.restoreAllMocks(); vi.unstubAllGlobals() })
+ function mount(patch: Partial<PetPlayProps> = {}) {
+   const props: PetPlayProps = { petName: 'Bun', onReact: vi.fn(() => 'started' as const), ...patch }
+   const ui = render(<PetPlay {...props} />); cleanups.push(ui.unmount)
+@@ -107,7 +107,7 @@ it('starts collapsed and sends only explicit choices without creating scheduling
+ it.each(['travel', 'away', 'sick'] as const)('explains and blocks play while %s', blocked => {
+   const ui = mount({ blocked })
+   click(button(ui.container, 'Spend time together'))
+-  for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together']) {
++  for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together', 'Dance together']) {
+     expect((button(ui.container, label) as HTMLButtonElement).disabled).toBe(true)
+     click(button(ui.container, label))
+   }
+@@ -143,5 +143,30 @@ it('offers a quiet rest without starting a panel clock or duplicating successful
+   click(rest)
+   expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
+   expect(requestAnimationFrame).not.toHaveBeenCalled()
+-  expect([...ui.container.querySelectorAll('.pet-play-actions button')].map(node => node.textContent)).toEqual(['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together'])
++  expect([...ui.container.querySelectorAll('.pet-play-actions button')].map(node => node.textContent)).toEqual(['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together', 'Dance together'])
++})
++
++it('delegates Dance together without creating a second clock, write or success announcement', () => {
++  vi.stubGlobal('requestAnimationFrame', vi.fn())
++  const write = vi.spyOn(Storage.prototype, 'setItem')
++  const ui = mount()
++  click(button(ui.container, 'Spend time together'))
++  const control = button(ui.container, 'Dance together')
++  expect(control).toBeDefined()
++  click(control)
++  expect(ui.props.onReact).toHaveBeenCalledExactlyOnceWith('dance')
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++  expect(write).not.toHaveBeenCalled()
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
++  write.mockRestore()
++})
++
++it.each(['travel', 'away', 'sick'] as const)('declines a dance while %s without calling the resident', blocked => {
++  const ui = mount({ blocked })
++  click(button(ui.container, 'Spend time together'))
++  const control = button(ui.container, 'Dance together')
++  expect(control).toBeDefined()
++  expect(control.disabled).toBe(true)
++  click(control)
++  expect(ui.props.onReact).not.toHaveBeenCalled()
+ })
+diff --git i/src/pet/PetPlay.checkIn.test.tsx w/src/pet/PetPlay.checkIn.test.tsx
+index b9ac62b..07d41d3 100644
+--- i/src/pet/PetPlay.checkIn.test.tsx
++++ w/src/pet/PetPlay.checkIn.test.tsx
+@@ -39,11 +39,11 @@ it.each(['away', 'sick'] as const)('explains a %s Check in that requires the res
+   expect(ui.props.onCheckIn).not.toHaveBeenCalled()
+ })
+ 
+-it.each([undefined, 'travel'] as const)('retains the regular five choices when mode is %s', blocked => {
++it.each([undefined, 'travel'] as const)('retains the regular six choices when mode is %s', blocked => {
+   const ui = mount({ blocked })
+   expect(ui.button('Check in')).toBeUndefined()
+   const buttons = [...ui.container.querySelectorAll('.pet-play-actions button')] as HTMLButtonElement[]
+-  expect(buttons.map(node => node.textContent)).toEqual(['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together'])
++  expect(buttons.map(node => node.textContent)).toEqual(['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together', 'Dance together'])
+   expect(buttons.every(node => node.disabled === Boolean(blocked))).toBe(true)
+   click(ui.button('Wave'))
+   expect(ui.props.onReact).toHaveBeenCalledTimes(blocked ? 0 : 1)
+diff --git i/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index 2fc78ef..c818ecd 100644
+--- i/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -1269,3 +1269,56 @@ it('keeps reduced rest grounded through its deadline and expires an offscreen re
+   expect(frames.size).toBe(0)
+   expect(art(ui.container).innerHTML).toBe(still)
+ })
++
++it.each(['mochi', 'bun', 'sprout'] as const)('dances a moving %s at its drawn position with one finite clock and chore priority', species => {
++  const control = createRef<LivingRoomControl>()
++  const dance = 'dance' as Parameters<LivingRoomControl['respond']>[0]
++  const scene = { ...props, pet: { ...pet, species }, mood: 'happy' as const, objects: [plant], control, initialTile: { tx: 7, ty: 7 } }
++  const ui = mount(<StrictMode><LivingRoom {...scene} /></StrictMode>)
++  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
++  frame(137)
++  const resident = ui.container.querySelector('.room-pet')!, node = art(ui.container), position = resident.getAttribute('transform')
++  act(() => { expect(control.current!.respond(dance)).toBe('started') })
++  expect(resident.getAttribute('transform')).toBe(position)
++  const heard = ui.container.querySelector('[aria-live]')!.textContent
++  expect(heard).toMatch(/dance|sway|rhythm/i)
++  frame(1200)
++  expect(resident.getAttribute('transform')).toBe(position)
++  const expected = motionFor({ ...initialPet(scene.initialTile, 137), activity: { kind: 'react', action: dance, start: 137, until: 2937 } }, 1200, species, 'happy', false).frame
++  const left = Number(node.querySelector('[data-arm="left"]')!.getAttribute('transform')!.match(/rotate\(([^ ]+)/)![1])
++  expect(left).toBeCloseTo(expected.leftArm, 8)
++  expect(left).toBeGreaterThan(3)
++  for (let n = 0; n < 10; n++) act(() => { expect(control.current!.respond(dance)).toBe('busy') })
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
++  expect(frames.size).toBe(1)
++  ui.rerender(<StrictMode><LivingRoom {...scene} celebrate={{ key: 501, choreName: 'Water plant' }} /></StrictMode>)
++  expect(ui.container.querySelector('[aria-live]')!.textContent).not.toBe(heard)
++  act(() => { expect(control.current!.respond(dance)).toBe('busy') })
++  expect(art(ui.container)).toBe(node)
++})
++
++it('keeps reduced dance still through its deadline and expires it offscreen without replay', () => {
++  const visibility = observeResident()
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const control = createRef<LivingRoomControl>()
++  const dance = 'dance' as Parameters<LivingRoomControl['respond']>[0]
++  const ui = mount(<LivingRoom {...props} mood="content" control={control} />)
++  act(() => { expect(control.current!.respond(dance)).toBe('started') })
++  frame(100)
++  const still = art(ui.container).innerHTML
++  expect(ui.container.querySelector('[data-expression="cheering"]')).not.toBeNull()
++  frame(2799)
++  expect(art(ui.container).innerHTML).toBe(still)
++  expect(frames.size).toBe(1)
++  frame(2800)
++  expect(frames.size).toBe(0)
++  expect(ui.container.querySelector('[data-expression="content"]')).not.toBeNull()
++  const settled = art(ui.container).innerHTML
++  visibility.show(false)
++  act(() => { expect(control.current!.respond(dance)).toBe('started') })
++  expect(frames.size).toBe(0)
++  now = 5700
++  visibility.show(true)
++  expect(frames.size).toBe(0)
++  expect(art(ui.container).innerHTML).toBe(settled)
++})
+diff --git i/src/screens/WardrobePreview.tsx w/src/screens/WardrobePreview.tsx
+index 0e76260..73acfe2 100644
+--- i/src/screens/WardrobePreview.tsx
++++ w/src/screens/WardrobePreview.tsx
+@@ -7,7 +7,7 @@ import { usePetMotion } from '../pet/usePetMotion'
+ import { SegThumb } from '../shell/SegThumb'
+ import { describeOutfit, WARDROBE_POSES } from './wardrobeModel'
+ 
+-type PreviewAction = 'greet' | 'affection' | 'celebrate' | 'stretch' | 'rest'
++type PreviewAction = 'greet' | 'affection' | 'celebrate' | 'stretch' | 'rest' | 'dance'
+ interface PreviewRun { action: PreviewAction; start: number; paused: boolean }
+ 
+ /** One finite, on-demand clock, isolated from the wardrobe's item grid. */
+@@ -88,6 +88,8 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
+         onClick={() => toggle('stretch')}>{active?.action === 'stretch' ? 'Stop stretch' : 'Stretch'}</button>
+       <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'rest')}
+         onClick={() => toggle('rest')}>{active?.action === 'rest' ? 'Stop rest' : 'Rest'}</button>
++      <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'dance')}
++        onClick={() => toggle('dance')}>{active?.action === 'dance' ? 'Stop dance' : 'Dance'}</button>
+     </div>
+     <button type="button" className="btn btn-sm btn-quiet wd-show-preview" aria-label={`Show preview of ${pet.name}`} onClick={showPreview}>Show preview</button>
+     {reducedMotion && <p className="wd-note wd-motion-note">Motion previews are off while reduced motion is on.</p>}
+diff --git i/src/screens/Wardrobe.css w/src/screens/Wardrobe.css
+index 72cd98d..7e89873 100644
+--- i/src/screens/Wardrobe.css
++++ w/src/screens/Wardrobe.css
+@@ -31,11 +31,10 @@
+ .wd-poses { align-self: stretch; }
+ .wd-motion { display: grid; grid-template-columns: minmax(0, 1fr); width: min(100%, 360px); min-width: 0; gap: 8px; flex: none; }
+ .wd-motion .btn { min-width: 44px; padding: 0 6px; line-height: 1.2; }
+-/* Keep five finite previews in two balanced rows when their labels fit. */
++/* Keep six finite previews in two balanced rows when their labels fit. */
+ @container wardrobe-preview (min-width: 12rem) {
+   .wd-motion { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+-  .wd-motion .btn:nth-child(-n+3) { grid-column: span 2; }
+-  .wd-motion .btn:nth-child(n+4) { grid-column: span 3; }
++  .wd-motion .btn { grid-column: span 2; }
+ }
+ .wd-motion-note { max-width: 32ch; text-align: center; }
+ .wd-tabs { position: sticky; top: 0; z-index: 1; flex-shrink: 0; }
+diff --git i/src/screens/Wardrobe.test.tsx w/src/screens/Wardrobe.test.tsx
+index b6ceddc..8351ce4 100644
+--- i/src/screens/Wardrobe.test.tsx
++++ w/src/screens/Wardrobe.test.tsx
+@@ -226,3 +226,61 @@ it('pauses hidden pats, expires on return and ignores callbacks after unmount',
+   act(() => stale(3000))
+   expect(frames.size).toBe(0)
+ })
++
++it('previews and pauses the grounded dance on the same isolated subtree and resumes only its remaining duration', () => {
++  const write = vi.spyOn(Storage.prototype, 'setItem'), node = preview().querySelector('.ch-animated')
++  const control = button('Dance'), neutral = body()
++  act(() => control.focus()); click(control); frame(1176)
++  const renders = vi.mocked(model.itemsForSlot).mock.calls.length
++  expect(body()).not.toBe(neutral)
++  expect(preview().querySelector('[data-character-accents]')!.getAttribute('opacity')).toBe('0')
++  expect(button('Stop dance')).toBe(control); expect(document.activeElement).toBe(control)
++  expect(button('Wave').disabled).toBe(true); expect(button('Rest').disabled).toBe(true)
++  const pause = ui.container.querySelector('.wd-pause-preview')!
++  click(pause)
++  const held = preview().querySelector('.ch-animated')!.outerHTML
++  expect(frames.size).toBe(0)
++  click(ui.container.querySelector('.wd-mirror-preview')!)
++  expect(preview().querySelector('[data-preview-facing]')!.getAttribute('data-preview-facing')).toBe('mirrored')
++  frame(60000)
++  expect(preview().querySelector('.ch-animated')!.outerHTML).toBe(held)
++  expect(frames.size).toBe(0)
++  click(pause)
++  expect(frames.size).toBe(1)
++  frame(61623); expect(button('Stop dance')).toBe(control)
++  frame(61624); expect(button('Dance')).toBe(control)
++  expect(frames.size).toBe(0); expect(body()).toBe(neutral)
++  expect(preview().querySelector('.ch-animated')).toBe(node)
++  expect(model.itemsForSlot).toHaveBeenCalledTimes(renders)
++  expect(changed).not.toHaveBeenCalled(); expect(write).not.toHaveBeenCalled()
++})
++
++it('lets Stop and a static pose cancel dance without leaving callbacks', () => {
++  click(button('Dance')); frame(600)
++  click(button('Stop dance')); expect(frames.size).toBe(0)
++  click(button('Dance')); frame(1000)
++  click(button('Sleepy')); expect(frames.size).toBe(0)
++  expect(preview().querySelector('[data-character-pose="sleeping"]')).not.toBeNull()
++  click(button('Dance')); expect(button('Happy').getAttribute('aria-pressed')).toBe('true')
++  expect(frames.size).toBe(1)
++  ui.unmount(); expect(frames.size).toBe(0)
++})
++
++it('cancels a held dance immediately on live reduction and never replays it', () => {
++  click(button('Dance')); frame(800)
++  click(ui.container.querySelector('.wd-pause-preview')!)
++  expect(frames.size).toBe(0)
++  preference(true)
++  expect(button('Dance').disabled).toBe(true)
++  expect(body()).toMatch(/^translate\(0 0\)/)
++  expect(frames.size).toBe(0)
++  preference(false)
++  expect(button('Dance').disabled).toBe(false); expect(frames.size).toBe(0)
++})
++
++it('expires an unpaused hidden dance by its absolute deadline and does not replay', () => {
++  click(button('Dance')); frame(700)
++  visibility(true); expect(frames.size).toBe(0)
++  now = 10000; visibility(false); frame(now)
++  expect(button('Dance')).toBeTruthy(); expect(frames.size).toBe(0)
++})
+diff --git 1/scripts/browser/pet-dance.test.mjs 2/scripts/browser/pet-dance.test.mjs
+new file mode 100644
+index 0000000..be6517d
+--- /dev/null
++++ 2/scripts/browser/pet-dance.test.mjs
+@@ -0,0 +1,99 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, snapshot } from './helpers.mjs'
++
++const out = process.env.CHORE_DANCE_CAPTURE_DIR
++const contacts = resident => resident.evaluate(node => [...node.querySelectorAll('[data-foot] ellipse')].map(foot => {
++  const point = new DOMPoint(Number(foot.getAttribute('cx')), Number(foot.getAttribute('cy'))).matrixTransform(foot.getScreenCTM())
++  return { x: point.x, y: point.y }
++}))
++async function instrument(page, freeze) {
++  if (freeze) { await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000) }
++  await page.addInitScript(() => {
++    Math.random = () => .99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__danceFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__danceFrames.delete(id); callback(now) })
++      window.__danceFrames.add(id); return id
++    }
++    window.cancelAnimationFrame = id => { window.__danceFrames.delete(id); cancel(id) }
++  })
++  await page.reload(); await page.locator('.room-pet').waitFor()
++}
++
++for (const species of ['mochi', 'bun', 'sprout']) test(`keyboard ${species} dance keeps both screen contacts and its original deadline`, async t => {
++  const page = await browserApp(t, { viewport: { width: 1280, height: 800 }, reducedMotion: 'no-preference' })
++  await page.evaluate(species => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
++      read.onsuccess = () => { const saved = read.result; Object.values(saved.tables.pets)[0].species = species; saved.outbox = {}; store.put(saved, 'snapshot') }
++      tx.oncomplete = () => { db.close(); resolve() }; tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), species)
++  await instrument(page, true)
++  const saved = (await snapshot(page)).tables, resident = page.locator('.room-pet')
++  const art = await resident.locator('.ch-animated').elementHandle(), position = await resident.getAttribute('transform'), before = await contacts(resident)
++  const idleArms = await resident.locator('[data-arm]').evaluateAll(nodes => nodes.map(node => node.getAttribute('transform')))
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  const rest = page.getByRole('button', { name: 'Rest together', exact: true }), dance = page.getByRole('button', { name: 'Dance together', exact: true })
++  await rest.focus(); await page.keyboard.press('Tab')
++  assert.equal(await dance.evaluate(node => node === document.activeElement && node.matches(':focus-visible')), true)
++  await page.keyboard.press('Enter')
++  const heard = await page.locator('.living-room [aria-live="polite"]').textContent()
++  assert.match(heard, /dance|sway|rhythm/i)
++  const samples = []
++  for (let elapsed = 200; elapsed <= 2600; elapsed += 200) {
++    await page.clock.runFor(200)
++    const feet = await contacts(resident), body = await resident.locator('[data-character-body]').getAttribute('transform')
++    for (let i = 0; i < before.length; i++) assert.ok(Math.hypot(feet[i].x - before[i].x, feet[i].y - before[i].y) < .005, 'actual feet retain both screen-space ground contacts')
++    assert.equal(await resident.getAttribute('transform'), position)
++    assert.equal(await page.evaluate(() => window.__danceFrames.size), 1)
++    assert.equal(await resident.locator('[data-character-accents]').getAttribute('opacity'), '0')
++    samples.push({ elapsed, feet, body })
++    if (elapsed === 1200) {
++      await page.keyboard.press('Space')
++      assert.match(await page.locator('.pet-play-feedback').textContent(), /busy/i)
++      assert.equal(await page.locator('.living-room [aria-live="polite"]').textContent(), heard)
++      if (out) { await mkdir(out, { recursive: true }); await page.screenshot({ path: join(out, `dance-${species}.png`) }) }
++    }
++  }
++  assert.ok(samples.some(sample => !sample.body.startsWith('translate(0 0)')), 'the normal-motion torso visibly sways')
++  await page.clock.runFor(216)
++  assert.deepEqual(await resident.locator('[data-arm]').evaluateAll(nodes => nodes.map(node => node.getAttribute('transform'))), idleArms, 'busy retry cannot extend the2800ms deadline')
++  assert.equal(await page.evaluate(() => window.__danceFrames.size), 1, 'normal idle retains the single resident clock')
++  assert.equal(await resident.locator('.ch-animated').evaluate((node, old) => node === old, art), true)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  if (out) await writeFile(join(out, `dance-${species}.json`), JSON.stringify({ species, before, samples, heard, browser: page.context().browser().version(), method: 'Native Tab/Enter/Space, deterministic native clock,13sampled screen-space foot contacts, busy at1200, completion by2816. Unchanged savedtables and resident art identity.' }, null, 2) + '\n')
++})
++
++test('an enlarged-text offscreen dance stays still and expires without replay', { timeout: 15000 }, async t => {
++  const page = await browserApp(t, { viewport: { width: 320, height: 640 } })
++  await instrument(page, false)
++  await page.evaluate(() => { document.documentElement.style.fontSize = '200%' })
++  const saved = (await snapshot(page)).tables, resident = page.locator('.room-pet'), idle = await resident.locator('.ch-animated').innerHTML(), idleBody = await resident.locator('[data-character-body]').getAttribute('transform')
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  const dance = page.getByRole('button', { name: 'Dance together', exact: true }), show = page.getByRole('button', { name: 'Show room with Mochi', exact: true })
++  const scrollAway = async () => { await dance.scrollIntoViewIfNeeded(); await page.waitForFunction(() => document.querySelector('.room-pet').getBoundingClientRect().bottom < 0); await page.waitForFunction(() => window.__danceFrames.size === 0) }
++  await scrollAway(); await dance.click()
++  const heard = await page.locator('.living-room [aria-live="polite"]').textContent()
++  assert.match(heard, /dance|sway|rhythm/i)
++  assert.equal(await page.evaluate(() => window.__danceFrames.size), 0)
++  await show.focus(); await page.keyboard.press('Enter')
++  await page.waitForFunction(() => window.__danceFrames.size === 1)
++  assert.equal(await resident.locator('[data-expression]').getAttribute('data-expression'), 'cheering')
++  assert.equal(await resident.locator('[data-character-body]').getAttribute('transform'), idleBody)
++  await scrollAway(); await page.waitForTimeout(2900)
++  assert.equal(await page.evaluate(() => window.__danceFrames.size), 0)
++  await show.focus(); await page.keyboard.press('Enter')
++  // Zero RAF already holds offscreen; await the asynchronous native observer's settled paint too.
++  await page.waitForFunction(() => window.__danceFrames.size === 0 && document.querySelector('.room-pet [data-expression="content"]'))
++  assert.equal(await resident.locator('.ch-animated').innerHTML(), idle)
++  assert.equal(await page.locator('.living-room [aria-live="polite"]').textContent(), heard)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
+diff --git i/scripts/browser/pet-play.test.mjs w/scripts/browser/pet-play.test.mjs
+index 110e767..e3854bc 100644
+--- i/scripts/browser/pet-play.test.mjs
++++ w/scripts/browser/pet-play.test.mjs
+@@ -107,12 +107,14 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 361, height: 664 }
+       const boxes = await Promise.all([wave, pats, hop, stretch, rest].map(control => control.boundingBox()))
+       assert.ok(boxes.slice(0, 3).every(box => Math.abs(box.y - boxes[0].y) < .5))
+       assert.ok(Math.abs(boxes[3].y - boxes[4].y) < .5)
+-      assert.ok(boxes[3].y >= boxes[0].y + boxes[0].height + 8, 'narrow player panels retain two rows with three choices above two')
++      assert.ok(boxes[3].y >= boxes[0].y + boxes[0].height + 8, 'narrow player panels retain two rows with three choices above three')
+       assert.ok(Math.abs(boxes[3].width - boxes[4].width) < .5)
+     }
+     if (viewport.width === 1280) {
+-      const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
+-      assert.ok(boxes.every(box => Math.abs(box.y - boxes[0].y) < .5), 'the wide player panel fits all four controls in one row')
++      const rest = page.getByRole('button', { name: 'Rest together', exact: true }), dance = page.getByRole('button', { name: 'Dance together', exact: true })
++      const boxes = await Promise.all([wave, pats, hop, stretch, rest, dance].map(control => control.boundingBox()))
++      assert.ok(boxes.slice(0, 3).every(box => Math.abs(box.y - boxes[0].y) < .5), 'the wide panel fits three choices in the first row')
++      assert.ok(boxes.slice(3).every(box => Math.abs(box.y - boxes[3].y) < .5), 'the wide panel fits three choices in the second row')
+     }
+     const room = await page.locator('.home-scene .home-room').boundingBox()
+     assert.ok(room.height >= originalRoom.height - .5, 'expanded player choices must preserve room size')
+diff --git i/scripts/browser/pet-play-layout.test.mjs w/scripts/browser/pet-play-layout.test.mjs
+index f2b4fab..0db13e5 100644
+--- i/scripts/browser/pet-play-layout.test.mjs
++++ w/scripts/browser/pet-play-layout.test.mjs
+@@ -33,11 +33,10 @@ for (const large of [false, true]) test(`player rows stay balanced and readable
+       const row = rows.find(row => Math.abs(row.y - box.y) < .5)
+       if (row) row.count++; else rows.push({ y: box.y, count: 1 })
+     }
+-    assert.ok(['1,1,1,1,1', '3,2', '4,1'].includes(rows.map(row => row.count).join(',')), `balanced rows at${viewport.width}px/${large ? 200 : 100}%: ${rows.map(row => row.count)}`)
+-    if(rows.length===2&&rows[0].count===4)assert.ok(Math.abs(actions.at(-1).width-layout.actionsWidth)<1,'wide Rest together spans the complete action row')
+-    if(rows.length===2&&rows[0].count===3){
+-      assert.ok(Math.abs(actions[3].width-actions[4].width)<.5,'the two quiet choices share the second row evenly')
+-      assert.ok(Math.abs(actions[3].width+actions[4].width+10-layout.actionsWidth)<1,'the quiet row fills the panel')
++    assert.ok(['1,1,1,1,1,1', '3,3'].includes(rows.map(row => row.count).join(',')), `balanced rows at${viewport.width}px/${large ? 200 : 100}%: ${rows.map(row => row.count)}`)
++    if (rows.length === 2) {
++      assert.ok(actions.every(box => Math.abs(box.width - actions[0].width) < .5), 'all six choices share equal widths')
++      assert.ok(Math.abs(actions[3].width + actions[4].width + actions[5].width + 20 - layout.actionsWidth) < 1, 'the quiet and dance row fills the panel')
+     }
+     for (const box of layout.boxes) {
+       assert.ok(box.width >= 44 && box.height >= 44, `${box.label} retains a44px target`)
+@@ -46,7 +45,7 @@ for (const large of [false, true]) test(`player rows stay balanced and readable
+     }
+     assert.ok(layout.scrollWidth <= layout.clientWidth + 1, 'the player panel has no horizontal overflow')
+     if (!large) assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
+-    for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together']) {
++    for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together', 'Dance together']) {
+       const control = page.getByRole('button', { name: label, exact: true })
+       await page.keyboard.press('Tab')
+       assert.equal(await control.evaluate(node => node === document.activeElement && node.matches(':focus-visible')), true, 'native tab order retains a visible focus ring')
+@@ -70,5 +69,5 @@ for (const large of [false, true]) test(`player rows stay balanced and readable
+   }
+   assert.deepEqual((await snapshot(page)).tables, saved)
+   if (process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR) await writeFile(join(process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR, `panel-${large ? 200 : 100}.json`), JSON.stringify({ samples, scope: 'Native player panel rows, actual label rectangles, target and focus bounds; large text changes root font size, not browser zoom or whole-app accessibility certification.' }, null, 2) + '\n')
+-  t.diagnostic(`Chromium ${page.context().browser().version()}; ${samples.length}layouts; compact3+2/wide4+1/large-text1column, readable targets and focus, unchanged saved tables.`)
++  t.diagnostic(`Chromium ${page.context().browser().version()}; ${samples.length}layouts; six choices in3+3rows/large-text1column, readable targets and focus, unchanged saved tables.`)
+ })
+diff --git i/scripts/browser/wardrobe-motion.test.mjs w/scripts/browser/wardrobe-motion.test.mjs
+index 11bb928..b3952c5 100644
+--- i/scripts/browser/wardrobe-motion.test.mjs
++++ w/scripts/browser/wardrobe-motion.test.mjs
+@@ -81,7 +81,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
+     const rowCounts = Object.values(geometry.movement.reduce((rows, control) => {
+       const y = Math.round(control.y); rows[y] = (rows[y] ?? 0) + 1; return rows
+     }, {}))
+-    assert.deepEqual(rowCounts, [3, 2], 'five movement controls form two balanced rows for the actual stage width')
++    assert.deepEqual(rowCounts, [3, 3], 'six movement controls form two balanced rows for the actual stage width')
+     assert.ok(geometry.scroll <= width, `horizontal overflow: ${JSON.stringify(geometry)}`)
+     assert.ok(geometry.art.h >= 80, `preview needs readable height: ${JSON.stringify(geometry)}`)
+     assert.ok(geometry.tabButtons.length >= 5)
+@@ -166,7 +166,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
+   })
+ }
+ 
+-for (const action of ['Hop', 'Gentle pats', 'Stretch', 'Rest']) test(`wardrobe ${action} live reduced motion settles the preview and does not restart when restored`, { timeout: 15000 }, async t => {
++for (const action of ['Hop', 'Gentle pats', 'Stretch', 'Rest', 'Dance']) test(`wardrobe ${action} live reduced motion settles the preview and does not restart when restored`, { timeout: 15000 }, async t => {
+   const page = await wardrobeApp(t, { viewport: { width: 320, height: 568 } })
+   const preview = page.locator('.wd-preview')
+   await page.getByRole('button', { name: action, exact: true }).click()
+diff --git i/scripts/browser/wardrobe-rest.test.mjs w/scripts/browser/wardrobe-rest.test.mjs
+index 97407a1..b34be7c 100644
+--- i/scripts/browser/wardrobe-rest.test.mjs
++++ w/scripts/browser/wardrobe-rest.test.mjs
+@@ -101,7 +101,7 @@ test('wardrobe Rest rows, text and keyboard outlines fit ordinary and enlarged l
+     assert.ok(geometry.art.h>=80,`readable preview:${JSON.stringify({width,height,text,geometry})}`)
+     for(const c of geometry.controls){assert.ok(c.w>=44&&c.h>=44,JSON.stringify(c));assert.ok(c.fits,JSON.stringify(c));assert.ok(c.x>=0&&c.right<=width,JSON.stringify(c));assert.ok(c.y>=geometry.stage.y&&c.bottom<=geometry.stage.bottom,JSON.stringify(c))}
+     const rows=Object.values(geometry.controls.reduce((a,c)=>{const y=Math.round(c.y);a[y]=(a[y]??0)+1;return a},{}))
+-    assert.ok(JSON.stringify(rows)==='[3,2]' || text===200 && JSON.stringify(rows)==='[1,1,1,1,1]',`balanced rows or a single column for enlarged text:${JSON.stringify({width,height,text,rows})}`)
++    assert.ok(JSON.stringify(rows)==='[3,3]' || text===200 && JSON.stringify(rows)==='[1,1,1,1,1,1]',`balanced rows or a single column for enlarged text:${JSON.stringify({width,height,text,rows})}`)
+     const focus=await page.getByRole('button',{name:'Stop rest',exact:true}).evaluate(focusGeometry)
+     assert.ok(focus.focusVisible&&focus.ring>0&&focus.clear,JSON.stringify({width,height,text,focus}))
+     const sample={width,height,text,geometry,rows,focus};samples.push(sample)
+diff --git i/scripts/browser/wardrobe-show.test.mjs w/scripts/browser/wardrobe-show.test.mjs
+index 1f0baba..c74babc 100644
+--- i/scripts/browser/wardrobe-show.test.mjs
++++ w/scripts/browser/wardrobe-show.test.mjs
+@@ -59,11 +59,11 @@ for(const policy of['system','device'])test(`Show wardrobe preview works during
+  const still=await preview.innerHTML();await page.clock.runFor(3000);assert.equal(await preview.innerHTML(),still);assert.deepEqual((await snapshot(page)).tables,before)
+  await capture(page,`wardrobe-show-reduced-${policy}`,{policy,visible,browser:page.context().browser().version(),method:'Production native Show preview with settled reduced motion; actual art visibility/focus, zero pending preview frames, unchanged saved tables.'})
+ })
+-test('ordinary wardrobe layouts retain their five controls without an extra visible view button',{timeout:20000},async t=>{
++test('ordinary wardrobe layouts retain their six controls without an extra visible view button',{timeout:20000},async t=>{
+  const page=await wardrobe(t,{width:320,height:568},100),samples=[]
+  for(const[width,height]of[[320,568],[390,664],[640,360],[844,390],[1280,800]]){
+   await page.setViewportSize({width,height});assert.equal(await page.getByRole('button',{name:'Show preview of Mochi',exact:true}).count(),0)
+-  assert.equal(await page.locator('.wd-motion button:visible').count(),5)
++  assert.equal(await page.locator('.wd-motion button:visible').count(),6)
+   const art=await page.locator('.wd-preview').boundingBox();assert.ok(art.height>=80)
+   samples.push({width,height,art})
+  }
+diff --git i/scripts/browser/wardrobe-mirror.test.mjs w/scripts/browser/wardrobe-mirror.test.mjs
+index 3184f3e..4c92daa 100644
+--- i/scripts/browser/wardrobe-mirror.test.mjs
++++ w/scripts/browser/wardrobe-mirror.test.mjs
+@@ -181,7 +181,7 @@ for (const species of ['mochi', 'bun', 'sprout']) test(`mirrored dressed ${speci
+   assert.equal(await page.evaluate(() => window.__mirrorFrames.size), 0)
+   assert.deepEqual((await snapshot(page)).tables, saved)
+   const clearance = []
+-  for (const [action, duration] of [['Wave', 1200], ['Gentle pats', 1600], ['Hop', 1800], ['Stretch', 2400], ['Rest', 2400]]) {
++  for (const [action, duration] of [['Wave', 1200], ['Gentle pats', 1600], ['Hop', 1800], ['Stretch', 2400], ['Rest', 2400], ['Dance', 2800]]) {
+     await page.getByRole('button', { name: action, exact: true }).click()
+     let elapsed = 0
+     for (const phase of [.25, .5, .75]) {
+@@ -206,7 +206,7 @@ for (const species of ['mochi', 'bun', 'sprout']) test(`mirrored dressed ${speci
+     assert.equal(await page.evaluate(() => window.__mirrorFrames.size), 0)
+   }
+   assert.deepEqual((await snapshot(page)).tables, saved)
+-  if (out) await writeFile(join(out, `wardrobe-mirror-clearance-${species}.json`), JSON.stringify({ species, samples: clearance, method: 'All five finite movements at .25/.5/.75 in both directions; body and active accents use nonintersecting rectangles where possible and native painted-geometry hit tests on a 1px grid inside any bounding overlap; exact inline styles restored, sampled child art unchanged, one clock then finite expiry. 30 configurations per species, not every frame.' }, null, 2) + '\n')
++  if (out) await writeFile(join(out, `wardrobe-mirror-clearance-${species}.json`), JSON.stringify({ species, samples: clearance, method: 'All six finite movements at .25/.5/.75 in both directions; body and active accents use nonintersecting rectangles where possible and native painted-geometry hit tests on a 1px grid inside any bounding overlap; exact inline styles restored, sampled child art unchanged, one clock then finite expiry. 36 configurations per species, not every frame.' }, null, 2) + '\n')
+ })
+ 
+ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [1280, 800]]) for (const text of [100, 200]) {
+@@ -224,7 +224,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
+     assert.equal(view.overlap, 0); assert.equal(view.accentOverlap, 0); assert.equal(view.tabsVisible, true); assert.equal(view.focusVisible, true); assert.equal(view.ringClear, true)
+     assert.equal(view.horizontalOverflow, 0); assert.equal(view.frames, 0)
+     assert.ok(view.art.height >= 90, JSON.stringify(view))
+-    assert.equal(await page.locator('.wd-motion button:visible').count(), 5)
++    assert.equal(await page.locator('.wd-motion button:visible').count(), 6)
+     assert.ok(view.button.x >= 0 && view.button.right <= width)
+   })
+ }
+diff --git i/scripts/browser/wardrobe-pause.test.mjs w/scripts/browser/wardrobe-pause.test.mjs
+index 9d429b9..5c92ad3 100644
+--- i/scripts/browser/wardrobe-pause.test.mjs
++++ w/scripts/browser/wardrobe-pause.test.mjs
+@@ -118,7 +118,7 @@ async function geometry(control) {
+ const pauseName = 'Pause movement preview of Mochi', resumeName = 'Resume movement preview of Mochi'
+ const actions = [
+   ['Wave', 'Stop wave', 1200], ['Gentle pats', 'Stop pats', 1600], ['Hop', 'Stop hop', 1800],
+-  ['Stretch', 'Stop stretch', 2400], ['Rest', 'Stop rest', 2400],
++  ['Stretch', 'Stop stretch', 2400], ['Rest', 'Stop rest', 2400], ['Dance', 'Stop dance', 2800],
+ ]
+ 
+ test('initial pause control is disabled without starting a clock or shrinking short-phone art', async t => {
+@@ -133,7 +133,7 @@ test('initial pause control is disabled without starting a clock or shrinking sh
+   assert.equal(view.horizontalOverflow, 0)
+ })
+ 
+-for (const species of ['mochi', 'bun', 'sprout']) test(`dressed ${species} pauses all five previews in both facings and resumes the remaining duration`, async t => {
++for (const species of ['mochi', 'bun', 'sprout']) test(`dressed ${species} pauses all six previews in both facings and resumes the remaining duration`, async t => {
+   const page = await wardrobe(t, { species }), preview = page.locator('.wd-preview')
+   await page.getByRole('button', { name: pauseName, exact: true }).waitFor()
+   const saved = (await snapshot(page)).tables
+@@ -197,7 +197,7 @@ for (const species of ['mochi', 'bun', 'sprout']) test(`dressed ${species} pause
+     clearance.push({ action, duration, phase, activeElapsed, remaining, before, reflected, normal, flipped, heldClockAdvanceMs: 60000 })
+   }
+   assert.deepEqual((await snapshot(page)).tables, saved)
+-  if (out) await writeFile(join(out, `wardrobe-pause-clearance-${species}.json`), JSON.stringify({ species, samples: clearance, method: '15 separate movement runs per species near .25/.5/.75 delivered phases. Each held60s, exact art/nodes, zero paused RAF, reflected contacts, two corners x two facings =60 geometry views per species; 1px painted hit sampling inside bounds only; SVG pointer-events presentation attributes and exact button inline styles restored. Resume verified at remaining minus24ms and plus24ms, not exact native millisecond delivery. Exact millisecond deadline covered separately by unit tests.' }, null, 2)+'\n')
++  if (out) await writeFile(join(out, `wardrobe-pause-clearance-${species}.json`), JSON.stringify({ species, samples: clearance, method: '18 separate movement runs per species near .25/.5/.75 delivered phases. Each held60s, exact art/nodes, zero paused RAF, reflected contacts, two corners x two facings =72 geometry views per species; 1px painted hit sampling inside bounds only; SVG pointer-events presentation attributes and exact button inline styles restored. Resume verified at remaining minus24ms and plus24ms, not exact native millisecond delivery. Exact millisecond deadline covered separately by unit tests.' }, null, 2)+'\n')
+ })
+ 
+ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [1280, 800]]) for (const text of [100, 200]) {
+@@ -218,7 +218,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
+       assert.equal(sample.ringClear, true); assert.equal(sample.frames, 0); assert.equal(sample.horizontalOverflow, 0)
+     }
+     assert.equal(view.focusVisible, true); assert.equal(view.tabsVisible, true)
+-    assert.ok(view.art.height >= 90); assert.equal(await page.locator('.wd-motion button:visible').count(), 5)
++    assert.ok(view.art.height >= 90); assert.equal(await page.locator('.wd-motion button:visible').count(), 6)
+     await page.keyboard.press('Enter'); assert.equal(await page.evaluate(() => window.__pauseFrames.size), 1)
+     await page.clock.runFor(1248); assert.equal(await page.evaluate(() => window.__pauseFrames.size), 0)
+   })
+diff --git i/docs/ART.md w/docs/ART.md
+index e21beb0..68077dd 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -156,7 +156,7 @@ The deterministic motion panel uses the production sampler and renderer. Explici
+ 
+ Use playback and real-room checks to judge grounding, clipping, interrupted motion, and gaze. Numeric continuity and SVG attachment tests support that review but do not establish visual quality by themselves.
+ 
+-The wardrobe main preview uses the sampled renderer at rest and offers finite Wave, Gentle pats, Hop, Stretch and Rest controls. Pats use the same 1600ms affection as the resident, including its calmer appendage follow-through. The active control becomes its Stop button; other movement controls are disabled while it plays. Pose selection stops playback. Live reduced motion settles before paint and does not replay when restored. Five 44px-minimum controls form balanced 3+2 rows when the preview panel is at least 12rem wide; tighter panels give each control its own row. Labels wrap while the character keeps a readable area. Stretch reuses the grounded 2400ms player response and the same finite preview clock, stop control and cancellation policies. Item grids and outfit thumbnails retain their static renderers, and frame updates stay inside the preview. Previewing never saves pet changes.
++The wardrobe main preview uses the sampled renderer at rest and offers finite Wave, Gentle pats, Hop, Stretch, Rest and Dance controls. Pats use the same 1600ms affection as the resident, including its calmer appendage follow-through. The active control becomes its Stop button; other movement controls are disabled while it plays. Pose selection stops playback. Live reduced motion settles before paint and does not replay when restored. Six 44px-minimum controls form balanced 3+3 rows when the preview panel is at least 12rem wide; tighter panels give each control its own row. Labels wrap while the character keeps a readable area. Stretch reuses the grounded 2400ms player response and the same finite preview clock, stop control and cancellation policies. Item grids and outfit thumbnails retain their static renderers, and frame updates stay inside the preview. Previewing never saves pet changes.
+ 
+ Narrow landscape views from 640 to 759px give the wardrobe item panel three wider columns and half the available width. Short item names such as Backpack fit on one line. Compact tabs retain 44px input targets and show every category without horizontal clipping, while the character and pose controls keep their own space.
+ 
+@@ -172,7 +172,7 @@ Settings offers a device-local Reduce pet motion choice, off by default. Either
+ 
+ One native IntersectionObserver pauses that same clock when the resident's SVG is completely outside the viewport or scroll clipping. Any positive visible area keeps it active. Exact edge contact also stays active because the native default threshold may omit the following positive-area notification. Returning into view samples current world deadlines before paint and clears stale hover. Offscreen responses request no frames; returning resumes a finite response only while its deadline remains active. Missing observation support retains the existing clock policy. Observer cleanup ignores queued callbacks; no polling or additional animation clock is used.
+ 
+-Spend time together follows the home chore list and offers Wave, Gentle pats, Happy hop and Stretch together. Each choice uses a finite resident animation, retaining its fractional position and outgoing pose. Busy requests do not queue or extend a reaction; chore cheers keep priority. The resident owns the single successful spoken line, and the controls explain resting/travel without waking or moving the pet. Reduced motion keeps a still pose and returns to zero pending frames when the response ends. Controls remain optional, with no saved changes or separate clock.
++Spend time together follows the home chore list and offers Wave, Gentle pats, Happy hop, Stretch together, Rest together and Dance together. Each choice uses a finite resident animation, retaining its fractional position and outgoing pose. Busy requests do not queue or extend a reaction; chore cheers keep priority. The resident owns the single successful spoken line, and the controls explain resting/travel without waking or moving the pet. Reduced motion keeps a still pose and returns to zero pending frames when the response ends. Controls remain optional, with no saved changes or separate clock.
+ 
+ Stretch together adds a calm 2400 ms player moment to the same controls and clock. Both arms rise once, hold and lower; small torso extension stays anchored to the feet, with a restrained delayed appendage sway. Bun reaches farther than Mochi and Sprout. Feet, world position and shadow stay grounded, and no reaction marks appear. Busy, resting, travel, chore priority, tap alternation, live reduced motion and offscreen expiry retain the existing rules. The review panel exposes the full timeline through its action selector.
+ 
+@@ -184,7 +184,7 @@ Happy hop uses a separate transient player reaction with play dialogue and the e
+ 
+ When Spend time together is expanded, Show room brings the scene into view and focuses the resident. It preserves the current gesture, dialogue, camera zoom and pan, room selection and saved data. Viewing is available while the pet rests in the focused room. It is disabled during travel or while a blocked route leaves the resident in another room; the control explains how to find them. Use native instant scrolling and the existing pet focus target; successful viewing adds no announcement, timer or animation. Offscreen responses resume only while their original deadline remains active.
+ 
+-Gesture buttons use the width of their own panel, including narrow landscape side panels. In browsers with container queries, use equal one-, two- or four-column rows, with text-relative thresholds so enlarged labels can keep their room. The disclosure and Show room heading may wrap; keyboard order and native targets stay unchanged. Retain the existing flex/phone fallback when container queries are unavailable. Native checks cover the player panel at200%root text; this is not whole-app zoom or assistive-technology certification.
++Gesture buttons use the width of their own panel, including narrow landscape side panels. In browsers with container queries, use equal one- or three-column rows, with text-relative thresholds so enlarged labels can keep their room. The disclosure and Show room heading may wrap; keyboard order and native targets stay unchanged. Retain the existing flex/phone fallback when container queries are unavailable. Native checks cover the player panel at200%root text; this is not whole-app zoom or assistive-technology certification.
+ 
+ Environmental rest beside beds, couches, bean bags and rugs uses one small delayed appendage sway. Mochi, Bun and Sprout retain25%,30%and25%of their energetic finite follow strength, with smooth finite joins and existing species lag. Preserve the2400ms timing, grounded body/feet, arms, gaze, blink, mood expression, shadow, outfits and safe approaches; no furniture contact is introduced. Reduced rest and all other actions retain their existing samples.
+ 
+@@ -196,7 +196,7 @@ Navigation rails grow with root text size while retaining their default widths.
+ 
+ In stacked home views below640px, keep at least250px of room canvas after enlarged text increases the picker, tools and travel status. Let the scene and its stage grow with their contents, so the resident stays readable and following chores remain below the complete scene. Preserve the default geometry, existing420px stage floor, camera and animation lifetime. Native checks cover four narrow widths at default/200% root text and real offscreen/finite response deadlines; this is a scene-specific check, not whole-app enlarged-text acceptance.
+ 
+-Rest together offers a quiet player response alongside the four existing choices. It uses the existing2400ms grounded environmental rest sampler, restrained appendage sway and mood face; it does not imply sitting on furniture or completing chores. Use two balanced rows in narrow default-text panels (three choices above two), a full-width rest row after four choices in wide panels, and one column when enlarged text needs it. Preserve the busy/resting rules, allow chore cheers to preempt it, and reuse the resident speech and clock. Reduced motion keeps the existing still mood. No replay after a hidden deadline. The enlarged-text scene regression also protects the recorded default dimensions and spends1400ms of Stretch offscreen before requiring completion within1600ms after return, which rules out restarting its2400ms lifetime.
++Rest together offers a quiet player response alongside the other player choices. It uses the existing2400ms grounded environmental rest sampler, restrained appendage sway and mood face; it does not imply sitting on furniture or completing chores. Use two balanced rows of three choices when the panel is at least 15rem wide, and one column when enlarged text needs it. Preserve the busy/resting rules, allow chore cheers to preempt it, and reuse the resident speech and clock. Reduced motion keeps the existing still mood. No replay after a hidden deadline. The enlarged-text scene regression also protects the recorded default dimensions and spends1400ms of Stretch offscreen before requiring completion within1600ms after return, which rules out restarting its2400ms lifetime.
+ 
+ Healthy environmental concern settles appendages in one restrained sway as the resident studies wilting leaves. Preserve the existing1800ms action, torso, arms, gaze, lifetime blink, planted feet, shadow and dialogue. Mochi stays soft, Bun retains the largest ear movement and Sprout a smaller leaf sway. Normal sick frames, reduced-motion frames and every other action remain exact. This implies no contact with the furnishing.
+ 
+@@ -206,15 +206,15 @@ Home speech belongs in the canvas layer below the actual view and compact door c
+ 
+ Healthy smell reactions retain their1600ms lean-back and hand gesture while smaller appendage arcs recoil and settle. Use damped follow-through with Bun largest, Mochi soft and Sprout restrained. Cancel lateral torso translation at both horizontal ground contacts so the feet stay planted. Preserve primary torso/arms/gaze/expression/blinks/shadow and all other actions, sick/reduced frames, routing and dialogue.
+ 
+-Wardrobe Rest uses the same grounded 2400ms reaction as the resident and environmental rest, with the existing finite preview clock. It retains outfit slots and feet, adds no reward accent, and follows Stop, pose cancellation, outfit updates, hidden deadlines and system/device motion reduction. Five movement choices use balanced 3+2 rows when labels fit; cramped enlarged text switches the wardrobe to page scrolling with readable art and wrapped pose/category controls.
++Wardrobe Rest uses the same grounded 2400ms reaction as the resident and environmental rest, with the existing finite preview clock. It retains outfit slots and feet, adds no reward accent, and follows Stop, pose cancellation, outfit updates, hidden deadlines and system/device motion reduction. Six movement choices use balanced 3+3 rows when labels fit; cramped enlarged text switches the wardrobe to page scrolling with readable art and wrapped pose/category controls.
+ 
+-In cramped wardrobe page-flow layouts, Show preview scrolls instantly to the current character image and focuses it with an inset outline. It remains available during movement or reduced motion. Viewing preserves the sampled frame, pose, original finite deadline, outfit and item grid; it starts no animation or save operation. Ordinary layouts keep the same five movement choices.
++In cramped wardrobe page-flow layouts, Show preview scrolls instantly to the current character image and focuses it with an inset outline. It remains available during movement or reduced motion. Viewing preserves the sampled frame, pose, original finite deadline, outfit and item grid; it starts no animation or save operation. Ordinary layouts keep the same six movement choices.
+ 
+ Healthy furniture orientation keeps its existing 360ms torso, gaze, grounded stance and action handoff. Ears, knot and leaves follow one small half-sine deflection with species strengths (Mochi10%, Bun12%, Sprout10%), returning smoothly to neutral. Sick/reduced sampling and every other action remain unchanged; walking corner overlays retain their existing torso-only turn contribution.
+ 
+ Healthy upright notice uses one small appendage deflection over its existing600ms, with species strengths Mochi .15, Bun .20 and Sprout .15 applied to the existing follow envelope and mood energy. Primary lean, gaze, arm, ground, face, shadow and timing stay exact; sick and reduced sampler fields remain exact. Sleeping and sick renderers already keep body/appendages static and acknowledge only through the existing restrained gaze. Paused MotionReview samples prove upright SVG geometry, not a live resident notice path.
+ 
+-While the resident is sleeping or unwell, Spend time together offers one Check in control in place of the five disabled play gestures. It uses the existing resting notice gaze and600ms lifetime; body, appendages, ground, world position, health and saved tables stay intact. Repeated checks return busy before sound/speech and do not extend or queue the notice. Successful speech stays in the resident's live region. Reduced motion keeps the art still; offscreen notices can expire without a hidden clock or replay. Outside the resident room, Check in is disabled with the existing room explanation. Healthy play and travel keep their existing five-control policy. The optional callback preserves legacy panel consumers. No additional motion owner, timer, observer or saved schema is introduced.
++While the resident is sleeping or unwell, Spend time together offers one Check in control in place of the six disabled play gestures. It uses the existing resting notice gaze and600ms lifetime; body, appendages, ground, world position, health and saved tables stay intact. Repeated checks return busy before sound/speech and do not extend or queue the notice. Successful speech stays in the resident's live region. Reduced motion keeps the art still; offscreen notices can expire without a hidden clock or replay. Outside the resident room, Check in is disabled with the existing room explanation. Healthy play and travel keep their existing six-control policy. The optional callback preserves legacy panel consumers. No additional motion owner, timer, observer or saved schema is introduced.
+ 
+ Healthy furniture inspection uses one restrained ear, knot or leaf sway within its existing timing. The pointing arm, height-aware torso lean, gaze and planted feet retain their original motion. Sick and reduced-motion sampling remain exact.
+ 
+@@ -229,3 +229,5 @@ Healthy player Wave greetings retain their existing species hand arcs, cycles, g
+ Saved wardrobe looks have an explicit Rename action. Naming keeps the saved outfit ID, order and clothing, and leaves the currently worn look and preview state alone. The editor shares the existing 16-character naming rules, supports Escape/Not now without writes, and returns focus with the saved label and card actions visible. Saved cards reflow with text size. A paused mirrored movement stays held during rename. No new preview clock is added; renaming saves only the chosen name through the existing outfit update.
+ 
+ Saved-outfit name drafts keep their native input/control and caret when the wardrobe changes between narrow and wide layouts. The saved section retains one parent; a wide-to-narrow transition with an editor selects Saved. Resize immediately reveals only the already-focused name-form control, preserving selection and leaving preview focus alone. The wardrobe owns one resize listener with cleanup, no extra frame clock or timer. This also covers field reflow while remaining in the same layout.
++
++Dance together is a finite 2800ms player invitation with two grounded sways, lightly raised hands and small delayed appendage follow-through. Both foot contacts and the shadow remain fixed while the torso moves at most2.5SVGunits and leans at most4.5degrees before species/mood scaling. No reward marks appear. A quarter-duration ease raises and lowers the hands smoothly; the existing pleased-face blend and blink remain on the shared clock. Repeated invitations stay busy without extending or queueing the response; chores keep priority. Resting residents keep Check in. The wardrobe Dance preview shares Stop, Pause/Resume, Mirror, hidden-deadline and live-reduction behavior without saving or redrawing the item grid.
+diff --git 1/docs/audits/2026-10-12-character-polish/dance-design.md 2/docs/audits/2026-10-12-character-polish/dance-design.md
+new file mode 100644
+index 0000000..79124c3
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/dance-design.md
+@@ -0,0 +1,13 @@
++# Grounded time together
++
++Add a player-chosen Dance together moment and a Dance wardrobe preview. It is a finite 2800ms response, using the existing resident/preview clock, with two slow side-to-side sways. Both feet retain their ground contacts. There is no hop, reward accent, added sound, autonomous trigger, queue, or new timer.
++
++The torso moves at most 2.5 SVG units before species/mood scaling, leans at most 4.5 degrees, and gently shifts weight with at most 1.2% compression. Hands stay lightly raised and sweep with the rhythm; Mochi remains softer, Bun livelier, and Sprout smaller. Appendages lag with bounded low amplitude and ease to rest. Smooth envelopes give neutral geometry and zero speed at finite endpoints. The existing pleased-face blend and lifetime blink are retained.
++
++Integrate through PlayerGesture and existing reaction priority/deadline handling. Explicit repeated choices stay busy and never extend or queue the response; chore celebrations can interrupt. Sick/away residents retain their resting/check-in behavior. Reduced motion presents the existing still pleased expression until the semantic deadline, with no continuous idle clock. Successful speech remains owned by the resident, and no saved data changes.
++
++Six choices form balanced rows that adapt to container width and enlarged root text. The wardrobe uses the existing Stop, Pause/Resume, Mirror, pose cancellation, visibility and preference handling. Preview movement never redraws the item grid or changes saved wardrobe data.
++
++Verify finite endpoints, bounded speed/amplitude, feet, scaling, reduced motion, action priority, fractional walking interruption and tap alternation first. Then verify preview lifecycle and native keyboard/player speech/actual screen-space foot contacts. Review sampled character sheets for all species, both facings, default/dark colors and representative layered outfits at room and preview scales. Inspect responsive controls at narrow, landscape and desktop sizes with 100% and 200% root text. Still frames establish visible geometry; they do not certify temporal comfort or physical devices.
++
++This scope is authorized by the user's continuing request to improve character visuals, animations and features. It begins after the frozen outfit review and small heart-glasses correction have recoverable checkpoints. Heavy work remains sequential and resource-gated.

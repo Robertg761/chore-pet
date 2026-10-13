@@ -31,11 +31,10 @@
 .wd-poses { align-self: stretch; }
 .wd-motion { display: grid; grid-template-columns: minmax(0, 1fr); width: min(100%, 360px); min-width: 0; gap: 8px; flex: none; }
 .wd-motion .btn { min-width: 44px; padding: 0 6px; line-height: 1.2; }
-/* Keep five finite previews in two balanced rows when their labels fit. */
+/* Keep six finite previews in two balanced rows when their labels fit. */
 @container wardrobe-preview (min-width: 12rem) {
   .wd-motion { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .wd-motion .btn:nth-child(-n+3) { grid-column: span 2; }
-  .wd-motion .btn:nth-child(n+4) { grid-column: span 3; }
+  .wd-motion .btn { grid-column: span 2; }
 }
 .wd-motion-note { max-width: 32ch; text-align: center; }
 .wd-tabs { position: sticky; top: 0; z-index: 1; flex-shrink: 0; }

@@ -3,7 +3,7 @@ import { SPECIES, type Mood } from '../domain/types'
 import { ACTION_MS, blendGroundFeet, sampleMotion, type MotionAction, type MotionFrame, type MotionInput } from './motion'
 
 const actions: MotionAction[] = [
-  'idle', 'walk', 'turn', 'greet', 'affection', 'stretch', 'celebrate', 'celebrate-big',
+  'idle', 'walk', 'turn', 'greet', 'affection', 'stretch', 'dance', 'celebrate', 'celebrate-big',
   'notice', 'inspect', 'wave', 'reach', 'rest', 'dust', 'smell', 'concern',
 ]
 const moods: Mood[] = ['happy', 'content', 'meh', 'scruffy', 'sick']
@@ -23,7 +23,7 @@ const numbers = (frame: MotionFrame): number[] => Object.values(frame).filter((v
 describe('motion vocabulary', () => {
   it('provides every action duration and the agreed player reaction timing', () => {
     expect(Object.keys(ACTION_MS).sort()).toEqual([...actions].sort())
-    expect(ACTION_MS).toMatchObject({ greet: 1200, affection: 1600, stretch: 2400, celebrate: 1800, 'celebrate-big': 2200 })
+    expect(ACTION_MS).toMatchObject({ greet: 1200, affection: 1600, stretch: 2400, dance: 2800, celebrate: 1800, 'celebrate-big': 2200 })
     expect(Object.values(ACTION_MS).every((ms) => Number.isFinite(ms) && ms > 0)).toBe(true)
   })
 

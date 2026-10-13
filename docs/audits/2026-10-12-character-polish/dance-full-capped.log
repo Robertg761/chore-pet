@@ -1,0 +1,47 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/motion.test.ts (30 tests | 1 failed) 390ms
+   ❯ motion vocabulary (7)
+     × provides every action duration and the agreed player reaction timing 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/motion.test.ts > motion vocabulary > provides every action duration and the agreed player reaction timing
+AssertionError: expected [ 'affection', 'celebrate', …(15) ] to deeply equal [ 'affection', 'celebrate', …(14) ]
+
+- Expected
++ Received
+
+@@ -1,10 +1,11 @@
+  [
+    "affection",
+    "celebrate",
+    "celebrate-big",
+    "concern",
++   "dance",
+    "dust",
+    "greet",
+    "idle",
+    "inspect",
+    "notice",
+
+ ❯ src/character/motion.test.ts:25:43
+     23| describe('motion vocabulary', () => {
+     24|   it('provides every action duration and the agreed player reaction ti…
+     25|     expect(Object.keys(ACTION_MS).sort()).toEqual([...actions].sort())
+       |                                           ^
+     26|     expect(ACTION_MS).toMatchObject({ greet: 1200, affection: 1600, st…
+     27|     expect(Object.values(ACTION_MS).every((ms) => Number.isFinite(ms) …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 129 passed (130)
+      Tests  1 failed | 2461 passed (2462)
+   Start at  02:50:01
+   Duration  84.23s (tests 79%, environment 13%, import 5%, transform 4%, worker 1%)
+
+    Isolate  130 workers spawned · ~149ms startup each (spawn + environment, per file)
+             at least ~19.20s faster with isolate: false — reuses workers across files instead of one per file
+

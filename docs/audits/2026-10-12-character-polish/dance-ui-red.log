@@ -1,0 +1,170 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (110 tests | 4 failed) 1981ms
+   × dances a moving mochi at its drawn position with one finite clock and chore priority 18ms
+   × dances a moving bun at its drawn position with one finite clock and chore priority 11ms
+   × dances a moving sprout at its drawn position with one finite clock and chore priority 11ms
+   × keeps reduced dance still through its deadline and expires it offscreen without replay 6ms
+ ❯ src/screens/Wardrobe.test.tsx (14 tests | 4 failed) 626ms
+   × previews and pauses the grounded dance on the same isolated subtree and resumes only its remaining duration 19ms
+   × lets Stop and a static pose cancel dance without leaving callbacks 12ms
+   × cancels a held dance immediately on live reduction and never replays it 15ms
+   × expires an unpaused hidden dance by its absolute deadline and does not replay 12ms
+ ❯ src/pet/PetPlay.test.tsx (20 tests | 4 failed) 95ms
+   × delegates Dance together without creating a second clock, write or success announcement 5ms
+   × declines a dance while travel without calling the resident 2ms
+   × declines a dance while away without calling the resident 2ms
+   × declines a dance while sick without calling the resident 3ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > dances a moving mochi at its drawn position with one finite clock and chore priority
+ FAIL  src/pet/PetIntegration.test.tsx > dances a moving bun at its drawn position with one finite clock and chore priority
+ FAIL  src/pet/PetIntegration.test.tsx > dances a moving sprout at its drawn position with one finite clock and chore priority
+TypeError: Cannot read properties of undefined (reading 'filter')
+ ❯ pickLine src/content/petLines.ts:357:40
+    355|   const raw = vars.chore?.trim()
+    356|   const chore = raw && raw.length > 1 && raw[1] === raw[1].toLowerCase…
+    357|   const usable = chore ? lines : lines.filter((line) => !line.includes…
+       |                                        ^
+    358|   if (usable.length === 0) return ''
+    359|
+ ❯ Object.respond src/pet/LivingRoom.tsx:267:21
+ ❯ src/pet/PetIntegration.test.tsx:1281:39
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/react/cjs/react.development.js:890:22
+ ❯ src/pet/PetIntegration.test.tsx:1281:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps reduced dance still through its deadline and expires it offscreen without replay
+TypeError: Cannot read properties of undefined (reading 'filter')
+ ❯ pickLine src/content/petLines.ts:357:40
+    355|   const raw = vars.chore?.trim()
+    356|   const chore = raw && raw.length > 1 && raw[1] === raw[1].toLowerCase…
+    357|   const usable = chore ? lines : lines.filter((line) => !line.includes…
+       |                                        ^
+    358|   if (usable.length === 0) return ''
+    359|
+ ❯ Object.respond src/pet/LivingRoom.tsx:267:21
+ ❯ src/pet/PetIntegration.test.tsx:1306:39
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/react/cjs/react.development.js:890:22
+ ❯ src/pet/PetIntegration.test.tsx:1306:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > delegates Dance together without creating a second clock, write or success announcement
+AssertionError: expected undefined to be defined
+ ❯ src/pet/PetPlay.test.tsx:155:19
+    153|   click(button(ui.container, 'Spend time together'))
+    154|   const control = button(ui.container, 'Dance together')
+    155|   expect(control).toBeDefined()
+       |                   ^
+    156|   click(control)
+    157|   expect(ui.props.onReact).toHaveBeenCalledExactlyOnceWith('dance')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > declines a dance while travel without calling the resident
+ FAIL  src/pet/PetPlay.test.tsx > declines a dance while away without calling the resident
+ FAIL  src/pet/PetPlay.test.tsx > declines a dance while sick without calling the resident
+AssertionError: expected undefined to be defined
+ ❯ src/pet/PetPlay.test.tsx:168:19
+    166|   click(button(ui.container, 'Spend time together'))
+    167|   const control = button(ui.container, 'Dance together')
+    168|   expect(control).toBeDefined()
+       |                   ^
+    169|   expect(control.disabled).toBe(true)
+    170|   click(control)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/screens/Wardrobe.test.tsx > previews and pauses the grounded dance on the same isolated subtree and resumes only its remaining duration
+AssertionError: button Dance: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     32|   return node!
+     33| }
+ ❯ src/screens/Wardrobe.test.tsx:232:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/screens/Wardrobe.test.tsx > lets Stop and a static pose cancel dance without leaving callbacks
+AssertionError: button Dance: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     32|   return node!
+     33| }
+ ❯ src/screens/Wardrobe.test.tsx:259:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  src/screens/Wardrobe.test.tsx > cancels a held dance immediately on live reduction and never replays it
+AssertionError: button Dance: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     32|   return node!
+     33| }
+ ❯ src/screens/Wardrobe.test.tsx:270:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  src/screens/Wardrobe.test.tsx > expires an unpaused hidden dance by its absolute deadline and does not replay
+AssertionError: button Dance: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     32|   return node!
+     33| }
+ ❯ src/screens/Wardrobe.test.tsx:282:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  12 failed | 132 passed (144)
+   Start at  02:31:37
+   Duration  4.66s (tests 62%, environment 17%, transform 16%, import 5%)
+
+    Isolate  3 workers spawned · ~335ms startup each (spawn + environment, per file)
+             at least ~670ms faster with isolate: false — reuses workers across files instead of one per file
+

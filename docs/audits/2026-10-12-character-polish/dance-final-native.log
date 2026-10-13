@@ -1,0 +1,508 @@
+✖ keyboard mochi dance keeps both screen contacts and its original deadline (1624.574745ms)
+✖ keyboard bun dance keeps both screen contacts and its original deadline (1498.313941ms)
+✖ keyboard sprout dance keeps both screen contacts and its original deadline (1609.539407ms)
+✖ an enlarged-text offscreen dance stays still and expires without replay (959.318143ms)
+✔ player rows stay balanced and readable with default text in narrow panels (1637.092716ms)
+ℹ Chromium 152.0.7977.82; 7layouts; compact3+2/wide4+1/large-text1column, readable targets and focus, unchanged saved tables.
+✔ player rows stay balanced and readable with 200% text in narrow panels (1214.334234ms)
+ℹ Chromium 152.0.7977.82; 3layouts; compact3+2/wide4+1/large-text1column, readable targets and focus, unchanged saved tables.
+✔ native player choices stay still and fit 320px (2729.512642ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 361px (2609.511094ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 375px (2602.519405ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2595.718554ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✖ native player choices stay still and fit 1280px (1373.125745ms)
+✔ native player choices stay still and fit 640px (2710.435344ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2664.450601ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (896.863468ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2199.48997ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1690.186972ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ initial Head tab keeps a readable dressed preview on a short phone (1285.299819ms)
+✔ initial wardrobe tabs and gift labels remain visible at 640/100% (1313.083755ms)
+✔ initial wardrobe tabs and gift labels remain visible at 1280/200% (1301.709051ms)
+✔ mirrored dressed mochi Rest preserves exact art and the original deadline (6657.109537ms)
+✔ mirrored dressed bun Rest preserves exact art and the original deadline (6691.680521ms)
+✔ mirrored dressed sprout Rest preserves exact art and the original deadline (6657.183459ms)
+✖ mirror control fits without covering character ink at 320x568/100% (1257.962825ms)
+✖ mirror control fits without covering character ink at 320x568/200% (1241.864729ms)
+✖ mirror control fits without covering character ink at 390x664/100% (1278.600154ms)
+✖ mirror control fits without covering character ink at 390x664/200% (1288.695611ms)
+✖ mirror control fits without covering character ink at 640x360/100% (1286.292755ms)
+✖ mirror control fits without covering character ink at 640x360/200% (1316.837513ms)
+✖ mirror control fits without covering character ink at 844x390/100% (1268.229489ms)
+✖ mirror control fits without covering character ink at 844x390/200% (1278.738251ms)
+✖ mirror control fits without covering character ink at 1280x800/100% (1330.198557ms)
+✖ mirror control fits without covering character ink at 1280x800/200% (1374.752763ms)
+✔ mirror stays available through system reduction without replay (1711.991934ms)
+✔ mirror stays available through device reduction without replay (1712.502968ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (3327.329952ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (3311.876328ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 640x360 (3235.004583ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (3423.113005ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (3263.908655ms)
+✔ wardrobe Hop live reduced motion settles the preview and does not restart when restored (1774.85239ms)
+✔ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (1742.068914ms)
+✔ wardrobe Stretch live reduced motion settles the preview and does not restart when restored (1776.416553ms)
+✔ wardrobe Rest live reduced motion settles the preview and does not restart when restored (1768.521134ms)
+✔ wardrobe Dance live reduced motion settles the preview and does not restart when restored (1773.303005ms)
+✔ initial pause control is disabled without starting a clock or shrinking short-phone art (1256.003731ms)
+✔ dressed mochi pauses all six previews in both facings and resumes the remaining duration (12822.897295ms)
+✔ dressed bun pauses all six previews in both facings and resumes the remaining duration (12767.133993ms)
+✔ dressed sprout pauses all six previews in both facings and resumes the remaining duration (12570.599276ms)
+✖ pause control stays clear and keyboard visible at 320x568/100% (1609.722629ms)
+✖ pause control stays clear and keyboard visible at 320x568/200% (1621.089972ms)
+✖ pause control stays clear and keyboard visible at 390x664/100% (1605.763509ms)
+✖ pause control stays clear and keyboard visible at 390x664/200% (1621.846074ms)
+✖ pause control stays clear and keyboard visible at 640x360/100% (1638.476894ms)
+✖ pause control stays clear and keyboard visible at 640x360/200% (1660.126724ms)
+✖ pause control stays clear and keyboard visible at 844x390/100% (1642.892248ms)
+✖ pause control stays clear and keyboard visible at 844x390/200% (1653.617339ms)
+✖ pause control stays clear and keyboard visible at 1280x800/100% (1676.251518ms)
+✖ pause control stays clear and keyboard visible at 1280x800/200% (1652.308382ms)
+✔ live system reduction cancels a paused preview without replay (1698.115655ms)
+✔ live device reduction cancels a paused preview without replay (1703.787607ms)
+✔ wardrobe mochi rests with planted feet, one finite preview and unchanged outfit (2241.224493ms)
+✔ wardrobe bun rests with planted feet, one finite preview and unchanged outfit (2273.292985ms)
+✔ wardrobe sprout rests with planted feet, one finite preview and unchanged outfit (2278.676111ms)
+✔ wardrobe Rest rows, text and keyboard outlines fit ordinary and enlarged layouts (4964.431215ms)
+✔ wardrobe Rest live system reduction settles without replay (1904.22581ms)
+✔ wardrobe Rest live device reduction settles without replay (1839.688589ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at320x568/200% (2195.619356ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at390x664/200% (2214.611151ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at640x360/200% (2169.375895ms)
+✔ Show wardrobe preview preserves the offscreen Rest deadline at844x390/200% (2189.291649ms)
+✔ Show wardrobe preview works during system reduction without starting a clock (1704.691945ms)
+✔ Show wardrobe preview works during device reduction without starting a clock (1582.939437ms)
+✔ ordinary wardrobe layouts retain their six controls without an extra visible view button (1570.956549ms)
+ℹ tests 73
+ℹ suites 0
+ℹ pass 48
+ℹ fail 25
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 187673.889812
+
+✖ failing tests:
+
+test at scripts/browser/pet-dance.test.mjs:27:51
+✖ keyboard mochi dance keeps both screen contacts and its original deadline (1624.574745ms)
+  AssertionError [ERR_ASSERTION]: busy retry cannot extend the2800ms deadline
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-dance.test.mjs:66:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'translate(0 0) rotate(3 100 181) translate(100 181) scale(1.02 0.98) translate(-100 -181)',
+    expected: /^translate\(0 0\) rotate\(0 /,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-dance.test.mjs:27:51
+✖ keyboard bun dance keeps both screen contacts and its original deadline (1498.313941ms)
+  AssertionError [ERR_ASSERTION]: busy retry cannot extend the2800ms deadline
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-dance.test.mjs:66:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'translate(0 0) rotate(3 100 181) translate(100 181) scale(1.02 0.97) translate(-100 -181)',
+    expected: /^translate\(0 0\) rotate\(0 /,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-dance.test.mjs:27:51
+✖ keyboard sprout dance keeps both screen contacts and its original deadline (1609.539407ms)
+  AssertionError [ERR_ASSERTION]: busy retry cannot extend the2800ms deadline
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-dance.test.mjs:66:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'translate(0 0) rotate(3 100 181) translate(100 181) scale(1.01 0.98) translate(-100 -181)',
+    expected: /^translate\(0 0\) rotate\(0 /,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-dance.test.mjs:73:1
+✖ an enlarged-text offscreen dance stays still and expires without replay (959.318143ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^translate\(0 0\) rotate\(0 /. Input:
+  
+  'translate(0 0) rotate(3 100 181) translate(100 181) scale(1.02 0.98) translate(-100 -181)'
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-dance.test.mjs:89:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'translate(0 0) rotate(3 100 181) translate(100 181) scale(1.02 0.98) translate(-100 -181)',
+    expected: /^translate\(0 0\) rotate\(0 /,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-play.test.mjs:53:3
+✖ native player choices stay still and fit 1280px (1373.125745ms)
+  AssertionError [ERR_ASSERTION]: the wide player panel fits all four controls in one row
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:115:14)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-mirror.test.mjs:213:3
+✖ mirror control fits without covering character ink at 320x568/100% (1257.962825ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:227:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-mirror.test.mjs:213:3
+✖ mirror control fits without covering character ink at 320x568/200% (1241.864729ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:227:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-mirror.test.mjs:213:3
+✖ mirror control fits without covering character ink at 390x664/100% (1278.600154ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:227:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-mirror.test.mjs:213:3
+✖ mirror control fits without covering character ink at 390x664/200% (1288.695611ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:227:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-mirror.test.mjs:213:3
+✖ mirror control fits without covering character ink at 640x360/100% (1286.292755ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:227:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-mirror.test.mjs:213:3
+✖ mirror control fits without covering character ink at 640x360/200% (1316.837513ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:227:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-mirror.test.mjs:213:3
+✖ mirror control fits without covering character ink at 844x390/100% (1268.229489ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:227:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-mirror.test.mjs:213:3
+✖ mirror control fits without covering character ink at 844x390/200% (1278.738251ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:227:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-mirror.test.mjs:213:3
+✖ mirror control fits without covering character ink at 1280x800/100% (1330.198557ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:227:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-mirror.test.mjs:213:3
+✖ mirror control fits without covering character ink at 1280x800/200% (1374.752763ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-mirror.test.mjs:227:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-pause.test.mjs:204:3
+✖ pause control stays clear and keyboard visible at 320x568/100% (1609.722629ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-pause.test.mjs:221:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-pause.test.mjs:204:3
+✖ pause control stays clear and keyboard visible at 320x568/200% (1621.089972ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-pause.test.mjs:221:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-pause.test.mjs:204:3
+✖ pause control stays clear and keyboard visible at 390x664/100% (1605.763509ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-pause.test.mjs:221:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-pause.test.mjs:204:3
+✖ pause control stays clear and keyboard visible at 390x664/200% (1621.846074ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-pause.test.mjs:221:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-pause.test.mjs:204:3
+✖ pause control stays clear and keyboard visible at 640x360/100% (1638.476894ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-pause.test.mjs:221:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-pause.test.mjs:204:3
+✖ pause control stays clear and keyboard visible at 640x360/200% (1660.126724ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-pause.test.mjs:221:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-pause.test.mjs:204:3
+✖ pause control stays clear and keyboard visible at 844x390/100% (1642.892248ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-pause.test.mjs:221:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-pause.test.mjs:204:3
+✖ pause control stays clear and keyboard visible at 844x390/200% (1653.617339ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-pause.test.mjs:221:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-pause.test.mjs:204:3
+✖ pause control stays clear and keyboard visible at 1280x800/100% (1676.251518ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-pause.test.mjs:221:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/wardrobe-pause.test.mjs:204:3
+✖ pause control stays clear and keyboard visible at 1280x800/200% (1652.308382ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  6 !== 5
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-pause.test.mjs:221:46)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 6,
+    expected: 5,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
