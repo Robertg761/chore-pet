@@ -1,0 +1,11 @@
+{
+  "startedUtc": "2026-10-13T08:58:36.948Z",
+  "finishedUtc": "2026-10-13T08:58:37.004Z",
+  "numericProcEntries": 681,
+  "readableStatuses": 681,
+  "failedStatusReads": 0,
+  "browserCandidates": 17,
+  "failedBrowserReads": 0,
+  "headless": [],
+  "method": "Point-in-time host /proc inventory. Reads browser command lines only for status names chrome/chromium, selects any argument beginning --headless, emits PID/group/session/start ticks/RSS and booleans for this workspace and Playwright profile only. No command lines, URLs or profile paths emitted. Process races and read failures are counted; an empty match list does not certify all host processes, detached descendants, browser names outside the two-name filter, current/peak RSS, CPU or causation. No signal or process mutation."
+}

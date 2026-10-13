@@ -1,0 +1,153 @@
+{
+  "species": "mochi",
+  "mood": "happy",
+  "dressed": {
+    "centerX": 408,
+    "body": [
+      {
+        "x": 524.203125,
+        "y": 278.515625
+      },
+      {
+        "x": 291.796875,
+        "y": 278.515625
+      },
+      {
+        "x": 524.203125,
+        "y": 561.171875
+      },
+      {
+        "x": 291.796875,
+        "y": 561.171875
+      }
+    ],
+    "ground": [
+      {
+        "x": 524.203125,
+        "y": 278.515625
+      },
+      {
+        "x": 291.796875,
+        "y": 278.515625
+      },
+      {
+        "x": 524.203125,
+        "y": 561.171875
+      },
+      {
+        "x": 291.796875,
+        "y": 561.171875
+      }
+    ],
+    "facing": "mirrored",
+    "slots": [
+      "back",
+      "face",
+      "head",
+      "neck",
+      "outfit"
+    ],
+    "focused": false,
+    "focusVisible": false,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624,
+      "bottom": 713,
+      "right": 609
+    }
+  },
+  "bare": {
+    "centerX": 408,
+    "body": [
+      {
+        "x": 524.203125,
+        "y": 278.515625
+      },
+      {
+        "x": 291.796875,
+        "y": 278.515625
+      },
+      {
+        "x": 524.203125,
+        "y": 561.171875
+      },
+      {
+        "x": 291.796875,
+        "y": 561.171875
+      }
+    ],
+    "ground": [
+      {
+        "x": 524.203125,
+        "y": 278.515625
+      },
+      {
+        "x": 291.796875,
+        "y": 278.515625
+      },
+      {
+        "x": 524.203125,
+        "y": 561.171875
+      },
+      {
+        "x": 291.796875,
+        "y": 561.171875
+      }
+    ],
+    "facing": "mirrored",
+    "slots": [],
+    "focused": false,
+    "focusVisible": false,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624,
+      "bottom": 713,
+      "right": 609
+    }
+  },
+  "facial": {
+    "viewBox": "36 75 128 110",
+    "label": "Mochi, Mochi, Happy preview, mirrored, face detail, outfit hidden",
+    "scale": 3.140625,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 515.4093654155731,
+        "y": 349.1796875,
+        "stroke": 7.7726503213240035,
+        "part": "expression"
+      },
+      {
+        "x": 300.5906345844269,
+        "y": 349.1796875,
+        "stroke": 7.7726503213240035,
+        "part": "expression"
+      },
+      {
+        "x": 515.4093654155731,
+        "y": 440.8859758377075,
+        "stroke": 7.7726503213240035,
+        "part": "expression"
+      },
+      {
+        "x": 300.5906345844269,
+        "y": 440.8859758377075,
+        "stroke": 7.7726503213240035,
+        "part": "expression"
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

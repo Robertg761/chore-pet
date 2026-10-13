@@ -1,0 +1,68 @@
+from pathlib import Path
+import datetime,hashlib,json,struct,subprocess,zlib
+root=Path.cwd();out=root/'docs/audits/2026-10-12-character-polish'
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+pending=json.loads((out/'creator-outfit-pending-state.json').read_text())
+assert head==pending['baseCommit']
+for group in ['currentSources','unchangedDependencies']:
+ for name,digest in pending[group].items():assert sha(root/name)==digest,(group,name)
+render=json.loads((out/'daisy-clip-source-render-studies-v2.json').read_text())
+equivalence=json.loads((out/'daisy-clip-source-equivalence-v2.json').read_text())
+assert equivalence['counts']=={'poses':1344,'sampledActions':936,'reducedSamples':72,'total':2352}
+assert render['prototypeSha256']==equivalence['prototypeSha256']==sha(out/'daisy-clip-design-prototype-v2.tsx.txt')
+for name,digest in equivalence['sourceDependencies'].items():
+ assert sha(root/name)==digest
+ assert hashlib.sha256(subprocess.check_output(['git','show',head+':'+name])).hexdigest()==digest
+
+def png_info(p):
+ data=p.read_bytes();assert data[:8]==b'\x89PNG\r\n\x1a\n',p
+ offset=8;compressed=[];header=None;ended=False
+ while offset<len(data):
+  n=struct.unpack('>I',data[offset:offset+4])[0];kind=data[offset+4:offset+8];payload=data[offset+8:offset+8+n]
+  assert len(payload)==n and len(data)>=offset+n+12
+  assert zlib.crc32(kind+payload)&0xffffffff==struct.unpack('>I',data[offset+n+8:offset+n+12])[0]
+  if kind==b'IHDR':header=struct.unpack('>IIBBBBB',payload)
+  if kind==b'IDAT':compressed.append(payload)
+  offset+=n+12
+  if kind==b'IEND':ended=True;break
+ assert ended and offset==len(data)
+ w,h,depth,colour,compression,filtering,interlace=header
+ assert depth==8 and colour in (2,6) and compression==filtering==interlace==0
+ raw=zlib.decompress(b''.join(compressed));assert len(raw)==h*(1+w*(4 if colour==6 else 3))
+ return {'width':w,'height':h,'bytes':len(data),'sha256':sha(p),'chunkCrcsAndScanlineLengthValid':True}
+
+images=[]
+for name in ['daisy-clip-shape-study.png','daisy-clip-shape-study-v2.png','daisy-clip-shape-study-v3.png']:
+ p=out/name;images.append({'path':str(p.relative_to(root)),'review':'directly viewed during concept development','status':'concept history; third sheet selects the broad no-leaf shape',**png_info(p)})
+for version,metadata,ending in [('first-fit','daisy-clip-source-render-studies.json','-final-v3.png'),('selected-fit-v2','daisy-clip-source-render-studies-v2.json','-final.png')]:
+ for record in json.loads((out/metadata).read_text())['records']:
+  p=out/(record['name']+ending);info=png_info(p);assert [info['width'],info['height']]==[record['width'],record['height']]
+  images.append({'path':str(p.relative_to(root)),'review':'directly viewed all cells','status':'Sprout cooling-patch overlap requires fit revision' if version=='first-fit' else 'selected static fit; native acceptance pending','cells':len(record['samples']),'version':version,**info})
+assert len(images)==15 and sum(x.get('cells',0) for x in images)==120
+jobs=[]
+monitor_sha=sha(out/'creator-outfit-conservative-monitor-v2.py.txt')
+for p in sorted(out.glob('daisy-clip-*-resources.json')):
+ record=json.loads(p.read_text());label=p.name.removesuffix('-resources.json');code=record['exitCode'];cleanup=record['cleanup'];samples=record['samples'];command=record['command']
+ assert type(code) is int and code in (0,-11,-6)
+ assert int((out/(label+'.exit')).read_text())==code
+ assert (out/(label+'.log')).exists()
+ assert record['monitorSha256']==monitor_sha
+ assert record['launchMinimumMiB']==3072 and record['runReserveMiB']==2048 and record['tmpReserveMiB']==2048 and record['sampleIntervalSeconds']==.5
+ assert command[:3]==['nice','-n','10']
+ assert samples[0]['phase']=='launch' and samples[-1]['phase']=='after-cleanup'
+ assert samples[0]['memAvailableBytes']>=3072*1048576
+ assert min(s['memAvailableBytes'] for s in samples)>=2048*1048576
+ assert min(s['tmpFreeBytes'] for s in samples)>=2048*1048576
+ assert record['minimumObservedAvailableBytes']==min(s['memAvailableBytes'] for s in samples)
+ assert record['resourceStopReason'] is None and record['stopEvent'] is None and not record['errors']
+ assert cleanup['membershipVerified'] is True and cleanup['leaderCollected'] is True and cleanup['leaderReturnCode']==code
+ assert type(cleanup['processGroup']) is int and cleanup['processGroup']>0
+ assert not cleanup['termMembers'] and not cleanup['killMembers'] and not cleanup['remainingLiveMembers']
+ if code<0:assert '--as=201326592' in command
+ jobs.append({'label':label,'exitCode':code,'status':'historical converter failure, excluded from passing work' if code else 'completed','command':command,'minimumObservedAvailableMiB':record['minimumObservedAvailableBytes']/1048576,'sampleRows':len(samples),'triplet':{str((out/(label+suffix)).relative_to(root)):sha(out/(label+suffix)) for suffix in ['.log','.exit','-resources.json']}})
+assert len(jobs)==20 and sorted(x['exitCode'] for x in jobs)==[-11,-6]+[0]*18
+partial=[{'path':str((out/n).relative_to(root)),'bytes':(out/n).stat().st_size,'sha256':sha(out/n),'status':'zero-byte output from failed converter; never a final/reviewed PNG'} for n in ['daisy-clip-pose-study-light-top.png','daisy-clip-pose-study-light-top-final.png']]
+summary={'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'status':'Static design evidence only. No production integration, product PASS, freeze/commit or native acceptance.','baseCommit':head,'rootVisualReview':images,'failedPartialOutputs':partial,'sourceEquivalenceCounts':equivalence['counts'],'resourceJobs':jobs,'resourceSummary':{'successfulJobs':18,'historicalConverterFailures':2,'minimumObservedAvailableMiBAllJobs':min(x['minimumObservedAvailableMiB'] for x in jobs),'noResourceStopRecorded':True,'noOwnedLiveMembersRecordedAfterCleanup':True,'limits':'Sampled trigger and original process-group observations only; no host peak, global concurrency or system safety certification.'},'pendingB64':{'stateFile':str((out/'creator-outfit-pending-state.json').relative_to(root)),'stateFileSha256':sha(out/'creator-outfit-pending-state.json'),'sixCurrentSourcesAnd44UnchangedDependenciesStillMatch':True},'unchangedSourceDependencies':equivalence['sourceDependencies'],'limits':'Root inspected 15 complete PNGs, including 120 source-rendered cells and three concepts. Paired source serialization is not live animation, browser, wardrobe, reward/save or continuous all-phase proof. Node memory snapshots are not measured peaks.'}
+(out/'daisy-clip-design-evidence.json').write_text(json.dumps(summary,indent=2)+'\n')
+print(json.dumps({'images':len(images),'sourceCells':120,'counts':equivalence['counts'],'resourceJobs':len(jobs),'successfulJobs':18,'historicalConverterFailures':2,'minimumObservedAvailableMiB':summary['resourceSummary']['minimumObservedAvailableMiBAllJobs'],'B64SourceBindingsUnchanged':True}))

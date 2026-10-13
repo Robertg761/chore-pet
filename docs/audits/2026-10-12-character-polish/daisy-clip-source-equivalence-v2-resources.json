@@ -1,0 +1,138 @@
+{
+  "utc": "2026-10-13T09:37:27.162250+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "--max-old-space-size=128",
+    "/tmp/chore-pet-daisy-clip-source-equivalence-v2.cjs"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3072,
+  "runReserveMiB": 2048,
+  "tmpReserveMiB": 2048,
+  "sampleIntervalSeconds": 0.5,
+  "nodeOptions": null,
+  "monitorSha256": "afddd715ca4ec81f0d714360e45af0bde7f56b5bd94df784a9698e75ebea3178",
+  "cleanup": {
+    "processGroup": 3,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "membershipVerified": true,
+    "leaderCollected": true,
+    "leaderReturnCode": 0
+  },
+  "stopEvent": null,
+  "events": [
+    {
+      "kind": "child-started",
+      "elapsedSeconds": 0.001,
+      "processGroup": 3
+    },
+    {
+      "kind": "leader-exited",
+      "elapsedSeconds": 6.003,
+      "returnCode": 0
+    },
+    {
+      "kind": "cleanup-started",
+      "elapsedSeconds": 6.003
+    },
+    {
+      "kind": "cleanup-finished",
+      "elapsedSeconds": 6.004
+    }
+  ],
+  "errors": [],
+  "minimumObservedAvailableBytes": 3652988928,
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "phase": "launch",
+      "memAvailableBytes": 3856490496,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "phase": "running",
+      "memAvailableBytes": 3856490496,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 0.501,
+      "phase": "running",
+      "memAvailableBytes": 3767132160,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "phase": "running",
+      "memAvailableBytes": 3745533952,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 1.501,
+      "phase": "running",
+      "memAvailableBytes": 3674738688,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "phase": "running",
+      "memAvailableBytes": 3701800960,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 2.502,
+      "phase": "running",
+      "memAvailableBytes": 3701645312,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 3.002,
+      "phase": "running",
+      "memAvailableBytes": 3704729600,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 3.502,
+      "phase": "running",
+      "memAvailableBytes": 3666497536,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 4.002,
+      "phase": "running",
+      "memAvailableBytes": 3660800000,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 4.503,
+      "phase": "running",
+      "memAvailableBytes": 3659030528,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 5.003,
+      "phase": "running",
+      "memAvailableBytes": 3657441280,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 5.503,
+      "phase": "running",
+      "memAvailableBytes": 3652988928,
+      "tmpFreeBytes": 4281769984
+    },
+    {
+      "elapsedSeconds": 6.004,
+      "phase": "after-cleanup",
+      "memAvailableBytes": 3805233152,
+      "tmpFreeBytes": 4281769984
+    }
+  ],
+  "method": "Host available RAM and /tmp sampled about twice per second while running, with explicit launch/running/after-cleanup phases and stop-event index. The RAM reserve is a sampled stop trigger, not a guaranteed floor. Only the original job process group/session may be signalled; changed groups/sessions and all host processes are not certified. Cleanup exceptions are recorded and make the run fail; evidence writing follows cleanup and bounded leader collection even when they fail. Requested child commands carry their own niceness/heap/worker options; this monitor does not enforce host-wide concurrency or certify peak RSS/CPU, battery or devices."
+}

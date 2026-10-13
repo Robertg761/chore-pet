@@ -1,0 +1,84 @@
+from pathlib import Path
+import hashlib,json,math,re
+out=Path('docs/audits/2026-10-12-character-polish')
+ns={}
+source=Path('/tmp/chore-pet-daisy-clip-study-v3.py').read_text()
+exec(compile(source.split('parts = [')[0],'<study-definitions>','exec'),ns)
+path=ns['petal_path'](10,17,11)
+nums=list(map(float,re.findall(r'-?\d+(?:\.\d+)?',path)))
+assert len(nums)==32
+curves=[];p=tuple(nums[:2])
+for i in range(2,len(nums),6):
+ q=nums[i:i+6];curve=(p,tuple(q[:2]),tuple(q[2:4]),tuple(q[4:6]));curves.append(curve);p=curve[-1]
+assert max(abs(p[i]-nums[i]) for i in range(2))<1e-6
+
+
+def bezier(p,t):
+ return (1-t)**3*p[0]+3*(1-t)**2*t*p[1]+3*(1-t)*t*t*p[2]+t**3*p[3]
+
+
+def extrema(p):
+ a=-p[0]+3*p[1]-3*p[2]+p[3];b=2*(p[0]-2*p[1]+p[2]);c=p[1]-p[0]
+ roots=[]
+ if abs(a)<1e-14:
+  if abs(b)>1e-14:roots=[-c/b]
+ else:
+  d=b*b-4*a*c
+  if d>=0:roots=[(-b-math.sqrt(d))/(2*a),(-b+math.sqrt(d))/(2*a)]
+ return [bezier(p,t) for t in [0,1,*[r for r in roots if 0<r<1]]]
+
+
+def bounds(transformed,stroke):
+ xs=[];ys=[]
+ for curve in transformed:
+  xs+=extrema([p[0] for p in curve]);ys+=extrema([p[1] for p in curve])
+ return {'left':min(xs)-stroke/2,'right':max(xs)+stroke/2,'top':min(ys)-stroke/2,'bottom':max(ys)+stroke/2}
+
+
+rows=[]
+for name in ('mochi','bun','sprout'):
+ x,y,s=ns['anchors'][name];dx,dy,angle=ns['placements'][name];a=math.radians(angle)
+ def transform(p):return (x+s*(dx+p[0]*math.cos(a)-p[1]*math.sin(a)),y+s*(dy+p[0]*math.sin(a)+p[1]*math.cos(a)))
+ transformed=[tuple(transform(p) for p in curve) for curve in curves]
+ normal=bounds(transformed,4*s);room=bounds(transformed,6.4*s)
+ # Button/glint are within the petal outline, checked against a conservative circle radius.
+ center=transform((0,0));radius=(5.6+2.5*1.6/2)*s
+ assert center[0]-radius>=room['left'] and center[0]+radius<=room['right'] and center[1]-radius>=room['top'] and center[1]+radius<=room['bottom']
+ assert normal['left']>0 and normal['right']<200 and normal['top']>0 and normal['bottom']<200
+ body=list(map(float,re.findall(r'-?\d+(?:\.\d+)?',ns['bodies'][name])));head=[];p=tuple(body[:2])
+ for i in range(2,len(body),6):
+  q=body[i:i+6];head.append((p,tuple(q[:2]),tuple(q[2:4]),tuple(q[4:6])));p=head[-1][-1]
+ curve=head[0 if name=='sprout' else 1]
+ lo,hi=0,1
+ for _ in range(52):
+  mid=(lo+hi)/2
+  if bezier([p[0] for p in curve],mid)<center[0]:lo=mid
+  else:hi=mid
+ top=bezier([p[1] for p in curve],(lo+hi)/2)
+ inside=center[1]-top
+ assert inside>0
+ mirrored={'left':200-room['right'],'right':200-room['left'],'top':room['top'],'bottom':room['bottom']}
+ rows.append({'species':name,'headAnchor':ns['anchors'][name],'candidatePlacement':ns['placements'][name],'center':center,'centerVerticalInsetFromIdleHeadCurveUnits':inside,'normalStrokeBounds':normal,'roomStrokeBounds':room,'roomPixelWidthAt033':(room['right']-room['left'])*.33,'roomPixelHeightAt033':(room['bottom']-room['top'])*.33,'mirroredRoomStrokeBounds':mirrored})
+prototype=f'''import {{ PALETTE }} from '../../art/palette'
+import {{ Ink }} from '../ink'
+import type {{ Fit }} from './shared'
+
+// Design prototype only. No registry or reward change has been applied.
+const DAISY_PATH = '{path}'
+const DAISY_PLACEMENT = {{ mochi: 'translate(30 7) rotate(14)', bun: 'translate(29 5) rotate(14)', sprout: 'translate(27 9) rotate(16)' }}
+
+export function daisyClip({{ species }}: Fit) {{
+  return <g transform={{DAISY_PLACEMENT[species]}}>
+    <Ink>
+      <path d={{DAISY_PATH}} fill={{PALETTE.cream}} />
+      <Ink k={{0.625}}><circle cx={{0}} cy={{0}} r={{5.6}} fill={{PALETTE.petDefault}} /></Ink>
+      <circle cx={{-1.3}} cy={{-1.5}} r={{1}} fill={{PALETTE.white}} stroke="none" />
+    </Ink>
+  </g>
+}}
+'''
+Path('/tmp/chore-pet-daisy-clip-candidate.tsx').write_text(prototype)
+(out/'daisy-clip-design-prototype.tsx.txt').write_text(prototype)
+record={'status':'Analytical design geometry only; no runtime/native or all-pose claim.','path':path,'pathSha256':hashlib.sha256(path.encode()).hexdigest(),'cubicSegments':5,'rows':rows,'method':'Exact extrema of rounded six-decimal cubic petal path after the candidate idle head anchor and rotation, with half-stroke padding for isotropic scale. The centre button/glint are conservatively contained by its radius. Source idle head curve solved by monotonic x bisection for vertical centre inset. These calculations do not certify every point against the body, pose clipping, browser stroke rasterization or animated attachment.','limits':'Current idle head anchors and source body paths only. Tiny prototype and raster studies have no new runtime state, timer, listener, frame owner, ID/clip path or saved field. Production item/reward integration and native review remain pending.'}
+(out/'daisy-clip-design-geometry.json').write_text(json.dumps(record,indent=2)+'\n')
+print(json.dumps({'cubicSegments':5,'species':[{k:r[k] for k in ['species','centerVerticalInsetFromIdleHeadCurveUnits','roomPixelWidthAt033','roomPixelHeightAt033']} for r in rows]}))

@@ -1,0 +1,144 @@
+from pathlib import Path
+import hashlib,json,subprocess,sys,datetime
+import math
+
+MIB = 1024**2
+
+
+def integer(value, minimum=0):
+    return type(value) is int and value >= minimum
+
+
+def finite(value, minimum=0):
+    return type(value) in (int, float) and math.isfinite(value) and value >= minimum
+
+
+def validate_resource(name, j, code, policy, expected_stop=None):
+    assert code in (0, 1, 124, 125), (name, 'unsupported result')
+    assert type(j['exitCode']) is int and j['exitCode'] == code
+    for key in ('launchMinimumMiB', 'runReserveMiB'):
+        assert integer(j[key], 1) and j[key] == policy[key], (name, key)
+    assert j['launchMinimumMiB'] >= j['runReserveMiB']
+    assert j.get('tmpReserveMiB', 2048) == policy['tmpReserveMiB'] == 2048
+    assert j.get('sampleIntervalSeconds') == policy['sampleIntervalSeconds']
+    assert j['command'] == policy['command']
+    assert j.get('monitorSha256') == policy.get('monitorSha256')
+    rows = j['samples']
+    assert isinstance(rows, list) and len(rows) >= 2
+    previous = -1
+    for row in rows:
+        assert finite(row['elapsedSeconds']) and row['elapsedSeconds'] >= previous
+        assert integer(row['memAvailableBytes']) and integer(row['tmpFreeBytes'])
+        previous = row['elapsedSeconds']
+    assert min(x['memAvailableBytes'] for x in rows) == j['minimumObservedAvailableBytes']
+    c = j['cleanup']
+    for key in ('termMembers', 'killMembers', 'remainingLiveMembers'):
+        assert isinstance(c[key], list) and all(integer(x, 1) for x in c[key])
+        assert len(set(c[key])) == len(c[key])
+    assert c['remainingLiveMembers'] == []
+    assert c.get('membershipVerified', True) is True
+    assert j.get('errors', []) == []
+    assert ('events' in j) == ('stopEvent' in j)
+    first = rows[0]
+    launch_ok = first['memAvailableBytes'] >= j['launchMinimumMiB'] * MIB and first['tmpFreeBytes'] >= 2048 * MIB
+    if code == 125:
+        assert not launch_ok
+        assert j['resourceStopReason'] == 'Insufficient launch headroom; no child started.'
+        assert c['processGroup'] is None and 'leaderReturnCode' not in c
+        assert c['termMembers'] == c['killMembers'] == []
+        assert c.get('leaderCollected', False) is False
+    else:
+        assert launch_ok, (name, 'launched below declared launch minimum')
+        assert integer(c['processGroup'], 1) and type(c['leaderReturnCode']) is int
+        assert -64 <= c['leaderReturnCode'] <= 255
+        assert c.get('leaderCollected', True) is True
+        if code in (0, 1):
+            assert c['leaderReturnCode'] == code and c['termMembers'] == c['killMembers'] == []
+            assert j['resourceStopReason'] is None
+            assert all(x['memAvailableBytes'] >= j['runReserveMiB'] * MIB and x['tmpFreeBytes'] >= 2048 * MIB for x in rows)
+        else:
+            assert j['resourceStopReason'] == expected_stop == 'Resource reserve crossed; stopped only this job process group.'
+            crosses = [i for i, x in enumerate(rows) if x['memAvailableBytes'] < j['runReserveMiB'] * MIB or x['tmpFreeBytes'] < 2048 * MIB]
+            assert crosses and crosses[0] < len(rows) - 1, (name, 'crossing only after cleanup')
+            trigger = crosses[0]
+            if 'stopEvent' not in j:
+                assert policy['legacyStopTrigger'] == {'sampleIndex': trigger, 'elapsedSeconds': rows[trigger]['elapsedSeconds'], 'memAvailableBytes': rows[trigger]['memAvailableBytes'], 'tmpFreeBytes': rows[trigger]['tmpFreeBytes']}
+            else:
+                assert rows[trigger]['phase'] == 'running'
+                e = j['stopEvent']
+                assert e['kind'] == 'reserve-stop' and e['triggerSampleIndex'] == trigger
+                assert rows[trigger]['elapsedSeconds'] <= e['elapsedSeconds']
+    if code in (0, 1) and 'stopEvent' in j:
+        assert j['stopEvent'] is None
+    if 'events' in j:
+        assert isinstance(j['monitorSha256'], str) and len(j['monitorSha256']) == 64 and all(c in '0123456789abcdef' for c in j['monitorSha256'])
+        assert rows[0]['phase'] == 'launch' and rows[-1]['phase'] == 'after-cleanup'
+        events = j['events']
+        previous = -1
+        for e in events:
+            assert finite(e['elapsedSeconds']) and e['elapsedSeconds'] >= previous
+            previous = e['elapsedSeconds']
+        started = [e for e in events if e['kind'] == 'child-started']
+        assert len(started) == (0 if code == 125 else 1)
+        if started:
+            assert started[0]['processGroup'] == c['processGroup']
+        cleanup_start = [e for e in events if e['kind'] == 'cleanup-started']
+        cleanup_end = [e for e in events if e['kind'] == 'cleanup-finished']
+        assert len(cleanup_start) == len(cleanup_end) == 1
+        assert cleanup_start[0]['elapsedSeconds'] <= cleanup_end[0]['elapsedSeconds'] <= rows[-1]['elapsedSeconds']
+        if code == 124:
+            assert j['stopEvent'] in events
+            assert j['stopEvent']['elapsedSeconds'] <= cleanup_start[0]['elapsedSeconds']
+            assert events.index(j['stopEvent']) < events.index(cleanup_start[0])
+        if code == 125:
+            assert j['stopEvent']['kind'] == 'launch-refused' and j['stopEvent']['triggerSampleIndex'] == 0
+            assert not any(e['kind'].startswith(('term-', 'kill-')) for e in events)
+    return {'samples': len(rows), 'minimumAvailableMiB': min(x['memAvailableBytes'] for x in rows) / MIB,
+        'minimumTmpMiB': min(x['tmpFreeBytes'] for x in rows) / MIB, 'exitCode': code,
+        'launchMinimumMiB': j['launchMinimumMiB'], 'runReserveMiB': j['runReserveMiB'], 'tmpReserveMiB': 2048,
+        'scope': 'Recorded original job group/session only; requested command and declared thresholds bound to per-run configuration. Samples are not a guaranteed resource floor or peak CPU/RSS measurement.'}
+
+
+def main():
+ cfg=json.loads(Path(sys.argv[1]).read_text());out=Path('docs/audits/2026-10-12-character-polish');prefix=cfg['prefix']
+ def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+ def put(p,v):Path(p).write_text(json.dumps(v,indent=2)+'\n')
+ base=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+ sources=cfg['sources'];unchanged=cfg['unchangedSources']
+ for p in unchanged:assert Path(p).read_bytes()==subprocess.check_output(['git','show',f'{base}:{p}']),p
+ checks=[];resources=[]
+ for p in sorted(out.glob(f'{prefix}-*.exit')):
+  code=int(p.read_text());assert code==cfg.get('expectedFailures',{}).get(p.stem,0),(p,code)
+  log=p.with_suffix('.log');checks.append({'name':p.stem,'log':str(log),'logSha256':sha(log),'exitCode':code,'exitEvidence':{'path':str(p),'sha256':sha(p)}})
+  sidecar=p.with_name(p.stem+'-resources.json');j=json.loads(sidecar.read_text());assert j['exitCode']==code
+  policy=cfg['resourcePolicies'][p.stem]
+  row=validate_resource(p.stem,j,code,policy,cfg.get('expectedResourceStops',{}).get(p.stem))
+  resources.append({'path':str(sidecar),**row})
+ assert len(checks)==cfg['expectedCheckCount'],len(checks)
+ assert set(cfg['resourcePolicies'])=={x['name']for x in checks}
+ required=cfg['requiredPassingChecks'];assert required and len(set(required))==len(required)
+ codes={x['name']:x['exitCode']for x in checks}
+ assert all(codes.get(name)==0 for name in required),(required,codes)
+ summary={'runs':len(resources),'sampleRows':sum(x['samples']for x in resources),'minimumObservedAvailableMiB':min(x['minimumAvailableMiB']for x in resources),'minimumObservedTmpFreeMiB':min(x['minimumTmpMiB']for x in resources),'reserveStops':sum(x['exitCode']==124 for x in resources),'minimumSuccessfulAvailableMiB':min(x['minimumAvailableMiB']for x in resources if x['exitCode']==0),'launchRejections':sum(x['exitCode']==125 for x in resources),'rows':resources,'limits':'All observed minima retained, including explicitly failed reserve-stopped history. Successful runs must retain their declared RAM reserve; launch refusals start no child. Host samples at approximately1s original or0.5s conservative cadence are not peak process RSS/CPU or device certification. Per-run command arrays and declared thresholds are bound to explicit configuration. The parent requested sequential jobs, nice10 and capped heaps; this evidence does not enforce host-wide concurrency or measure peak CPU/RSS. No all-runs-above-reserve claim.'};put(out/f'{prefix}-resource-summary.json',summary)
+ patch=b''
+ for p in sources:
+  tracked=subprocess.run(['git','ls-files','--error-unmatch',p],capture_output=True).returncode==0
+  if tracked:patch+=subprocess.check_output(['git','diff','--',p])
+  else:
+   r=subprocess.run(['git','diff','--no-index','--','/dev/null',p],capture_output=True);assert r.returncode in[0,1];patch+=r.stdout
+ patchpath=out/f'{prefix}-source.diff';patchpath.write_bytes(patch)
+ exclude=set(sources)|{str(out/f'{prefix}-{n}')for n in ['artifacts.json','review-input.json','verification.json','source.diff','independent-review.md']}
+ files=[]
+ for p in sorted(out.glob(f'{prefix}-*')):
+  for f in sorted(p.rglob('*'))if p.is_dir()else[p]:
+   if f.is_file()and str(f)not in exclude and f.suffix not in ['.log','.exit']:files.append(f)
+ manifest=out/f'{prefix}-artifacts.json';put(manifest,{'files':{str(p):sha(p)for p in files}})
+ j={'freeze':{'baseCommit':base,'sources':{p:sha(p)for p in sources},'unchangedSources':{p:sha(p)for p in unchanged},'patch':{'path':str(patchpath),'sha256':sha(patchpath)}},'artifactsManifest':{'path':str(manifest),'sha256':sha(manifest)},'checks':checks,'requiredPassingChecks':required,'resourcePolicies':cfg['resourcePolicies'],'configuration':{'path':str(Path(sys.argv[1])),'sha256':sha(sys.argv[1])},'results':cfg['results'],'scope':cfg['scope'],'history':cfg.get('history',''),'resources':{k:v for k,v in summary.items()if k!='rows'},'status':'Evidence frozen; required current checks passed. Historical failures, stops and refusals remain separate; awaiting bounded independent review.'}
+ inputpath=out/f'{prefix}-review-input.json';assert not inputpath.exists();put(inputpath,j)
+ j['reviewInput']={'path':str(inputpath),'sha256':sha(inputpath)};put(out/f'{prefix}-verification.json',j)
+ with(out/'PROGRESS.md').open('a')as f:f.write('\n'+datetime.datetime.now(datetime.timezone.utc).isoformat()+f': {prefix} frozen: {len(sources)} sources, {len(unchanged)} unchanged dependencies, {len(files)} artifacts, {len(checks)} raw log/exit pairs. Awaiting bounded independent review. '+cfg['results']['summary']+'\n')
+ print(prefix,sha(inputpath),len(files),'artifacts',len(checks),'pairs',summary['minimumObservedAvailableMiB'],'MiB minimum')
+
+
+if __name__ == '__main__':
+ main()

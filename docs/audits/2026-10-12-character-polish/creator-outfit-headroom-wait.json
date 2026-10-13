@@ -1,0 +1,189 @@
+{
+  "utc": "2026-10-13T09:02:54.221786+00:00",
+  "launchedMonitor": false,
+  "monitorExitCode": null,
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4408451072,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 5.0,
+      "memAvailableBytes": 4459098112,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 10.0,
+      "memAvailableBytes": 4456353792,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 15.001,
+      "memAvailableBytes": 4450648064,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 20.001,
+      "memAvailableBytes": 4444528640,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 25.001,
+      "memAvailableBytes": 4429623296,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 30.001,
+      "memAvailableBytes": 4432375808,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 35.002,
+      "memAvailableBytes": 4422696960,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 40.002,
+      "memAvailableBytes": 4406939648,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 45.002,
+      "memAvailableBytes": 4352290816,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 50.002,
+      "memAvailableBytes": 4236746752,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 55.002,
+      "memAvailableBytes": 4433010688,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 60.003,
+      "memAvailableBytes": 4436557824,
+      "tmpFreeBytes": 4282761216
+    },
+    {
+      "elapsedSeconds": 65.003,
+      "memAvailableBytes": 4419436544,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 70.003,
+      "memAvailableBytes": 4398125056,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 75.003,
+      "memAvailableBytes": 4353384448,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 80.003,
+      "memAvailableBytes": 4335988736,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 85.004,
+      "memAvailableBytes": 4317954048,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 90.004,
+      "memAvailableBytes": 4312907776,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 95.004,
+      "memAvailableBytes": 4371021824,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 100.004,
+      "memAvailableBytes": 4562120704,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 105.005,
+      "memAvailableBytes": 4506288128,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 110.005,
+      "memAvailableBytes": 4490244096,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 115.005,
+      "memAvailableBytes": 4479143936,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 120.005,
+      "memAvailableBytes": 4433891328,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 125.005,
+      "memAvailableBytes": 4389470208,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 130.006,
+      "memAvailableBytes": 4379213824,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 135.006,
+      "memAvailableBytes": 4363001856,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 140.006,
+      "memAvailableBytes": 4253171712,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 145.006,
+      "memAvailableBytes": 4269916160,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 150.007,
+      "memAvailableBytes": 4275355648,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 155.007,
+      "memAvailableBytes": 4288675840,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 160.007,
+      "memAvailableBytes": 4296888320,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 165.007,
+      "memAvailableBytes": 4153774080,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 170.007,
+      "memAvailableBytes": 3971743744,
+      "tmpFreeBytes": 4282753024
+    },
+    {
+      "elapsedSeconds": 175.008,
+      "memAvailableBytes": 4103753728,
+      "tmpFreeBytes": 4282753024
+    }
+  ],
+  "status": "Deferred after three minutes; no monitor, test, browser or server started.",
+  "method": "Read-only available RAM and /tmp every five seconds. Native work requires four consecutive samples at least6144MiBRAM and2048MiB/tmp, then the conservative-v2 monitor rechecks launch and retains4096MiBRAM/2048MiB/tmp sampled stop triggers. One possible native probe only; no other heavy job may overlap this watcher."
+}

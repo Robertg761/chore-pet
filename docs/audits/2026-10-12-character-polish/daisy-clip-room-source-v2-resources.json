@@ -1,0 +1,78 @@
+{
+  "utc": "2026-10-13T09:51:02.095227+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "--max-old-space-size=128",
+    "/tmp/chore-pet-daisy-clip-room-studies-v2.cjs"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3072,
+  "runReserveMiB": 2048,
+  "tmpReserveMiB": 2048,
+  "sampleIntervalSeconds": 0.5,
+  "nodeOptions": null,
+  "monitorSha256": "afddd715ca4ec81f0d714360e45af0bde7f56b5bd94df784a9698e75ebea3178",
+  "cleanup": {
+    "processGroup": 3,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "membershipVerified": true,
+    "leaderCollected": true,
+    "leaderReturnCode": 0
+  },
+  "stopEvent": null,
+  "events": [
+    {
+      "kind": "child-started",
+      "elapsedSeconds": 0.001,
+      "processGroup": 3
+    },
+    {
+      "kind": "leader-exited",
+      "elapsedSeconds": 1.001,
+      "returnCode": 0
+    },
+    {
+      "kind": "cleanup-started",
+      "elapsedSeconds": 1.001
+    },
+    {
+      "kind": "cleanup-finished",
+      "elapsedSeconds": 1.002
+    }
+  ],
+  "errors": [],
+  "minimumObservedAvailableBytes": 3512979456,
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "phase": "launch",
+      "memAvailableBytes": 3614052352,
+      "tmpFreeBytes": 4281614336
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "phase": "running",
+      "memAvailableBytes": 3614052352,
+      "tmpFreeBytes": 4281614336
+    },
+    {
+      "elapsedSeconds": 0.501,
+      "phase": "running",
+      "memAvailableBytes": 3512979456,
+      "tmpFreeBytes": 4281614336
+    },
+    {
+      "elapsedSeconds": 1.002,
+      "phase": "after-cleanup",
+      "memAvailableBytes": 3611480064,
+      "tmpFreeBytes": 4281614336
+    }
+  ],
+  "method": "Host available RAM and /tmp sampled about twice per second while running, with explicit launch/running/after-cleanup phases and stop-event index. The RAM reserve is a sampled stop trigger, not a guaranteed floor. Only the original job process group/session may be signalled; changed groups/sessions and all host processes are not certified. Cleanup exceptions are recorded and make the run fail; evidence writing follows cleanup and bounded leader collection even when they fail. Requested child commands carry their own niceness/heap/worker options; this monitor does not enforce host-wide concurrency or certify peak RSS/CPU, battery or devices."
+}

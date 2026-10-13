@@ -1,0 +1,47 @@
+{
+  "utc": "2026-10-13T10:00:07.247280+00:00",
+  "status": "Original and supplement independent reviews accepted for static design only; all bindings reverified. No product/native PASS, source integration or checkpoint.",
+  "baseCommit": "5db1330781976ee933708128977835e34227a93d",
+  "reviewFiles": {
+    "/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/daisy-clip-design-review-input.json": "423004792516e6e55f39c0b4de5bbb888ec06ad3bca17bed6a69193922a84c2b",
+    "/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/daisy-clip-design-review.md": "53215009276e3417fe610290e5748c40c67df308c160f7c24cda1ed03ee47da0",
+    "/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/daisy-clip-design-review-supplement-input.json": "580fc7b276bfa744d267c5ff8ac1881d79803bd271f70f20d183e1ab37706ded",
+    "/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/daisy-clip-design-review-supplement.md": "aac99787b3033be6214fbfaa4430856e4bff4caff337daa93908cd6bb6cd4a47"
+  },
+  "bindingCounts": {
+    "originalArtifacts": 118,
+    "supplementArtifacts": 32,
+    "sourceDependencies": 28,
+    "additionalBindings": 2
+  },
+  "rootVisualReview": {
+    "uniquePNGSheets": 19,
+    "actualSourceCells": 204,
+    "conceptSheets": 3,
+    "selectedFitFullSizeSheets": 6,
+    "selectedFitRoomSizeSheets": 4
+  },
+  "selectedPrototypeSha256": "fa0055f0daba6bfa85feb14fda52faf2f84f14a25abc4f2e0dc0549a9ae8ee6c",
+  "sourceEquivalence": {
+    "caseCount": 2352,
+    "finalRun": "daisy-clip-source-equivalence-v3",
+    "warningLines": 0,
+    "limits": "Historical paired source serialization only; no live/native/continuous-motion acceptance."
+  },
+  "historicalStaticJobs": {
+    "total": 26,
+    "successful": 24,
+    "failedConversions": 2,
+    "failureCodes": [
+      -11,
+      -6
+    ]
+  },
+  "laterAcceptanceItems": [
+    "Bun cooling-patch outer-corner contact in native room/wardrobe art",
+    "Reward/equip/remove/save behavior",
+    "Actual CSS/live motion, clocks/deadlines and reduced-motion preferences",
+    "All body colours, native camera/floor/device density, wardrobe clipping and accessibility"
+  ],
+  "B64CurrentSourcesAndDependenciesUnchanged": true
+}

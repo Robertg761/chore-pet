@@ -1,0 +1,124 @@
+{
+  "status": "Analytical design geometry only; no runtime/native or all-pose claim.",
+  "path": "M-5.877853 -8.09017 C-11 -19.969943 11 -19.969943 5.877853 -8.09017 C15.593358 -16.632674 22.391732 4.29057 9.510565 3.09017 C20.637225 9.690386 2.838851 22.621661 0 10 C-2.838851 22.621661 -20.637225 9.690386 -9.510565 3.09017 C-22.391732 4.29057 -15.593358 -16.632674 -5.877853 -8.09017 Z",
+  "pathSha256": "e76fc8aeff3fb408921f48cfb67ae42b6e8808118b0ecf696f5df023d36fd27e",
+  "cubicSegments": 5,
+  "rows": [
+    {
+      "species": "mochi",
+      "headAnchor": [
+        100,
+        78,
+        1
+      ],
+      "candidatePlacement": [
+        30,
+        7,
+        14
+      ],
+      "center": [
+        130.0,
+        85.0
+      ],
+      "centerVerticalInsetFromIdleHeadCurveUnits": 5.635674032609259,
+      "normalStrokeBounds": {
+        "left": 112.3148572626199,
+        "right": 148.9804623150706,
+        "top": 66.24226955458698,
+        "bottom": 103.3920490872911
+      },
+      "roomStrokeBounds": {
+        "left": 111.11485726261989,
+        "right": 150.1804623150706,
+        "top": 65.04226955458698,
+        "bottom": 104.5920490872911
+      },
+      "roomPixelWidthAt033": 12.891649667308734,
+      "roomPixelHeightAt033": 13.051427245792361,
+      "mirroredRoomStrokeBounds": {
+        "left": 49.8195376849294,
+        "right": 88.88514273738011,
+        "top": 65.04226955458698,
+        "bottom": 104.5920490872911
+      }
+    },
+    {
+      "species": "bun",
+      "headAnchor": [
+        100,
+        92,
+        0.95
+      ],
+      "candidatePlacement": [
+        29,
+        5,
+        14
+      ],
+      "center": [
+        127.55,
+        96.75
+      ],
+      "centerVerticalInsetFromIdleHeadCurveUnits": 4.243766866337367,
+      "normalStrokeBounds": {
+        "left": 110.74911439948889,
+        "right": 145.5814391993171,
+        "top": 78.93015607685763,
+        "bottom": 114.22244663292655
+      },
+      "roomStrokeBounds": {
+        "left": 109.60911439948889,
+        "right": 146.72143919931708,
+        "top": 77.79015607685763,
+        "bottom": 115.36244663292655
+      },
+      "roomPixelWidthAt033": 12.247067183943303,
+      "roomPixelHeightAt033": 12.398855883502744,
+      "mirroredRoomStrokeBounds": {
+        "left": 53.278560800682925,
+        "right": 90.39088560051111,
+        "top": 77.79015607685763,
+        "bottom": 115.36244663292655
+      }
+    },
+    {
+      "species": "sprout",
+      "headAnchor": [
+        100,
+        76,
+        0.95
+      ],
+      "candidatePlacement": [
+        27,
+        9,
+        16
+      ],
+      "center": [
+        125.65,
+        84.55
+      ],
+      "centerVerticalInsetFromIdleHeadCurveUnits": 4.220791515124503,
+      "normalStrokeBounds": {
+        "left": 109.01601112657355,
+        "right": 143.6953640517294,
+        "top": 66.80171522828545,
+        "bottom": 102.12473736968589
+      },
+      "roomStrokeBounds": {
+        "left": 107.87601112657354,
+        "right": 144.83536405172939,
+        "top": 65.66171522828544,
+        "bottom": 103.26473736968589
+      },
+      "roomPixelWidthAt033": 12.196586465301428,
+      "roomPixelHeightAt033": 12.408997306662148,
+      "mirroredRoomStrokeBounds": {
+        "left": 55.164635948270615,
+        "right": 92.12398887342646,
+        "top": 65.66171522828544,
+        "bottom": 103.26473736968589
+      }
+    }
+  ],
+  "method": "Exact extrema of rounded six-decimal cubic petal path after the candidate idle head anchor and rotation, with half-stroke padding for isotropic scale. The centre button/glint are conservatively contained by its radius. Source idle head curve solved by monotonic x bisection for vertical centre inset. These calculations do not certify every point against the body, pose clipping, browser stroke rasterization or animated attachment.",
+  "limits": "Current idle head anchors and source body paths only. Tiny prototype and raster studies have no new runtime state, timer, listener, frame owner, ID/clip path or saved field. Production item/reward integration and native review remain pending."
+}

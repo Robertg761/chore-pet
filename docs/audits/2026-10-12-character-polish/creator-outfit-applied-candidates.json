@@ -1,0 +1,10 @@
+{
+  "baseFrozenSources": {
+    "src/screens/CreatorPreview.tsx": "64a5509adc18d658cfa29cd72c5d24e56f495b304da70dc454280d80dc9a1bb9",
+    "src/screens/CharacterCreator.tsx": "b0a9e5829b5eeb4c2bd92c4987857d52b345fbdf521873c598fd3b40f81cd233"
+  },
+  "candidates": {
+    "/tmp/creator-outfit-CreatorPreview.tsx": "522d611a0dee306d0ac19ac6e971c725468e480fd5060d1dc9c38b8cd078237d",
+    "/tmp/creator-outfit-CharacterCreator.tsx": "85795aa68eeaaba7604bd9bdc4ce981ee260ebcd6f1c23b12649a4938e5db2d5"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "largest": [
+    {
+      "pid": 2494955,
+      "name": "ChatGPT",
+      "rssMiB": 1176.4
+    },
+    {
+      "pid": 2663972,
+      "name": "qemu-system-x86",
+      "rssMiB": 1155
+    },
+    {
+      "pid": 2663971,
+      "name": "qemu-system-x86",
+      "rssMiB": 1032.1
+    },
+    {
+      "pid": 674328,
+      "name": "chrome",
+      "rssMiB": 452
+    },
+    {
+      "pid": 3765633,
+      "name": "claude-desktop",
+      "rssMiB": 423.8
+    },
+    {
+      "pid": 2147229,
+      "name": "Isolated Web Co",
+      "rssMiB": 392.1
+    },
+    {
+      "pid": 2162752,
+      "name": "Isolated Web Co",
+      "rssMiB": 292.4
+    },
+    {
+      "pid": 1156702,
+      "name": "WebExtensions",
+      "rssMiB": 288.6
+    }
+  ],
+  "headless": []
+}

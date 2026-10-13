@@ -1,0 +1,73 @@
+B64 resource-method review, 2026-10-13
+
+Verdict: the reviewed records honestly retain the observed reserve stops, launch refusal and RAM minima. The freezer keeps those outcomes numerically separate from successful checks. Changes are required before claiming that the method rejects all inconsistent code, reason, reserve and cleanup evidence or always preserves final sidecars. This verdict covers the resource method only. It grants no product completion, native verification, final batch approval or permission to launch another job.
+
+This was one bounded, static-only review. I read the three archived Python sources, the native-initial, native-probe and final-full raw log/exit/resource triplets, the post-stop inventory and design document. I also read the small focused-v2, lint and build triplets to check how successes differ from interrupted history. I did not read the large focused log, execute archived code, run tests, builds, browsers, servers or installs, use other agents, make network calls or inspect current host processes. Only this report was written. Numerical conversions and minima were calculated from the existing JSON samples. Source-level counterexamples below are deductions from the code, not executed tests or modified evidence.
+
+The recorded outcomes are:
+
+| Run | Raw exit and JSON exit | Launch / run RAM threshold, MiB | Exact observed RAM minimum | Stop or refusal evidence |
+| --- | --- | --- | --- | --- |
+| native-initial | 124 / 124, reserve-stopped, not passing | 3200 / 2048 | 1,063,059,456 bytes = 1013.8125 MiB at 70.159s | First recorded crossing at 67.016s, 1,953,607,680 bytes = 1863.10546875 MiB. |
+| native-probe | 125 / 125, refused, not passing | 6144 / 4096 | 5,614,657,536 bytes = 5354.5546875 MiB | Both samples at rounded elapsed 0.000s; RAM below launch threshold, no child. |
+| final-full | 124 / 124, reserve-stopped, not passing | 5120 / 4096 | 4,240,560,128 bytes = 4044.11328125 MiB at 4.504s | First recorded crossing at 4.504s; final post-cleanup sample at 4.662s. |
+
+The native-initial record contains 70 samples. At 66.016s it still recorded 2791.265625 MiB. At 67.016s it crossed the 2048 MiB reserve. The final sample at 70.159s, after the cleanup code path, is lower still. That last sample must remain part of the minimum, rather than replacing it with the stop-trigger value. The 3.143s interval between detection and the final sample is consistent with the original three-second TERM grace and later escalation. It is not an exact timestamp of TERM, KILL or process exit, because those events have no individual timestamps. The [raw native log](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/creator-outfit-native-initial.log:31) reports 29 passes and two cancelled file jobs, plus the reserve-stop message. This is incomplete browser verification. The cancellations coincide with termination; the records do not establish a separate screenshot failure or the cause of the RAM drop.
+
+The [native-initial cleanup record](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/creator-outfit-native-initial-resources.json:25) identifies group 572337, TERM members 572337 and 577861, KILL member 577861, no remaining live members and leader return code 1. Supervisor exit 124 records the resource stop independently of that leader code. Initial available RAM was 4179.6640625 MiB, above its 3200 MiB launch threshold.
+
+The [probe record](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/creator-outfit-native-probe-resources.json:17) agrees with its raw exit and repeated refusal message. Its process group is null, TERM/KILL/remaining lists are empty, and it has no leader return code. The conservative monitor's launch branch precedes Popen and leaves child unset when the threshold fails. Together these support no child started for this probe. The rounded zero timestamps do not establish an exactly zero-duration operation.
+
+The final-full record contains 12 samples. It launched at 5304.8984375 MiB, above its explicitly lower 5120 MiB launch minimum. At 4.004s it recorded 4210.9375 MiB; at 4.504s it crossed the 4096 MiB reserve. Its final sample recovered to 5133.72265625 MiB at 4.662s. The [cleanup record](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/creator-outfit-final-full-resources.json:20) lists group 590830, TERM members 590830 and 590878, no KILL members, no remaining live members and leader return code 143. The 0.158s detection-to-final-sample interval is not a separately measured signal latency. Its short raw log contains no completed-test report. This run does not replace the focused success.
+
+All three observed /tmp minima exceeded the fixed 2048 MiB reserve. They were 3998.96484375 MiB for native-initial, 4085.11328125 MiB for the probe and 4084.48046875 MiB for final-full. The recorded stop/refusal conditions therefore concern RAM, not an observed /tmp crossing.
+
+Successful checks remain distinct:
+
+| Archived run | Exit / stop reason | Exact RAM minimum, MiB | Declared run reserve, MiB | Recorded result |
+| --- | --- | --- | --- | --- |
+| focused-v2 | 0 / null | 4114.1484375 | 2048 | 91 tests passed across five files. |
+| lint | 0 / null | 5344.80859375 | 4096 | Successful exit; empty log. |
+| build | 0 / null | 3602.75 | 2048 | Completed build, with a chunk-size warning. |
+
+Their raw exits match their sidecars; their recorded RAM and /tmp samples retain their declared run reserves, and their cleanup records show leader return code 0 with empty remaining lists. The earlier build's 3602.75 MiB minimum meets its original 2048 MiB reserve; it is not evidence of meeting the later 4096 MiB reserve. These are historical, scoped successes, not fresh validation of product state.
+
+The [freezer](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/creator-outfit-freeze-method.py.txt:10) has useful rejection rules. Lines 11-13 require each raw code to match the configured expectation and the sidecar code, and hash the log and exit file. Lines 14-20 require the exact refusal/stop reason, a null probe group and a relevant threshold breach. Lines 21-25 require a null reason for other outcomes, recompute the RAM minimum exactly, enforce RAM and /tmp reserve minima for non-124/125 runs, check successful RAM launch headroom and reject a nonempty remaining-live list. Line 28 retains all run minima, counts reserve stops and launch rejections separately, and calculates the successful minimum only from code-zero rows. It does not relabel 124 or 125 as passing, discard the native-initial cleanup minimum or assert all runs stayed above reserve. Log hashes preserve the reviewed bytes; they do not validate the log's meaning. I did not execute the freezer or certify a generated manifest/configuration outside this review.
+
+Actionable findings:
+
+1. P2: validate the complete cleanup state for each outcome. Freezer lines 15 and 25 check only a null group for code 125 and an empty remaining-live list for every code. They do not check TERM/KILL lists or leader status. A probe record with a null group but nonempty TERM/KILL lists and a leader return code would satisfy these predicates. A code-124 record with processGroup changed to null would also satisfy them, despite claiming it stopped a launched group. For code zero, an incompatible leaderReturnCode such as 143 is not rejected. Require refusal records to contain no group, leader status or signalled members; require launched records to identify a valid group and leader status; require code-zero leader status zero and no cleanup that the monitor would have classified as a failure. Validate field types and state relationships. The reviewed records themselves show none of these contradictions.
+
+2. P2: bind reserve-stop validation to launch eligibility, the intended thresholds and a recorded stop event. Freezer line 20 accepts any crossing anywhere in the samples, including the final cleanup sample. Only code-zero runs get the first-RAM-sample launch check at line 24. For example, changing final-full's declared launchMinimumMiB from 5120 to 6144 would contradict the monitor's launch decision at 5304.8984375 MiB, yet no code-124 predicate would reject it. The freezer also ignores tmpReserveMiB and hardcodes 2048 MiB; changing lint's declaration to 8192 would leave a successful record below its advertised /tmp reserve without rejection. Check first-sample launch eligibility for every started run, verify threshold declarations against the intended per-run policy, and validate the fixed /tmp declaration where present. Future records should identify the trigger sample and cleanup phase, with monotonic times and a crossing before cleanup. Retain all samples in the overall minimum. Existing records support the timing above by manual source-to-record comparison, but cannot independently timestamp the signals.
+
+3. P2: make evidence writing survive cleanup failures. The [conservative monitor](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/creator-outfit-conservative-monitor.py.txt:88) calls live_group_members, signal_group and child.wait before writing .exit and resource JSON at lines 118-128. The [initial monitor](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/creator-outfit-initial-monitor.py.txt:87) has the same order at lines 91-127. Neither catches TimeoutExpired from the two-second wait; the /proc reader catches only FileNotFoundError and ProcessLookupError. An exception in that cleanup path exits before the sidecar writers, contrary to an unconditional reading of "preserve final sidecars" in the method string. Use an outer evidence-writing finally, preserve the original stop cause and samples, and explicitly record incomplete cleanup/collection instead of claiming no remaining members. All three reviewed triplets exist; this finding concerns the actual exception path, not an observed missing artifact.
+
+4. P3: make frozen status and policy wording match what was verified. Freezer line 42 unconditionally writes "Scoped checks complete; awaiting bounded independent review." It can emit that wording for a set containing known 124/125 outcomes. Line 28 also states "One heavy job/worker/browser at a time, nice10, capped Node heaps" without validating those policies or enforcing a cross-job lock. The reviewed command arrays request nice 10 and Node heap limits, but neither the source nor the archived snapshot establishes host-wide concurrency. Use a status such as "Evidence frozen; interrupted/refused checks remain incomplete" when applicable, and distinguish requested execution limits from measured/enforced properties. Keep individual successful rows and stop/refusal counts visible.
+
+Cleanup and measurement limits remain material. Both monitor membership predicates require process-group ID and session ID to equal the original child PID and exclude Z/X states. They inspect that particular live group even if its leader exits. They do not prove the absence of descendants that changed process group or session, zombies, unrelated browsers or every host process. Signals target only that job group. TERM grace is three seconds in the original monitor and one second in the conservative monitor, followed by up to two seconds of KILL polling and a separate leader wait. Sampling occurs about once per second originally and twice per second conservatively, with no samples inside the cleanup polling loops. Thus 1013.8125 MiB is the lowest observed RAM value, not a continuous-time bound, and a configured reserve is a sampled stop trigger rather than a guaranteed floor.
+
+The [post-stop inventory](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/creator-outfit-post-stop-host-inventory.json:1) contains eight "largest" rows and an empty "headless" list. It has no timestamp, scan command, matching criteria, ownership fields or assertion of complete coverage. It supports only that the archived scan listed no headless matches. The [design note](/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/creator-outfit-design.md:11) is accurate about the recorded minima, stop/refusal outcomes and successful focused run. Its "no headless browser left" wording should be read with this snapshot limitation; future inventory evidence should record its time and selection method. The listed RSS values neither identify who caused a memory change nor certify peak/process RSS. This review explicitly does not certify CPU, RSS, battery use, physical devices, every host process, current headroom or the absence of any system-resource exceedance. The user's statement that no heavy job or browser is currently active was not independently probed.
+
+SHA-256 of the reviewed archived monitor/freezer sources, re-read unchanged before report creation:
+
+| Source | SHA-256 |
+| --- | --- |
+| creator-outfit-conservative-monitor.py.txt | `48fdf79105970191e0cb33a75c47e74802595cc5cf747721bfa2b2812d2682e6` |
+| creator-outfit-initial-monitor.py.txt | `43416218ab8099affaead61557d0461a77c05c22105c31ef9bddc812c72b016a` |
+| creator-outfit-freeze-method.py.txt | `c7310f3d3d12fa4cce875520a36079785ff8f97c15d4669c64365229f5c35cf9` |
+
+SHA-256 of the primary reviewed evidence:
+
+| Evidence | SHA-256 |
+| --- | --- |
+| creator-outfit-native-initial.log | `c3036c54864ec9d2be35e701a1d8ed2968c7cca80293846f9b7d0bd85e737e0a` |
+| creator-outfit-native-initial.exit | `ca2ebdf97d7469496b1f4b78958f9dc8447efdcb623953fee7b6996b762f6fff` |
+| creator-outfit-native-initial-resources.json | `90312d4e4960d16327c02b96af02cf704a039a37f6b230a267259da24fce235e` |
+| creator-outfit-native-probe.log | `ee456c8cdd06e7459d057d3a3fa87527ba2f9a07ba46411d40fc8e3d44f76bc9` |
+| creator-outfit-native-probe.exit | `a5e45837a2959db847f7e67a915d0ecaddd47f943af2af5fa6453be497faabca` |
+| creator-outfit-native-probe-resources.json | `1a1b36774f1f90afc047e1acaf3c2f1312c1f0ee6db43b06315fac22834fd208` |
+| creator-outfit-final-full.log | `d09f5dd260a8ec8ca7b46f55bfacc29c34e3f611bdeb6a1a97b46def31ddc8cf` |
+| creator-outfit-final-full.exit | `ca2ebdf97d7469496b1f4b78958f9dc8447efdcb623953fee7b6996b762f6fff` |
+| creator-outfit-final-full-resources.json | `655d319e2d45d8c3a96d57d2be2569f7ea6a7559d63bbbec7f2203a9ae1155b6` |
+| creator-outfit-post-stop-host-inventory.json | `e918f47c99d9890a93d537b396d81eeccbed91b213632c2737dd99201bc8426b` |
+| creator-outfit-design.md | `3862b76dd6ef8103cf843ce7ca27a0d64f7954daadc29dce120695c28b50346f` |

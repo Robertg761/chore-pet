@@ -1,0 +1,217 @@
+import argparse
+import datetime
+import json
+import hashlib
+import os
+from pathlib import Path
+import shutil
+import signal
+import subprocess
+import time
+
+MIB = 1024**2
+TMP_RESERVE_MIB = 2048
+SAMPLE_SECONDS = .5
+
+
+class SupervisorSignal(Exception):
+    def __init__(self, number):
+        self.number = number
+
+
+
+def read_resources():
+    available = int(next(line.split()[1] for line in Path('/proc/meminfo').read_text().splitlines() if line.startswith('MemAvailable:'))) * 1024
+    return {'memAvailableBytes': available, 'tmpFreeBytes': shutil.disk_usage('/tmp').free}
+
+
+def live_group_members(pgid):
+    members = []
+    for path in Path('/proc').iterdir():
+        if not path.name.isdigit():
+            continue
+        try:
+            fields = (path / 'stat').read_text().rsplit(')', 1)[1].split()
+            if int(fields[2]) == pgid and int(fields[3]) == pgid and fields[0] not in ('Z', 'X'):
+                members.append(int(path.name))
+        except (FileNotFoundError, ProcessLookupError):
+            continue
+    return sorted(members)
+
+
+def signal_group(pgid, number):
+    try:
+        os.killpg(pgid, number)
+    except ProcessLookupError:
+        pass
+
+
+def run(args, out=Path('docs/audits/2026-10-12-character-polish')):
+    command = args.command[1:] if args.command[:1] == ['--'] else args.command
+    if not command or not 0 < args.reserve_mib <= args.launch_mib:
+        raise ValueError('Command required; positive launch minimum must cover the RAM run reserve.')
+    start = time.monotonic()
+    samples, events, errors = [], [], []
+    child, code, reason, stop_event = None, 125, None, None
+    received_signal = None
+
+    def interrupted(number, _frame):
+        nonlocal received_signal
+        received_signal = number
+
+    def check_signal():
+        if received_signal is not None:
+            raise SupervisorSignal(received_signal)
+    cleanup = {'processGroup': None, 'termMembers': [], 'killMembers': [], 'remainingLiveMembers': [], 'membershipVerified': True, 'leaderCollected': False}
+
+    def event(kind, **extra):
+        row = {'kind': kind, 'elapsedSeconds': round(time.monotonic() - start, 3), **extra}
+        events.append(row)
+        return row
+
+    def sample(phase):
+        row = {'elapsedSeconds': round(time.monotonic() - start, 3), 'phase': phase, **read_resources()}
+        samples.append(row)
+        return row
+
+    def below(row, ram_mib):
+        return row['memAvailableBytes'] < ram_mib * MIB or row['tmpFreeBytes'] < TMP_RESERVE_MIB * MIB
+
+    def error(phase, exc):
+        errors.append({'phase': phase, 'type': type(exc).__name__, 'message': str(exc)})
+        event('error', phase=phase, type=type(exc).__name__)
+
+    signal.signal(signal.SIGTERM, interrupted)
+    signal.signal(signal.SIGINT, interrupted)
+    with (out / f'{args.label}.log').open('w') as log:
+        try:
+            first = sample('launch')
+            check_signal()
+            if below(first, args.launch_mib):
+                reason = 'Insufficient launch headroom; no child started.'
+                stop_event = event('launch-refused', triggerSampleIndex=0)
+            else:
+                child = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
+                cleanup['processGroup'] = child.pid
+                event('child-started', processGroup=child.pid)
+                check_signal()
+                while child.poll() is None:
+                    check_signal()
+                    current = sample('running')
+                    if below(current, args.reserve_mib):
+                        reason = 'Resource reserve crossed; stopped only this job process group.'
+                        code = 124
+                        stop_event = event('reserve-stop', triggerSampleIndex=len(samples) - 1)
+                        break
+                    time.sleep(SAMPLE_SECONDS)
+                check_signal()
+                if reason is None:
+                    code = child.returncode
+                    event('leader-exited', returnCode=code)
+        except SupervisorSignal as stopped:
+            code = 128 + stopped.number
+            reason = f'Supervisor received signal {stopped.number}; stopped only this job process group.'
+            stop_event = event('supervisor-signal', number=stopped.number)
+        except Exception as exc:
+            code, reason = 127, 'Supervisor error; cleanup attempted only for this job process group.'
+            error('supervision', exc)
+        finally:
+            signal.signal(signal.SIGTERM, signal.SIG_IGN)
+            signal.signal(signal.SIGINT, signal.SIG_IGN)
+            event('cleanup-started')
+            try:
+                if child is not None:
+                    try:
+                        cleanup['termMembers'] = live_group_members(child.pid)
+                    except Exception as exc:
+                        cleanup['membershipVerified'] = False
+                        code = 127
+                        error('membership-before-term', exc)
+                    if cleanup['termMembers'] or not cleanup['membershipVerified']:
+                        if reason is None:
+                            reason = 'Direct child exited while owned descendants remained; stopped only this job process group.' if cleanup['membershipVerified'] else 'Owned-group membership could not be verified; cleanup attempted only for this job process group.'
+                            code = 127 if errors else 126
+                        event('term-requested', processGroup=child.pid)
+                        signal_group(child.pid, signal.SIGTERM)
+                        deadline = time.monotonic() + 1
+                        while time.monotonic() < deadline:
+                            if not live_group_members(child.pid):
+                                break
+                            time.sleep(.05)
+                        cleanup['killMembers'] = live_group_members(child.pid)
+                        if cleanup['killMembers']:
+                            event('kill-requested', processGroup=child.pid)
+                            signal_group(child.pid, signal.SIGKILL)
+                            deadline = time.monotonic() + 2
+                            while time.monotonic() < deadline:
+                                if not live_group_members(child.pid):
+                                    break
+                                time.sleep(.05)
+                    cleanup['remainingLiveMembers'] = live_group_members(child.pid)
+                    cleanup['membershipVerified'] = True
+                    if cleanup['remainingLiveMembers']:
+                        code = 127
+                        error('live-members-after-escalation', RuntimeError('Owned live members remain.'))
+            except Exception as exc:
+                code = 127
+                cleanup['membershipVerified'] = False
+                error('group-cleanup', exc)
+                if child is not None:
+                    try:
+                        event('kill-requested-after-cleanup-error', processGroup=child.pid)
+                        signal_group(child.pid, signal.SIGKILL)
+                    except Exception as killed:
+                        error('kill-after-cleanup-error', killed)
+                    try:
+                        cleanup['remainingLiveMembers'] = live_group_members(child.pid)
+                        cleanup['membershipVerified'] = True
+                    except Exception as inspected:
+                        error('membership-after-cleanup-error', inspected)
+            finally:
+                if child is not None:
+                    try:
+                        child.wait(timeout=2)
+                        cleanup['leaderCollected'] = True
+                    except Exception as exc:
+                        code = 127
+                        error('leader-collection', exc)
+                    cleanup['leaderReturnCode'] = child.returncode
+                event('cleanup-finished')
+                try:
+                    sample('after-cleanup')
+                except Exception as exc:
+                    code = 127
+                    error('final-resource-sample', exc)
+                if errors and reason is None:
+                    reason = 'Supervisor or cleanup error; inspect recorded errors and incomplete cleanup.'
+                if reason:
+                    log.write('\n' + reason + '\n')
+                for item in errors:
+                    log.write(json.dumps(item) + '\n')
+                log.flush()
+                minimum = min((row['memAvailableBytes'] for row in samples), default=None)
+                evidence = {'utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'command': command, 'exitCode': code, 'resourceStopReason': reason,
+                    'launchMinimumMiB': args.launch_mib, 'runReserveMiB': args.reserve_mib, 'tmpReserveMiB': TMP_RESERVE_MIB, 'sampleIntervalSeconds': SAMPLE_SECONDS,
+                    'nodeOptions': os.environ.get('NODE_OPTIONS'), 'monitorSha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), 'cleanup': cleanup, 'stopEvent': stop_event, 'events': events, 'errors': errors,
+                    'minimumObservedAvailableBytes': minimum, 'samples': samples,
+                    'method': 'Host available RAM and /tmp sampled about twice per second while running, with explicit launch/running/after-cleanup phases and stop-event index. The RAM reserve is a sampled stop trigger, not a guaranteed floor. Only the original job process group/session may be signalled; changed groups/sessions and all host processes are not certified. Cleanup exceptions are recorded and make the run fail; evidence writing follows cleanup and bounded leader collection even when they fail. Requested child commands carry their own niceness/heap/worker options; this monitor does not enforce host-wide concurrency or certify peak RSS/CPU, battery or devices.'}
+                # Attempt both evidence files even if one filesystem write fails.
+                try:
+                    (out / f'{args.label}.exit').write_text(str(code) + '\n')
+                finally:
+                    (out / f'{args.label}-resources.json').write_text(json.dumps(evidence, indent=2) + '\n')
+    print(args.label, 'exit', code, 'minimum observed available MiB', None if minimum is None else round(minimum / MIB, 1), reason or '')
+    return code
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--launch-mib', type=int, default=6144)
+    parser.add_argument('--reserve-mib', type=int, default=4096)
+    parser.add_argument('label')
+    parser.add_argument('command', nargs=argparse.REMAINDER)
+    return run(parser.parse_args())
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

@@ -1,0 +1,40 @@
+from pathlib import Path
+import datetime,hashlib,json,struct,zlib
+root=Path.cwd();out=root/'docs/audits/2026-10-12-character-polish';sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+base=out/'daisy-clip-design-review-input.json';report=out/'daisy-clip-design-review.md'
+assert sha(base)=='423004792516e6e55f39c0b4de5bbb888ec06ad3bca17bed6a69193922a84c2b'
+assert sha(report)=='53215009276e3417fe610290e5748c40c67df308c160f7c24cda1ed03ee47da0'
+old=json.loads(base.read_text())
+for group in ['artifacts','unchangedSourceDependencies','additionalReadOnlyBindings']:
+ for name,digest in old[group].items():assert sha(root/name)==digest,name
+before=json.loads((out/'daisy-clip-source-equivalence-v2.json').read_text());after=json.loads((out/'daisy-clip-source-equivalence-v3.json').read_text())
+assert before['counts']==after['counts']=={'poses':1344,'sampledActions':936,'reducedSamples':72,'total':2352}
+assert before['prototypeSha256']==after['prototypeSha256'] and before['sourceDependencies']==after['sourceDependencies']
+key=lambda r:json.dumps({k:v for k,v in r.items() if k!='withoutHeadSha256'},sort_keys=True)
+oldkeys=list(map(key,before['checks']));newkeys=list(map(key,after['checks']));assert oldkeys==newkeys and len(set(newkeys))==2352
+log=(out/'daisy-clip-source-equivalence-v3.log').read_text().splitlines();assert len(log)==1 and json.loads(log[0])['counts']==after['counts']
+ns={};method=(out/'daisy-clip-design-evidence-method.py.txt').read_text();exec(compile(method.split('\nimages=[]',1)[0],'<bound-png-method>','exec'),ns)
+room=json.loads((out/'daisy-clip-room-source-studies-v2.json').read_text());assert room['prototypeSha256']==after['prototypeSha256'] and room['sourceDependencies']==after['sourceDependencies']
+images=[]
+for r in room['records']:
+ p=out/(r['name']+'-final.png');info=ns['png_info'](p);assert (info['width'],info['height'])==(976,824)
+ assert len(r['samples'])==21
+ images.append({'path':str(p.relative_to(root)),'review':'Root directly inspected all21cells at actual66px SVG size, source strokeScale1.6.','cells':21,**info})
+assert len(images)==4
+labels=['daisy-clip-source-equivalence-v3','daisy-clip-room-source-v2']+[r['name']+'-raster' for r in room['records']]
+jobs=[]
+for label in labels:
+ p=out/(label+'-resources.json');r=json.loads(p.read_text());c=r['cleanup'];s=r['samples']
+ assert r['exitCode']==c['leaderReturnCode']==int((out/(label+'.exit')).read_text())==0
+ assert c['leaderCollected'] is True and c['membershipVerified'] is True and not c['termMembers'] and not c['killMembers'] and not c['remainingLiveMembers']
+ assert r['resourceStopReason'] is None and r['stopEvent'] is None and not r['errors']
+ assert r['launchMinimumMiB']==3072 and r['runReserveMiB']==2048 and r['tmpReserveMiB']==2048 and r['sampleIntervalSeconds']==.5
+ assert r['monitorSha256']==old['additionalReadOnlyBindings'][str((out/'creator-outfit-conservative-monitor-v2.py.txt').relative_to(root))]
+ assert r['command'][:3]==['nice','-n','10'] and s[0]['phase']=='launch' and s[-1]['phase']=='after-cleanup'
+ assert s[0]['memAvailableBytes']>=3072*1048576 and min(x['memAvailableBytes'] for x in s)>=2048*1048576 and min(x['tmpFreeBytes'] for x in s)>=2048*1048576
+ assert r['minimumObservedAvailableBytes']==min(x['memAvailableBytes'] for x in s)
+ assert '--as=536870912' in r['command'] if label.endswith('-raster') else '--max-old-space-size=128' in r['command']
+ jobs.append({'label':label,'exitCode':0,'command':r['command'],'minimumObservedAvailableMiB':r['minimumObservedAvailableBytes']/1048576,'samples':len(s),'triplet':{str((out/(label+x)).relative_to(root)):sha(out/(label+x)) for x in ['.log','.exit','-resources.json']}})
+record={'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'status':'Static-design supplement only; production/native acceptance remains pending.','baseReviewInputSha256':sha(base),'baseReviewReportSha256':sha(report),'correction':'Equivalence v2 emitted13344ReactclipPathcasingwarnings because it rendered SVG fragments outside an SVG. V3 wraps both paired members in an enclosing SVG. Both runs retain the same2352case keys and selected prototype/source hashes. V3 log has exactly one matching JSON summary and no warnings. V2 historical warning log is unchanged.','pairedComparisonCounts':after['counts'],'caseKeysSha256':hashlib.sha256(('\n'.join(newkeys)+'\n').encode()).hexdigest(),'newRootVisualReview':images,'rootObservation':'All84small source cells reviewed. Flower cream silhouette remains distinguishable on default and dark bodies in both directions. Sprout sick patch face and white marks remain visible. Bun retains outer-corner contact; actual native floor/camera/CSS and device display validation remains necessary. Tiny glint is not relied upon for recognition.','resourceJobs':jobs,'resourceSummary':{'newSuccessfulJobs':6,'totalHistoricalJobs':26,'totalHistoricalSuccessfulJobs':24,'totalHistoricalFailedConversions':2,'minimumObservedAvailableMiBNewJobs':min(r['minimumObservedAvailableMiB'] for r in jobs),'limits':'Sampled original-job process-group observations only. No guaranteed RAM floor or host-wide peak/concurrency/system-safety certification.'},'limits':'The four new images use actual source art at0.33SVGscale with strokeScale1.6, but are static rsvg renders. They do not complete native, live animation, reward, equip/remove/save, wardrobe or accessibility acceptance. Paired rows retain baseline hashes rather than both full markups.'}
+p=out/'daisy-clip-design-supplement-evidence.json';assert not p.exists();p.write_text(json.dumps(record,indent=2)+'\n')
+print(json.dumps({'newImages':4,'newCells':84,'caseCounts':after['counts'],'newSuccessfulJobs':6,'minimumObservedAvailableMiB':record['resourceSummary']['minimumObservedAvailableMiBNewJobs'],'allOriginalBindingsUnchanged':True}))

@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<fontconfig><dir>/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts</dir><cachedir>/tmp/chore-pet-daisy-fonts-5g5f8e0v/cache</cachedir><alias><family>sans-serif</family><prefer><family>Liberation Sans</family></prefer></alias></fontconfig>

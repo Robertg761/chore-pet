@@ -5,11 +5,13 @@ import type { Mood, Pet } from '../domain/types'
 import { usePetMotion } from '../pet/usePetMotion'
 import { PREVIEW_MOOD_OPTIONS, type CreatorDraft } from './creatorModel'
 
+const EMPTY_PREVIEW_OUTFIT: Pet['equipped'] = {}
+
 export interface CreatorPreviewControl { cheer: () => void; settle: () => void; show: () => void }
 
 /** Keep finite character frames out of the creator's choice grids and form. */
-export function CreatorPreview({ draft, equipped, label, control, mood = 'happy', mirrored = false, faceDetail = false }: {
-  draft: CreatorDraft; equipped: Pet['equipped']; label: string; mood?: Mood; mirrored?: boolean; faceDetail?: boolean
+export function CreatorPreview({ draft, equipped, label, control, mood = 'happy', mirrored = false, faceDetail = false, showOutfit = true }: {
+  draft: CreatorDraft; equipped: Pet['equipped']; label: string; mood?: Mood; mirrored?: boolean; faceDetail?: boolean; showOutfit?: boolean
   control: RefObject<CreatorPreviewControl | null>
 }) {
   const preview = useRef<SVGSVGElement>(null)
@@ -34,14 +36,15 @@ export function CreatorPreview({ draft, equipped, label, control, mood = 'happy'
     settle: () => setStart(null),
   }), [reducedMotion, start, mood])
   const active = start !== null && !reducedMotion && mood === 'happy'
+  const outfitHidden = !showOutfit && Object.values(equipped).some(Boolean)
   const moodLabel = PREVIEW_MOOD_OPTIONS.find(option => option.value === mood)!.label
   const frame = sampleMotion({ species: draft.species, mood, action: active ? 'celebrate' : 'idle',
     elapsedMs: active ? elapsed : 0, durationMs: active ? ACTION_MS.celebrate : ACTION_MS.idle,
     distance: 0, reducedMotion: reducedMotion || !active })
   return <div className="cc-preview">
-    <svg ref={preview} tabIndex={-1} focusable="true" width={170} height={170} viewBox={faceDetail ? '36 75 128 110' : '0 0 200 200'} role="img" aria-label={`${label}, ${moodLabel} preview${mirrored ? ", mirrored" : ""}${faceDetail ? ", face detail" : ""}`}>
+    <svg ref={preview} tabIndex={-1} focusable="true" width={170} height={170} viewBox={faceDetail ? '36 75 128 110' : '0 0 200 200'} role="img" aria-label={`${label}, ${moodLabel} preview${mirrored ? ", mirrored" : ""}${faceDetail ? ", face detail" : ""}${outfitHidden ? ", outfit hidden" : ""}`}>
       <g data-preview-facing={mirrored ? 'mirrored' : 'normal'} transform={mirrored ? 'translate(200 0) scale(-1 1)' : undefined}>
-      <AnimatedCharacterArt species={draft.species} mood={mood} bodyColour={draft.bodyColour} equipped={equipped}
+      <AnimatedCharacterArt species={draft.species} mood={mood} bodyColour={draft.bodyColour} equipped={showOutfit ? equipped : EMPTY_PREVIEW_OUTFIT}
         look={{ eyes: draft.eyes, cheeks: draft.cheeks }} frame={frame} />
       </g>
     </svg>

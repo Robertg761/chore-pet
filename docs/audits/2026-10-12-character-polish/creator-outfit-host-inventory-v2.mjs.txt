@@ -1,0 +1,15 @@
+import { readdir, readFile, readlink, writeFile } from 'node:fs/promises';
+const startedUtc=new Date().toISOString(), entries=(await readdir('/proc')).filter(pid=>/^\d+$/.test(pid));
+let readableStatuses=0,failedStatusReads=0,browserCandidates=0,failedBrowserReads=0;
+const headless=[];
+for(const pid of entries){let m;try{
+ const raw=await readFile(`/proc/${pid}/status`,'utf8');m=Object.fromEntries(raw.split('\n').filter(x=>x.includes(':')).map(x=>{const i=x.indexOf(':');return[x.slice(0,i),x.slice(i+1).trim()]}));readableStatuses++;
+}catch{failedStatusReads++;continue;}
+if(!['chromium','chrome'].includes(m.Name))continue;browserCandidates++;
+try{const cmd=(await readFile(`/proc/${pid}/cmdline`)).toString().split('\0');if(!cmd.some(x=>x.startsWith('--headless')))continue;
+ const stat=(await readFile(`/proc/${pid}/stat`,'utf8')).split(')').at(-1).trim().split(/\s+/);
+ headless.push({pid:+pid,parent:+m.PPid,group:+stat[2],session:+stat[3],startTicks:stat[19],rssMiB:Math.round(parseInt(m.VmRSS||'0')/102.4)/10,workspace:(await readlink(`/proc/${pid}/cwd`))==='/home/robert/.codex/worktrees/4511/chore-pet',playwrightProfile:cmd.some(x=>x.startsWith('--user-data-dir=/tmp/playwright_'))});
+}catch{failedBrowserReads++;}}
+const result={startedUtc,finishedUtc:new Date().toISOString(),numericProcEntries:entries.length,readableStatuses,failedStatusReads,browserCandidates,failedBrowserReads,headless,method:'Point-in-time host /proc inventory. Reads browser command lines only for status names chrome/chromium, selects any argument beginning --headless, emits PID/group/session/start ticks/RSS and booleans for this workspace and Playwright profile only. No command lines, URLs or profile paths emitted. Process races and read failures are counted; an empty match list does not certify all host processes, detached descendants, browser names outside the two-name filter, current/peak RSS, CPU or causation. No signal or process mutation.'};
+await writeFile('docs/audits/2026-10-12-character-polish/creator-outfit-post-stop-host-inventory-v2.json',JSON.stringify(result,null,2)+'\n');
+console.log(JSON.stringify({startedUtc:result.startedUtc,finishedUtc:result.finishedUtc,numericProcEntries:entries.length,failedStatusReads,failedBrowserReads,headlessMatches:headless.length}));

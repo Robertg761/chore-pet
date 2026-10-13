@@ -1,0 +1,44 @@
+{
+  "utc": "2026-10-13T08:29:41.171232+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "env",
+    "CHROME=/usr/bin/chromium",
+    "CHORE_PET_OUTFIT_CAPTURE_DIR=docs/audits/2026-10-12-character-polish/creator-outfit-native-probe",
+    "node",
+    "--max-old-space-size=384",
+    "--test",
+    "--test-concurrency=1",
+    "--test-name-pattern=outfit can be hidden and exactly restored on mochi",
+    "scripts/browser/creator-outfit.test.mjs"
+  ],
+  "exitCode": 125,
+  "resourceStopReason": "Insufficient launch headroom; no child started.",
+  "launchMinimumMiB": 6144,
+  "runReserveMiB": 4096,
+  "tmpReserveMiB": 2048,
+  "sampleIntervalSeconds": 0.5,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": null,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": []
+  },
+  "minimumObservedAvailableBytes": 5614657536,
+  "method": "Host available RAM and /tmp sampled about twice per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after1s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 5614657536,
+      "tmpFreeBytes": 4283551744
+    },
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 5614657536,
+      "tmpFreeBytes": 4283551744
+    }
+  ]
+}

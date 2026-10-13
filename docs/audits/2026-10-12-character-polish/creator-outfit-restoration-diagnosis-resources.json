@@ -1,0 +1,52 @@
+{
+  "utc": "2026-10-13T08:16:53.798431+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "--max-old-space-size=256",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/screens/CharacterCreator.outfit.test.tsx",
+    "--maxWorkers=1",
+    "-t",
+    "reveals and restores the mochi happy"
+  ],
+  "exitCode": 1,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 3,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 1
+  },
+  "minimumObservedAvailableBytes": 4853952512,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4853952512,
+      "tmpFreeBytes": 4284764160
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4853952512,
+      "tmpFreeBytes": 4284764160
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4923695104,
+      "tmpFreeBytes": 4284239872
+    },
+    {
+      "elapsedSeconds": 2.002,
+      "memAvailableBytes": 4930187264,
+      "tmpFreeBytes": 4284764160
+    }
+  ]
+}

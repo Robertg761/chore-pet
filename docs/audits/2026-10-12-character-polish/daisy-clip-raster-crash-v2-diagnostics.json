@@ -1,0 +1,35 @@
+{
+  "utc": "2026-10-13T09:27:10.148Z",
+  "scope": "Read-only second own rsvg conversion time window. No core extracted or system configuration changed.",
+  "rows": [
+    {
+      "command": [
+        "coredumpctl",
+        "info",
+        "--no-pager",
+        "--since=2026-10-13 09:25:20 UTC",
+        "--until=2026-10-13 09:26:00 UTC",
+        "/usr/bin/rsvg-convert"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "           PID: 666416 (rsvg-convert)\n           TID: 666416 (rsvg-convert)\n           UID: 1000 (robert)\n           GID: 1000 (robert)\n        Signal: 6 (ABRT) si_code: SI_TKILL\n     Timestamp: Tue 2026-10-13 06:55:43 NDT (1min 27s ago)\n  Command Line: /usr/bin/rsvg-convert docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top.svg -o docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top-final.png\n    Executable: /usr/bin/rsvg-convert\n Control Group: /user.slice/user-1000.slice/user@1000.service/app.slice/app-org.chromium.Chromium-2494606.scope\n          Unit: user@1000.service\n     User Unit: app-org.chromium.Chromium-2494606.scope\n         Slice: user-1000.slice\n     Owner UID: 1000 (robert)\n       Boot ID: fd710125d7514deba54c1c14d3fc2249\n    Machine ID: b181fc1c108c47d6aef2a69d4229356c\n      Hostname: omarchy\n       Storage: /var/lib/systemd/coredump/core.rsvg-convert.1000.fd710125d7514deba54c1c14d3fc2249.666416.1791883543000000.zst (present)\n  Size on Disk: 701.1K\n       Message: Process 666416 (rsvg-convert) of user 1000 dumped core.\n                \n                Stack trace of thread 5:\n                #0  0x000072db4e89a17c n/a (libc.so.6 + 0x9a17c)\n                #1  0x000072db4e83e5d0 raise (libc.so.6 + 0x3e5d0)\n                #2  0x000072db4e825685 abort (libc.so.6 + 0x25685)\n                #3  0x0000586be26ad3aa n/a (rsvg-convert + 0x4e03aa)\n                #4  0x0000586be26862f9 n/a (rsvg-convert + 0x4b92f9)\n                #5  0x0000586be26adbbe n/a (rsvg-convert + 0x4e0bbe)\n                #6  0x0000586be26adba9 n/a (rsvg-convert + 0x4e0ba9)\n                #7  0x0000586be26ae399 n/a (rsvg-convert + 0x4e1399)\n                #8  0x0000586be26ae382 n/a (rsvg-convert + 0x4e1382)\n                #9  0x0000586be23a8514 n/a (rsvg-convert + 0x1db514)\n                #10 0x0000586be23a8403 n/a (rsvg-convert + 0x1db403)\n                #11 0x0000586be251e480 n/a (rsvg-convert + 0x351480)\n                #12 0x0000586be25602c7 n/a (rsvg-convert + 0x3932c7)\n                #13 0x0000586be255eebc n/a (rsvg-convert + 0x391ebc)\n                #14 0x0000586be255e18d n/a (rsvg-convert + 0x39118d)\n                #15 0x0000586be2622fda n/a (rsvg-convert + 0x455fda)\n                #16 0x0000586be256691f n/a (rsvg-convert + 0x39991f)\n                #17 0x0000586be25664d6 n/a (rsvg-convert + 0x3994d6)\n                #18 0x0000586be2565e6b n/a (rsvg-convert + 0x398e6b)\n                #19 0x0000586be255eebc n/a (rsvg-convert + 0x391ebc)\n                #20 0x0000586be2636374 n/a (rsvg-convert + 0x469374)\n                #21 0x0000586be256691f n/a (rsvg-convert + 0x39991f)\n                #22 0x0000586be25664d6 n/a (rsvg-convert + 0x3994d6)\n                #23 0x0000586be2565e6b n/a (rsvg-convert + 0x398e6b)\n                #24 0x0000586be2639bd1 n/a (rsvg-convert + 0x46cbd1)\n                #25 0x0000586be255eebc n/a (rsvg-convert + 0x391ebc)\n                #26 0x0000586be262e12d n/a (rsvg-convert + 0x46112d)\n                #27 0x0000586be256691f n/a (rsvg-convert + 0x39991f)\n                #28 0x0000586be25664d6 n/a (rsvg-convert + 0x3994d6)\n                #29 0x0000586be2635681 n/a (rsvg-convert + 0x468681)\n                #30 0x0000586be26349ee n/a (rsvg-convert + 0x4679ee)\n                #31 0x0000586be266add1 n/a (rsvg-convert + 0x49ddd1)\n                #32 0x0000586be2375819 n/a (rsvg-convert + 0x1a8819)\n                #33 0x0000586be2371e8c n/a (rsvg-convert + 0x1a4e8c)\n                #34 0x0000586be2378e96 n/a (rsvg-convert + 0x1abe96)\n                #35 0x0000586be237db69 n/a (rsvg-convert + 0x1b0b69)\n                #36 0x000072db4e827781 n/a (libc.so.6 + 0x27781)\n                #37 0x000072db4e8278b9 __libc_start_main (libc.so.6 + 0x278b9)\n                #38 0x0000586be236aad5 n/a (rsvg-convert + 0x19dad5)\n                \n                Stack trace of thread 7:\n                #0  0x000072db4e8a0952 n/a (libc.so.6 + 0xa0952)\n                #1  0x000072db4e911a57 ppoll (libc.so.6 + 0x111a57)\n                #2  0x000072db4ef98f59 n/a (libglib-2.0.so.0 + 0x63f59)\n                #3  0x000072db4ef99055 g_main_context_iteration (libglib-2.0.so.0 + 0x64055)\n                #4  0x000072db4ef990a2 n/a (libglib-2.0.so.0 + 0x640a2)\n                #5  0x000072db4efcfb14 n/a (libglib-2.0.so.0 + 0x9ab14)\n                #6  0x000072db4e8980a2 n/a (libc.so.6 + 0x980a2)\n                #7  0x000072db4e92080c n/a (libc.so.6 + 0x12080c)\n                \n                Stack trace of thread 8:\n                #0  0x000072db4e91e4ed syscall (libc.so.6 + 0x11e4ed)\n                #1  0x000072db4efc615e g_cond_wait (libglib-2.0.so.0 + 0x9115e)\n                #2  0x000072db4ef5b52d n/a (libglib-2.0.so.0 + 0x2652d)\n                #3  0x000072db4ef5b5a6 g_async_queue_pop (libglib-2.0.so.0 + 0x265a6)\n                #4  0x000072db4ea49661 n/a (libpangoft2-1.0.so.0 + 0xc661)\n                #5  0x000072db4efcfb14 n/a (libglib-2.0.so.0 + 0x9ab14)\n                #6  0x000072db4e8980a2 n/a (libc.so.6 + 0x980a2)\n                #7  0x000072db4e92080c n/a (libc.so.6 + 0x12080c)\n                \n                Stack trace of thread 6:\n                #0  0x000072db4e91e4ed syscall (libc.so.6 + 0x11e4ed)\n                #1  0x000072db4efc615e g_cond_wait (libglib-2.0.so.0 + 0x9115e)\n                #2  0x000072db4ef5b52d n/a (libglib-2.0.so.0 + 0x2652d)\n                #3  0x000072db4efd0017 n/a (libglib-2.0.so.0 + 0x9b017)\n                #4  0x000072db4efcfb14 n/a (libglib-2.0.so.0 + 0x9ab14)\n                #5  0x000072db4e8980a2 n/a (libc.so.6 + 0x980a2)\n                #6  0x000072db4e92080c n/a (libc.so.6 + 0x12080c)\n                ELF object binary architecture: AMD x86-64\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "journalctl",
+        "-k",
+        "--no-pager",
+        "--since=2026-10-13 09:25:20 UTC",
+        "--until=2026-10-13 09:26:00 UTC",
+        "-g",
+        "(?i)(oom|out of memory|killed process|rsvg|segfault)"
+      ],
+      "exitCode": 1,
+      "signal": null,
+      "stdout": "-- No entries --\n",
+      "stderr": ""
+    }
+  ]
+}

@@ -1,0 +1,741 @@
+{
+  "utc": "2026-10-13T09:39:48.500302+00:00",
+  "status": "Static design evidence only. No production integration, product PASS, freeze/commit or native acceptance.",
+  "baseCommit": "5db1330781976ee933708128977835e34227a93d",
+  "rootVisualReview": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-shape-study.png",
+      "review": "directly viewed during concept development",
+      "status": "concept history; third sheet selects the broad no-leaf shape",
+      "width": 1024,
+      "height": 760,
+      "bytes": 99310,
+      "sha256": "6f8bdb2ccdf09628198b4a377f884285dd1d3afa2297f75512a3d424d6a2df98",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-shape-study-v2.png",
+      "review": "directly viewed during concept development",
+      "status": "concept history; third sheet selects the broad no-leaf shape",
+      "width": 1024,
+      "height": 760,
+      "bytes": 107674,
+      "sha256": "d75bc91c66e6eb40924f606986af5fd80ae92672129814a5aa07f1faf25e0a70",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-shape-study-v3.png",
+      "review": "directly viewed during concept development",
+      "status": "concept history; third sheet selects the broad no-leaf shape",
+      "width": 1024,
+      "height": 760,
+      "bytes": 106460,
+      "sha256": "20fce36543e32dee657820e07c8e7885f127746bef3ba61e6f942ae63806cff7",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top-final-v3.png",
+      "review": "directly viewed all cells",
+      "status": "Sprout cooling-patch overlap requires fit revision",
+      "cells": 12,
+      "version": "first-fit",
+      "width": 976,
+      "height": 976,
+      "bytes": 285131,
+      "sha256": "738d721bf7eca47f2abc882341b4590d6e31a39bc704847bc2221fb58d7819cf",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-bottom-final-v3.png",
+      "review": "directly viewed all cells",
+      "status": "Sprout cooling-patch overlap requires fit revision",
+      "cells": 9,
+      "version": "first-fit",
+      "width": 976,
+      "height": 756,
+      "bytes": 213123,
+      "sha256": "46aa1b2bf020aba2951eded14df2e43ad64814bb267d1bd021cb0ddeaed7116f",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-top-final-v3.png",
+      "review": "directly viewed all cells",
+      "status": "Sprout cooling-patch overlap requires fit revision",
+      "cells": 12,
+      "version": "first-fit",
+      "width": 976,
+      "height": 976,
+      "bytes": 259476,
+      "sha256": "ca9e8b0c773e90af2c15db27c5c23b66fecb5f9fa528842b386f698f5d6d8d4b",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-bottom-final-v3.png",
+      "review": "directly viewed all cells",
+      "status": "Sprout cooling-patch overlap requires fit revision",
+      "cells": 9,
+      "version": "first-fit",
+      "width": 976,
+      "height": 756,
+      "bytes": 199129,
+      "sha256": "016a1123feda63c0bbaecd1764e592fb7d304d2b0d14b1046cb652182c90e32a",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-action-study-top-final-v3.png",
+      "review": "directly viewed all cells",
+      "status": "Sprout cooling-patch overlap requires fit revision",
+      "cells": 9,
+      "version": "first-fit",
+      "width": 976,
+      "height": 756,
+      "bytes": 237923,
+      "sha256": "2ea66ca08b1add1ad4f25d5f36fb262599c7c4ba1af5c7888973c9226def3718",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-action-study-bottom-final-v3.png",
+      "review": "directly viewed all cells",
+      "status": "Sprout cooling-patch overlap requires fit revision",
+      "cells": 9,
+      "version": "first-fit",
+      "width": 976,
+      "height": 756,
+      "bytes": 231581,
+      "sha256": "3a477e34aefa782b52f37b3492a284e0593e1829ef363e357f02aeedcb86eb07",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top-fit-v2-final.png",
+      "review": "directly viewed all cells",
+      "status": "selected static fit; native acceptance pending",
+      "cells": 12,
+      "version": "selected-fit-v2",
+      "width": 976,
+      "height": 976,
+      "bytes": 284565,
+      "sha256": "d7494bd642783092ddf5f25bbc8aff4ebb40268658bfebcb146ae34a9b56da13",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-bottom-fit-v2-final.png",
+      "review": "directly viewed all cells",
+      "status": "selected static fit; native acceptance pending",
+      "cells": 9,
+      "version": "selected-fit-v2",
+      "width": 976,
+      "height": 756,
+      "bytes": 213162,
+      "sha256": "47502fa5daea1c78777f26a63185b0e1abc4f2838e5cb2a8b537f769f95fc032",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-top-fit-v2-final.png",
+      "review": "directly viewed all cells",
+      "status": "selected static fit; native acceptance pending",
+      "cells": 12,
+      "version": "selected-fit-v2",
+      "width": 976,
+      "height": 976,
+      "bytes": 258398,
+      "sha256": "1f3aebab5f6e3942fbd0dca22354b5ff51067e8f3a4a13f1f1723330c3fa678a",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-bottom-fit-v2-final.png",
+      "review": "directly viewed all cells",
+      "status": "selected static fit; native acceptance pending",
+      "cells": 9,
+      "version": "selected-fit-v2",
+      "width": 976,
+      "height": 756,
+      "bytes": 198269,
+      "sha256": "689009d0c200d0f79dc309702948747d89491bdfef32a2a8341632719c0b0e87",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-action-study-top-fit-v2-final.png",
+      "review": "directly viewed all cells",
+      "status": "selected static fit; native acceptance pending",
+      "cells": 9,
+      "version": "selected-fit-v2",
+      "width": 976,
+      "height": 756,
+      "bytes": 237891,
+      "sha256": "78fd277264f98cece95ab2376452678a8fb2670ff993fbaddfa2fd0a46a5e86c",
+      "chunkCrcsAndScanlineLengthValid": true
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-action-study-bottom-fit-v2-final.png",
+      "review": "directly viewed all cells",
+      "status": "selected static fit; native acceptance pending",
+      "cells": 9,
+      "version": "selected-fit-v2",
+      "width": 976,
+      "height": 756,
+      "bytes": 231824,
+      "sha256": "56cffd7918754709b08abebd2b187d301082c0608a14a4843e782fb63063c9ab",
+      "chunkCrcsAndScanlineLengthValid": true
+    }
+  ],
+  "failedPartialOutputs": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top.png",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "zero-byte output from failed converter; never a final/reviewed PNG"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top-final.png",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "zero-byte output from failed converter; never a final/reviewed PNG"
+    }
+  ],
+  "sourceEquivalenceCounts": {
+    "poses": 1344,
+    "sampledActions": 936,
+    "reducedSamples": 72,
+    "total": 2352
+  },
+  "resourceJobs": [
+    {
+      "label": "daisy-clip-action-bottom-fit-v2-raster",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=536870912",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-study-bottom-fit-v2.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-study-bottom-fit-v2-final.png"
+      ],
+      "minimumObservedAvailableMiB": 3757.50390625,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-bottom-fit-v2-raster.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-bottom-fit-v2-raster.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-bottom-fit-v2-raster-resources.json": "fc7a5c7b60574a61f3efdfeabd532c908a22df30b2262bc767f316ff2765edad"
+      }
+    },
+    {
+      "label": "daisy-clip-action-top-fit-v2-raster",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=536870912",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-study-top-fit-v2.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-study-top-fit-v2-final.png"
+      ],
+      "minimumObservedAvailableMiB": 3773.47265625,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-top-fit-v2-raster.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-top-fit-v2-raster.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-top-fit-v2-raster-resources.json": "4f8039521e949eb306194343c41a74cb6c92abd55b4def355b29fdc4ffe9ccb4"
+      }
+    },
+    {
+      "label": "daisy-clip-pose-dark-bottom-fit-v2-raster",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=536870912",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-bottom-fit-v2.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-bottom-fit-v2-final.png"
+      ],
+      "minimumObservedAvailableMiB": 3790.37890625,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-dark-bottom-fit-v2-raster.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-dark-bottom-fit-v2-raster.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-dark-bottom-fit-v2-raster-resources.json": "dc02f70df0732558ee8126b6b1e17a640d55f5a88abb6926927250da57121b86"
+      }
+    },
+    {
+      "label": "daisy-clip-pose-dark-top-fit-v2-raster",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=536870912",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-top-fit-v2.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-top-fit-v2-final.png"
+      ],
+      "minimumObservedAvailableMiB": 3808.20703125,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-dark-top-fit-v2-raster.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-dark-top-fit-v2-raster.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-dark-top-fit-v2-raster-resources.json": "d60de6955a68cc529b28433e98661f93dfc443d30370f1f2506cad46d8548668"
+      }
+    },
+    {
+      "label": "daisy-clip-pose-light-bottom-fit-v2-raster",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=536870912",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-bottom-fit-v2.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-bottom-fit-v2-final.png"
+      ],
+      "minimumObservedAvailableMiB": 3803.98828125,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-light-bottom-fit-v2-raster.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-light-bottom-fit-v2-raster.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-light-bottom-fit-v2-raster-resources.json": "e1c12c9f5c8a37ded6b102f844085b02bc6f2faf653673841a5134bd7d5fc3f7"
+      }
+    },
+    {
+      "label": "daisy-clip-pose-light-top-fit-v2-raster",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=536870912",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top-fit-v2.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top-fit-v2-final.png"
+      ],
+      "minimumObservedAvailableMiB": 3816.578125,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-light-top-fit-v2-raster.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-light-top-fit-v2-raster.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-light-top-fit-v2-raster-resources.json": "d775bd30ed5682456bd29c86c4e01e515bd5a34f0a1daf2cb6772cee166b7948"
+      }
+    },
+    {
+      "label": "daisy-clip-raster-action-bottom-v3",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=536870912",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-study-bottom.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-study-bottom-final-v3.png"
+      ],
+      "minimumObservedAvailableMiB": 3766.01953125,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-action-bottom-v3.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-action-bottom-v3.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-action-bottom-v3-resources.json": "51143beacb6e91a742ec3580e7fffe3e558f2ed64caff39bccec4d15eea21332"
+      }
+    },
+    {
+      "label": "daisy-clip-raster-action-top-v3",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=536870912",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-study-top.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-action-study-top-final-v3.png"
+      ],
+      "minimumObservedAvailableMiB": 3780.56640625,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-action-top-v3.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-action-top-v3.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-action-top-v3-resources.json": "90f353afce32840d53c202739654f9760db2968a779ee69671949aa1c282ddb2"
+      }
+    },
+    {
+      "label": "daisy-clip-raster-pose-dark-bottom-v3",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=536870912",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-bottom.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-bottom-final-v3.png"
+      ],
+      "minimumObservedAvailableMiB": 3785.60546875,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-dark-bottom-v3.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-dark-bottom-v3.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-dark-bottom-v3-resources.json": "3a113fe2a862e6101345278a0510b49182af2f1685072a81fdaa1c254934be5e"
+      }
+    },
+    {
+      "label": "daisy-clip-raster-pose-dark-top-v3",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=536870912",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-top.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-top-final-v3.png"
+      ],
+      "minimumObservedAvailableMiB": 3815.2109375,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-dark-top-v3.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-dark-top-v3.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-dark-top-v3-resources.json": "ffda0f9b0669094cd033b0383d22f2de5a0c4cfedf5e7019ee909e998e6adeca"
+      }
+    },
+    {
+      "label": "daisy-clip-raster-pose-light-bottom-v3",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=536870912",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-bottom.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-bottom-final-v3.png"
+      ],
+      "minimumObservedAvailableMiB": 3834.30078125,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-light-bottom-v3.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-light-bottom-v3.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-light-bottom-v3-resources.json": "93f74ddc65b7618d780cec69e6c9942dcc9f1855d9fa6bbf87228e06503a12d4"
+      }
+    },
+    {
+      "label": "daisy-clip-raster-pose-light-top",
+      "exitCode": -11,
+      "status": "historical converter failure, excluded from passing work",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "prlimit",
+        "--as=201326592",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top.png"
+      ],
+      "minimumObservedAvailableMiB": 3771.95703125,
+      "sampleRows": 4,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-light-top.log": "cf97817b442b3bc21fd00ea530f57c4253904047c8f074fa10ac0194ea818594",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-light-top.exit": "0d30a47b87915d4d0555189c00b0543b164ec3c7ce7f97117c37794565b286d0",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-light-top-resources.json": "ff525ab1199e06d45ce22b0be69504fd296131d6849f538b0beb2996778a616c"
+      }
+    },
+    {
+      "label": "daisy-clip-raster-pose-light-top-v2",
+      "exitCode": -6,
+      "status": "historical converter failure, excluded from passing work",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=201326592",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top-final.png"
+      ],
+      "minimumObservedAvailableMiB": 3831.14453125,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-light-top-v2.log": "96b2df69170df365c72c40bc24cf92ddf986358588b8a6b7424a648d984ed0c3",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-light-top-v2.exit": "d7b906a85360766ca93a7f2a3391ddc205bb248d2ec6e045769e67889fc1ebd5",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-light-top-v2-resources.json": "fb871a462cde00a950b103bd17ea3b53ea5bbc0942cf49dbb1618cb3523dda3f"
+      }
+    },
+    {
+      "label": "daisy-clip-raster-pose-light-top-v3",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "env",
+        "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+        "prlimit",
+        "--as=536870912",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top-final-v3.png"
+      ],
+      "minimumObservedAvailableMiB": 3933.10546875,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-light-top-v3.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-light-top-v3.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-raster-pose-light-top-v3-resources.json": "136c62195fcb2858e8b6dc2b27bea2d5afa57e7e850b5773f341a0d6579f05ae"
+      }
+    },
+    {
+      "label": "daisy-clip-source-equivalence-v2",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "node",
+        "--max-old-space-size=128",
+        "/tmp/chore-pet-daisy-clip-source-equivalence-v2.cjs"
+      ],
+      "minimumObservedAvailableMiB": 3483.76171875,
+      "sampleRows": 14,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-source-equivalence-v2.log": "c621e0eca7ab2f0201ce80cf9aea9b8f1e3ad996d7c450cecbed11aa9203d984",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-source-equivalence-v2.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-source-equivalence-v2-resources.json": "997b8725041f72d46a0c0d60e643524460de9d96bd899b12bd30ef972c7adc54"
+      }
+    },
+    {
+      "label": "daisy-clip-source-render",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "node",
+        "--max-old-space-size=128",
+        "/tmp/chore-pet-daisy-clip-render-studies.cjs"
+      ],
+      "minimumObservedAvailableMiB": 3799.64453125,
+      "sampleRows": 4,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-source-render.log": "9fdda3ed1b59fe6f24775c6e2d03845b2fcdb7e59009b6cf753c3a4e2959290d",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-source-render.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-source-render-resources.json": "de8b83944456d13bf647591ba633cf7faefbb90d5cfb1492997e32d79a80b131"
+      }
+    },
+    {
+      "label": "daisy-clip-source-render-v2",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "node",
+        "--max-old-space-size=128",
+        "/tmp/chore-pet-daisy-clip-render-studies-v2.cjs"
+      ],
+      "minimumObservedAvailableMiB": 3734.625,
+      "sampleRows": 4,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-source-render-v2.log": "ae68d55bf2665cf9b00c44863974319bc01a372ccca2d940e9fbf6c8ad5fe989",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-source-render-v2.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-source-render-v2-resources.json": "d3c458f54cd43c45ecb0417f584520f2e2d3149e752dfb05e84bc055a13baf68"
+      }
+    },
+    {
+      "label": "daisy-clip-study-raster",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "prlimit",
+        "--as=201326592",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-shape-study.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-shape-study.png"
+      ],
+      "minimumObservedAvailableMiB": 3673.58984375,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-study-raster.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-study-raster.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-study-raster-resources.json": "7b97adb12d37d525c2e8dc7c57f949f3567f6a4a60f0349e694001a834aabd64"
+      }
+    },
+    {
+      "label": "daisy-clip-study-raster-v2",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "prlimit",
+        "--as=201326592",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-shape-study-v2.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-shape-study-v2.png"
+      ],
+      "minimumObservedAvailableMiB": 3519.71484375,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-study-raster-v2.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-study-raster-v2.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-study-raster-v2-resources.json": "b6493e4e2c81cb456e185efc8a4c1a7953175bb918a922d79f9ea7a55270856a"
+      }
+    },
+    {
+      "label": "daisy-clip-study-raster-v3",
+      "exitCode": 0,
+      "status": "completed",
+      "command": [
+        "nice",
+        "-n",
+        "10",
+        "prlimit",
+        "--as=201326592",
+        "--",
+        "/usr/bin/rsvg-convert",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-shape-study-v3.svg",
+        "-o",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-shape-study-v3.png"
+      ],
+      "minimumObservedAvailableMiB": 3894.7890625,
+      "sampleRows": 3,
+      "triplet": {
+        "docs/audits/2026-10-12-character-polish/daisy-clip-study-raster-v3.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-study-raster-v3.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+        "docs/audits/2026-10-12-character-polish/daisy-clip-study-raster-v3-resources.json": "0b99878dbcf8918704289988e7ab9764e304392b7ee968bba7a7356113d3fb4a"
+      }
+    }
+  ],
+  "resourceSummary": {
+    "successfulJobs": 18,
+    "historicalConverterFailures": 2,
+    "minimumObservedAvailableMiBAllJobs": 3483.76171875,
+    "noResourceStopRecorded": true,
+    "noOwnedLiveMembersRecordedAfterCleanup": true,
+    "limits": "Sampled trigger and original process-group observations only; no host peak, global concurrency or system safety certification."
+  },
+  "pendingB64": {
+    "stateFile": "docs/audits/2026-10-12-character-polish/creator-outfit-pending-state.json",
+    "stateFileSha256": "38b9fd11dcfaecda2a62a063db62825cf49fa74c113e5f68bae4ae110827050b",
+    "sixCurrentSourcesAnd44UnchangedDependenciesStillMatch": true
+  },
+  "unchangedSourceDependencies": {
+    "src/art/color.ts": "f7dd62c6ad58d9d5f24de2e47c5ef459144aa28cedf3bf47b2636c44ba95c8ad",
+    "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+    "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+    "src/character/Character.css": "b30c9ffd119371268a744563e054b5e7d41ae0abf1d1e6120caff9bbfa0afccf",
+    "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+    "src/character/Garment.tsx": "16daa1a85cd041cef028c33edfe9711e6b30c4b42f5d4378b34d4ac7d8f110bb",
+    "src/character/accent.tsx": "97e78bfce8b045d60a905b7ca015b36df907f89699985882442f2c82d4d97cca",
+    "src/character/eyeGeometry.ts": "b0a106858c8c8c88a2a27d0d85470a33fdffa8377b4c918943b2d40ea774b2ae",
+    "src/character/ink.tsx": "dba9a5832cbbe6fcfd3f07f756d1c21c67a27ec8887c15ad322eeebf613a9f38",
+    "src/character/items.tsx": "f06572844f4a349fef05caa7a45068f5935815f14d79daf0a76d71dc3d412c6a",
+    "src/character/items/extras.tsx": "2ebe7ed7be300b2a5a207fb67037ec28146ae96a1bbba00d6c8627fce3b8d173",
+    "src/character/items/hats.tsx": "79cbd70f0e72b7dcd4fbd2b47398a89089d4472e2a4af6f42808ba72344f4b31",
+    "src/character/items/outfits.tsx": "4dfa775cda7c954916e8b874b7119e662b21ffd0d546ee203a3988fed5d09802",
+    "src/character/items/shared.tsx": "50ec159099e748ecf516398d1fad6cccfb6ced335703e876e9e23e12b09ef8f2",
+    "src/character/look.ts": "cc5140783904fc43fc5169ba168bfdb28e63444c817bf25c4e58627eea704d40",
+    "src/character/motion.ts": "07679d0a1f861d3bd327a5eb05b1d3b0edda9fc3b1633da53a4965a5b601173a",
+    "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+    "src/character/poses.ts": "5a7cf52f0dc3c8efbb9f4478fbbbbf660f345f5cfb12a6e1e078487acf7a1fcc",
+    "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+    "src/character/species/bun-poses.tsx": "75d43d09f1b9f7f753b0889f95b92b12ae6dfaddb5263d934abab69df78fde5a",
+    "src/character/species/bun.tsx": "3da44577ba175a087cdb61b0b3962df343d730f9694c3d3cdc33c6207cd05ac3",
+    "src/character/species/mochi-poses.tsx": "97cd70836237fa87d07b3b5511bd10970e1cdc38288c6eab7859075acfc7250c",
+    "src/character/species/mochi.tsx": "bcf0efd767116d9ecb7e00f6cd5d8539b4d5b7e8e5616471bcc961ae27da2dbc",
+    "src/character/species/sprout-poses.tsx": "170f9ee84d3a0358b8c2909d1f95d212c60641bb14aa01c7cfa61d84de7b7ad0",
+    "src/character/species/sprout.tsx": "1cb3bce8cb289487be9197791d196b5cb7f8985d341a118d24856caf27d933c5",
+    "src/character/strokeScale.ts": "5bf8f80e4ee3eed8b994c4da7ebb6af29fa32203448358886b8d33f7d83fe9de",
+    "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a",
+    "src/effects/shapes.tsx": "a8ce0b0ce0625660e55d034e4b6eebc7172132286558c02026e6ace049708205"
+  },
+  "limits": "Root inspected 15 complete PNGs, including 120 source-rendered cells and three concepts. Paired source serialization is not live animation, browser, wardrobe, reward/save or continuous all-phase proof. Node memory snapshots are not measured peaks."
+}

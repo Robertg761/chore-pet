@@ -1,0 +1,30 @@
+test_final_sample_failure_keeps_initial_sample (__main__.MonitorTests.test_final_sample_failure_keeps_initial_sample) ... ok
+test_invalid_thresholds_start_nothing (__main__.MonitorTests.test_invalid_thresholds_start_nothing) ... ok
+test_leader_timeout_still_writes_both_sidecars (__main__.MonitorTests.test_leader_timeout_still_writes_both_sidecars) ... ok
+test_refusal_starts_no_child_and_records_phases (__main__.MonitorTests.test_refusal_starts_no_child_and_records_phases) ... ok
+test_reserve_stop_has_running_trigger_before_cleanup (__main__.MonitorTests.test_reserve_stop_has_running_trigger_before_cleanup) ... ok
+test_signal_during_spawn_retains_child_handle_for_cleanup (__main__.MonitorTests.test_signal_during_spawn_retains_child_handle_for_cleanup) ... ok
+test_signal_failure_is_retained_and_sidecars_survive (__main__.MonitorTests.test_signal_failure_is_retained_and_sidecars_survive) ... ok
+test_spawn_failure_records_no_fictional_child (__main__.MonitorTests.test_spawn_failure_records_no_fictional_child) ... ok
+test_success_records_collected_leader_without_signals (__main__.MonitorTests.test_success_records_collected_leader_without_signals) ... ok
+test_unreadable_membership_attempts_owned_kill_and_reports_unknown (__main__.MonitorTests.test_unreadable_membership_attempts_owned_kill_and_reports_unknown) ... ok
+test_all_eleven_archived_records_validate_without_changes (__main__.ValidationTests.test_all_eleven_archived_records_validate_without_changes) ... ok
+test_even_matching_policy_cannot_launch_below_threshold (__main__.ValidationTests.test_even_matching_policy_cannot_launch_below_threshold) ... ok
+test_refusal_rejects_fictional_leader_status (__main__.ValidationTests.test_refusal_rejects_fictional_leader_status) ... ok
+test_refusal_rejects_fictional_signal_members (__main__.ValidationTests.test_refusal_rejects_fictional_signal_members) ... ok
+test_rejects_boolean_group_id (__main__.ValidationTests.test_rejects_boolean_group_id) ... ok
+test_rejects_changed_monitor_binding (__main__.ValidationTests.test_rejects_changed_monitor_binding) ... ok
+test_rejects_errors_on_a_claimed_success (__main__.ValidationTests.test_rejects_errors_on_a_claimed_success) ... ok
+test_rejects_nonmonotonic_samples (__main__.ValidationTests.test_rejects_nonmonotonic_samples) ... ok
+test_rejects_tampered_minimum (__main__.ValidationTests.test_rejects_tampered_minimum) ... ok
+test_rejects_unverified_empty_remaining_list (__main__.ValidationTests.test_rejects_unverified_empty_remaining_list) ... ok
+test_stop_rejects_changed_launch_policy (__main__.ValidationTests.test_stop_rejects_changed_launch_policy) ... ok
+test_stop_rejects_crossing_only_in_final_cleanup_sample (__main__.ValidationTests.test_stop_rejects_crossing_only_in_final_cleanup_sample) ... ok
+test_stop_rejects_null_group (__main__.ValidationTests.test_stop_rejects_null_group) ... ok
+test_success_rejects_advertised_tmp_reserve_change (__main__.ValidationTests.test_success_rejects_advertised_tmp_reserve_change) ... ok
+test_success_rejects_incompatible_leader_status (__main__.ValidationTests.test_success_rejects_incompatible_leader_status) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 0.014s
+
+OK

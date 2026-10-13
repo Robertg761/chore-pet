@@ -1,0 +1,97 @@
+import math
+
+MIB = 1024**2
+
+
+def integer(value, minimum=0):
+    return type(value) is int and value >= minimum
+
+
+def finite(value, minimum=0):
+    return type(value) in (int, float) and math.isfinite(value) and value >= minimum
+
+
+def validate_resource(name, j, code, policy, expected_stop=None):
+    assert code in (0, 1, 124, 125), (name, 'unsupported result')
+    assert type(j['exitCode']) is int and j['exitCode'] == code
+    for key in ('launchMinimumMiB', 'runReserveMiB'):
+        assert integer(j[key], 1) and j[key] == policy[key], (name, key)
+    assert j['launchMinimumMiB'] >= j['runReserveMiB']
+    assert j.get('tmpReserveMiB', 2048) == policy['tmpReserveMiB'] == 2048
+    assert j.get('sampleIntervalSeconds') == policy['sampleIntervalSeconds']
+    assert j['command'] == policy['command']
+    assert j.get('monitorSha256') == policy.get('monitorSha256')
+    rows = j['samples']
+    assert isinstance(rows, list) and len(rows) >= 2
+    previous = -1
+    for row in rows:
+        assert finite(row['elapsedSeconds']) and row['elapsedSeconds'] >= previous
+        assert integer(row['memAvailableBytes']) and integer(row['tmpFreeBytes'])
+        previous = row['elapsedSeconds']
+    assert min(x['memAvailableBytes'] for x in rows) == j['minimumObservedAvailableBytes']
+    c = j['cleanup']
+    for key in ('termMembers', 'killMembers', 'remainingLiveMembers'):
+        assert isinstance(c[key], list) and all(integer(x, 1) for x in c[key])
+        assert len(set(c[key])) == len(c[key])
+    assert c['remainingLiveMembers'] == []
+    assert c.get('membershipVerified', True) is True
+    assert j.get('errors', []) == []
+    assert ('events' in j) == ('stopEvent' in j)
+    first = rows[0]
+    launch_ok = first['memAvailableBytes'] >= j['launchMinimumMiB'] * MIB and first['tmpFreeBytes'] >= 2048 * MIB
+    if code == 125:
+        assert not launch_ok
+        assert j['resourceStopReason'] == 'Insufficient launch headroom; no child started.'
+        assert c['processGroup'] is None and 'leaderReturnCode' not in c
+        assert c['termMembers'] == c['killMembers'] == []
+        assert c.get('leaderCollected', False) is False
+    else:
+        assert launch_ok, (name, 'launched below declared launch minimum')
+        assert integer(c['processGroup'], 1) and type(c['leaderReturnCode']) is int
+        assert -64 <= c['leaderReturnCode'] <= 255
+        assert c.get('leaderCollected', True) is True
+        if code in (0, 1):
+            assert c['leaderReturnCode'] == code and c['termMembers'] == c['killMembers'] == []
+            assert j['resourceStopReason'] is None
+            assert all(x['memAvailableBytes'] >= j['runReserveMiB'] * MIB and x['tmpFreeBytes'] >= 2048 * MIB for x in rows)
+        else:
+            assert j['resourceStopReason'] == expected_stop == 'Resource reserve crossed; stopped only this job process group.'
+            crosses = [i for i, x in enumerate(rows) if x['memAvailableBytes'] < j['runReserveMiB'] * MIB or x['tmpFreeBytes'] < 2048 * MIB]
+            assert crosses and crosses[0] < len(rows) - 1, (name, 'crossing only after cleanup')
+            trigger = crosses[0]
+            if 'stopEvent' not in j:
+                assert policy['legacyStopTrigger'] == {'sampleIndex': trigger, 'elapsedSeconds': rows[trigger]['elapsedSeconds'], 'memAvailableBytes': rows[trigger]['memAvailableBytes'], 'tmpFreeBytes': rows[trigger]['tmpFreeBytes']}
+            else:
+                assert rows[trigger]['phase'] == 'running'
+                e = j['stopEvent']
+                assert e['kind'] == 'reserve-stop' and e['triggerSampleIndex'] == trigger
+                assert rows[trigger]['elapsedSeconds'] <= e['elapsedSeconds']
+    if code in (0, 1) and 'stopEvent' in j:
+        assert j['stopEvent'] is None
+    if 'events' in j:
+        assert isinstance(j['monitorSha256'], str) and len(j['monitorSha256']) == 64 and all(c in '0123456789abcdef' for c in j['monitorSha256'])
+        assert rows[0]['phase'] == 'launch' and rows[-1]['phase'] == 'after-cleanup'
+        events = j['events']
+        previous = -1
+        for e in events:
+            assert finite(e['elapsedSeconds']) and e['elapsedSeconds'] >= previous
+            previous = e['elapsedSeconds']
+        started = [e for e in events if e['kind'] == 'child-started']
+        assert len(started) == (0 if code == 125 else 1)
+        if started:
+            assert started[0]['processGroup'] == c['processGroup']
+        cleanup_start = [e for e in events if e['kind'] == 'cleanup-started']
+        cleanup_end = [e for e in events if e['kind'] == 'cleanup-finished']
+        assert len(cleanup_start) == len(cleanup_end) == 1
+        assert cleanup_start[0]['elapsedSeconds'] <= cleanup_end[0]['elapsedSeconds'] <= rows[-1]['elapsedSeconds']
+        if code == 124:
+            assert j['stopEvent'] in events
+            assert j['stopEvent']['elapsedSeconds'] <= cleanup_start[0]['elapsedSeconds']
+            assert events.index(j['stopEvent']) < events.index(cleanup_start[0])
+        if code == 125:
+            assert j['stopEvent']['kind'] == 'launch-refused' and j['stopEvent']['triggerSampleIndex'] == 0
+            assert not any(e['kind'].startswith(('term-', 'kill-')) for e in events)
+    return {'samples': len(rows), 'minimumAvailableMiB': min(x['memAvailableBytes'] for x in rows) / MIB,
+        'minimumTmpMiB': min(x['tmpFreeBytes'] for x in rows) / MIB, 'exitCode': code,
+        'launchMinimumMiB': j['launchMinimumMiB'], 'runReserveMiB': j['runReserveMiB'], 'tmpReserveMiB': 2048,
+        'scope': 'Recorded original job group/session only; requested command and declared thresholds bound to per-run configuration. Samples are not a guaranteed resource floor or peak CPU/RSS measurement.'}

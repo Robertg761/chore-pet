@@ -1,0 +1,90 @@
+{
+  "utc": "2026-10-13T08:42:17.019507+00:00",
+  "method": "Read-only MemAvailable every two seconds for forty seconds. No test or browser launched.",
+  "samples": [
+    {
+      "elapsedSeconds": 0,
+      "availableMiB": 4303.54296875
+    },
+    {
+      "elapsedSeconds": 2,
+      "availableMiB": 4259.859375
+    },
+    {
+      "elapsedSeconds": 4,
+      "availableMiB": 4332.828125
+    },
+    {
+      "elapsedSeconds": 6,
+      "availableMiB": 4354.1875
+    },
+    {
+      "elapsedSeconds": 8,
+      "availableMiB": 4353.41015625
+    },
+    {
+      "elapsedSeconds": 10,
+      "availableMiB": 4350.42578125
+    },
+    {
+      "elapsedSeconds": 12,
+      "availableMiB": 4306.91796875
+    },
+    {
+      "elapsedSeconds": 14,
+      "availableMiB": 4306.2734375
+    },
+    {
+      "elapsedSeconds": 16,
+      "availableMiB": 4306.390625
+    },
+    {
+      "elapsedSeconds": 18,
+      "availableMiB": 4264.16015625
+    },
+    {
+      "elapsedSeconds": 20,
+      "availableMiB": 4289.484375
+    },
+    {
+      "elapsedSeconds": 22,
+      "availableMiB": 4297.3828125
+    },
+    {
+      "elapsedSeconds": 24,
+      "availableMiB": 4329.35546875
+    },
+    {
+      "elapsedSeconds": 26,
+      "availableMiB": 4345.109375
+    },
+    {
+      "elapsedSeconds": 28,
+      "availableMiB": 4359.703125
+    },
+    {
+      "elapsedSeconds": 30,
+      "availableMiB": 4353.4296875
+    },
+    {
+      "elapsedSeconds": 32,
+      "availableMiB": 4354.8125
+    },
+    {
+      "elapsedSeconds": 34,
+      "availableMiB": 4354.3203125
+    },
+    {
+      "elapsedSeconds": 36,
+      "availableMiB": 4277.1640625
+    },
+    {
+      "elapsedSeconds": 38,
+      "availableMiB": 4335.14453125
+    },
+    {
+      "elapsedSeconds": 40,
+      "availableMiB": 4257.19921875
+    }
+  ]
+}

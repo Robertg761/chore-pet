@@ -1,0 +1,17 @@
+import { PALETTE } from '../../art/palette'
+import { Ink } from '../ink'
+import type { Fit } from './shared'
+
+// Design prototype only. No registry or reward change has been applied.
+const DAISY_PATH = 'M-5.877853 -8.09017 C-11 -19.969943 11 -19.969943 5.877853 -8.09017 C15.593358 -16.632674 22.391732 4.29057 9.510565 3.09017 C20.637225 9.690386 2.838851 22.621661 0 10 C-2.838851 22.621661 -20.637225 9.690386 -9.510565 3.09017 C-22.391732 4.29057 -15.593358 -16.632674 -5.877853 -8.09017 Z'
+const DAISY_PLACEMENT = { mochi: 'translate(30 7) rotate(14)', bun: 'translate(29 5) rotate(14)', sprout: 'translate(-30 12) rotate(-16)' }
+
+export function daisyClip({ species }: Fit) {
+  return <g transform={DAISY_PLACEMENT[species]}>
+    <Ink>
+      <path d={DAISY_PATH} fill={PALETTE.cream} />
+      <Ink k={0.625}><circle cx={0} cy={0} r={5.6} fill={PALETTE.petDefault} /></Ink>
+      <circle cx={-1.3} cy={-1.5} r={1} fill={PALETTE.white} stroke="none" />
+    </Ink>
+  </g>
+}

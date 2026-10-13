@@ -1,0 +1,10 @@
+{
+  "ownedDirectory": "/tmp/chore-pet-daisy-fonts-5g5f8e0v",
+  "fontConfig": "/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+  "fontConfigSha256": "4e07e9174e9ebe7c8aece6c55b56e7496680e545836df90c78548b7c9c77dde3",
+  "sourceFonts": {
+    "/usr/share/fonts/liberation/LiberationSans-Regular.ttf": "baccc64becc3eb7d104b7c84d99f5314a0a1f896e2b3ea6c2f22fc08d2003bee",
+    "/usr/share/fonts/liberation/LiberationSans-Bold.ttf": "769673c4355020b1e28a14c366a152da410ab6b16239fe883ebc35b73624835b"
+  },
+  "method": "Task-private temporary font directory/cache and FONTCONFIG_FILE for rsvg subprocesses only. Two existing fonts copied with exact hashes; no installation, desktop configuration edit, package change or system font cache write requested. AS cap remains192MiB."
+}

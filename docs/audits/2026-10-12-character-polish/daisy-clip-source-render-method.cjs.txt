@@ -1,0 +1,50 @@
+const fs=require('node:fs');
+const path=require('node:path');
+const crypto=require('node:crypto');
+const root=process.cwd(),out=path.join(root,'docs/audits/2026-10-12-character-polish'),loaded=new Set(),memory=[];
+const ts=require(path.join(root,'node_modules/typescript'));
+const snapshot=phase=>memory.push({phase,rssBytes:process.memoryUsage().rss,heapUsedBytes:process.memoryUsage().heapUsed});
+snapshot('typescript-loaded');
+for(const extension of ['.ts','.tsx'])require.extensions[extension]=(module,filename)=>{
+ loaded.add(filename);module.paths.unshift(path.join(root,'node_modules'));
+ const result=ts.transpileModule(fs.readFileSync(filename,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX,esModuleInterop:true},fileName:filename});module._compile(result.outputText,filename);
+};
+require.extensions['.css']=(_module,filename)=>{loaded.add(filename)};
+const prototype=fs.readFileSync('/tmp/chore-pet-daisy-clip-candidate.tsx','utf8');
+const runtime=prototype.replace("from '../../art/palette'",`from '${root}/src/art/palette'`).replace("from '../ink'",`from '${root}/src/character/ink'`).replace("from './shared'",`from '${root}/src/character/items/shared'`);
+fs.writeFileSync('/tmp/chore-pet-daisy-clip-study-runtime.tsx',runtime);
+const React=require(path.join(root,'node_modules/react')),{renderToStaticMarkup}=require(path.join(root,'node_modules/react-dom/server'));
+const {CharacterArt}=require(path.join(root,'src/character/Character.tsx')),{AnimatedCharacterArt}=require(path.join(root,'src/character/AnimatedCharacter.tsx'));
+const {ITEMS}=require(path.join(root,'src/character/items.tsx')),{ACTION_MS,sampleMotion}=require(path.join(root,'src/character/motion.ts')),{PALETTE,SPECIES_COLOUR}=require(path.join(root,'src/art/palette.ts'));
+const {daisyClip}=require('/tmp/chore-pet-daisy-clip-study-runtime.tsx');
+const studyId='daisy-clip-design-study',items=[...ITEMS,{id:studyId,slot:'head',name:'Daisy clip study',render:daisyClip}];
+const equipped={head:studyId,face:'glasses',neck:'scarf',outfit:'overalls',back:'backpack'};
+const h=React.createElement,species=['mochi','bun','sprout'],records=[];
+function sheet(name,title,rows,{dark=false,mirrored=false,animated=false}={}){
+ const cells=[],samples=[];const height=96+rows.length*220;
+ for(let r=0;r<rows.length;r++)for(let c=0;c<3;c++){
+  const s=species[c],row=rows[r],pose=animated?undefined:row;
+  const mood=pose==='sleeping'||pose==='cheering'||animated?'happy':pose==='idle'?'happy':pose;
+  const props={species:s,mood,bodyColour:dark?PALETTE.ink:SPECIES_COLOUR[s],items,equipped,look:{eyes:'lashes',cheeks:'hearts'}};
+  const frame=animated?sampleMotion({species:s,mood:'happy',action:row,elapsedMs:ACTION_MS[row]*.44,durationMs:ACTION_MS[row],distance:0,reducedMotion:false}):null;
+  const art=animated?h(AnimatedCharacterArt,{...props,frame}):h(CharacterArt,{...props,pose});
+  const x=16+c*320,y=92+r*220;
+  cells.push(h('g',{key:`${s}-${row}`},h('rect',{x,y,width:304,height:212,rx:16,fill:PALETTE.ground}),h('text',{x:x+12,y:y+20,fontSize:13,fill:PALETTE.ink},`${s}, ${row}${mirrored?', mirrored':''}${animated?', 44%':''}`),h('svg',{x:x+52,y:y+18,width:200,height:200,viewBox:'0 0 200 200'},h('g',{transform:mirrored?'translate(200 0) scale(-1 1)':undefined},art))));
+  samples.push({species:s,pose,mood,action:animated?row:undefined,phase:animated?.44:undefined,dark,mirrored,frame});
+ }
+ const svg=renderToStaticMarkup(h('svg',{xmlns:'http://www.w3.org/2000/svg',width:976,height,viewBox:`0 0 976 ${height}`,role:'img'},h('title',null,title),h('desc',null,'Actual source renderer with isolated prototype items prop. No registry, rewards, saved data or application runtime changed. CSS animation intentionally omitted. Static design evidence only.'),h('rect',{width:976,height,fill:PALETTE.cream}),h('g',{fontFamily:'sans-serif'},h('text',{x:28,y:36,fontSize:23,fontWeight:700,fill:PALETTE.ink},title),h('text',{x:28,y:62,fontSize:13,fill:PALETTE.ink},'Static source render. Isolated item candidate; wardrobe integration and native verification pending.'),cells)));
+ const ids=[...svg.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);if(ids.length!==new Set(ids).size)throw Error('Duplicate SVG IDs in study');
+ if((svg.match(/data-slot="head"/g)||[]).length!==samples.length)throw Error('Missing prototype head layer');
+ fs.writeFileSync(path.join(out,name+'.svg'),svg+'\n');records.push({name,title,width:976,height,samples,scopedIds:ids.length});snapshot(name);
+}
+const top=['idle','content','meh','scruffy'],bottom=['sleeping','cheering','sick'];
+sheet('daisy-clip-pose-study-light-top','Daisy clip, default colours and upright poses',top);
+sheet('daisy-clip-pose-study-light-bottom','Daisy clip, default colours and resting/cheering poses',bottom);
+sheet('daisy-clip-pose-study-dark-top','Daisy clip, dark colours and mirrored upright poses',top,{dark:true,mirrored:true});
+sheet('daisy-clip-pose-study-dark-bottom','Daisy clip, dark colours and mirrored resting/cheering poses',bottom,{dark:true,mirrored:true});
+sheet('daisy-clip-action-study-top','Daisy clip, sampled Wave, Pats and Hop', ['greet','affection','celebrate'],{animated:true});
+sheet('daisy-clip-action-study-bottom','Daisy clip, sampled Stretch, Rest and Dance',['stretch','rest','dance'],{animated:true});
+const sources=Object.fromEntries([...loaded].filter(p=>p.startsWith(root+'/src/')).sort().map(p=>[path.relative(root,p),crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex')]));
+const result={status:'Prototype studies only. No registry, reward, saved state, app runtime, clock or production source changed.',method:'Existing CharacterArt and AnimatedCharacterArt rendered with isolated items prop through ReactDOMServer. TypeScript transpilation here is not typechecking. Character.css omitted intentionally; it contains CSS animation, and static rendering follows the existing source share-image convention. Native browser, temporal animation, save/equip flow and all scale/colour/mirror combinations remain unverified.',prototypeSha256:crypto.createHash('sha256').update(prototype).digest('hex'),sourceDependencies:sources,records,memorySnapshots:memory,limits:'Process requested128MiBNodeoldheap under a3072MiBlaunch/2048MiBsampledRAMreserve for this small static-art task. RSS snapshots are not a peak or host-wide certification. Browser/full thresholds remain unchanged.'};
+fs.writeFileSync(path.join(out,'daisy-clip-source-render-studies.json'),JSON.stringify(result,null,2)+'\n');
+console.log(JSON.stringify({sheets:records.length,cells:records.reduce((n,r)=>n+r.samples.length,0),loadedSourceFiles:Object.keys(sources).length,largestRecordedRssMiB:Math.max(...memory.map(r=>r.rssBytes))/1048576}));

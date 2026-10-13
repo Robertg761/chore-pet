@@ -1,0 +1,78 @@
+{
+  "status": "Exploratory source-derived vector fit study; no item registry, availability, runtime art or tests changed.",
+  "sources": {
+    "src/character/species/mochi.tsx": "bcf0efd767116d9ecb7e00f6cd5d8539b4d5b7e8e5616471bcc961ae27da2dbc",
+    "src/character/species/bun.tsx": "3da44577ba175a087cdb61b0b3962df343d730f9694c3d3cdc33c6207cd05ac3",
+    "src/character/species/sprout.tsx": "1cb3bce8cb289487be9197791d196b5cb7f8985d341a118d24856caf27d933c5",
+    "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+    "src/character/ink.tsx": "dba9a5832cbbe6fcfd3f07f756d1c21c67a27ec8887c15ad322eeebf613a9f38",
+    "src/character/slots.ts": "df1a387388887457d795f07415ec71d91e435f1c66e4bf4f31b5bfbd051e38fb"
+  },
+  "study": {
+    "path": "docs/audits/2026-10-12-character-polish/daisy-clip-shape-study-v2.svg",
+    "sha256": "2e49430defc5b09992a4b6f6aca5596e18b70d06025f7e449a7cd1f3b4e6480a"
+  },
+  "anchors": {
+    "mochi": [
+      100,
+      78,
+      1
+    ],
+    "bun": [
+      100,
+      92,
+      0.95
+    ],
+    "sprout": [
+      100,
+      76,
+      0.95
+    ]
+  },
+  "candidatePlacements": {
+    "mochi": [
+      30,
+      7,
+      14
+    ],
+    "bun": [
+      29,
+      5,
+      14
+    ],
+    "sprout": [
+      27,
+      9,
+      16
+    ]
+  },
+  "variants": [
+    {
+      "valley": 6,
+      "tip": 14,
+      "width": 7.5,
+      "center": 4.8
+    },
+    {
+      "valley": 9,
+      "tip": 16,
+      "width": 10,
+      "center": 5.4
+    },
+    {
+      "valley": 10,
+      "tip": 17,
+      "width": 11,
+      "center": 5.6
+    }
+  ],
+  "candidateVariant": 2,
+  "petalRadialTip": 17,
+  "petalCount": 5,
+  "colors": {
+    "mochi": "#FFCFDA",
+    "bun": "#FFFFFF",
+    "sprout": "#FFD65C"
+  },
+  "limits": "Copies exact idle body/ear paths and current idle head anchors. Head crops omit eyes and most other character details; not complete character art or native pose/attachment verification. Cairo/librsvg study only. Runtime integration, all moods/poses, animated frame attachment, accessibility, item availability and saves remain unimplemented and unverified."
+}

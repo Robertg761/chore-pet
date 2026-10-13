@@ -1,0 +1,208 @@
+import argparse
+import contextlib
+import copy
+import importlib.util
+import io
+import json
+from pathlib import Path
+import signal
+import subprocess
+import tempfile
+import unittest
+from unittest.mock import Mock, patch
+
+ROOT = Path('/home/robert/.codex/worktrees/4511/chore-pet')
+OUT = ROOT / 'docs/audits/2026-10-12-character-polish'
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+monitor = load('monitor', '/tmp/chore-pet-resource-check-conservative-v2.py')
+validator = load('validator', '/tmp/chore-pet-resource-validation-v2.py')
+MIB = 1024**2
+
+
+def resource(ram):
+    return {'memAvailableBytes': ram * MIB, 'tmpFreeBytes': 4096 * MIB}
+
+
+def policy(j):
+    p = {key: j[key] for key in ('launchMinimumMiB', 'runReserveMiB', 'command')}
+    p.update(tmpReserveMiB=2048, sampleIntervalSeconds=j.get('sampleIntervalSeconds'), monitorSha256=j.get('monitorSha256'))
+    if j['exitCode'] == 124 and 'stopEvent' not in j:
+        i = next(i for i, row in enumerate(j['samples'][:-1]) if row['memAvailableBytes'] < j['runReserveMiB'] * MIB or row['tmpFreeBytes'] < 2048 * MIB)
+        p['legacyStopTrigger'] = {'sampleIndex': i, **{key: j['samples'][i][key] for key in ('elapsedSeconds', 'memAvailableBytes', 'tmpFreeBytes')}}
+    return p
+
+
+class MonitorTests(unittest.TestCase):
+    def run_fake(self, resources, child=None, members=None, signals=None, spawn_error=None, read_error=None, spawn_signal=None):
+        args = argparse.Namespace(label='synthetic', command=['--', 'synthetic-command'], launch_mib=6144, reserve_mib=4096)
+        callbacks = {}
+        def register(number, fn):
+            if callable(fn): callbacks[number] = fn
+        def spawn(*_a, **_kw):
+            if spawn_error: raise spawn_error
+            if spawn_signal: callbacks[spawn_signal](spawn_signal, None)
+            return child
+        read = Mock(side_effect=resources if read_error is None else read_error)
+        with tempfile.TemporaryDirectory() as folder, patch.object(monitor.signal, 'signal', side_effect=register), patch.object(monitor.subprocess, 'Popen', side_effect=spawn) as popen, patch.object(monitor, 'read_resources', read), patch.object(monitor, 'live_group_members', side_effect=members or (lambda _pg: [])), patch.object(monitor, 'signal_group', side_effect=signals) as sent, contextlib.redirect_stdout(io.StringIO()):
+            code = monitor.run(args, Path(folder))
+            j = json.loads((Path(folder) / 'synthetic-resources.json').read_text())
+            self.assertEqual(int((Path(folder) / 'synthetic.exit').read_text()), code)
+            self.assertEqual(j['exitCode'], code)
+            self.assertIn('cleanup-finished', [event['kind'] for event in j['events']])
+            calls = sent.call_args_list
+            starts = popen.call_count
+        return code, j, calls, starts
+
+    @staticmethod
+    def child(returncode=0, waiting_error=None):
+        child = Mock(pid=12345, returncode=returncode)
+        child.poll.return_value = returncode
+        if waiting_error: child.wait.side_effect = waiting_error
+        return child
+
+    def test_refusal_starts_no_child_and_records_phases(self):
+        code, j, calls, starts = self.run_fake([resource(6000), resource(6100)])
+        self.assertEqual((code, starts, calls), (125, 0, []))
+        self.assertIsNone(j['cleanup']['processGroup'])
+        validator.validate_resource('synthetic', j, code, policy(j))
+
+    def test_success_records_collected_leader_without_signals(self):
+        code, j, calls, starts = self.run_fake([resource(7000), resource(6900)], self.child())
+        self.assertEqual((code, starts, calls), (0, 1, []))
+        self.assertTrue(j['cleanup']['leaderCollected'])
+        validator.validate_resource('synthetic', j, code, policy(j))
+
+    def test_reserve_stop_has_running_trigger_before_cleanup(self):
+        child = self.child(143); child.poll.return_value = None
+        code, j, calls, _ = self.run_fake([resource(7000), resource(4000), resource(5000)], child, members=Mock(side_effect=[[12345], [], [], []]))
+        self.assertEqual(code, 124)
+        self.assertEqual(calls[0].args, (12345, signal.SIGTERM))
+        self.assertEqual(j['stopEvent']['triggerSampleIndex'], 1)
+        validator.validate_resource('synthetic', j, code, policy(j), j['resourceStopReason'])
+        changed = copy.deepcopy(j); changed['stopEvent']['triggerSampleIndex'] = 2
+        with self.assertRaises(AssertionError): validator.validate_resource('synthetic', changed, code, policy(j), j['resourceStopReason'])
+
+    def test_leader_timeout_still_writes_both_sidecars(self):
+        child = self.child(None, subprocess.TimeoutExpired('synthetic-command', 2))
+        code, j, _, _ = self.run_fake([resource(7000), resource(4000), resource(5000)], child, members=lambda _pg: [])
+        self.assertEqual(code, 127)
+        self.assertFalse(j['cleanup']['leaderCollected'])
+        self.assertIn('leader-collection', [e['phase'] for e in j['errors']])
+        self.assertEqual(j['stopEvent']['kind'], 'reserve-stop')
+
+    def test_unreadable_membership_attempts_owned_kill_and_reports_unknown(self):
+        code, j, calls, _ = self.run_fake([resource(7000), resource(6900)], self.child(), members=Mock(side_effect=PermissionError('synthetic /proc denial')))
+        self.assertEqual(code, 127)
+        self.assertFalse(j['cleanup']['membershipVerified'])
+        self.assertIn((12345, signal.SIGKILL), [x.args for x in calls])
+        self.assertTrue(all(x.args[0] == 12345 for x in calls))
+
+    def test_signal_failure_is_retained_and_sidecars_survive(self):
+        code, j, _, _ = self.run_fake([resource(7000), resource(6900)], self.child(), members=lambda _pg: [12345], signals=PermissionError('synthetic signal denial'))
+        self.assertEqual(code, 127)
+        self.assertIn('group-cleanup', [e['phase'] for e in j['errors']])
+        self.assertEqual(j['cleanup']['remainingLiveMembers'], [12345])
+
+    def test_final_sample_failure_keeps_initial_sample(self):
+        code, j, _, _ = self.run_fake(None, self.child(), read_error=[resource(7000), OSError('synthetic sample failure')])
+        self.assertEqual(code, 127)
+        self.assertEqual(len(j['samples']), 1)
+        self.assertIn('final-resource-sample', [e['phase'] for e in j['errors']])
+        self.assertEqual(j['minimumObservedAvailableBytes'], 7000 * MIB)
+
+    def test_spawn_failure_records_no_fictional_child(self):
+        code, j, calls, starts = self.run_fake([resource(7000), resource(6900)], spawn_error=OSError('synthetic spawn failure'))
+        self.assertEqual((code, starts, calls), (127, 1, []))
+        self.assertIsNone(j['cleanup']['processGroup'])
+        self.assertIn('supervision', [e['phase'] for e in j['errors']])
+
+    def test_signal_during_spawn_retains_child_handle_for_cleanup(self):
+        code, j, calls, _ = self.run_fake([resource(7000), resource(6900)], self.child(143), members=Mock(side_effect=[[12345], [], [], []]), spawn_signal=signal.SIGTERM)
+        self.assertEqual(code, 143)
+        self.assertEqual(j['cleanup']['processGroup'], 12345)
+        self.assertEqual(j['stopEvent']['kind'], 'supervisor-signal')
+        self.assertEqual(calls[0].args, (12345, signal.SIGTERM))
+
+    def test_invalid_thresholds_start_nothing(self):
+        with patch.object(monitor.subprocess, 'Popen') as child:
+            with self.assertRaises(ValueError):
+                monitor.run(argparse.Namespace(label='unused', command=['synthetic'], launch_mib=100, reserve_mib=4096))
+            child.assert_not_called()
+
+
+class ValidationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.actual = {p.name.removesuffix('-resources.json'): json.loads(p.read_text()) for p in OUT.glob('creator-outfit-*-resources.json')}
+        cls.policies = {name: policy(j) for name, j in cls.actual.items()}
+
+    def validate(self, name, j):
+        return validator.validate_resource(name, j, j['exitCode'], self.policies[name], self.actual[name]['resourceStopReason'])
+
+    def rejected(self, name, mutate):
+        j = copy.deepcopy(self.actual[name]); mutate(j)
+        with self.assertRaises(AssertionError): self.validate(name, j)
+
+    def test_all_eleven_archived_records_validate_without_changes(self):
+        self.assertEqual(len(self.actual), 11)
+        for name, j in self.actual.items():
+            with self.subTest(name=name): self.validate(name, j)
+
+    def test_refusal_rejects_fictional_signal_members(self):
+        self.rejected('creator-outfit-native-probe', lambda j: j['cleanup']['termMembers'].append(999))
+
+    def test_refusal_rejects_fictional_leader_status(self):
+        self.rejected('creator-outfit-native-probe', lambda j: j['cleanup'].update(leaderReturnCode=0))
+
+    def test_stop_rejects_null_group(self):
+        self.rejected('creator-outfit-final-full', lambda j: j['cleanup'].update(processGroup=None))
+
+    def test_success_rejects_incompatible_leader_status(self):
+        self.rejected('creator-outfit-lint', lambda j: j['cleanup'].update(leaderReturnCode=143))
+
+    def test_stop_rejects_changed_launch_policy(self):
+        self.rejected('creator-outfit-final-full', lambda j: j.update(launchMinimumMiB=6144))
+
+    def test_even_matching_policy_cannot_launch_below_threshold(self):
+        j = copy.deepcopy(self.actual['creator-outfit-final-full']); j['launchMinimumMiB'] = 6144
+        with self.assertRaises(AssertionError): validator.validate_resource('synthetic', j, 124, policy(j), j['resourceStopReason'])
+
+    def test_success_rejects_advertised_tmp_reserve_change(self):
+        self.rejected('creator-outfit-lint', lambda j: j.update(tmpReserveMiB=8192))
+
+    def test_stop_rejects_crossing_only_in_final_cleanup_sample(self):
+        def mutate(j):
+            for row in j['samples'][:-1]: row['memAvailableBytes'] = 7000 * MIB
+            j['samples'][-1]['memAvailableBytes'] = 4000 * MIB
+            j['minimumObservedAvailableBytes'] = 4000 * MIB
+        self.rejected('creator-outfit-final-full', mutate)
+
+    def test_rejects_nonmonotonic_samples(self):
+        self.rejected('creator-outfit-final-full', lambda j: j['samples'][1].update(elapsedSeconds=999))
+
+    def test_rejects_tampered_minimum(self):
+        self.rejected('creator-outfit-native-initial', lambda j: j.update(minimumObservedAvailableBytes=4096 * MIB))
+
+    def test_rejects_unverified_empty_remaining_list(self):
+        self.rejected('creator-outfit-lint', lambda j: j['cleanup'].update(membershipVerified=False))
+
+    def test_rejects_boolean_group_id(self):
+        self.rejected('creator-outfit-lint', lambda j: j['cleanup'].update(processGroup=True))
+
+    def test_rejects_changed_monitor_binding(self):
+        self.rejected('creator-outfit-lint', lambda j: j.update(monitorSha256='0' * 64))
+
+    def test_rejects_errors_on_a_claimed_success(self):
+        self.rejected('creator-outfit-lint', lambda j: j.update(errors=[{'phase': 'synthetic'}]))
+
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)

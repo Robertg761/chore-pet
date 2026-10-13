@@ -1,0 +1,8 @@
+{
+  "utc": "2026-10-13T09:43:12.271818+00:00",
+  "memAvailableMiB": 3369.73828125,
+  "tmpFreeMiB": 4083.3984375,
+  "nativeLaunchMinimumMiB": 6144,
+  "nativeRunStopTriggerMiB": 4096,
+  "action": "Observation only. No browser/full test started; their resource thresholds remain unchanged."
+}

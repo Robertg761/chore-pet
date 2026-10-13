@@ -1,0 +1,151 @@
+// @vitest-environment jsdom
+import { act, StrictMode } from 'react'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import type { Mood, Pet, Species } from '../domain/types'
+import { setPetMotionReduced } from '../pet/motionPreference'
+import { click, render } from '../test/react'
+import { CharacterCreator, type PetLookPatch } from './CharacterCreator'
+
+const pet: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#FFCFDA', eyes: 'lashes', cheeks: 'hearts', equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } }
+let ui: ReturnType<typeof render>
+let now: number, serial: number
+let frames: Map<number, FrameRequestCallback>
+let media: MediaQueryList, wide: MediaQueryList
+let saved: ReturnType<typeof vi.fn<(patch: PetLookPatch) => void>>
+const closed = vi.fn()
+const content = (p = pet) => <StrictMode><CharacterCreator pet={p} onSave={saved} onClose={closed} /></StrictMode>
+
+beforeEach(() => {
+  setPetMotionReduced(false)
+  now = 0; serial = 0; frames = new Map(); saved = vi.fn(); closed.mockClear()
+  vi.spyOn(performance, 'now').mockImplementation(() => now)
+  media = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
+  wide = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
+  vi.stubGlobal('matchMedia', (query: string) => query.includes('prefers-reduced-motion') ? media : wide)
+  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
+  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
+  ui = render(content())
+})
+afterEach(() => { ui.unmount(); setPetMotionReduced(false); vi.restoreAllMocks(); vi.unstubAllGlobals() })
+
+function button(name: string) {
+  const node = [...ui.container.querySelectorAll('button')].find(node => node.textContent === name)
+  expect(node, `button ${name}`).toBeTruthy(); return node!
+}
+const art = () => ui.container.querySelector('.cc-preview .ch-animated')!
+const image = () => ui.container.querySelector('.cc-preview svg') as SVGSVGElement
+function radio(name: string) { return ui.container.querySelector(`[role="radio"][aria-label="${name}"]`)! }
+function mood(value: Mood) {
+  const node = ui.container.querySelector('.cc-mood select') as HTMLSelectElement
+  act(() => { node.value = value; node.dispatchEvent(new Event('change', { bubbles: true })) })
+}
+function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
+function expectFacing(mirrored: boolean) {
+  const group = ui.container.querySelector('[data-preview-facing]')
+  expect(group).not.toBeNull()
+  expect(group!.getAttribute('data-preview-facing')).toBe(mirrored ? 'mirrored' : 'normal')
+  expect(group!.getAttribute('transform')).toBe(mirrored ? 'translate(200 0) scale(-1 1)' : null)
+  expect(button('Mirror preview').getAttribute('aria-pressed')).toBe(String(mirrored))
+}
+
+function comparableArt() {
+  const clone = art().cloneNode(true) as Element
+  const clips = [...clone.querySelectorAll('clipPath[id]')]
+  const ids = new Map(clips.map((node, i) => [node.id, `clip${i}`]))
+  expect(ids.size).toBe(clips.length)
+  for (const node of clone.querySelectorAll('[clip-path]')) {
+    const value = node.getAttribute('clip-path')!
+    node.setAttribute('clip-path', value.replace(/url\(#([^)]+)\)/g, (_, id: string) => {
+      expect(ids.has(id), `clip reference ${id} resolves locally`).toBe(true)
+      return `url(#${ids.get(id)})`
+    }))
+  }
+  clips.forEach(node => node.setAttribute('id', ids.get(node.id)!))
+  return clone.innerHTML
+}
+
+it.each((['mochi', 'bun', 'sprout'] as Species[]).flatMap(species => (['happy', 'content', 'meh', 'scruffy', 'sick'] as Mood[]).map(value => [species, value] as const)))('reveals and restores the %s %s face without changing pose or saving its outfit', (species, value) => {
+  ui.unmount(); ui = render(content({ ...pet, species })); click(button('Face')); mood(value)
+  const figure = art(), svg = image(), markup = comparableArt()
+  const face = () => [...figure.querySelectorAll('[data-expression]')].map(node => node.outerHTML)
+  const expression = face(), body = figure.querySelector('[data-character-body]')!.getAttribute('transform')
+  const write = vi.spyOn(Storage.prototype, 'setItem'), toggle = button('Show outfit')
+  expect(toggle.getAttribute('aria-pressed')).toBe('true'); expect(toggle.getAttribute('type')).toBe('button')
+  act(() => toggle.focus()); click(toggle)
+  expect(toggle.getAttribute('aria-pressed')).toBe('false'); expect(document.activeElement).toBe(toggle)
+  expect(art()).toBe(figure); expect(image()).toBe(svg)
+  for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) expect(figure.querySelector(`[data-slot="${slot}"]`)).toBeNull()
+  expect(face()).toEqual(expression); expect(figure.querySelector('[data-character-body]')!.getAttribute('transform')).toBe(body)
+  expect(svg.getAttribute('aria-label')).toContain('outfit hidden')
+  expect(frames.size).toBe(0); expect(saved).not.toHaveBeenCalled(); expect(write).not.toHaveBeenCalled()
+  click(toggle)
+  expect(toggle.getAttribute('aria-pressed')).toBe('true')
+  expect(comparableArt()).toBe(markup)
+  expect(svg.getAttribute('aria-label')).not.toContain('outfit hidden')
+})
+
+it('hides the outfit during the same mirrored detail cheer frame and retains its original deadline', () => {
+  click(radio('Bun')); frame(756); click(button('Face')); click(button('Face detail')); click(button('Mirror preview'))
+  const figure = art(), body = figure.querySelector('[data-character-body]')!.getAttribute('transform')
+  const face = figure.querySelector('[data-expression]')!.outerHTML
+  click(button('Show outfit'))
+  expect(art()).toBe(figure); expect(figure.querySelector('[data-character-body]')!.getAttribute('transform')).toBe(body)
+  expect(figure.querySelector('[data-expression]')!.outerHTML).toBe(face)
+  expect(image().getAttribute('viewBox')).toBe('36 75 128 110'); expectFacing(true); expect(frames.size).toBe(1)
+  const scroll = vi.fn(), focus = vi.fn(); Object.assign(image(), { scrollIntoView: scroll, focus }); click(button('Show preview'))
+  expect(scroll).toHaveBeenCalledExactlyOnceWith({ behavior: 'instant', block: 'center', inline: 'nearest' })
+  expect(focus).toHaveBeenCalledExactlyOnceWith({ preventScroll: true })
+  frame(1799); expect(frames.size).toBe(1); frame(1800); expect(frames.size).toBe(0)
+  expect(button('Show outfit').getAttribute('aria-pressed')).toBe('false'); expect(saved).not.toHaveBeenCalled()
+})
+
+it.each(['system', 'device'] as const)('preserves hidden outfit under live %s reduction without replay', policy => {
+  click(radio('Bun')); frame(756); click(button('Face')); click(button('Show outfit'))
+  const reduce = (value: boolean) => act(() => {
+    if (policy === 'device') setPetMotionReduced(value)
+    else { Object.defineProperty(media, 'matches', { value, configurable: true }); media.dispatchEvent(new Event('change')) }
+  })
+  reduce(true); expect(frames.size).toBe(0)
+  const expression = art().querySelector('[data-expression]')!.outerHTML
+  click(button('Show outfit')); click(button('Show outfit'))
+  expect(art().querySelector('[data-expression]')!.outerHTML).toBe(expression); expect(frames.size).toBe(0)
+  reduce(false); frame(5000)
+  expect(art().querySelector('[data-expression]')!.outerHTML).toBe(expression); expect(frames.size).toBe(0)
+  expect(button('Show outfit').getAttribute('aria-pressed')).toBe('false'); expect(saved).not.toHaveBeenCalled()
+})
+
+it('keeps outfit visibility local through mood, tabs, resize and edits, then restores it on remount', () => {
+  click(button('Face')); click(button('Show outfit')); click(button('Face detail')); click(button('Mirror preview')); mood('meh')
+  click(button('Who')); click(radio('Bun'))
+  act(() => { Object.defineProperty(wide, 'matches', { value: true, configurable: true }); wide.dispatchEvent(new Event('change')) })
+  click(radio('Sparkly')); click(radio('Hearts'))
+  expect(button('Show outfit').getAttribute('aria-pressed')).toBe('false'); expectFacing(true)
+  expect(art().querySelector('[data-slot="face"]')).toBeNull(); expect(frames.size).toBe(0)
+  click(button('Save'))
+  expect(saved).toHaveBeenCalledExactlyOnceWith({ species: 'bun', bodyColour: '#FFFFFF', eyes: 'sparkly' })
+  ui.unmount(); ui = render(content())
+  expect(button('Show outfit').getAttribute('aria-pressed')).toBe('true')
+  expect(art().querySelector('[data-slot="face"]')).not.toBeNull(); expect(frames.size).toBe(0)
+})
+
+it('omits the outfit toggle for an unequipped pet while keeping all preview tools usable', () => {
+  ui.unmount(); ui = render(content({ ...pet, equipped: {} })); click(button('Face'))
+  expect([...ui.container.querySelectorAll('button')].some(node => node.textContent === 'Show outfit')).toBe(false)
+  click(button('Face detail')); click(button('Mirror preview')); mood('sick')
+  expect(image().getAttribute('aria-label')).not.toContain('outfit hidden'); expectFacing(true)
+  expect(frames.size).toBe(0); expect(saved).not.toHaveBeenCalled()
+})
+
+it.each(['system', 'device'] as const)('allows outfit inspection under initial %s reduction without starting motion', policy => {
+  ui.unmount()
+  if (policy === 'device') setPetMotionReduced(true)
+  else Object.defineProperty(media, 'matches', { value: true, configurable: true })
+  ui = render(content()); click(button('Face')); mood('sick')
+  const figure = art(), face = figure.querySelector('[data-expression]')!.outerHTML
+  const write = vi.spyOn(Storage.prototype, 'setItem')
+  click(button('Show outfit')); click(button('Face detail')); click(button('Mirror preview'))
+  expect(figure.querySelector('[data-expression]')!.outerHTML).toBe(face)
+  expect(figure.querySelector('[data-slot="head"]')).toBeNull(); expect(figure.querySelector('[data-slot="face"]')).toBeNull()
+  expect(frames.size).toBe(0); expect(saved).not.toHaveBeenCalled(); expect(write).not.toHaveBeenCalled()
+  expect(image().getAttribute('aria-label')).toContain('outfit hidden'); expectFacing(true)
+})

@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-13T08:57:52.162241+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "python3",
+    "/tmp/creator-outfit-resource-method-tests.py"
+  ],
+  "exitCode": 0,
+  "sources": {
+    "docs/audits/2026-10-12-character-polish/creator-outfit-conservative-monitor-v2.py.txt": "afddd715ca4ec81f0d714360e45af0bde7f56b5bd94df784a9698e75ebea3178",
+    "docs/audits/2026-10-12-character-polish/creator-outfit-resource-validation-v2.py.txt": "a3cabc14a668b8275234671772ff4e7c233d97dafa1563f990b98343f06ba3c6",
+    "docs/audits/2026-10-12-character-polish/creator-outfit-freeze-method-v2.py.txt": "ff5b34b94ab248699f1ab82ba78c5aa8ae11d76bf0e2399a0fa8259cdbff6820",
+    "docs/audits/2026-10-12-character-polish/creator-outfit-resource-method-tests.py.txt": "1e9c25206ee10ecf1a597bea542720d37b3ebda0b0d18e082ffb13626cb40553"
+  },
+  "output": {
+    "path": "docs/audits/2026-10-12-character-polish/creator-outfit-resource-method-tests-output.txt",
+    "sha256": "9c57a90d5dd34c839fd2deaa8d84819a06bdc52985c07750f045b2e728a31289"
+  },
+  "method": "Tiny Python-only synthetic child/resource/signal mocks and read-only validation of eleven existing resource JSON records. No real Popen, browser, app tests, server or process signal was issued by the tested monitor. Includes cleanup timeout/permission/spawn/final-sample errors, deferred spawn signal, normal success/refusal/stop, and rejection counterexamples. This is helper verification, not native product verification or a measured CPU/RSS bound."
+}

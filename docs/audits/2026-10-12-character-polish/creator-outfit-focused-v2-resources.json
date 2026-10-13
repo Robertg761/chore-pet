@@ -1,0 +1,99 @@
+{
+  "utc": "2026-10-13T08:19:12.824989+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "--max-old-space-size=384",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/screens/CharacterCreator.outfit.test.tsx",
+    "src/screens/CharacterCreator.detail.test.tsx",
+    "src/screens/CharacterCreator.tools.test.tsx",
+    "src/screens/CharacterCreator.mood.test.tsx",
+    "src/screens/CharacterCreator.test.tsx",
+    "--maxWorkers=1"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 3,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 0
+  },
+  "minimumObservedAvailableBytes": 4313997312,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4427538432,
+      "tmpFreeBytes": 4284764160
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4427538432,
+      "tmpFreeBytes": 4284764160
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4587356160,
+      "tmpFreeBytes": 4284071936
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "memAvailableBytes": 4361129984,
+      "tmpFreeBytes": 4283944960
+    },
+    {
+      "elapsedSeconds": 3.002,
+      "memAvailableBytes": 4313997312,
+      "tmpFreeBytes": 4283944960
+    },
+    {
+      "elapsedSeconds": 4.002,
+      "memAvailableBytes": 4438863872,
+      "tmpFreeBytes": 4283912192
+    },
+    {
+      "elapsedSeconds": 5.002,
+      "memAvailableBytes": 4355080192,
+      "tmpFreeBytes": 4283912192
+    },
+    {
+      "elapsedSeconds": 6.002,
+      "memAvailableBytes": 4468924416,
+      "tmpFreeBytes": 4283912192
+    },
+    {
+      "elapsedSeconds": 7.003,
+      "memAvailableBytes": 4359041024,
+      "tmpFreeBytes": 4283883520
+    },
+    {
+      "elapsedSeconds": 8.003,
+      "memAvailableBytes": 4489838592,
+      "tmpFreeBytes": 4283883520
+    },
+    {
+      "elapsedSeconds": 9.003,
+      "memAvailableBytes": 4425170944,
+      "tmpFreeBytes": 4283854848
+    },
+    {
+      "elapsedSeconds": 10.003,
+      "memAvailableBytes": 4492025856,
+      "tmpFreeBytes": 4283854848
+    },
+    {
+      "elapsedSeconds": 11.004,
+      "memAvailableBytes": 4578869248,
+      "tmpFreeBytes": 4284764160
+    }
+  ]
+}

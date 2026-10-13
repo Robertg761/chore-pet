@@ -1,0 +1,773 @@
+{
+  "status": "Selected prototype in actual source art at66px SVG size and strokeScale1.6. Static design only; no production integration or native acceptance.",
+  "method": "Source CharacterArt with isolated prototype items prop. Every200x200 source viewport is displayed at66x66 SVG pixels, so the scale is0.33. Existing CSS animation omitted. Mirroring occurs once inside that source viewport. All seven poses, three species, default/dark body colours and both horizontal directions are covered. This does not simulate room floor, camera scaling, native CSS, display density or live motion.",
+  "prototypeSha256": "fa0055f0daba6bfa85feb14fda52faf2f84f14a25abc4f2e0dc0549a9ae8ee6c",
+  "sourceDependencies": {
+    "src/art/color.ts": "f7dd62c6ad58d9d5f24de2e47c5ef459144aa28cedf3bf47b2636c44ba95c8ad",
+    "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+    "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+    "src/character/Character.css": "b30c9ffd119371268a744563e054b5e7d41ae0abf1d1e6120caff9bbfa0afccf",
+    "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+    "src/character/Garment.tsx": "16daa1a85cd041cef028c33edfe9711e6b30c4b42f5d4378b34d4ac7d8f110bb",
+    "src/character/accent.tsx": "97e78bfce8b045d60a905b7ca015b36df907f89699985882442f2c82d4d97cca",
+    "src/character/eyeGeometry.ts": "b0a106858c8c8c88a2a27d0d85470a33fdffa8377b4c918943b2d40ea774b2ae",
+    "src/character/ink.tsx": "dba9a5832cbbe6fcfd3f07f756d1c21c67a27ec8887c15ad322eeebf613a9f38",
+    "src/character/items.tsx": "f06572844f4a349fef05caa7a45068f5935815f14d79daf0a76d71dc3d412c6a",
+    "src/character/items/extras.tsx": "2ebe7ed7be300b2a5a207fb67037ec28146ae96a1bbba00d6c8627fce3b8d173",
+    "src/character/items/hats.tsx": "79cbd70f0e72b7dcd4fbd2b47398a89089d4472e2a4af6f42808ba72344f4b31",
+    "src/character/items/outfits.tsx": "4dfa775cda7c954916e8b874b7119e662b21ffd0d546ee203a3988fed5d09802",
+    "src/character/items/shared.tsx": "50ec159099e748ecf516398d1fad6cccfb6ced335703e876e9e23e12b09ef8f2",
+    "src/character/look.ts": "cc5140783904fc43fc5169ba168bfdb28e63444c817bf25c4e58627eea704d40",
+    "src/character/motion.ts": "07679d0a1f861d3bd327a5eb05b1d3b0edda9fc3b1633da53a4965a5b601173a",
+    "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+    "src/character/poses.ts": "5a7cf52f0dc3c8efbb9f4478fbbbbf660f345f5cfb12a6e1e078487acf7a1fcc",
+    "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+    "src/character/species/bun-poses.tsx": "75d43d09f1b9f7f753b0889f95b92b12ae6dfaddb5263d934abab69df78fde5a",
+    "src/character/species/bun.tsx": "3da44577ba175a087cdb61b0b3962df343d730f9694c3d3cdc33c6207cd05ac3",
+    "src/character/species/mochi-poses.tsx": "97cd70836237fa87d07b3b5511bd10970e1cdc38288c6eab7859075acfc7250c",
+    "src/character/species/mochi.tsx": "bcf0efd767116d9ecb7e00f6cd5d8539b4d5b7e8e5616471bcc961ae27da2dbc",
+    "src/character/species/sprout-poses.tsx": "170f9ee84d3a0358b8c2909d1f95d212c60641bb14aa01c7cfa61d84de7b7ad0",
+    "src/character/species/sprout.tsx": "1cb3bce8cb289487be9197791d196b5cb7f8985d341a118d24856caf27d933c5",
+    "src/character/strokeScale.ts": "5bf8f80e4ee3eed8b994c4da7ebb6af29fa32203448358886b8d33f7d83fe9de",
+    "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a",
+    "src/effects/shapes.tsx": "a8ce0b0ce0625660e55d034e4b6eebc7172132286558c02026e6ace049708205"
+  },
+  "records": [
+    {
+      "name": "daisy-clip-light-room-v2",
+      "title": "Room-scale fit, default colours",
+      "width": 976,
+      "height": 824,
+      "samples": [
+        {
+          "species": "mochi",
+          "pose": "idle",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "idle",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "idle",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "content",
+          "mood": "content",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "content",
+          "mood": "content",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "content",
+          "mood": "content",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "meh",
+          "mood": "meh",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "meh",
+          "mood": "meh",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "meh",
+          "mood": "meh",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "scruffy",
+          "mood": "scruffy",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "scruffy",
+          "mood": "scruffy",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "scruffy",
+          "mood": "scruffy",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "sleeping",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "sleeping",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "sleeping",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "cheering",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "cheering",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "cheering",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "sick",
+          "mood": "sick",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "sick",
+          "mood": "sick",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "sick",
+          "mood": "sick",
+          "dark": false,
+          "mirrored": false,
+          "frame": null
+        }
+      ],
+      "scopedIds": 57
+    },
+    {
+      "name": "daisy-clip-light-mirrored-room-v2",
+      "title": "Room-scale fit, default colours, mirrored",
+      "width": 976,
+      "height": 824,
+      "samples": [
+        {
+          "species": "mochi",
+          "pose": "idle",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "idle",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "idle",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "content",
+          "mood": "content",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "content",
+          "mood": "content",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "content",
+          "mood": "content",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "meh",
+          "mood": "meh",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "meh",
+          "mood": "meh",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "meh",
+          "mood": "meh",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "scruffy",
+          "mood": "scruffy",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "scruffy",
+          "mood": "scruffy",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "scruffy",
+          "mood": "scruffy",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "sleeping",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "sleeping",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "sleeping",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "cheering",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "cheering",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "cheering",
+          "mood": "happy",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "sick",
+          "mood": "sick",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "sick",
+          "mood": "sick",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "sick",
+          "mood": "sick",
+          "dark": false,
+          "mirrored": true,
+          "frame": null
+        }
+      ],
+      "scopedIds": 57
+    },
+    {
+      "name": "daisy-clip-dark-room-v2",
+      "title": "Room-scale fit, dark colours",
+      "width": 976,
+      "height": 824,
+      "samples": [
+        {
+          "species": "mochi",
+          "pose": "idle",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "idle",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "idle",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "content",
+          "mood": "content",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "content",
+          "mood": "content",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "content",
+          "mood": "content",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "meh",
+          "mood": "meh",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "meh",
+          "mood": "meh",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "meh",
+          "mood": "meh",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "scruffy",
+          "mood": "scruffy",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "scruffy",
+          "mood": "scruffy",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "scruffy",
+          "mood": "scruffy",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "sleeping",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "sleeping",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "sleeping",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "cheering",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "cheering",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "cheering",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "sick",
+          "mood": "sick",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "sick",
+          "mood": "sick",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "sick",
+          "mood": "sick",
+          "dark": true,
+          "mirrored": false,
+          "frame": null
+        }
+      ],
+      "scopedIds": 57
+    },
+    {
+      "name": "daisy-clip-dark-mirrored-room-v2",
+      "title": "Room-scale fit, dark colours, mirrored",
+      "width": 976,
+      "height": 824,
+      "samples": [
+        {
+          "species": "mochi",
+          "pose": "idle",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "idle",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "idle",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "content",
+          "mood": "content",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "content",
+          "mood": "content",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "content",
+          "mood": "content",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "meh",
+          "mood": "meh",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "meh",
+          "mood": "meh",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "meh",
+          "mood": "meh",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "scruffy",
+          "mood": "scruffy",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "scruffy",
+          "mood": "scruffy",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "scruffy",
+          "mood": "scruffy",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "sleeping",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "sleeping",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "sleeping",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "cheering",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "cheering",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "cheering",
+          "mood": "happy",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "mochi",
+          "pose": "sick",
+          "mood": "sick",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "bun",
+          "pose": "sick",
+          "mood": "sick",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        },
+        {
+          "species": "sprout",
+          "pose": "sick",
+          "mood": "sick",
+          "dark": true,
+          "mirrored": true,
+          "frame": null
+        }
+      ],
+      "scopedIds": 57
+    }
+  ],
+  "memorySnapshots": [
+    {
+      "phase": "typescript-loaded",
+      "rssBytes": 98009088,
+      "heapUsedBytes": 13140256
+    },
+    {
+      "phase": "daisy-clip-light",
+      "rssBytes": 174923776,
+      "heapUsedBytes": 24766160
+    },
+    {
+      "phase": "daisy-clip-light-mirrored",
+      "rssBytes": 176365568,
+      "heapUsedBytes": 38508984
+    },
+    {
+      "phase": "daisy-clip-dark",
+      "rssBytes": 180559872,
+      "heapUsedBytes": 51512736
+    },
+    {
+      "phase": "daisy-clip-dark-mirrored",
+      "rssBytes": 189734912,
+      "heapUsedBytes": 25769888
+    }
+  ],
+  "limits": "No reward, wardrobe, save, browser, live motion or all-colour claim. Node128MiBoldheap and3GiBlaunch/2GiBsampledRAMstoptrigger requested; RSS snapshots are not peaks."
+}

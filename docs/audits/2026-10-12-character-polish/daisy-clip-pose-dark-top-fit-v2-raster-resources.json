@@ -1,0 +1,78 @@
+{
+  "utc": "2026-10-13T09:34:09.125134+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "env",
+    "FONTCONFIG_FILE=/tmp/chore-pet-daisy-fonts-5g5f8e0v/fonts.conf",
+    "prlimit",
+    "--as=536870912",
+    "--",
+    "/usr/bin/rsvg-convert",
+    "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-top-fit-v2.svg",
+    "-o",
+    "docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-dark-top-fit-v2-final.png"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3072,
+  "runReserveMiB": 2048,
+  "tmpReserveMiB": 2048,
+  "sampleIntervalSeconds": 0.5,
+  "nodeOptions": null,
+  "monitorSha256": "afddd715ca4ec81f0d714360e45af0bde7f56b5bd94df784a9698e75ebea3178",
+  "cleanup": {
+    "processGroup": 15,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "membershipVerified": true,
+    "leaderCollected": true,
+    "leaderReturnCode": 0
+  },
+  "stopEvent": null,
+  "events": [
+    {
+      "kind": "child-started",
+      "elapsedSeconds": 0.001,
+      "processGroup": 15
+    },
+    {
+      "kind": "leader-exited",
+      "elapsedSeconds": 0.501,
+      "returnCode": 0
+    },
+    {
+      "kind": "cleanup-started",
+      "elapsedSeconds": 0.501
+    },
+    {
+      "kind": "cleanup-finished",
+      "elapsedSeconds": 0.502
+    }
+  ],
+  "errors": [],
+  "minimumObservedAvailableBytes": 3993194496,
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "phase": "launch",
+      "memAvailableBytes": 3993743360,
+      "tmpFreeBytes": 4281786368
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "phase": "running",
+      "memAvailableBytes": 3993743360,
+      "tmpFreeBytes": 4281786368
+    },
+    {
+      "elapsedSeconds": 0.502,
+      "phase": "after-cleanup",
+      "memAvailableBytes": 3993194496,
+      "tmpFreeBytes": 4281786368
+    }
+  ],
+  "method": "Host available RAM and /tmp sampled about twice per second while running, with explicit launch/running/after-cleanup phases and stop-event index. The RAM reserve is a sampled stop trigger, not a guaranteed floor. Only the original job process group/session may be signalled; changed groups/sessions and all host processes are not certified. Cleanup exceptions are recorded and make the run fail; evidence writing follows cleanup and bounded leader collection even when they fail. Requested child commands carry their own niceness/heap/worker options; this monitor does not enforce host-wide concurrency or certify peak RSS/CPU, battery or devices."
+}

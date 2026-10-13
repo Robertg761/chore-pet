@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="760" viewBox="0 0 1024 760" role="img" aria-labelledby="title desc">
+<title id="title">Daisy clip broad-petal and idle head fit study</title>
+<desc id="desc">Exploratory vector study. Three five-petal silhouettes widen their petals and inner valleys. Existing body and ear path strings are taken from the current source. Candidate idle anchors use the current head anchors. Face art is intentionally outside these head crops. This does not verify runtime attachment, other poses or native browser rendering.</desc>
+<rect width="1024" height="760" fill="#FFF6E6"/>
+<g font-family="sans-serif" fill="#2B1E2F"><text x="32" y="42" font-size="24" font-weight="700">Daisy clip</text><text x="32" y="68" font-size="14">Shape and idle head fit study. No product change applied.</text>
+<rect x="32" y="88" width="304" height="174" rx="16" fill="#EFE9FF"/>
+<g transform="translate(184 163) scale(3.3)"><g stroke="#2B1E2F" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="#8CCB5E" stroke="none"/>
+      <path d="M3 5 Q12 4 22 0 C19 8 9 12 3 5 Z" fill="#6FB24A" stroke="none"/>
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="none"/>
+      <path d="M-3.526712 -4.854102 C-7.5 -17.048633 7.5 -17.048633 3.526712 -4.854102 C13.896586 -12.401241 18.531841 1.864607 5.706339 1.854102 C16.088562 9.384244 3.953307 18.201023 0 6 C-3.953307 18.201023 -16.088562 9.384244 -5.706339 1.854102 C-18.531841 1.864607 -13.896586 -12.401241 -3.526712 -4.854102 Z" fill="#FFF6E6"/>
+      <circle cx="0" cy="0" r="4.8" fill="#FFD65C" stroke-width="2.5"/>
+      <circle cx="-1.3" cy="-1.5" r="1" fill="#FFFFFF" stroke="none"/>
+    </g></g>
+<text x="48" y="240" font-size="14">Inner radius 6, petal tip 14</text>
+<rect x="360" y="88" width="304" height="174" rx="16" fill="#EFE9FF"/>
+<g transform="translate(512 163) scale(3.3)"><g stroke="#2B1E2F" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="#8CCB5E" stroke="none"/>
+      <path d="M3 5 Q12 4 22 0 C19 8 9 12 3 5 Z" fill="#6FB24A" stroke="none"/>
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="none"/>
+      <path d="M-5.290067 -7.281153 C-10 -18.906282 10 -18.906282 5.290067 -7.281153 C14.890773 -15.352928 21.071113 3.668203 8.559509 2.781153 C19.203004 9.417651 3.022664 21.173356 0 9 C-3.022664 21.173356 -19.203004 9.417651 -8.559509 2.781153 C-21.071113 3.668203 -14.890773 -15.352928 -5.290067 -7.281153 Z" fill="#FFF6E6"/>
+      <circle cx="0" cy="0" r="5.4" fill="#FFD65C" stroke-width="2.5"/>
+      <circle cx="-1.3" cy="-1.5" r="1" fill="#FFFFFF" stroke="none"/>
+    </g></g>
+<text x="376" y="240" font-size="14">Inner radius 9, petal tip 16</text>
+<rect x="688" y="88" width="304" height="174" rx="16" fill="#EFE9FF"/>
+<g transform="translate(840 163) scale(3.3)"><g stroke="#2B1E2F" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="#8CCB5E" stroke="none"/>
+      <path d="M3 5 Q12 4 22 0 C19 8 9 12 3 5 Z" fill="#6FB24A" stroke="none"/>
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="none"/>
+      <path d="M-5.877853 -8.09017 C-11 -19.969943 11 -19.969943 5.877853 -8.09017 C15.593358 -16.632674 22.391732 4.29057 9.510565 3.09017 C20.637225 9.690386 2.838851 22.621661 0 10 C-2.838851 22.621661 -20.637225 9.690386 -9.510565 3.09017 C-22.391732 4.29057 -15.593358 -16.632674 -5.877853 -8.09017 Z" fill="#FFF6E6"/>
+      <circle cx="0" cy="0" r="5.6" fill="#FFD65C" stroke-width="2.5"/>
+      <circle cx="-1.3" cy="-1.5" r="1" fill="#FFFFFF" stroke="none"/>
+    </g></g>
+<text x="704" y="240" font-size="14">Inner radius 10, petal tip 17</text>
+<text x="32" y="296" font-size="18" font-weight="700">Candidate fit, broad right silhouette</text>
+<rect x="32" y="312" width="304" height="248" rx="16" fill="#EFE9FF"/>
+<svg x="52" y="326" width="264" height="194" viewBox="25 15 150 110" overflow="hidden"><g stroke="#2B1E2F" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M89 78 C88 67 94 60 100 60 C106 60 112 67 111 78 Z" fill="#FFCFDA"/><path d="M100 60 C100 55 104 53 106 55" fill="none" stroke-width="3.5"/><path d="M32 150 C32 104 62 72 100 72 C138 72 168 104 168 150 C168 172 140 181 100 181 C60 181 32 172 32 150 Z" fill="#FFCFDA"/></g><g transform="translate(100 78) scale(1) translate(30 7) rotate(14)"><g stroke="#2B1E2F" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="#8CCB5E" stroke="none"/>
+      <path d="M3 5 Q12 4 22 0 C19 8 9 12 3 5 Z" fill="#6FB24A" stroke="none"/>
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="none"/>
+      <path d="M-5.877853 -8.09017 C-11 -19.969943 11 -19.969943 5.877853 -8.09017 C15.593358 -16.632674 22.391732 4.29057 9.510565 3.09017 C20.637225 9.690386 2.838851 22.621661 0 10 C-2.838851 22.621661 -20.637225 9.690386 -9.510565 3.09017 C-22.391732 4.29057 -15.593358 -16.632674 -5.877853 -8.09017 Z" fill="#FFF6E6"/>
+      <circle cx="0" cy="0" r="5.6" fill="#FFD65C" stroke-width="2.5"/>
+      <circle cx="-1.3" cy="-1.5" r="1" fill="#FFFFFF" stroke="none"/>
+    </g></g></svg>
+<text x="48" y="542" font-size="14">Mochi, current idle head anchor</text>
+<rect x="360" y="312" width="304" height="248" rx="16" fill="#EFE9FF"/>
+<svg x="380" y="326" width="264" height="194" viewBox="25 15 150 110" overflow="hidden"><g stroke="#2B1E2F" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(-6 82 98)"><path d="M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z" fill="#FFFFFF"/></g><g transform="translate(200 0) scale(-1 1)"><g transform="rotate(-6 82 98)"><path d="M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z" fill="#FFFFFF"/></g></g><path d="M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z" fill="#FFFFFF"/></g><g transform="translate(100 92) scale(0.95) translate(29 5) rotate(14)"><g stroke="#2B1E2F" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="#8CCB5E" stroke="none"/>
+      <path d="M3 5 Q12 4 22 0 C19 8 9 12 3 5 Z" fill="#6FB24A" stroke="none"/>
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="none"/>
+      <path d="M-5.877853 -8.09017 C-11 -19.969943 11 -19.969943 5.877853 -8.09017 C15.593358 -16.632674 22.391732 4.29057 9.510565 3.09017 C20.637225 9.690386 2.838851 22.621661 0 10 C-2.838851 22.621661 -20.637225 9.690386 -9.510565 3.09017 C-22.391732 4.29057 -15.593358 -16.632674 -5.877853 -8.09017 Z" fill="#FFF6E6"/>
+      <circle cx="0" cy="0" r="5.6" fill="#FFD65C" stroke-width="2.5"/>
+      <circle cx="-1.3" cy="-1.5" r="1" fill="#FFFFFF" stroke="none"/>
+    </g></g></svg>
+<text x="376" y="542" font-size="14">Bun, current idle head anchor</text>
+<rect x="688" y="312" width="304" height="248" rx="16" fill="#EFE9FF"/>
+<svg x="708" y="326" width="264" height="194" viewBox="25 15 150 110" overflow="hidden"><g stroke="#2B1E2F" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M100 74 C100 62 98 54 101 46" fill="none" stroke-width="11"/><path d="M100 74 C100 62 98 54 101 46" fill="none" stroke="#8CCB5E" stroke-width="4"/>
+          <path d="M101 46 C94 32 78 26 64 32 C70 46 86 52 101 46 Z" fill="#8CCB5E"/>
+          <path d="M101 46 C108 30 126 22 142 28 C136 44 118 52 101 46 Z" fill="#8CCB5E"/><path d="M100 70 C124 70 158 104 158 146 C158 170 134 181 100 181 C66 181 42 170 42 146 C42 104 76 70 100 70 Z" fill="#FFD65C"/></g><g transform="translate(100 76) scale(0.95) translate(27 9) rotate(16)"><g stroke="#2B1E2F" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="#8CCB5E" stroke="none"/>
+      <path d="M3 5 Q12 4 22 0 C19 8 9 12 3 5 Z" fill="#6FB24A" stroke="none"/>
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="none"/>
+      <path d="M-5.877853 -8.09017 C-11 -19.969943 11 -19.969943 5.877853 -8.09017 C15.593358 -16.632674 22.391732 4.29057 9.510565 3.09017 C20.637225 9.690386 2.838851 22.621661 0 10 C-2.838851 22.621661 -20.637225 9.690386 -9.510565 3.09017 C-22.391732 4.29057 -15.593358 -16.632674 -5.877853 -8.09017 Z" fill="#FFF6E6"/>
+      <circle cx="0" cy="0" r="5.6" fill="#FFD65C" stroke-width="2.5"/>
+      <circle cx="-1.3" cy="-1.5" r="1" fill="#FFFFFF" stroke="none"/>
+    </g></g></svg>
+<text x="704" y="542" font-size="14">Sprout, current idle head anchor</text>
+<text x="32" y="598" font-size="18" font-weight="700">Small-scale and contrast checks</text>
+<rect x="32" y="616" width="140" height="112" rx="12" fill="#EFE9FF"/>
+<svg x="69" y="628" width="66" height="48" viewBox="0 0 200 145" overflow="hidden"><g stroke="#2B1E2F" stroke-width="6.4" stroke-linejoin="round" stroke-linecap="round"><path d="M89 78 C88 67 94 60 100 60 C106 60 112 67 111 78 Z" fill="#FFCFDA"/><path d="M100 60 C100 55 104 53 106 55" fill="none" stroke-width="5.6000000000000005"/><path d="M32 150 C32 104 62 72 100 72 C138 72 168 104 168 150 C168 172 140 181 100 181 C60 181 32 172 32 150 Z" fill="#FFCFDA"/></g><g transform="translate(100 78) scale(1) translate(30 7) rotate(14)"><g stroke="#2B1E2F" stroke-width="6.4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="#8CCB5E" stroke="none"/>
+      <path d="M3 5 Q12 4 22 0 C19 8 9 12 3 5 Z" fill="#6FB24A" stroke="none"/>
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="none"/>
+      <path d="M-5.877853 -8.09017 C-11 -19.969943 11 -19.969943 5.877853 -8.09017 C15.593358 -16.632674 22.391732 4.29057 9.510565 3.09017 C20.637225 9.690386 2.838851 22.621661 0 10 C-2.838851 22.621661 -20.637225 9.690386 -9.510565 3.09017 C-22.391732 4.29057 -15.593358 -16.632674 -5.877853 -8.09017 Z" fill="#FFF6E6"/>
+      <circle cx="0" cy="0" r="5.6" fill="#FFD65C" stroke-width="4.0"/>
+      <circle cx="-1.3" cy="-1.5" r="1" fill="#FFFFFF" stroke="none"/>
+    </g></g></svg>
+<text x="44" y="704" font-size="12">mochi, 0.33 scale</text>
+<rect x="196" y="616" width="140" height="112" rx="12" fill="#EFE9FF"/>
+<svg x="233" y="628" width="66" height="48" viewBox="0 0 200 145" overflow="hidden"><g stroke="#2B1E2F" stroke-width="6.4" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(-6 82 98)"><path d="M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z" fill="#FFFFFF"/></g><g transform="translate(200 0) scale(-1 1)"><g transform="rotate(-6 82 98)"><path d="M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z" fill="#FFFFFF"/></g></g><path d="M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z" fill="#FFFFFF"/></g><g transform="translate(100 92) scale(0.95) translate(29 5) rotate(14)"><g stroke="#2B1E2F" stroke-width="6.4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="#8CCB5E" stroke="none"/>
+      <path d="M3 5 Q12 4 22 0 C19 8 9 12 3 5 Z" fill="#6FB24A" stroke="none"/>
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="none"/>
+      <path d="M-5.877853 -8.09017 C-11 -19.969943 11 -19.969943 5.877853 -8.09017 C15.593358 -16.632674 22.391732 4.29057 9.510565 3.09017 C20.637225 9.690386 2.838851 22.621661 0 10 C-2.838851 22.621661 -20.637225 9.690386 -9.510565 3.09017 C-22.391732 4.29057 -15.593358 -16.632674 -5.877853 -8.09017 Z" fill="#FFF6E6"/>
+      <circle cx="0" cy="0" r="5.6" fill="#FFD65C" stroke-width="4.0"/>
+      <circle cx="-1.3" cy="-1.5" r="1" fill="#FFFFFF" stroke="none"/>
+    </g></g></svg>
+<text x="208" y="704" font-size="12">bun, 0.33 scale</text>
+<rect x="360" y="616" width="140" height="112" rx="12" fill="#EFE9FF"/>
+<svg x="397" y="628" width="66" height="48" viewBox="0 0 200 145" overflow="hidden"><g stroke="#2B1E2F" stroke-width="6.4" stroke-linejoin="round" stroke-linecap="round"><path d="M100 74 C100 62 98 54 101 46" fill="none" stroke-width="15.200000000000001"/><path d="M100 74 C100 62 98 54 101 46" fill="none" stroke="#8CCB5E" stroke-width="4"/>
+          <path d="M101 46 C94 32 78 26 64 32 C70 46 86 52 101 46 Z" fill="#8CCB5E"/>
+          <path d="M101 46 C108 30 126 22 142 28 C136 44 118 52 101 46 Z" fill="#8CCB5E"/><path d="M100 70 C124 70 158 104 158 146 C158 170 134 181 100 181 C66 181 42 170 42 146 C42 104 76 70 100 70 Z" fill="#FFD65C"/></g><g transform="translate(100 76) scale(0.95) translate(27 9) rotate(16)"><g stroke="#2B1E2F" stroke-width="6.4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="#8CCB5E" stroke="none"/>
+      <path d="M3 5 Q12 4 22 0 C19 8 9 12 3 5 Z" fill="#6FB24A" stroke="none"/>
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="none"/>
+      <path d="M-5.877853 -8.09017 C-11 -19.969943 11 -19.969943 5.877853 -8.09017 C15.593358 -16.632674 22.391732 4.29057 9.510565 3.09017 C20.637225 9.690386 2.838851 22.621661 0 10 C-2.838851 22.621661 -20.637225 9.690386 -9.510565 3.09017 C-22.391732 4.29057 -15.593358 -16.632674 -5.877853 -8.09017 Z" fill="#FFF6E6"/>
+      <circle cx="0" cy="0" r="5.6" fill="#FFD65C" stroke-width="4.0"/>
+      <circle cx="-1.3" cy="-1.5" r="1" fill="#FFFFFF" stroke="none"/>
+    </g></g></svg>
+<text x="372" y="704" font-size="12">sprout, 0.33 scale</text>
+<rect x="524" y="616" width="140" height="112" rx="12" fill="#EFE9FF"/>
+<svg x="561" y="628" width="66" height="48" viewBox="0 0 200 145" overflow="hidden"><g stroke="#2B1E2F" stroke-width="6.4" stroke-linejoin="round" stroke-linecap="round"><path d="M89 78 C88 67 94 60 100 60 C106 60 112 67 111 78 Z" fill="#2B1E2F"/><path d="M100 60 C100 55 104 53 106 55" fill="none" stroke-width="5.6000000000000005"/><path d="M32 150 C32 104 62 72 100 72 C138 72 168 104 168 150 C168 172 140 181 100 181 C60 181 32 172 32 150 Z" fill="#2B1E2F"/></g><g transform="translate(100 78) scale(1) translate(30 7) rotate(14)"><g stroke="#2B1E2F" stroke-width="6.4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="#8CCB5E" stroke="none"/>
+      <path d="M3 5 Q12 4 22 0 C19 8 9 12 3 5 Z" fill="#6FB24A" stroke="none"/>
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="none"/>
+      <path d="M-5.877853 -8.09017 C-11 -19.969943 11 -19.969943 5.877853 -8.09017 C15.593358 -16.632674 22.391732 4.29057 9.510565 3.09017 C20.637225 9.690386 2.838851 22.621661 0 10 C-2.838851 22.621661 -20.637225 9.690386 -9.510565 3.09017 C-22.391732 4.29057 -15.593358 -16.632674 -5.877853 -8.09017 Z" fill="#FFF6E6"/>
+      <circle cx="0" cy="0" r="5.6" fill="#FFD65C" stroke-width="4.0"/>
+      <circle cx="-1.3" cy="-1.5" r="1" fill="#FFFFFF" stroke="none"/>
+    </g></g></svg>
+<text x="536" y="704" font-size="12">mochi, 0.33 scale</text>
+<rect x="688" y="616" width="140" height="112" rx="12" fill="#EFE9FF"/>
+<svg x="725" y="628" width="66" height="48" viewBox="0 0 200 145" overflow="hidden"><g stroke="#2B1E2F" stroke-width="6.4" stroke-linejoin="round" stroke-linecap="round"><g transform="rotate(-6 82 98)"><path d="M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z" fill="#2B1E2F"/></g><g transform="translate(200 0) scale(-1 1)"><g transform="rotate(-6 82 98)"><path d="M70 100 C58 72 58 32 72 26 C86 20 96 60 94 98 Z" fill="#2B1E2F"/></g></g><path d="M44 146 C44 106 70 86 100 86 C130 86 156 106 156 146 C156 170 132 181 100 181 C68 181 44 170 44 146 Z" fill="#2B1E2F"/></g><g transform="translate(100 92) scale(0.95) translate(29 5) rotate(14)"><g stroke="#2B1E2F" stroke-width="6.4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="#8CCB5E" stroke="none"/>
+      <path d="M3 5 Q12 4 22 0 C19 8 9 12 3 5 Z" fill="#6FB24A" stroke="none"/>
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="none"/>
+      <path d="M-5.877853 -8.09017 C-11 -19.969943 11 -19.969943 5.877853 -8.09017 C15.593358 -16.632674 22.391732 4.29057 9.510565 3.09017 C20.637225 9.690386 2.838851 22.621661 0 10 C-2.838851 22.621661 -20.637225 9.690386 -9.510565 3.09017 C-22.391732 4.29057 -15.593358 -16.632674 -5.877853 -8.09017 Z" fill="#FFF6E6"/>
+      <circle cx="0" cy="0" r="5.6" fill="#FFD65C" stroke-width="4.0"/>
+      <circle cx="-1.3" cy="-1.5" r="1" fill="#FFFFFF" stroke="none"/>
+    </g></g></svg>
+<text x="700" y="704" font-size="12">bun, 0.33 scale</text>
+<rect x="852" y="616" width="140" height="112" rx="12" fill="#EFE9FF"/>
+<svg x="889" y="628" width="66" height="48" viewBox="0 0 200 145" overflow="hidden"><g stroke="#2B1E2F" stroke-width="6.4" stroke-linejoin="round" stroke-linecap="round"><path d="M100 74 C100 62 98 54 101 46" fill="none" stroke-width="15.200000000000001"/><path d="M100 74 C100 62 98 54 101 46" fill="none" stroke="#8CCB5E" stroke-width="4"/>
+          <path d="M101 46 C94 32 78 26 64 32 C70 46 86 52 101 46 Z" fill="#8CCB5E"/>
+          <path d="M101 46 C108 30 126 22 142 28 C136 44 118 52 101 46 Z" fill="#8CCB5E"/><path d="M100 70 C124 70 158 104 158 146 C158 170 134 181 100 181 C66 181 42 170 42 146 C42 104 76 70 100 70 Z" fill="#2B1E2F"/></g><g transform="translate(100 76) scale(0.95) translate(27 9) rotate(16)"><g stroke="#2B1E2F" stroke-width="6.4" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="#8CCB5E" stroke="none"/>
+      <path d="M3 5 Q12 4 22 0 C19 8 9 12 3 5 Z" fill="#6FB24A" stroke="none"/>
+      <path d="M3 5 C7 -6 18 -6 22 0 C19 8 9 12 3 5 Z" fill="none"/>
+      <path d="M-5.877853 -8.09017 C-11 -19.969943 11 -19.969943 5.877853 -8.09017 C15.593358 -16.632674 22.391732 4.29057 9.510565 3.09017 C20.637225 9.690386 2.838851 22.621661 0 10 C-2.838851 22.621661 -20.637225 9.690386 -9.510565 3.09017 C-22.391732 4.29057 -15.593358 -16.632674 -5.877853 -8.09017 Z" fill="#FFF6E6"/>
+      <circle cx="0" cy="0" r="5.6" fill="#FFD65C" stroke-width="4.0"/>
+      <circle cx="-1.3" cy="-1.5" r="1" fill="#FFFFFF" stroke="none"/>
+    </g></g></svg>
+<text x="864" y="704" font-size="12">sprout, 0.33 scale</text>
+</g></svg>

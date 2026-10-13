@@ -1,0 +1,61 @@
+const fs=require('node:fs');
+const path=require('node:path');
+const crypto=require('node:crypto');
+const root=process.cwd(),out=path.join(root,'docs/audits/2026-10-12-character-polish'),loaded=new Set(),memory=[];
+const ts=require(path.join(root,'node_modules/typescript'));
+const snapshot=phase=>memory.push({phase,rssBytes:process.memoryUsage().rss,heapUsedBytes:process.memoryUsage().heapUsed});
+snapshot('typescript-loaded');
+for(const extension of ['.ts','.tsx'])require.extensions[extension]=(module,filename)=>{
+ loaded.add(filename);module.paths.unshift(path.join(root,'node_modules'));
+ const result=ts.transpileModule(fs.readFileSync(filename,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX,esModuleInterop:true},fileName:filename});module._compile(result.outputText,filename);
+};
+require.extensions['.css']=(_module,filename)=>{loaded.add(filename)};
+const prototype=fs.readFileSync('/tmp/chore-pet-daisy-clip-candidate-v2.tsx','utf8');
+const runtime=prototype.replace("from '../../art/palette'",`from '${root}/src/art/palette'`).replace("from '../ink'",`from '${root}/src/character/ink'`).replace("from './shared'",`from '${root}/src/character/items/shared'`);
+fs.writeFileSync('/tmp/chore-pet-daisy-clip-study-runtime-v2.tsx',runtime);
+const React=require(path.join(root,'node_modules/react')),{renderToStaticMarkup}=require(path.join(root,'node_modules/react-dom/server'));
+const {CharacterArt}=require(path.join(root,'src/character/Character.tsx')),{AnimatedCharacterArt}=require(path.join(root,'src/character/AnimatedCharacter.tsx'));
+const {ITEMS}=require(path.join(root,'src/character/items.tsx')),{ACTION_MS,sampleMotion}=require(path.join(root,'src/character/motion.ts')),{PALETTE,SPECIES_COLOUR}=require(path.join(root,'src/art/palette.ts'));
+const {daisyClip}=require('/tmp/chore-pet-daisy-clip-study-runtime-v2.tsx');
+
+const {EYE_STYLES,CHEEK_STYLES}=require(path.join(root,'src/domain/types.ts'));
+const studyId='daisy-clip-design-study',items=[...ITEMS,{id:studyId,slot:'head',name:'Daisy clip study',render:daisyClip}];
+const equipped={head:studyId,face:'glasses',neck:'scarf',outfit:'overalls',back:'backpack'};
+const h=React.createElement,phases=[0,.01,.1,.18,.25,1/3,.44,.5,2/3,.75,.9,.99,1],checks=[];
+function withoutHead(markup){
+ const start=markup.indexOf('<g data-slot="head">');
+ if(start<0||markup.indexOf('<g data-slot="head">',start+1)>=0)throw Error('Expected exactly one prototype head slot');
+ let depth=0;const tags=/<\/?g(?=[\s>\/])[^>]*>/g;tags.lastIndex=start;
+ for(let token;(token=tags.exec(markup));){
+  depth+=token[0].startsWith('</')?-1:token[0].endsWith('/>')?0:1;
+  if(depth===0)return markup.slice(0,start)+markup.slice(tags.lastIndex);
+ }
+ throw Error('Unbalanced head slot');
+}
+function verify(label,props,frame){
+ const kind=frame?AnimatedCharacterArt:CharacterArt;
+ const worn=renderToStaticMarkup(h(kind,{...props,...(frame?{frame}:{}),items,equipped}));
+ const bare=renderToStaticMarkup(h(kind,{...props,...(frame?{frame}:{}),equipped:{...equipped,head:undefined}}));
+ if(withoutHead(worn)!==bare)throw Error('Unexpected non-head difference: '+JSON.stringify(label));
+ const ids=[...worn.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]),refs=[...worn.matchAll(/url\(#([^)]+)\)/g)].map(m=>m[1]);
+ if(ids.length!==new Set(ids).size||refs.some(r=>!ids.includes(r)))throw Error('Invalid clip reference');
+ checks.push({...label,withoutHeadSha256:crypto.createHash('sha256').update(bare).digest('hex')});
+}
+for(const species of ['mochi','bun','sprout'])for(const pose of ['idle','content','meh','scruffy','sleeping','cheering','sick'])for(const eyes of EYE_STYLES)for(const cheeks of CHEEK_STYLES)for(const dark of [false,true])for(const strokeScale of [1,1.6]){
+ const mood=pose==='sleeping'||pose==='cheering'||pose==='idle'?'happy':pose;
+ verify({kind:'pose',species,pose,eyes,cheeks,dark,strokeScale},{species,pose,mood,bodyColour:dark?PALETTE.ink:SPECIES_COLOUR[species],strokeScale,look:{eyes,cheeks}});
+}
+snapshot('all-static-pairs');
+for(const species of ['mochi','bun','sprout'])for(const action of ['greet','affection','celebrate','stretch','rest','dance'])for(const phase of phases)for(const dark of [false,true])for(const strokeScale of [1,1.6]){
+ const frame=sampleMotion({species,mood:'happy',action,elapsedMs:ACTION_MS[action]*phase,durationMs:ACTION_MS[action],distance:0,reducedMotion:false});
+ verify({kind:'sampled-action',species,action,phase,dark,strokeScale},{species,mood:'happy',bodyColour:dark?PALETTE.ink:SPECIES_COLOUR[species],strokeScale,look:{eyes:'classic',cheeks:'round'}},frame);
+}
+for(const species of ['mochi','bun','sprout'])for(const action of ['greet','affection','celebrate','stretch','rest','dance'])for(const dark of [false,true])for(const strokeScale of [1,1.6]){
+ const frame=sampleMotion({species,mood:'happy',action,elapsedMs:ACTION_MS[action]*.44,durationMs:ACTION_MS[action],distance:0,reducedMotion:true});
+ verify({kind:'reduced-sample',species,action,phase:.44,dark,strokeScale},{species,mood:'happy',bodyColour:dark?PALETTE.ink:SPECIES_COLOUR[species],strokeScale,look:{eyes:'classic',cheeks:'round'}},frame);
+}
+snapshot('all-pairs');
+const sources=Object.fromEntries([...loaded].filter(p=>p.startsWith(root+'/src/')).sort().map(p=>[path.relative(root,p),crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex')]));
+const result={status:'All isolated prototype equivalence comparisons pass. This is static source rendering, not browser, CSS, native animation or wardrobe/save acceptance.',method:'Every source-rendered pair differs only by the single new head-slot group; removing that complete balanced group gives byte-identical SVG markup, without ID canonicalization. Every rendered literal clip reference resolves to a unique ID. Existing full dressed outfit and all body, feet, face and sampled transforms stay byte-identical.',prototypeSha256:crypto.createHash('sha256').update(prototype).digest('hex'),sourceDependencies:sources,phases,counts:{poses:checks.filter(x=>x.kind==='pose').length,sampledActions:checks.filter(x=>x.kind==='sampled-action').length,reducedSamples:checks.filter(x=>x.kind==='reduced-sample').length,total:checks.length},checks,memorySnapshots:memory,limits:'Paired source serialization does not prove visual separation, attachment under CSS, pixel equivalence, live clocks, all continuous phases, actual reduced-motion preferences, equip/save behavior, reward rules, browser compatibility or host peak resource use.'};
+fs.writeFileSync(path.join(out,'daisy-clip-source-equivalence-v2.json'),JSON.stringify(result,null,2)+'\n');
+console.log(JSON.stringify({counts:result.counts,largestRecordedRssMiB:Math.max(...memory.map(x=>x.rssBytes))/1048576}));

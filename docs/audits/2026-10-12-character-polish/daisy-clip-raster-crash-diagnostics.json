@@ -1,0 +1,49 @@
+{
+  "utc": "2026-10-13T09:24:13.768Z",
+  "scope": "Read-only own rsvg conversion time window. No core extracted, system configuration changed, process killed, network call or upstream report made.",
+  "rows": [
+    {
+      "command": [
+        "coredumpctl",
+        "info",
+        "--no-pager",
+        "--since=2026-10-13 09:22:00 UTC",
+        "--until=2026-10-13 09:23:00 UTC",
+        "/usr/bin/rsvg-convert"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "           PID: 661990 (rsvg-convert)\n           TID: 661993 ([pango] fontcon)\n           UID: 1000 (robert)\n           GID: 1000 (robert)\n        Signal: 11 (SEGV) si_code: SEGV_MAPERR\n     Timestamp: Tue 2026-10-13 06:52:29 NDT (1min 44s ago)\n  Command Line: /usr/bin/rsvg-convert docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top.svg -o docs/audits/2026-10-12-character-polish/daisy-clip-pose-study-light-top.png\n    Executable: /usr/bin/rsvg-convert\n Control Group: /user.slice/user-1000.slice/user@1000.service/app.slice/app-org.chromium.Chromium-2494606.scope\n          Unit: user@1000.service\n     User Unit: app-org.chromium.Chromium-2494606.scope\n         Slice: user-1000.slice\n     Owner UID: 1000 (robert)\n       Boot ID: fd710125d7514deba54c1c14d3fc2249\n    Machine ID: b181fc1c108c47d6aef2a69d4229356c\n      Hostname: omarchy\n       Storage: /var/lib/systemd/coredump/core.rsvg-convert.1000.fd710125d7514deba54c1c14d3fc2249.661990.1791883349000000.zst (present)\n  Size on Disk: 725.5K\n       Message: Process 661990 (rsvg-convert) of user 1000 dumped core.\n                \n                Stack trace of thread 6:\n                #0  0x0000796eb5051a56 FcStrBuildFilename (libfontconfig.so.1 + 0x2ea56)\n                #1  0x0000796eb5029ded n/a (libfontconfig.so.1 + 0x6ded)\n                #2  0x0000796eb502d8b7 n/a (libfontconfig.so.1 + 0xa8b7)\n                #3  0x0000796eb502e237 n/a (libfontconfig.so.1 + 0xb237)\n                #4  0x0000796eb502e85a FcConfigBuildFonts (libfontconfig.so.1 + 0xb85a)\n                #5  0x0000796eb502e901 n/a (libfontconfig.so.1 + 0xb901)\n                #6  0x0000796eb5041479 FcInit (libfontconfig.so.1 + 0x1e479)\n                #7  0x0000796eb48307f0 n/a (libpangoft2-1.0.so.0 + 0xc7f0)\n                #8  0x0000796eb4db6b14 n/a (libglib-2.0.so.0 + 0x9ab14)\n                #9  0x0000796eb46980a2 n/a (libc.so.6 + 0x980a2)\n                #10 0x0000796eb472080c n/a (libc.so.6 + 0x12080c)\n                \n                Stack trace of thread 4:\n                #0  0x0000796eb471e4ed syscall (libc.so.6 + 0x11e4ed)\n                #1  0x0000796eb4dad15e g_cond_wait (libglib-2.0.so.0 + 0x9115e)\n                #2  0x0000796eb4d4252d n/a (libglib-2.0.so.0 + 0x2652d)\n                #3  0x0000796eb4db7017 n/a (libglib-2.0.so.0 + 0x9b017)\n                #4  0x0000796eb4db6b14 n/a (libglib-2.0.so.0 + 0x9ab14)\n                #5  0x0000796eb46980a2 n/a (libc.so.6 + 0x980a2)\n                #6  0x0000796eb472080c n/a (libc.so.6 + 0x12080c)\n                \n                Stack trace of thread 3:\n                #0  0x0000796eb471e4ed syscall (libc.so.6 + 0x11e4ed)\n                #1  0x0000796eb4dad15e g_cond_wait (libglib-2.0.so.0 + 0x9115e)\n                #2  0x0000796eb4830914 n/a (libpangoft2-1.0.so.0 + 0xc914)\n                #3  0x0000796eb4834745 n/a (libpangoft2-1.0.so.0 + 0x10745)\n                #4  0x0000796eb50c884b n/a (libpango-1.0.so.0 + 0x2a84b)\n                #5  0x0000796eb50d3b1d n/a (libpango-1.0.so.0 + 0x35b1d)\n                #6  0x0000796eb50d79e7 n/a (libpango-1.0.so.0 + 0x399e7)\n                #7  0x0000796eb50d7f0e pango_layout_get_size (libpango-1.0.so.0 + 0x39f0e)\n                #8  0x0000565077521aee n/a (rsvg-convert + 0x45baee)\n                #9  0x000056507751c99a n/a (rsvg-convert + 0x45699a)\n                #10 0x000056507751bf88 n/a (rsvg-convert + 0x455f88)\n                #11 0x000056507745f91f n/a (rsvg-convert + 0x39991f)\n                #12 0x000056507745f4d6 n/a (rsvg-convert + 0x3994d6)\n                #13 0x000056507745ee6b n/a (rsvg-convert + 0x398e6b)\n                #14 0x0000565077457ebc n/a (rsvg-convert + 0x391ebc)\n                #15 0x000056507752f374 n/a (rsvg-convert + 0x469374)\n                #16 0x000056507745f91f n/a (rsvg-convert + 0x39991f)\n                #17 0x000056507745f4d6 n/a (rsvg-convert + 0x3994d6)\n                #18 0x000056507745ee6b n/a (rsvg-convert + 0x398e6b)\n                #19 0x0000565077532bd1 n/a (rsvg-convert + 0x46cbd1)\n                #20 0x0000565077457ebc n/a (rsvg-convert + 0x391ebc)\n                #21 0x000056507752712d n/a (rsvg-convert + 0x46112d)\n                #22 0x000056507745f91f n/a (rsvg-convert + 0x39991f)\n                #23 0x000056507745f4d6 n/a (rsvg-convert + 0x3994d6)\n                #24 0x000056507752e681 n/a (rsvg-convert + 0x468681)\n                #25 0x000056507752d9ee n/a (rsvg-convert + 0x4679ee)\n                #26 0x0000565077563dd1 n/a (rsvg-convert + 0x49ddd1)\n                #27 0x000056507726e819 n/a (rsvg-convert + 0x1a8819)\n                #28 0x000056507726ae8c n/a (rsvg-convert + 0x1a4e8c)\n                #29 0x0000565077271e96 n/a (rsvg-convert + 0x1abe96)\n                #30 0x0000565077276b69 n/a (rsvg-convert + 0x1b0b69)\n                #31 0x0000796eb4627781 n/a (libc.so.6 + 0x27781)\n                #32 0x0000796eb46278b9 __libc_start_main (libc.so.6 + 0x278b9)\n                #33 0x0000565077263ad5 n/a (rsvg-convert + 0x19dad5)\n                \n                Stack trace of thread 5:\n                #0  0x0000796eb46a0952 n/a (libc.so.6 + 0xa0952)\n                #1  0x0000796eb4711a57 ppoll (libc.so.6 + 0x111a57)\n                #2  0x0000796eb4d7ff59 n/a (libglib-2.0.so.0 + 0x63f59)\n                #3  0x0000796eb4d80055 g_main_context_iteration (libglib-2.0.so.0 + 0x64055)\n                #4  0x0000796eb4d800a2 n/a (libglib-2.0.so.0 + 0x640a2)\n                #5  0x0000796eb4db6b14 n/a (libglib-2.0.so.0 + 0x9ab14)\n                #6  0x0000796eb46980a2 n/a (libc.so.6 + 0x980a2)\n                #7  0x0000796eb472080c n/a (libc.so.6 + 0x12080c)\n                ELF object binary architecture: AMD x86-64\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "coredumpctl",
+        "list",
+        "--no-pager",
+        "--since=2026-10-13 09:22:00 UTC",
+        "--until=2026-10-13 09:23:00 UTC",
+        "/usr/bin/rsvg-convert"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "TIME                           PID  UID  GID SIG     COREFILE EXE                     SIZE\nTue 2026-10-13 06:52:30 NDT 661990 1000 1000 SIGSEGV present  /usr/bin/rsvg-convert 725.5K\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "journalctl",
+        "-k",
+        "--no-pager",
+        "--since=2026-10-13 09:22:00 UTC",
+        "--until=2026-10-13 09:23:00 UTC",
+        "-g",
+        "(?i)(oom|out of memory|killed process|rsvg|segfault)"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "stdout": "Oct 13 06:52:29 omarchy kernel: [pango] fontcon[661993]: segfault at 8 ip 0000796eb5051a56 sp 0000796eb0659510 error 4 in libfontconfig.so.1.17.0[2ea56,796eb5029000+35000] likely on CPU 7 (core 1, socket 0)\n",
+      "stderr": ""
+    }
+  ]
+}
