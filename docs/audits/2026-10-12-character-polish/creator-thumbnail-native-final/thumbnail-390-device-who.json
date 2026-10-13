@@ -1,0 +1,47 @@
+{
+  "width": 390,
+  "preference": "device",
+  "part": "Who",
+  "images": 3,
+  "infiniteAnimations": [],
+  "groups": [
+    {
+      "animation": "none",
+      "transform": "none"
+    },
+    {
+      "animation": "none",
+      "transform": "none"
+    },
+    {
+      "animation": "none",
+      "transform": "none"
+    },
+    {
+      "animation": "none",
+      "transform": "none"
+    },
+    {
+      "animation": "none",
+      "transform": "none"
+    },
+    {
+      "animation": "none",
+      "transform": "none"
+    },
+    {
+      "animation": "none",
+      "transform": "none"
+    },
+    {
+      "animation": "none",
+      "transform": "none"
+    },
+    {
+      "animation": "none",
+      "transform": "none"
+    }
+  ],
+  "browser": "152.0.7977.82",
+  "method": "Actual production CSS animation inventory and computed transforms asserted before screenshot. Screenshot settles finite UI transitions for still inspection; not a temporal or CPU/battery measurement."
+}

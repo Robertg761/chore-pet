@@ -1,0 +1,417 @@
+✖ comparison thumbnails stay still at 390px with normal motion preference (2030.360016ms)
+✖ comparison thumbnails stay still at 390px with device motion preference (2096.553885ms)
+✖ comparison thumbnails stay still at 390px with system motion preference (794.008713ms)
+✖ comparison thumbnails stay still at 1280px with normal motion preference (2062.414577ms)
+✖ comparison thumbnails stay still at 1280px with device motion preference (2243.331646ms)
+✖ comparison thumbnails stay still at 1280px with system motion preference (752.757027ms)
+✖ still thumbnails preserve the finite main cheer at 390px (2403.681796ms)
+✖ still thumbnails preserve the finite main cheer at 1280px (2272.16358ms)
+✖ live OS reduction changes and reopening never animate comparison thumbnails (2034.116589ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 0
+ℹ fail 9
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17085.688533
+
+✖ failing tests:
+
+test at scripts/browser/creator-thumbnail.test.mjs:57:3
+✖ comparison thumbnails stay still at 390px with normal motion preference (2030.360016ms)
+  AssertionError [ERR_ASSERTION]: Comparison thumbnails must own no perpetual CSS animations
+  + actual - expected
+  
+  + [
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink'
+  + ]
+  - []
+  
+      at expectStill (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:40:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:62:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [
+      'ch-breathe', 'ch-blink',
+      'ch-blink',   'ch-breathe',
+      'ch-blink',   'ch-blink',
+      'ch-breathe', 'ch-blink',
+      'ch-blink'
+    ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-thumbnail.test.mjs:57:3
+✖ comparison thumbnails stay still at 390px with device motion preference (2096.553885ms)
+  AssertionError [ERR_ASSERTION]: Comparison thumbnails must own no perpetual CSS animations
+  + actual - expected
+  
+  + [
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink'
+  + ]
+  - []
+  
+      at expectStill (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:40:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:62:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [
+      'ch-breathe', 'ch-blink',
+      'ch-blink',   'ch-breathe',
+      'ch-blink',   'ch-blink',
+      'ch-breathe', 'ch-blink',
+      'ch-blink'
+    ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-thumbnail.test.mjs:57:3
+✖ comparison thumbnails stay still at 390px with system motion preference (794.008713ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:66:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-thumbnail.test.mjs:57:3
+✖ comparison thumbnails stay still at 1280px with normal motion preference (2062.414577ms)
+  AssertionError [ERR_ASSERTION]: Comparison thumbnails must own no perpetual CSS animations
+  + actual - expected
+  
+  + [
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink'
+  + ]
+  - []
+  
+      at expectStill (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:40:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:62:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink'
+    ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-thumbnail.test.mjs:57:3
+✖ comparison thumbnails stay still at 1280px with device motion preference (2243.331646ms)
+  AssertionError [ERR_ASSERTION]: Comparison thumbnails must own no perpetual CSS animations
+  + actual - expected
+  
+  + [
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink'
+  + ]
+  - []
+  
+      at expectStill (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:40:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:62:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink'
+    ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-thumbnail.test.mjs:57:3
+✖ comparison thumbnails stay still at 1280px with system motion preference (752.757027ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:66:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-thumbnail.test.mjs:91:3
+✖ still thumbnails preserve the finite main cheer at 390px (2403.681796ms)
+  AssertionError [ERR_ASSERTION]: Comparison thumbnails must own no perpetual CSS animations
+  + actual - expected
+  
+  + [
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink'
+  + ]
+  - []
+  
+      at expectStill (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:40:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:102:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [
+      'ch-breathe', 'ch-blink',
+      'ch-blink',   'ch-breathe',
+      'ch-blink',   'ch-blink',
+      'ch-breathe', 'ch-blink',
+      'ch-blink'
+    ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-thumbnail.test.mjs:91:3
+✖ still thumbnails preserve the finite main cheer at 1280px (2272.16358ms)
+  AssertionError [ERR_ASSERTION]: Comparison thumbnails must own no perpetual CSS animations
+  + actual - expected
+  
+  + [
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink'
+  + ]
+  - []
+  
+      at expectStill (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:40:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:102:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink',
+      'ch-breathe', 'ch-blink', 'ch-blink'
+    ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-thumbnail.test.mjs:122:1
+✖ live OS reduction changes and reopening never animate comparison thumbnails (2034.116589ms)
+  AssertionError [ERR_ASSERTION]: Comparison thumbnails must own no perpetual CSS animations
+  + actual - expected
+  
+  + [
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink',
+  +   'ch-breathe',
+  +   'ch-blink',
+  +   'ch-blink'
+  + ]
+  - []
+  
+      at expectStill (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:40:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-thumbnail.test.mjs:125:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [
+      'ch-breathe', 'ch-blink',
+      'ch-blink',   'ch-breathe',
+      'ch-blink',   'ch-blink',
+      'ch-breathe', 'ch-blink',
+      'ch-blink',   'ch-breathe',
+      'ch-blink',   'ch-blink',
+      'ch-breathe', 'ch-blink',
+      'ch-blink',   'ch-breathe',
+      'ch-blink',   'ch-blink',
+      'ch-breathe', 'ch-blink',
+      'ch-blink',   'ch-breathe',
+      'ch-blink',   'ch-blink'
+    ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

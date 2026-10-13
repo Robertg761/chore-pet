@@ -1,0 +1,186 @@
+diff --git i/src/screens/CharacterCreator.css w/src/screens/CharacterCreator.css
+index b0f0141..75cb299 100644
+--- i/src/screens/CharacterCreator.css
++++ w/src/screens/CharacterCreator.css
+@@ -47,6 +47,10 @@
+ }
+ .cc-choice:hover { transform: translateY(-2px); }
+ 
++/* Keep comparison eyes open and bodies still; the main preview owns the finite cheer. */
++.cc-choice .ch-breathe,
++.cc-choice .ch-eye { animation: none; }
++
+ .cc-species { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 4px; }
+ .cc-species .cc-choice {
+   display: flex;
+diff --git 1/scripts/browser/creator-thumbnail.test.mjs 2/scripts/browser/creator-thumbnail.test.mjs
+new file mode 100644
+index 0000000..9658904
+--- /dev/null
++++ 2/scripts/browser/creator-thumbnail.test.mjs
+@@ -0,0 +1,136 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
++
++const out = process.env.CHORE_PET_THUMBNAIL_CAPTURE_DIR
++
++async function creator(t, width, preference = 'normal') {
++  const page = await browserApp(t, { viewport: { width, height: 800 }, reducedMotion: preference === 'system' ? 'reduce' : 'no-preference' })
++  if (preference === 'device') {
++    await page.evaluate(() => localStorage.setItem('chore-pet-reduce-motion', 'on'))
++    await page.reload()
++  }
++  await page.getByRole('button', { name: 'More', exact: true }).click()
++  await page.getByRole('button', { name: 'Change look', exact: true }).click()
++  await page.waitForFunction(() => !document.documentElement.dataset.vt)
++  return page
++}
++
++async function choosePart(page, name) {
++  const tab = page.getByRole('tab', { name, exact: true })
++  if (await tab.count()) await tab.click()
++}
++
++async function thumbnailState(page) {
++  return page.evaluate(() => ({
++    images: document.querySelectorAll('.cc-choice svg').length,
++    infiniteAnimations: document.getAnimations().filter(animation => animation.effect?.target?.closest('.cc-choice') && animation.effect.getTiming().iterations === Infinity).map(animation => animation.animationName),
++    groups: [...document.querySelectorAll('.cc-choice .ch-breathe, .cc-choice .ch-eye')].map(node => ({
++      animation: getComputedStyle(node).animationName,
++      transform: getComputedStyle(node).transform,
++    })),
++  }))
++}
++
++async function expectStill(page, expectedImages) {
++  const state = await thumbnailState(page)
++  if (expectedImages !== undefined) assert.equal(state.images, expectedImages)
++  assert.deepEqual(state.infiniteAnimations, [], 'Comparison thumbnails must own no perpetual CSS animations')
++  for (const group of state.groups) {
++    assert.equal(group.animation, 'none')
++    assert.equal(group.transform, 'none', 'Resting thumbnails keep their eyes open and body unscaled')
++  }
++  return state
++}
++
++async function capture(page, name, state) {
++  if (!out) return
++  await mkdir(out, { recursive: true })
++  await page.screenshot({ path: join(out, `${name}.png`), animations: 'disabled' })
++  await writeFile(join(out, `${name}.json`), JSON.stringify({ ...state, browser: page.context().browser().version(),
++    method: 'Actual production CSS animation inventory and computed transforms asserted before screenshot. Screenshot settles finite UI transitions for still inspection; not a temporal or CPU/battery measurement.' }, null, 2) + '\n')
++}
++
++for (const width of [390, 1280]) for (const preference of ['normal', 'device', 'system']) {
++  test(`comparison thumbnails stay still at ${width}px with ${preference} motion preference`, async t => {
++    const page = await creator(t, width, preference)
++    const before = (await snapshot(page)).tables
++    for (const part of ['Who', 'Colour', 'Face']) {
++      await choosePart(page, part)
++      const state = await expectStill(page, width === 1280 ? 11 : { Who: 3, Colour: 0, Face: 8 }[part])
++      if (part !== 'Colour') await capture(page, `thumbnail-${width}-${preference}-${part.toLowerCase()}`, { width, preference, part, ...state })
++    }
++    for (const name of ['Classic', 'Sparkly', 'Button', 'Lashes', 'Round', 'Hearts', 'Freckles', 'None']) {
++      assert.equal(await page.getByRole('radio', { name, exact: true }).count(), 1)
++    }
++    await page.getByRole('button', { name: 'Cancel', exact: true }).click()
++    assert.deepEqual((await snapshot(page)).tables, before)
++  })
++}
++
++async function trackFrames(page) {
++  await page.clock.install()
++  await page.clock.pauseAt(Date.now() + 1000)
++  await page.evaluate(() => {
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__thumbnailFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(time => { window.__thumbnailFrames.delete(id); callback(time) })
++      window.__thumbnailFrames.add(id)
++      return id
++    }
++    window.cancelAnimationFrame = id => { window.__thumbnailFrames.delete(id); cancel(id) }
++  })
++  await page.clock.runFor(48)
++}
++const frames = page => page.evaluate(() => window.__thumbnailFrames.size)
++
++for (const width of [390, 1280]) {
++  test(`still thumbnails preserve the finite main cheer at ${width}px`, async t => {
++    const page = await creator(t, width)
++    const before = (await snapshot(page)).tables
++    await trackFrames(page)
++    assert.equal(await frames(page), 0)
++    await page.getByRole('radio', { name: 'Bun', exact: true }).click()
++    await page.clock.runFor(756)
++    assert.equal(await frames(page), 1, 'Only the finite main preview owns a pending JS frame')
++    const art = page.locator('.cc-preview .ch-animated')
++    assert.equal(await art.locator('[data-expression="cheering"]').count(), 1)
++    assert.match(await art.locator('[data-character-body]').getAttribute('transform'), /^translate\(0 -/)
++    await expectStill(page)
++    const thumbnailArt = await page.locator('.cc-choice svg').evaluateAll(nodes => nodes.map(node => node.outerHTML))
++    await page.clock.runFor(1200)
++    assert.equal(await frames(page), 0)
++    assert.equal(await art.locator('[data-expression="happy"]').count(), 1)
++    await expectStill(page)
++    assert.deepEqual(await page.locator('.cc-choice svg').evaluateAll(nodes => nodes.map(node => node.outerHTML)), thumbnailArt)
++    await choosePart(page, 'Face')
++    await page.getByRole('radio', { name: 'Sparkly', exact: true }).click()
++    assert.equal(await frames(page), 0)
++    await expectStill(page)
++    assert.deepEqual((await snapshot(page)).tables, before)
++    await page.clock.resume()
++    await page.getByRole('button', { name: 'Cancel', exact: true }).click()
++    await page.waitForFunction(() => !document.documentElement.dataset.vt)
++    await page.locator('.room-pet .ch-animated').waitFor()
++    assert.deepEqual((await snapshot(page)).tables, before)
++  })
++}
++
++test('live OS reduction changes and reopening never animate comparison thumbnails', async t => {
++  const page = await creator(t, 390)
++  await choosePart(page, 'Face')
++  await expectStill(page, 8)
++  await changeReducedMotion(page, 'reduce')
++  await expectStill(page, 8)
++  await changeReducedMotion(page, 'no-preference')
++  await expectStill(page, 8)
++  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
++  await page.waitForFunction(() => !document.documentElement.dataset.vt)
++  await page.getByRole('button', { name: 'More', exact: true }).click()
++  await page.getByRole('button', { name: 'Change look', exact: true }).click()
++  await page.waitForFunction(() => !document.documentElement.dataset.vt)
++  await expectStill(page, 3)
++})
+diff --git i/docs/ART.md w/docs/ART.md
+index 866b5bd..804f2e1 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -235,3 +235,5 @@ Dance together is a finite 2800ms player invitation with two grounded sways, lig
+ Change look retains a readable character and full input targets as root text grows. The stage/name field can shrink within landscape columns; cramped app-shell widths use page scrolling, a160px character area and a full-line title below Cancel/Save. Narrow option panels use horizontal species rows, two face columns, fitting swatches and wrapped tabs. Native focus gets8px scroll margin. This preserves draft/save behavior and the existing finite preview clock; no additional state, listener, timer or frame owner is introduced. Native checks cover five viewports at100%/200% root text, all choice groups, draft name/caret preservation across resizing and existing animation/reduction behavior.
+ 
+ Change look offers a native Preview mood selector in Face: Happy, Content, Tired, Scruffy and Unwell. It samples the existing mood pose and clothing rules without putting mood into the look draft or saved patch. The character image names the selected expression. Choosing a mood cancels an active cheer before paint; other moods remain still while editing. Returning to Happy does not replay the old cheer, and the next eligible look change can start the existing finite cheer. Eye/cheek thumbnails retain their recognizable happy crops. Tab/resize changes preserve the preview selection; reopening resets Happy. Reduction and hidden expiry retain the existing owner. A44px field with8px scroll margin follows the editor reflow. Native checks cover all15species/mood combinations, keyboard selection, no saved-table changes, zero static pending frames, live reduction and four enlarged-text layouts; stills do not certify temporal comfort, whole-app zoom or physical devices.
++
++Change look comparison thumbnails keep their resting body and open eyes still. The scoped `.cc-choice` rule stops their legacy CSS breath/blink loops under every preference, including device-local Reduce pet motion. The main sampled preview retains its finite1800ms cheer and mood/reduction policies; radio hover, focus and selection feedback retain existing behavior. Native CSS animation inventories and computed transforms verify the distinction; animation counts do not measure CPU or battery savings.
+diff --git 1/docs/audits/2026-10-12-character-polish/creator-thumbnail-design.md 2/docs/audits/2026-10-12-character-polish/creator-thumbnail-design.md
+new file mode 100644
+index 0000000..a4b4ac3
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/creator-thumbnail-design.md
+@@ -0,0 +1,13 @@
++# Still comparison thumbnails in Change look
++
++The actual native inventory on the preceding mood-preview production artifact found33infinite CSS animations (11breaths and22blinks) in the desktop choice grid. Phone Who has9, Face24. Device-local Reduce pet motion leaves those CSS animations running; OS reduction stops them. Main sampled preview has0CSS animations. These are measured animation counts, not CPU, battery or memory savings.
++
++Keep all creator comparison thumbnails still, regardless of preference, using one scoped rule inside CharacterCreator.css for .cc-choice .ch-breathe and .cc-choice .ch-eye. Set animation:none; no additional React clock, effect, listener or class. Existing static SVG resting geometry already has no transform on these groups; verify computed transform:none. The main sampled preview remains outside this scope and keeps its existing finite1800ms cheer, mood selection, reduction and outfit policies. Radio hover/focus/selection transitions remain intact, with their existing OS reduction treatment.
++
++Use native tests because jsdom does not run CSS animations. Verify actual document.getAnimations plus computed SVG group styles on390/1280px, normal/device/system preferences, Who/Colour/Face, remount and live OS reduction changes. Check all eyes/cheeks stay available, no saved changes on Cancel, and finite main cheer still progresses and settles with exactly one JS frame owner. Returning to resident art must retain its existing animated behavior (scoping check). Inspect final phone/desktop style comparisons and enlarged controls. Preserve raw red, sequential capped build/native checks, source binding and one bounded independent review. No generic tests mirroring CSS text.
++
++The user's continuing authorization covers this measured, bounded visual/resource fix. Mood sources remain frozen until their independent review and local checkpoint; new design/native test files can be prepared in parallel, but production CSS and ART edits wait for that checkpoint.
++
++The initial native red harness had four guessed option labels that did not exist. Their two system-reduced cases also failed; exact original harness and9fail raw log are retained as test-authoring history. Corrected to existing Button/Lashes/Hearts/Freckles labels before production edits; red-v2 gives2system cases pass and7fail specifically for perpetual thumbnail CSS animations. No acceptance bound was relaxed.
++
++A harness lint attempt incorrectly called an unavailable ESLint path and exited1 without linting. The repository uses oxlint; the corrected exact one-file zero-warning harness check passes. Both raw runs are retained. Production CSS was changed only after the frozen mood batch was independently approved and committed.

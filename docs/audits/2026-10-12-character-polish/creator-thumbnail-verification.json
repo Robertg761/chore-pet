@@ -1,0 +1,191 @@
+{
+  "freeze": {
+    "baseCommit": "16da293103ead4fd0c63b78f54def9d13c2fbf30",
+    "sources": {
+      "src/screens/CharacterCreator.css": "f3d4f697293936c8a159f89f92d684abc2144659043382bff59a22c8cc26a02e",
+      "scripts/browser/creator-thumbnail.test.mjs": "fc9f8c82ce0199d86bbdc96b394e5094c18c542c3af1bfd2cdb8830e452d9fb0",
+      "docs/ART.md": "0d8cc770cccce63c50c7a87e8c46f73e20904d87451e1a51d477626e08e3b75f",
+      "docs/audits/2026-10-12-character-polish/creator-thumbnail-design.md": "5cc34bf21032e455c5dc8fa4b5f88963cb19f7225b74afe388e8031dbab27b6c"
+    },
+    "unchangedSources": {
+      "src/screens/CharacterCreator.test.tsx": "26f82b2fa3c8eb31945af149684fa1ce9f32018cbf93925651b31575aaa20832",
+      "src/screens/creatorModel.test.ts": "0bd1b3445e719c73f91916be25465639f107fee2e3a47941284e04a997d2bb7e",
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/character/Character.css": "b30c9ffd119371268a744563e054b5e7d41ae0abf1d1e6120caff9bbfa0afccf",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/motion.ts": "07679d0a1f861d3bd327a5eb05b1d3b0edda9fc3b1633da53a4965a5b601173a",
+      "src/character/items.tsx": "f06572844f4a349fef05caa7a45068f5935815f14d79daf0a76d71dc3d412c6a",
+      "src/character/items/extras.tsx": "2ebe7ed7be300b2a5a207fb67037ec28146ae96a1bbba00d6c8627fce3b8d173",
+      "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+      "src/pet/usePetMotion.test.tsx": "07474f35781bb9b3442939d6eba0da4753211092a0d423d69c88236c782de93b",
+      "src/pet/usePetMotion.preference.test.tsx": "39d4767c5b54d38a0a4335b4f1bd8553ebffdf5aa78f0103e98c77655da70f68",
+      "src/shell/useViewport.ts": "889d9cc64d950e9f0f8473326e5b821cc0f485a60b7011003e12536ba54515ef",
+      "src/shell/ScreenHeader.tsx": "4cb84f6ce0d9ba56f1e60297e79fa0fab7ed22f8ae4d7b4147b3b7b9a8c7b7f8",
+      "src/shell/ScreenHeader.css": "6f080e585b434cef33665cd58c627389010b3ec0e3c9a0b3fd15cfb56ded1e65",
+      "src/shell/SegThumb.tsx": "9c35f972813c2270237ca025a0bf07250eaf1b2f5b79cf49c1de7e79c3134eea",
+      "src/shell/controls.css": "a0d257f01716ffb9aeecc89d5903b4d92a00a5b035caba72b02c5090c1889dce",
+      "src/index.css": "28b09b668da92e49c2a13554af34e56408dcc677d21e954fbc8145262b592418",
+      "src/App.tsx": "c8c59ac9cf30d66d7daaf1a8316b23c64beb0554784a59665e3057c39303e81a",
+      "src/data/store.ts": "3a02f895c6688efb8257eec7f8ef083d6257a1e2c37cdd5b378cbe1807092733",
+      "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+      "scripts/browser/creator-motion.test.mjs": "564d3d001515720921a0f507b4e157523171370ed474b1c3825b712b06a37987",
+      "scripts/browser/creator-layout.test.mjs": "3c730821d0b14103993feec4c1461539a1ce6434c887671bed30ceb44df7aed9",
+      "src/character/poses.ts": "5a7cf52f0dc3c8efbb9f4478fbbbbf660f345f5cfb12a6e1e078487acf7a1fcc",
+      "src/screens/CharacterCreator.tsx": "a9b21bce7fbc51b1ef7a4571c1a426e63c503eff8e66aeb57aaee55a7bb48bda",
+      "src/screens/CreatorPreview.tsx": "73206db2add0dd31753261cea0084511f30d54325c1c1db40dc66da4e9305657",
+      "src/screens/creatorModel.ts": "65596944161f450b7d87c3b3782698bc8cb3b0694e270cdb64280d8355ca1b8b",
+      "src/screens/CharacterCreator.mood.test.tsx": "ddfdbf32456a8e5d4581c6feda54f5b2ce4c804af0335ed25a7dbbecc6323cf9",
+      "scripts/browser/creator-mood.test.mjs": "f0ab948abbb22859a8773bd80a75c4d1ac55ce6289e153c684949698fc5aa74f"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-source.diff",
+      "sha256": "8dec23587df7401660ad90006b0e3ae0f53f7239d1a5c08d530e307b8ada7d25"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-artifacts.json",
+    "sha256": "1a828378f58a7e83778b37e7956bba6a234d6fb05c08190af02a207b30f63009"
+  },
+  "checks": [
+    {
+      "name": "creator-thumbnail-baseline",
+      "log": "docs/audits/2026-10-12-character-polish/creator-thumbnail-baseline.log",
+      "logSha256": "ff99f410bef1c59b219b0a72b10be2e2a81661c179ffde9afde814aa4eaadd44",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-baseline.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-thumbnail-build",
+      "log": "docs/audits/2026-10-12-character-polish/creator-thumbnail-build.log",
+      "logSha256": "6113ccb160ec14adc82541efdc270fb9a1112517e1ec96f805917d0cc5338f5b",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-thumbnail-final-diff",
+      "log": "docs/audits/2026-10-12-character-polish/creator-thumbnail-final-diff.log",
+      "logSha256": "5968133a878710e890ecfc6e09174d513aed6e41f75edd06ae557d7caac9a44b",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-final-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-thumbnail-final-harness-lint",
+      "log": "docs/audits/2026-10-12-character-polish/creator-thumbnail-final-harness-lint.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-final-harness-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-thumbnail-final-native",
+      "log": "docs/audits/2026-10-12-character-polish/creator-thumbnail-final-native.log",
+      "logSha256": "1da516a633fdd930eed5e15b9dd79b75d4e18203e9b8ddc9f10a0039f12e59fc",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-final-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-thumbnail-focused",
+      "log": "docs/audits/2026-10-12-character-polish/creator-thumbnail-focused.log",
+      "logSha256": "182f6a1b8750861ea98f822dbd479f4e83c077749f86d8e4a548770dca60f4fe",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-thumbnail-harness-lint",
+      "log": "docs/audits/2026-10-12-character-polish/creator-thumbnail-harness-lint.log",
+      "logSha256": "df6bc6b67b2843383e1db35b2b1ac3ea44ab22aeb6a216ce9b55ac17f7dfb48d",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-harness-lint.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "creator-thumbnail-red-v2",
+      "log": "docs/audits/2026-10-12-character-polish/creator-thumbnail-red-v2.log",
+      "logSha256": "de6eab6fc090ef4ffe704bff798a749d3dd371a4ae339c9732d6c5ddd4d9bc8f",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-red-v2.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "creator-thumbnail-red",
+      "log": "docs/audits/2026-10-12-character-polish/creator-thumbnail-red.log",
+      "logSha256": "dbdb2d6b786d9b34b36b59e34b6745bf7c48ac505e589bf943bf160c704ef2de",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "results": {
+    "summary": "Still creator comparisons: final34nativepass,63focused/5filespass, typecheck/build/PWA, zero-warning one-harness oxlint and4authoredwhitespacepass. Final12PNGcomplete review6direct+6exactduplicates. Measured33desktop/9phoneWho/24phoneFaceperpetualCSSanimations become0 undernormal/device/system preferences. Mainfinitecheer retains one JSowner and originaldeadline.",
+    "focused": {
+      "tests": 63,
+      "files": 5,
+      "check": "creator-thumbnail-focused",
+      "durationSeconds": 4.3
+    },
+    "native": {
+      "tests": 34,
+      "pass": 34,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationSeconds": 74.992324611,
+      "check": "creator-thumbnail-final-native"
+    },
+    "visual": {
+      "finalPngs": 12,
+      "directFinalRoot": 6,
+      "exactDuplicates": 6,
+      "computedStyleGroups": 297,
+      "manifest": "docs/audits/2026-10-12-character-polish/creator-thumbnail-root-visual-review.json"
+    }
+  },
+  "scope": "One productionCSS rule disables legacy breath/blink animations only within creator comparison choices, preserving main finite sampled cheer and hover/focus/selection feedback. New native9cases plus25existingcreatorcases, ART/design. MainJS/render/storeunchanged. ActualnativeCSSanimation inventory and computedresttransforms; no resourceusage savings estimate. Lastfull2485suite passed preceding mood checkpoint; nofullrerunforCSSonlychange. New preview-tools red test/design/native WIP explicitly outside this freeze and local checkpoint.",
+  "history": "Baseline6read-onlyinventory probes pass but are not acceptance tests; measured33wide,9Who/24FacephoneinfiniteCSSanimationsnormal/device,0OSreduce. Initial9redfail included2systemfails due4guessed labels; exact initialharness retained. Corrected to actualexistinglabels beforeproductionchanges; red-v2 2pass7fail solelyperpetualCSSassertions. HarnesslintcalledunavailableESLintpath(exit1,notlintresult); correctedrepositoryoxlintonepathpasseszero-warning. ProductionCSSappliedaftermoodreviewPASS/localcheckpoint; currentbuild,34native,63focused,white4allpass. No sourcechangeafterfinalnative. InvalidemptyARTapply_patch hunk failed atomically before actualCSS edit; no partialsource mutation. All meaningful rawchecks/history retained.",
+  "resources": {
+    "runs": 9,
+    "sampleRows": 160,
+    "minimumObservedAvailableMiB": 3092.55859375,
+    "minimumObservedTmpFreeMiB": 4005.05078125,
+    "reserveStops": 0,
+    "launchRejections": 0,
+    "limits": "Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor."
+  },
+  "status": "Completed scoped checks and independent static/source/still review; bound files reverified before local checkpoint.",
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-review-input.json",
+    "sha256": "7e0b54ea2b71e99362526c90b3f6bf1c977792a33b663093229c43a12cc00c51"
+  },
+  "independentReview": {
+    "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-independent-review.md",
+    "sha256": "639a734fe0ae51d2e45dee591c33e94c86cbe2314f637cd16078db93da58896e",
+    "verdict": "PASS; no scoped findings"
+  }
+}

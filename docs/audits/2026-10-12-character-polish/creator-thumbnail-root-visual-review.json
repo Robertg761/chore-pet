@@ -1,0 +1,106 @@
+{
+  "finalPngs": 12,
+  "directFinalPngs": {
+    "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-device-face.png": "54dd31d057b1046e68159aa624dd0b8c973f379ba5d9f26de61e3895d1e67887",
+    "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-device-face.png": "870162c0b8f8646e525452a8cfc6c55c42a5f4dbb71eca99b578e895cf3fde72",
+    "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-device-who.png": "0af538bf475215663bee4e6034209add6bdf4edb2be76e8a4b6f28062963b8af",
+    "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-normal-who.png": "ba54c0f8f0d2ed77b46bd6de440d38f55c867f95afc351123a957669f5fc3c1b",
+    "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-system-face.png": "f2ccc8bed55940121903637caf1e14b45433cfacd42e01b1e9b9df47b4ea6658",
+    "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-system-who.png": "0e1d8663ffdacf2eb9a63f4bc485d0a63173580ee6a1355e92f3a874fb3523b2"
+  },
+  "exactDirectIdentityCarry": {
+    "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-device-who.png": {
+      "sha256": "54dd31d057b1046e68159aa624dd0b8c973f379ba5d9f26de61e3895d1e67887",
+      "directReviewedOrigin": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-device-face.png",
+      "originSha256": "54dd31d057b1046e68159aa624dd0b8c973f379ba5d9f26de61e3895d1e67887"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-normal-face.png": {
+      "sha256": "54dd31d057b1046e68159aa624dd0b8c973f379ba5d9f26de61e3895d1e67887",
+      "directReviewedOrigin": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-device-face.png",
+      "originSha256": "54dd31d057b1046e68159aa624dd0b8c973f379ba5d9f26de61e3895d1e67887"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-normal-who.png": {
+      "sha256": "54dd31d057b1046e68159aa624dd0b8c973f379ba5d9f26de61e3895d1e67887",
+      "directReviewedOrigin": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-device-face.png",
+      "originSha256": "54dd31d057b1046e68159aa624dd0b8c973f379ba5d9f26de61e3895d1e67887"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-system-face.png": {
+      "sha256": "54dd31d057b1046e68159aa624dd0b8c973f379ba5d9f26de61e3895d1e67887",
+      "directReviewedOrigin": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-device-face.png",
+      "originSha256": "54dd31d057b1046e68159aa624dd0b8c973f379ba5d9f26de61e3895d1e67887"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-system-who.png": {
+      "sha256": "54dd31d057b1046e68159aa624dd0b8c973f379ba5d9f26de61e3895d1e67887",
+      "directReviewedOrigin": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-device-face.png",
+      "originSha256": "54dd31d057b1046e68159aa624dd0b8c973f379ba5d9f26de61e3895d1e67887"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-normal-face.png": {
+      "sha256": "870162c0b8f8646e525452a8cfc6c55c42a5f4dbb71eca99b578e895cf3fde72",
+      "directReviewedOrigin": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-device-face.png",
+      "originSha256": "870162c0b8f8646e525452a8cfc6c55c42a5f4dbb71eca99b578e895cf3fde72"
+    }
+  },
+  "recomputedSamples": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-device-face.json",
+      "images": 11,
+      "restingGroups": 33
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-device-who.json",
+      "images": 11,
+      "restingGroups": 33
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-normal-face.json",
+      "images": 11,
+      "restingGroups": 33
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-normal-who.json",
+      "images": 11,
+      "restingGroups": 33
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-system-face.json",
+      "images": 11,
+      "restingGroups": 33
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-1280-system-who.json",
+      "images": 11,
+      "restingGroups": 33
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-device-face.json",
+      "images": 8,
+      "restingGroups": 24
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-device-who.json",
+      "images": 3,
+      "restingGroups": 9
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-normal-face.json",
+      "images": 8,
+      "restingGroups": 24
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-normal-who.json",
+      "images": 3,
+      "restingGroups": 9
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-system-face.json",
+      "images": 8,
+      "restingGroups": 24
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-thumbnail-native-final/thumbnail-390-system-who.json",
+      "images": 3,
+      "restingGroups": 9
+    }
+  ],
+  "scope": "Six unique finalPNGbyteidentities directly viewed, six exact duplicates independently reverified. Phone/desktop normal/device/system comparisons keep open eyes/resting bodies legible. Actual CSS animation and computed-transform assertions precede screenshot animation disabling. Wide lower cheek choices require existing panel scroll; prior layout coverage focuses them. No CPU/battery/peak-resource/physical-device/AT/temporalcomfort claim."
+}

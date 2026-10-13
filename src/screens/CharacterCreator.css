@@ -47,6 +47,10 @@
 }
 .cc-choice:hover { transform: translateY(-2px); }
 
+/* Keep comparison eyes open and bodies still; the main preview owns the finite cheer. */
+.cc-choice .ch-breathe,
+.cc-choice .ch-eye { animation: none; }
+
 .cc-species { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 4px; }
 .cc-species .cc-choice {
   display: flex;

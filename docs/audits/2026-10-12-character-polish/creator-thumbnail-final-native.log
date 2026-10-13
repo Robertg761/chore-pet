@@ -1,0 +1,42 @@
+✔ look editor keeps its character and controls readable at 320x568 text100 (1441.083483ms)
+✔ look editor keeps its character and controls readable at 320x568 text200 (1282.532903ms)
+✔ look editor keeps its character and controls readable at 390x664 text100 (1221.981814ms)
+✔ look editor keeps its character and controls readable at 390x664 text200 (1245.964958ms)
+✔ look editor keeps its character and controls readable at 640x360 text100 (1154.204981ms)
+✔ look editor keeps its character and controls readable at 640x360 text200 (1162.768333ms)
+✔ look editor keeps its character and controls readable at 844x390 text100 (1164.681013ms)
+✔ look editor keeps its character and controls readable at 844x390 text200 (1159.043171ms)
+✔ look editor keeps its character and controls readable at 1280x800 text100 (1183.023285ms)
+✔ look editor keeps its character and controls readable at 1280x800 text200 (1158.463717ms)
+✔ look draft name and caret survive resizing and stay reachable at enlarged text (961.037026ms)
+✔ look editor previews all five expressions on dressed mochi with no saved change or clock (2359.654805ms)
+✔ look editor previews all five expressions on dressed bun with no saved change or clock (2458.133254ms)
+✔ look editor previews all five expressions on dressed sprout with no saved change or clock (2301.090688ms)
+✔ choosing a mood cancels the current cheer and reduction never replays it (2831.634607ms)
+✔ mood-only Save changes no saved tables and reopening begins with Happy (3978.410054ms)
+✔ mood selector and character remain readable at 320x568 text200 (2190.281276ms)
+✔ mood selector and character remain readable at 390x664 text200 (2172.950085ms)
+✔ mood selector and character remain readable at 640x360 text200 (2166.344883ms)
+✔ mood selector and character remain readable at 1280x800 text200 (2174.178172ms)
+✔ wrapped look tabs settle on the selected control with the real browser clock (3056.144241ms)
+✔ creator previews the actual character while keeping face choices visible at 320x568 (3802.284955ms)
+✔ creator previews the actual character while keeping face choices visible at 844x390 (3195.246603ms)
+✔ creator previews the actual character while keeping face choices visible at 1280x800 (3250.408296ms)
+✔ creator settles live reduction and initial reduction keeps look choices available (3227.730369ms)
+✔ comparison thumbnails stay still at 390px with normal motion preference (2290.429529ms)
+✔ comparison thumbnails stay still at 390px with device motion preference (2311.496232ms)
+✔ comparison thumbnails stay still at 390px with system motion preference (945.440006ms)
+✔ comparison thumbnails stay still at 1280px with normal motion preference (2245.916526ms)
+✔ comparison thumbnails stay still at 1280px with device motion preference (2307.522393ms)
+✔ comparison thumbnails stay still at 1280px with system motion preference (977.707686ms)
+✔ still thumbnails preserve the finite main cheer at 390px (3248.947882ms)
+✔ still thumbnails preserve the finite main cheer at 1280px (3018.271522ms)
+✔ live OS reduction changes and reopening never animate comparison thumbnails (3818.59653ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 74992.324611

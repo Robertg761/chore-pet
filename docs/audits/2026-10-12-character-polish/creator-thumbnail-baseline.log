@@ -1,0 +1,14 @@
+✔ thumbnail baseline 390 normal (2182.758735ms)
+✔ thumbnail baseline 390 device (2260.548766ms)
+✔ thumbnail baseline 390 system (855.287478ms)
+✔ thumbnail baseline 1280 normal (2175.227903ms)
+✔ thumbnail baseline 1280 device (2281.208314ms)
+✔ thumbnail baseline 1280 system (837.61266ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11026.279163

@@ -1,0 +1,13 @@
+# Still comparison thumbnails in Change look
+
+The actual native inventory on the preceding mood-preview production artifact found33infinite CSS animations (11breaths and22blinks) in the desktop choice grid. Phone Who has9, Face24. Device-local Reduce pet motion leaves those CSS animations running; OS reduction stops them. Main sampled preview has0CSS animations. These are measured animation counts, not CPU, battery or memory savings.
+
+Keep all creator comparison thumbnails still, regardless of preference, using one scoped rule inside CharacterCreator.css for .cc-choice .ch-breathe and .cc-choice .ch-eye. Set animation:none; no additional React clock, effect, listener or class. Existing static SVG resting geometry already has no transform on these groups; verify computed transform:none. The main sampled preview remains outside this scope and keeps its existing finite1800ms cheer, mood selection, reduction and outfit policies. Radio hover/focus/selection transitions remain intact, with their existing OS reduction treatment.
+
+Use native tests because jsdom does not run CSS animations. Verify actual document.getAnimations plus computed SVG group styles on390/1280px, normal/device/system preferences, Who/Colour/Face, remount and live OS reduction changes. Check all eyes/cheeks stay available, no saved changes on Cancel, and finite main cheer still progresses and settles with exactly one JS frame owner. Returning to resident art must retain its existing animated behavior (scoping check). Inspect final phone/desktop style comparisons and enlarged controls. Preserve raw red, sequential capped build/native checks, source binding and one bounded independent review. No generic tests mirroring CSS text.
+
+The user's continuing authorization covers this measured, bounded visual/resource fix. Mood sources remain frozen until their independent review and local checkpoint; new design/native test files can be prepared in parallel, but production CSS and ART edits wait for that checkpoint.
+
+The initial native red harness had four guessed option labels that did not exist. Their two system-reduced cases also failed; exact original harness and9fail raw log are retained as test-authoring history. Corrected to existing Button/Lashes/Hearts/Freckles labels before production edits; red-v2 gives2system cases pass and7fail specifically for perpetual thumbnail CSS animations. No acceptance bound was relaxed.
+
+A harness lint attempt incorrectly called an unavailable ESLint path and exited1 without linting. The repository uses oxlint; the corrected exact one-file zero-warning harness check passes. Both raw runs are retained. Production CSS was changed only after the frozen mood batch was independently approved and committed.

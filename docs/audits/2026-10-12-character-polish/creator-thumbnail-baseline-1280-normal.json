@@ -1,0 +1,484 @@
+{
+  "width": 1280,
+  "preference": "normal",
+  "browser": "152.0.7977.82",
+  "samples": [
+    {
+      "part": "Who",
+      "images": 11,
+      "animations": [
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        }
+      ],
+      "mainAnimations": 0
+    },
+    {
+      "part": "Face",
+      "images": 11,
+      "animations": [
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Species",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Eyes",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-breathe",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-breathe"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        },
+        {
+          "name": "ch-blink",
+          "state": "running",
+          "iterations": "Infinity",
+          "group": "Cheeks",
+          "classes": "ch-eye"
+        }
+      ],
+      "mainAnimations": 0
+    }
+  ],
+  "method": "Read-only native animation inventory, not acceptance test. Real browser clock; finite tab transitions excluded by choice-target filter."
+}
