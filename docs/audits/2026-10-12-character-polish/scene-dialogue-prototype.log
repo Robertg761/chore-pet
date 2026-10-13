@@ -1,0 +1,32 @@
+✔ home speech clears view controls at320x640/100%/one room (978.801835ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at320x640/200%/one room (928.427599ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at390x664/200%/one room (926.130988ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at640x360/100%/one room (902.809654ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at640x360/200%/one room (905.669191ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at844x390/100%/one room (913.492544ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at844x390/200%/one room (958.056176ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at1280x800/100%/one room (968.775719ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at1280x800/200%/one room (1048.063512ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at320x640/100%/two rooms (909.454089ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools+doors;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at320x640/200%/two rooms (916.492296ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools+doors;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at844x390/200%/two rooms (920.304576ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools+doors;samecanvas/body/camera/placement/savedtables
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11742.045949

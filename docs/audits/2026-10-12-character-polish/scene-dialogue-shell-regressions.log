@@ -1,0 +1,14 @@
+✔ Back dismisses the sheet and visible gift while keeping correction reachable (3091.104718ms)
+✔ Back dismisses the sheet and pending gift while keeping correction reachable (2411.118173ms)
+✔ More and All chores dismiss with Back, menu selection replaces the sheet entry, deep links reload (1009.907529ms)
+✔ a second room gets its own furniture and chores, and the kitchen keeps its own (1129.028056ms)
+✔ the pill counts late chores in the other rooms (1009.360535ms)
+✔ removing a room asks first, then archives its chores (1061.446597ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10843.020888

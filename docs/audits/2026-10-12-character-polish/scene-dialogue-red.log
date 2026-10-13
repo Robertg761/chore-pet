@@ -1,0 +1,125 @@
+✔ home speech clears view controls at320x640/100%/one room (1215.469266ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✖ home speech clears view controls at320x640/200%/one room (857.535513ms)
+✖ home speech clears view controls at390x664/200%/one room (933.562051ms)
+✔ home speech clears view controls at640x360/100%/one room (1201.51103ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✖ home speech clears view controls at640x360/200%/one room (1104.309118ms)
+✔ home speech clears view controls at844x390/100%/one room (888.407806ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✖ home speech clears view controls at844x390/200%/one room (904.478661ms)
+✔ home speech clears view controls at1280x800/100%/one room (915.20915ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at1280x800/200%/one room (954.737045ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✖ home speech clears view controls at320x640/100%/two rooms (890.83574ms)
+✖ home speech clears view controls at320x640/200%/two rooms (929.124057ms)
+✖ home speech clears view controls at844x390/200%/two rooms (910.244247ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 5
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12127.690438
+
+✖ failing tests:
+
+test at scripts/browser/scene-dialogue.test.mjs:16:4
+✖ home speech clears view controls at320x640/200%/one room (857.535513ms)
+  AssertionError [ERR_ASSERTION]: speech must clear actual control rows:{"tools":{"x":16,"y":-137.21875,"width":288,"height":100,"bottom":-37.21875,"right":304},"doors":null,"canvas":{"x":16,"y":-37.21875,"width":288,"height":250,"bottom":212.78125,"right":304},"bubble":{"x":28,"y":-85.21875,"width":264,"height":87.59375,"bottom":2.375,"right":292},"body":{"x":146.4486541748047,"y":104.77726745605469,"width":28.186477661132812,"height":25.074691772460938,"bottom":129.85195922851562,"right":174.6351318359375},"camera":{"x":0,"y":0}}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/scene-dialogue.test.mjs:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/scene-dialogue.test.mjs:16:4
+✖ home speech clears view controls at390x664/200%/one room (933.562051ms)
+  AssertionError [ERR_ASSERTION]: speech must clear actual control rows:{"tools":{"x":16,"y":-101.21875,"width":358,"height":76,"bottom":-25.21875,"right":374},"doors":null,"canvas":{"x":16,"y":-25.21875,"width":358,"height":250,"bottom":224.78125,"right":374},"bubble":{"x":55,"y":-49.21875,"width":280,"height":87.59375,"bottom":38.375,"right":335},"body":{"x":181.4486541748047,"y":116.77726745605469,"width":28.186477661132812,"height":25.074691772460938,"bottom":141.85195922851562,"right":209.6351318359375},"camera":{"x":0,"y":0}}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/scene-dialogue.test.mjs:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/scene-dialogue.test.mjs:16:4
+✖ home speech clears view controls at640x360/200%/one room (1104.309118ms)
+  AssertionError [ERR_ASSERTION]: speech must clear actual control rows:{"tools":{"x":160,"y":130,"width":184,"height":164,"bottom":294,"right":344},"doors":null,"canvas":{"x":160,"y":294,"width":184,"height":90,"bottom":384,"right":344},"bubble":{"x":172,"y":182,"width":160,"height":155.1875,"bottom":337.1875,"right":332},"body":{"x":248.9635009765625,"y":325.7078552246094,"width":6.2940673828125,"height":5.59918212890625,"bottom":331.3070373535156,"right":255.257568359375},"camera":{"x":0,"y":0}}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/scene-dialogue.test.mjs:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/scene-dialogue.test.mjs:16:4
+✖ home speech clears view controls at844x390/200%/one room (904.478661ms)
+  AssertionError [ERR_ASSERTION]: speech must clear actual control rows:{"tools":{"x":160,"y":95,"width":380.8125,"height":76,"bottom":171,"right":540.8125},"doors":null,"canvas":{"x":160,"y":171,"width":380.8125,"height":169,"bottom":340,"right":540.8125},"bubble":{"x":210.40625,"y":147,"width":280,"height":87.59375,"bottom":234.59375,"right":490.40625},"body":{"x":342.2642822265625,"y":257.1626281738281,"width":17.103424072265625,"height":15.215240478515625,"bottom":272.37786865234375,"right":359.3677062988281},"camera":{"x":0,"y":0}}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/scene-dialogue.test.mjs:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/scene-dialogue.test.mjs:16:4
+✖ home speech clears view controls at320x640/100%/two rooms (890.83574ms)
+  AssertionError [ERR_ASSERTION]: speech must clear actual control rows:{"tools":{"x":16,"y":-255.203125,"width":288,"height":48,"bottom":-207.203125,"right":304},"doors":{"x":16,"y":-207.203125,"width":288,"height":54,"bottom":-153.203125,"right":304},"canvas":{"x":16,"y":-153.203125,"width":288,"height":250,"bottom":96.796875,"right":304},"bubble":{"x":58.21875,"y":-203.203125,"width":203.546875,"height":36.890625,"bottom":-166.3125,"right":261.765625},"body":{"x":111.71256256103516,"y":-36.832725524902344,"width":23.09972381591797,"height":20.549537658691406,"bottom":-16.283187866210938,"right":134.81228637695312},"camera":{"x":0,"y":0}}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/scene-dialogue.test.mjs:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/scene-dialogue.test.mjs:16:4
+✖ home speech clears view controls at320x640/200%/two rooms (929.124057ms)
+  AssertionError [ERR_ASSERTION]: speech must clear actual control rows:{"tools":{"x":16,"y":-191.21875,"width":288,"height":100,"bottom":-91.21875,"right":304},"doors":{"x":16,"y":-91.21875,"width":288,"height":54,"bottom":-37.21875,"right":304},"canvas":{"x":16,"y":-37.21875,"width":288,"height":250,"bottom":212.78125,"right":304},"bubble":{"x":28,"y":-139.21875,"width":264,"height":87.59375,"bottom":-51.625,"right":292},"body":{"x":111.71256256103516,"y":79.15164947509766,"width":23.09972381591797,"height":20.549537658691406,"bottom":99.70118713378906,"right":134.81228637695312},"camera":{"x":0,"y":0}}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/scene-dialogue.test.mjs:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/scene-dialogue.test.mjs:16:4
+✖ home speech clears view controls at844x390/200%/two rooms (910.244247ms)
+  AssertionError [ERR_ASSERTION]: speech must clear actual control rows:{"tools":{"x":160,"y":95,"width":380.8125,"height":76,"bottom":171,"right":540.8125},"doors":{"x":160,"y":171,"width":380.8125,"height":54,"bottom":225,"right":540.8125},"canvas":{"x":160,"y":225,"width":380.8125,"height":115,"bottom":340,"right":540.8125},"bubble":{"x":210.40625,"y":147,"width":280,"height":87.59375,"bottom":234.59375,"right":490.40625},"body":{"x":333.85498046875,"y":265.1082458496094,"width":7.9615478515625,"height":7.082611083984375,"bottom":272.19085693359375,"right":341.8165283203125},"camera":{"x":0,"y":0}}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/scene-dialogue.test.mjs:60:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

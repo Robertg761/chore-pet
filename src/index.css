@@ -236,6 +236,7 @@ h1[tabindex='-1']:focus { outline: none; }
 /* App frame: the view fills the screen above the tab bar (phones) or beside the rail (wide).
    Screens are laid out to fit it; the view only scrolls as a last resort. */
 .app {
+  container: app-shell / inline-size;
   height: 100vh;
   height: 100dvh;
   /* viewport-fit=cover: keep clear of notches and rounded corners. */
@@ -335,6 +336,20 @@ h1[tabindex='-1']:focus { outline: none; }
   .home-chores { padding-bottom: 4px; }
   .home-chores .cl-foot { bottom: -4px; padding: 6px 0; }
   .app-view > .screen { padding: 14px 20px; }
+}
+
+/* Enlarged text can leave too little room for two home columns. Keep the
+   normal-text landscape layout, then reuse the stacked flow when text needs it. */
+@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+  @container app-shell (max-width: 34rem) {
+    .home { display: flex; max-width: 520px; padding: 12px 16px 10px; gap: 10px; }
+    .home-top { grid-template-columns: 1fr; row-gap: 8px; }
+    .home-stage { flex: 1 0 auto; min-height: 420px; height: max-content; }
+    .home .home-scene { min-height: min-content; }
+    .home .home-scene-viewport { min-height: 250px; }
+    .home-chores { overflow: visible; padding: 0; }
+    .home-chores .cl-foot { position: static; }
+  }
 }
 
 /* Build mode: the room fills what the panel below (phones) or beside it (wide) leaves. */

@@ -1,0 +1,82 @@
+✔ navigation keeps visible labels and reward progress inside its rail at100%text (1654.519421ms)
+ℹ Chromium152.0.7977.82;6layouts;visible navigation typography and keyboard controls;unchanged savedtables.
+✔ navigation keeps visible labels and reward progress inside its rail at200%text (1394.275256ms)
+ℹ Chromium152.0.7977.82;6layouts;visible navigation typography and keyboard controls;unchanged savedtables.
+✔ Explore views the selected room at320x640/100% text without another invitation (970.755076ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the selected room at320x640/200% text without another invitation (917.871851ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the selected room at390x664/100% text without another invitation (889.987088ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the selected room at844x390/100% text without another invitation (945.954333ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the selected room at844x390/200% text without another invitation (924.466809ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the selected room at1280x800/100% text without another invitation (930.203681ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the selected room at1280x800/200% text without another invitation (923.390771ms)
+ℹ Chromium 152.0.7977.82;explicitkeyboardview;resident>=.95visible;44target;no secondinvitation/no savedchanges;atmost1clock
+✔ Explore views the away resident only in its own room (902.182006ms)
+ℹ Actual blocked doorway; separate resting/view explanations;own room viewable with0frames;no saved changes.
+✔ Explore views the sick resident only in its own room (981.421574ms)
+ℹ Actual blocked doorway; separate resting/view explanations;own room viewable with0frames;no saved changes.
+✔ player rows stay balanced and readable with default text in narrow panels (1477.889178ms)
+ℹ Chromium 152.0.7977.82; 7layouts; compact3+2/wide4+1/large-text1column, readable targets and focus, unchanged saved tables.
+✔ player rows stay balanced and readable with 200% text in narrow panels (1048.69655ms)
+ℹ Chromium 152.0.7977.82; 3layouts; compact3+2/wide4+1/large-text1column, readable targets and focus, unchanged saved tables.
+✔ Show room resumes an offscreen reaction only while its deadline remains active (3568.763428ms)
+ℹ Native offscreen 0 → live visible 1 → offscreen 0 → expired visible 0; no replay or saved changes.
+✔ Show room explains a blocked route while away and still views the resting resident's own room (937.787584ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room explains a blocked route while sick and still views the resting resident's own room (1073.663339ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room preserves a live stretch and restores context at320x640 (1461.900209ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.238;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at361x664 (1456.150898ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.371;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at390x664 (1492.936896ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.520;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at640x360 (1775.703549ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at844x390 (1816.247893ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at1280x800 (1798.661422ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ home speech clears view controls at320x640/100%/one room (962.653794ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at320x640/200%/one room (909.537165ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at390x664/200%/one room (911.499177ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at640x360/100%/one room (893.380189ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at640x360/200%/one room (900.615939ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at844x390/100%/one room (899.156427ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at844x390/200%/one room (915.519104ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at1280x800/100%/one room (888.567967ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at1280x800/200%/one room (1034.064075ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at320x640/100%/two rooms (911.05444ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools+doors;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at320x640/200%/two rooms (932.942561ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools+doors;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at844x390/200%/two rooms (931.099453ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools+doors;samecanvas/body/camera/placement/savedtables
+✔ portrait room keeps the resident readable and preserves content flow at100%text (1232.768441ms)
+ℹ Chromium152.0.7977.82;4narrowstackedlayouts;actualcharacter/canvas/childflow and Showroomfocus;unchanged savedtables.
+✔ portrait room keeps the resident readable and preserves content flow at200%text (1286.724981ms)
+ℹ Chromium152.0.7977.82;4narrowstackedlayouts;actualcharacter/canvas/childflow and Showroomfocus;unchanged savedtables.
+✔ enlarged portrait scene retains0offscreen/1finite-visible/0deadline resident frames (3326.328543ms)
+ℹ Real native observation/deadline, enlarged-text scene:0offscreen→1visible finite response→0originaldeadline;unchanged savedtables.
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 48525.129832

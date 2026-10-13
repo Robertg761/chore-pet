@@ -1,0 +1,79 @@
+{
+  "width": 844,
+  "height": 390,
+  "textPercent": 200,
+  "multi": false,
+  "prototype": true,
+  "before": {
+    "tools": {
+      "x": 160,
+      "y": 95,
+      "width": 380.8125,
+      "height": 76,
+      "bottom": 171,
+      "right": 540.8125
+    },
+    "doors": null,
+    "canvas": {
+      "x": 160,
+      "y": 171,
+      "width": 380.8125,
+      "height": 169,
+      "bottom": 340,
+      "right": 540.8125
+    },
+    "bubble": null,
+    "body": {
+      "x": 342.2642822265625,
+      "y": 257.1626281738281,
+      "width": 17.103424072265625,
+      "height": 15.215240478515625,
+      "bottom": 272.37786865234375,
+      "right": 359.3677062988281
+    },
+    "camera": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "after": {
+    "tools": {
+      "x": 160,
+      "y": 95,
+      "width": 380.8125,
+      "height": 76,
+      "bottom": 171,
+      "right": 540.8125
+    },
+    "doors": null,
+    "canvas": {
+      "x": 160,
+      "y": 171,
+      "width": 380.8125,
+      "height": 169,
+      "bottom": 340,
+      "right": 540.8125
+    },
+    "bubble": {
+      "x": 210.40625,
+      "y": 175,
+      "width": 280,
+      "height": 87.59375,
+      "bottom": 262.59375,
+      "right": 490.40625
+    },
+    "body": {
+      "x": 342.2642822265625,
+      "y": 257.1626281738281,
+      "width": 17.103424072265625,
+      "height": 15.215240478515625,
+      "bottom": 272.37786865234375,
+      "right": 359.3677062988281
+    },
+    "camera": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "scope": "Actual dialogue/control rectangles and unchanged reduced resident/camera/savedtables;frozen native clock;not whole-app accessibility or temporal acceptance."
+}

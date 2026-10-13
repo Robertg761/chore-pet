@@ -1,0 +1,36 @@
+.home-scene { position: relative; display: flex; flex-direction: column; flex: 1 1 0; width: 100%; min-width: 0; min-height: 140px; }
+.home-scene-tools { display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding: 2px; flex: none; }
+.home-scene-hint { margin-right: auto; font-size: 0.75rem; color: var(--ink-soft); }
+.home-scene-tools button { min-height: 44px; min-width: 44px; padding: 0 10px; border: 1px solid #b9aecf; border-radius: 12px; background: #ffffffaa; color: var(--ink); font: inherit; font-size: 0.8125rem; font-weight: 800; cursor: pointer; }
+.home-scene-tools button:disabled { opacity: 0.4; cursor: default; }
+.home-scene-tools button:focus-visible, .home-scene-label:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.home-scene-door-links { display: flex; flex: none; gap: 6px; max-width: 100%; padding: 4px 3px 6px; overflow-x: auto; overscroll-behavior-x: contain; }
+.home-scene-door-links button { flex: none; min-height: 44px; min-width: 44px; padding: 0 12px; border: 1px solid #b9aecf; border-radius: 12px; background: var(--card); color: var(--ink); font: inherit; font-size: 0.8125rem; font-weight: 800; cursor: pointer; }
+.home-scene-door-links button[aria-disabled='true'] { color: var(--ink-soft); cursor: not-allowed; }
+.home-scene-door-links button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.home-scene-viewport { position: relative; flex: 1 1 0; min-height: 90px; overflow: auto; overscroll-behavior: contain; border-radius: 18px; }
+.home-scene-space { position: relative; overflow: hidden; }
+.home-scene-world { position: absolute; transform-origin: top left; }
+.home-scene-doors { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; z-index: 900; pointer-events: none; }
+.home-scene-room { position: absolute; pointer-events: none; }
+.home-scene-art { opacity: 0.32; filter: saturate(0.45); transition: opacity 240ms ease, filter 240ms ease; }
+.home-scene-room[data-focused='true'] .home-scene-art { opacity: 1; filter: none; }
+.home-scene-room[data-focused='false']:hover .home-scene-art { opacity: 0.5; }
+.home-scene .home-scene-art svg { display: block; width: 100%; height: auto; overflow: visible; pointer-events: none; }
+/* Hit only painted room geometry. The overlapping SVG rectangles must not steal taps. */
+.home-scene-art svg > g { pointer-events: visiblePainted; }
+.home-scene-room[data-focused='false'] svg > g { cursor: pointer; }
+.home-scene .living-room { width: 100%; }
+.home-scene-room[data-focused='false'] .nc-cue * { animation: none; }
+.home-scene-label { position: absolute; left: 50%; top: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; max-width: 200px; padding: 0 10px; white-space: nowrap; border: 1px solid #b9aecf; border-radius: 18px; background: #efe9fff2; color: var(--ink-soft); font: inherit; font-size: 0.75rem; font-weight: 800; cursor: pointer; pointer-events: auto; transform: translateX(-50%) scale(calc(1 / var(--scene-scale))); transform-origin: top center; }
+.home-scene-label[aria-pressed='true'] { border: 2px solid var(--accent); color: var(--ink); background: white; }
+/* At overview scale, keep names from covering the house. They reappear on hover or keyboard focus. */
+.home-scene[data-compact='true'] .home-scene-label[aria-pressed='false'] { opacity: 0; }
+.home-scene[data-compact='true'] .home-scene-room:hover .home-scene-label,
+.home-scene[data-compact='true'] .home-scene-label:focus-visible { opacity: 1; }
+.home-scene-diamond { width: 9px; height: 13px; background: #67b77a; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.home-scene-dialogue { position: absolute; top: 52px; left: 12px; right: 12px; z-index: 1; display: flex; justify-content: center; pointer-events: none; }
+.home-scene-bubble { max-width: 280px; margin: 0; padding: 8px 12px; border: 2px solid var(--ink); border-radius: 14px; background: var(--card); color: var(--ink); font-size: 0.8125rem; font-weight: 800; line-height: 1.3; text-align: center; }
+.home-scene-travel-status { margin: 0; padding: 4px; min-height: 24px; font-size: 0.75rem; text-align: center; color: var(--ink-soft); }
+.room-door:focus-visible { outline: none; }
+@media (prefers-reduced-motion: reduce) { .home-scene-art { transition: none; } }

@@ -1,0 +1,75 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { browserApp, snapshot } from './helpers.mjs'
+
+for (const { width, height, text = 1, multi = false } of [
+  { width: 320, height: 640 }, { width: 320, height: 640, text: 2 },
+  { width: 390, height: 664, text: 2 },
+  { width: 640, height: 360 }, { width: 640, height: 360, text: 2 },
+  { width: 844, height: 390 }, { width: 844, height: 390, text: 2 },
+  { width: 1280, height: 800 }, { width: 1280, height: 800, text: 2 },
+  { width: 320, height: 640, multi: true }, { width: 320, height: 640, text: 2, multi: true },
+  { width: 844, height: 390, text: 2, multi: true },
+]) test(`home speech clears view controls at${width}x${height}/${text * 100}%/${multi ? 'two rooms' : 'one room'}`, async t => {
+  const page = await browserApp(t, { viewport: { width, height } })
+  if (multi) await page.evaluate(() => new Promise((resolve, reject) => {
+    const request = indexedDB.open('chore-pet', 1)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
+      read.onsuccess = () => {
+        const saved = read.result, first = Object.values(saved.tables.rooms)[0]
+        saved.tables.rooms['speech-other-room'] = { ...first, id: 'speech-other-room', type: 'bedroom' }
+        store.put(saved, 'snapshot')
+      }
+      tx.oncomplete = () => { db.close(); resolve() }
+      tx.onerror = () => { db.close(); reject(tx.error) }
+    }
+  }))
+  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
+  await page.reload()
+  if (text === 2) await page.addStyleTag({ content: ':root{font-size:200%}' })
+  const resident = page.locator('.room-pet'); await resident.waitFor()
+  const saved = (await snapshot(page)).tables
+  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
+  await page.getByRole('combobox', { name: 'Show Mochi', exact: true }).selectOption({ label: 'Dining table' })
+  const geometry = () => page.evaluate(() => {
+    const rect = selector => {
+      const node = document.querySelector(selector); if (!node) return null
+      const b = node.getBoundingClientRect(); return { x: b.x, y: b.y, width: b.width, height: b.height, bottom: b.bottom, right: b.right }
+    }
+    const viewport = document.querySelector('.home-scene-viewport')
+    return { stage: rect('.home-stage'), toolButtons: [...document.querySelectorAll('.home-scene-tools button')].map(node => { const b = node.getBoundingClientRect(); return { x: b.x, right: b.right } }), tools: rect('.home-scene-tools'), doors: rect('.home-scene-door-links'), canvas: rect('.home-scene-viewport'),
+      bubble: rect('.home-scene-bubble'), body: rect('.room-pet [data-character-body]'), camera: { x: viewport.scrollLeft, y: viewport.scrollTop } }
+  })
+  const before = await geometry(), body = await resident.locator('[data-character-body]').innerHTML(), position = await resident.getAttribute('transform')
+  await page.getByRole('button', { name: 'Look together', exact: true }).click()
+  await page.locator('.home-scene-bubble').waitFor()
+  const after = await geometry()
+  const out = process.env.CHORE_SCENE_DIALOGUE_CAPTURE_DIR, key = `${width}-${text * 100}-${multi ? 'two' : 'one'}`
+  if (out) {
+    await mkdir(out, { recursive: true })
+    await page.getByRole('button', { name: 'Show room to explore with Mochi', exact: true }).click()
+    await page.screenshot({ path: join(out, `scene-dialogue-${key}.png`), fullPage: false })
+    await writeFile(join(out, `scene-dialogue-${key}.json`), JSON.stringify({ width, height, textPercent: text * 100, multi, stage: 'production', before, after, scope: 'Actual dialogue/control rectangles and unchanged reduced resident/camera/savedtables;frozen native clock;not whole-app accessibility or temporal acceptance.' }, null, 2) + '\n')
+  }
+  assert.ok(after.bubble.y >= Math.max(after.tools.bottom, after.doors?.bottom ?? -Infinity) + 2, `speech must clear actual control rows:${JSON.stringify(after)}`)
+  assert.ok(after.bubble.y >= after.canvas.y + 2)
+  assert.ok(after.bubble.bottom + 8 <= after.body.y, 'speech must leave the actual resident ink unobscured')
+  assert.ok(after.canvas.x >= after.stage.x - .1 && after.canvas.right <= after.stage.right + .1, 'the canvas stays inside its allocated stage width')
+  for (const box of after.toolButtons) assert.ok(box.x >= after.stage.x - .1 && box.right <= after.stage.right + .1, 'zoom controls stay inside the stage')
+  if (text === 2 && [640, 844].includes(width)) {
+    assert.ok(after.canvas.height >= 250, 'enlarged landscape keeps the established stacked canvas floor')
+    assert.ok(after.body.height >= (multi ? 18 : 22), 'the actual enlarged-text resident remains readable')
+  }
+  assert.ok(after.bubble.x >= after.canvas.x && after.bubble.right <= after.canvas.right)
+  assert.equal(await resident.locator('[data-character-body]').innerHTML(), body)
+  assert.equal(await resident.getAttribute('transform'), position)
+  assert.deepEqual(after.camera, before.camera)
+  for (const key of ['width', 'height']) assert.ok(Math.abs(after.canvas[key] - before.canvas[key]) < .5, 'speech keeps the existing scene geometry')
+  assert.deepEqual((await snapshot(page)).tables, saved)
+  if (multi) assert.ok(after.doors, 'multi-room fixture requires the actual compact door controls')
+  t.diagnostic(`Chromium ${page.context().browser().version()};actualbubblebelow${after.doors ? 'tools+doors' : 'tools'};samecanvas/body/camera/placement/savedtables`)
+})

@@ -1,0 +1,202 @@
+diff --git c/src/index.css w/src/index.css
+index 6467277..3db1c97 100644
+--- c/src/index.css
++++ w/src/index.css
+@@ -236,6 +236,7 @@ h1[tabindex='-1']:focus { outline: none; }
+ /* App frame: the view fills the screen above the tab bar (phones) or beside the rail (wide).
+    Screens are laid out to fit it; the view only scrolls as a last resort. */
+ .app {
++  container: app-shell / inline-size;
+   height: 100vh;
+   height: 100dvh;
+   /* viewport-fit=cover: keep clear of notches and rounded corners. */
+@@ -337,6 +338,20 @@ h1[tabindex='-1']:focus { outline: none; }
+   .app-view > .screen { padding: 14px 20px; }
+ }
+ 
++/* Enlarged text can leave too little room for two home columns. Keep the
++   normal-text landscape layout, then reuse the stacked flow when text needs it. */
++@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
++  @container app-shell (max-width: 34rem) {
++    .home { display: flex; max-width: 520px; padding: 12px 16px 10px; gap: 10px; }
++    .home-top { grid-template-columns: 1fr; row-gap: 8px; }
++    .home-stage { flex: 1 0 auto; min-height: 420px; height: max-content; }
++    .home .home-scene { min-height: min-content; }
++    .home .home-scene-viewport { min-height: 250px; }
++    .home-chores { overflow: visible; padding: 0; }
++    .home-chores .cl-foot { position: static; }
++  }
++}
++
+ /* Build mode: the room fills what the panel below (phones) or beside it (wide) leaves. */
+ .build {
+   height: 100%;
+diff --git c/src/room/HomeScene.css w/src/room/HomeScene.css
+index 20e9418..cbcae76 100644
+--- c/src/room/HomeScene.css
++++ w/src/room/HomeScene.css
+@@ -1,14 +1,14 @@
+-.home-scene { position: relative; display: flex; flex-direction: column; flex: 1 1 0; width: 100%; min-width: 0; min-height: 140px; }
+-.home-scene-tools { display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding: 2px; flex: none; }
++.home-scene { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto minmax(90px, 1fr) auto; grid-template-areas: "tools" "doors" "canvas" "status"; flex: 1 1 0; width: 100%; min-width: 0; min-height: 140px; }
++.home-scene-tools { grid-area: tools; display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding: 2px; flex: none; }
+ .home-scene-hint { margin-right: auto; font-size: 0.75rem; color: var(--ink-soft); }
+ .home-scene-tools button { min-height: 44px; min-width: 44px; padding: 0 10px; border: 1px solid #b9aecf; border-radius: 12px; background: #ffffffaa; color: var(--ink); font: inherit; font-size: 0.8125rem; font-weight: 800; cursor: pointer; }
+ .home-scene-tools button:disabled { opacity: 0.4; cursor: default; }
+ .home-scene-tools button:focus-visible, .home-scene-label:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+-.home-scene-door-links { display: flex; flex: none; gap: 6px; max-width: 100%; padding: 4px 3px 6px; overflow-x: auto; overscroll-behavior-x: contain; }
++.home-scene-door-links { grid-area: doors; display: flex; flex: none; gap: 6px; max-width: 100%; padding: 4px 3px 6px; overflow-x: auto; overscroll-behavior-x: contain; }
+ .home-scene-door-links button { flex: none; min-height: 44px; min-width: 44px; padding: 0 12px; border: 1px solid #b9aecf; border-radius: 12px; background: var(--card); color: var(--ink); font: inherit; font-size: 0.8125rem; font-weight: 800; cursor: pointer; }
+ .home-scene-door-links button[aria-disabled='true'] { color: var(--ink-soft); cursor: not-allowed; }
+ .home-scene-door-links button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+-.home-scene-viewport { position: relative; flex: 1 1 0; min-height: 90px; overflow: auto; overscroll-behavior: contain; border-radius: 18px; }
++.home-scene-viewport { grid-area: canvas; position: relative; flex: 1 1 0; min-height: 90px; overflow: auto; overscroll-behavior: contain; border-radius: 18px; }
+ .home-scene-space { position: relative; overflow: hidden; }
+ .home-scene-world { position: absolute; transform-origin: top left; }
+ .home-scene-doors { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; z-index: 900; pointer-events: none; }
+@@ -29,8 +29,8 @@
+ .home-scene[data-compact='true'] .home-scene-room:hover .home-scene-label,
+ .home-scene[data-compact='true'] .home-scene-label:focus-visible { opacity: 1; }
+ .home-scene-diamond { width: 9px; height: 13px; background: #67b77a; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+-.home-scene-dialogue { position: absolute; top: 52px; left: 12px; right: 12px; z-index: 1; display: flex; justify-content: center; pointer-events: none; }
++.home-scene-dialogue { grid-area: canvas; position: relative; align-self: start; margin: 4px 12px 0; z-index: 1; display: flex; justify-content: center; pointer-events: none; }
+ .home-scene-bubble { max-width: 280px; margin: 0; padding: 8px 12px; border: 2px solid var(--ink); border-radius: 14px; background: var(--card); color: var(--ink); font-size: 0.8125rem; font-weight: 800; line-height: 1.3; text-align: center; }
+-.home-scene-travel-status { margin: 0; padding: 4px; min-height: 24px; font-size: 0.75rem; text-align: center; color: var(--ink-soft); }
++.home-scene-travel-status { grid-area: status; margin: 0; padding: 4px; min-height: 24px; font-size: 0.75rem; text-align: center; color: var(--ink-soft); }
+ .room-door:focus-visible { outline: none; }
+ @media (prefers-reduced-motion: reduce) { .home-scene-art { transition: none; } }
+diff --git 1/scripts/browser/scene-dialogue.test.mjs 2/scripts/browser/scene-dialogue.test.mjs
+new file mode 100644
+index 0000000..78831ee
+--- /dev/null
++++ 2/scripts/browser/scene-dialogue.test.mjs
+@@ -0,0 +1,75 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, snapshot } from './helpers.mjs'
++
++for (const { width, height, text = 1, multi = false } of [
++  { width: 320, height: 640 }, { width: 320, height: 640, text: 2 },
++  { width: 390, height: 664, text: 2 },
++  { width: 640, height: 360 }, { width: 640, height: 360, text: 2 },
++  { width: 844, height: 390 }, { width: 844, height: 390, text: 2 },
++  { width: 1280, height: 800 }, { width: 1280, height: 800, text: 2 },
++  { width: 320, height: 640, multi: true }, { width: 320, height: 640, text: 2, multi: true },
++  { width: 844, height: 390, text: 2, multi: true },
++]) test(`home speech clears view controls at${width}x${height}/${text * 100}%/${multi ? 'two rooms' : 'one room'}`, async t => {
++  const page = await browserApp(t, { viewport: { width, height } })
++  if (multi) await page.evaluate(() => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, first = Object.values(saved.tables.rooms)[0]
++        saved.tables.rooms['speech-other-room'] = { ...first, id: 'speech-other-room', type: 'bedroom' }
++        store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }))
++  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
++  await page.reload()
++  if (text === 2) await page.addStyleTag({ content: ':root{font-size:200%}' })
++  const resident = page.locator('.room-pet'); await resident.waitFor()
++  const saved = (await snapshot(page)).tables
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  await page.getByRole('combobox', { name: 'Show Mochi', exact: true }).selectOption({ label: 'Dining table' })
++  const geometry = () => page.evaluate(() => {
++    const rect = selector => {
++      const node = document.querySelector(selector); if (!node) return null
++      const b = node.getBoundingClientRect(); return { x: b.x, y: b.y, width: b.width, height: b.height, bottom: b.bottom, right: b.right }
++    }
++    const viewport = document.querySelector('.home-scene-viewport')
++    return { stage: rect('.home-stage'), toolButtons: [...document.querySelectorAll('.home-scene-tools button')].map(node => { const b = node.getBoundingClientRect(); return { x: b.x, right: b.right } }), tools: rect('.home-scene-tools'), doors: rect('.home-scene-door-links'), canvas: rect('.home-scene-viewport'),
++      bubble: rect('.home-scene-bubble'), body: rect('.room-pet [data-character-body]'), camera: { x: viewport.scrollLeft, y: viewport.scrollTop } }
++  })
++  const before = await geometry(), body = await resident.locator('[data-character-body]').innerHTML(), position = await resident.getAttribute('transform')
++  await page.getByRole('button', { name: 'Look together', exact: true }).click()
++  await page.locator('.home-scene-bubble').waitFor()
++  const after = await geometry()
++  const out = process.env.CHORE_SCENE_DIALOGUE_CAPTURE_DIR, key = `${width}-${text * 100}-${multi ? 'two' : 'one'}`
++  if (out) {
++    await mkdir(out, { recursive: true })
++    await page.getByRole('button', { name: 'Show room to explore with Mochi', exact: true }).click()
++    await page.screenshot({ path: join(out, `scene-dialogue-${key}.png`), fullPage: false })
++    await writeFile(join(out, `scene-dialogue-${key}.json`), JSON.stringify({ width, height, textPercent: text * 100, multi, stage: 'production', before, after, scope: 'Actual dialogue/control rectangles and unchanged reduced resident/camera/savedtables;frozen native clock;not whole-app accessibility or temporal acceptance.' }, null, 2) + '\n')
++  }
++  assert.ok(after.bubble.y >= Math.max(after.tools.bottom, after.doors?.bottom ?? -Infinity) + 2, `speech must clear actual control rows:${JSON.stringify(after)}`)
++  assert.ok(after.bubble.y >= after.canvas.y + 2)
++  assert.ok(after.bubble.bottom + 8 <= after.body.y, 'speech must leave the actual resident ink unobscured')
++  assert.ok(after.canvas.x >= after.stage.x - .1 && after.canvas.right <= after.stage.right + .1, 'the canvas stays inside its allocated stage width')
++  for (const box of after.toolButtons) assert.ok(box.x >= after.stage.x - .1 && box.right <= after.stage.right + .1, 'zoom controls stay inside the stage')
++  if (text === 2 && [640, 844].includes(width)) {
++    assert.ok(after.canvas.height >= 250, 'enlarged landscape keeps the established stacked canvas floor')
++    assert.ok(after.body.height >= (multi ? 18 : 22), 'the actual enlarged-text resident remains readable')
++  }
++  assert.ok(after.bubble.x >= after.canvas.x && after.bubble.right <= after.canvas.right)
++  assert.equal(await resident.locator('[data-character-body]').innerHTML(), body)
++  assert.equal(await resident.getAttribute('transform'), position)
++  assert.deepEqual(after.camera, before.camera)
++  for (const key of ['width', 'height']) assert.ok(Math.abs(after.canvas[key] - before.canvas[key]) < .5, 'speech keeps the existing scene geometry')
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  if (multi) assert.ok(after.doors, 'multi-room fixture requires the actual compact door controls')
++  t.diagnostic(`Chromium ${page.context().browser().version()};actualbubblebelow${after.doors ? 'tools+doors' : 'tools'};samecanvas/body/camera/placement/savedtables`)
++})
+diff --git c/docs/ART.md w/docs/ART.md
+index 808f547..1c91907 100644
+--- c/docs/ART.md
++++ w/docs/ART.md
+@@ -201,3 +201,5 @@ Rest together offers a quiet player response alongside the four existing choices
+ Healthy environmental concern settles appendages in one restrained sway as the resident studies wilting leaves. Preserve the existing1800ms action, torso, arms, gaze, lifetime blink, planted feet, shadow and dialogue. Mochi stays soft, Bun retains the largest ear movement and Sprout a smaller leaf sway. Normal sick frames, reduced-motion frames and every other action remain exact. This implies no contact with the furnishing.
+ 
+ Explore together also offers Show room while expanded. Reuse the player view action: explicitly scroll the scene into view and focus the resident without restarting an invitation, changing the chosen furnishing or clearing successful feedback. A resting resident remains viewable in its own room; travel and a different focused room have linked explanations. Keep the heading wrapping,44px targets and a distinct accessible name when both panels are open. Look together itself does not scroll the scene.
++
++Home speech belongs in the canvas layer below the actual view and compact door controls. Share the existing canvas grid area with a4px top gap, keep the grid column within its stage, and preserve empty/default geometry. In wide/landscape homes, a34rem app-shell container threshold follows root text size: cramped enlarged-text views reuse the established stacked home flow and250px canvas floor. Default landscape arrangements remain unchanged. Speech keeps the resident ink clear and does not change camera, placement, invitation or saved state.
+diff --git 1/docs/audits/2026-10-12-character-polish/compare-scene-dialogue.mjs 2/docs/audits/2026-10-12-character-polish/compare-scene-dialogue.mjs
+new file mode 100644
+index 0000000..9f27193
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/compare-scene-dialogue.mjs
+@@ -0,0 +1,38 @@
++import assert from 'node:assert/strict'
++import { readFile, readdir, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const dir = 'docs/audits/2026-10-12-character-polish'
++const baseline = `${dir}/scene-dialogue-before-captures`, final = `${dir}/scene-dialogue-final-captures`
++const hash = value => createHash('sha256').update(value).digest('hex')
++const files = (await readdir(final)).filter(name => name.endsWith('.json')).sort(), samples = []
++assert.equal(files.length, 12)
++for (const file of files) {
++  const oldBytes = await readFile(`${baseline}/${file}`), newBytes = await readFile(`${final}/${file}`)
++  const a = JSON.parse(oldBytes), b = JSON.parse(newBytes), old = a.after, current = b.after
++  const adapted = b.textPercent === 200 && [640, 844].includes(b.width)
++  const gap = data => data.bubble.y - Math.max(data.tools.bottom, data.doors?.bottom ?? -Infinity)
++  assert.equal(gap(current), 4)
++  assert.ok(current.body.y - current.bubble.bottom >= 8)
++  const unchangedGeometry = ['width', 'height'].every(key => old.canvas[key] === current.canvas[key] && old.body[key] === current.body[key])
++  if (!adapted) assert.ok(unchangedGeometry, `${file}: existing canvas and resident sizes remain exact`)
++  else {
++    assert.ok(current.canvas.height >= 250)
++    assert.ok(current.body.height >= (b.multi ? 18 : 22))
++  }
++  const png = file.replace('.json', '.png')
++  const oldImage = await readFile(`${baseline}/${png}`), newImage = await readFile(`${final}/${png}`)
++  const originalAlreadyClear = gap(old) === 4
++  if (originalAlreadyClear) assert.equal(hash(oldImage), hash(newImage), `${file}: already-clear view stays pixel exact`)
++  samples.push({ width: b.width, height: b.height, textPercent: b.textPercent, multi: b.multi, adapted,
++    controlGapBefore: gap(old), controlGapAfter: gap(current), residentGapAfter: current.body.y - current.bubble.bottom,
++    oldCanvas: { width: old.canvas.width, height: old.canvas.height }, newCanvas: { width: current.canvas.width, height: current.canvas.height },
++    oldBody: { width: old.body.width, height: old.body.height }, newBody: { width: current.body.width, height: current.body.height },
++    unchangedGeometry, imageByteExact: hash(oldImage) === hash(newImage),
++    inputs: { baseline: { path: `${baseline}/${file}`, sha256: hash(oldBytes) }, final: { path: `${final}/${file}`, sha256: hash(newBytes) },
++      baselineImage: { path: `${baseline}/${png}`, sha256: hash(oldImage) }, finalImage: { path: `${final}/${png}`, sha256: hash(newImage) } } })
++}
++await writeFile(`${dir}/scene-dialogue-comparison.json`, JSON.stringify({
++  method: 'Twelve deterministic native before/production pairs. Existing canvas/body sizes exact in nine unaffected layouts; three cramped enlarged landscape samples adapt. All five already-clear views have byte-exact PNGs. This compares stored geometry and pixels, not human temporal playback.',
++  runnerSha256: hash(await readFile(new URL(import.meta.url))), samples,
++}, null, 2) + '\n')
++console.log('12 pairs verified: 9 exact canvas/body sizes, 3 enlarged landscape improvements, 5 byte-exact already-clear views, 4px speech clearance in all cases.')

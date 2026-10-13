@@ -1,0 +1,28 @@
+{
+  "baseCommit": "3296d4a82052758ba7cdd05eb1691dc946e609b2",
+  "sources": {
+    "src/index.css": "28b09b668da92e49c2a13554af34e56408dcc677d21e954fbc8145262b592418",
+    "src/room/HomeScene.css": "7f57c79a20ca791e4eac3765acb5ca0a064a11fb167b5893d5c638c0d43075b1",
+    "scripts/browser/scene-dialogue.test.mjs": "9b6c98d42591f88d753e189dd30eb2b2e1b7ee9aec87afe7f3379ef24b6a403d",
+    "docs/ART.md": "c7dc68644f60cbe7c9c66fae3ec8589c140fed45a4e50b6f389f46dbc53e0b6a",
+    "docs/audits/2026-10-12-character-polish/compare-scene-dialogue.mjs": "f63ba18f1f7b8c1fc5f106e898a0a07c92b396a4f396f1a010ffbbd220d7d2f8"
+  },
+  "unchangedSources": {
+    "src/App.tsx": "63958a74abb6ac16e890728c20eabfc7296b4c0b2a361ba68b2337f7d805a181",
+    "src/room/HomeScene.tsx": "a9c1cfd48627624fc3cd6bf4039e55421c3e1682bb170cb61aea7fc01655a5ba",
+    "src/pet/LivingRoom.tsx": "ef72fe47fe14dd67bb78e512dd237f046730d68ebd3209ebc4c16060a380294f",
+    "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+    "src/pet/usePetVisibility.ts": "d322342a8b624b9a534e268299f26c539a171e9511854c7cc45582f166729134",
+    "src/pet/behaviour.ts": "7e4b850de2aa14c42cbd6bafac23420e428b5564350aa1c8a7b17db9b2a915af",
+    "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+    "src/character/motion.ts": "a912e37fb61319129245da227a7dc1e9cda10390596c68089440f307a7762b15",
+    "src/pet/PetExplore.tsx": "785ebd379165a9dfa8eb13c0c500d4260133206fdfa1600b87705234fdb08ad1",
+    "src/pet/PetExplore.css": "21a634ded88c3e74039e1780fd35dbed840d7d71110b0ccf4916aec37915146a",
+    "src/pet/PetPlay.tsx": "aa946e4910abd666f0fea82e124d3d59bc8d6e951af808edfa6cb92e7a37b2e7",
+    "src/pet/PetPlay.css": "a7aee9c909174d0a2bf8777b92baf6a0b4239031f187c0eabb8f9a2bd8c1f37e"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-source.diff",
+    "sha256": "d7a001d70935132ddc38ba96c048765984c9bb1ecc04e2b4b7c88ece80f96268"
+  }
+}

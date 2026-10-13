@@ -1,0 +1,32 @@
+✔ home speech clears view controls at320x640/100%/one room (1027.559066ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at320x640/200%/one room (1057.053986ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at390x664/200%/one room (812.917612ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at640x360/100%/one room (828.547939ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at640x360/200%/one room (854.836325ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at844x390/100%/one room (840.941319ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at844x390/200%/one room (870.597638ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at1280x800/100%/one room (847.621962ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at1280x800/200%/one room (868.893835ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at320x640/100%/two rooms (830.733034ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools+doors;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at320x640/200%/two rooms (833.218382ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools+doors;samecanvas/body/camera/placement/savedtables
+✔ home speech clears view controls at844x390/200%/two rooms (869.122073ms)
+ℹ Chromium 152.0.7977.82;actualbubblebelowtools+doors;samecanvas/body/camera/placement/savedtables
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10921.219508

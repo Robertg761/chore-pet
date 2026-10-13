@@ -1,0 +1,159 @@
+{
+  "freeze": {
+    "baseCommit": "3296d4a82052758ba7cdd05eb1691dc946e609b2",
+    "sources": {
+      "src/index.css": "28b09b668da92e49c2a13554af34e56408dcc677d21e954fbc8145262b592418",
+      "src/room/HomeScene.css": "7f57c79a20ca791e4eac3765acb5ca0a064a11fb167b5893d5c638c0d43075b1",
+      "scripts/browser/scene-dialogue.test.mjs": "9b6c98d42591f88d753e189dd30eb2b2e1b7ee9aec87afe7f3379ef24b6a403d",
+      "docs/ART.md": "c7dc68644f60cbe7c9c66fae3ec8589c140fed45a4e50b6f389f46dbc53e0b6a",
+      "docs/audits/2026-10-12-character-polish/compare-scene-dialogue.mjs": "f63ba18f1f7b8c1fc5f106e898a0a07c92b396a4f396f1a010ffbbd220d7d2f8"
+    },
+    "unchangedSources": {
+      "src/App.tsx": "63958a74abb6ac16e890728c20eabfc7296b4c0b2a361ba68b2337f7d805a181",
+      "src/room/HomeScene.tsx": "a9c1cfd48627624fc3cd6bf4039e55421c3e1682bb170cb61aea7fc01655a5ba",
+      "src/pet/LivingRoom.tsx": "ef72fe47fe14dd67bb78e512dd237f046730d68ebd3209ebc4c16060a380294f",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/usePetVisibility.ts": "d322342a8b624b9a534e268299f26c539a171e9511854c7cc45582f166729134",
+      "src/pet/behaviour.ts": "7e4b850de2aa14c42cbd6bafac23420e428b5564350aa1c8a7b17db9b2a915af",
+      "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+      "src/character/motion.ts": "a912e37fb61319129245da227a7dc1e9cda10390596c68089440f307a7762b15",
+      "src/pet/PetExplore.tsx": "785ebd379165a9dfa8eb13c0c500d4260133206fdfa1600b87705234fdb08ad1",
+      "src/pet/PetExplore.css": "21a634ded88c3e74039e1780fd35dbed840d7d71110b0ccf4916aec37915146a",
+      "src/pet/PetPlay.tsx": "aa946e4910abd666f0fea82e124d3d59bc8d6e951af808edfa6cb92e7a37b2e7",
+      "src/pet/PetPlay.css": "a7aee9c909174d0a2bf8777b92baf6a0b4239031f187c0eabb8f9a2bd8c1f37e"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-source.diff",
+      "sha256": "d7a001d70935132ddc38ba96c048765984c9bb1ecc04e2b4b7c88ece80f96268"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-artifacts.json",
+    "sha256": "6060813447ba8f777b75c364c45aac205bb1d9b3f3e5f02b6c59ea98d744806a"
+  },
+  "checks": [
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/scene-dialogue-build.log",
+      "logSha256": "18b64a5b058ea912c215bda488f918467e99c92883c7c74151038397df6dc683",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "comparison",
+      "log": "docs/audits/2026-10-12-character-polish/scene-dialogue-comparison.log",
+      "logSha256": "ffe8e5fd4a3fac0ede043df6b646d111305af718838e24adee77c84593e567ee",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-comparison.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/scene-dialogue-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint-final",
+      "log": "docs/audits/2026-10-12-character-polish/scene-dialogue-lint-final.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-lint-final.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/scene-dialogue-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/scene-dialogue-native.log",
+      "logSha256": "333d16efc9367ba8de147ac3f75dbedcd4ce805842cb8a2bf77b790a02411d43",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-bounds",
+      "log": "docs/audits/2026-10-12-character-polish/scene-dialogue-prototype-bounds.log",
+      "logSha256": "3f7521ee1f4bd399baa566c90fcfbcb5c610bcdb5ddb4fa9b98723f598183a4c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-prototype-bounds.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-revised",
+      "log": "docs/audits/2026-10-12-character-polish/scene-dialogue-prototype-revised.log",
+      "logSha256": "d4c8afbf2f7dd3bd716df14197885d93e1ee3344ff6430dc63ee45e12c2ee29a",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-prototype-revised.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype",
+      "log": "docs/audits/2026-10-12-character-polish/scene-dialogue-prototype.log",
+      "logSha256": "6b1021a37202ca0a0a57638152465459b40e55fe7f0cd1cae9fef5b7fec73dce",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-prototype.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/scene-dialogue-red.log",
+      "logSha256": "26523fa2d2488c67088778417ff0b2cbb1904f332112810e51d436d6b5542b04",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "shell-regressions",
+      "log": "docs/audits/2026-10-12-character-polish/scene-dialogue-shell-regressions.log",
+      "logSha256": "76805e85cbc64daca2080efb53350837e3c804a30adfffb321abe12a9827aeda",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-shell-regressions.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    }
+  ],
+  "status": "Scoped CSS verification and independent source/still review accepted; ready for local checkpoint.",
+  "result": "43 native cases pass: 37 scene/Explore/player/nav cases in 48.525s and 6 room/sheet/gift-history regressions in 10.843s. Production build, zero-warning lint and authored whitespace pass. New 12-case speech matrix checks 4px clearance below actual tools/compact doors, at least 8px before resident ink, canvas and zoom controls inside stage, unchanged geometry/body/camera/placement/saved tables within each invitation. Large-text 640/844 landscapes use a 250px canvas; actual one-room resident height improves from 5.60/15.22px to 25.07px, two-room 844 from 7.08 to 20.55px. Nine unaffected layouts retain exact canvas/body sizes; five already-clear views have byte-exact before/after PNGs. Default portrait 420px stage/282px canvas/body dimensions and real offscreen finite deadline checks pass. All 12 final PNGs match the corrected prototype bytes; root inspected six final images directly and six byte-exact earlier inspected images.",
+  "history": "Baseline 12 native cases: 5 pass, 7 actual speech/control collision failures, 12.128s. First injected grid prototype passes the original 12 checks (11.742s), but root comparison exposes an implicit grid column 67.3px too wide at 640/200% and cramped enlarged landscape art. Historical artifacts retained. Revised prototype limits grid column with minmax(0,1fr) and adds a 34rem app-shell query inside existing wide/landscape modes: 12 pass, 11.827s. Added stage/zoom bounds, resident clearance and enlarged landscape readability requirements then passes 12 stronger prototype checks, 10.921s. Prototype is stored separately; final native source contains no injection mechanism. CSS applied only after Batch41 checkpoint. Actual production passes all stronger checks.",
+  "limits": "CSS-only product change; prior checkpoint 2285 tests/113 files covers unchanged TS. No post-CSS full-unit repeat claimed. Chromium 152 and sampled 100/200% root text sizes, not browser zoom, physical devices, other browsers or assistive-technology certification. New speech matrix uses reduced motion and a frozen clock; real-clock offscreen finite behavior comes from unchanged scene/player regressions. Comparison binds stored numeric/pixel evidence; it does not certify human temporal quality or all room/camera/message combinations. The prototype-runner artifact represents the final strengthened prototype, not every earlier fixture revision. Global app-shell containment is checked through six existing default room/sheet/gift-history cases and the sampled navigation matrix. One heavy executor at a time, one Chromium, 768MB Node cap/nice 10; observed available RAM 6.2\u20136.8GiB, /tmp 4.1GB free.",
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-review-input.json",
+    "sha256": "8cc4a0fdb4cab146e29e1cb9c3c85510df51930a96ce13159ab4897380e4e209"
+  },
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/scene-dialogue-review.md",
+    "sha256": "5635e5aa99cb368547ab30fdbc7f67a6fdece56bb754d3f2b51c34413460a8ec",
+    "verdict": "Lovelace passes the sampled scope; no actionable findings. All 24 baseline/production PNGs inspected."
+  }
+}
