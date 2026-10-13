@@ -1,0 +1,79 @@
+{
+  "utc": "2026-10-13T02:14:35.603428+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "npm",
+    "run",
+    "build"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "minimumObservedAvailableBytes": 3426705408,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 3861594112,
+      "tmpFreeBytes": 4300972032
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 3861594112,
+      "tmpFreeBytes": 4300972032
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 3715293184,
+      "tmpFreeBytes": 4300972032
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "memAvailableBytes": 3492925440,
+      "tmpFreeBytes": 4300972032
+    },
+    {
+      "elapsedSeconds": 3.001,
+      "memAvailableBytes": 3438637056,
+      "tmpFreeBytes": 4300972032
+    },
+    {
+      "elapsedSeconds": 4.002,
+      "memAvailableBytes": 3434086400,
+      "tmpFreeBytes": 4300972032
+    },
+    {
+      "elapsedSeconds": 5.002,
+      "memAvailableBytes": 3426705408,
+      "tmpFreeBytes": 4300972032
+    },
+    {
+      "elapsedSeconds": 6.002,
+      "memAvailableBytes": 3553234944,
+      "tmpFreeBytes": 4300972032
+    },
+    {
+      "elapsedSeconds": 7.002,
+      "memAvailableBytes": 3500154880,
+      "tmpFreeBytes": 4300972032
+    },
+    {
+      "elapsedSeconds": 8.003,
+      "memAvailableBytes": 4069597184,
+      "tmpFreeBytes": 4300972032
+    },
+    {
+      "elapsedSeconds": 9.003,
+      "memAvailableBytes": 3875610624,
+      "tmpFreeBytes": 4300967936
+    },
+    {
+      "elapsedSeconds": 10.003,
+      "memAvailableBytes": 4074631168,
+      "tmpFreeBytes": 4300959744
+    }
+  ]
+}

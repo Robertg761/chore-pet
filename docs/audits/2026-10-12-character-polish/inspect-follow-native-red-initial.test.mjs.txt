@@ -1,0 +1,122 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+const out = process.env.CHORE_INSPECT_FOLLOW_CAPTURE_DIR
+import { browserApp, snapshot } from './helpers.mjs'
+
+const readFeet = node => ['left', 'right'].map(side => {
+  const foot = node.querySelector(`[data-foot="${side}"] ellipse`)
+  const point = new DOMPoint(+foot.getAttribute('cx'), +foot.getAttribute('cy'))
+    .matrixTransform(foot.getScreenCTM()).matrixTransform(node.getScreenCTM().inverse())
+  return { x: point.x, y: point.y }
+})
+
+for (const { species, selector, limit, speed, visible } of [
+  { species: 'mochi', selector: '[data-appendage="knot"] > g', limit: 1.76, speed: 9, visible: .9 },
+  { species: 'bun', selector: '[data-appendage="left-ear"]', limit: 4.81, speed: 24, visible: 3 },
+  { species: 'sprout', selector: '[data-appendage="stem"]', limit: 1.265, speed: 6.5, visible: .7 },
+]) {
+  test(`${species} inspects a bookshelf with one restrained appendage sway`, async t => {
+    const page = await browserApp(t, { reducedMotion: 'no-preference', viewport: { width: 1280, height: 800 } })
+    await page.evaluate(species => new Promise((resolve, reject) => {
+      const request = indexedDB.open('chore-pet', 1)
+      request.onerror = () => reject(request.error)
+      request.onsuccess = () => {
+        const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
+        const read = store.get('snapshot')
+        read.onsuccess = () => {
+          const saved = read.result, pet = Object.values(saved.tables.pets)[0]
+          pet.species = species
+          const room = Object.values(saved.tables.rooms)[0]
+          saved.tables.placed_objects = { 'inspect-shelf': { id: 'inspect-shelf', roomId: room.id, catalogId: 'bookshelf', tileX: 5, tileY: 5, rotation: 0 } }
+          saved.tables.chores = {}
+          saved.tables.completions = {}
+          pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
+          saved.outbox = {}
+          store.put(saved, 'snapshot')
+        }
+        tx.oncomplete = () => { db.close(); resolve() }
+        tx.onerror = () => { db.close(); reject(tx.error) }
+      }
+    }), species)
+    await page.clock.install()
+    await page.clock.pauseAt(Date.now() + 1000)
+    await page.addInitScript(() => {
+      Math.random = () => .99
+      const request = requestAnimationFrame, cancel = cancelAnimationFrame
+      window.__inspectFrames = new Set()
+      window.requestAnimationFrame = callback => {
+        const id = request(now => { window.__inspectFrames.delete(id); window.__inspectLastFrame = now; callback(now) })
+        window.__inspectFrames.add(id)
+        return id
+      }
+      window.cancelAnimationFrame = id => { window.__inspectFrames.delete(id); cancel(id) }
+    })
+    await page.reload()
+    const resident = page.locator('.room-pet')
+    await resident.waitFor()
+    const saved = (await snapshot(page)).tables
+    await resident.evaluate(node => { window.__inspectPet = node })
+    await page.getByRole('button', { name: 'Explore together', exact: true }).click()
+    await page.getByRole('combobox', { name: /^Show / }).selectOption('inspect-shelf')
+    await page.getByRole('button', { name: 'Look together', exact: true }).click()
+    const live = page.locator('.living-room [aria-live="polite"]')
+    let heard = ''
+    for (let i = 0; i < 1000 && !heard; i++) {
+      await page.clock.runFor(16)
+      heard = (await live.textContent()).trim()
+    }
+    assert.ok(heard.trim(), 'actual invited bookshelf arrival starts the furniture orientation')
+    // Allow the 360ms orientation and its next 16ms frame before the action.
+    // At 512ms after announced arrival, inspection is 136..168ms old, beyond
+    // its 120ms join. 101 samples span 1600ms and end before the 1800ms expiry.
+    await page.clock.runFor(512)
+    const position = await resident.getAttribute('transform'), feet = await resident.evaluate(readFeet), samples = []
+    for (let elapsed = 128; elapsed <= 1728; elapsed += 16) {
+      const sample = await resident.evaluate((node, selector) => {
+        const part = node.querySelector(selector), matrix = part.transform.baseVal.consolidate().matrix
+        return { time: window.__inspectLastFrame, angle: Math.atan2(matrix.b, matrix.a) * 180 / Math.PI,
+          lean: Number(node.querySelector('[data-character-body]').getAttribute('transform').match(/rotate\(([-\d.]+)/)[1]),
+          arms: [...node.querySelectorAll('[data-arm]')].map(n => Number(n.getAttribute('transform').match(/rotate\(([-\d.]+)/)[1])),
+          frames: window.__inspectFrames.size }
+      }, selector)
+      samples.push(sample)
+      assert.equal(sample.frames, 1)
+      assert.ok(Math.abs(sample.arms[0]) < .00001, 'inspection keeps the unraised arm neutral')
+      sample.position = await resident.getAttribute('transform')
+      assert.equal(sample.position, position)
+      const current = await resident.evaluate(readFeet)
+      sample.feet = current
+      current.forEach((p,i) => assert.ok(Math.hypot(p.x - feet[i].x, p.y - feet[i].y) < .01, 'inspection keeps actual foot contacts fixed'))
+      if (out && elapsed === 720) {
+        await mkdir(out, { recursive: true })
+        await page.screenshot({ path: join(out, `inspect-follow-${species}.png`) })
+      }
+      if (elapsed < 1728) await page.clock.runFor(16)
+    }
+    const peak = Math.max(...samples.map(x => Math.abs(x.angle)))
+    const maxFootDrift = Math.max(...samples.flatMap(sample => sample.feet.map((p,i) => Math.hypot(p.x-feet[i].x,p.y-feet[i].y))))
+    const observedSpeed = Math.max(...samples.slice(1).map((x,i) => x.time > samples[i].time ? Math.abs(x.angle - samples[i].angle) / (x.time - samples[i].time) * 1000 : 0))
+    t.diagnostic(`${species}: peak ${peak.toFixed(3)}deg, speed ${observedSpeed.toFixed(3)}deg/s; ${samples.length} actual SVG/RAF-time samples within actual inspection`)
+    assert.ok(samples.some(x => x.lean > 5), 'primary inspection lean remains visible')
+    assert.ok(samples.some(x => x.arms[1] < -8), 'the original pointing arm remains visible')
+    assert.ok(peak <= limit && peak > visible, 'actual appendage retains one small visible inspection sway')
+    assert.ok(observedSpeed < speed, 'actual inspection follow-through stays within speed budget')
+    const signs = samples.filter(x => Math.abs(x.angle) > 1e-6).map(x => Math.sign(x.angle))
+    assert.equal(signs.filter((sign,i) => i > 0 && sign !== signs[i-1]).length, 1)
+    assert.equal(await resident.evaluate(node => node === window.__inspectPet), true)
+    assert.equal((await live.textContent()).trim(), heard)
+    assert.deepEqual((await snapshot(page)).tables, saved)
+    if (out) {
+      await mkdir(out, { recursive: true })
+      await writeFile(join(out, `inspect-follow-${species}.json`), JSON.stringify({ species, samples, peak, observedSpeed, maxFootDrift, position, feet,
+        method: 'Actual invited bookshelf inspection; wait 512ms after announced orientation arrival, giving action-relative 136..168ms after its 120ms join. 101 SVG/RAF-time samples at 16ms over 1600ms end at 1736..1768ms, before 1800ms action expiry. PNG at label 720ms, approximately action 728..760ms near the held pointing pose. Sprout measures the actual stem angle, not the full leaf transform.' }, null, 2)+'\n')
+    }
+    await page.clock.runFor(192)
+    assert.equal(await page.evaluate(() => window.__inspectFrames.size), 1)
+    const arms = await resident.locator('[data-arm]').evaluateAll(nodes => nodes.map(n => Number(n.getAttribute('transform').match(/rotate\(([-\d.]+)/)[1])))
+    assert.ok(arms.every(value => Math.abs(value) < .00001), 'finite inspection hands off to the unchanged quiet settlement')
+    assert.deepEqual((await snapshot(page)).tables, saved)
+  })
+}

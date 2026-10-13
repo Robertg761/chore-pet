@@ -1,0 +1,369 @@
+diff --git i/src/character/motion.ts w/src/character/motion.ts
+index 3cc9ba0..3d38006 100644
+--- i/src/character/motion.ts
++++ w/src/character/motion.ts
+@@ -81,6 +81,8 @@ const SMELL_FOLLOW: Record<Species, number> = { mochi: 0.45, bun: 0.5, sprout: 0
+ const NOTICE_FOLLOW: Record<Species, number> = { mochi: 0.15, bun: 0.20, sprout: 0.15 }
+ // A short furniture turn makes one small settling deflection.
+ const TURN_FOLLOW: Record<Species, number> = { mochi: 0.10, bun: 0.12, sprout: 0.10 }
++// Inspection follows one calm sway without changing its pointing gesture.
++const INSPECT_FOLLOW: Record<Species, number> = { mochi: 0.35, bun: 0.4, sprout: 0.35 }
+ // Concern settles in one smaller sway while the resident studies wilting leaves.
+ const CONCERN_FOLLOW: Record<Species, number> = { mochi: 0.35, bun: 0.4, sprout: 0.35 }
+ 
+@@ -396,8 +398,10 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+     // Advance the calm sway so inherited lag cannot add a tiny initial
+     // counter-movement after the follow envelope first becomes visible.
+     const calmConcern = action === 'concern' && mood !== 'sick'
++    const calmInspect = action === 'inspect' && mood !== 'sick'
+     const followStrength = action === 'stretch' ? STRETCH[species].follow
+       : action === 'rest' ? REST_FOLLOW[species]
++      : calmInspect ? INSPECT_FOLLOW[species]
+       : calmConcern ? CONCERN_FOLLOW[species] : AFFECTION_FOLLOW[species]
+     const sway = action === 'notice' && mood !== 'sick'
+       ? Math.sin(t * Math.PI) * follow * personality.follow * NOTICE_FOLLOW[species] * energy
+@@ -405,7 +409,7 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+       ? Math.sin(t * Math.PI) * follow * personality.follow * TURN_FOLLOW[species] * energy
+       : action === 'smell' && mood !== 'sick'
+       ? Math.sin(t * Math.PI * 3 - personality.lag + 0.5) * follow * personality.follow * SMELL_FOLLOW[species] * (1 - 0.55 * ease(t)) * energy
+-      : action === 'affection' || action === 'stretch' || action === 'rest' || calmConcern
++      : action === 'affection' || action === 'stretch' || action === 'rest' || calmConcern || calmInspect
+       ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * followStrength * energy
+       : Math.sin(t * Math.PI * 4 - personality.lag) * follow * personality.follow * energy
+     frame.leftAppendage = sway
+diff --git 1/src/character/motion.inspect.test.ts 2/src/character/motion.inspect.test.ts
+new file mode 100644
+index 0000000..607b207
+--- /dev/null
++++ 2/src/character/motion.inspect.test.ts
+@@ -0,0 +1,64 @@
++import { describe, expect, it } from 'vitest'
++import { ACTION_MS, sampleMotion } from './motion'
++import type { Mood, Species } from '../domain/types'
++
++const at = (species: Species, elapsedMs: number, durationMs = ACTION_MS.inspect, reducedMotion = false, mood: Mood = 'happy') =>
++  sampleMotion({ species, mood, action: 'inspect', elapsedMs, durationMs, reducedMotion, distance: 0 })
++
++describe('quiet furniture inspection', () => {
++  it.each([
++    { species: 'mochi', excursion: 1.75, speed: 8.5, visible: 1 },
++    { species: 'bun', excursion: 4.8, speed: 23, visible: 3 },
++    { species: 'sprout', excursion: 3.15, speed: 15, visible: 2 },
++  ] as const)('keeps $species appendages restrained while the resident examines a furnishing', ({ species, excursion, speed, visible }) => {
++    for (const mood of ['happy', 'content', 'meh', 'scruffy'] as const) {
++      const energy = { happy: 1, content: .9, meh: .8, scruffy: .65 }[mood]
++      const frames = Array.from({ length: 1801 }, (_, ms) => at(species, ms, 1800, false, mood))
++      for (const side of ['leftAppendage', 'rightAppendage'] as const) {
++        const values = frames.map(frame => frame[side])
++        expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(excursion * energy + 1e-9)
++        expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visible * .7 * energy)
++        const velocity = values.slice(1).map((value, i) => Math.abs(value - values[i]) * 1000)
++        expect(Math.max(...velocity)).toBeLessThan(speed * energy)
++        expect(values[0]).toBe(0)
++        expect(values.at(-1)).toBe(0)
++        expect(velocity.at(-1)).toBeLessThan(.1)
++      }
++      const held = at(species, 720, 1800, false, mood)
++      expect(held.lean).toBeCloseTo(8 * ({ mochi: .82, bun: 1, sprout: .72 }[species]) * energy, 9)
++      expect(held.gazeX).toBe(4 * energy)
++      expect(held.leftArm).toBe(0)
++      expect(held.rightArm).toBeCloseTo(-12 * ({ mochi: .82, bun: 1, sprout: .72 }[species]) * energy, 9)
++      for (const frame of frames) {
++        expect(frame.bodyX).toBe(0)
++        expect(frame.bodyY).toBe(0)
++        expect(frame.leftFoot).toBe(0)
++        expect(frame.rightFoot).toBe(0)
++        expect(frame.accentOpacity).toBe(0)
++        expect(frame.shadowScale).toBe(1)
++        expect(frame.shadowOpacity).toBe(1)
++      }
++    }
++  })
++
++  it.each(['mochi', 'bun', 'sprout'] as const)('%s makes one calm sway at short, normal, long and legacy durations', species => {
++    for (const mood of ['happy', 'content', 'meh', 'scruffy'] as const) for (const duration of [900, 1800, 3600, 4200]) for (const side of ['leftAppendage', 'rightAppendage'] as const) {
++      const values = Array.from({ length: 1001 }, (_, phase) => at(species, phase / 1000 * duration, duration, false, mood)[side])
++      const signs = values.filter(value => Math.abs(value) > 1e-6).map(Math.sign)
++      expect(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1])).toHaveLength(1)
++      expect(values[0]).toBe(0)
++      expect(values.at(-1)).toBe(0)
++    }
++  })
++
++  it('retains a still reduced reaction throughout the existing 1800ms lifetime', () => {
++    expect(ACTION_MS.inspect).toBe(1800)
++    for (const species of ['mochi', 'bun', 'sprout'] as const) for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick'] as const) {
++      for (const ms of [0, 180, 600, 900, 1500, 1799, 1800]) {
++        const frame = at(species, ms, 1800, true, mood)
++        expect(frame.leftAppendage).toBe(0)
++        expect(frame.rightAppendage).toBe(0)
++      }
++    }
++  })
++})
+diff --git 1/scripts/browser/pet-inspect-follow.test.mjs 2/scripts/browser/pet-inspect-follow.test.mjs
+new file mode 100644
+index 0000000..e2c8316
+--- /dev/null
++++ 2/scripts/browser/pet-inspect-follow.test.mjs
+@@ -0,0 +1,125 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++const out = process.env.CHORE_INSPECT_FOLLOW_CAPTURE_DIR
++import { browserApp, snapshot } from './helpers.mjs'
++
++const readFeet = node => ['left', 'right'].map(side => {
++  const foot = node.querySelector(`[data-foot="${side}"] ellipse`)
++  const point = new DOMPoint(+foot.getAttribute('cx'), +foot.getAttribute('cy'))
++    .matrixTransform(foot.getScreenCTM()).matrixTransform(node.getScreenCTM().inverse())
++  return { x: point.x, y: point.y }
++})
++
++for (const { species, selector, limit, speed, visible, lean } of [
++  { species: 'mochi', selector: '[data-appendage="knot"] > g', limit: 1.76, speed: 9, visible: .9, lean: .8569177924259664 },
++  { species: 'bun', selector: '[data-appendage="left-ear"]', limit: 4.81, speed: 24, visible: 3, lean: .9174978876653315 },
++  { species: 'sprout', selector: '[data-appendage="stem"]', limit: 1.265, speed: 6.5, visible: .7, lean: .6605984791190387 },
++]) {
++  test(`${species} inspects a bookshelf with one restrained appendage sway`, async t => {
++    const page = await browserApp(t, { reducedMotion: 'no-preference', viewport: { width: 1280, height: 800 } })
++    await page.evaluate(species => new Promise((resolve, reject) => {
++      const request = indexedDB.open('chore-pet', 1)
++      request.onerror = () => reject(request.error)
++      request.onsuccess = () => {
++        const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
++        const read = store.get('snapshot')
++        read.onsuccess = () => {
++          const saved = read.result, pet = Object.values(saved.tables.pets)[0]
++          pet.species = species
++          const room = Object.values(saved.tables.rooms)[0]
++          saved.tables.placed_objects = { 'inspect-shelf': { id: 'inspect-shelf', roomId: room.id, catalogId: 'bookshelf', tileX: 5, tileY: 5, rotation: 0 } }
++          saved.tables.chores = {}
++          saved.tables.completions = {}
++          pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++          saved.outbox = {}
++          store.put(saved, 'snapshot')
++        }
++        tx.oncomplete = () => { db.close(); resolve() }
++        tx.onerror = () => { db.close(); reject(tx.error) }
++      }
++    }), species)
++    await page.clock.install()
++    await page.clock.pauseAt(Date.now() + 1000)
++    await page.addInitScript(() => {
++      Math.random = () => .99
++      const request = requestAnimationFrame, cancel = cancelAnimationFrame
++      window.__inspectFrames = new Set()
++      window.requestAnimationFrame = callback => {
++        const id = request(now => { window.__inspectFrames.delete(id); window.__inspectLastFrame = now; callback(now) })
++        window.__inspectFrames.add(id)
++        return id
++      }
++      window.cancelAnimationFrame = id => { window.__inspectFrames.delete(id); cancel(id) }
++    })
++    await page.reload()
++    const resident = page.locator('.room-pet')
++    await resident.waitFor()
++    const saved = (await snapshot(page)).tables
++    await resident.evaluate(node => { window.__inspectPet = node })
++    await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++    await page.getByRole('combobox', { name: /^Show / }).selectOption('inspect-shelf')
++    await page.getByRole('button', { name: 'Look together', exact: true }).click()
++    const live = page.locator('.living-room [aria-live="polite"]')
++    let heard = ''
++    for (let i = 0; i < 1000 && !heard; i++) {
++      await page.clock.runFor(16)
++      heard = (await live.textContent()).trim()
++    }
++    assert.ok(heard.trim(), 'actual invited bookshelf arrival starts the furniture orientation')
++    // Allow the 360ms orientation and its next 16ms frame before the action.
++    // At 512ms after announced arrival, inspection is 136..168ms old, beyond
++    // its 120ms join. 101 samples span 1600ms and end before the 1800ms expiry.
++    await page.clock.runFor(512)
++    const position = await resident.getAttribute('transform'), feet = await resident.evaluate(readFeet), samples = []
++    for (let elapsed = 128; elapsed <= 1728; elapsed += 16) {
++      const sample = await resident.evaluate((node, selector) => {
++        const part = node.querySelector(selector), matrix = part.transform.baseVal.consolidate().matrix
++        return { time: window.__inspectLastFrame, angle: Math.atan2(matrix.b, matrix.a) * 180 / Math.PI,
++          lean: Number(node.querySelector('[data-character-body]').getAttribute('transform').match(/rotate\(([-\d.]+)/)[1]),
++          arms: [...node.querySelectorAll('[data-arm]')].map(n => Number(n.getAttribute('transform').match(/rotate\(([-\d.]+)/)[1])),
++          frames: window.__inspectFrames.size }
++      }, selector)
++      samples.push(sample)
++      assert.equal(sample.frames, 1)
++      assert.ok(Math.abs(sample.arms[0]) < .00001, 'inspection keeps the unraised arm neutral')
++      sample.position = await resident.getAttribute('transform')
++      assert.equal(sample.position, position)
++      const current = await resident.evaluate(readFeet)
++      sample.feet = current
++      current.forEach((p,i) => assert.ok(Math.hypot(p.x - feet[i].x, p.y - feet[i].y) < .01, 'inspection keeps actual foot contacts fixed'))
++      if (out && elapsed === 720) {
++        await mkdir(out, { recursive: true })
++        await page.screenshot({ path: join(out, `inspect-follow-${species}.png`) })
++      }
++      if (elapsed < 1728) await page.clock.runFor(16)
++    }
++    const peak = Math.max(...samples.map(x => Math.abs(x.angle)))
++    const maxFootDrift = Math.max(...samples.flatMap(sample => sample.feet.map((p,i) => Math.hypot(p.x-feet[i].x,p.y-feet[i].y))))
++    const observedSpeed = Math.max(...samples.slice(1).map((x,i) => x.time > samples[i].time ? Math.abs(x.angle - samples[i].angle) / (x.time - samples[i].time) * 1000 : 0))
++    t.diagnostic(`${species}: peak ${peak.toFixed(3)}deg, speed ${observedSpeed.toFixed(3)}deg/s; ${samples.length} actual SVG/RAF-time samples within actual inspection`)
++    if (out) {
++      await mkdir(out, { recursive: true })
++      await writeFile(join(out, `inspect-follow-${species}.json`), JSON.stringify({ species, samples, peak, observedSpeed, maxFootDrift, position, feet,
++        method: 'Actual invited bookshelf inspection; wait 512ms after announced orientation arrival, giving action-relative 136..168ms after its 120ms join. 101 SVG/RAF-time samples at 16ms over 1600ms end at 1736..1768ms, before 1800ms action expiry. PNG at label 720ms, approximately action 728..760ms near the held pointing pose. Sprout measures the actual stem angle, not the full leaf transform.' }, null, 2)+'\n')
++    }
++    t.diagnostic(`lean range ${Math.min(...samples.map(x => x.lean))}..${Math.max(...samples.map(x => x.lean))}; pointing ${Math.min(...samples.map(x => x.arms[1]))}`)
++    // This shelf's gaze target attenuates the primary lean. Preserve the
++    // measured baseline peak rather than assuming a low-detail forward tilt.
++    assert.ok(Math.abs(Math.max(...samples.map(x => x.lean)) - lean) < .00001, 'height-aware bookshelf lean remains equal to the existing baseline')
++    assert.ok(samples.some(x => x.arms[1] < -8), 'the original pointing arm remains visible')
++    assert.ok(peak <= limit && peak > visible, 'actual appendage retains one small visible inspection sway')
++    assert.ok(observedSpeed < speed, 'actual inspection follow-through stays within speed budget')
++    const signs = samples.filter(x => Math.abs(x.angle) > 1e-6).map(x => Math.sign(x.angle))
++    assert.equal(signs.filter((sign,i) => i > 0 && sign !== signs[i-1]).length, 1)
++    assert.equal(await resident.evaluate(node => node === window.__inspectPet), true)
++    assert.equal((await live.textContent()).trim(), heard)
++    assert.deepEqual((await snapshot(page)).tables, saved)
++    await page.clock.runFor(192)
++    assert.equal(await page.evaluate(() => window.__inspectFrames.size), 1)
++    const arms = await resident.locator('[data-arm]').evaluateAll(nodes => nodes.map(n => Number(n.getAttribute('transform').match(/rotate\(([-\d.]+)/)[1])))
++    assert.ok(arms.every(value => Math.abs(value) < .00001), 'finite inspection hands off to the unchanged quiet settlement')
++    assert.deepEqual((await snapshot(page)).tables, saved)
++  })
++}
+diff --git i/docs/ART.md w/docs/ART.md
+index be8112c..1025c49 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -215,3 +215,5 @@ Healthy furniture orientation keeps its existing 360ms torso, gaze, grounded sta
+ Healthy upright notice uses one small appendage deflection over its existing600ms, with species strengths Mochi .15, Bun .20 and Sprout .15 applied to the existing follow envelope and mood energy. Primary lean, gaze, arm, ground, face, shadow and timing stay exact; sick and reduced sampler fields remain exact. Sleeping and sick renderers already keep body/appendages static and acknowledge only through the existing restrained gaze. Paused MotionReview samples prove upright SVG geometry, not a live resident notice path.
+ 
+ While the resident is sleeping or unwell, Spend time together offers one Check in control in place of the five disabled play gestures. It uses the existing resting notice gaze and600ms lifetime; body, appendages, ground, world position, health and saved tables stay intact. Repeated checks return busy before sound/speech and do not extend or queue the notice. Successful speech stays in the resident's live region. Reduced motion keeps the art still; offscreen notices can expire without a hidden clock or replay. Outside the resident room, Check in is disabled with the existing room explanation. Healthy play and travel keep their existing five-control policy. The optional callback preserves legacy panel consumers. No additional motion owner, timer, observer or saved schema is introduced.
++
++Healthy furniture inspection uses one restrained ear, knot or leaf sway within its existing timing. The pointing arm, height-aware torso lean, gaze and planted feet retain their original motion. Sick and reduced-motion sampling remain exact.
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-inspect-follow.mjs 2/docs/audits/2026-10-12-character-polish/capture-inspect-follow.mjs
+new file mode 100644
+index 0000000..fb24e18
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-inspect-follow.mjs
+@@ -0,0 +1,59 @@
++// Bounded static production art and numeric appendage curves; no live motion clock.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const label = process.argv[2], out = 'docs/audits/2026-10-12-character-polish'
++if (!['before', 'after', 'prototype'].includes(label)) throw new Error('Expected before or after')
++const baseline = await readFile(`${out}/inspect-follow-baseline.ts.txt`, 'utf8')
++const prototype = label === 'prototype' ? await readFile(`${out}/inspect-follow-prototype.ts.txt`, 'utf8') : null
++const server = await createServer({ plugins: [{ name: 'inspect-follow-baseline', enforce: 'pre', transform(code, id) {
++  if (label !== 'after' && id.split('?')[0] === `${process.cwd()}/src/character/motion.ts`) return { code: prototype ?? baseline, map: null }
++} }], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++  const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++  const { sampleMotion, ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts')
++  const { SPECIES_COLOUR, PALETTE } = await server.ssrLoadModule('/src/art/palette.ts')
++  const { PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++  const h = React.createElement, speciesList = ['mochi', 'bun', 'sprout'], samples = [], files = []
++  const equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++  const at = (species, elapsedMs, mood = 'happy') => sampleMotion({ species, action: 'inspect', mood, elapsedMs, blinkMs: elapsedMs, distance: 0, durationMs: ACTION_MS.inspect, reducedMotion: false })
++  async function png(name, width, height, children) {
++    const markup = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width, height }, h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), children))
++    await writeFile(`${out}/${name}`, new Resvg(markup).render().asPng()); files.push(name)
++  }
++  for (const variant of ['light', 'dark']) {
++    const cells = [], mood = variant === 'light' ? 'happy' : 'scruffy'
++    for (const species of speciesList) for (const facing of [1, -1]) for (const phase of [.24, .42, .6, .76]) {
++      const frame = at(species, ACTION_MS.inspect * phase, mood)
++      const draw = size => h('g', { transform: facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined }, h(AnimatedCharacterArt,
++        { species, mood, frame, equipped, bodyColour: variant === 'dark' ? PALETTE.ink : SPECIES_COLOUR[species], strokeScale: size === 25 ? PET_STROKE_SCALE : 1 }))
++      const views = [200, 60, 25].map((size, i) => h('g', { key: size, transform: `translate(${[0, 205, 280][i]} ${100 - size / 2}) scale(${size / 200})` }, draw(size)))
++      cells.push(h('g', { key: cells.length, transform: `translate(${cells.length % 4 * 330} ${Math.floor(cells.length / 4) * 230})` }, views,
++        h('text', { x: 8, y: 220, fontSize: 11, fill: PALETTE.ink }, `${species} inspect f${facing} ${phase * 100}%;200/60/25px`)))
++      samples.push({ variant, mood, species, facing, phase, frame })
++    }
++    await png(`inspect-follow-${label}-${variant}-sizes.png`, 1320, 1380, cells)
++  }
++  const colours = { mochi: '#ca6080', bun: '#397dbb', sprout: '#568747' }, curveSamples = []
++  const x0 = 54, y0 = 50, width = 430, height = 200, duration = ACTION_MS.inspect
++  const curves = speciesList.map(species => {
++    const points = Array.from({ length: 701 }, (_, n) => { const ms = duration * n / 700; return { ms, angle: at(species, ms).leftAppendage } })
++    curveSamples.push({ species, points })
++    return h('path', { key: species, d: points.map((p, n) => `${n ? 'L' : 'M'}${(x0 + p.ms / duration * width).toFixed(3)} ${(y0 + (14 - p.angle) / 28 * height).toFixed(3)}`).join(' '), fill: 'none', stroke: colours[species], strokeWidth: 1.8 })
++  })
++  await png(`inspect-follow-${label}-curves.png`, 520, 290, h('g', null,
++    h('text', { x: x0, y: 20, fontSize: 14, fill: PALETTE.ink }, `inspect:left appendage angle over ${duration}ms`),
++    speciesList.map((species, n) => h('text', { key: species, x: x0 + n * 130, y: 39, fontSize: 12, fill: colours[species] }, species)),
++    [-12, -6, 0, 6, 12].map(angle => h('g', { key: angle }, h('path', { d: `M${x0} ${y0 + (14 - angle) / 28 * height} h${width}`, stroke: '#d8d0c4', fill: 'none' }),
++      h('text', { x: 12, y: y0 + (14 - angle) / 28 * height + 4, fontSize: 11, fill: PALETTE.ink }, `${angle}°`))), curves,
++    [0, duration / 2, duration].map(ms => h('text', { key: ms, x: x0 + ms / duration * width, y: 275, textAnchor: 'middle', fontSize: 11, fill: PALETTE.ink }, `${ms}ms`))))
++  const hash = bytes => createHash('sha256').update(bytes).digest('hex')
++  const sources = ['src/character/motion.ts', 'src/character/AnimatedCharacter.tsx', 'src/character/species/animatedBody.tsx', 'src/character/parts.tsx', 'src/character/Character.tsx', 'src/art/palette.ts', 'src/room/shell/geometry.ts', `${out}/capture-inspect-follow.mjs`]
++  await writeFile(`${out}/inspect-follow-${label}.json`, JSON.stringify({ method: '48dressed species/mirror/phase/light-happy-or-dark-scruffy samples,144views at200/60/25px,and three appendage angle/time curves. Static/numeric only;no human temporal playback. Production art with exact7a7b169 sampler baseline for before, archived candidate for prototype and production sampler for after. No human temporal playback.', samples, curveSamples,
++    sourceSha256: Object.fromEntries(await Promise.all(sources.map(async path => [path, hash(label !== 'after' && path === 'src/character/motion.ts' ? prototype ?? baseline : await readFile(path))]))),
++    captureSha256: Object.fromEntries(await Promise.all(files.map(async file => [file, hash(await readFile(`${out}/${file}`))]))) }, null, 2) + '\n')
++  console.log(`Wrote ${label}:144sizeviews and3appendage curves`)
++} finally { await server.close() }
+diff --git 1/docs/audits/2026-10-12-character-polish/compare-inspect-follow.mjs 2/docs/audits/2026-10-12-character-polish/compare-inspect-follow.mjs
+new file mode 100644
+index 0000000..3b8fed5
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/compare-inspect-follow.mjs
+@@ -0,0 +1,41 @@
++// Exact sampler differential, isolated from live playback and browser clocks.
++import assert from 'node:assert/strict'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++import ts from 'typescript'
++const out = 'docs/audits/2026-10-12-character-polish'
++const baseline = await readFile(`${out}/inspect-follow-baseline.ts.txt`, 'utf8')
++const label = process.argv[2] ?? 'after'
++if (!['after', 'prototype'].includes(label)) throw new Error('Expected after or prototype')
++const currentPath = label === 'prototype' ? `${out}/inspect-follow-prototype.ts.txt` : 'src/character/motion.ts'
++const current = await readFile(currentPath, 'utf8')
++async function load(source) {
++  const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText
++  return import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`)
++}
++const before = await load(baseline), after = await load(current)
++assert.deepEqual(after.ACTION_MS, before.ACTION_MS)
++const phases = [0, .1, .18, .3, .35, .4, .48, .5, .56, .64, .75, .9, .92, 1, 2]
++let samples = 0, unchanged = 0, changed = 0
++const changes = {}
++for (const species of ['mochi', 'bun', 'sprout']) for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick']) {
++  for (const action of Object.keys(before.ACTION_MS)) for (const factor of [.5, 1, 2]) for (const reducedMotion of [false, true]) for (const facing of [1, -1]) for (const phase of phases) {
++    const durationMs = before.ACTION_MS[action] * factor
++    const input = { species, mood, action, durationMs, elapsedMs: phase * durationMs, blinkMs: 9250 + phase * durationMs, distance: phase * 3, facing, reducedMotion }
++    const a = before.sampleMotion(input), b = after.sampleMotion(input)
++    const allowed = !reducedMotion && action === 'inspect' && mood !== 'sick'
++    if (allowed) {
++      const { leftAppendage: oldLeft, rightAppendage: oldRight, ...oldRest } = a, { leftAppendage: newLeft, rightAppendage: newRight, ...newRest } = b
++      assert.deepEqual(newRest, oldRest, `${species}/${mood}/${action}/${factor}/${phase}: only appendages may change`)
++      if (oldLeft !== newLeft || oldRight !== newRight) {
++        changed++; const key = `${species}/${action}`; changes[key] = (changes[key] ?? 0) + 1
++      } else unchanged++
++    } else { assert.deepEqual(b, a, `${species}/${mood}/${action}/${factor}/${phase}/${reducedMotion}: exact preservation`); unchanged++ }
++    samples++
++  }
++}
++assert.deepEqual(Object.keys(changes).sort(), ['bun/inspect', 'mochi/inspect', 'sprout/inspect'])
++assert.ok(changed > 0)
++const sha256 = text => createHash('sha256').update(text).digest('hex')
++await writeFile(`${out}/inspect-follow-${label === 'prototype' ? 'prototype-' : ''}differential.json`, JSON.stringify({ method: 'Exact sampled frames across3species/5moods/16actions/3durations/2motionpolicies/2facings/15phases. Only normal healthy inspect appendages may differ; allotherfields/actions/sick/reduced/durations exact. Static numeric checks,not temporal acceptance.', label, currentPath, samples, unchanged, changed, changes, sourceSha256: { baseline: sha256(baseline), current: sha256(current), runner: sha256(await readFile(new URL(import.meta.url))) } }, null, 2) + '\n')
++console.log(`Compared ${samples} frames;${unchanged} exact;${changed} appendage-only differences`)
+diff --git 1/docs/audits/2026-10-12-character-polish/inspect-follow-design.md 2/docs/audits/2026-10-12-character-polish/inspect-follow-design.md
+new file mode 100644
+index 0000000..f62b8ab
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/inspect-follow-design.md
+@@ -0,0 +1,7 @@
++Furniture inspection currently repeats its appendage sway and uses the same secondary-motion strength as stronger reactions. Keep the 1800ms inspection and all of its primary movement, but give healthy residents one smaller sway: Mochi gain .35, Bun .4, Sprout .35, the existing .1/.42/.8/1 follow envelope, and sin(2*pi*t - species lag + .5). Preserve all other fields, all other actions, sick/reduced output and durations exactly. The 4200ms legacy look branch also remains compatible; current LivingRoom uses furnishing profiles.
++
++Validate all three species and all four healthy moods over the full duration, plus 900/1800/3600/4200ms timings. Compare 43,200 sampled frames, then inspect dressed art at 200/60/25px in both mirrors on light and dark bodies. The native regression invites the resident to an actual bookshelf, waits beyond the existing orientation and transition, and records 101 actual SVG/RAF samples within inspection. Verify one small appendage sway, the original pointing arm and height-aware lean, fixed feet/world position, one clock, stable resident identity/speech/data, and the finite handoff. Keep before/prototype/final captures and raw failures.
++
++The first native fixture incorrectly assumed the large forward lean of low furnishings. A pre-change probe measured the existing shelf-height-aware peaks (.8569177924 Mochi, .9174978877 Bun, .6605984791 Sprout); the corrected test requires those original peaks within .00001 degrees. Its three baseline failures then occur on the oversized appendage range. Preserve that fixture correction and probe separately from final acceptance.
++
++Start from reviewed Check in checkpoint f329967. Use one low-priority worker or isolated offline browser at a time, constrain Node heaps, check available RAM and /tmp, and retain at least 2 GB available RAM during jobs. Defer heavy work when launch headroom is insufficient. Do not modify unrelated applications or publish externally.

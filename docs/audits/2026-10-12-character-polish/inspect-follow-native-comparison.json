@@ -1,0 +1,62 @@
+{
+  "method": "Paired 101 stored native samples per species. Listed primary fields compared exactly by index; RAF absolute times and appendage angles deliberately excluded. Same frozen-clock sampling protocol, not human timing acceptance.",
+  "pairs": [
+    {
+      "species": "mochi",
+      "samples": 101,
+      "nonAppendageFieldsExact": [
+        "lean",
+        "arms",
+        "frames",
+        "position",
+        "feet"
+      ],
+      "beforePeak": 4.995767116546631,
+      "finalPeak": 1.7494733333587644,
+      "beforeSpeed": 34.887404181063175,
+      "finalSpeed": 7.956504821777344,
+      "maxFootDrift": 8.171863670955854e-06,
+      "finalSignCrossings": 1,
+      "beforeSha256": "b6a64b4e8be51df1ca7abc9cf6bc54ac620042c913c0ebde2dd8141d9f93252a",
+      "finalSha256": "c721dbff2e2f22fdeb40a9bb9b61c2eb233b815ad3e83bc57229649dd02bdff0"
+    },
+    {
+      "species": "bun",
+      "samples": 101,
+      "nonAppendageFieldsExact": [
+        "lean",
+        "arms",
+        "frames",
+        "position",
+        "feet"
+      ],
+      "beforePeak": 11.998729705810547,
+      "finalPeak": 4.7849578857421875,
+      "beforeSpeed": 83.6829524487257,
+      "finalSpeed": 22.013947367668123,
+      "maxFootDrift": 5.700145320502976e-06,
+      "finalSignCrossings": 1,
+      "beforeSha256": "7fd3fc035737f8c0f6cb6d3abd19ac454b33d5dcc4e4e952f4dc6d70be627bec",
+      "finalSha256": "5b9cdcf4dfa10ff8a7358394f73377949e4ca118757706e315b723c0b9f584cc"
+    },
+    {
+      "species": "sprout",
+      "samples": 101,
+      "nonAppendageFieldsExact": [
+        "lean",
+        "arms",
+        "frames",
+        "position",
+        "feet"
+      ],
+      "beforePeak": 3.597407341003419,
+      "finalPeak": 1.2186377048492432,
+      "beforeSpeed": 25.11818241328001,
+      "finalSpeed": 5.694601684808724,
+      "maxFootDrift": 8.640613358092528e-06,
+      "finalSignCrossings": 1,
+      "beforeSha256": "fd9e79b38da1e95a2402dc5146eaf49461b05181853622c8943148306ae9f0d2",
+      "finalSha256": "8399f94fa43397eef0c7e807061d61ac286b8a446920563359685a5dd91c1b30"
+    }
+  ]
+}

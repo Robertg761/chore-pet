@@ -1,0 +1,214 @@
+{
+  "freeze": {
+    "baseCommit": "f329967ef4ae02cb27a09c0d505b66cd1b22f87b",
+    "sources": {
+      "src/character/motion.ts": "f32b2c67dd237fb0d07dbefabe90f7c14e861644e027803f42342d94823d36e8",
+      "src/character/motion.inspect.test.ts": "3ef7b843e446a1b89a7de913eef2155c6ab0f0ef6abdb30932767c31256adae7",
+      "scripts/browser/pet-inspect-follow.test.mjs": "9862acdc9d4d2e21a804b91f6236a8fe1ed6dac6bc60f592dfb81f24c40d32bd",
+      "docs/ART.md": "b45bba56d0a690a67aa3bfd6521fff7a0989a1d8af456736e34e1e62e159a26e",
+      "docs/audits/2026-10-12-character-polish/capture-inspect-follow.mjs": "cbbd159cfb39e5116dab24a6b3f7642fbef637b17fff43839adf19feb4bb45de",
+      "docs/audits/2026-10-12-character-polish/compare-inspect-follow.mjs": "2be6273c67ca23affeff44e453e8cb801cdd787560070c62b67cf2b5a4ca4997",
+      "docs/audits/2026-10-12-character-polish/inspect-follow-design.md": "a59790c4ec59d1de2012a336a85b22722e712045ad14807e50e13f5c5e1487ad"
+    },
+    "unchangedSources": {
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/room/shell/geometry.ts": "967f73de056add3298520e580aa172a720132b49b11dd5bcab4a8f1a4b4fd027",
+      "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+      "src/pet/LivingRoom.tsx": "2511988fd34e30be0b696a5c4f378af88b28a45f7b9d905b06e04c66cdd99408",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/usePetVisibility.ts": "d322342a8b624b9a534e268299f26c539a171e9511854c7cc45582f166729134",
+      "src/pet/behaviour.ts": "7e4b850de2aa14c42cbd6bafac23420e428b5564350aa1c8a7b17db9b2a915af",
+      "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7",
+      "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+      "src/pet/playerAttention.ts": "06b7d8559968218fb3770743c7cc0d007af021bc60ded0da9088cfde673c5536",
+      "src/screens/WardrobePreview.tsx": "67cfc1c5a7302f3c7d91933446fb91cb43a061a6c1c0687b746d6e34d010a3de",
+      "src/dev/MotionReview.tsx": "4a22a5c5401427337d1a2e08d0609958ad5b7267fdd2f8ac9e3eda898cafffd1",
+      "scripts/browser/pet-turn-follow.test.mjs": "c85c2414c58d6d1764dc829c1b8f642a11a026b6bcff66a6615ae029e35be591",
+      "scripts/browser/pet-idle-clock.test.mjs": "367d4b77c6395e5bd4eaab3e481db40312500209b2f774440b91d6324fddf6a5",
+      "scripts/browser/pet-environment-attention.test.mjs": "82c65ebfae72229e2ce2aa3626ea877587b02f48d6209bfc8aee7fddde8e17ee",
+      "scripts/browser/pet-explore.test.mjs": "760ea164e885fcdeaf2fdd86062b0af1cb6e14323d81e7cf1822545c2181a827",
+      "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+      "src/pet/PetIntegration.test.tsx": "63dfc043cc158dbf94b3f9b1ba7701811f6abe8c25a56ce3c3f6a781c513fa9c",
+      "src/pet/activityMotion.test.ts": "1efdab93c7bc2909a03a806cd4390d2c69ddfe57cdb459bf92aad32ecc4797ab",
+      "src/pet/interactions.test.ts": "14c60a908f3cc24a51ae06a2061065be3c5ebc8e469e5a0069ac3f965605c516",
+      "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/inspect-follow-source.diff",
+      "sha256": "414c52115f0a502e5fe71e81823da033c2f9cfe1f8cdc5b809f3bc5f9726ab62"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/inspect-follow-artifacts.json",
+    "sha256": "f14b4c7146b16bc5fa54bef1da05ad7ddb9822b1a54a74d4d96e0ef6624d10c5"
+  },
+  "checks": [
+    {
+      "name": "after",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-after.log",
+      "logSha256": "01dfc17d039231e775a397845db899169e952fd10ff97d1877be4809e12304a1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-after.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "before",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-before.log",
+      "logSha256": "0b1a6e1827851d62b6f112b6a43b28c43b1b1eb8d18f26a208d5f39766db6c9b",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-before.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-build.log",
+      "logSha256": "79e724e4149031c5d28677a3811af281a919ff205344cba9cce05fc7ad311240",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "compare",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-compare.log",
+      "logSha256": "d5e5fa35503a640833e7ac8159f497796d9682459d81f6b0e696859951509527",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-compare.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-focused.log",
+      "logSha256": "440712f6890f94cdfb9dcad1d45b25e9ba6eb4ddc71f612e1dc35d14802f3aa1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-full.log",
+      "logSha256": "c8b8897b38fca00b1c137abc77365fbaf59b54b6466285db80712734280bd6e6",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-lint.log",
+      "logSha256": "c2c1b49fa87fc3469ba80cc568419689f4819edac0e66f530ba69634f6c9ee23",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-probe",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-native-probe.log",
+      "logSha256": "b82c169827ebf794a4f7b9e7d508dd91c7a301eecb004699b530fc5e3c7a1fc7",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-native-probe.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native-red-initial",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-native-red-initial.log",
+      "logSha256": "a5edcdcd3602115bcfd3cd974e946a3e9054d0222ca56c8502877324e378314f",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-native-red-initial.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native-red",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-native-red.log",
+      "logSha256": "a7fceebb3713ec22c7b0478a0334352eaa4337a896bb179e79f483abffd1558d",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-native-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-native.log",
+      "logSha256": "13bb3d3b455e36b022134c6fb9aa58e61533afaa0f50e49a27143c9472875c86",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-compare",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-prototype-compare.log",
+      "logSha256": "d5e5fa35503a640833e7ac8159f497796d9682459d81f6b0e696859951509527",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-prototype-compare.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-prototype.log",
+      "logSha256": "0395356fcc408787d802170b5718b42f94f6fc7c14d68a615928eb5d9a3eb03f",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-prototype.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/inspect-follow-red.log",
+      "logSha256": "f4e9a69ceb2297c5834a6dd886a82e8775be89b00e1df7b0193d1b3f252cac37",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/inspect-follow-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "status": "Completed scoped checks and independent static/source/still review; bound files reverified before local checkpoint.",
+  "result": "2349 full tests/121 files pass 84.31s; 163 focused/11 files 3.53s; 21 native 30.805832548s; production build, zero-warning scoped lint and authored whitespace pass. Three actual invited bookshelf cases record 101 SVG/RAF-time samples per species after the orientation/join, one visible appendage sign crossing, finite handoff, stable node/speech/store and one clock. Peaks/speeds: Mochi 1.749473deg/7.956505deg/s, Bun 4.784958/22.013947, Sprout stem 1.218638/5.694602. Local foot drift <.0000087. All 303 paired stored native samples exactly preserve lean, arms, frame count, room position and foot coordinates; absolute RAF times and angles are excluded from that pairing. Six low/high mirrored/rotated environment-aim, six exploration, three existing furnishing-turn and three reduced/sick/away idle-clock cases also pass. Both 43200-frame differential stages yield 42408 exact/792 healthy inspect appendage-only differences, preserving every other field/action/sick/reduced/duration. Production sampler equals inspected candidate; all three final static PNGs byte-exact prototype.",
+  "history": "Pre-product units: six expected excursion/reversal failures, one reduced pass, 189ms. First native fixture incorrectly required a forward lean >5 degrees for an overhead bookshelf: three primary-lean failures, 6.653945134s, with retained original fixture. A pre-product diagnostic probe retained 303 baseline samples/three held-pose PNGs and measured the existing height-aware lean peaks; same three early lean failures, 6.95240698s, fixture retained. Corrected native primary-lean checks now require those exact baseline peaks within .00001 degrees; three pre-product failures then occur on oversized appendage range, 6.398684581s. Subsequent speed/sign-crossing/identity/speech/store/handoff assertions were not reached in those red runs. Final checks all pass; no product expectation was relaxed to accept the old sway. The original sampler is archived and base-Git exact. Prototype numerical differential and six before/prototype still PNGs were reviewed before copying candidate into production. No final run is substituted by earlier reds/probes.",
+  "limits": "Static/numeric and paused Chromium152 production browser evidence, not human temporal acceptance or physical-device/AT certification. Native 101 samples per species cover approximately action-relative136..1768ms and exclude the 120ms transition, rather than every instant; 1800ms/default and 900/1800/3600/4200ms full timelines and four healthy moods are covered numerically. Native bookshelf fixture is happy, one full outfit and one default body/eye configuration per species, not all furnishings/equipment/colors/moods. Six existing actual gaze cases add low/high/rotation/mirror coverage. Sprout native angle is its stem transform (.4*leftAppendage), not full leaf motion. Static stages use 48 dressed species/mirror/phase/light-happy-or-dark-scruffy samples and 144 size views at200/60/25px, not exhaustive combinations. Root directly inspected six before/prototype sheets/curves and all six before/final native PNGs; final static three are byte-identical to inspected prototype. Resource guard samples host available RAM and /tmp about once per second during build/final static capture/native/full/lint, stops only its own process group at2GB reserve, and used one worker/browser/nice10. Observed minima are in the bound JSONs; this is not peak RSS/CPU/battery certification. Node heap caps: build/full768MB, final static256MB, native384MB, lint192MB. Prototype/red/focused jobs used smaller 192-384MB heaps sequentially, without the later guard. No external deployment, push or unrelated application change.",
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/inspect-follow-review-input.json",
+    "sha256": "61284ee3ca96b246045d5458fd6b330fba5b1c64cf4840816de4021cafc39772"
+  },
+  "independentReview": {
+    "path": "docs/audits/2026-10-12-character-polish/inspect-follow-independent-review.md",
+    "sha256": "777dafb275ad67798a1c7f5917d5f742492a8409f039876c329048cc8587fa43",
+    "verdict": "PASS; no scoped findings"
+  }
+}

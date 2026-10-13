@@ -1,0 +1,35 @@
+{
+  "utc": "2026-10-13T02:18:31.245049+00:00",
+  "memAvailableBytes": 4789518336,
+  "tmpFreeBytes": 4300947456,
+  "workspaceFreeBytes": 590441168896,
+  "guardedChecks": [
+    {
+      "file": "docs/audits/2026-10-12-character-polish/inspect-follow-after-resources.json",
+      "minimumObservedAvailableBytes": 3710902272,
+      "samples": 5
+    },
+    {
+      "file": "docs/audits/2026-10-12-character-polish/inspect-follow-build-resources.json",
+      "minimumObservedAvailableBytes": 3426705408,
+      "samples": 12
+    },
+    {
+      "file": "docs/audits/2026-10-12-character-polish/inspect-follow-full-resources.json",
+      "minimumObservedAvailableBytes": 2380791808,
+      "samples": 87
+    },
+    {
+      "file": "docs/audits/2026-10-12-character-polish/inspect-follow-lint-resources.json",
+      "minimumObservedAvailableBytes": 4757082112,
+      "samples": 3
+    },
+    {
+      "file": "docs/audits/2026-10-12-character-polish/inspect-follow-native-resources.json",
+      "minimumObservedAvailableBytes": 3304001536,
+      "samples": 33
+    }
+  ],
+  "runnerSha256": "bdaf59760648b4a7dbc2876cfc9e716bd85df4be4281f15f8324603d06f4dfd1",
+  "method": "Current resource snapshot plus five guarded check minima; approximate1s samples,not peak RSS/CPU certification."
+}

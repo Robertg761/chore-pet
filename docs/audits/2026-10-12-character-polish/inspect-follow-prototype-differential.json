@@ -1,0 +1,18 @@
+{
+  "method": "Exact sampled frames across3species/5moods/16actions/3durations/2motionpolicies/2facings/15phases. Only normal healthy inspect appendages may differ; allotherfields/actions/sick/reduced/durations exact. Static numeric checks,not temporal acceptance.",
+  "label": "prototype",
+  "currentPath": "docs/audits/2026-10-12-character-polish/inspect-follow-prototype.ts.txt",
+  "samples": 43200,
+  "unchanged": 42408,
+  "changed": 792,
+  "changes": {
+    "mochi/inspect": 264,
+    "bun/inspect": 264,
+    "sprout/inspect": 264
+  },
+  "sourceSha256": {
+    "baseline": "300b4f077d499653df339a85ffea9f9d0af6419f89bb667fbc50118f1b55ffe5",
+    "current": "f32b2c67dd237fb0d07dbefabe90f7c14e861644e027803f42342d94823d36e8",
+    "runner": "2be6273c67ca23affeff44e453e8cb801cdd787560070c62b67cf2b5a4ca4997"
+  }
+}
