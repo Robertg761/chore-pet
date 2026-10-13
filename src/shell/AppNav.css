@@ -72,7 +72,7 @@
   left: calc(50% + 10px);
   padding: 0 6px;
   font-size: 0.625rem;
-  line-height: 16px;
+  line-height: max(16px, 1.5em);
   white-space: nowrap;
   color: #fff;
   background: var(--accent);
@@ -117,7 +117,7 @@
 
 /* Wide screens: a rail down the left. */
 @media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
-  .app-nav { container-type: normal; border-top: 0; border-right: var(--outline); padding: 16px 0 0; }
+  .app-nav { container-type: normal; border-top: 0; border-right: var(--outline); padding: 16px 0 0; overflow-y: auto; }
   .app-nav-list { grid-template-columns: 1fr; gap: 6px; padding: 0 8px; }
   .app-nav-tab { min-height: 68px; font-size: 0.8125rem; }
   .app-nav-note { position: static; margin-top: 2px; }
@@ -137,7 +137,6 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  .app-nav-note { position: absolute; top: 0; left: auto; right: 0; margin: 0; }
 }
 .app-more-note { margin: 0; font-size: 0.8125rem; font-weight: 700; color: var(--ink-soft); text-align: center; }
 

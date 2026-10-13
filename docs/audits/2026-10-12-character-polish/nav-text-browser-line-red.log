@@ -1,0 +1,39 @@
+✔ navigation keeps visible labels and reward progress inside its rail at100%text (1841.70657ms)
+ℹ Chromium152.0.7977.82;6layouts;visible navigation typography and keyboard controls;unchanged savedtables.
+✖ navigation keeps visible labels and reward progress inside its rail at200%text (1057.249523ms)
+✔ player rows stay balanced and readable with default text in narrow panels (1412.12011ms)
+ℹ Chromium 152.0.7977.82; 6layouts; rows1/2/4, readable targets and focus, unchanged saved tables.
+✔ player rows stay balanced and readable with 200% text in narrow panels (1085.636466ms)
+ℹ Chromium 152.0.7977.82; 3layouts; rows1/2/4, readable targets and focus, unchanged saved tables.
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (3291.790657ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (3158.05267ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 640x360 (4390.623119ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (3246.579404ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (3211.313281ms)
+✔ wardrobe Hop live reduced motion settles the preview and does not restart when restored (1809.593356ms)
+✔ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (1789.324521ms)
+✔ wardrobe Stretch live reduced motion settles the preview and does not restart when restored (1798.072282ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 11
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29263.889724
+
+✖ failing tests:
+
+test at scripts/browser/nav-text.test.mjs:7:36
+✖ navigation keeps visible labels and reward progress inside its rail at200%text (1057.249523ms)
+  AssertionError [ERR_ASSERTION]: Gift in 1 text fits its badge background:{"label":"Gift in 1","badge":true,"box":{"left":26.625,"right":114.375,"top":213,"bottom":239,"width":87.75,"height":26},"control":{"left":6,"right":135,"top":176,"bottom":243,"width":129,"height":67},"text":[{"left":32.625,"right":108.375,"top":212,"bottom":239}],"fontSize":20}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/nav-text.test.mjs:32:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

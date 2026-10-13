@@ -1,0 +1,20 @@
+{
+  "artifacts": {
+    "docs/audits/2026-10-12-character-polish/nav-text-captures/nav-100.json": "054e26fd5c40fb1dcdb376a8c548e29ff54af78642c3c086ac87daef2814098b",
+    "docs/audits/2026-10-12-character-polish/nav-text-captures/nav-1280-100.png": "7d84bd3ab74571b0de1c468f74a3c23da2ceefd3b2aa8cf657bdfbd8aaeda008",
+    "docs/audits/2026-10-12-character-polish/nav-text-captures/nav-1280-200.png": "e29fb1a6518389e04209ba8c4e801d5bb16c164dc3b2f8ba8879586294775c69",
+    "docs/audits/2026-10-12-character-polish/nav-text-captures/nav-200.json": "78ff607d743a525c195024fee4654bc75b7623acf109e5469f1fe81a824b19d4",
+    "docs/audits/2026-10-12-character-polish/nav-text-captures/nav-320-100.png": "36d5e167e38b904ff0c1a1b3174a30637533a598d740e8d8bead93e682bf7ee6",
+    "docs/audits/2026-10-12-character-polish/nav-text-captures/nav-320-200.png": "8f1789df181d2eb90f65fb15d46d5c9ddf8afbd6ae4629ce93c8c9fab191f9b5",
+    "docs/audits/2026-10-12-character-polish/nav-text-captures/nav-844-100.png": "a5819dd138d7b761e968f7fec971522e36d115547d8101903a86480d1b784165",
+    "docs/audits/2026-10-12-character-polish/nav-text-captures/nav-844-200.png": "0f7653900104cb3170ef007796533fed81cdd0a02fa955c0050ac3079cc5860d"
+  },
+  "historicalArtifacts": {
+    "docs/audits/2026-10-12-character-polish/nav-text-captures-first/nav-100.json": "054e26fd5c40fb1dcdb376a8c548e29ff54af78642c3c086ac87daef2814098b",
+    "docs/audits/2026-10-12-character-polish/nav-text-captures-first/nav-1280-100.png": "7d84bd3ab74571b0de1c468f74a3c23da2ceefd3b2aa8cf657bdfbd8aaeda008",
+    "docs/audits/2026-10-12-character-polish/nav-text-captures-first/nav-320-100.png": "36d5e167e38b904ff0c1a1b3174a30637533a598d740e8d8bead93e682bf7ee6",
+    "docs/audits/2026-10-12-character-polish/nav-text-captures-first/nav-320-200.png": "8f1789df181d2eb90f65fb15d46d5c9ddf8afbd6ae4629ce93c8c9fab191f9b5",
+    "docs/audits/2026-10-12-character-polish/nav-text-captures-first/nav-844-100.png": "a5819dd138d7b761e968f7fec971522e36d115547d8101903a86480d1b784165"
+  },
+  "scope": "Six final native default/200% navigation PNGs and two JSON records covering12layouts total;5partial first-run artifacts preserved. Root inspected all6finalPNG. Navigation typography/keyboard/pill geometry, not whole-app enlarged-text acceptance."
+}

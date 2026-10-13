@@ -1,0 +1,997 @@
+{
+  "samples": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 640
+      },
+      "textPercent": 200,
+      "nav": {
+        "left": 0,
+        "right": 320,
+        "top": 585,
+        "bottom": 640,
+        "width": 320,
+        "height": 55
+      },
+      "track": {
+        "left": 0,
+        "right": 320,
+        "top": 588,
+        "bottom": 640,
+        "width": 320,
+        "height": 52
+      },
+      "pill": {
+        "left": 12.1875,
+        "right": 58.1875,
+        "top": 600,
+        "bottom": 630,
+        "width": 46,
+        "height": 30
+      },
+      "icon": {
+        "left": 12.1875,
+        "right": 58.1875,
+        "top": 600,
+        "bottom": 630,
+        "width": 46,
+        "height": 30
+      },
+      "buttons": [
+        {
+          "label": "Home",
+          "box": {
+            "left": 4,
+            "right": 66.390625,
+            "top": 588,
+            "bottom": 640,
+            "width": 62.390625,
+            "height": 52
+          }
+        },
+        {
+          "label": "Build",
+          "box": {
+            "left": 66.390625,
+            "right": 128.796875,
+            "top": 588,
+            "bottom": 640,
+            "width": 62.40625,
+            "height": 52
+          }
+        },
+        {
+          "label": "Wardrobe",
+          "box": {
+            "left": 128.796875,
+            "right": 191.1875,
+            "top": 588,
+            "bottom": 640,
+            "width": 62.390625,
+            "height": 52
+          }
+        },
+        {
+          "label": "RewardsGift in 1",
+          "box": {
+            "left": 191.1875,
+            "right": 253.59375,
+            "top": 588,
+            "bottom": 640,
+            "width": 62.40625,
+            "height": 52
+          }
+        },
+        {
+          "label": "More",
+          "box": {
+            "left": 253.59375,
+            "right": 316,
+            "top": 588,
+            "bottom": 640,
+            "width": 62.40625,
+            "height": 52
+          }
+        }
+      ],
+      "visibleText": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 664
+      },
+      "textPercent": 200,
+      "nav": {
+        "left": 0,
+        "right": 390,
+        "top": 609,
+        "bottom": 664,
+        "width": 390,
+        "height": 55
+      },
+      "track": {
+        "left": 0,
+        "right": 390,
+        "top": 612,
+        "bottom": 664,
+        "width": 390,
+        "height": 52
+      },
+      "pill": {
+        "left": 19.1875,
+        "right": 65.1875,
+        "top": 624,
+        "bottom": 654,
+        "width": 46,
+        "height": 30
+      },
+      "icon": {
+        "left": 19.1875,
+        "right": 65.1875,
+        "top": 624,
+        "bottom": 654,
+        "width": 46,
+        "height": 30
+      },
+      "buttons": [
+        {
+          "label": "Home",
+          "box": {
+            "left": 4,
+            "right": 80.390625,
+            "top": 612,
+            "bottom": 664,
+            "width": 76.390625,
+            "height": 52
+          }
+        },
+        {
+          "label": "Build",
+          "box": {
+            "left": 80.390625,
+            "right": 156.796875,
+            "top": 612,
+            "bottom": 664,
+            "width": 76.40625,
+            "height": 52
+          }
+        },
+        {
+          "label": "Wardrobe",
+          "box": {
+            "left": 156.796875,
+            "right": 233.1875,
+            "top": 612,
+            "bottom": 664,
+            "width": 76.390625,
+            "height": 52
+          }
+        },
+        {
+          "label": "RewardsGift in 1",
+          "box": {
+            "left": 233.1875,
+            "right": 309.59375,
+            "top": 612,
+            "bottom": 664,
+            "width": 76.40625,
+            "height": 52
+          }
+        },
+        {
+          "label": "More",
+          "box": {
+            "left": 309.59375,
+            "right": 386,
+            "top": 612,
+            "bottom": 664,
+            "width": 76.40625,
+            "height": 52
+          }
+        }
+      ],
+      "visibleText": []
+    },
+    {
+      "viewport": {
+        "width": 640,
+        "height": 360
+      },
+      "textPercent": 200,
+      "nav": {
+        "left": 0,
+        "right": 144,
+        "top": 0,
+        "bottom": 360,
+        "width": 144,
+        "height": 360
+      },
+      "track": {
+        "left": 0,
+        "right": 141,
+        "top": 8,
+        "bottom": 303,
+        "width": 141,
+        "height": 295
+      },
+      "pill": {
+        "left": 47.5,
+        "right": 93.5,
+        "top": 19,
+        "bottom": 49,
+        "width": 46,
+        "height": 30
+      },
+      "icon": {
+        "left": 47.5,
+        "right": 93.5,
+        "top": 19,
+        "bottom": 49,
+        "width": 46,
+        "height": 30
+      },
+      "buttons": [
+        {
+          "label": "Home",
+          "box": {
+            "left": 6,
+            "right": 135,
+            "top": 8,
+            "bottom": 60,
+            "width": 129,
+            "height": 52
+          }
+        },
+        {
+          "label": "Build",
+          "box": {
+            "left": 6,
+            "right": 135,
+            "top": 64,
+            "bottom": 116,
+            "width": 129,
+            "height": 52
+          }
+        },
+        {
+          "label": "Wardrobe",
+          "box": {
+            "left": 6,
+            "right": 135,
+            "top": 120,
+            "bottom": 172,
+            "width": 129,
+            "height": 52
+          }
+        },
+        {
+          "label": "RewardsGift in 1",
+          "box": {
+            "left": 6,
+            "right": 135,
+            "top": 176,
+            "bottom": 247,
+            "width": 129,
+            "height": 71
+          }
+        },
+        {
+          "label": "More",
+          "box": {
+            "left": 6,
+            "right": 135,
+            "top": 251,
+            "bottom": 303,
+            "width": 129,
+            "height": 52
+          }
+        }
+      ],
+      "visibleText": [
+        {
+          "label": "Gift in 1",
+          "badge": true,
+          "box": {
+            "left": 26.625,
+            "right": 114.375,
+            "top": 213,
+            "bottom": 243,
+            "width": 87.75,
+            "height": 30
+          },
+          "control": {
+            "left": 6,
+            "right": 135,
+            "top": 176,
+            "bottom": 247,
+            "width": 129,
+            "height": 71
+          },
+          "text": [
+            {
+              "left": 32.625,
+              "right": 108.375,
+              "top": 214,
+              "bottom": 241
+            }
+          ],
+          "fontSize": 20
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "textPercent": 200,
+      "nav": {
+        "left": 0,
+        "right": 144,
+        "top": 0,
+        "bottom": 390,
+        "width": 144,
+        "height": 390
+      },
+      "track": {
+        "left": 0,
+        "right": 141,
+        "top": 8,
+        "bottom": 303,
+        "width": 141,
+        "height": 295
+      },
+      "pill": {
+        "left": 47.5,
+        "right": 93.5,
+        "top": 19,
+        "bottom": 49,
+        "width": 46,
+        "height": 30
+      },
+      "icon": {
+        "left": 47.5,
+        "right": 93.5,
+        "top": 19,
+        "bottom": 49,
+        "width": 46,
+        "height": 30
+      },
+      "buttons": [
+        {
+          "label": "Home",
+          "box": {
+            "left": 6,
+            "right": 135,
+            "top": 8,
+            "bottom": 60,
+            "width": 129,
+            "height": 52
+          }
+        },
+        {
+          "label": "Build",
+          "box": {
+            "left": 6,
+            "right": 135,
+            "top": 64,
+            "bottom": 116,
+            "width": 129,
+            "height": 52
+          }
+        },
+        {
+          "label": "Wardrobe",
+          "box": {
+            "left": 6,
+            "right": 135,
+            "top": 120,
+            "bottom": 172,
+            "width": 129,
+            "height": 52
+          }
+        },
+        {
+          "label": "RewardsGift in 1",
+          "box": {
+            "left": 6,
+            "right": 135,
+            "top": 176,
+            "bottom": 247,
+            "width": 129,
+            "height": 71
+          }
+        },
+        {
+          "label": "More",
+          "box": {
+            "left": 6,
+            "right": 135,
+            "top": 251,
+            "bottom": 303,
+            "width": 129,
+            "height": 52
+          }
+        }
+      ],
+      "visibleText": [
+        {
+          "label": "Gift in 1",
+          "badge": true,
+          "box": {
+            "left": 26.625,
+            "right": 114.375,
+            "top": 213,
+            "bottom": 243,
+            "width": 87.75,
+            "height": 30
+          },
+          "control": {
+            "left": 6,
+            "right": 135,
+            "top": 176,
+            "bottom": 247,
+            "width": 129,
+            "height": 71
+          },
+          "text": [
+            {
+              "left": 32.625,
+              "right": 108.375,
+              "top": 214,
+              "bottom": 241
+            }
+          ],
+          "fontSize": 20
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 900,
+        "height": 800
+      },
+      "textPercent": 200,
+      "nav": {
+        "left": 0,
+        "right": 208,
+        "top": 0,
+        "bottom": 800,
+        "width": 208,
+        "height": 800
+      },
+      "track": {
+        "left": 0,
+        "right": 205,
+        "top": 16,
+        "bottom": 420.96875,
+        "width": 205,
+        "height": 404.96875
+      },
+      "pill": {
+        "left": 79.5,
+        "right": 125.5,
+        "top": 22,
+        "bottom": 52,
+        "width": 46,
+        "height": 30
+      },
+      "icon": {
+        "left": 79.5,
+        "right": 125.5,
+        "top": 22,
+        "bottom": 52,
+        "width": 46,
+        "height": 30
+      },
+      "buttons": [
+        {
+          "label": "Home",
+          "box": {
+            "left": 8,
+            "right": 197,
+            "top": 16,
+            "bottom": 85.59375,
+            "width": 189,
+            "height": 69.59375
+          }
+        },
+        {
+          "label": "Build",
+          "box": {
+            "left": 8,
+            "right": 197,
+            "top": 91.59375,
+            "bottom": 161.1875,
+            "width": 189,
+            "height": 69.59375
+          }
+        },
+        {
+          "label": "Wardrobe",
+          "box": {
+            "left": 8,
+            "right": 197,
+            "top": 167.1875,
+            "bottom": 236.78125,
+            "width": 189,
+            "height": 69.59375
+          }
+        },
+        {
+          "label": "RewardsGift in 1",
+          "box": {
+            "left": 8,
+            "right": 197,
+            "top": 242.78125,
+            "bottom": 345.375,
+            "width": 189,
+            "height": 102.59375
+          }
+        },
+        {
+          "label": "More",
+          "box": {
+            "left": 8,
+            "right": 197,
+            "top": 351.375,
+            "bottom": 420.96875,
+            "width": 189,
+            "height": 69.59375
+          }
+        }
+      ],
+      "visibleText": [
+        {
+          "label": "Home",
+          "badge": false,
+          "box": {
+            "left": 66,
+            "right": 138.984375,
+            "top": 53,
+            "bottom": 81.59375,
+            "width": 72.984375,
+            "height": 28.59375
+          },
+          "control": {
+            "left": 8,
+            "right": 197,
+            "top": 16,
+            "bottom": 85.59375,
+            "width": 189,
+            "height": 69.59375
+          },
+          "text": [
+            {
+              "left": 66,
+              "right": 138.984375,
+              "top": 49,
+              "bottom": 84
+            }
+          ],
+          "fontSize": 26
+        },
+        {
+          "label": "Build",
+          "badge": false,
+          "box": {
+            "left": 70.109375,
+            "right": 134.890625,
+            "top": 128.59375,
+            "bottom": 157.1875,
+            "width": 64.78125,
+            "height": 28.59375
+          },
+          "control": {
+            "left": 8,
+            "right": 197,
+            "top": 91.59375,
+            "bottom": 161.1875,
+            "width": 189,
+            "height": 69.59375
+          },
+          "text": [
+            {
+              "left": 70.109375,
+              "right": 134.890625,
+              "top": 124.59375,
+              "bottom": 159.59375
+            }
+          ],
+          "fontSize": 26
+        },
+        {
+          "label": "Wardrobe",
+          "badge": false,
+          "box": {
+            "left": 40.34375,
+            "right": 164.640625,
+            "top": 204.1875,
+            "bottom": 232.78125,
+            "width": 124.296875,
+            "height": 28.59375
+          },
+          "control": {
+            "left": 8,
+            "right": 197,
+            "top": 167.1875,
+            "bottom": 236.78125,
+            "width": 189,
+            "height": 69.59375
+          },
+          "text": [
+            {
+              "left": 40.34375,
+              "right": 164.640625,
+              "top": 200.1875,
+              "bottom": 235.1875
+            }
+          ],
+          "fontSize": 26
+        },
+        {
+          "label": "Rewards",
+          "badge": false,
+          "box": {
+            "left": 48.71875,
+            "right": 156.265625,
+            "top": 279.78125,
+            "bottom": 308.375,
+            "width": 107.546875,
+            "height": 28.59375
+          },
+          "control": {
+            "left": 8,
+            "right": 197,
+            "top": 242.78125,
+            "bottom": 345.375,
+            "width": 189,
+            "height": 102.59375
+          },
+          "text": [
+            {
+              "left": 48.71875,
+              "right": 156.265625,
+              "top": 275.78125,
+              "bottom": 310.78125
+            }
+          ],
+          "fontSize": 26
+        },
+        {
+          "label": "Gift in 1",
+          "badge": true,
+          "box": {
+            "left": 58.625,
+            "right": 146.375,
+            "top": 311.375,
+            "bottom": 341.375,
+            "width": 87.75,
+            "height": 30
+          },
+          "control": {
+            "left": 8,
+            "right": 197,
+            "top": 242.78125,
+            "bottom": 345.375,
+            "width": 189,
+            "height": 102.59375
+          },
+          "text": [
+            {
+              "left": 64.625,
+              "right": 140.375,
+              "top": 312.375,
+              "bottom": 339.375
+            }
+          ],
+          "fontSize": 20
+        },
+        {
+          "label": "More",
+          "badge": false,
+          "box": {
+            "left": 71.0625,
+            "right": 133.921875,
+            "top": 388.375,
+            "bottom": 416.96875,
+            "width": 62.859375,
+            "height": 28.59375
+          },
+          "control": {
+            "left": 8,
+            "right": 197,
+            "top": 351.375,
+            "bottom": 420.96875,
+            "width": 189,
+            "height": 69.59375
+          },
+          "text": [
+            {
+              "left": 71.0625,
+              "right": 133.921875,
+              "top": 384.375,
+              "bottom": 419.375
+            }
+          ],
+          "fontSize": 26
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "textPercent": 200,
+      "nav": {
+        "left": 0,
+        "right": 208,
+        "top": 0,
+        "bottom": 800,
+        "width": 208,
+        "height": 800
+      },
+      "track": {
+        "left": 0,
+        "right": 205,
+        "top": 16,
+        "bottom": 420.96875,
+        "width": 205,
+        "height": 404.96875
+      },
+      "pill": {
+        "left": 79.5,
+        "right": 125.5,
+        "top": 22,
+        "bottom": 52,
+        "width": 46,
+        "height": 30
+      },
+      "icon": {
+        "left": 79.5,
+        "right": 125.5,
+        "top": 22,
+        "bottom": 52,
+        "width": 46,
+        "height": 30
+      },
+      "buttons": [
+        {
+          "label": "Home",
+          "box": {
+            "left": 8,
+            "right": 197,
+            "top": 16,
+            "bottom": 85.59375,
+            "width": 189,
+            "height": 69.59375
+          }
+        },
+        {
+          "label": "Build",
+          "box": {
+            "left": 8,
+            "right": 197,
+            "top": 91.59375,
+            "bottom": 161.1875,
+            "width": 189,
+            "height": 69.59375
+          }
+        },
+        {
+          "label": "Wardrobe",
+          "box": {
+            "left": 8,
+            "right": 197,
+            "top": 167.1875,
+            "bottom": 236.78125,
+            "width": 189,
+            "height": 69.59375
+          }
+        },
+        {
+          "label": "RewardsGift in 1",
+          "box": {
+            "left": 8,
+            "right": 197,
+            "top": 242.78125,
+            "bottom": 345.375,
+            "width": 189,
+            "height": 102.59375
+          }
+        },
+        {
+          "label": "More",
+          "box": {
+            "left": 8,
+            "right": 197,
+            "top": 351.375,
+            "bottom": 420.96875,
+            "width": 189,
+            "height": 69.59375
+          }
+        }
+      ],
+      "visibleText": [
+        {
+          "label": "Home",
+          "badge": false,
+          "box": {
+            "left": 66,
+            "right": 138.984375,
+            "top": 53,
+            "bottom": 81.59375,
+            "width": 72.984375,
+            "height": 28.59375
+          },
+          "control": {
+            "left": 8,
+            "right": 197,
+            "top": 16,
+            "bottom": 85.59375,
+            "width": 189,
+            "height": 69.59375
+          },
+          "text": [
+            {
+              "left": 66,
+              "right": 138.984375,
+              "top": 49,
+              "bottom": 84
+            }
+          ],
+          "fontSize": 26
+        },
+        {
+          "label": "Build",
+          "badge": false,
+          "box": {
+            "left": 70.109375,
+            "right": 134.890625,
+            "top": 128.59375,
+            "bottom": 157.1875,
+            "width": 64.78125,
+            "height": 28.59375
+          },
+          "control": {
+            "left": 8,
+            "right": 197,
+            "top": 91.59375,
+            "bottom": 161.1875,
+            "width": 189,
+            "height": 69.59375
+          },
+          "text": [
+            {
+              "left": 70.109375,
+              "right": 134.890625,
+              "top": 124.59375,
+              "bottom": 159.59375
+            }
+          ],
+          "fontSize": 26
+        },
+        {
+          "label": "Wardrobe",
+          "badge": false,
+          "box": {
+            "left": 40.34375,
+            "right": 164.640625,
+            "top": 204.1875,
+            "bottom": 232.78125,
+            "width": 124.296875,
+            "height": 28.59375
+          },
+          "control": {
+            "left": 8,
+            "right": 197,
+            "top": 167.1875,
+            "bottom": 236.78125,
+            "width": 189,
+            "height": 69.59375
+          },
+          "text": [
+            {
+              "left": 40.34375,
+              "right": 164.640625,
+              "top": 200.1875,
+              "bottom": 235.1875
+            }
+          ],
+          "fontSize": 26
+        },
+        {
+          "label": "Rewards",
+          "badge": false,
+          "box": {
+            "left": 48.71875,
+            "right": 156.265625,
+            "top": 279.78125,
+            "bottom": 308.375,
+            "width": 107.546875,
+            "height": 28.59375
+          },
+          "control": {
+            "left": 8,
+            "right": 197,
+            "top": 242.78125,
+            "bottom": 345.375,
+            "width": 189,
+            "height": 102.59375
+          },
+          "text": [
+            {
+              "left": 48.71875,
+              "right": 156.265625,
+              "top": 275.78125,
+              "bottom": 310.78125
+            }
+          ],
+          "fontSize": 26
+        },
+        {
+          "label": "Gift in 1",
+          "badge": true,
+          "box": {
+            "left": 58.625,
+            "right": 146.375,
+            "top": 311.375,
+            "bottom": 341.375,
+            "width": 87.75,
+            "height": 30
+          },
+          "control": {
+            "left": 8,
+            "right": 197,
+            "top": 242.78125,
+            "bottom": 345.375,
+            "width": 189,
+            "height": 102.59375
+          },
+          "text": [
+            {
+              "left": 64.625,
+              "right": 140.375,
+              "top": 312.375,
+              "bottom": 339.375
+            }
+          ],
+          "fontSize": 20
+        },
+        {
+          "label": "More",
+          "badge": false,
+          "box": {
+            "left": 71.0625,
+            "right": 133.921875,
+            "top": 388.375,
+            "bottom": 416.96875,
+            "width": 62.859375,
+            "height": 28.59375
+          },
+          "control": {
+            "left": 8,
+            "right": 197,
+            "top": 351.375,
+            "bottom": 420.96875,
+            "width": 189,
+            "height": 69.59375
+          },
+          "text": [
+            {
+              "left": 71.0625,
+              "right": 133.921875,
+              "top": 384.375,
+              "bottom": 419.375
+            }
+          ],
+          "fontSize": 26
+        }
+      ]
+    }
+  ],
+  "scope": "Actual native navigation label/badge/target/pill/focus geometry, keyboard More/Escape and saved tables. Root text enlargement, not browser zoom or whole-app acceptance."
+}

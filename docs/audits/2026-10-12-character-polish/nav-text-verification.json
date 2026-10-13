@@ -1,0 +1,112 @@
+{
+  "freeze": {
+    "baseCommit": "e94eab1df88f67b5d20d68933822d18946bee4b4",
+    "sources": {
+      "src/index.css": "eae24e93f7e02b2215493e533632a0d67d96af1f796acff7aad04e36a6218fc6",
+      "src/shell/AppNav.css": "800842f38febe420774d01481cd739a756841dd8d8d1268edf9293e9d10d512e",
+      "scripts/browser/nav-text.test.mjs": "834166f2324bc643013f3dfc9059481b80490665a2941150b58d80275fb96426",
+      "docs/ART.md": "8321c2abe7fd2e87133be5995db3172b7cee8f27075e50e1e78d98c6ac655245"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/nav-text-source.diff",
+      "sha256": "03db6cf1b13ef06c8121221dcf4756178684d3c1ef450bae66f359187ce00b27"
+    },
+    "scope": "CSS-only runtime in two files: text-relative navigation rail widths, scalable reward badge line box, static landscape reward note, vertical desktop rail overflow. New bounded native regression and ART. No TS/JS runtime change."
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/nav-text-artifacts.json",
+    "sha256": "8dbabfb4779cc7e86c620395ed5623964278372045467c04b7ffc3501f2fac58"
+  },
+  "checks": [
+    {
+      "name": "browser-line-red",
+      "log": "docs/audits/2026-10-12-character-polish/nav-text-browser-line-red.log",
+      "logSha256": "11a2d36dd7cbcc159863a495ad92a21576f50bad32d22979d8d540aa9d809cbd",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/nav-text-browser-line-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "browser",
+      "log": "docs/audits/2026-10-12-character-polish/nav-text-browser.log",
+      "logSha256": "ab9e573cdf1d0a931d710c38338fc20f65211073cfed1c9ea36b41e403d0d741",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/nav-text-browser.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "build-first",
+      "log": "docs/audits/2026-10-12-character-polish/nav-text-build-first.log",
+      "logSha256": "8eef74034e08118d96b04b36633472e42400f53c1e3ec14da53ca4c9723aab89",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/nav-text-build-first.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/nav-text-build.log",
+      "logSha256": "3afd940a98acecb1df47f252025d41d4764914093a09a90838fc2f38d3e893c3",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/nav-text-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/nav-text-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/nav-text-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/nav-text-lint.log",
+      "logSha256": "639c0f373f296ebe13e4681bb2e3eb0f46c301843d57764a68e2a06434fe0245",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/nav-text-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/nav-text-red.log",
+      "logSha256": "811495b3fb1cd896aedbef5fb5bf6452c061f92e845c535b2926dfb23a97c982",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/nav-text-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "priorFullReference": {
+    "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-full.log",
+    "sha256": "83a28fa4c99ca8244c0a07188a6b51f9c2c822a54d399047029d72b4544a7585",
+    "exit": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-full.exit",
+    "exitSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "result": "2262tests/110files71.70s;predates this CSS-only change. No full repeat or post-CSS full pass claimed."
+  },
+  "status": "Complete scoped native/build/lint/diff verification and independent source/still approval; prior full is historical only. Ready for local checkpoint.",
+  "result": "2finalnative cases3.982s over12default/200%layouts;10unchanged player/wardrobe cases from first12native run29.264s (11pass/1badge line failure),12unique applicable cases total. Final2cases cover actualvisiblelabel/badge Range rectangles,44targets,activepill/focus geometry,keyboardMore/Escape,unchanged savedtables. Default rails104/72px;200%208/144px;badge16/30px. Finalbuild/zero-warninglint/diff0. Root inspectedall6finalPNG.",
+  "history": "Baseline1default6-layoutpass/1large-textbadgeclipfail3.045s. FirstCSSfix rail widths/staticlandscapenote/max16px1.3em line:11of12nativepass,1glyphbounds1pxabovebadgebackground. Lastlineheight max16px1.5em thenfinal2casespass;5partialfirstcaptureartifacts andrawfailures retained.",
+  "limits": "Native focus assertions use actualTab/:focus-visible and controlboundingboxes, not physicalAT acceptance. Mobile enlargedtext intentionallyretains existingicon-only policy/fullnames;nativefilters1pxclippedlabels. CSSonlyruntime;priorfullpredateschange. Finalnative2plus10unchangedmain-view regressions,not14unique. Sixscreenshots default/200%,roottextenlargement notbrowserzoom/whole-app acceptance. SequentialoneChromium/768MBNodecap;no newclocks/state/input/persistence.",
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/nav-text-review-input.json",
+    "sha256": "f50314f57e5d17cf2b681a0937f6fd088b36bf622d91feb12b997984366cf6bf"
+  },
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/nav-text-review.md",
+    "sha256": "30e161c9c573667a9635fa420fb7051d6b995280ea8d02081dab610c0008f32d",
+    "verdict": "Independent source/still approval; no actionable findings. Source-reviewed desktop overflow has no forced-scroll native case."
+  }
+}

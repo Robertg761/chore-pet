@@ -1,0 +1,14 @@
+{
+  "baseCommit": "e94eab1df88f67b5d20d68933822d18946bee4b4",
+  "sources": {
+    "src/index.css": "eae24e93f7e02b2215493e533632a0d67d96af1f796acff7aad04e36a6218fc6",
+    "src/shell/AppNav.css": "800842f38febe420774d01481cd739a756841dd8d8d1268edf9293e9d10d512e",
+    "scripts/browser/nav-text.test.mjs": "834166f2324bc643013f3dfc9059481b80490665a2941150b58d80275fb96426",
+    "docs/ART.md": "8321c2abe7fd2e87133be5995db3172b7cee8f27075e50e1e78d98c6ac655245"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/nav-text-source.diff",
+    "sha256": "03db6cf1b13ef06c8121221dcf4756178684d3c1ef450bae66f359187ce00b27"
+  },
+  "scope": "CSS-only runtime in two files: text-relative navigation rail widths, scalable reward badge line box, static landscape reward note, vertical desktop rail overflow. New bounded native regression and ART. No TS/JS runtime change."
+}

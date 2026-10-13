@@ -1,0 +1,12 @@
+✔ navigation keeps visible labels and reward progress inside its rail at100%text (1783.249492ms)
+ℹ Chromium152.0.7977.82;6layouts;visible navigation typography and keyboard controls;unchanged savedtables.
+✔ navigation keeps visible labels and reward progress inside its rail at200%text (1817.608524ms)
+ℹ Chromium152.0.7977.82;6layouts;visible navigation typography and keyboard controls;unchanged savedtables.
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3982.171274
