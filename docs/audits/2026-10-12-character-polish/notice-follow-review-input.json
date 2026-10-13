@@ -1,0 +1,187 @@
+{
+  "freeze": {
+    "baseCommit": "5839d16f06533818f679f5499be6dfc8ce916c13",
+    "sources": {
+      "src/character/motion.ts": "300b4f077d499653df339a85ffea9f9d0af6419f89bb667fbc50118f1b55ffe5",
+      "src/character/motion.notice.test.ts": "8b58a2dc145c91d4d0f9151e566e4415e1d6e7f7d17ad4cd03a66f685ba1026f",
+      "scripts/browser/pet-notice-follow.test.mjs": "7d2eaac2737f5f2d8b4d2e2cc7419c9b4e090c3e844ae6d4a18b41ca9b6c2d85",
+      "docs/ART.md": "82a30e6b6a1aac9018823c603667746a2606705f478dbf0be6fd1131ea42e0cc",
+      "docs/audits/2026-10-12-character-polish/capture-notice-follow.mjs": "008c4ed02a358089d4a12df6804057abdb4c9ab4c548d28d565efb668c62147a",
+      "docs/audits/2026-10-12-character-polish/compare-notice-follow.mjs": "df556b9ffa36095d395ab4c09dbb4029a91c455149b9e969de3ad9c5b06dd856"
+    },
+    "unchangedSources": {
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/room/shell/geometry.ts": "967f73de056add3298520e580aa172a720132b49b11dd5bcab4a8f1a4b4fd027",
+      "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+      "src/pet/LivingRoom.tsx": "ef72fe47fe14dd67bb78e512dd237f046730d68ebd3209ebc4c16060a380294f",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/behaviour.ts": "7e4b850de2aa14c42cbd6bafac23420e428b5564350aa1c8a7b17db9b2a915af",
+      "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7",
+      "src/screens/WardrobePreview.tsx": "67cfc1c5a7302f3c7d91933446fb91cb43a061a6c1c0687b746d6e34d010a3de",
+      "src/dev/MotionReview.tsx": "4a22a5c5401427337d1a2e08d0609958ad5b7267fdd2f8ac9e3eda898cafffd1",
+      "scripts/browser/pet-turn-follow.test.mjs": "c85c2414c58d6d1764dc829c1b8f642a11a026b6bcff66a6615ae029e35be591",
+      "scripts/browser/pet-idle-clock.test.mjs": "367d4b77c6395e5bd4eaab3e481db40312500209b2f774440b91d6324fddf6a5",
+      "scripts/browser/motion-review.test.mjs": "8d584e7b82dbc37720b519b5bd3d319a077a657fd7304df7ad2263bdb4c3dea7",
+      "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+      "src/pet/PetIntegration.test.tsx": "63dfc043cc158dbf94b3f9b1ba7701811f6abe8c25a56ce3c3f6a781c513fa9c"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/notice-follow-source.diff",
+      "sha256": "d9e121eac78448e75684a090ab5bd07c90e34c041e5cca158e3868fab87fee27"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/notice-follow-artifacts.json",
+    "sha256": "9879ffee020b5a57bd003ae711e2784e509c4a08512d392470f1792ad71cb181"
+  },
+  "checks": [
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-build.log",
+      "logSha256": "607b55b8ee45ffb9a41cab5ea24d4242c5854b3c3d588c1e9a2d2052a949f06b",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-capture-after.log",
+      "logSha256": "01dfc17d039231e775a397845db899169e952fd10ff97d1877be4809e12304a1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-capture-after.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-capture-before.log",
+      "logSha256": "a91969405dbf1910248d2365f041fe079f5646efe4839f3a071a0a13f083eb05",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-capture-before.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-prototype",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-capture-prototype.log",
+      "logSha256": "0395356fcc408787d802170b5718b42f94f6fc7c14d68a615928eb5d9a3eb03f",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-capture-prototype.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "differential-prototype",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-differential-prototype.log",
+      "logSha256": "d5e5fa35503a640833e7ac8159f497796d9682459d81f6b0e696859951509527",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-differential-prototype.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "differential",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-differential.log",
+      "logSha256": "d5e5fa35503a640833e7ac8159f497796d9682459d81f6b0e696859951509527",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-differential.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-focused.log",
+      "logSha256": "123dbc9e4a24cda1e831f42fd7edcbc17b3cb4c0038f4efb90af3f8c04709b3d",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-full.log",
+      "logSha256": "c5ee0ff0f4ffb747496e77811139a3dd43a68364aebd2c64605db28fb9176dcb",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-red",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-native-red.log",
+      "logSha256": "bb864c6febefbcee602f84ea22666f3b5c2a424cea3bcb5d17803185ef82e056",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-native-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-native.log",
+      "logSha256": "4156aa7edecc705a65888cddb51cf84891bdc650962ed427f126a4e1f277a853",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red-scoped",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-red-scoped.log",
+      "logSha256": "d8b71692e6edc9baff4fd7133b14033fd933016ab95d8d6cf858ab1fab1a334d",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-red-scoped.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/notice-follow-red.log",
+      "logSha256": "1bcc7209838339336619bf2f60791ca6ea6c5a9d574b03f044d18030d685c6a1",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/notice-follow-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "status": "Completed scoped checks; awaiting independent static/source/still review.",
+  "result": "2322 full tests/118files pass75.52s;233focused/8files6.45s;11native53.151s;production build, lint and authored whitespace pass. Native three upright MotionReview cases sample42actualSVG frames/species across full600ms in30ms steps and both mirrors, stable feet and0RAF requests. Peak/speed Mochi .750deg/5.815deg/s,Bun2.400/18.607,Sprout stem .540/4.187;foot drift below.0000062localunits, no displacement sign crossings, exact neutral endpoints, reduced still/no replay/saved tables unchanged. Three resting-clock,two previous review and three furnishing-turn native regressions pass. Both43200frame differential stages42408exact/792healthy-notice appendage-only differences;every other field/action and all sick/reduced frames/durations exact. Production equals inspected archived candidate; three final static PNGs byte-exact prototype.",
+  "history": "Two pre-product seven-unit runs each six excursion/reversal failures and one reduced pass,185ms each. Initial loop included sick; scoped final loop tests healthy moods because sleeping/sick rendering intentionally bypasses articulated body/appendages and only uses notice gaze. No angle/speed/reversal criterion relaxed. Three native pre-product cases fail three displacement sign crossings vs zero after successful full-duration feet/pose/mirror/0RAF checks; peak/speed assertions are later and were not reached. Exact original sampler archived. Prototype reviewed in six before/prototype sheets/curves before production copied it. Whitespace wrapper first had a Python parse error before any check executed; corrected runner produced empty diagnostic log/exit0. Previous Batch46 broad staged whitespace check included unedited raw terminal log/patch whitespace; retained exactly, while authored source whitespace passed separately.",
+  "limits": "Native production Chromium152 paused SVG scrubbing and static/numeric curves, not live playback or a healthy resident notice path. The current resident uses notice only while sleeping/sick, whose body/appendages already remain static and are deliberately unchanged; existing native idle-clock cases establish finite notice lifetimes, not new appendage motion. No human temporal/physical-device/AT/peak-resource certification. Native21times/facing at30ms steps, not every frame; Sprout native measures stem0.4*leftAppendage, not complete leaves. Static48dressed samples/144sizeviews per stage couple light/happy and dark/scruffy, four phases and both mirrors; not every color/mood/equipment combination. Root inspected six before/prototype PNGs plus three final native PNGs; final three static PNGs verified byte-exact prototype. Red test source prior mood-scope edit not separately archived; preserved raw logs/explicit history. One heavy job/worker/browser,768MBNodecap/nice10; bound memory/tmp snapshot is not peak RSS/CPU/battery measurement."
+}

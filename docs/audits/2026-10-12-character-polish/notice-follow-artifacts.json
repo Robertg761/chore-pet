@@ -1,0 +1,27 @@
+{
+  "files": {
+    "docs/audits/2026-10-12-character-polish/notice-follow-baseline.ts.txt": "2242e3fdb9dacb58ecaf779183916ecbba2124862f6f5083d9e3ac8a5bb95d10",
+    "docs/audits/2026-10-12-character-polish/notice-follow-prototype.ts.txt": "300b4f077d499653df339a85ffea9f9d0af6419f89bb667fbc50118f1b55ffe5",
+    "docs/audits/2026-10-12-character-polish/notice-follow-differential.json": "3b7e28e385495e46e9e18c1aa748941f4a714d58745e063f26f982ee15ac56b0",
+    "docs/audits/2026-10-12-character-polish/notice-follow-prototype-differential.json": "3248409e73a3f00c5debe4e0ed30d7110ff457f2d635d979ec26a3a4a7632d41",
+    "docs/audits/2026-10-12-character-polish/notice-follow-resources.json": "c4927ed92d258bd7633b510fadfea577eceb101052ce13f6a5a6e1d6cd20df6a",
+    "docs/audits/2026-10-12-character-polish/notice-follow-before.json": "cd7359bdbde33f12c2e9cbf2a5d97d397fb4c85b2f005ca44cb2015c146075a1",
+    "docs/audits/2026-10-12-character-polish/notice-follow-before-light-sizes.png": "ee408c54ea928cc75fe99207bf779f8783c83430a4204221430c2cda15dcb38f",
+    "docs/audits/2026-10-12-character-polish/notice-follow-before-dark-sizes.png": "f99869d1cfdf5cea3629a68240ff1c4ae577e3b3c33a9a2d9b94a63d7d5692b3",
+    "docs/audits/2026-10-12-character-polish/notice-follow-before-curves.png": "a0c20247339b7689f13647b511d6ad371c1b8051dc9816a7e65bb5829118c0d3",
+    "docs/audits/2026-10-12-character-polish/notice-follow-prototype.json": "39bc64b509d172575ca5f542c385145bef602599679c3e7e485c0775d02ca317",
+    "docs/audits/2026-10-12-character-polish/notice-follow-prototype-light-sizes.png": "2a5bdb465c9cac3fab8173859c6f98768e43dcf5bd0b700e846a22540551370f",
+    "docs/audits/2026-10-12-character-polish/notice-follow-prototype-dark-sizes.png": "79e61b25cc29b775c426a20490660a0c749084afbc7c4c8360797f15ccfac63c",
+    "docs/audits/2026-10-12-character-polish/notice-follow-prototype-curves.png": "af4b3a70d1c4ae39e3c9e3666b00c967e351fc3dc191ac71ba8e8695e2ac802b",
+    "docs/audits/2026-10-12-character-polish/notice-follow-after.json": "966d8057f8850116e6ae36b249f40c555f3e11997878e82f8db889a3ff50ec10",
+    "docs/audits/2026-10-12-character-polish/notice-follow-after-light-sizes.png": "2a5bdb465c9cac3fab8173859c6f98768e43dcf5bd0b700e846a22540551370f",
+    "docs/audits/2026-10-12-character-polish/notice-follow-after-dark-sizes.png": "79e61b25cc29b775c426a20490660a0c749084afbc7c4c8360797f15ccfac63c",
+    "docs/audits/2026-10-12-character-polish/notice-follow-after-curves.png": "af4b3a70d1c4ae39e3c9e3666b00c967e351fc3dc191ac71ba8e8695e2ac802b",
+    "docs/audits/2026-10-12-character-polish/notice-follow-native/notice-follow-bun.json": "007a7a7f458a89783cbe279a64d3657a7ae4a074755366714beeace4a7f4fafe",
+    "docs/audits/2026-10-12-character-polish/notice-follow-native/notice-follow-bun.png": "abfbd7233ccd8383f3b611a7d1925f976ddb12a7f7a87c8003b030b9f197ec77",
+    "docs/audits/2026-10-12-character-polish/notice-follow-native/notice-follow-mochi.json": "6222b6c99d11b24bf949d9935d7bbadff7f7b3edbf0994a7423b7abc2e25382e",
+    "docs/audits/2026-10-12-character-polish/notice-follow-native/notice-follow-mochi.png": "851cb8b82fecf08a28d6f6e6c93dd3a98d5999396b5058ab04d46efcb1468f48",
+    "docs/audits/2026-10-12-character-polish/notice-follow-native/notice-follow-sprout.json": "a4167bee31de9b690a03fbb73aaff22b7b0663c9b632c097dfe167815205627a",
+    "docs/audits/2026-10-12-character-polish/notice-follow-native/notice-follow-sprout.png": "8ac76a035074d359d589177cedfc372b039d7584c47b1c01ea313bada4da23a7"
+  }
+}

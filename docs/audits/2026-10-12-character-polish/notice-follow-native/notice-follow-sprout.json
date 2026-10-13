@@ -1,0 +1,723 @@
+{
+  "species": "sprout",
+  "samples": [
+    {
+      "facing": "right",
+      "elapsed": 0,
+      "angle": 0,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 30,
+      "angle": 0,
+      "feet": [
+        {
+          "x": 78.00000235976091,
+          "y": 177.99999621468487
+        },
+        {
+          "x": 121.99999808220775,
+          "y": 177.99999621468487
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 60,
+      "angle": 0,
+      "feet": [
+        {
+          "x": 78.00000111695695,
+          "y": 178.00000229998477
+        },
+        {
+          "x": 122.00000271323754,
+          "y": 178.00000229998477
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 90,
+      "angle": 0.016085295006632805,
+      "feet": [
+        {
+          "x": 78.00000111695695,
+          "y": 178.00000229998477
+        },
+        {
+          "x": 122.00000271323754,
+          "y": 178.00000229998477
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 120,
+      "angle": 0.07361666858196257,
+      "feet": [
+        {
+          "x": 77.99999984176095,
+          "y": 177.99999986596163
+        },
+        {
+          "x": 122.00000015845683,
+          "y": 177.99999986436433
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 150,
+      "angle": 0.17304350435733795,
+      "feet": [
+        {
+          "x": 78.00000006441167,
+          "y": 177.9999999508716
+        },
+        {
+          "x": 121.9999999367395,
+          "y": 177.99999994242944
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 180,
+      "angle": 0.29864105582237244,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 210,
+      "angle": 0.42214590311050415,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 240,
+      "angle": 0.5078029036521912,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 270,
+      "angle": 0.533351719379425,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 300,
+      "angle": 0.5399999618530275,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 330,
+      "angle": 0.533351719379425,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 360,
+      "angle": 0.5135704874992371,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 390,
+      "angle": 0.48114353418350225,
+      "feet": [
+        {
+          "x": 77.99999999999999,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 420,
+      "angle": 0.43686917424201965,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 450,
+      "angle": 0.38183769583702093,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 480,
+      "angle": 0.31740403175354004,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 510,
+      "angle": 0.2068494111299515,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 540,
+      "angle": 0.08343459665775299,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 570,
+      "angle": 0.013199158944189548,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "right",
+      "elapsed": 600,
+      "angle": 0,
+      "feet": [
+        {
+          "x": 78,
+          "y": 178
+        },
+        {
+          "x": 122,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": 1
+    },
+    {
+      "facing": "left",
+      "elapsed": 0,
+      "angle": 0,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 30,
+      "angle": 0,
+      "feet": [
+        {
+          "x": 121.99999764023909,
+          "y": 177.99999621468487
+        },
+        {
+          "x": 78.00000191779225,
+          "y": 177.99999621468487
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 60,
+      "angle": 0,
+      "feet": [
+        {
+          "x": 121.99999888304305,
+          "y": 178.00000229998477
+        },
+        {
+          "x": 77.99999728676246,
+          "y": 178.00000229998477
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 90,
+      "angle": 0.016085295006632805,
+      "feet": [
+        {
+          "x": 121.99999888304305,
+          "y": 178.00000229998477
+        },
+        {
+          "x": 77.99999728676246,
+          "y": 178.00000229998477
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 120,
+      "angle": 0.07361666858196257,
+      "feet": [
+        {
+          "x": 122.00000015823906,
+          "y": 177.99999986596163
+        },
+        {
+          "x": 77.99999984154319,
+          "y": 177.99999986436433
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 150,
+      "angle": 0.17304350435733795,
+      "feet": [
+        {
+          "x": 121.99999993558833,
+          "y": 177.9999999508716
+        },
+        {
+          "x": 78.00000006326047,
+          "y": 177.99999994242944
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 180,
+      "angle": 0.29864105582237244,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 210,
+      "angle": 0.42214590311050415,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 240,
+      "angle": 0.5078029036521912,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 270,
+      "angle": 0.533351719379425,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 300,
+      "angle": 0.5399999618530275,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 330,
+      "angle": 0.533351719379425,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 360,
+      "angle": 0.5135704874992371,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 390,
+      "angle": 0.48114353418350225,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 420,
+      "angle": 0.43686917424201965,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 450,
+      "angle": 0.38183769583702093,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 480,
+      "angle": 0.31740403175354004,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 510,
+      "angle": 0.2068494111299515,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 540,
+      "angle": 0.08343459665775299,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 570,
+      "angle": 0.013199158944189548,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    },
+    {
+      "facing": "left",
+      "elapsed": 600,
+      "angle": 0,
+      "feet": [
+        {
+          "x": 122,
+          "y": 178
+        },
+        {
+          "x": 78,
+          "y": 178
+        }
+      ],
+      "pose": "idle",
+      "mirror": -1
+    }
+  ],
+  "peak": 0.5399999618530275,
+  "observedSpeed": 4.186585048834483,
+  "maxFootDrift": 0.000004460614553830365,
+  "method": "Actual production MotionReview SVG scrubbing,21times at30ms intervals across full600ms for each facing;42paused samples. Sprout measures stem,0.4*leftAppendage. No temporal playback or resident notice path claim."
+}

@@ -1,0 +1,30 @@
+✔ idle study exposes exact paired blinks with no automatic clock at 390px (7209.374005ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; no automatic frame requests
+✔ idle study exposes exact paired blinks with no automatic clock at 1280px (5420.067466ms)
+ℹ Chromium 152.0.7977.82; isolated offline production preview; no automatic frame requests
+✔ the reduced resident stops idle frames but completes an explicit response (1163.208773ms)
+ℹ Chromium 152.0.7977.82; reduced:0 idle frames,1 finite clock,0 after response
+✔ the sick resident stops idle frames but completes an explicit response (891.612829ms)
+ℹ Chromium 152.0.7977.82; sick:0 idle frames,1 finite clock,0 after response
+✔ the away resident stops idle frames but completes an explicit response (836.463183ms)
+ℹ Chromium 152.0.7977.82; away:0 idle frames,1 finite clock,0 after response
+✔ mochi notice review retains one small deflection across both mirrors without a playback clock (10872.309589ms)
+ℹ mochi: actual SVG peak0.7500deg/speed5.8147deg/s, foot drift0.000006135280691989334;42paused scrub samples,0RAF requests
+✔ bun notice review retains one small deflection across both mirrors without a playback clock (10731.283308ms)
+ℹ bun: actual SVG peak2.4000deg/speed18.6070deg/s, foot drift0.000004641050218992056;42paused scrub samples,0RAF requests
+✔ sprout notice review retains one small deflection across both mirrors without a playback clock (10749.191292ms)
+ℹ sprout: actual SVG peak0.5400deg/speed4.1866deg/s, foot drift0.000004460614553830365;42paused scrub samples,0RAF requests
+✔ mochi orients toward a furnishing with one small appendage deflection (1312.395658ms)
+ℹ mochi: peak0.500deg, speed6.588deg/s; 13actual SVG/RAF-time samples within orientation
+✔ bun orients toward a furnishing with one small appendage deflection (1232.682227ms)
+ℹ bun: peak1.439deg, speed18.975deg/s; 13actual SVG/RAF-time samples within orientation
+✔ sprout orients toward a furnishing with one small appendage deflection (1274.461948ms)
+ℹ sprout: peak0.360deg, speed4.744deg/s; 13actual SVG/RAF-time samples within orientation
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 53150.875731

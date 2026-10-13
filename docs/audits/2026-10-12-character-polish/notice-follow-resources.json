@@ -1,0 +1,7 @@
+{
+  "recordedUnixSeconds": 1791855484.7525861,
+  "memAvailableKiB": 5691708,
+  "tmpFreeBytes": 4304289792,
+  "workspaceFreeBytes": 590514696192,
+  "policy": "One heavy job at a time; single worker/browser;768MB Node heap cap and nice10. Defer heavy work below3GiB available RAM or2GiB tmp free. Snapshot, not peak or performance certification."
+}

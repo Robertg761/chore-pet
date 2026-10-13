@@ -1,0 +1,18 @@
+{
+  "method": "Exact sampled frames across3species/5moods/16actions/3durations/2motionpolicies/2facings/15phases. Only normal healthy notice appendages may differ; allotherfields/actions/sick/reduced/durations exact. Static numeric checks,not temporal acceptance.",
+  "label": "after",
+  "currentPath": "src/character/motion.ts",
+  "samples": 43200,
+  "unchanged": 42408,
+  "changed": 792,
+  "changes": {
+    "mochi/notice": 264,
+    "bun/notice": 264,
+    "sprout/notice": 264
+  },
+  "sourceSha256": {
+    "baseline": "2242e3fdb9dacb58ecaf779183916ecbba2124862f6f5083d9e3ac8a5bb95d10",
+    "current": "300b4f077d499653df339a85ffea9f9d0af6419f89bb667fbc50118f1b55ffe5",
+    "runner": "df556b9ffa36095d395ab4c09dbb4029a91c455149b9e969de3ad9c5b06dd856"
+  }
+}
