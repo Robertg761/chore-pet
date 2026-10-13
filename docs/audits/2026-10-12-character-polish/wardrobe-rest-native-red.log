@@ -1,0 +1,28 @@
+✖ wardrobe mochi rests with planted feet, one finite preview and unchanged outfit (1579.273248ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1977.170921
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-rest.test.mjs:53:49
+✖ wardrobe mochi rests with planted feet, one finite preview and unchanged outfit (1579.273248ms)
+  AssertionError [ERR_ASSERTION]: wardrobe offers the quiet Rest preview
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rest.test.mjs:64:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

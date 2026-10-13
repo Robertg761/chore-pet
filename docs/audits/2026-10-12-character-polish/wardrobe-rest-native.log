@@ -1,0 +1,23 @@
+✔ wardrobe finite previews stay usable and preserve the outfit at 320x568 (3258.085432ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 390x664 (3125.51343ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 640x360 (4310.475209ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 844x390 (3229.681239ms)
+✔ wardrobe finite previews stay usable and preserve the outfit at 1280x800 (3369.088456ms)
+✔ wardrobe Hop live reduced motion settles the preview and does not restart when restored (1794.310146ms)
+✔ wardrobe Gentle pats live reduced motion settles the preview and does not restart when restored (1924.151368ms)
+✔ wardrobe Stretch live reduced motion settles the preview and does not restart when restored (1791.005765ms)
+✔ wardrobe Rest live reduced motion settles the preview and does not restart when restored (1759.276348ms)
+✔ wardrobe mochi rests with planted feet, one finite preview and unchanged outfit (2290.75531ms)
+✔ wardrobe bun rests with planted feet, one finite preview and unchanged outfit (2399.391534ms)
+✔ wardrobe sprout rests with planted feet, one finite preview and unchanged outfit (2327.337134ms)
+✔ wardrobe Rest rows, text and keyboard outlines fit ordinary and enlarged layouts (5133.662776ms)
+✔ wardrobe Rest live system reduction settles without replay (1904.761569ms)
+✔ wardrobe Rest live device reduction settles without replay (1851.823037ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41240.831375

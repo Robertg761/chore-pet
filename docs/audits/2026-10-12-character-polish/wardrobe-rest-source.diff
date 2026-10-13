@@ -1,0 +1,398 @@
+diff --git i/src/screens/WardrobePreview.tsx w/src/screens/WardrobePreview.tsx
+index e4f9d2d..445dd9d 100644
+--- i/src/screens/WardrobePreview.tsx
++++ w/src/screens/WardrobePreview.tsx
+@@ -7,7 +7,7 @@ import { usePetMotion } from '../pet/usePetMotion'
+ import { SegThumb } from '../shell/SegThumb'
+ import { describeOutfit, WARDROBE_POSES } from './wardrobeModel'
+ 
+-type PreviewAction = 'greet' | 'affection' | 'celebrate' | 'stretch'
++type PreviewAction = 'greet' | 'affection' | 'celebrate' | 'stretch' | 'rest'
+ interface PreviewRun { action: PreviewAction; start: number }
+ 
+ /** One finite, on-demand clock, isolated from the wardrobe's item grid. */
+@@ -56,6 +56,8 @@ export function WardrobePreview({ pet }: { pet: Pet }) {
+         onClick={() => toggle('celebrate')}>{active?.action === 'celebrate' ? 'Stop hop' : 'Hop'}</button>
+       <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'stretch')}
+         onClick={() => toggle('stretch')}>{active?.action === 'stretch' ? 'Stop stretch' : 'Stretch'}</button>
++      <button type="button" className="btn btn-sm" disabled={reducedMotion || Boolean(active && active.action !== 'rest')}
++        onClick={() => toggle('rest')}>{active?.action === 'rest' ? 'Stop rest' : 'Rest'}</button>
+     </div>
+     {reducedMotion && <p className="wd-note wd-motion-note">Motion previews are off while reduced motion is on.</p>}
+   </div>
+diff --git i/src/screens/Wardrobe.css w/src/screens/Wardrobe.css
+index c9855ec..e642215 100644
+--- i/src/screens/Wardrobe.css
++++ w/src/screens/Wardrobe.css
+@@ -23,10 +23,13 @@
+ }
+ .wd-preview { flex: 1 1 0; min-height: 0; width: 100%; display: block; }
+ .wd-poses { align-self: stretch; }
+-.wd-motion { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: min(100%, 360px); min-width: 0; gap: 8px; flex: none; }
++.wd-motion { display: grid; grid-template-columns: minmax(0, 1fr); width: min(100%, 360px); min-width: 0; gap: 8px; flex: none; }
+ .wd-motion .btn { min-width: 44px; padding: 0 6px; line-height: 1.2; }
+-@container wardrobe-preview (min-width: 20rem) {
+-  .wd-motion { grid-template-columns: repeat(4, minmax(0, 1fr)); }
++/* Keep five finite previews in two balanced rows when their labels fit. */
++@container wardrobe-preview (min-width: 12rem) {
++  .wd-motion { grid-template-columns: repeat(6, minmax(0, 1fr)); }
++  .wd-motion .btn:nth-child(-n+3) { grid-column: span 2; }
++  .wd-motion .btn:nth-child(n+4) { grid-column: span 3; }
+ }
+ .wd-motion-note { max-width: 32ch; text-align: center; }
+ .wd-tabs .seg-btn { white-space: nowrap; }
+@@ -169,3 +172,35 @@ button.wd-tile:active, .wd-outfit-try:active { transform: scale(0.97); }
+   .wd-tabs { gap: 1px; padding: 2px; }
+   .wd-tabs .seg-btn { flex: 1 1 auto; min-width: 44px; padding: 0 1px; font-size: 0.75rem; }
+ }
++
++/* Cramped enlarged text uses the page scroll, retaining the character and input targets. */
++@container app-shell (max-width: 19rem) {
++
++  .app-view > .screen:has(> .screen-fit.wd) { height: auto; min-height: 100%; }
++  .screen-fit.wd { flex: none; }
++  .wd-body { flex: none; flex-direction: column; }
++  .wd-stage { flex: none; max-height: none; padding: 10px 12px 12px; gap: 8px; }
++  .wd-preview { flex: none; height: 160px; min-height: 160px; }
++  .wd-side { flex: none; min-height: 0; overflow: visible; padding: 0; margin: 0; }
++  .wd-panel { flex: none; max-height: none; overflow: visible; padding: 5px; margin: -5px; }
++  .wd-poses, .wd-tabs { width: 100%; flex-wrap: wrap; overflow: visible; }
++  .wd-poses .seg-btn, .wd-tabs .seg-btn { flex: 1 1 40%; min-width: 0; padding: 0 4px; }
++  .wd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
++  .wd-tile-locked .wd-tile-name { white-space: normal; }
++}
++@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
++ @container app-shell (max-width: 34rem) {
++
++  .app-view > .screen:has(> .screen-fit.wd) { height: auto; min-height: 100%; }
++  .screen-fit.wd { flex: none; }
++  .wd-body { flex: none; flex-direction: column; }
++  .wd-stage { flex: none; max-height: none; padding: 10px 12px 12px; gap: 8px; }
++  .wd-preview { flex: none; height: 160px; min-height: 160px; }
++  .wd-side { flex: none; min-height: 0; overflow: visible; padding: 0; margin: 0; }
++  .wd-panel { flex: none; max-height: none; overflow: visible; padding: 5px; margin: -5px; }
++  .wd-poses, .wd-tabs { width: 100%; flex-wrap: wrap; overflow: visible; }
++  .wd-poses .seg-btn, .wd-tabs .seg-btn { flex: 1 1 40%; min-width: 0; padding: 0 4px; }
++  .wd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
++  .wd-tile-locked .wd-tile-name { white-space: normal; }
++ }
++}
+diff --git 1/src/screens/Wardrobe.rest.test.tsx 2/src/screens/Wardrobe.rest.test.tsx
+new file mode 100644
+index 0000000..35cfc59
+--- /dev/null
++++ 2/src/screens/Wardrobe.rest.test.tsx
+@@ -0,0 +1,111 @@
++// @vitest-environment jsdom
++import { act, StrictMode } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import type { Pet } from '../domain/types'
++import { setPetMotionReduced } from '../pet/motionPreference'
++import { click, render } from '../test/react'
++import { Wardrobe, type WardrobeProps } from './Wardrobe'
++import * as model from './wardrobeModel'
++
++const pet: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#ffcfda',
++  equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } }
++let ui: ReturnType<typeof render>, now: number, serial: number, hidden: boolean, media: MediaQueryList
++let frames: Map<number, FrameRequestCallback>, changed: ReturnType<typeof vi.fn<WardrobeProps['onChange']>>
++beforeEach(() => {
++  setPetMotionReduced(false)
++  now = 0; serial = 0; hidden = false; frames = new Map(); changed = vi.fn()
++  vi.spyOn(performance, 'now').mockImplementation(() => now)
++  vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden)
++  media = Object.assign(new EventTarget(), { matches: false, media: '(prefers-reduced-motion: reduce)' }) as MediaQueryList
++  const narrow = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  vi.stubGlobal('matchMedia', (query: string) => query.includes('prefers-reduced-motion') ? media : narrow)
++  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
++  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
++  vi.spyOn(model, 'itemsForSlot')
++  ui = render(<StrictMode><Wardrobe pet={pet} progress={null} onChange={changed} /></StrictMode>)
++})
++afterEach(() => { ui.unmount(); setPetMotionReduced(false); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++function button(name: string) {
++  const node = [...ui.container.querySelectorAll('button')].find(node => node.textContent === name)
++  expect(node, `button ${name}`).toBeTruthy()
++  return node!
++}
++function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
++function visibility(value: boolean) { act(() => { hidden = value; document.dispatchEvent(new Event('visibilitychange')) }) }
++function preview() { return ui.container.querySelector('.wd-preview')! }
++function body() { return preview().querySelector('[data-character-body]')!.getAttribute('transform') }
++function arms() { return [...preview().querySelectorAll('[data-arm]')].map(node => node.getAttribute('transform')) }
++
++it.each(['mochi', 'bun', 'sprout'] as const)('previews a quiet grounded dressed %s rest for exactly2400ms without saving or redrawing items', species => {
++  ui.rerender(<StrictMode><Wardrobe pet={{ ...pet, species }} progress={null} onChange={changed} /></StrictMode>)
++  const write = vi.spyOn(Storage.prototype, 'setItem'), art = preview().querySelector('.ch-animated')
++  const neutralBody = body(), neutralArms = arms(), ground = preview().querySelector('[data-character-ground]')!.outerHTML
++  click(button('Sleepy')); click(button('Rest'))
++  expect(button('Happy').getAttribute('aria-pressed')).toBe('true')
++  const gridRenders = vi.mocked(model.itemsForSlot).mock.calls.length
++  expect(frames.size).toBe(1)
++  frame(1200)
++  expect(body()).toMatch(/^translate\(0 0\)/)
++  expect(body()).not.toBe(neutralBody)
++  const restingArms = arms()
++  expect(restingArms).toHaveLength(2)
++  restingArms.forEach((value, index) => expect(value).not.toBe(neutralArms[index]))
++  expect(preview().querySelector('[data-character-ground]')!.outerHTML).toBe(ground)
++  expect(preview().querySelector('[data-character-accents]')!.getAttribute('opacity')).toBe('0')
++  for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) expect(preview().querySelector(`[data-slot="${slot}"]`)).not.toBeNull()
++  frame(2399)
++  expect(button('Stop rest')).toBeTruthy(); expect(frames.size).toBe(1)
++  frame(2400)
++  expect(button('Rest')).toBeTruthy(); expect(frames.size).toBe(0)
++  expect(body()).toBe(neutralBody); expect(arms()).toEqual(neutralArms)
++  expect(preview().querySelector('.ch-animated')).toBe(art)
++  expect(model.itemsForSlot).toHaveBeenCalledTimes(gridRenders)
++  expect(changed).not.toHaveBeenCalled(); expect(write).not.toHaveBeenCalled()
++})
++
++it('keeps the rest stop control focused, rejects competing actions and lets pose selection stop it', () => {
++  const control = button('Rest'); act(() => control.focus()); click(control); frame(1200)
++  const at = body()
++  for (const name of ['Wave', 'Gentle pats', 'Hop', 'Stretch']) { expect(button(name).disabled).toBe(true); click(button(name)) }
++  expect(body()).toBe(at); expect(frames.size).toBe(1)
++  expect(button('Stop rest')).toBe(control); expect(document.activeElement).toBe(control)
++  click(control)
++  expect(button('Rest')).toBe(control); expect(document.activeElement).toBe(control); expect(frames.size).toBe(0)
++  click(control); frame(1800); click(button('Poorly'))
++  expect(frames.size).toBe(0); expect(preview().querySelector('[data-character-pose="sick"]')).not.toBeNull()
++})
++
++it.each(['system', 'device'] as const)('settles rest on live %s reduction without replaying', policy => {
++  const change = (value: boolean) => act(() => {
++    if (policy === 'device') setPetMotionReduced(value)
++    else { Object.defineProperty(media, 'matches', { value, configurable: true }); media.dispatchEvent(new Event('change')) }
++  })
++  click(button('Rest')); frame(1200); change(true)
++  expect(frames.size).toBe(0)
++  for (const name of ['Wave', 'Gentle pats', 'Hop', 'Stretch', 'Rest']) expect(button(name).disabled).toBe(true)
++  const still = preview().innerHTML
++  frame(5000); change(false)
++  expect(button('Rest').disabled).toBe(false); expect(frames.size).toBe(0)
++  frame(6000); expect(preview().innerHTML).toBe(still); expect(changed).not.toHaveBeenCalled()
++})
++
++it('expires hidden rest on return and ignores a stale frame after unmount', () => {
++  click(button('Rest')); frame(900)
++  const stale = [...frames.values()][0]
++  visibility(true); expect(frames.size).toBe(0)
++  now = 2500; visibility(false); frame(now)
++  expect(frames.size).toBe(0); expect(button('Rest')).toBeTruthy()
++  click(button('Rest')); expect(frames.size).toBe(1)
++  ui.unmount(); expect(frames.size).toBe(0)
++  act(() => stale(5000)); expect(frames.size).toBe(0)
++})
++
++it('updates an outfit during rest without extending its original deadline', () => {
++  click(button('Rest')); frame(1200)
++  ui.rerender(<StrictMode><Wardrobe pet={{ ...pet, equipped: { face: 'glasses', neck: 'scarf' } }} progress={null} onChange={changed} /></StrictMode>)
++  expect(preview().querySelector('[data-slot="head"]')).toBeNull()
++  for (const slot of ['face', 'neck']) expect(preview().querySelector(`[data-slot="${slot}"]`)).not.toBeNull()
++  expect(frames.size).toBe(1)
++  frame(2400); expect(frames.size).toBe(0); expect(button('Rest')).toBeTruthy()
++  expect(changed).not.toHaveBeenCalled()
++})
+diff --git 1/scripts/browser/wardrobe-rest.test.mjs 2/scripts/browser/wardrobe-rest.test.mjs
+new file mode 100644
+index 0000000..97407a1
+--- /dev/null
++++ 2/scripts/browser/wardrobe-rest.test.mjs
+@@ -0,0 +1,123 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, readFile, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, changeReducedMotion, seedProgress, snapshot } from './helpers.mjs'
++
++const out = process.env.CHORE_WARDROBE_REST_CAPTURE_DIR
++async function wardrobe(t, species = 'mochi', viewport = { width: 1280, height: 800 }) {
++  const page = await browserApp(t, { reducedMotion: 'no-preference', viewport })
++  await seedProgress(page, { unlockedItems: ['item:beanie-red', 'item:glasses', 'item:scarf', 'item:backpack'] })
++  if (species !== 'mochi') {
++    await page.evaluate(species => new Promise((resolve, reject) => {
++      const request = indexedDB.open('chore-pet', 1)
++      request.onerror = () => reject(request.error)
++      request.onsuccess = () => {
++        const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), read = store.get('snapshot')
++        read.onsuccess = () => { const saved = read.result; Object.values(saved.tables.pets)[0].species = species; store.put(saved, 'snapshot') }
++        tx.oncomplete = () => { db.close(); resolve() }; tx.onerror = () => { db.close(); reject(tx.error) }
++      }
++    }), species)
++    await page.reload()
++  }
++  await page.getByRole('button', { name: 'Wardrobe', exact: true }).click()
++  await page.getByRole('heading', { name: 'Dress up Mochi' }).waitFor()
++  for (const [slot, name] of [['Head', 'Red beanie'], ['Face', 'Round glasses'], ['Neck', 'Scarf'], ['Outfit', 'Overalls'], ['On back', 'Backpack']]) {
++    await page.getByRole('tab', { name: slot, exact: true }).click(); await page.getByRole('button', { name, exact: true }).click()
++  }
++  if (process.env.CHORE_WARDROBE_REST_PROTOTYPE_CSS) await page.addStyleTag({ content: await readFile(process.env.CHORE_WARDROBE_REST_PROTOTYPE_CSS, 'utf8') })
++  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
++  return page
++}
++async function feet(preview) {
++  return preview.evaluate(node => [...node.querySelectorAll('[data-foot] ellipse')].map(foot => {
++    const p = new DOMPoint(+foot.getAttribute('cx'), +foot.getAttribute('cy')).matrixTransform(foot.getScreenCTM())
++    return { x: p.x, y: p.y }
++  }))
++}
++function focusGeometry(node) {
++  const r = node.getBoundingClientRect(), style = getComputedStyle(node)
++  const ring = parseFloat(style.outlineWidth) + Math.max(0, parseFloat(style.outlineOffset))
++  let left = 0, top = 0, right = innerWidth, bottom = innerHeight
++  for (let p = node.parentElement; p; p = p.parentElement) {
++    const s = getComputedStyle(p), b = p.getBoundingClientRect()
++    if (/(auto|scroll|hidden|clip)/.test(s.overflowX)) { left = Math.max(left, b.left + p.clientLeft); right = Math.min(right, b.left + p.clientLeft + p.clientWidth) }
++    if (/(auto|scroll|hidden|clip)/.test(s.overflowY)) { top = Math.max(top, b.top + p.clientTop); bottom = Math.min(bottom, b.top + p.clientTop + p.clientHeight) }
++  }
++  return { focusVisible: node.matches(':focus-visible'), ring, clear: r.left-ring>=left && r.right+ring<=right && r.top-ring>=top && r.bottom+ring<=bottom }
++}
++async function capture(page, name, value) {
++  if (!out) return
++  await mkdir(out, { recursive: true }); await page.screenshot({ path: join(out, `${name}.png`) })
++  await writeFile(join(out, `${name}.json`), JSON.stringify(value, null, 2)+'\n')
++}
++for (const species of ['mochi','bun','sprout']) test(`wardrobe ${species} rests with planted feet, one finite preview and unchanged outfit`, { timeout: 20000 }, async t => {
++  const page = await wardrobe(t, species), before = (await snapshot(page)).tables, preview = page.locator('.wd-preview')
++  const art = await preview.locator('.ch-animated').elementHandle(), grid = await page.locator('.wd-grid').elementHandle()
++  const original = await feet(preview), neutral = await preview.innerHTML()
++  await page.evaluate(() => {
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__restFrames = new Set()
++    window.requestAnimationFrame = fn => { let id; id=request(time=>{ window.__restFrames.delete(id); fn(time) }); window.__restFrames.add(id); return id }
++    window.cancelAnimationFrame = id => { window.__restFrames.delete(id); cancel(id) }
++  })
++  const rest = page.getByRole('button', { name: 'Rest', exact: true })
++  assert.equal(await rest.count(), 1, 'wardrobe offers the quiet Rest preview')
++  await rest.focus(); await page.keyboard.press('Enter'); await page.clock.runFor(1200)
++  const control = page.getByRole('button', { name: 'Stop rest', exact: true }), held = await feet(preview)
++  held.forEach((p,i)=>assert.ok(Math.hypot(p.x-original[i].x,p.y-original[i].y)<.05,'rest keeps both actual screen-space foot contacts fixed'))
++  assert.equal(await page.evaluate(()=>window.__restFrames.size),1)
++  assert.equal(await control.evaluate(n=>n===document.activeElement),true)
++  assert.equal(await page.getByRole('button', {name:'Happy',exact:true}).getAttribute('aria-pressed'),'true')
++  for (const name of ['Wave','Gentle pats','Hop','Stretch']) assert.equal(await page.getByRole('button',{name,exact:true}).isDisabled(),true)
++  assert.match(await preview.locator('[data-character-body]').getAttribute('transform'),/^translate\(0 0\)/)
++  assert.equal(await preview.locator('[data-character-accents]').getAttribute('opacity'),'0')
++  const arms=await preview.locator('[data-arm]').evaluateAll(nodes=>nodes.map(n=>+n.getAttribute('transform').match(/rotate\(([-\d.]+)/)[1]))
++  assert.ok(arms[0]<-7 && arms[1]>7, 'both arms relax to the quiet stance')
++  for (const slot of ['head','face','neck','outfit','back']) assert.equal(await preview.locator(`[data-slot="${slot}"]`).count(),1)
++  assert.equal(await preview.locator('.ch-animated').evaluate((n,old)=>n===old,art),true)
++  assert.equal(await page.locator('.wd-grid').evaluate((n,old)=>n===old,grid),true)
++  const focus=await control.evaluate(focusGeometry); assert.ok(focus.focusVisible&&focus.ring>0&&focus.clear,JSON.stringify(focus))
++  await capture(page,`wardrobe-rest-${species}`,{species,original,held,arms,focus,browser:page.context().browser().version(),method:'Offline production wardrobe Rest at1200ms; actual screen foot contacts, keyboard focus, stable SVG/grid and one pending animation frame.'})
++  await page.clock.runFor(1184); assert.equal(await control.count(),1,'retains its original2400ms deadline')
++  await page.clock.runFor(32); assert.equal(await rest.isEnabled(),true); assert.equal(await page.evaluate(()=>window.__restFrames.size),0)
++  assert.equal(await preview.innerHTML(),neutral); assert.deepEqual((await snapshot(page)).tables,before)
++})
++
++test('wardrobe Rest rows, text and keyboard outlines fit ordinary and enlarged layouts', { timeout: 30000 }, async t => {
++  const page = await wardrobe(t), before=(await snapshot(page)).tables, samples=[]
++  for (const [width,height,text] of [[320,568,100],[390,664,100],[640,360,100],[844,390,100],[1280,800,100],[320,568,200],[390,664,200],[640,360,200],[844,390,200],[1280,800,200]]) {
++    await page.setViewportSize({width,height}); await page.evaluate(percent=>document.documentElement.style.fontSize=`${percent}%`,text)
++    const rest=page.getByRole('button',{name:'Rest',exact:true}); assert.equal(await rest.count(),1)
++    // Enter from an actually keyboard-focused sibling; focus() alone doesn't establish modality.
++    const stretch=page.getByRole('button',{name:'Stretch',exact:true}); await stretch.focus(); await page.keyboard.press('Tab')
++    assert.equal(await rest.evaluate(n=>n===document.activeElement),true)
++    await page.keyboard.press('Enter'); await page.clock.runFor(1200)
++    const geometry=await page.evaluate(()=>{
++      const box=n=>{const r=n.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom}}
++      return {scroll:document.documentElement.scrollWidth,view:innerWidth,art:box(document.querySelector('.wd-preview')),stage:box(document.querySelector('.wd-stage')),controls:[...document.querySelectorAll('.wd-motion button')].map(n=>({...box(n),label:n.textContent,fits:n.scrollWidth<=n.clientWidth}))}
++    })
++    assert.ok(geometry.scroll<=width,`no horizontal overflow:${JSON.stringify({width,height,text,geometry})}`)
++    assert.ok(geometry.art.h>=80,`readable preview:${JSON.stringify({width,height,text,geometry})}`)
++    for(const c of geometry.controls){assert.ok(c.w>=44&&c.h>=44,JSON.stringify(c));assert.ok(c.fits,JSON.stringify(c));assert.ok(c.x>=0&&c.right<=width,JSON.stringify(c));assert.ok(c.y>=geometry.stage.y&&c.bottom<=geometry.stage.bottom,JSON.stringify(c))}
++    const rows=Object.values(geometry.controls.reduce((a,c)=>{const y=Math.round(c.y);a[y]=(a[y]??0)+1;return a},{}))
++    assert.ok(JSON.stringify(rows)==='[3,2]' || text===200 && JSON.stringify(rows)==='[1,1,1,1,1]',`balanced rows or a single column for enlarged text:${JSON.stringify({width,height,text,rows})}`)
++    const focus=await page.getByRole('button',{name:'Stop rest',exact:true}).evaluate(focusGeometry)
++    assert.ok(focus.focusVisible&&focus.ring>0&&focus.clear,JSON.stringify({width,height,text,focus}))
++    const sample={width,height,text,geometry,rows,focus};samples.push(sample)
++    if(text===100||[320,844].includes(width)) await capture(page,`wardrobe-rest-layout-${width}-${text}`,sample)
++    await page.keyboard.press('Enter'); assert.equal(await rest.isEnabled(),true)
++  }
++  assert.deepEqual((await snapshot(page)).tables,before)
++  if(out)await writeFile(join(out,'wardrobe-rest-layouts.json'),JSON.stringify({samples,browser:page.context().browser().version(),method:'Actual native production layout and keyboard focus at100/200%root text. Enlarged controls may use ordinary vertical page scroll.'},null,2)+'\n')
++})
++
++for(const policy of ['system','device'])test(`wardrobe Rest live ${policy} reduction settles without replay`, {timeout:20000},async t=>{
++  const page=await wardrobe(t,'mochi',{width:320,height:568}),before=(await snapshot(page)).tables,preview=page.locator('.wd-preview')
++  await page.getByRole('button',{name:'Rest',exact:true}).click();await page.clock.runFor(1200)
++  async function reduce(value){if(policy==='system')await changeReducedMotion(page,value?'reduce':'no-preference');else await page.evaluate(value=>{localStorage.setItem('chore-pet-reduce-motion',value?'on':'off');window.dispatchEvent(new StorageEvent('storage',{key:'chore-pet-reduce-motion',newValue:value?'on':'off',storageArea:localStorage}))},value)}
++  await reduce(true);assert.equal(await page.getByRole('button',{name:'Rest',exact:true}).isDisabled(),true)
++  const still=await preview.innerHTML();await page.clock.runFor(5000);assert.equal(await preview.innerHTML(),still)
++  await reduce(false);assert.equal(await page.getByRole('button',{name:'Rest',exact:true}).isEnabled(),true)
++  await page.clock.runFor(1000);assert.equal(await preview.innerHTML(),still);assert.deepEqual((await snapshot(page)).tables,before)
++})
+diff --git i/scripts/browser/wardrobe-motion.test.mjs w/scripts/browser/wardrobe-motion.test.mjs
+index 14a724f..11bb928 100644
+--- i/scripts/browser/wardrobe-motion.test.mjs
++++ w/scripts/browser/wardrobe-motion.test.mjs
+@@ -81,7 +81,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
+     const rowCounts = Object.values(geometry.movement.reduce((rows, control) => {
+       const y = Math.round(control.y); rows[y] = (rows[y] ?? 0) + 1; return rows
+     }, {}))
+-    assert.deepEqual(rowCounts, [390, 1280].includes(width) ? [4] : [2, 2], 'four movement controls form balanced rows for the actual stage width')
++    assert.deepEqual(rowCounts, [3, 2], 'five movement controls form two balanced rows for the actual stage width')
+     assert.ok(geometry.scroll <= width, `horizontal overflow: ${JSON.stringify(geometry)}`)
+     assert.ok(geometry.art.h >= 80, `preview needs readable height: ${JSON.stringify(geometry)}`)
+     assert.ok(geometry.tabButtons.length >= 5)
+@@ -141,7 +141,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
+     assert.equal(await page.getByRole('button', { name: 'Happy', exact: true }).getAttribute('aria-pressed'), 'true')
+     const stopStretch = page.getByRole('button', { name: 'Stop stretch', exact: true })
+     assert.equal(await stopStretch.evaluate(node => node === document.activeElement), true)
+-    for (const name of ['Wave', 'Gentle pats', 'Hop']) assert.equal(await page.getByRole('button', { name, exact: true }).isDisabled(), true)
++    for (const name of ['Wave', 'Gentle pats', 'Hop', 'Rest']) assert.equal(await page.getByRole('button', { name, exact: true }).isDisabled(), true)
+     const stretchedFeet = await footContacts(preview)
+     stretchedFeet.forEach((foot, index) => assert.ok(Math.hypot(foot.x - planted[index].x, foot.y - planted[index].y) < .05, 'both stretch feet stay planted in actual screen geometry'))
+     assert.match(await preview.locator('[data-character-body]').getAttribute('transform'), /^translate\(0 0\)/)
+@@ -166,7 +166,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
+   })
+ }
+ 
+-for (const action of ['Hop', 'Gentle pats', 'Stretch']) test(`wardrobe ${action} live reduced motion settles the preview and does not restart when restored`, { timeout: 15000 }, async t => {
++for (const action of ['Hop', 'Gentle pats', 'Stretch', 'Rest']) test(`wardrobe ${action} live reduced motion settles the preview and does not restart when restored`, { timeout: 15000 }, async t => {
+   const page = await wardrobeApp(t, { viewport: { width: 320, height: 568 } })
+   const preview = page.locator('.wd-preview')
+   await page.getByRole('button', { name: action, exact: true }).click()
+diff --git i/docs/ART.md w/docs/ART.md
+index 2753d69..60724f6 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -205,3 +205,5 @@ Explore together also offers Show room while expanded. Reuse the player view act
+ Home speech belongs in the canvas layer below the actual view and compact door controls. Share the existing canvas grid area with a4px top gap, keep the grid column within its stage, and preserve empty/default geometry. In wide/landscape homes, a34rem app-shell container threshold follows root text size: cramped enlarged-text views reuse the established stacked home flow and250px canvas floor. Default landscape arrangements remain unchanged. Speech keeps the resident ink clear and does not change camera, placement, invitation or saved state.
+ 
+ Healthy smell reactions retain their1600ms lean-back and hand gesture while smaller appendage arcs recoil and settle. Use damped follow-through with Bun largest, Mochi soft and Sprout restrained. Cancel lateral torso translation at both horizontal ground contacts so the feet stay planted. Preserve primary torso/arms/gaze/expression/blinks/shadow and all other actions, sick/reduced frames, routing and dialogue.
++
++Wardrobe Rest uses the same grounded 2400ms reaction as the resident and environmental rest, with the existing finite preview clock. It retains outfit slots and feet, adds no reward accent, and follows Stop, pose cancellation, outfit updates, hidden deadlines and system/device motion reduction. Five movement choices use balanced 3+2 rows when labels fit; cramped enlarged text switches the wardrobe to page scrolling with readable art and wrapped pose/category controls.
+diff --git 1/docs/audits/2026-10-12-character-polish/compare-wardrobe-rest.mjs 2/docs/audits/2026-10-12-character-polish/compare-wardrobe-rest.mjs
+new file mode 100644
+index 0000000..634ddd4
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/compare-wardrobe-rest.mjs
+@@ -0,0 +1,26 @@
++// Compare the accepted injected layout with final production geometry and stills.
++import assert from 'node:assert/strict'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const out = 'docs/audits/2026-10-12-character-polish'
++const prototype = `${out}/wardrobe-rest-flow-revised-prototype`, final = `${out}/wardrobe-rest-native`
++const sha = bytes => createHash('sha256').update(bytes).digest('hex')
++const a = JSON.parse(await readFile(`${prototype}/wardrobe-rest-layouts.json`)), b = JSON.parse(await readFile(`${final}/wardrobe-rest-layouts.json`))
++assert.equal(a.samples.length, 10); assert.equal(b.samples.length, 10)
++const files = {}, stills = []
++for (const path of [`${prototype}/wardrobe-rest-layouts.json`, `${final}/wardrobe-rest-layouts.json`]) files[path] = sha(await readFile(path))
++for (let i = 0; i < a.samples.length; i++) {
++  assert.deepEqual(b.samples[i], a.samples[i], `exact prototype/final geometry: sample ${i}`)
++  const { width, text } = b.samples[i]
++  if (text === 100 || [320, 844].includes(width)) {
++    const name = `wardrobe-rest-layout-${width}-${text}.png`, paths = [`${prototype}/${name}`, `${final}/${name}`]
++    const hashes = await Promise.all(paths.map(async path => sha(await readFile(path))))
++    paths.forEach((path, n) => { files[path] = hashes[n] })
++    stills.push({ width, text, byteExact: hashes[0] === hashes[1] })
++  }
++}
++files['src/screens/Wardrobe.css'] = sha(await readFile('src/screens/Wardrobe.css'))
++files['scripts/browser/wardrobe-rest.test.mjs'] = sha(await readFile('scripts/browser/wardrobe-rest.test.mjs'))
++files[`${out}/compare-wardrobe-rest.mjs`] = sha(await readFile(new URL(import.meta.url)))
++await writeFile(`${out}/wardrobe-rest-comparison.json`, JSON.stringify({ method: 'Ten accepted injected-prototype and final native-production layout/target/label/focus samples compared exactly, plus seven still byte comparisons. Static evidence only; no independent live motion playback.', exactGeometrySamples: b.samples.length, stills, sourceAndArtifactSha256: files }, null, 2)+'\n')
++console.log(`${b.samples.length} exact geometry samples; ${stills.filter(x=>x.byteExact).length}/${stills.length} byte-exact stills`)

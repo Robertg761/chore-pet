@@ -1,0 +1,7 @@
+{
+  "method": "Read-only host memory and tmpfs snapshot during the single sequential native job; not CPU, peak-RSS or battery measurement. Heavy commands use nice10, 768MB Node cap and one worker/browser.",
+  "utc": "2026-10-13T01:10:35.994351+00:00",
+  "memoryAvailableKiB": 6174328,
+  "tmpFreeBytes": 4303839232,
+  "tmpTotalBytes": 16783474688
+}

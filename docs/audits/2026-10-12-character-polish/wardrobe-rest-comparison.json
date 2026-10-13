@@ -1,0 +1,62 @@
+{
+  "method": "Ten accepted injected-prototype and final native-production layout/target/label/focus samples compared exactly, plus seven still byte comparisons. Static evidence only; no independent live motion playback.",
+  "exactGeometrySamples": 10,
+  "stills": [
+    {
+      "width": 320,
+      "text": 100,
+      "byteExact": false
+    },
+    {
+      "width": 390,
+      "text": 100,
+      "byteExact": false
+    },
+    {
+      "width": 640,
+      "text": 100,
+      "byteExact": false
+    },
+    {
+      "width": 844,
+      "text": 100,
+      "byteExact": true
+    },
+    {
+      "width": 1280,
+      "text": 100,
+      "byteExact": false
+    },
+    {
+      "width": 320,
+      "text": 200,
+      "byteExact": false
+    },
+    {
+      "width": 844,
+      "text": 200,
+      "byteExact": true
+    }
+  ],
+  "sourceAndArtifactSha256": {
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-flow-revised-prototype/wardrobe-rest-layouts.json": "7bc439a56f2bb7010b757f0770f6b6bd6e906546fc9cb01d34e58f4a62108741",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-native/wardrobe-rest-layouts.json": "7bc439a56f2bb7010b757f0770f6b6bd6e906546fc9cb01d34e58f4a62108741",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-flow-revised-prototype/wardrobe-rest-layout-320-100.png": "c3f4d8ad22d70b9c098cd72ad0262fbdad3a9cae8ddb82981d115fd737d6c89b",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-native/wardrobe-rest-layout-320-100.png": "6248b95232830603eb69a798fc1277920c6badb71a875805ebc3f61368c12aec",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-flow-revised-prototype/wardrobe-rest-layout-390-100.png": "53d626eacb57dff1e9ffecb78040b72b74eaf0300dd47d968077a145daa48c8b",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-native/wardrobe-rest-layout-390-100.png": "76a83a71811bf0459f46dc6111f90637f9c6c2df8724f29b06106d6d03ea84d7",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-flow-revised-prototype/wardrobe-rest-layout-640-100.png": "529c1a447be2700e435e79332432af134bf00728e353a0b70c608fa38652d43b",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-native/wardrobe-rest-layout-640-100.png": "692e820f9d971f180bdf439ca5e00f29bcf34d530e95756f8369d8e7de72a6e4",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-flow-revised-prototype/wardrobe-rest-layout-844-100.png": "76c8bd306bb6cbbca05b630fa667fc0a910e09521da3a4e27a625cd954de3be6",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-native/wardrobe-rest-layout-844-100.png": "76c8bd306bb6cbbca05b630fa667fc0a910e09521da3a4e27a625cd954de3be6",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-flow-revised-prototype/wardrobe-rest-layout-1280-100.png": "a9651ae34d1541c81587c9acbe913ccfbd15f187cb322e55e4275dbd3186c4a4",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-native/wardrobe-rest-layout-1280-100.png": "b09ca9fe3f881a290fcfa5cdbaf8481819f7932be5d16934daf1e6ec062b077b",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-flow-revised-prototype/wardrobe-rest-layout-320-200.png": "bc302393ef2e1ddd2c03094577c56f6f0d6be1eacfce4860552b8c9fce3fc104",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-native/wardrobe-rest-layout-320-200.png": "9b8419bba608ba307212d8128a9f020d5fb5ff3c8a2156efa06d98fe4a6b29c6",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-flow-revised-prototype/wardrobe-rest-layout-844-200.png": "3164222a738c926a1840d181bf875540f9833f98faa9a10eef26e12d78821c1d",
+    "docs/audits/2026-10-12-character-polish/wardrobe-rest-native/wardrobe-rest-layout-844-200.png": "3164222a738c926a1840d181bf875540f9833f98faa9a10eef26e12d78821c1d",
+    "src/screens/Wardrobe.css": "20f255b55a8b3c004bf57fbef9112ab0f0a9053928dd80fb4e5864a076d2b0af",
+    "scripts/browser/wardrobe-rest.test.mjs": "8926976d76b47d8597001305da60cb8dcf9003af46d21f0278621992f005cd96",
+    "docs/audits/2026-10-12-character-polish/compare-wardrobe-rest.mjs": "e01d100f93a55f0bdb812e255a2e5e085540a0d356fad87fa125fc9f1415d281"
+  }
+}

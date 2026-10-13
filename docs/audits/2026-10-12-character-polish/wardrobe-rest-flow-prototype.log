@@ -1,0 +1,37 @@
+✖ wardrobe Rest rows, text and keyboard outlines fit ordinary and enlarged layouts (4588.008709ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4985.952318
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-rest.test.mjs:87:1
+✖ wardrobe Rest rows, text and keyboard outlines fit ordinary and enlarged layouts (4588.008709ms)
+  AssertionError [ERR_ASSERTION]: balanced ordinary rows, roomy enlarged rows
+  + actual - expected
+  
+    [
+  +   3,
+  +   2
+  -   1,
+  -   1,
+  -   1,
+  -   1,
+  -   1
+    ]
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rest.test.mjs:104:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 3, 2 ],
+    expected: [ 1, 1, 1, 1, 1 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

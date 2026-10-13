@@ -1,0 +1,7 @@
+
+.wd-motion { grid-template-columns: minmax(0, 1fr); }
+@container wardrobe-preview (min-width: 12rem) {
+  .wd-motion { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .wd-motion .btn:nth-child(-n+3) { grid-column: span 2; }
+  .wd-motion .btn:nth-child(n+4) { grid-column: span 3; }
+}

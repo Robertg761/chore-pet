@@ -1,0 +1,126 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/screens/Wardrobe.rest.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/screens/Wardrobe.rest.test.tsx (8 tests | 8 failed) 387ms
+   × previews a quiet grounded dressed mochi rest for exactly2400ms without saving or redrawing items 124ms
+   × previews a quiet grounded dressed bun rest for exactly2400ms without saving or redrawing items 77ms
+   × previews a quiet grounded dressed sprout rest for exactly2400ms without saving or redrawing items 72ms
+   × keeps the rest stop control focused, rejects competing actions and lets pose selection stop it 22ms
+   × settles rest on live system reduction without replaying 20ms
+   × settles rest on live device reduction without replaying 21ms
+   × expires hidden rest on return and ignores a stale frame after unmount 28ms
+   × updates an outfit during rest without extending its original deadline 20ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/Wardrobe.rest.test.tsx > previews a quiet grounded dressed mochi rest for exactly2400ms without saving or redrawing items
+ FAIL  src/screens/Wardrobe.rest.test.tsx > previews a quiet grounded dressed bun rest for exactly2400ms without saving or redrawing items
+ FAIL  src/screens/Wardrobe.rest.test.tsx > previews a quiet grounded dressed sprout rest for exactly2400ms without saving or redrawing items
+AssertionError: button Rest: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.rest.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.rest.test.tsx:43:34
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/screens/Wardrobe.rest.test.tsx > keeps the rest stop control focused, rejects competing actions and lets pose selection stop it
+AssertionError: button Rest: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.rest.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.rest.test.tsx:67:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/screens/Wardrobe.rest.test.tsx > settles rest on live system reduction without replaying
+ FAIL  src/screens/Wardrobe.rest.test.tsx > settles rest on live device reduction without replaying
+AssertionError: button Rest: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.rest.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.rest.test.tsx:83:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/screens/Wardrobe.rest.test.tsx > expires hidden rest on return and ignores a stale frame after unmount
+AssertionError: button Rest: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.rest.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.rest.test.tsx:93:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  src/screens/Wardrobe.rest.test.tsx > updates an outfit during rest without extending its original deadline
+AssertionError: button Rest: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/Wardrobe.rest.test.tsx:30:34
+     28| function button(name: string) {
+     29|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     30|   expect(node, `button ${name}`).toBeTruthy()
+       |                                  ^
+     31|   return node!
+     32| }
+ ❯ src/screens/Wardrobe.rest.test.tsx:104:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  22:34:18
+   Duration  1.51s (transform 44%, tests 28%, environment 19%, import 8%)
+

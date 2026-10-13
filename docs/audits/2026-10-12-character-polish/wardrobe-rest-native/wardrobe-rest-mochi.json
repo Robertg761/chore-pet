@@ -1,0 +1,34 @@
+{
+  "species": "mochi",
+  "original": [
+    {
+      "x": 378.4,
+      "y": 496.3
+    },
+    {
+      "x": 487.6,
+      "y": 496.3
+    }
+  ],
+  "held": [
+    {
+      "x": 378.4000026945074,
+      "y": 496.29999912398966
+    },
+    {
+      "x": 487.5999972139914,
+      "y": 496.2999999170015
+    }
+  ],
+  "arms": [
+    -11.479999999999999,
+    11.479999999999999
+  ],
+  "focus": {
+    "focusVisible": true,
+    "ring": 6,
+    "clear": true
+  },
+  "browser": "152.0.7977.82",
+  "method": "Offline production wardrobe Rest at1200ms; actual screen foot contacts, keyboard focus, stable SVG/grid and one pending animation frame."
+}

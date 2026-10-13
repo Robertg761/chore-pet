@@ -81,7 +81,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
     const rowCounts = Object.values(geometry.movement.reduce((rows, control) => {
       const y = Math.round(control.y); rows[y] = (rows[y] ?? 0) + 1; return rows
     }, {}))
-    assert.deepEqual(rowCounts, [390, 1280].includes(width) ? [4] : [2, 2], 'four movement controls form balanced rows for the actual stage width')
+    assert.deepEqual(rowCounts, [3, 2], 'five movement controls form two balanced rows for the actual stage width')
     assert.ok(geometry.scroll <= width, `horizontal overflow: ${JSON.stringify(geometry)}`)
     assert.ok(geometry.art.h >= 80, `preview needs readable height: ${JSON.stringify(geometry)}`)
     assert.ok(geometry.tabButtons.length >= 5)
@@ -141,7 +141,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
     assert.equal(await page.getByRole('button', { name: 'Happy', exact: true }).getAttribute('aria-pressed'), 'true')
     const stopStretch = page.getByRole('button', { name: 'Stop stretch', exact: true })
     assert.equal(await stopStretch.evaluate(node => node === document.activeElement), true)
-    for (const name of ['Wave', 'Gentle pats', 'Hop']) assert.equal(await page.getByRole('button', { name, exact: true }).isDisabled(), true)
+    for (const name of ['Wave', 'Gentle pats', 'Hop', 'Rest']) assert.equal(await page.getByRole('button', { name, exact: true }).isDisabled(), true)
     const stretchedFeet = await footContacts(preview)
     stretchedFeet.forEach((foot, index) => assert.ok(Math.hypot(foot.x - planted[index].x, foot.y - planted[index].y) < .05, 'both stretch feet stay planted in actual screen geometry'))
     assert.match(await preview.locator('[data-character-body]').getAttribute('transform'), /^translate\(0 0\)/)
@@ -166,7 +166,7 @@ for (const [width, height] of [[320, 568], [390, 664], [640, 360], [844, 390], [
   })
 }
 
-for (const action of ['Hop', 'Gentle pats', 'Stretch']) test(`wardrobe ${action} live reduced motion settles the preview and does not restart when restored`, { timeout: 15000 }, async t => {
+for (const action of ['Hop', 'Gentle pats', 'Stretch', 'Rest']) test(`wardrobe ${action} live reduced motion settles the preview and does not restart when restored`, { timeout: 15000 }, async t => {
   const page = await wardrobeApp(t, { viewport: { width: 320, height: 568 } })
   const preview = page.locator('.wd-preview')
   await page.getByRole('button', { name: action, exact: true }).click()

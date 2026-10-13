@@ -1,0 +1,86 @@
+{
+  "width": 640,
+  "height": 360,
+  "text": 100,
+  "geometry": {
+    "scroll": 640,
+    "view": 640,
+    "art": {
+      "x": 109,
+      "y": 57.59375,
+      "w": 220,
+      "h": 109.40625,
+      "right": 329,
+      "bottom": 167
+    },
+    "stage": {
+      "x": 92,
+      "y": 44.59375,
+      "w": 254,
+      "h": 305.40625,
+      "right": 346,
+      "bottom": 350
+    },
+    "controls": [
+      {
+        "x": 109,
+        "y": 239,
+        "w": 68,
+        "h": 44,
+        "right": 177,
+        "bottom": 283,
+        "label": "Wave",
+        "fits": true
+      },
+      {
+        "x": 185,
+        "y": 239,
+        "w": 68,
+        "h": 44,
+        "right": 253,
+        "bottom": 283,
+        "label": "Gentle pats",
+        "fits": true
+      },
+      {
+        "x": 261,
+        "y": 239,
+        "w": 68,
+        "h": 44,
+        "right": 329,
+        "bottom": 283,
+        "label": "Hop",
+        "fits": true
+      },
+      {
+        "x": 109,
+        "y": 291,
+        "w": 106,
+        "h": 44,
+        "right": 215,
+        "bottom": 335,
+        "label": "Stretch",
+        "fits": true
+      },
+      {
+        "x": 223,
+        "y": 291,
+        "w": 106,
+        "h": 44,
+        "right": 329,
+        "bottom": 335,
+        "label": "Stop rest",
+        "fits": true
+      }
+    ]
+  },
+  "rows": [
+    3,
+    2
+  ],
+  "focus": {
+    "focusVisible": true,
+    "ring": 6,
+    "clear": true
+  }
+}

@@ -1,0 +1,25 @@
+✖ wardrobe Rest rows, text and keyboard outlines fit ordinary and enlarged layouts (2829.671452ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3228.397783
+
+✖ failing tests:
+
+test at scripts/browser/wardrobe-rest.test.mjs:87:1
+✖ wardrobe Rest rows, text and keyboard outlines fit ordinary and enlarged layouts (2829.671452ms)
+  AssertionError [ERR_ASSERTION]: readable preview:{"width":640,"height":360,"text":100,"geometry":{"scroll":640,"view":640,"art":{"x":109,"y":57.59375,"w":220,"h":0,"right":329,"bottom":57.59375},"stage":{"x":92,"y":44.59375,"w":254,"h":305.40625,"right":346,"bottom":350},"controls":[{"x":109,"y":85.59375,"w":220,"h":44,"right":329,"bottom":129.59375,"label":"Wave","fits":true},{"x":109,"y":137.59375,"w":220,"h":44,"right":329,"bottom":181.59375,"label":"Gentle pats","fits":true},{"x":109,"y":189.59375,"w":220,"h":44,"right":329,"bottom":233.59375,"label":"Hop","fits":true},{"x":109,"y":241.59375,"w":220,"h":44,"right":329,"bottom":285.59375,"label":"Stretch","fits":true},{"x":109,"y":293.59375,"w":220,"h":44,"right":329,"bottom":337.59375,"label":"Stop rest","fits":true}]}}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/wardrobe-rest.test.mjs:101:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

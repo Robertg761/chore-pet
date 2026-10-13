@@ -1,0 +1,38 @@
+
+.wd-motion { grid-template-columns: minmax(0, 1fr); }
+@container wardrobe-preview (min-width: 12rem) {
+  .wd-motion { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .wd-motion .btn:nth-child(-n+3) { grid-column: span 2; }
+  .wd-motion .btn:nth-child(n+4) { grid-column: span 3; }
+}
+
+@container app-shell (max-width: 19rem) {
+
+  .app-view > .screen:has(> .screen-fit.wd) { height: auto; min-height: 100%; }
+  .screen-fit.wd { flex: none; }
+  .wd-body { flex: none; flex-direction: column; }
+  .wd-stage { flex: none; max-height: none; padding: 10px 12px 12px; gap: 8px; }
+  .wd-preview { flex: none; height: 160px; min-height: 160px; }
+  .wd-side { flex: none; min-height: 0; overflow: visible; padding: 0; margin: 0; }
+  .wd-panel { flex: none; max-height: none; overflow: visible; padding: 5px; margin: -5px; }
+  .wd-poses, .wd-tabs { width: 100%; flex-wrap: wrap; overflow: visible; }
+  .wd-poses .seg-btn, .wd-tabs .seg-btn { flex: 1 1 40%; min-width: 0; padding: 0 4px; }
+  .wd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wd-tile-locked .wd-tile-name { white-space: normal; }
+}
+@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+ @container app-shell (max-width: 34rem) {
+
+  .app-view > .screen:has(> .screen-fit.wd) { height: auto; min-height: 100%; }
+  .screen-fit.wd { flex: none; }
+  .wd-body { flex: none; flex-direction: column; }
+  .wd-stage { flex: none; max-height: none; padding: 10px 12px 12px; gap: 8px; }
+  .wd-preview { flex: none; height: 160px; min-height: 160px; }
+  .wd-side { flex: none; min-height: 0; overflow: visible; padding: 0; margin: 0; }
+  .wd-panel { flex: none; max-height: none; overflow: visible; padding: 5px; margin: -5px; }
+  .wd-poses, .wd-tabs { width: 100%; flex-wrap: wrap; overflow: visible; }
+  .wd-poses .seg-btn, .wd-tabs .seg-btn { flex: 1 1 40%; min-width: 0; padding: 0 4px; }
+  .wd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wd-tile-locked .wd-tile-name { white-space: normal; }
+ }
+}
