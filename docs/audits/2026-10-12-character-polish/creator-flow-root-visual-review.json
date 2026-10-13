@@ -1,0 +1,149 @@
+{
+  "finalPngs": 21,
+  "directRootFinalPngs": {
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-320x568-200-colour.png": "11c5cc27d9ab7b345ba6308df87da9a1673fc859cdd797715c2fe66efdd5f1cc",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-320x568-200-face.png": "5d060ebf52fd5507cbb094cfd2ed7202e5d5b67f192585b780e7fda2dcc825e1",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-640x360-100-colour.png": "1af5289316c1c572de4ec58137e37820b8b8e3920d8791a5ab8e5023008fe7ef",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-640x360-100-face.png": "a41574f6c4becd79be51c318f98c52eb367d522e43f33a373cba867f249ae9d9",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-640x360-200-colour.png": "fdf59c55344ebbdb021e9ab620698c4123860473ff422d87b55f368a60e0ab10",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-640x360-200-face.png": "c451a61a314da24200795e0fd4dce84e8776fa9b4b1cc3d9c979b5794657bd72",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-1280x800-200-colour.png": "b59d5aa238992823ce0bd058ab3818a7932f194aa47ded2a82b708e19a398776",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-1280x800-200-face.png": "d39167accb02d19a342bfd18325941c740672b72a0a19d8d811ae984cb60d2d8",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-1280x800-200.png": "cd2ed362c6c879a85fa699cf06ab23d4eb3770862cda71a862bfc2a917729438",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-1280x800.png": "987bf4ba5b62a29825f346e505893998d66aac3d38a981e01367644bd1d962f7",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-320x568-200.png": "fdcbb266d1aca03a9eda32d14fe05b51d4093174231ab00230dbb010a2bf4286",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-320x568.png": "e9ed68684b0438c79a3dbbe96037f3879dd04bd77defcefaf8d2ac8bd21e7353",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-390x664-200.png": "75418d6d69f2bb8a27ba538843f8d8437ee689b2e1a6dc92f8aacbdfdbd5ff8d",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-844x390-100.png": "2d50d56ad2d2d587c56548b5bb70bdaca84fd7dbf1e8244471e519102e48f95c",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-844x390-200.png": "c25267b4d50254a215b52ec6d97a08d4469a9b9a7bab9bcac103063a010843d3"
+  },
+  "exactPriorRootReview": {
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-1280x800-100.png": {
+      "sha256": "9d814bec2c24c5ac632bf3a488e9fdf3877acfd31ab2e8f790739e275bb60c91",
+      "directlyViewedPrior": "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-1280x800-100.png",
+      "priorSha256": "9d814bec2c24c5ac632bf3a488e9fdf3877acfd31ab2e8f790739e275bb60c91"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-320x568-100.png": {
+      "sha256": "2d0b9ba84b4c2880e57f3b1f709150a2aa80fe0f7020690350f6306d75779560",
+      "directlyViewedPrior": "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-320x568-100.png",
+      "priorSha256": "2d0b9ba84b4c2880e57f3b1f709150a2aa80fe0f7020690350f6306d75779560"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-390x664-100.png": {
+      "sha256": "e0269129442a83f4383326058df615635e04e260e245e3ce8dd608cd723a8a55",
+      "directlyViewedPrior": "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-390x664-100.png",
+      "priorSha256": "e0269129442a83f4383326058df615635e04e260e245e3ce8dd608cd723a8a55"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-640x360-100.png": {
+      "sha256": "4b05d9900b4acd7f617042e5876b07efbbb9719d4ec49c432a5b478dafbee317",
+      "directlyViewedPrior": "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-640x360-100.png",
+      "priorSha256": "4b05d9900b4acd7f617042e5876b07efbbb9719d4ec49c432a5b478dafbee317"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-640x360-200.png": {
+      "sha256": "7cac6440e020540f1bfe651fb9f759ae4cc0d0307fd966bca30e46c789fdadfb",
+      "directlyViewedPrior": "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-640x360-200.png",
+      "priorSha256": "7cac6440e020540f1bfe651fb9f759ae4cc0d0307fd966bca30e46c789fdadfb"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-844x390.png": {
+      "sha256": "4feb53f342fda60a98575e9346d0f5a2d366ea07ad492fa242a9628b19e57bc2",
+      "directlyViewedPrior": "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-844x390.png",
+      "priorSha256": "4feb53f342fda60a98575e9346d0f5a2d366ea07ad492fa242a9628b19e57bc2"
+    }
+  },
+  "priorDirectRootPngs": {
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-320x568-100.png": "2d0b9ba84b4c2880e57f3b1f709150a2aa80fe0f7020690350f6306d75779560",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-320x568-200.png": "0b569570da7b13144a3af6d2160ab39e57c5d4ac502b7cbd866a3bc19563a036",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-390x664-100.png": "e0269129442a83f4383326058df615635e04e260e245e3ce8dd608cd723a8a55",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-390x664-200.png": "1f61b4034d145a78422715b31eeb50ca82641d98f0bdf67f7aafba3653fef95a",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-640x360-100.png": "4b05d9900b4acd7f617042e5876b07efbbb9719d4ec49c432a5b478dafbee317",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-640x360-200.png": "7cac6440e020540f1bfe651fb9f759ae4cc0d0307fd966bca30e46c789fdadfb",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-844x390-100.png": "5c6ccc0fe1f28dd33089d95e609044f4dbf5c250c07221f9aa25a8bfa5e201b2",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-844x390-200.png": "0879df7e7ebcfe4887e2aee43a9f00793018e4b06361b2e3e0a21e3889898d61",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-1280x800-100.png": "9d814bec2c24c5ac632bf3a488e9fdf3877acfd31ab2e8f790739e275bb60c91",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-1280x800-200.png": "472ef28ed50fce2cdab785618779a608160e8371f5aeafdb882232fea025c5af",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-320x568.png": "6e228b649529af3047269be95be4024f805159de3b4cd3f983c8ef2fb7022337",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-844x390.png": "4feb53f342fda60a98575e9346d0f5a2d366ea07ad492fa242a9628b19e57bc2",
+    "docs/audits/2026-10-12-character-polish/creator-flow-final-v2/creator-1280x800.png": "3f6f566f5ad91af38e8c974f85a95059542e813a3a9c0477ba31385d7795a8fa"
+  },
+  "baselineDirectPngs": {
+    "docs/audits/2026-10-12-character-polish/creator-flow-before/creator-1280x800-100.png": "36294981116db2b9075cbbf701a174467375658e5709de67bcf87d76d55e28be",
+    "docs/audits/2026-10-12-character-polish/creator-flow-before/creator-1280x800-200.png": "0c2615faa754a190edd11e4fae5da0796f1fc7309bea9ab39db15572e4da6e67",
+    "docs/audits/2026-10-12-character-polish/creator-flow-before/creator-320x568-100.png": "7ff33d37caf34c219d4e77cfe856eae82dff165853bb57b34c82e80371680f55",
+    "docs/audits/2026-10-12-character-polish/creator-flow-before/creator-320x568-200.png": "771ae2c156751c27cb110c5e5f2a358a446c8e20495677cfa9c759e0822a2f74",
+    "docs/audits/2026-10-12-character-polish/creator-flow-before/creator-390x664-100.png": "bd30d84c6ad7105d1cd068e9d3e79843da76bf73b012f4d035f793836618c0d2",
+    "docs/audits/2026-10-12-character-polish/creator-flow-before/creator-390x664-200.png": "8a688f330fa34f05d6d06dff41e8184365738aae4344f657d5bf92117c9d47ce",
+    "docs/audits/2026-10-12-character-polish/creator-flow-before/creator-640x360-100.png": "2a44b0e52edb06967bed1347a99f6a77b0f233c7365a0c0e8e60ab8a2dc3fe24",
+    "docs/audits/2026-10-12-character-polish/creator-flow-before/creator-640x360-200.png": "9d7e1df88b663ce4a814d064d9fed0e2c1d0bdbd045420af11988c814b584a8d",
+    "docs/audits/2026-10-12-character-polish/creator-flow-before/creator-844x390-100.png": "5c6ccc0fe1f28dd33089d95e609044f4dbf5c250c07221f9aa25a8bfa5e201b2",
+    "docs/audits/2026-10-12-character-polish/creator-flow-before/creator-844x390-200.png": "7ee89bd9b941236654442e9d75bf374fa26a78365a33fc874abfec11d623b36c"
+  },
+  "geometryRows": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-1280x800-100.json",
+      "initialControlCount": 24,
+      "focusedChoiceSamples": 21,
+      "artHeight": 624
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-320x568-100.json",
+      "initialControlCount": 9,
+      "focusedChoiceSamples": 21,
+      "artHeight": 123
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-390x664-100.json",
+      "initialControlCount": 9,
+      "focusedChoiceSamples": 21,
+      "artHeight": 189
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-640x360-100.json",
+      "initialControlCount": 24,
+      "focusedChoiceSamples": 21,
+      "artHeight": 226
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-844x390-100.json",
+      "initialControlCount": 24,
+      "focusedChoiceSamples": 21,
+      "artHeight": 256
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-1280x800-200.json",
+      "initialControlCount": 24,
+      "focusedChoiceSamples": 21,
+      "artHeight": 597
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-320x568-200.json",
+      "initialControlCount": 9,
+      "focusedChoiceSamples": 21,
+      "artHeight": 160
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-390x664-200.json",
+      "initialControlCount": 9,
+      "focusedChoiceSamples": 21,
+      "artHeight": 160
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-640x360-200.json",
+      "initialControlCount": 24,
+      "focusedChoiceSamples": 21,
+      "artHeight": 160
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-flow-final-v3/creator-844x390-200.json",
+      "initialControlCount": 24,
+      "focusedChoiceSamples": 21,
+      "artHeight": 160
+    }
+  ],
+  "focusedChoiceSamples": 210,
+  "unchangedDefaultPreviewBoxes": [
+    "320x568",
+    "390x664",
+    "844x390",
+    "1280x800"
+  ],
+  "method": "Root directly viewed all10 baseline PNGs and all13 prior-final PNGs; final21 are15 direct final views plus6 byte-identical prior direct views. Final stills include10initiallayouts,8scrolledcolour/face panels and3layeredBuncheers. Native recorded210choice target samples across5viewports x2root-text sizes x21choices. All focus measurements recomputed here; no saved-data/motion rerun by this read-only check. Actual native tests also compare saved tables, input identity/caret across resizing and existing motion/reduction. Exact four default preview boxes are geometry equivalence, not full pixel/layout equivalence. Root text enlargement is not browser zoom/AT/physical-device or temporal certification."
+}

@@ -1,0 +1,28 @@
+{"width":320,"height":568,"textPercent":100,"artHeight":123,"rootWidth":320,"maxVisibleBottom":423}
+✔ creator layout probe 320x568 text100 (850.07506ms)
+{"width":320,"height":568,"textPercent":200,"artHeight":0,"rootWidth":320,"maxVisibleBottom":452}
+✔ creator layout probe 320x568 text200 (808.09136ms)
+{"width":390,"height":664,"textPercent":100,"artHeight":189,"rootWidth":390,"maxVisibleBottom":525}
+✔ creator layout probe 390x664 text100 (796.795405ms)
+{"width":390,"height":664,"textPercent":200,"artHeight":0,"rootWidth":390,"maxVisibleBottom":554}
+✔ creator layout probe 390x664 text200 (739.848698ms)
+{"width":640,"height":360,"textPercent":100,"artHeight":226,"rootWidth":640,"maxVisibleBottom":568.28125}
+✔ creator layout probe 640x360 text100 (774.971289ms)
+{"width":640,"height":360,"textPercent":200,"artHeight":150.625,"rootWidth":640,"maxVisibleBottom":797.15625}
+✔ creator layout probe 640x360 text200 (783.366343ms)
+{"width":844,"height":390,"textPercent":100,"artHeight":256,"rootWidth":844,"maxVisibleBottom":597.90625}
+✔ creator layout probe 844x390 text100 (789.743138ms)
+{"width":844,"height":390,"textPercent":200,"artHeight":237.8125,"rootWidth":844,"maxVisibleBottom":778.4375}
+✔ creator layout probe 844x390 text200 (916.925826ms)
+{"width":1280,"height":800,"textPercent":100,"artHeight":624,"rootWidth":1280,"maxVisibleBottom":776}
+✔ creator layout probe 1280x800 text100 (815.609093ms)
+{"width":1280,"height":800,"textPercent":200,"artHeight":597,"rootWidth":1280,"maxVisibleBottom":862.03125}
+✔ creator layout probe 1280x800 text200 (819.546123ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8485.598836

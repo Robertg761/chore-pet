@@ -1,0 +1,262 @@
+{
+  "width": 640,
+  "height": 360,
+  "textPercent": 200,
+  "geometry": {
+    "width": 640,
+    "height": 360,
+    "scrollWidth": 640,
+    "preview": {
+      "x": 171,
+      "y": 137.1875,
+      "w": 442,
+      "h": 160,
+      "right": 613,
+      "bottom": 297.1875
+    },
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 158,
+        "y": 10,
+        "w": 147.359375,
+        "h": 49,
+        "right": 305.359375,
+        "bottom": 59,
+        "textFits": true
+      },
+      {
+        "label": "Save",
+        "x": 509.53125,
+        "y": 10,
+        "w": 110.46875,
+        "h": 49,
+        "right": 620,
+        "bottom": 59,
+        "textFits": true
+      },
+      {
+        "label": "cc-name",
+        "x": 261.9375,
+        "y": 310.1875,
+        "w": 358.0625,
+        "h": 49,
+        "right": 620,
+        "bottom": 359.1875,
+        "textFits": true
+      },
+      {
+        "label": "Mochi",
+        "x": 168,
+        "y": 423.984375,
+        "w": 448,
+        "h": 86,
+        "right": 616,
+        "bottom": 509.984375,
+        "textFits": true
+      },
+      {
+        "label": "Bun",
+        "x": 168,
+        "y": 517.984375,
+        "w": 448,
+        "h": 86,
+        "right": 616,
+        "bottom": 603.984375,
+        "textFits": true
+      },
+      {
+        "label": "Sprout",
+        "x": 168,
+        "y": 611.984375,
+        "w": 448,
+        "h": 86,
+        "right": 616,
+        "bottom": 697.984375,
+        "textFits": true
+      },
+      {
+        "label": "Pink",
+        "x": 168,
+        "y": 795.78125,
+        "w": 52,
+        "h": 52,
+        "right": 220,
+        "bottom": 847.78125,
+        "textFits": true
+      },
+      {
+        "label": "White",
+        "x": 234,
+        "y": 795.78125,
+        "w": 52,
+        "h": 52,
+        "right": 286,
+        "bottom": 847.78125,
+        "textFits": true
+      },
+      {
+        "label": "Yellow",
+        "x": 300,
+        "y": 795.78125,
+        "w": 52,
+        "h": 52,
+        "right": 352,
+        "bottom": 847.78125,
+        "textFits": true
+      },
+      {
+        "label": "Sky",
+        "x": 366,
+        "y": 795.78125,
+        "w": 52,
+        "h": 52,
+        "right": 418,
+        "bottom": 847.78125,
+        "textFits": true
+      },
+      {
+        "label": "Mint",
+        "x": 432,
+        "y": 795.78125,
+        "w": 52,
+        "h": 52,
+        "right": 484,
+        "bottom": 847.78125,
+        "textFits": true
+      },
+      {
+        "label": "Lavender",
+        "x": 498,
+        "y": 795.78125,
+        "w": 52,
+        "h": 52,
+        "right": 550,
+        "bottom": 847.78125,
+        "textFits": true
+      },
+      {
+        "label": "Peach",
+        "x": 564,
+        "y": 795.78125,
+        "w": 52,
+        "h": 52,
+        "right": 616,
+        "bottom": 847.78125,
+        "textFits": true
+      },
+      {
+        "label": "Caramel",
+        "x": 168,
+        "y": 855.78125,
+        "w": 52,
+        "h": 52,
+        "right": 220,
+        "bottom": 907.78125,
+        "textFits": true
+      },
+      {
+        "label": "Cocoa",
+        "x": 234,
+        "y": 855.78125,
+        "w": 52,
+        "h": 52,
+        "right": 286,
+        "bottom": 907.78125,
+        "textFits": true
+      },
+      {
+        "label": "Grey",
+        "x": 300,
+        "y": 855.78125,
+        "w": 52,
+        "h": 52,
+        "right": 352,
+        "bottom": 907.78125,
+        "textFits": true
+      },
+      {
+        "label": "Classic",
+        "x": 168,
+        "y": 966.578125,
+        "w": 221,
+        "h": 153.59375,
+        "right": 389,
+        "bottom": 1120.171875,
+        "textFits": true
+      },
+      {
+        "label": "Sparkly",
+        "x": 395,
+        "y": 966.578125,
+        "w": 221,
+        "h": 153.59375,
+        "right": 616,
+        "bottom": 1120.171875,
+        "textFits": true
+      },
+      {
+        "label": "Button",
+        "x": 168,
+        "y": 1126.171875,
+        "w": 221,
+        "h": 153.59375,
+        "right": 389,
+        "bottom": 1279.765625,
+        "textFits": true
+      },
+      {
+        "label": "Lashes",
+        "x": 395,
+        "y": 1126.171875,
+        "w": 221,
+        "h": 153.59375,
+        "right": 616,
+        "bottom": 1279.765625,
+        "textFits": true
+      },
+      {
+        "label": "Round",
+        "x": 168,
+        "y": 1338.5625,
+        "w": 221,
+        "h": 153.59375,
+        "right": 389,
+        "bottom": 1492.15625,
+        "textFits": true
+      },
+      {
+        "label": "Hearts",
+        "x": 395,
+        "y": 1338.5625,
+        "w": 221,
+        "h": 153.59375,
+        "right": 616,
+        "bottom": 1492.15625,
+        "textFits": true
+      },
+      {
+        "label": "Freckles",
+        "x": 168,
+        "y": 1498.15625,
+        "w": 221,
+        "h": 153.59375,
+        "right": 389,
+        "bottom": 1651.75,
+        "textFits": true
+      },
+      {
+        "label": "None",
+        "x": 395,
+        "y": 1498.15625,
+        "w": 221,
+        "h": 153.59375,
+        "right": 616,
+        "bottom": 1651.75,
+        "textFits": true
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Offline production editor, 100%/200% root text; initial Who options. Geometry verifies art height, all visible input targets, horizontal bounds and text clipping. Vertical reachability separately verified through native focus."
+}

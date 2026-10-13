@@ -1,0 +1,105 @@
+✔ look editor keeps its character and controls readable at 320x568 text100 (1208.310573ms)
+✖ look editor keeps its character and controls readable at 320x568 text200 (701.265113ms)
+✔ look editor keeps its character and controls readable at 390x664 text100 (1127.366502ms)
+✖ look editor keeps its character and controls readable at 390x664 text200 (705.501589ms)
+✖ look editor keeps its character and controls readable at 640x360 text100 (733.446663ms)
+✖ look editor keeps its character and controls readable at 640x360 text200 (732.970609ms)
+✔ look editor keeps its character and controls readable at 844x390 text100 (1557.536539ms)
+✖ look editor keeps its character and controls readable at 844x390 text200 (906.158996ms)
+✔ look editor keeps its character and controls readable at 1280x800 text100 (1747.413605ms)
+✖ look editor keeps its character and controls readable at 1280x800 text200 (795.901834ms)
+✔ look draft name and caret survive resizing and stay reachable at enlarged text (963.34467ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 5
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11562.780535
+
+✖ failing tests:
+
+test at scripts/browser/creator-layout.test.mjs:34:3
+✖ look editor keeps its character and controls readable at 320x568 text200 (701.265113ms)
+  AssertionError [ERR_ASSERTION]: Preview height: {"x":21,"y":192.5625,"w":278,"h":0,"right":299,"bottom":192.5625}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-layout.test.mjs:38:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-layout.test.mjs:34:3
+✖ look editor keeps its character and controls readable at 390x664 text200 (705.501589ms)
+  AssertionError [ERR_ASSERTION]: Preview height: {"x":21,"y":306.9375,"w":348,"h":0,"right":369,"bottom":306.9375}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-layout.test.mjs:38:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-layout.test.mjs:34:3
+✖ look editor keeps its character and controls readable at 640x360 text100 (733.446663ms)
+  AssertionError [ERR_ASSERTION]: Horizontal bounds: {"label":"Sprout","x":600.078125,"y":86.390625,"w":90.546875,"h":110,"right":690.625,"bottom":196.390625,"textFits":true}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-layout.test.mjs:42:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-layout.test.mjs:34:3
+✖ look editor keeps its character and controls readable at 640x360 text200 (732.970609ms)
+  AssertionError [ERR_ASSERTION]: Horizontal bounds: {"label":"cc-name","x":261.9375,"y":301,"w":432,"h":49,"right":693.9375,"bottom":350,"textFits":true}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-layout.test.mjs:42:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-layout.test.mjs:34:3
+✖ look editor keeps its character and controls readable at 844x390 text200 (906.158996ms)
+  AssertionError [ERR_ASSERTION]: Horizontal bounds: {"label":"Bun","x":841.125,"y":117.984375,"w":115.203125,"h":131,"right":956.328125,"bottom":248.984375,"textFits":true}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-layout.test.mjs:42:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-layout.test.mjs:34:3
+✖ look editor keeps its character and controls readable at 1280x800 text200 (795.901834ms)
+  AssertionError [ERR_ASSERTION]: Horizontal bounds: {"label":"Sprout","x":1173.9375,"y":153.390625,"w":172,"h":151,"right":1345.9375,"bottom":304.390625,"textFits":true}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-layout.test.mjs:42:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

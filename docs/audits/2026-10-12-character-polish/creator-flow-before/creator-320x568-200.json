@@ -1,0 +1,159 @@
+{
+  "width": 320,
+  "height": 568,
+  "textPercent": 200,
+  "geometry": {
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "root": {
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "scrollHeight": 568
+    },
+    "form": {
+      "x": 14,
+      "y": 8,
+      "w": 292,
+      "h": 497,
+      "right": 306,
+      "bottom": 505,
+      "scrollHeight": 502,
+      "clientHeight": 497
+    },
+    "stage": {
+      "x": 14,
+      "y": 185.5625,
+      "w": 292,
+      "h": 67.4375,
+      "right": 306,
+      "bottom": 253,
+      "scrollHeight": 69,
+      "clientHeight": 67
+    },
+    "preview": {
+      "x": 21,
+      "y": 192.5625,
+      "w": 278,
+      "h": 0,
+      "right": 299,
+      "bottom": 192.5625,
+      "scrollHeight": 0,
+      "clientHeight": 0
+    },
+    "panel": {
+      "x": 9,
+      "y": 320,
+      "w": 302,
+      "h": 190,
+      "right": 311,
+      "bottom": 510,
+      "scrollHeight": 215,
+      "clientHeight": 190
+    },
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 8,
+        "y": 71.78125,
+        "w": 44,
+        "h": 44,
+        "right": 52,
+        "bottom": 115.78125,
+        "scrollHeight": 38,
+        "clientHeight": 38
+      },
+      {
+        "label": "Save",
+        "x": 195.53125,
+        "y": 69.28125,
+        "w": 110.46875,
+        "h": 49,
+        "right": 306,
+        "bottom": 118.28125,
+        "scrollHeight": 43,
+        "clientHeight": 43
+      },
+      {
+        "label": "cc-name",
+        "x": 111.9375,
+        "y": 205.5625,
+        "w": 194.0625,
+        "h": 49,
+        "right": 306,
+        "bottom": 254.5625,
+        "scrollHeight": 43,
+        "clientHeight": 43
+      },
+      {
+        "label": "Who",
+        "x": 20,
+        "y": 267,
+        "w": 90.53125,
+        "h": 44,
+        "right": 110.53125,
+        "bottom": 311,
+        "scrollHeight": 44,
+        "clientHeight": 44
+      },
+      {
+        "label": "Colour",
+        "x": 114.53125,
+        "y": 267,
+        "w": 114.71875,
+        "h": 44,
+        "right": 229.25,
+        "bottom": 311,
+        "scrollHeight": 44,
+        "clientHeight": 44
+      },
+      {
+        "label": "Face",
+        "x": 233.25,
+        "y": 267,
+        "w": 83.734375,
+        "h": 44,
+        "right": 316.984375,
+        "bottom": 311,
+        "scrollHeight": 44,
+        "clientHeight": 44
+      },
+      {
+        "label": "Mochi",
+        "x": 18,
+        "y": 329,
+        "w": 89.328125,
+        "h": 123,
+        "right": 107.328125,
+        "bottom": 452,
+        "scrollHeight": 117,
+        "clientHeight": 117
+      },
+      {
+        "label": "Bun",
+        "x": 115.328125,
+        "y": 329,
+        "w": 89.328125,
+        "h": 123,
+        "right": 204.65625,
+        "bottom": 452,
+        "scrollHeight": 117,
+        "clientHeight": 117
+      },
+      {
+        "label": "Sprout",
+        "x": 212.65625,
+        "y": 329,
+        "w": 89.34375,
+        "h": 123,
+        "right": 302,
+        "bottom": 452,
+        "scrollHeight": 117,
+        "clientHeight": 117
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Read-only production offline baseline probe; no layout acceptance assertion. Initial Who options, reduced motion, no saved changes."
+}

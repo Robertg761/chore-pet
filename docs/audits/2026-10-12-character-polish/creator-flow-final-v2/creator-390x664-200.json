@@ -1,0 +1,112 @@
+{
+  "width": 390,
+  "height": 664,
+  "textPercent": 200,
+  "geometry": {
+    "width": 390,
+    "height": 664,
+    "scrollWidth": 390,
+    "preview": {
+      "x": 21,
+      "y": 135.1875,
+      "w": 348,
+      "h": 160,
+      "right": 369,
+      "bottom": 295.1875
+    },
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 8,
+        "y": 8,
+        "w": 147.359375,
+        "h": 49,
+        "right": 155.359375,
+        "bottom": 57,
+        "textFits": true
+      },
+      {
+        "label": "Save",
+        "x": 265.53125,
+        "y": 8,
+        "w": 110.46875,
+        "h": 49,
+        "right": 376,
+        "bottom": 57,
+        "textFits": true
+      },
+      {
+        "label": "cc-name",
+        "x": 111.9375,
+        "y": 308.1875,
+        "w": 264.0625,
+        "h": 49,
+        "right": 376,
+        "bottom": 357.1875,
+        "textFits": true
+      },
+      {
+        "label": "Who",
+        "x": 20,
+        "y": 371.1875,
+        "w": 173,
+        "h": 44,
+        "right": 193,
+        "bottom": 415.1875,
+        "textFits": true
+      },
+      {
+        "label": "Colour",
+        "x": 197,
+        "y": 371.1875,
+        "w": 173,
+        "h": 44,
+        "right": 370,
+        "bottom": 415.1875,
+        "textFits": true
+      },
+      {
+        "label": "Face",
+        "x": 20,
+        "y": 419.1875,
+        "w": 350,
+        "h": 44,
+        "right": 370,
+        "bottom": 463.1875,
+        "textFits": true
+      },
+      {
+        "label": "Mochi",
+        "x": 18,
+        "y": 481.1875,
+        "w": 354,
+        "h": 86,
+        "right": 372,
+        "bottom": 567.1875,
+        "textFits": true
+      },
+      {
+        "label": "Bun",
+        "x": 18,
+        "y": 575.1875,
+        "w": 354,
+        "h": 86,
+        "right": 372,
+        "bottom": 661.1875,
+        "textFits": true
+      },
+      {
+        "label": "Sprout",
+        "x": 18,
+        "y": 669.1875,
+        "w": 354,
+        "h": 86,
+        "right": 372,
+        "bottom": 755.1875,
+        "textFits": true
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Offline production editor, 100%/200% root text; initial Who options. Geometry verifies art height, all visible input targets, horizontal bounds and text clipping. Vertical reachability separately verified through native focus."
+}

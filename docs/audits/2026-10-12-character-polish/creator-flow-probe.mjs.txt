@@ -1,0 +1,24 @@
+import { test } from 'node:test'
+import { writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { browserApp, snapshot } from '/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/helpers.mjs'
+const out='/home/robert/.codex/worktrees/4511/chore-pet/docs/audits/2026-10-12-character-polish/creator-flow-before'
+for(const [width,height] of [[320,568],[390,664],[640,360],[844,390],[1280,800]]) for(const textPercent of [100,200]){
+ test(`creator layout probe ${width}x${height} text${textPercent}`,{timeout:25000},async t=>{
+  const page=await browserApp(t,{viewport:{width,height}})
+  await page.getByRole('button',{name:'More',exact:true}).click()
+  await page.getByRole('button',{name:'Change look',exact:true}).click()
+  await page.getByRole('heading',{name:'Change look',exact:true}).waitFor()
+  await page.waitForFunction(()=>!document.documentElement.dataset.vt)
+  if(textPercent!==100) await page.addStyleTag({content:`html { font-size: ${textPercent}% !important; }`})
+  await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))))
+  const geometry=await page.evaluate(()=>{
+   const box=n=>{if(!n)return null;const r=n.getBoundingClientRect();return{x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom,scrollHeight:n.scrollHeight,clientHeight:n.clientHeight}}
+   return{viewport:{width:innerWidth,height:innerHeight},root:{scrollWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,scrollHeight:document.documentElement.scrollHeight},form:box(document.querySelector('.cc')),stage:box(document.querySelector('.cc-stage')),preview:box(document.querySelector('.cc-preview svg')),panel:box(document.querySelector('.cc-panel')),controls:[...document.querySelectorAll('.cc button,.cc input')].filter(n=>n.getClientRects().length).map(n=>({label:n.getAttribute('aria-label')||n.textContent.trim()||n.id,...box(n)}))}
+  })
+  await page.screenshot({path:join(out,`creator-${width}x${height}-${textPercent}.png`)})
+  await writeFile(join(out,`creator-${width}x${height}-${textPercent}.json`),JSON.stringify({width,height,textPercent,geometry,browser:page.context().browser().version(),method:'Read-only production offline baseline probe; no layout acceptance assertion. Initial Who options, reduced motion, no saved changes.'},null,2)+'\n')
+  console.log(JSON.stringify({width,height,textPercent,artHeight:geometry.preview.h,rootWidth:geometry.root.scrollWidth,maxVisibleBottom:Math.max(...geometry.controls.map(x=>x.bottom))}))
+  if(!Object.keys((await snapshot(page)).tables.pets).length)throw new Error('Missing sample pet')
+ })
+}

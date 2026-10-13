@@ -1,0 +1,39 @@
+✔ look editor keeps its character and controls readable at 320x568 text100 (1338.844937ms)
+✔ look editor keeps its character and controls readable at 320x568 text200 (1314.850403ms)
+✔ look editor keeps its character and controls readable at 390x664 text100 (1156.998338ms)
+✔ look editor keeps its character and controls readable at 390x664 text200 (1169.234092ms)
+✔ look editor keeps its character and controls readable at 640x360 text100 (1724.34036ms)
+✖ look editor keeps its character and controls readable at 640x360 text200 (1003.209971ms)
+✔ look editor keeps its character and controls readable at 844x390 text100 (1647.159061ms)
+✔ look editor keeps its character and controls readable at 844x390 text200 (1633.655419ms)
+✔ look editor keeps its character and controls readable at 1280x800 text100 (1609.796193ms)
+✔ look editor keeps its character and controls readable at 1280x800 text200 (1617.171698ms)
+✔ look draft name and caret survive resizing and stay reachable at enlarged text (970.764754ms)
+✔ creator previews the actual character while keeping face choices visible at 320x568 (3896.639967ms)
+✔ creator previews the actual character while keeping face choices visible at 844x390 (3422.841076ms)
+✔ creator previews the actual character while keeping face choices visible at 1280x800 (3336.225363ms)
+✔ creator settles live reduction and initial reduction keeps look choices available (3757.179464ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 14
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30377.876213
+
+✖ failing tests:
+
+test at scripts/browser/creator-layout.test.mjs:34:3
+✖ look editor keeps its character and controls readable at 640x360 text200 (1003.209971ms)
+  AssertionError [ERR_ASSERTION]: Focused vertical reachability: Classic {"x":168,"y":206.578125,"width":221,"height":153.59375}
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-layout.test.mjs:62:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

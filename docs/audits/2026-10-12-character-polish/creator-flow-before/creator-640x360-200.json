@@ -1,0 +1,324 @@
+{
+  "width": 640,
+  "height": 360,
+  "textPercent": 200,
+  "geometry": {
+    "viewport": {
+      "width": 640,
+      "height": 360
+    },
+    "root": {
+      "scrollWidth": 640,
+      "clientWidth": 640,
+      "scrollHeight": 360
+    },
+    "form": {
+      "x": 164,
+      "y": 10,
+      "w": 456,
+      "h": 340,
+      "right": 620,
+      "bottom": 350,
+      "scrollHeight": 340,
+      "clientHeight": 340
+    },
+    "stage": {
+      "x": 164,
+      "y": 130.375,
+      "w": 529.9375,
+      "h": 219.625,
+      "right": 693.9375,
+      "bottom": 350,
+      "scrollHeight": 220,
+      "clientHeight": 220
+    },
+    "preview": {
+      "x": 171,
+      "y": 137.375,
+      "w": 515.9375,
+      "h": 150.625,
+      "right": 686.9375,
+      "bottom": 288,
+      "scrollHeight": 151,
+      "clientHeight": 151
+    },
+    "panel": {
+      "x": 708.9375,
+      "y": 125.375,
+      "w": 265.359375,
+      "h": 116.625,
+      "right": 974.296875,
+      "bottom": 242,
+      "scrollHeight": 681,
+      "clientHeight": 117
+    },
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 158,
+        "y": 42.6875,
+        "w": 147.359375,
+        "h": 49,
+        "right": 305.359375,
+        "bottom": 91.6875,
+        "scrollHeight": 43,
+        "clientHeight": 43
+      },
+      {
+        "label": "Save",
+        "x": 509.53125,
+        "y": 42.6875,
+        "w": 110.46875,
+        "h": 49,
+        "right": 620,
+        "bottom": 91.6875,
+        "scrollHeight": 43,
+        "clientHeight": 43
+      },
+      {
+        "label": "cc-name",
+        "x": 261.9375,
+        "y": 301,
+        "w": 432,
+        "h": 49,
+        "right": 693.9375,
+        "bottom": 350,
+        "scrollHeight": 43,
+        "clientHeight": 43
+      },
+      {
+        "label": "Mochi",
+        "x": 717.9375,
+        "y": 175.171875,
+        "w": 77.109375,
+        "h": 122.125,
+        "right": 795.046875,
+        "bottom": 297.296875,
+        "scrollHeight": 116,
+        "clientHeight": 116
+      },
+      {
+        "label": "Bun",
+        "x": 803.046875,
+        "y": 175.171875,
+        "w": 77.125,
+        "h": 122.125,
+        "right": 880.171875,
+        "bottom": 297.296875,
+        "scrollHeight": 116,
+        "clientHeight": 116
+      },
+      {
+        "label": "Sprout",
+        "x": 888.171875,
+        "y": 175.171875,
+        "w": 77.109375,
+        "h": 122.125,
+        "right": 965.28125,
+        "bottom": 297.296875,
+        "scrollHeight": 116,
+        "clientHeight": 116
+      },
+      {
+        "label": "Pink",
+        "x": 711.078125,
+        "y": 430.09375,
+        "w": 52,
+        "h": 52,
+        "right": 763.078125,
+        "bottom": 482.09375,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      },
+      {
+        "label": "White",
+        "x": 763.34375,
+        "y": 430.09375,
+        "w": 52,
+        "h": 52,
+        "right": 815.34375,
+        "bottom": 482.09375,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      },
+      {
+        "label": "Yellow",
+        "x": 815.609375,
+        "y": 430.09375,
+        "w": 52,
+        "h": 52,
+        "right": 867.609375,
+        "bottom": 482.09375,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      },
+      {
+        "label": "Sky",
+        "x": 867.890625,
+        "y": 430.09375,
+        "w": 52,
+        "h": 52,
+        "right": 919.890625,
+        "bottom": 482.09375,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      },
+      {
+        "label": "Mint",
+        "x": 920.15625,
+        "y": 430.09375,
+        "w": 52,
+        "h": 52,
+        "right": 972.15625,
+        "bottom": 482.09375,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      },
+      {
+        "label": "Lavender",
+        "x": 711.078125,
+        "y": 490.09375,
+        "w": 52,
+        "h": 52,
+        "right": 763.078125,
+        "bottom": 542.09375,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      },
+      {
+        "label": "Peach",
+        "x": 763.34375,
+        "y": 490.09375,
+        "w": 52,
+        "h": 52,
+        "right": 815.34375,
+        "bottom": 542.09375,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      },
+      {
+        "label": "Caramel",
+        "x": 815.609375,
+        "y": 490.09375,
+        "w": 52,
+        "h": 52,
+        "right": 867.609375,
+        "bottom": 542.09375,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      },
+      {
+        "label": "Cocoa",
+        "x": 867.890625,
+        "y": 490.09375,
+        "w": 52,
+        "h": 52,
+        "right": 919.890625,
+        "bottom": 542.09375,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      },
+      {
+        "label": "Grey",
+        "x": 920.15625,
+        "y": 490.09375,
+        "w": 52,
+        "h": 52,
+        "right": 972.15625,
+        "bottom": 542.09375,
+        "scrollHeight": 46,
+        "clientHeight": 46
+      },
+      {
+        "label": "Classic",
+        "x": 717.9375,
+        "y": 600.890625,
+        "w": 57.328125,
+        "h": 68.734375,
+        "right": 775.265625,
+        "bottom": 669.625,
+        "scrollHeight": 63,
+        "clientHeight": 63
+      },
+      {
+        "label": "Sparkly",
+        "x": 781.265625,
+        "y": 600.890625,
+        "w": 57.34375,
+        "h": 68.734375,
+        "right": 838.609375,
+        "bottom": 669.625,
+        "scrollHeight": 63,
+        "clientHeight": 63
+      },
+      {
+        "label": "Button",
+        "x": 844.609375,
+        "y": 600.890625,
+        "w": 57.34375,
+        "h": 68.734375,
+        "right": 901.953125,
+        "bottom": 669.625,
+        "scrollHeight": 63,
+        "clientHeight": 63
+      },
+      {
+        "label": "Lashes",
+        "x": 907.953125,
+        "y": 600.890625,
+        "w": 57.34375,
+        "h": 68.734375,
+        "right": 965.296875,
+        "bottom": 669.625,
+        "scrollHeight": 63,
+        "clientHeight": 63
+      },
+      {
+        "label": "Round",
+        "x": 717.9375,
+        "y": 728.421875,
+        "w": 57.328125,
+        "h": 68.734375,
+        "right": 775.265625,
+        "bottom": 797.15625,
+        "scrollHeight": 63,
+        "clientHeight": 63
+      },
+      {
+        "label": "Hearts",
+        "x": 781.265625,
+        "y": 728.421875,
+        "w": 57.34375,
+        "h": 68.734375,
+        "right": 838.609375,
+        "bottom": 797.15625,
+        "scrollHeight": 63,
+        "clientHeight": 63
+      },
+      {
+        "label": "Freckles",
+        "x": 844.609375,
+        "y": 728.421875,
+        "w": 57.34375,
+        "h": 68.734375,
+        "right": 901.953125,
+        "bottom": 797.15625,
+        "scrollHeight": 63,
+        "clientHeight": 63
+      },
+      {
+        "label": "None",
+        "x": 907.953125,
+        "y": 728.421875,
+        "w": 57.34375,
+        "h": 68.734375,
+        "right": 965.296875,
+        "bottom": 797.15625,
+        "scrollHeight": 63,
+        "clientHeight": 63
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Read-only production offline baseline probe; no layout acceptance assertion. Initial Who options, reduced motion, no saved changes."
+}

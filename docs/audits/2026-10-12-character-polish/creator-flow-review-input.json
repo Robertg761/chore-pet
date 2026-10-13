@@ -1,0 +1,202 @@
+{
+  "freeze": {
+    "baseCommit": "042051d53a2d5e564f6874139403be9df289a3bb",
+    "sources": {
+      "src/screens/CharacterCreator.css": "de3a7fbf841274fd9b95b2520643e4ba7b2d0b6fb6d72cb1718798b171ab41a3",
+      "scripts/browser/creator-layout.test.mjs": "3c730821d0b14103993feec4c1461539a1ce6434c887671bed30ceb44df7aed9",
+      "docs/ART.md": "c0d5cc1b2eb0c6ccce16776838bce1b62f976846a0db6f81846a55921edf783f",
+      "docs/audits/2026-10-12-character-polish/creator-flow-design.md": "a0be72e2c6131570779dc334e963be7482238ea9124a32d10c6a7bb0b4fbd765"
+    },
+    "unchangedSources": {
+      "src/screens/CharacterCreator.tsx": "4de4082c6d8d9cdfc0d7bf1cdc7adac89bfa6a341e28b414f93ab1bcff345a59",
+      "src/screens/CreatorPreview.tsx": "37757eca1606d67d72f87ab327ffb47f2ca87145415c7f6ae03eaa9d75ad5cf6",
+      "src/screens/creatorModel.ts": "0da071e59c56e9ddcb8b6718997b2b0fe84b2f8d3602e699c8221850dcf03b45",
+      "src/screens/CharacterCreator.test.tsx": "26f82b2fa3c8eb31945af149684fa1ce9f32018cbf93925651b31575aaa20832",
+      "src/screens/creatorModel.test.ts": "0bd1b3445e719c73f91916be25465639f107fee2e3a47941284e04a997d2bb7e",
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/character/Character.css": "b30c9ffd119371268a744563e054b5e7d41ae0abf1d1e6120caff9bbfa0afccf",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/motion.ts": "07679d0a1f861d3bd327a5eb05b1d3b0edda9fc3b1633da53a4965a5b601173a",
+      "src/character/items.tsx": "f06572844f4a349fef05caa7a45068f5935815f14d79daf0a76d71dc3d412c6a",
+      "src/character/items/extras.tsx": "2ebe7ed7be300b2a5a207fb67037ec28146ae96a1bbba00d6c8627fce3b8d173",
+      "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+      "src/pet/usePetMotion.test.tsx": "07474f35781bb9b3442939d6eba0da4753211092a0d423d69c88236c782de93b",
+      "src/pet/usePetMotion.preference.test.tsx": "39d4767c5b54d38a0a4335b4f1bd8553ebffdf5aa78f0103e98c77655da70f68",
+      "src/shell/useViewport.ts": "889d9cc64d950e9f0f8473326e5b821cc0f485a60b7011003e12536ba54515ef",
+      "src/shell/ScreenHeader.tsx": "4cb84f6ce0d9ba56f1e60297e79fa0fab7ed22f8ae4d7b4147b3b7b9a8c7b7f8",
+      "src/shell/ScreenHeader.css": "6f080e585b434cef33665cd58c627389010b3ec0e3c9a0b3fd15cfb56ded1e65",
+      "src/shell/SegThumb.tsx": "9c35f972813c2270237ca025a0bf07250eaf1b2f5b79cf49c1de7e79c3134eea",
+      "src/shell/controls.css": "a0d257f01716ffb9aeecc89d5903b4d92a00a5b035caba72b02c5090c1889dce",
+      "src/index.css": "28b09b668da92e49c2a13554af34e56408dcc677d21e954fbc8145262b592418",
+      "src/App.tsx": "c8c59ac9cf30d66d7daaf1a8316b23c64beb0554784a59665e3057c39303e81a",
+      "src/data/store.ts": "3a02f895c6688efb8257eec7f8ef083d6257a1e2c37cdd5b378cbe1807092733",
+      "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+      "scripts/browser/creator-motion.test.mjs": "564d3d001515720921a0f507b4e157523171370ed474b1c3825b712b06a37987"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/creator-flow-source.diff",
+      "sha256": "f115f28436a02de19292c9cb2ef19cedb01808566ff091f299acee62e0d845a6"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/creator-flow-artifacts.json",
+    "sha256": "75532b8bd9170c6f3c197f1de2fe1c658336bb4a5a1ae850ca6bb39eb0bddbda"
+  },
+  "checks": [
+    {
+      "name": "creator-flow-baseline-native",
+      "log": "docs/audits/2026-10-12-character-polish/creator-flow-baseline-native.log",
+      "logSha256": "bbec6778742a81d16ee5f831f0e228b44e3fd4f6270bd520df0a8ff76c4cc93a",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-flow-baseline-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-flow-build-v2",
+      "log": "docs/audits/2026-10-12-character-polish/creator-flow-build-v2.log",
+      "logSha256": "17056d75d682aa5af1d5f08a047366de8baf56c767c9daab3d640234548a2369",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-flow-build-v2.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-flow-build",
+      "log": "docs/audits/2026-10-12-character-polish/creator-flow-build.log",
+      "logSha256": "a9742ff05584b6fe836eb9b298385052e03b10fea658c6110e4a4f222eafc42a",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-flow-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-flow-diff",
+      "log": "docs/audits/2026-10-12-character-polish/creator-flow-diff.log",
+      "logSha256": "af49f8897e304be3762ad574f7f93933696c892b8e286bfce7d5a388a1c29ae9",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-flow-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-flow-final-native-v2",
+      "log": "docs/audits/2026-10-12-character-polish/creator-flow-final-native-v2.log",
+      "logSha256": "bd708c6311b171ea7766cb8588d737afd48aec58a43fd79c7bb8ec94559434b1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-flow-final-native-v2.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-flow-final-native",
+      "log": "docs/audits/2026-10-12-character-polish/creator-flow-final-native.log",
+      "logSha256": "67ad4e816db97f5c6a38688c9f58f3f07fe7b5d1b9a386e630d46ef7cd4d21c0",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-flow-final-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-flow-focused",
+      "log": "docs/audits/2026-10-12-character-polish/creator-flow-focused.log",
+      "logSha256": "d5c6dd3a4445d9454269fc5b1649621a971eb06a49d94796b7992aebb90d2983",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-flow-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-flow-green-native",
+      "log": "docs/audits/2026-10-12-character-polish/creator-flow-green-native.log",
+      "logSha256": "03adb4b9352d42d0743e6d79eb59dd0ffcc7000e36b165652b2c367d7d627dc3",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-flow-green-native.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "creator-flow-lint-v2",
+      "log": "docs/audits/2026-10-12-character-polish/creator-flow-lint-v2.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-flow-lint-v2.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-flow-lint",
+      "log": "docs/audits/2026-10-12-character-polish/creator-flow-lint.log",
+      "logSha256": "f1f97ac668a29337e3e0aec00e47d98981dc16c354e7e7e6a0e21120360e4bd9",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-flow-lint.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "creator-flow-red-native",
+      "log": "docs/audits/2026-10-12-character-polish/creator-flow-red-native.log",
+      "logSha256": "7988dfe183f631bd0ffe35d793313c19c6294fe34bba1f14ac3c2c8848dd6900",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-flow-red-native.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "results": {
+    "summary": "Creator reflow: final15nativepass,40focused/4filespass, productiontypecheck/build/PWA, zero-warning scopedlint and4authoredwhitespacepass. Final21PNGs reviewed15direct+6exactprioridentity;210focusedchoice samples independently recomputed;4defaultpreviewboxesexact. CSSonlyproduction; no new clock/listener/state/save.",
+    "focused": {
+      "tests": 40,
+      "files": 4,
+      "durationSeconds": 2.39,
+      "check": "creator-flow-focused"
+    },
+    "native": {
+      "tests": 15,
+      "pass": 15,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationSeconds": 29.060722181,
+      "check": "creator-flow-final-native-v2",
+      "scope": "10layout/textcases,1name/caret/resize/cancelcase,4existingmotion/reduction/savecases. FinalproductionCSS; native harness subsequent cleanup only4unnecessary quote escapes, same selector strings. Archived exact native-run harness retained."
+    },
+    "visual": {
+      "finalPngs": 21,
+      "directFinalRoot": 15,
+      "exactPriorRoot": 6,
+      "baselineDirect": 10,
+      "priorFinalDirect": 13,
+      "manifest": "docs/audits/2026-10-12-character-polish/creator-flow-root-visual-review.json",
+      "focusedChoiceSamples": 210,
+      "preservedDefaultPreviewGeometry": 4
+    }
+  },
+  "scope": "One productionCSS path fixes stage/input shrink, page-flow at existing app-shell container thresholds, readable160px art area, full-line title, narrow choices/tabs/swatches and8pxnativefocusmargin. New native layout harness and2documents. NoReact/save/animation/clock/listener change. Full2462suite passed in precedingDancecheckpoint; not rerun for CSSonly change, focused40 and native15 are current.",
+  "history": "Read-only baseline10probe cases captured10PNGs, not acceptance tests. Red native5pass6fail/11 reproduces collapsedphonepreview and clippedlandscape/enlargedcontrols. FirstCSS build pass, native14pass1fail/15:640x360/200% focusedClassic bottom360.171875 exceededviewport; added8px scrollmargin without relaxing assertion. Secondbuildpass; initialfinal15nativepass (raw log retains exact duration), then strengthened harness to measure44px/textFits/reachability in every choice group and capture8new panels; final15pass29.060722181s. No production change between final native runs. Lintfirstfailedstrict4unnecessaryescapedquotes; removed4lexicalescapes (selector runtime unchanged), archived exact native-run harness, then finalstrictlintpasses. All historicalartifacts/logs retained. No fullsuite/build/native claim for post-lint harness byteidentity; actual productionCSS remained exact.",
+  "resources": {
+    "runs": 11,
+    "sampleRows": 161,
+    "minimumObservedAvailableMiB": 3455.390625,
+    "minimumObservedTmpFreeMiB": 4005.21484375,
+    "reserveStops": 0,
+    "launchRejections": 0,
+    "limits": "Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor."
+  },
+  "status": "Scoped checks complete; awaiting bounded independent review."
+}

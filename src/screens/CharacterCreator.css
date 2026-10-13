@@ -1,11 +1,12 @@
 /* Change look: fits one view. Phones stack the pet, the name and a tabbed panel;
    wide screens (and phones on their side) go two columns. Header and screen frame: shell/ScreenHeader.css. */
 .cc { gap: 6px; }
+.cc button, .cc input { scroll-margin: 8px; }
 
-.cc-body { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.cc-body { flex: 1 1 0; min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
 
 /* The live preview takes whatever height the options leave. */
-.cc-stage { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
+.cc-stage { flex: 1 1 0; min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 .cc-preview {
   flex: 1 1 0;
   min-height: 0;
@@ -19,16 +20,16 @@
 .cc-preview svg { display: block; width: 100%; height: 100%; }
 
 .cc-field { flex: none; display: flex; flex-direction: column; gap: 4px; }
-.cc-field-row { display: flex; align-items: center; gap: 10px; }
+.cc-field-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .cc-field label { font-weight: 800; }
-.cc-field input { flex: 1; min-height: 48px; padding: 0 14px; }
+.cc-field input { flex: 1 1 8rem; min-width: 0; min-height: 48px; padding: 0 14px; }
 .cc-error { margin: 0; font-weight: 700; color: var(--late-ink); }
 
-.cc-side { flex: none; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.cc-side { container: creator-options / inline-size; flex: none; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 
 .cc-panel { height: 216px; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 8px; padding: 5px; margin: -5px; }
 .cc-section { display: flex; flex-direction: column; gap: 4px; }
-.cc-section h2 { margin: 0; font-size: 1rem; line-height: 1.15; display: flex; align-items: baseline; gap: 8px; }
+.cc-section h2 { margin: 0; font-size: 1rem; line-height: 1.15; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
 .cc-section h2.sr-only { display: block; }
 .cc-current { font-size: 0.875rem; font-weight: 700; color: var(--ink-soft); }
 .cc-hint { margin: 0; font-size: 0.8125rem; font-weight: 700; color: var(--ink-soft); }
@@ -117,4 +118,48 @@
 @media (prefers-reduced-motion: reduce) {
   .cc-choice { transition: none; }
   .cc-choice:hover { transform: none; }
+}
+
+/* Give cramped text a full preview and ordinary page scrolling. */
+@container app-shell (max-width: 19rem) {
+
+  .app-view > .screen:has(> .screen-fit.cc) { height: auto; min-height: 100%; }
+  .screen-fit.cc { flex: none; }
+  .cc-body { flex: none; flex-direction: column; }
+  .cc-stage { flex: none; }
+  .cc-preview { flex: none; height: 174px; min-height: 174px; }
+  .cc-side { flex: none; min-height: 0; }
+  .cc-panel { flex: none; height: auto; max-height: none; overflow: visible; }
+  .cc .screen-header { display: grid; grid-template-columns: minmax(44px, 1fr) auto; }
+  .cc .sh-back { grid-column: 1; grid-row: 1; justify-self: start; }
+  .cc .sh-actions { grid-column: 2; grid-row: 1; }
+  .cc .sh-title { grid-column: 1 / -1; grid-row: 2; overflow-wrap: normal; }
+}
+@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+ @container app-shell (max-width: 34rem) {
+
+  .app-view > .screen:has(> .screen-fit.cc) { height: auto; min-height: 100%; }
+  .screen-fit.cc { flex: none; }
+  .cc-body { flex: none; flex-direction: column; }
+  .cc-stage { flex: none; }
+  .cc-preview { flex: none; height: 174px; min-height: 174px; }
+  .cc-side { flex: none; min-height: 0; }
+  .cc-panel { flex: none; height: auto; max-height: none; overflow: visible; }
+  .cc .screen-header { display: grid; grid-template-columns: minmax(44px, 1fr) auto; }
+  .cc .sh-back { grid-column: 1; grid-row: 1; justify-self: start; }
+  .cc .sh-actions { grid-column: 2; grid-row: 1; }
+  .cc .sh-title { grid-column: 1 / -1; grid-row: 2; overflow-wrap: normal; }
+ }
+}
+
+/* The options adapt to their own panel, including narrow landscape columns. */
+@container creator-options (max-width: 16rem) {
+  .cc-species { grid-template-columns: minmax(0, 1fr); }
+  .cc-species .cc-choice { flex-direction: row; gap: 12px; padding: 8px 12px; }
+  .cc-species-art { width: 64px; flex: none; }
+  .cc-faces { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cc-swatches { grid-template-columns: repeat(auto-fit, minmax(52px, 1fr)); }
+  .cc-tabs { flex-wrap: wrap; }
+  .cc-tabs .seg-btn { flex: 1 1 40%; min-width: 0; padding: 0 4px; }
+  .cc-tabs .seg-btn:last-child { flex-basis: 100%; }
 }

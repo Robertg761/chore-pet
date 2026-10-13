@@ -1,0 +1,453 @@
+{
+  "width": 844,
+  "height": 390,
+  "textPercent": 100,
+  "geometry": {
+    "width": 844,
+    "height": 390,
+    "scrollWidth": 844,
+    "preview": {
+      "x": 99,
+      "y": 67,
+      "w": 288.09375,
+      "h": 256,
+      "right": 387.09375,
+      "bottom": 323
+    },
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 86,
+        "y": 10,
+        "w": 96.6875,
+        "h": 44,
+        "right": 182.6875,
+        "bottom": 54,
+        "textFits": true
+      },
+      {
+        "label": "Save",
+        "x": 749.765625,
+        "y": 10,
+        "w": 74.234375,
+        "h": 44,
+        "right": 824,
+        "bottom": 54,
+        "textFits": true
+      },
+      {
+        "label": "cc-name",
+        "x": 145.96875,
+        "y": 336,
+        "w": 248.125,
+        "h": 44,
+        "right": 394.09375,
+        "bottom": 380,
+        "textFits": true
+      },
+      {
+        "label": "Mochi",
+        "x": 418.09375,
+        "y": 86.390625,
+        "w": 128.625,
+        "h": 110,
+        "right": 546.71875,
+        "bottom": 196.390625,
+        "textFits": true
+      },
+      {
+        "label": "Bun",
+        "x": 554.71875,
+        "y": 86.390625,
+        "w": 128.640625,
+        "h": 110,
+        "right": 683.359375,
+        "bottom": 196.390625,
+        "textFits": true
+      },
+      {
+        "label": "Sprout",
+        "x": 691.359375,
+        "y": 86.390625,
+        "w": 128.640625,
+        "h": 110,
+        "right": 820,
+        "bottom": 196.390625,
+        "textFits": true
+      },
+      {
+        "label": "Pink",
+        "x": 426.671875,
+        "y": 258.78125,
+        "w": 52,
+        "h": 52,
+        "right": 478.671875,
+        "bottom": 310.78125,
+        "textFits": true
+      },
+      {
+        "label": "White",
+        "x": 509.859375,
+        "y": 258.78125,
+        "w": 52,
+        "h": 52,
+        "right": 561.859375,
+        "bottom": 310.78125,
+        "textFits": true
+      },
+      {
+        "label": "Yellow",
+        "x": 593.03125,
+        "y": 258.78125,
+        "w": 52,
+        "h": 52,
+        "right": 645.03125,
+        "bottom": 310.78125,
+        "textFits": true
+      },
+      {
+        "label": "Sky",
+        "x": 676.21875,
+        "y": 258.78125,
+        "w": 52,
+        "h": 52,
+        "right": 728.21875,
+        "bottom": 310.78125,
+        "textFits": true
+      },
+      {
+        "label": "Mint",
+        "x": 759.40625,
+        "y": 258.78125,
+        "w": 52,
+        "h": 52,
+        "right": 811.40625,
+        "bottom": 310.78125,
+        "textFits": true
+      },
+      {
+        "label": "Lavender",
+        "x": 426.671875,
+        "y": 318.78125,
+        "w": 52,
+        "h": 52,
+        "right": 478.671875,
+        "bottom": 370.78125,
+        "textFits": true
+      },
+      {
+        "label": "Peach",
+        "x": 509.859375,
+        "y": 318.78125,
+        "w": 52,
+        "h": 52,
+        "right": 561.859375,
+        "bottom": 370.78125,
+        "textFits": true
+      },
+      {
+        "label": "Caramel",
+        "x": 593.03125,
+        "y": 318.78125,
+        "w": 52,
+        "h": 52,
+        "right": 645.03125,
+        "bottom": 370.78125,
+        "textFits": true
+      },
+      {
+        "label": "Cocoa",
+        "x": 676.21875,
+        "y": 318.78125,
+        "w": 52,
+        "h": 52,
+        "right": 728.21875,
+        "bottom": 370.78125,
+        "textFits": true
+      },
+      {
+        "label": "Grey",
+        "x": 759.40625,
+        "y": 318.78125,
+        "w": 52,
+        "h": 52,
+        "right": 811.40625,
+        "bottom": 370.78125,
+        "textFits": true
+      },
+      {
+        "label": "Classic",
+        "x": 418.09375,
+        "y": 411.171875,
+        "w": 95.96875,
+        "h": 73.171875,
+        "right": 514.0625,
+        "bottom": 484.34375,
+        "textFits": true
+      },
+      {
+        "label": "Sparkly",
+        "x": 520.0625,
+        "y": 411.171875,
+        "w": 95.984375,
+        "h": 73.171875,
+        "right": 616.046875,
+        "bottom": 484.34375,
+        "textFits": true
+      },
+      {
+        "label": "Button",
+        "x": 622.046875,
+        "y": 411.171875,
+        "w": 95.96875,
+        "h": 73.171875,
+        "right": 718.015625,
+        "bottom": 484.34375,
+        "textFits": true
+      },
+      {
+        "label": "Lashes",
+        "x": 724.015625,
+        "y": 411.171875,
+        "w": 95.984375,
+        "h": 73.171875,
+        "right": 820,
+        "bottom": 484.34375,
+        "textFits": true
+      },
+      {
+        "label": "Round",
+        "x": 418.09375,
+        "y": 524.734375,
+        "w": 95.96875,
+        "h": 73.171875,
+        "right": 514.0625,
+        "bottom": 597.90625,
+        "textFits": true
+      },
+      {
+        "label": "Hearts",
+        "x": 520.0625,
+        "y": 524.734375,
+        "w": 95.984375,
+        "h": 73.171875,
+        "right": 616.046875,
+        "bottom": 597.90625,
+        "textFits": true
+      },
+      {
+        "label": "Freckles",
+        "x": 622.046875,
+        "y": 524.734375,
+        "w": 95.96875,
+        "h": 73.171875,
+        "right": 718.015625,
+        "bottom": 597.90625,
+        "textFits": true
+      },
+      {
+        "label": "None",
+        "x": 724.015625,
+        "y": 524.734375,
+        "w": 95.984375,
+        "h": 73.171875,
+        "right": 820,
+        "bottom": 597.90625,
+        "textFits": true
+      }
+    ]
+  },
+  "focusedControls": [
+    {
+      "part": "Who",
+      "label": "Mochi",
+      "x": 418.09375,
+      "y": 86.390625,
+      "width": 128.625,
+      "height": 110,
+      "textFits": true
+    },
+    {
+      "part": "Who",
+      "label": "Bun",
+      "x": 554.71875,
+      "y": 86.390625,
+      "width": 128.640625,
+      "height": 110,
+      "textFits": true
+    },
+    {
+      "part": "Who",
+      "label": "Sprout",
+      "x": 691.359375,
+      "y": 86.390625,
+      "width": 128.640625,
+      "height": 110,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Pink",
+      "x": 426.671875,
+      "y": 258.78125,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "White",
+      "x": 509.859375,
+      "y": 258.78125,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Yellow",
+      "x": 593.03125,
+      "y": 258.78125,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Sky",
+      "x": 676.21875,
+      "y": 258.78125,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Mint",
+      "x": 759.40625,
+      "y": 258.78125,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Lavender",
+      "x": 426.671875,
+      "y": 298.78125,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Peach",
+      "x": 509.859375,
+      "y": 298.78125,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Caramel",
+      "x": 593.03125,
+      "y": 298.78125,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Cocoa",
+      "x": 676.21875,
+      "y": 298.78125,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Grey",
+      "x": 759.40625,
+      "y": 298.78125,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Classic",
+      "x": 418.09375,
+      "y": 170.171875,
+      "width": 95.96875,
+      "height": 73.171875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Sparkly",
+      "x": 520.0625,
+      "y": 170.171875,
+      "width": 95.984375,
+      "height": 73.171875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Button",
+      "x": 622.046875,
+      "y": 170.171875,
+      "width": 95.96875,
+      "height": 73.171875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Lashes",
+      "x": 724.015625,
+      "y": 170.171875,
+      "width": 95.984375,
+      "height": 73.171875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Round",
+      "x": 418.09375,
+      "y": 277.734375,
+      "width": 95.96875,
+      "height": 73.171875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Hearts",
+      "x": 520.0625,
+      "y": 277.734375,
+      "width": 95.984375,
+      "height": 73.171875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Freckles",
+      "x": 622.046875,
+      "y": 277.734375,
+      "width": 95.96875,
+      "height": 73.171875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "None",
+      "x": 724.015625,
+      "y": 277.734375,
+      "width": 95.984375,
+      "height": 73.171875,
+      "textFits": true
+    }
+  ],
+  "browser": "152.0.7977.82",
+  "method": "Offline production editor, 100%/200% root text; initial Who geometry plus each currently visible choice target measured immediately after native focus. Preview height, 44px targets, horizontal bounds, text clipping and viewport reachability asserted; saved tables unchanged. Focus capture stills are sampled controls, not whole-app zoom/AT certification."
+}

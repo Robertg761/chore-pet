@@ -1,0 +1,215 @@
+diff --git i/src/screens/CharacterCreator.css w/src/screens/CharacterCreator.css
+index ec14617..332c8d7 100644
+--- i/src/screens/CharacterCreator.css
++++ w/src/screens/CharacterCreator.css
+@@ -1,11 +1,12 @@
+ /* Change look: fits one view. Phones stack the pet, the name and a tabbed panel;
+    wide screens (and phones on their side) go two columns. Header and screen frame: shell/ScreenHeader.css. */
+ .cc { gap: 6px; }
++.cc button, .cc input { scroll-margin: 8px; }
+ 
+-.cc-body { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
++.cc-body { flex: 1 1 0; min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+ 
+ /* The live preview takes whatever height the options leave. */
+-.cc-stage { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
++.cc-stage { flex: 1 1 0; min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+ .cc-preview {
+   flex: 1 1 0;
+   min-height: 0;
+@@ -19,16 +20,16 @@
+ .cc-preview svg { display: block; width: 100%; height: 100%; }
+ 
+ .cc-field { flex: none; display: flex; flex-direction: column; gap: 4px; }
+-.cc-field-row { display: flex; align-items: center; gap: 10px; }
++.cc-field-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+ .cc-field label { font-weight: 800; }
+-.cc-field input { flex: 1; min-height: 48px; padding: 0 14px; }
++.cc-field input { flex: 1 1 8rem; min-width: 0; min-height: 48px; padding: 0 14px; }
+ .cc-error { margin: 0; font-weight: 700; color: var(--late-ink); }
+ 
+-.cc-side { flex: none; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
++.cc-side { container: creator-options / inline-size; flex: none; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+ 
+ .cc-panel { height: 216px; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 8px; padding: 5px; margin: -5px; }
+ .cc-section { display: flex; flex-direction: column; gap: 4px; }
+-.cc-section h2 { margin: 0; font-size: 1rem; line-height: 1.15; display: flex; align-items: baseline; gap: 8px; }
++.cc-section h2 { margin: 0; font-size: 1rem; line-height: 1.15; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+ .cc-section h2.sr-only { display: block; }
+ .cc-current { font-size: 0.875rem; font-weight: 700; color: var(--ink-soft); }
+ .cc-hint { margin: 0; font-size: 0.8125rem; font-weight: 700; color: var(--ink-soft); }
+@@ -118,3 +119,47 @@
+   .cc-choice { transition: none; }
+   .cc-choice:hover { transform: none; }
+ }
++
++/* Give cramped text a full preview and ordinary page scrolling. */
++@container app-shell (max-width: 19rem) {
++
++  .app-view > .screen:has(> .screen-fit.cc) { height: auto; min-height: 100%; }
++  .screen-fit.cc { flex: none; }
++  .cc-body { flex: none; flex-direction: column; }
++  .cc-stage { flex: none; }
++  .cc-preview { flex: none; height: 174px; min-height: 174px; }
++  .cc-side { flex: none; min-height: 0; }
++  .cc-panel { flex: none; height: auto; max-height: none; overflow: visible; }
++  .cc .screen-header { display: grid; grid-template-columns: minmax(44px, 1fr) auto; }
++  .cc .sh-back { grid-column: 1; grid-row: 1; justify-self: start; }
++  .cc .sh-actions { grid-column: 2; grid-row: 1; }
++  .cc .sh-title { grid-column: 1 / -1; grid-row: 2; overflow-wrap: normal; }
++}
++@media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
++ @container app-shell (max-width: 34rem) {
++
++  .app-view > .screen:has(> .screen-fit.cc) { height: auto; min-height: 100%; }
++  .screen-fit.cc { flex: none; }
++  .cc-body { flex: none; flex-direction: column; }
++  .cc-stage { flex: none; }
++  .cc-preview { flex: none; height: 174px; min-height: 174px; }
++  .cc-side { flex: none; min-height: 0; }
++  .cc-panel { flex: none; height: auto; max-height: none; overflow: visible; }
++  .cc .screen-header { display: grid; grid-template-columns: minmax(44px, 1fr) auto; }
++  .cc .sh-back { grid-column: 1; grid-row: 1; justify-self: start; }
++  .cc .sh-actions { grid-column: 2; grid-row: 1; }
++  .cc .sh-title { grid-column: 1 / -1; grid-row: 2; overflow-wrap: normal; }
++ }
++}
++
++/* The options adapt to their own panel, including narrow landscape columns. */
++@container creator-options (max-width: 16rem) {
++  .cc-species { grid-template-columns: minmax(0, 1fr); }
++  .cc-species .cc-choice { flex-direction: row; gap: 12px; padding: 8px 12px; }
++  .cc-species-art { width: 64px; flex: none; }
++  .cc-faces { grid-template-columns: repeat(2, minmax(0, 1fr)); }
++  .cc-swatches { grid-template-columns: repeat(auto-fit, minmax(52px, 1fr)); }
++  .cc-tabs { flex-wrap: wrap; }
++  .cc-tabs .seg-btn { flex: 1 1 40%; min-width: 0; padding: 0 4px; }
++  .cc-tabs .seg-btn:last-child { flex-basis: 100%; }
++}
+diff --git 1/scripts/browser/creator-layout.test.mjs 2/scripts/browser/creator-layout.test.mjs
+new file mode 100644
+index 0000000..4002816
+--- /dev/null
++++ 2/scripts/browser/creator-layout.test.mjs
+@@ -0,0 +1,96 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, snapshot } from './helpers.mjs'
++
++const out = process.env.CHORE_PET_CAPTURE_DIR
++const layouts = [[320, 568], [390, 664], [640, 360], [844, 390], [1280, 800]]
++async function creatorApp(t, viewport, textPercent = 100) {
++  const page = await browserApp(t, { viewport })
++  await page.getByRole('button', { name: 'More', exact: true }).click()
++  await page.getByRole('button', { name: 'Change look', exact: true }).click()
++  await page.getByRole('heading', { name: 'Change look', exact: true }).waitFor()
++  await page.waitForFunction(() => !document.documentElement.dataset.vt)
++  if (textPercent !== 100) await page.addStyleTag({ content: `html { font-size: ${textPercent}% !important; }` })
++  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
++  return page
++}
++async function geometry(page) {
++  return page.evaluate(() => {
++    const box = node => {
++      const r = node.getBoundingClientRect()
++      return { x: r.x, y: r.y, w: r.width, h: r.height, right: r.right, bottom: r.bottom }
++    }
++    return { width: innerWidth, height: innerHeight, scrollWidth: document.documentElement.scrollWidth,
++      preview: box(document.querySelector('.cc-preview svg')),
++      controls: [...document.querySelectorAll('.cc button, .cc input')].filter(node => node.getClientRects().length).map(node => ({
++        label: node.getAttribute('aria-label') || node.textContent.trim() || node.id, ...box(node),
++        textFits: node.scrollWidth <= node.clientWidth + 1,
++      })) }
++  })
++}
++for (const [width, height] of layouts) for (const textPercent of [100, 200]) {
++  test(`look editor keeps its character and controls readable at ${width}x${height} text${textPercent}`, { timeout: 25000 }, async t => {
++    const page = await creatorApp(t, { width, height }, textPercent)
++    const before = (await snapshot(page)).tables
++    const data = await geometry(page)
++    assert.ok(data.preview.h >= 120, `Preview height: ${JSON.stringify(data.preview)}`)
++    assert.ok(data.scrollWidth <= width, 'No horizontal document overflow')
++    for (const control of data.controls) {
++      assert.ok(control.w >= 44 && control.h >= 44, `44px target: ${JSON.stringify(control)}`)
++      assert.ok(control.x >= 0 && control.right <= width, `Horizontal bounds: ${JSON.stringify(control)}`)
++      assert.ok(control.textFits, `Text clipping: ${JSON.stringify(control)}`)
++    }
++    if (out) {
++      await page.screenshot({ path: join(out, `creator-${width}x${height}-${textPercent}.png`) })
++    }
++    const panels = page.locator('.cc-panel')
++    assert.equal(await panels.count(), 1)
++    const focusedControls = []
++    for (const [name, groups] of [['Who', ['Species']], ['Colour', ['Body colour']], ['Face', ['Eyes', 'Cheeks']]]) {
++      const tab = page.getByRole('tab', { name, exact: true })
++      if (await tab.count()) await tab.click()
++      const choices = page.locator(groups.map(group => `.cc-panel [role="radiogroup"][aria-label="${group}"] button`).join(', '))
++      for (let i = 0; i < await choices.count(); i++) {
++        const control = choices.nth(i)
++        if (!await control.isVisible()) continue
++        await control.focus()
++        const box = await control.boundingBox()
++        assert.ok(box.x >= 0 && box.x + box.width <= width + 0.01, `Focused horizontal bounds: ${await control.getAttribute('aria-label')}`)
++        assert.ok(box.y >= 0 && box.y + box.height <= height + 0.01, `Focused vertical reachability: ${await control.getAttribute('aria-label')} ${JSON.stringify(box)}`)
++        assert.equal(await control.evaluate(node => node === document.activeElement), true)
++        assert.ok(box.width >= 44 && box.height >= 44, '44px focused target')
++        const textFits = await control.evaluate(node => node.scrollWidth <= node.clientWidth + 1)
++        assert.ok(textFits, `Focused text clipping: ${await control.getAttribute('aria-label')}`)
++        focusedControls.push({ part: name, label: await control.getAttribute('aria-label'), ...box, textFits })
++      }
++      if (out && name !== 'Who' && ((textPercent === 200 && [320, 640, 1280].includes(width)) || (textPercent === 100 && width === 640))) {
++        await page.screenshot({ path: join(out, `creator-${width}x${height}-${textPercent}-${name.toLowerCase()}.png`) })
++      }
++    }
++    if (out) await writeFile(join(out, `creator-${width}x${height}-${textPercent}.json`), JSON.stringify({ width, height, textPercent, geometry: data, focusedControls,
++      browser: page.context().browser().version(), method: 'Offline production editor, 100%/200% root text; initial Who geometry plus each currently visible choice target measured immediately after native focus. Preview height, 44px targets, horizontal bounds, text clipping and viewport reachability asserted; saved tables unchanged. Focus capture stills are sampled controls, not whole-app zoom/AT certification.' }, null, 2) + '\n')
++    assert.deepEqual((await snapshot(page)).tables, before, 'Viewing and focusing keeps saved data intact')
++  })
++}
++
++test('look draft name and caret survive resizing and stay reachable at enlarged text', { timeout: 25000 }, async t => {
++  const page = await creatorApp(t, { width: 1280, height: 800 }, 200)
++  const before = (await snapshot(page)).tables
++  const name = page.getByRole('textbox', { name: 'Name', exact: true })
++  await name.fill('Little Sprout')
++  await name.evaluate(node => { node.focus(); node.setSelectionRange(2, 7); window.__creatorNameInput = node })
++  for (const [width, height] of [[320, 568], [844, 390], [390, 664], [1280, 800]]) {
++    await page.setViewportSize({ width, height })
++    assert.deepEqual(await name.evaluate(node => ({ same: node === window.__creatorNameInput, focused: node === document.activeElement,
++      value: node.value, selection: [node.selectionStart, node.selectionEnd] })), { same: true, focused: true, value: 'Little Sprout', selection: [2, 7] })
++    // Native focus can be reapplied without changing the draft or caret to reveal a control after reflow.
++    await name.focus()
++    const box = await name.boundingBox()
++    assert.ok(box.x >= 0 && box.x + box.width <= width + 0.01)
++    assert.ok(box.y >= 0 && box.y + box.height <= height + 0.01)
++  }
++  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
++  assert.deepEqual((await snapshot(page)).tables, before, 'Cancel discards the draft')
++})
+diff --git i/docs/ART.md w/docs/ART.md
+index 68077dd..d8cef85 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -231,3 +231,5 @@ Saved wardrobe looks have an explicit Rename action. Naming keeps the saved outf
+ Saved-outfit name drafts keep their native input/control and caret when the wardrobe changes between narrow and wide layouts. The saved section retains one parent; a wide-to-narrow transition with an editor selects Saved. Resize immediately reveals only the already-focused name-form control, preserving selection and leaving preview focus alone. The wardrobe owns one resize listener with cleanup, no extra frame clock or timer. This also covers field reflow while remaining in the same layout.
+ 
+ Dance together is a finite 2800ms player invitation with two grounded sways, lightly raised hands and small delayed appendage follow-through. Both foot contacts and the shadow remain fixed while the torso moves at most2.5SVGunits and leans at most4.5degrees before species/mood scaling. No reward marks appear. A quarter-duration ease raises and lowers the hands smoothly; the existing pleased-face blend and blink remain on the shared clock. Repeated invitations stay busy without extending or queueing the response; chores keep priority. Resting residents keep Check in. The wardrobe Dance preview shares Stop, Pause/Resume, Mirror, hidden-deadline and live-reduction behavior without saving or redrawing the item grid.
++
++Change look retains a readable character and full input targets as root text grows. The stage/name field can shrink within landscape columns; cramped app-shell widths use page scrolling, a160px character area and a full-line title below Cancel/Save. Narrow option panels use horizontal species rows, two face columns, fitting swatches and wrapped tabs. Native focus gets8px scroll margin. This preserves draft/save behavior and the existing finite preview clock; no additional state, listener, timer or frame owner is introduced. Native checks cover five viewports at100%/200% root text, all choice groups, draft name/caret preservation across resizing and existing animation/reduction behavior.
+diff --git 1/docs/audits/2026-10-12-character-polish/creator-flow-design.md 2/docs/audits/2026-10-12-character-polish/creator-flow-design.md
+new file mode 100644
+index 0000000..203efed
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/creator-flow-design.md
+@@ -0,0 +1,9 @@
++# Character editor reflow
++
++The user requests continued meticulous visual improvements and useful features within plan usage and system headroom. The current production Change look editor has a zero-height character at320x568/390x664 with200% root text, and hidden right-edge controls at640x360/default text and enlarged landscape/desktop. An offline native baseline probe captured10 layouts; subsequent acceptance tests reproduce6 failing layouts while5 cases pass, including draft name/caret preservation across resize.
++
++Keep the existing form, draft model, choice groups, finite preview owner and save/cancel behavior. Correct shrink constraints on the stage/name field so the options stay inside their panel. Use the existing named app-shell container and normal page scrolling for cramped text; retain a160px character drawing area, let the title occupy a complete line beneath Cancel/Save, and let the options grow. Reflow narrow species choices to readable horizontal rows, face choices to two columns, swatches to fitting columns and tabs to balanced rows. Preserve normal fitted layouts when their contents fit. Add8px scroll margin for native focus outlines. No new React state, listener, timer, frame owner or persistence change.
++
++Verify10 viewport/text combinations:320x568,390x664,640x360,844x390,1280x800 at100%/200% root text. Check every initial visible control has a44px target, complete horizontal bounds and no text clipping, and that the preview remains at least120px high. Focus all currently visible choice controls through each narrow tab and require viewport reachability; focusing and viewing must leave saved tables intact. Check native name input identity, draft, selection and focus across four rotations/resizes, with normal native re-focus permitted to reveal it after reflow; Cancel discards it. Existing creator browser cases protect motion, face visibility, reduction and saves. Root will directly inspect every final capture; stills/root-text tests do not certify whole-app zoom, assistive technologies or temporal comfort.
++
++The first fix passed14/15 native checks; at640x360/200% one focused face option extended0.171875px below the viewport. Its artifact and raw failure remain preserved. Scroll margin is a production refinement so the focus outline has room, rather than loosening the viewport assertion. Heavy jobs remain sequential, capped and resource-gated with2GiB reserve.

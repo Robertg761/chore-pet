@@ -1,0 +1,303 @@
+{
+  "width": 320,
+  "height": 568,
+  "textPercent": 100,
+  "geometry": {
+    "width": 320,
+    "height": 568,
+    "scrollWidth": 320,
+    "preview": {
+      "x": 21,
+      "y": 65,
+      "w": 278,
+      "h": 123,
+      "right": 299,
+      "bottom": 188
+    },
+    "controls": [
+      {
+        "label": "Cancel",
+        "x": 8,
+        "y": 8,
+        "w": 44,
+        "h": 44,
+        "right": 52,
+        "bottom": 52,
+        "textFits": true
+      },
+      {
+        "label": "Save",
+        "x": 231.765625,
+        "y": 8,
+        "w": 74.234375,
+        "h": 44,
+        "right": 306,
+        "bottom": 52,
+        "textFits": true
+      },
+      {
+        "label": "cc-name",
+        "x": 67.96875,
+        "y": 201,
+        "w": 238.03125,
+        "h": 44,
+        "right": 306,
+        "bottom": 245,
+        "textFits": true
+      },
+      {
+        "label": "Who",
+        "x": 20,
+        "y": 259,
+        "w": 90.65625,
+        "h": 44,
+        "right": 110.65625,
+        "bottom": 303,
+        "textFits": true
+      },
+      {
+        "label": "Colour",
+        "x": 114.65625,
+        "y": 259,
+        "w": 90.671875,
+        "h": 44,
+        "right": 205.328125,
+        "bottom": 303,
+        "textFits": true
+      },
+      {
+        "label": "Face",
+        "x": 209.328125,
+        "y": 259,
+        "w": 90.671875,
+        "h": 44,
+        "right": 300,
+        "bottom": 303,
+        "textFits": true
+      },
+      {
+        "label": "Mochi",
+        "x": 18,
+        "y": 321,
+        "w": 89.328125,
+        "h": 102,
+        "right": 107.328125,
+        "bottom": 423,
+        "textFits": true
+      },
+      {
+        "label": "Bun",
+        "x": 115.328125,
+        "y": 321,
+        "w": 89.328125,
+        "h": 102,
+        "right": 204.65625,
+        "bottom": 423,
+        "textFits": true
+      },
+      {
+        "label": "Sprout",
+        "x": 212.65625,
+        "y": 321,
+        "w": 89.34375,
+        "h": 102,
+        "right": 302,
+        "bottom": 423,
+        "textFits": true
+      }
+    ]
+  },
+  "focusedControls": [
+    {
+      "part": "Who",
+      "label": "Mochi",
+      "x": 18,
+      "y": 321,
+      "width": 89.328125,
+      "height": 102,
+      "textFits": true
+    },
+    {
+      "part": "Who",
+      "label": "Bun",
+      "x": 115.328125,
+      "y": 321,
+      "width": 89.328125,
+      "height": 102,
+      "textFits": true
+    },
+    {
+      "part": "Who",
+      "label": "Sprout",
+      "x": 212.65625,
+      "y": 321,
+      "width": 89.34375,
+      "height": 102,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Pink",
+      "x": 14.796875,
+      "y": 343.390625,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "White",
+      "x": 74.390625,
+      "y": 343.390625,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Yellow",
+      "x": 133.984375,
+      "y": 343.390625,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Sky",
+      "x": 193.59375,
+      "y": 343.390625,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Mint",
+      "x": 253.1875,
+      "y": 343.390625,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Lavender",
+      "x": 14.796875,
+      "y": 403.390625,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Peach",
+      "x": 74.390625,
+      "y": 403.390625,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Caramel",
+      "x": 133.984375,
+      "y": 403.390625,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Cocoa",
+      "x": 193.59375,
+      "y": 403.390625,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Colour",
+      "label": "Grey",
+      "x": 253.1875,
+      "y": 403.390625,
+      "width": 52,
+      "height": 52,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Classic",
+      "x": 18,
+      "y": 343.390625,
+      "width": 66.5,
+      "height": 57.875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Sparkly",
+      "x": 90.5,
+      "y": 343.390625,
+      "width": 66.5,
+      "height": 57.875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Button",
+      "x": 163,
+      "y": 343.390625,
+      "width": 66.5,
+      "height": 57.875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Lashes",
+      "x": 235.5,
+      "y": 343.390625,
+      "width": 66.5,
+      "height": 57.875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Round",
+      "x": 18,
+      "y": 435.65625,
+      "width": 66.5,
+      "height": 57.875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Hearts",
+      "x": 90.5,
+      "y": 435.65625,
+      "width": 66.5,
+      "height": 57.875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "Freckles",
+      "x": 163,
+      "y": 435.65625,
+      "width": 66.5,
+      "height": 57.875,
+      "textFits": true
+    },
+    {
+      "part": "Face",
+      "label": "None",
+      "x": 235.5,
+      "y": 435.65625,
+      "width": 66.5,
+      "height": 57.875,
+      "textFits": true
+    }
+  ],
+  "browser": "152.0.7977.82",
+  "method": "Offline production editor, 100%/200% root text; initial Who geometry plus each currently visible choice target measured immediately after native focus. Preview height, 44px targets, horizontal bounds, text clipping and viewport reachability asserted; saved tables unchanged. Focus capture stills are sampled controls, not whole-app zoom/AT certification."
+}

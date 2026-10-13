@@ -1,0 +1,23 @@
+✔ look editor keeps its character and controls readable at 320x568 text100 (1378.764097ms)
+✔ look editor keeps its character and controls readable at 320x568 text200 (1335.409591ms)
+✔ look editor keeps its character and controls readable at 390x664 text100 (1268.250538ms)
+✔ look editor keeps its character and controls readable at 390x664 text200 (1304.070152ms)
+✔ look editor keeps its character and controls readable at 640x360 text100 (1213.450159ms)
+✔ look editor keeps its character and controls readable at 640x360 text200 (1268.280688ms)
+✔ look editor keeps its character and controls readable at 844x390 text100 (1221.32766ms)
+✔ look editor keeps its character and controls readable at 844x390 text200 (1217.093002ms)
+✔ look editor keeps its character and controls readable at 1280x800 text100 (1205.885618ms)
+✔ look editor keeps its character and controls readable at 1280x800 text200 (1397.642634ms)
+✔ look draft name and caret survive resizing and stay reachable at enlarged text (1225.877892ms)
+✔ creator previews the actual character while keeping face choices visible at 320x568 (3878.211303ms)
+✔ creator previews the actual character while keeping face choices visible at 844x390 (3267.220127ms)
+✔ creator previews the actual character while keeping face choices visible at 1280x800 (3359.286715ms)
+✔ creator settles live reduction and initial reduction keeps look choices available (3759.168281ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29060.722181
