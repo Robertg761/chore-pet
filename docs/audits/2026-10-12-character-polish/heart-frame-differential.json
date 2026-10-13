@@ -1,0 +1,43 @@
+{
+  "sourceBindings": {
+    "before": "8c6e10017139ab137b386487e77314135f770e47db37086459f6fa30dd3a74dd",
+    "candidate": "2ebe7ed7be300b2a5a207fb67037ec28146ae96a1bbba00d6c8627fce3b8d173"
+  },
+  "counts": {
+    "total": 9108,
+    "exact": 1344,
+    "templeOnly": 7764,
+    "unexpected": 0
+  },
+  "failures": [],
+  "coverage": {
+    "static": 1428,
+    "sampled": 7680,
+    "species": 3,
+    "staticPoses": 7,
+    "itemsIncludingNone": 17,
+    "staticColors": "species default and ink",
+    "strokeScales": [
+      1,
+      1.6
+    ],
+    "sampledMoods": 5,
+    "sampledActions": 16,
+    "phases": [
+      0,
+      0.18,
+      0.42,
+      1
+    ],
+    "facings": [
+      1,
+      -1
+    ],
+    "reducedModes": [
+      false,
+      true
+    ]
+  },
+  "method": "Sequential production React/SVG renders, baseline server closed before candidate server. Exact complete SVG hashes or identical hashes after canonicalizing only the two known temple path strings; require exactly two changed occurrences for any non-exact frame. No pixels or temporal-quality inference from equality. Other item renders must be exact.",
+  "limits": "Finite sampled matrix; no arbitrary outfits/colors/device or human comfort certification."
+}

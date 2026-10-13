@@ -1,0 +1,12 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run src/character/heartGlasses.test.tsx --config /tmp/heart-frame-prototype.config.mjs --maxWorkers=1 --reporter=dot
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+····
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  01:53:22
+   Duration  397ms (transform 46%, tests 33%, import 20%, worker 1%)
+

@@ -1,0 +1,27 @@
+{
+  "stage": "before",
+  "method": "Direct SVG rendering through production React and Resvg, no browser/animation clock. Isolated candidate override declared when present. 200px poses,60px/25px native-size samples; sampled greet at42percent.",
+  "sources": {
+    "src/character/items/extras.tsx": "8c6e10017139ab137b386487e77314135f770e47db37086459f6fa30dd3a74dd",
+    "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+    "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+    "src/character/motion.ts": "155194546e3c9e68df5f7e4ccb129e27627998361aa503d9c7035439a2015e3b"
+  },
+  "sheets": [
+    {
+      "name": "mochi.png",
+      "samples": 18,
+      "sha256": "9a84c06ac3b5480bd8bbf7a2c858805f901fc75330583fe3d81e3a961c115a1a"
+    },
+    {
+      "name": "bun.png",
+      "samples": 18,
+      "sha256": "e5b43d1737b3c01d6a0d54cd9a2d9b0ada25a4f07ddb48b8912e3ac49e8feafd"
+    },
+    {
+      "name": "sprout.png",
+      "samples": 18,
+      "sha256": "5b65a16d0c711057e5f18ced86bd9a3f5153a8f344df2b8efccae6472c3344a9"
+    }
+  ]
+}

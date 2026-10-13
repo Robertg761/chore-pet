@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-13T04:55:58.916541+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "--max-old-space-size=512",
+    "node_modules/vite/bin/vite.js",
+    "build"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 3,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 0
+  },
+  "minimumObservedAvailableBytes": 4624699392,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4676567040,
+      "tmpFreeBytes": 4289556480
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4676567040,
+      "tmpFreeBytes": 4289556480
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4624699392,
+      "tmpFreeBytes": 4289552384
+    },
+    {
+      "elapsedSeconds": 2.002,
+      "memAvailableBytes": 4638650368,
+      "tmpFreeBytes": 4289544192
+    }
+  ]
+}

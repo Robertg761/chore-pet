@@ -1,0 +1,3 @@
+import { defineConfig } from '/home/robert/.codex/worktrees/4511/chore-pet/node_modules/vitest/dist/config.js'
+import { readFile } from 'node:fs/promises'
+export default defineConfig({plugins:[{name:'heart-frame-candidate',enforce:'pre',load(id){if(id.split('?')[0]==='/home/robert/.codex/worktrees/4511/chore-pet/src/character/items/extras.tsx')return readFile('/tmp/heart-frame-extras.tsx','utf8')}}],test:{environment:'node',include:['src/**/*.test.{ts,tsx}','supabase/**/*.test.ts']}})

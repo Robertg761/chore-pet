@@ -1,0 +1,25 @@
+{
+  "beforeAndPrototype": "Root directly viewed all six baseline/prototype sheets before applying candidate.",
+  "final": [
+    {
+      "final": "docs/audits/2026-10-12-character-polish/heart-frame-final/mochi.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/heart-frame-prototype/mochi.png",
+      "sha256": "122b2d879b7fe5c8b9fa602232077f2dcffbe059eb4afba6ecc49f80a6530927",
+      "review": "Byte exact to directly root-reviewed prototype PNG; not a new direct final view."
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/heart-frame-final/bun.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/heart-frame-prototype/bun.png",
+      "sha256": "cc23f38fef19d875c72e5246d68494a7322a43f26721817d29df4e4ae3fbc851",
+      "review": "Byte exact to directly root-reviewed prototype PNG; not a new direct final view."
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/heart-frame-final/sprout.png",
+      "prototype": "docs/audits/2026-10-12-character-polish/heart-frame-prototype/sprout.png",
+      "sha256": "e4d3b4a6379627f824b7dc811a8954be150a2759edc39f54c5131be5aa154a1c",
+      "review": "Byte exact to directly root-reviewed prototype PNG; not a new direct final view."
+    }
+  ],
+  "sourceSha256": "2ebe7ed7be300b2a5a207fb67037ec28146ae96a1bbba00d6c8627fce3b8d173",
+  "limits": "Sampled SVG/Resvg sheets; no browser-device or temporal comfort certification."
+}

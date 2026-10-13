@@ -1,0 +1,53 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run src/character/heartGlasses.test.tsx --maxWorkers=1 --reporter=dot
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+··xx
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/heartGlasses.test.tsx > keeps heart-glasses side arms attached at stroke scale 1
+AssertionError: expected [ 26670, 512, 512 ] to have a length of 1 but got 3
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/character/heartGlasses.test.tsx:36:50
+     34| })
+     35| it.each([1, 1.6])('keeps heart-glasses side arms attached at stroke sc…
+     36|   expect(paintedComponents(heartGlasses, scale)).toHaveLength(1)
+       |                                                  ^
+     37| })
+     38|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/character/heartGlasses.test.tsx > keeps heart-glasses side arms attached at stroke scale 1.6
+AssertionError: expected [ 30233, 965, 965 ] to have a length of 1 but got 3
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/character/heartGlasses.test.tsx:36:50
+     34| })
+     35| it.each([1, 1.6])('keeps heart-glasses side arms attached at stroke sc…
+     36|   expect(paintedComponents(heartGlasses, scale)).toHaveLength(1)
+       |                                                  ^
+     37| })
+     38|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  01:51:55
+   Duration  228ms (transform 45%, import 27%, tests 26%, worker 3%)
+

@@ -1,0 +1,39 @@
+import { createServer } from 'vite'
+import React from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { readFile,writeFile } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
+import path from 'node:path'
+const h=React.createElement,sha=s=>createHash('sha256').update(s).digest('hex'),candidate='/tmp/heart-frame-extras.tsx',out='docs/audits/2026-10-12-character-polish/heart-frame-differential.json'
+const before=[],failures=[],counts={total:0,exact:0,templeOnly:0,unexpected:0}
+const sourceBindings={before:sha(await readFile('src/character/items/extras.tsx')),candidate:sha(await readFile(candidate))}
+let allSpecs
+for(const pass of ['before','candidate']){
+ const server=await createServer({server:{middlewareMode:true,hmr:false,ws:false},appType:'custom',plugins:pass==='candidate'?[{name:'heart-frame-candidate',enforce:'pre',load(id){if(id.split('?')[0]===path.resolve('src/character/items/extras.tsx'))return readFile(candidate,'utf8')}}]:[]})
+ try{
+  const {CharacterArt}=await server.ssrLoadModule('/src/character/Character.tsx'),{AnimatedCharacterArt}=await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx'),{sampleMotion,ACTION_MS}=await server.ssrLoadModule('/src/character/motion.ts'),{ITEMS}=await server.ssrLoadModule('/src/character/items.tsx'),{SPECIES_COLOUR,PALETTE}=await server.ssrLoadModule('/src/art/palette.ts')
+  if(!allSpecs){
+   allSpecs=[]
+   for(const species of ['mochi','bun','sprout'])for(const item of [null,...ITEMS])for(const pose of ['idle','content','meh','scruffy','sleeping','sick','cheering'])for(const bodyColour of [SPECIES_COLOUR[species],PALETTE.ink])for(const strokeScale of [1,1.6])allSpecs.push({kind:'static',species,itemId:item?.id??'none',slot:item?.slot,pose,bodyColour,strokeScale,mood:['idle','sleeping','cheering'].includes(pose)?'happy':pose})
+   for(const species of ['mochi','bun','sprout'])for(const mood of ['happy','content','meh','scruffy','sick'])for(const action of Object.keys(ACTION_MS))for(const phase of [0,.18,.42,1])for(const strokeScale of [1,1.6])for(const facing of [1,-1])for(const reducedMotion of [false,true])allSpecs.push({kind:'sampled',species,mood,action,phase,strokeScale,facing,reducedMotion,itemId:'heart-glasses',bodyColour:SPECIES_COLOUR[species]})
+  }
+  for(const [index,s]of allSpecs.entries()){
+   const equipped=s.kind==='static'?(s.slot?{[s.slot]:s.itemId}:{}):{face:'heart-glasses',head:'bow',neck:'scarf',outfit:'overalls',back:'backpack'}
+   const common={species:s.species,mood:s.mood,bodyColour:s.bodyColour,equipped,strokeScale:s.strokeScale}
+   const frame=s.kind==='sampled'?sampleMotion({species:s.species,mood:s.mood,action:s.action,elapsedMs:s.phase*ACTION_MS[s.action],durationMs:ACTION_MS[s.action],distance:s.phase*2,facing:s.facing,reducedMotion:s.reducedMotion}):undefined
+   const art=s.kind==='static'?h(CharacterArt,{...common,pose:s.pose}):h(AnimatedCharacterArt,{...common,frame})
+   const svg=renderToStaticMarkup(h('svg',{xmlns:'http://www.w3.org/2000/svg',viewBox:'0 0 200 200'},h('g',{transform:s.facing===-1?'translate(200 0) scale(-1 1)':undefined},art)))
+   const canonical=svg.replaceAll('M-34 -4 L-39 -7','TEMPLE').replaceAll('M-14 -5 L-19 -8','TEMPLE')
+   const record={exact:sha(svg),canonical:sha(canonical),temples:(svg.match(/M-(?:34 -4 L-39 -7|14 -5 L-19 -8)/g)||[]).length}
+   if(pass==='before')before.push(record)
+   else{
+    counts.total++;const previous=before[index]
+    if(previous.exact===record.exact)counts.exact++
+    else if(s.itemId==='heart-glasses'&&previous.canonical===record.canonical&&previous.temples===2&&record.temples===2)counts.templeOnly++
+    else{counts.unexpected++;if(failures.length<12)failures.push({index,s,previous,record})}
+   }
+  }
+ }finally{await server.close()}
+}
+const result={sourceBindings,counts,failures,coverage:{static:1428,sampled:7680,species:3,staticPoses:7,itemsIncludingNone:17,staticColors:'species default and ink',strokeScales:[1,1.6],sampledMoods:5,sampledActions:16,phases:[0,.18,.42,1],facings:[1,-1],reducedModes:[false,true]},method:'Sequential production React/SVG renders, baseline server closed before candidate server. Exact complete SVG hashes or identical hashes after canonicalizing only the two known temple path strings; require exactly two changed occurrences for any non-exact frame. No pixels or temporal-quality inference from equality. Other item renders must be exact.',limits:'Finite sampled matrix; no arbitrary outfits/colors/device or human comfort certification.'}
+await writeFile(out,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(counts));if(failures.length)process.exitCode=1

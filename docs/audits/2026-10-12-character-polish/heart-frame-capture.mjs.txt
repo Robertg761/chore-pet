@@ -1,0 +1,36 @@
+import { createServer } from 'vite'
+import React from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { Resvg } from '@resvg/resvg-js'
+import { readFile, writeFile, mkdir } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
+import path from 'node:path'
+const h=React.createElement,stage=process.env.HEART_STAGE||'before',out=path.resolve('docs/audits/2026-10-12-character-polish',`heart-frame-${stage}`)
+await mkdir(out,{recursive:true})
+const candidate=process.env.HEART_CANDIDATE
+const override=candidate?{name:'heart-frame-isolated-candidate',enforce:'pre',load(id){if(id.split('?')[0]===path.resolve('src/character/items/extras.tsx'))return readFile(candidate,'utf8')}}:null
+const server=await createServer({server:{middlewareMode:true,hmr:false,ws:false},appType:'custom',plugins:override?[override]:[]})
+try{
+ const {CharacterArt}=await server.ssrLoadModule('/src/character/Character.tsx')
+ const {AnimatedCharacterArt}=await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
+ const {sampleMotion,ACTION_MS}=await server.ssrLoadModule('/src/character/motion.ts')
+ const {PALETTE,SPECIES_COLOUR}=await server.ssrLoadModule('/src/art/palette.ts')
+ const poses=['idle','content','meh','scruffy','sleeping','sick'],manifest={stage,method:'Direct SVG rendering through production React and Resvg, no browser/animation clock. Isolated candidate override declared when present. 200px poses,60px/25px native-size samples; sampled greet at42percent.',sources:{},sheets:[]}
+ for(const f of ['src/character/items/extras.tsx','src/character/Character.tsx','src/character/AnimatedCharacter.tsx','src/character/motion.ts'])manifest.sources[f]=createHash('sha256').update(await readFile(f=== 'src/character/items/extras.tsx'&&candidate?candidate:f)).digest('hex')
+ for(const species of ['mochi','bun','sprout']){
+  const groups=[],labels=[],cell=200,rowHeight=232
+  const place=(art,col,row,label,size=200)=>{
+   groups.push(h('g',{key:`art-${col}-${row}`,transform:`translate(${col*cell+(cell-size)/2} ${row*rowHeight+(200-size)}) scale(${size/200})`},art))
+   labels.push(h('text',{key:`label-${col}-${row}`,x:col*cell+6,y:row*rowHeight+218,fill:PALETTE.ink,fontSize:12},label))
+  }
+  for(const [row,colour]of [SPECIES_COLOUR[species],PALETTE.ink].entries())poses.forEach((pose,col)=>place(h(CharacterArt,{species,mood:['idle','sleeping'].includes(pose)?'happy':pose,pose,bodyColour:colour,equipped:{face:'heart-glasses'}}),col,row,`${pose} ${row?'dark':'default'} 200px`))
+  for(const [col,eyes]of ['classic','button','sparkly','lashes'].entries()){
+   const frame=sampleMotion({species,mood:'happy',action:'greet',elapsedMs:ACTION_MS.greet*.42,durationMs:ACTION_MS.greet,distance:0,reducedMotion:false})
+   place(h(AnimatedCharacterArt,{species,mood:'happy',bodyColour:SPECIES_COLOUR[species],equipped:{face:'heart-glasses',head:'bow',neck:'scarf',outfit:'overalls',back:'backpack'},look:{eyes},frame}),col,2,`greet42% ${eyes}`)
+  }
+  for(const [col,size]of [[4,60],[5,25]])place(h(CharacterArt,{species,mood:'happy',bodyColour:SPECIES_COLOUR[species],equipped:{face:'heart-glasses'},strokeScale:size===25?1.6:1}),col,2,`idle native${size}px`,size)
+  const svg=renderToStaticMarkup(h('svg',{xmlns:'http://www.w3.org/2000/svg',width:1200,height:696,viewBox:'0 0 1200 696'},h('rect',{width:1200,height:696,fill:PALETTE.ground}),groups,labels))
+  const name=`${species}.png`;await writeFile(path.join(out,name),new Resvg(svg).render().asPng());manifest.sheets.push({name,samples:18,sha256:createHash('sha256').update(await readFile(path.join(out,name))).digest('hex')})
+ }
+ await writeFile(path.join(out,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');console.log(stage,manifest.sheets.length,'sheets,54samples')
+}finally{await server.close()}

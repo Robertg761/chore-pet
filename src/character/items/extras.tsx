@@ -170,7 +170,7 @@ export function heartGlasses(_fit: Fit) {
         <g transform="translate(-20 1)">
           <path d={HEART} fill={mix(blush, white, 0.7)} fillOpacity={0.4} stroke="none" />
           <Tube d={HEART} outer={FRAME_OUTER} inner={3} colour={warmRed} />
-          <path d="M-34 -4 L-39 -7" fill="none" />
+          <path d="M-14 -5 L-19 -8" fill="none" />
           <path d="M-9.5 -4.5 Q-9.5 -8.5 -6 -8.5" fill="none" stroke={white} strokeWidth={3.2} />
         </g>,
       )}

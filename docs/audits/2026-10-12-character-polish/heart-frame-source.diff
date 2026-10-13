@@ -1,0 +1,63 @@
+diff --git i/src/character/items/extras.tsx w/src/character/items/extras.tsx
+index e8ad52b..8c58d9f 100644
+--- i/src/character/items/extras.tsx
++++ w/src/character/items/extras.tsx
+@@ -170,7 +170,7 @@ export function heartGlasses(_fit: Fit) {
+         <g transform="translate(-20 1)">
+           <path d={HEART} fill={mix(blush, white, 0.7)} fillOpacity={0.4} stroke="none" />
+           <Tube d={HEART} outer={FRAME_OUTER} inner={3} colour={warmRed} />
+-          <path d="M-34 -4 L-39 -7" fill="none" />
++          <path d="M-14 -5 L-19 -8" fill="none" />
+           <path d="M-9.5 -4.5 Q-9.5 -8.5 -6 -8.5" fill="none" stroke={white} strokeWidth={3.2} />
+         </g>,
+       )}
+diff --git 1/src/character/heartGlasses.test.tsx 2/src/character/heartGlasses.test.tsx
+new file mode 100644
+index 0000000..551d56f
+--- /dev/null
++++ 2/src/character/heartGlasses.test.tsx
+@@ -0,0 +1,37 @@
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { expect, it } from 'vitest'
++import { glasses, heartGlasses } from './items/extras'
++import { StrokeScaleContext } from './strokeScale'
++
++// A wearable frame and its side arms should form one connected painted shape.
++// Inspect rendered alpha rather than asserting a particular path or coordinate.
++function paintedComponents(renderItem: typeof glasses, scale: number) {
++  const svg = renderToStaticMarkup(<svg xmlns="http://www.w3.org/2000/svg" width={600} height={240} viewBox="-75 -30 150 60">
++    <StrokeScaleContext.Provider value={scale}>{renderItem({ species: 'mochi' })}</StrokeScaleContext.Provider>
++  </svg>)
++  const { pixels, width, height } = new Resvg(svg, { font: { loadSystemFonts: false } }).render()
++  const seen = new Uint8Array(width * height), sizes: number[] = []
++  for (let index = 0; index < seen.length; index++) {
++    if (seen[index] || pixels[index * 4 + 3] <= 16) continue
++    const pending = [index]; seen[index] = 1; let count = 0
++    while (pending.length) {
++      const at = pending.pop()!, x = at % width, y = Math.floor(at / width); count++
++      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
++        const nx = x + dx, ny = y + dy
++        if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue
++        const neighbor = ny * width + nx
++        if (!seen[neighbor] && pixels[neighbor * 4 + 3] > 16) { seen[neighbor] = 1; pending.push(neighbor) }
++      }
++    }
++    sizes.push(count)
++  }
++  return sizes.sort((a, b) => b - a)
++}
++
++it.each([1, 1.6])('keeps round-glasses side arms attached at stroke scale %s', scale => {
++  expect(paintedComponents(glasses, scale)).toHaveLength(1)
++})
++it.each([1, 1.6])('keeps heart-glasses side arms attached at stroke scale %s', scale => {
++  expect(paintedComponents(heartGlasses, scale)).toHaveLength(1)
++})
+diff --git 1/docs/audits/2026-10-12-character-polish/heart-frame-design.md 2/docs/audits/2026-10-12-character-polish/heart-frame-design.md
+new file mode 100644
+index 0000000..b7d6762
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/heart-frame-design.md
+@@ -0,0 +1 @@
++Next bounded character-art correction: investigate heart-glasses detached side arms. Existing child group translates by(-20,1) but its temple segment retains face-space coordinates(-34,-4)to(-39,-7), putting each segment20units too far out. Confirm with rendered-alpha topology and direct baseline SVG sheets. Round glasses serve as connected-frame control at stroke scales1and1.6. Expected anatomy: one continuous glasses frame including both temples, symmetric lenses/bridge, unchanged face anchors/lens shapes/color/strokes/layering. If confirmed, express only those two endpoint coordinates in the local lens group. No motion/state/timer/dependency/schema additions. Verify direct before/after sheets on all3species, sixstaticposes/defaultanddark, foureye styles/sampled greet+outfit,60px/25px sizes. Differential preserveeveryotheritem and motion geometry. Existing rename freeze excludes this next investigation.

@@ -1,0 +1,45 @@
+{
+  "utc": "2026-10-13T04:21:55.562446+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "npx",
+    "vitest",
+    "run",
+    "src/character/heartGlasses.test.tsx",
+    "--maxWorkers=1",
+    "--reporter=dot"
+  ],
+  "exitCode": 1,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": "--max-old-space-size=256",
+  "cleanup": {
+    "processGroup": 4,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 1
+  },
+  "minimumObservedAvailableBytes": 4106670080,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4106670080,
+      "tmpFreeBytes": 4289585152
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4106670080,
+      "tmpFreeBytes": 4289585152
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4166008832,
+      "tmpFreeBytes": 4289585152
+    }
+  ]
+}

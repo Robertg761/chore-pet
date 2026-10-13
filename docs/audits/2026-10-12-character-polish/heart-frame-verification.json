@@ -1,0 +1,168 @@
+{
+  "freeze": {
+    "baseCommit": "e8a28b623ce63394f3dd22412dae3a804840981c",
+    "sources": {
+      "src/character/items/extras.tsx": "2ebe7ed7be300b2a5a207fb67037ec28146ae96a1bbba00d6c8627fce3b8d173",
+      "src/character/heartGlasses.test.tsx": "49b391967e5b62ff226be32709a9421f5424289f945965885917a45268a33958",
+      "docs/audits/2026-10-12-character-polish/heart-frame-design.md": "d239b351dc8951b200dd8c531274dc24bdfec610f11929e0e673414aaa95bf29"
+    },
+    "unchangedSources": {
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/motion.ts": "155194546e3c9e68df5f7e4ccb129e27627998361aa503d9c7035439a2015e3b",
+      "src/character/strokeScale.ts": "5bf8f80e4ee3eed8b994c4da7ebb6af29fa32203448358886b8d33f7d83fe9de",
+      "src/character/items.tsx": "f06572844f4a349fef05caa7a45068f5935815f14d79daf0a76d71dc3d412c6a",
+      "src/character/poses.ts": "5a7cf52f0dc3c8efbb9f4478fbbbbf660f345f5cfb12a6e1e078487acf7a1fcc",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/heart-frame-source.diff",
+      "sha256": "9b7b37a2ff9843c0bbb100cdf3823689bf450523ee22ad95b430745f8c9003ac"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/heart-frame-artifacts.json",
+    "sha256": "cfa0b6335f9300cc8be03eb75e54a7eb243651e23bc038524c7efdb58af80f22"
+  },
+  "checks": [
+    {
+      "name": "heart-frame-before-capture",
+      "log": "docs/audits/2026-10-12-character-polish/heart-frame-before-capture.log",
+      "logSha256": "a6361716c2d8b719d3da5d5cf9c8365ab1b0138b7824c369481787ffd113593c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/heart-frame-before-capture.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "heart-frame-compare",
+      "log": "docs/audits/2026-10-12-character-polish/heart-frame-compare.log",
+      "logSha256": "b6299ca14d8de1b89b47521dfaa09b6c27804f562f9a9846547ec7e7129a74fe",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/heart-frame-compare.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "heart-frame-final-build",
+      "log": "docs/audits/2026-10-12-character-polish/heart-frame-final-build.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/heart-frame-final-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "heart-frame-final-bundle",
+      "log": "docs/audits/2026-10-12-character-polish/heart-frame-final-bundle.log",
+      "logSha256": "b496d84bbcd2052a3bbdfaaf95595d19bdd999ebe052c456be99f7fbc47c228c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/heart-frame-final-bundle.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "heart-frame-final-capture",
+      "log": "docs/audits/2026-10-12-character-polish/heart-frame-final-capture.log",
+      "logSha256": "0b188a87a578dda9d1c768df514d8265fb67ddc3ae4825f2f723f7acb2c39433",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/heart-frame-final-capture.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "heart-frame-final-diff",
+      "log": "docs/audits/2026-10-12-character-polish/heart-frame-final-diff.log",
+      "logSha256": "0ef4b0dbe6f4eb88208fe7b6a22530b20622e6dd736ac5981f9511119ec6cdd4",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/heart-frame-final-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "heart-frame-final-focused",
+      "log": "docs/audits/2026-10-12-character-polish/heart-frame-final-focused.log",
+      "logSha256": "5217df1e1ddc987a779d74887959d858363d4eedc1dcb5e3f2679bb49950b092",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/heart-frame-final-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "heart-frame-final-lint",
+      "log": "docs/audits/2026-10-12-character-polish/heart-frame-final-lint.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/heart-frame-final-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "heart-frame-prototype-capture",
+      "log": "docs/audits/2026-10-12-character-polish/heart-frame-prototype-capture.log",
+      "logSha256": "daa189f8231fae914ee4955ed46dc76530c30eeb499befb8be70e75cc54d02db",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/heart-frame-prototype-capture.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "heart-frame-prototype-unit",
+      "log": "docs/audits/2026-10-12-character-polish/heart-frame-prototype-unit.log",
+      "logSha256": "79eb9fcd5a2f7d1342f3f62705c752054098ed080a6fff70f85308bd8bdcd93d",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/heart-frame-prototype-unit.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "heart-frame-red",
+      "log": "docs/audits/2026-10-12-character-polish/heart-frame-red.log",
+      "logSha256": "fe627f02bbf633e46fedcec9c025548e5900296eb1be8a7859e4ad60a4d0ba68",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/heart-frame-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "results": {
+    "summary": "62 affected tests in two actual files pass8.62s; typecheck and production Vite bundle, lint and whitespace pass. 9108 rendered SVG comparisons:1344exact,7764temple-only,zero unexpected. Three final PNG byteexact to directly inspected prototypes.",
+    "focused": "heart-frame-final-focused:62tests/2files. Nonexistent Character.test.tsx was passed as an extra filter; it matched no file and is not credited.",
+    "build": "heart-frame-final-build is tsc -b only; heart-frame-final-bundle is the separate successful Vite/PWA production build, with existing chunk advisory.",
+    "visual": "Root opened all six baseline/prototype sheets. Final3PNG byteexact to prototype,54samples per stage:3species,sixstaticposes/default+ink,4eye variants in smiling sampled greet+combined outfit,native60/25pxidle. The four eye variants are not comprehensive open-eye coverage.",
+    "differential": "17items including none; static1428 acrossspecies/poses/colors/strokes. Sampled7680 acrossspecies/5moods/16actions/4phases/2strokes/2facings/2reduced withcombined heartoutfit. WholeSVG canonicalized only the two temple path strings; geometryidentity is not temporal or pixel comfort certification."
+  },
+  "scope": "One local heart-glasses temple path correction inside translated lens group; symmetric instances share that path. Alpha-component test checks connected painted frame at strokes1/1.6, with round-glasses control. No motion, state, schema, dependencies or clock changes.",
+  "history": "Isolated red2fail/2pass, candidate4pass before production mutation. Before/prototype captures and differential used declared Vite source override; exact candidate hash matches final production extras. Final checks use production source. Last full suite before this one-path art correction passed2418tests/127files; not claimed as a full run of this changed source.",
+  "resources": {
+    "runs": 11,
+    "sampleRows": 74,
+    "minimumObservedAvailableMiB": 3560.8046875,
+    "minimumObservedTmpFreeMiB": 4089.89453125,
+    "reserveStops": 0,
+    "launchRejections": 0,
+    "limits": "Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor."
+  },
+  "status": "Completed scoped checks and independent static/source/still review; bound files reverified before local checkpoint.",
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/heart-frame-review-input.json",
+    "sha256": "f928bf6bb606757b3ec365e5a89db198ed1e219eacbcf950ac80b722b6f7a76c"
+  },
+  "independentReview": {
+    "path": "docs/audits/2026-10-12-character-polish/heart-frame-independent-review.md",
+    "sha256": "79b9e05da60f8b164c99093d03298512c18d6d6f2a81aa14f0d7b5d05cf6e6e5",
+    "verdict": "PASS; no scoped findings"
+  }
+}

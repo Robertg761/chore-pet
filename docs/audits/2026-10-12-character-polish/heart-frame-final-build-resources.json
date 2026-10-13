@@ -1,0 +1,78 @@
+{
+  "utc": "2026-10-13T04:55:49.377923+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "--max-old-space-size=512",
+    "node_modules/typescript/bin/tsc",
+    "-b"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 3,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 0
+  },
+  "minimumObservedAvailableBytes": 4234784768,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 5049217024,
+      "tmpFreeBytes": 4289556480
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 5049008128,
+      "tmpFreeBytes": 4289556480
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4797280256,
+      "tmpFreeBytes": 4289556480
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "memAvailableBytes": 4667084800,
+      "tmpFreeBytes": 4289556480
+    },
+    {
+      "elapsedSeconds": 3.001,
+      "memAvailableBytes": 4616511488,
+      "tmpFreeBytes": 4289556480
+    },
+    {
+      "elapsedSeconds": 4.002,
+      "memAvailableBytes": 4562726912,
+      "tmpFreeBytes": 4289556480
+    },
+    {
+      "elapsedSeconds": 5.002,
+      "memAvailableBytes": 4469010432,
+      "tmpFreeBytes": 4289556480
+    },
+    {
+      "elapsedSeconds": 6.002,
+      "memAvailableBytes": 4432785408,
+      "tmpFreeBytes": 4289556480
+    },
+    {
+      "elapsedSeconds": 7.002,
+      "memAvailableBytes": 4234784768,
+      "tmpFreeBytes": 4289556480
+    },
+    {
+      "elapsedSeconds": 8.003,
+      "memAvailableBytes": 4679114752,
+      "tmpFreeBytes": 4289556480
+    }
+  ]
+}

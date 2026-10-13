@@ -1,0 +1,88 @@
+{
+  "runs": 11,
+  "sampleRows": 74,
+  "minimumObservedAvailableMiB": 3560.8046875,
+  "minimumObservedTmpFreeMiB": 4089.89453125,
+  "reserveStops": 0,
+  "launchRejections": 0,
+  "rows": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/heart-frame-before-capture-resources.json",
+      "samples": 5,
+      "minimumAvailableMiB": 3560.8046875,
+      "minimumTmpMiB": 4090.86328125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/heart-frame-compare-resources.json",
+      "samples": 21,
+      "minimumAvailableMiB": 3601.828125,
+      "minimumTmpMiB": 4090.83984375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/heart-frame-final-build-resources.json",
+      "samples": 10,
+      "minimumAvailableMiB": 4038.60546875,
+      "minimumTmpMiB": 4090.83984375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/heart-frame-final-bundle-resources.json",
+      "samples": 4,
+      "minimumAvailableMiB": 4410.45703125,
+      "minimumTmpMiB": 4090.828125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/heart-frame-final-capture-resources.json",
+      "samples": 5,
+      "minimumAvailableMiB": 4142.41015625,
+      "minimumTmpMiB": 4090.828125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/heart-frame-final-diff-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4531.8515625,
+      "minimumTmpMiB": 4090.82421875,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/heart-frame-final-focused-resources.json",
+      "samples": 11,
+      "minimumAvailableMiB": 4214.1796875,
+      "minimumTmpMiB": 4089.89453125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/heart-frame-final-lint-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4477.2890625,
+      "minimumTmpMiB": 4090.82421875,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/heart-frame-prototype-capture-resources.json",
+      "samples": 5,
+      "minimumAvailableMiB": 3561.9140625,
+      "minimumTmpMiB": 4090.84765625,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/heart-frame-prototype-unit-resources.json",
+      "samples": 4,
+      "minimumAvailableMiB": 3735.84375,
+      "minimumTmpMiB": 4090.7578125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/heart-frame-red-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 3916.42578125,
+      "minimumTmpMiB": 4090.8671875,
+      "exitCode": 1
+    }
+  ],
+  "limits": "Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor."
+}

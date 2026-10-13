@@ -1,0 +1,7 @@
+from pathlib import Path
+import subprocess
+for p in ['src/character/items/extras.tsx','src/character/heartGlasses.test.tsx','docs/audits/2026-10-12-character-polish/heart-frame-design.md']:
+ tracked=subprocess.run(['git','ls-files','--error-unmatch',p],capture_output=True).returncode==0
+ r=subprocess.run(['git','diff','--check','--',p] if tracked else ['git','diff','--no-index','--check','--','/dev/null',p],capture_output=True,text=True)
+ assert r.returncode==(0 if tracked else 1) and not (r.stdout+r.stderr).strip(),(p,r)
+ print(p,'whitespace pass')
