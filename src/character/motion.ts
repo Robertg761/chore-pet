@@ -75,6 +75,8 @@ const PERSONALITY: Record<Species, { amplitude: number; squash: number; stride: 
 const AFFECTION_FOLLOW: Record<Species, number> = { mochi: 0.45, bun: 0.55, sprout: 0.5 }
 // Environmental rest settles the same appendages with an even quieter sway.
 const REST_FOLLOW: Record<Species, number> = { mochi: 0.25, bun: 0.3, sprout: 0.25 }
+// Concern settles in one smaller sway while the resident studies wilting leaves.
+const CONCERN_FOLLOW: Record<Species, number> = { mochi: 0.35, bun: 0.4, sprout: 0.35 }
 
 const STRETCH: Record<Species, { arms: number; extension: number; follow: number }> = {
   mochi: { arms: 46, extension: 0.022, follow: 0.2 },
@@ -385,8 +387,12 @@ export function sampleMotion(input: MotionInput): MotionFrame {
     const follow = action === 'stretch' ? envelope(t, 0.14, 0.45, 0.76, 1) : envelope(t, 0.1, 0.42, 0.8, 1)
     // Advance the calm sway so inherited lag cannot add a tiny initial
     // counter-movement after the follow envelope first becomes visible.
-    const sway = action === 'affection' || action === 'stretch' || action === 'rest'
-      ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * (action === 'stretch' ? STRETCH[species].follow : action === 'rest' ? REST_FOLLOW[species] : AFFECTION_FOLLOW[species]) * energy
+    const calmConcern = action === 'concern' && mood !== 'sick'
+    const followStrength = action === 'stretch' ? STRETCH[species].follow
+      : action === 'rest' ? REST_FOLLOW[species]
+      : calmConcern ? CONCERN_FOLLOW[species] : AFFECTION_FOLLOW[species]
+    const sway = action === 'affection' || action === 'stretch' || action === 'rest' || calmConcern
+      ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * followStrength * energy
       : Math.sin(t * Math.PI * 4 - personality.lag) * follow * personality.follow * energy
     frame.leftAppendage = sway
     frame.rightAppendage = sway * (species === 'sprout' ? -0.75 : 0.8)

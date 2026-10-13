@@ -1,0 +1,166 @@
+{
+  "freeze": {
+    "baseCommit": "906aedcc8b752d7e2e391b158a8262a437feb8cf",
+    "sources": {
+      "src/character/motion.ts": "a912e37fb61319129245da227a7dc1e9cda10390596c68089440f307a7762b15",
+      "src/character/motion.concern.test.ts": "ca50bdd92a3cab0bc638bb8f2f7709e17e06d2568a04dcd90d62ad52bcab006c",
+      "scripts/browser/pet-concern-follow.test.mjs": "449cf70486c0855500b184748155f0c6ce8b7a541a26eb0aa8d2d84a710224ef",
+      "docs/ART.md": "cf4cef659d45b0041b717b5ecd33f692cf922a1dc02028b7c08f3573d652849a",
+      "docs/audits/2026-10-12-character-polish/capture-concern-follow.mjs": "d7aae77c967e7e9959be5dfa472845ffc8177a01cd1f4a5ad1cc0dac838114e5",
+      "docs/audits/2026-10-12-character-polish/compare-concern-follow.mjs": "5ec97c648596b78207853529fafdaf740b13ef9eaca2ad3b8f84595ec75c7944"
+    },
+    "unchangedSources": {
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+      "src/pet/LivingRoom.tsx": "ef72fe47fe14dd67bb78e512dd237f046730d68ebd3209ebc4c16060a380294f",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/behaviour.ts": "7e4b850de2aa14c42cbd6bafac23420e428b5564350aa1c8a7b17db9b2a915af",
+      "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/concern-follow-source.diff",
+      "sha256": "d6fb2a5c5e954fcbe72f404b4bf0ede5d8b5c2c6e4e9b9068191223bdf638b22"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/concern-follow-artifacts.json",
+    "sha256": "96ca587c05f1c2ae862070a116f8a6ff041f8c9fb5c6a5a50bf2eb56eaa334e9"
+  },
+  "checks": [
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/concern-follow-build.log",
+      "logSha256": "2eaa8b87555d81cb28a7917a078513ec912608288afa2328e002b2ee8ff9cf34",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/concern-follow-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/concern-follow-capture-after.log",
+      "logSha256": "01dfc17d039231e775a397845db899169e952fd10ff97d1877be4809e12304a1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/concern-follow-capture-after.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/concern-follow-capture-before.log",
+      "logSha256": "940a98b1ee851594177e6fea55137e4bd3e8877ad7baad9586bec1a0a1c08736",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/concern-follow-capture-before.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/concern-follow-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/concern-follow-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "differential",
+      "log": "docs/audits/2026-10-12-character-polish/concern-follow-differential.log",
+      "logSha256": "d5e5fa35503a640833e7ac8159f497796d9682459d81f6b0e696859951509527",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/concern-follow-differential.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/concern-follow-focused.log",
+      "logSha256": "6b7335e3007c0f03c8386baf9de9e0e3de87a8a0d5f85837f69f04558c061328",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/concern-follow-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/concern-follow-full.log",
+      "logSha256": "19553c77a5acdd0ac88ae17b65f08c5056cbc41e5b03531118bba18cb59ec957",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/concern-follow-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/concern-follow-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/concern-follow-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-red-corrected",
+      "log": "docs/audits/2026-10-12-character-polish/concern-follow-native-red-corrected.log",
+      "logSha256": "aa785460b1a7a5b2700a12381e0529ad8be78573d188e6fbc07fc4fc053153f0",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/concern-follow-native-red-corrected.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native-red",
+      "log": "docs/audits/2026-10-12-character-polish/concern-follow-native-red.log",
+      "logSha256": "e8b4942186fc43092cae08c138a0e9713ac1109d1323d1d75677094c55035737",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/concern-follow-native-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/concern-follow-native.log",
+      "logSha256": "4cdb3f47de0f186b49fc22b5954a0d016fed90aa890a37112ed6483a6d81e0fd",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/concern-follow-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/concern-follow-red.log",
+      "logSha256": "0c3578418006135980023daa3158311e88f8840066a530c3f80ffdfdeb6a7461",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/concern-follow-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "status": "Scoped verification and independent source/still review accepted; ready for local checkpoint.",
+  "result": "2277 tests/112 files pass in74.91s;255focused/8files4.97s;13native21.258s;typebuild/lint/authoredwhitespace0. Native dressed happy species:96SVG angle/timestamp samples each;actual peak/speed Mochi1.749deg/7.957deg/s,Bun4.785/22.014,Sprout stem1.219/5.695. One signchange,one resident clock,planted feet<.01localunits,sameposition/node/announcement/savedtables. Visible reduced reaction:0frames,stillbody,existing3600ms speech. Six unchanged attention/two rotations and three unchanged rest native cases pass. 43200-frame differential:42408exact/792healthyconcernappendage-only;allotherfields/actions/sick/reduced/durations exact.",
+  "history": "Preproduct7unit6bound/reversal fails+1reducedpass211ms. First native fixture expected content but actual onelevel2 task yields health89/happy;4fixturetimeouts do not establish motion failure. Corrected old-production baseline4cases5.760s:3actualspeedfail/1reducedpass;old peak/speed Mochi4.996/34.887,Bun11.999/83.683,Sproutstem3.597/25.118. Rebuilt with healthyconcern-onlygains then13native allpass. Captureenv/name corrected beforefinalrun;first baseline run had no captureenv.",
+  "limits": "Deterministic native Chromium152 frozen clock and SVG transforms,not human temporal/physicaldevice/AT/CPU/battery acceptance. Native concern fixture is happy/all3species/full5-slotoutfit;static sheets additionally scruffy/dark/bothfacings at200/60/25px. Sproutnativeangle measures stem (0.4*leftAppendage),not full leaf transform. Root inspected6before/after sheets/curves and3nativePNG. No contact/routing/dialogue/savedmodel/newclock change. Oneheavyjob/oneVitestworker orChromium;768MBNodecap/nice10;availableRAM6.2\u20136.35GiB,/tmp4.1GBfree.",
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/concern-follow-review-input.json",
+    "sha256": "cef26201e98b113ff49ebda83663b4c173ae09af66b3407380e97f656e550015"
+  },
+  "review": {
+    "path": "docs/audits/2026-10-12-character-polish/concern-follow-review.md",
+    "sha256": "466dc9de9f6a1e4770e3f38c5ec25e4b5ff34ce62535ed4d8cea4f0fedb8a065",
+    "verdict": "Ohm accepts static/source/still scope; no actionable P0\u2013P3 findings."
+  }
+}

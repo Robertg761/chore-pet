@@ -1,0 +1,20 @@
+{
+  "files": {
+    "docs/audits/2026-10-12-character-polish/concern-follow-baseline.ts.txt": "b551fa03994d7689c27e3076e136c8457af29c5b30aa9a1dbd6b730191f077af",
+    "docs/audits/2026-10-12-character-polish/concern-follow-before.json": "e597018d27fdc72a243b7d9d980f8d7c64d42b6962f37435c729fffa461c554f",
+    "docs/audits/2026-10-12-character-polish/concern-follow-after.json": "a599d04518c5df728809d5004b0095061ed83895c39cb74593ccb4a0ab327afd",
+    "docs/audits/2026-10-12-character-polish/concern-follow-differential.json": "0122361eb7bfc4ace5604297ddd5ecf27760cd338ae67c341c602e3f951631e5",
+    "docs/audits/2026-10-12-character-polish/concern-follow-after-curves.png": "6de49a147084c51fa05e09c57aefee9f3f0d991fd7e0ac9f2b3d2211da833e18",
+    "docs/audits/2026-10-12-character-polish/concern-follow-after-dark-sizes.png": "0eb7fc099014dfe8c62cbb1e43f381182dd484fb900fa430c7003157ab355b91",
+    "docs/audits/2026-10-12-character-polish/concern-follow-after-light-sizes.png": "c9c19383849963e458aeb0c6babd0fcc75bec4e224ac2485cf2b2d25e622f0c8",
+    "docs/audits/2026-10-12-character-polish/concern-follow-before-curves.png": "23cf8e9bc34dc3649ef27070e45b2ccb186975fdf5a3c17dbe31017b2d60c5b1",
+    "docs/audits/2026-10-12-character-polish/concern-follow-before-dark-sizes.png": "a7fdd714a51b26d1d8e21e69d9fbe9342003ad551c25526d0b972460a55b3bb9",
+    "docs/audits/2026-10-12-character-polish/concern-follow-before-light-sizes.png": "e540c987993bd3d452670d5eb5d002b8ff794b3d462471743d0ca93a2dfb9f07",
+    "docs/audits/2026-10-12-character-polish/concern-follow-native-captures/concern-follow-room-bun.json": "77cd40791c11a22d9568df35948efe8157210b54440c63d32ac3e76ed4abb1c2",
+    "docs/audits/2026-10-12-character-polish/concern-follow-native-captures/concern-follow-room-bun.png": "1b336a0a408991ca156e91b2db4629ebfdc83062f730ef53c8f60027dc67f5f7",
+    "docs/audits/2026-10-12-character-polish/concern-follow-native-captures/concern-follow-room-mochi.json": "b67b644fc04f5022c28ea53478c6e966814ef78e6e0803367e987efce6a47404",
+    "docs/audits/2026-10-12-character-polish/concern-follow-native-captures/concern-follow-room-mochi.png": "e2341a496324bd13305bc41eab6bda3af1bdd25658a1f3f0d12b4241e3863373",
+    "docs/audits/2026-10-12-character-polish/concern-follow-native-captures/concern-follow-room-sprout.json": "d102694b231fab5edac082589d99706a5288548116128b062c3c863c39d1c815",
+    "docs/audits/2026-10-12-character-polish/concern-follow-native-captures/concern-follow-room-sprout.png": "c2b146f9518b52d72139ddd92334ac3b69a41de2e73bbe6c5734f4adeae9b345"
+  }
+}

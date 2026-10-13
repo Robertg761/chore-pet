@@ -1,0 +1,79 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/motion.concern.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/motion.concern.test.ts (7 tests | 6 failed) 26ms
+   ❯ thoughtful environmental concern (7)
+     × keeps mochi appendages restrained while the resident studies a wilting object 10ms
+     × keeps bun appendages restrained while the resident studies a wilting object 3ms
+     × keeps sprout appendages restrained while the resident studies a wilting object 1ms
+     × mochi makes one calm sway at short, normal and long durations 5ms
+     × bun makes one calm sway at short, normal and long durations 1ms
+     × sprout makes one calm sway at short, normal and long durations 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/motion.concern.test.ts > thoughtful environmental concern > keeps mochi appendages restrained while the resident studies a wilting object
+AssertionError: expected 4.999998640167109 to be less than or equal to 1.750000001
+ ❯ src/character/motion.concern.test.ts:17:49
+     15|     for (const side of ['leftAppendage', 'rightAppendage'] as const) {
+     16|       const values = frames.map(frame => frame[side])
+     17|       expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(ex…
+       |                                                 ^
+     18|       expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visibl…
+     19|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/character/motion.concern.test.ts > thoughtful environmental concern > keeps bun appendages restrained while the resident studies a wilting object
+AssertionError: expected 11.999997912150267 to be less than or equal to 4.800000001
+ ❯ src/character/motion.concern.test.ts:17:49
+     15|     for (const side of ['leftAppendage', 'rightAppendage'] as const) {
+     16|       const values = frames.map(frame => frame[side])
+     17|       expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(ex…
+       |                                                 ^
+     18|       expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visibl…
+     19|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/character/motion.concern.test.ts > thoughtful environmental concern > keeps sprout appendages restrained while the resident studies a wilting object
+AssertionError: expected 8.999958191270608 to be less than or equal to 3.150000001
+ ❯ src/character/motion.concern.test.ts:17:49
+     15|     for (const side of ['leftAppendage', 'rightAppendage'] as const) {
+     16|       const values = frames.map(frame => frame[side])
+     17|       expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(ex…
+       |                                                 ^
+     18|       expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visibl…
+     19|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/character/motion.concern.test.ts > thoughtful environmental concern > mochi makes one calm sway at short, normal and long durations
+ FAIL  src/character/motion.concern.test.ts > thoughtful environmental concern > bun makes one calm sway at short, normal and long durations
+ FAIL  src/character/motion.concern.test.ts > thoughtful environmental concern > sprout makes one calm sway at short, normal and long durations
+AssertionError: expected [ -1, 1, -1 ] to have a length of 1 but got 3
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/character/motion.concern.test.ts:40:73
+     38|       const values = Array.from({ length: 1001 }, (_, phase) => at(spe…
+     39|       const signs = values.filter(value => Math.abs(value) > 1e-6).map…
+     40|       expect(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1])…
+       |                                                                         ^
+     41|       expect(values[0]).toBe(0)
+     42|       expect(values.at(-1)).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  22:01:30
+   Duration  211ms (transform 49%, tests 32%, import 14%, worker 5%)
+

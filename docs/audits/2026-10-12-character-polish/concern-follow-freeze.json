@@ -1,0 +1,25 @@
+{
+  "baseCommit": "906aedcc8b752d7e2e391b158a8262a437feb8cf",
+  "sources": {
+    "src/character/motion.ts": "a912e37fb61319129245da227a7dc1e9cda10390596c68089440f307a7762b15",
+    "src/character/motion.concern.test.ts": "ca50bdd92a3cab0bc638bb8f2f7709e17e06d2568a04dcd90d62ad52bcab006c",
+    "scripts/browser/pet-concern-follow.test.mjs": "449cf70486c0855500b184748155f0c6ce8b7a541a26eb0aa8d2d84a710224ef",
+    "docs/ART.md": "cf4cef659d45b0041b717b5ecd33f692cf922a1dc02028b7c08f3573d652849a",
+    "docs/audits/2026-10-12-character-polish/capture-concern-follow.mjs": "d7aae77c967e7e9959be5dfa472845ffc8177a01cd1f4a5ad1cc0dac838114e5",
+    "docs/audits/2026-10-12-character-polish/compare-concern-follow.mjs": "5ec97c648596b78207853529fafdaf740b13ef9eaca2ad3b8f84595ec75c7944"
+  },
+  "unchangedSources": {
+    "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+    "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+    "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+    "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+    "src/pet/LivingRoom.tsx": "ef72fe47fe14dd67bb78e512dd237f046730d68ebd3209ebc4c16060a380294f",
+    "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+    "src/pet/behaviour.ts": "7e4b850de2aa14c42cbd6bafac23420e428b5564350aa1c8a7b17db9b2a915af",
+    "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7"
+  },
+  "patch": {
+    "path": "docs/audits/2026-10-12-character-polish/concern-follow-source.diff",
+    "sha256": "d6fb2a5c5e954fcbe72f404b4bf0ede5d8b5c2c6e4e9b9068191223bdf638b22"
+  }
+}

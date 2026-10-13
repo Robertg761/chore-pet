@@ -1,0 +1,16 @@
+{
+  "method": "Exact sampled frames across3species/5moods/16actions/3durations/2motionpolicies/2facings/15phases. Only normal healthy concern appendages may differ;allotherfields/actions/reduced/durations exact. Static numeric checks,not temporal acceptance.",
+  "samples": 43200,
+  "unchanged": 42408,
+  "changed": 792,
+  "changes": {
+    "mochi/concern": 264,
+    "bun/concern": 264,
+    "sprout/concern": 264
+  },
+  "sourceSha256": {
+    "baseline": "b551fa03994d7689c27e3076e136c8457af29c5b30aa9a1dbd6b730191f077af",
+    "current": "a912e37fb61319129245da227a7dc1e9cda10390596c68089440f307a7762b15",
+    "runner": "5ec97c648596b78207853529fafdaf740b13ef9eaca2ad3b8f84595ec75c7944"
+  }
+}

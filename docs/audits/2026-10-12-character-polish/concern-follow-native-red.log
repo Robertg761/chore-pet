@@ -1,0 +1,58 @@
+✖ mochi reacts to an actually wilting plant with a grounded deliberate appendage gesture (4796.98562ms)
+✖ bun reacts to an actually wilting plant with a grounded deliberate appendage gesture (4698.286263ms)
+✖ sprout reacts to an actually wilting plant with a grounded deliberate appendage gesture (4700.292925ms)
+✖ mochi reacts to an actually wilting plant without moving in reduced motion (4666.560087ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19500.216604
+
+✖ failing tests:
+
+test at scripts/browser/pet-concern-follow.test.mjs:32:4
+✖ mochi reacts to an actually wilting plant with a grounded deliberate appendage gesture (4796.98562ms)
+  locator.waitFor: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByText('Feeling content', { exact: true }) to be visible[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-concern-follow.test.mjs:70:60) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByText('Feeling content', { exact: true }) to be visible" ]
+  }
+
+test at scripts/browser/pet-concern-follow.test.mjs:32:4
+✖ bun reacts to an actually wilting plant with a grounded deliberate appendage gesture (4698.286263ms)
+  locator.waitFor: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByText('Feeling content', { exact: true }) to be visible[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-concern-follow.test.mjs:70:60) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByText('Feeling content', { exact: true }) to be visible" ]
+  }
+
+test at scripts/browser/pet-concern-follow.test.mjs:32:4
+✖ sprout reacts to an actually wilting plant with a grounded deliberate appendage gesture (4700.292925ms)
+  locator.waitFor: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByText('Feeling content', { exact: true }) to be visible[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-concern-follow.test.mjs:70:60) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByText('Feeling content', { exact: true }) to be visible" ]
+  }
+
+test at scripts/browser/pet-concern-follow.test.mjs:32:4
+✖ mochi reacts to an actually wilting plant without moving in reduced motion (4666.560087ms)
+  locator.waitFor: Timeout 4000ms exceeded.
+  Call log:
+  [2m  - waiting for getByText('Feeling content', { exact: true }) to be visible[22m
+  
+      at TestContext.<anonymous> (/home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-concern-follow.test.mjs:70:60) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for getByText('Feeling content', { exact: true }) to be visible" ]
+  }

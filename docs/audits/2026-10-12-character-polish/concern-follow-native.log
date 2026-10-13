@@ -1,0 +1,37 @@
+✔ mochi reacts to an actually wilting plant with a grounded deliberate appendage gesture (1645.856461ms)
+ℹ Actual mochi appendage peak1.749deg;speed7.957deg/s
+ℹ Chromium 152.0.7977.82; 96 actual SVG appendage/timestamp samples; wilting linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ bun reacts to an actually wilting plant with a grounded deliberate appendage gesture (1526.827118ms)
+ℹ Actual bun appendage peak4.785deg;speed22.014deg/s
+ℹ Chromium 152.0.7977.82; 96 actual SVG appendage/timestamp samples; wilting linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ sprout reacts to an actually wilting plant with a grounded deliberate appendage gesture (1541.039432ms)
+ℹ Actual sprout appendage peak1.219deg;speed5.695deg/s
+ℹ Chromium 152.0.7977.82; 96 actual SVG appendage/timestamp samples; wilting linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ mochi reacts to an actually wilting plant without moving in reduced motion (881.898554ms)
+ℹ Visible reduced-motion wilting invitation: same position/body,existing3600ms speech lifetime,0resident frames,unchanged saved tables.
+✔ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1648.083129ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1566.906736ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1604.983513ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1542.409559ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1691.244905ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1565.73165ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ mochi settles into one quiet environmental rest sway on the resident clock (1790.635713ms)
+ℹ Chromium 152.0.7977.82; 53 actual SVG-angle samples; selected rug/rest; actual foot contacts<.01local SVGunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ bun settles into one quiet environmental rest sway on the resident clock (1573.587589ms)
+ℹ Chromium 152.0.7977.82; 53 actual SVG-angle samples; selected rug/rest; actual foot contacts<.01local SVGunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ sprout settles into one quiet environmental rest sway on the resident clock (1559.531514ms)
+ℹ Chromium 152.0.7977.82; 53 actual SVG-angle samples; selected rug/rest; actual foot contacts<.01local SVGunits; one resident clock; unchanged position/node/announcement/saved tables
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21258.101221
