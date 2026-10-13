@@ -1,0 +1,92 @@
+{
+  "freeze": {
+    "baseCommit": "7164d7125175a83d61aa535447b0ad4e87902da6",
+    "sources": {
+      "src/index.css": "beb2718dcfa019a1eded9ed62139f6aae435dc25d41a71916c5641077a2ad9e8",
+      "scripts/browser/scene-readability.test.mjs": "a35b486b512008528fe405c5cba5d536ac38fcdbab25b8d41ff3410ba74aaa08",
+      "docs/ART.md": "feebe4827e339012e6da2eadd6bc0923e83d58da7cd8b1e2431d2be58543e333"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/scene-readability-source.diff",
+      "sha256": "a8d1d60b8f119702e4294a81326a4b0ba7bb7462f9de0dcf403f82fcb8d409a6"
+    },
+    "scope": "CSS-only runtime in index.css, scoped below640px home; stage content growth, scene min-content and canvas250px floor. New bounded native check/ART. No runtime JS changes."
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/scene-readability-artifacts.json",
+    "sha256": "bcbce853f15e3089d4677c72e49903ccde3c40299b76c7ce3b9a397fc446e558"
+  },
+  "checks": [
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/scene-readability-red.log",
+      "logSha256": "d57cc79f6a3f092fecc50adab4f2567a46936ec5503ed2c50bcd73fc0bfc24d7",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-readability-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/scene-readability-build.log",
+      "logSha256": "a296ec468b897b4a4d3fdcff6ad2c53116ae20cb55e56112404a93b38deaf8d8",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-readability-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/scene-readability-native.log",
+      "logSha256": "1a433bfa1489528856b9a6a4fd62fe7243b3b50f6342185d70a9d49b167f99a1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-readability-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "regressions",
+      "log": "docs/audits/2026-10-12-character-polish/scene-readability-regressions.log",
+      "logSha256": "0ae8ffdd35a7521078097fd6aaafe759d97a0856979fa0007b3e0ac0e6b1312f",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-readability-regressions.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/scene-readability-lint.log",
+      "logSha256": "857d0b72320525e19e457cae16f3e92811847f8f54e642083ff0962bcc5e8a68",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-readability-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/scene-readability-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/scene-readability-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    }
+  ],
+  "priorFullReference": {
+    "log": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-full.log",
+    "sha256": "83a28fa4c99ca8244c0a07188a6b51f9c2c822a54d399047029d72b4544a7585",
+    "exit": "docs/audits/2026-10-12-character-polish/wardrobe-stretch-full.exit",
+    "exitSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "result": "2262tests/110files71.70s;predates this CSS-only change. No full repeat or post-CSS full pass claimed."
+  },
+  "status": "Root native/build/lint/diff verification complete; immutable independent source/still review input.",
+  "result": "3newnative6.629s:8layoutsamples default/200%, actual body/canvas/childcontainment/followingchores/horizontalfit/Showroom keyboardvisibility; enlargedtext native0offscreen\u21921visiblefinite\u21920deadline.17existingnative28.808s allpass (navigation/player/Showroom/observer). Build/lint/diff0. Defaultstage420/canvas282/body32.56x28.97;200%stage510/451/451/423,cavas250/body28.19x25.07. Savedtables unchanged.",
+  "history": "BeforeCSS2native2.346s:default4layouts pass,200%canvas fails. Ten-sample temporaryCSSprobe rejected viewport-only floor because its canvas protrudes50px paststage andoverlapschores40px. The canvasheight change is90px, not parentprotrusion. Probe scene-box-only overlap metric did not measure childoverflow; final regression measures allactualchildren.",
+  "limits": "Native root text enlargement, not browserzoom or whole-app/physicalAT certification. Bare sample Mochi body geometry, not every outfit/species. Same defaultgeometry measured in probe, new bounded defaultchecks and17existingregressions. Prior2262unit full predates this CSS-onlychange and is historical only. SequentialoneChromium/768MBNodecap;availableRAM6.9GB,/tmpfree4.1GB atstart;no newclocks/state/observers/persistence."
+}

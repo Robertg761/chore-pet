@@ -1,0 +1,45 @@
+{
+  "artifacts": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/scene-readability-captures/scene-100.json",
+      "sha256": "ff52a6c6253a6a7f64ea4f1d6141733af9eddd33ada74167aad9b64f21114398",
+      "bytes": 4927
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/scene-readability-captures/scene-200.json",
+      "sha256": "9465163bf37a640bb28f6da6a57a623ba6d0cfcdc717acaff958e752e59f1aa9",
+      "bytes": 4935
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/scene-readability-captures/scene-320-100.png",
+      "sha256": "9ff45ba0d8f6b4e0ab8a7fd78a340599c324d9ce37162c8344e0b661b555c104",
+      "bytes": 57043
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/scene-readability-captures/scene-320-200.png",
+      "sha256": "4ca36a89bd21a707db57d72d7f10a0abe3b7ef0b32108535ae64427ca8ee1180",
+      "bytes": 52286
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/scene-readability-captures/scene-375-100.png",
+      "sha256": "0d6a18b8090af45fcc6823af479e9ae651901a2dd9de83643fa94848cd05c65c",
+      "bytes": 63800
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/scene-readability-captures/scene-375-200.png",
+      "sha256": "2eff96e241f7ec293b8a6db5bf74222f180c54b38d21efebf0938ca6a4cc6d56",
+      "bytes": 58791
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/scene-readability-captures/scene-390-100.png",
+      "sha256": "78d02f359f59acc0bca6b1ed910e0030eb17ecf173912cd8dd8c68a32f93964e",
+      "bytes": 66165
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/scene-readability-captures/scene-390-200.png",
+      "sha256": "4e8a9c6e9b986fcef25e01b0432482f2110ef703d8d165d42e3cc170730f53d9",
+      "bytes": 58815
+    }
+  ],
+  "scope": "Six final scene PNGs and two measured geometry JSONs. Root inspected all six PNGs. Default/200% root text at320/375/390, geometry also600. Showroom-scroll captures may clip earlier content above viewport; actual resident >=95% visible."
+}

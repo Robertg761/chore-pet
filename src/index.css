@@ -295,6 +295,12 @@ h1[tabindex='-1']:focus { outline: none; }
 .home-chores { flex: none; display: flex; flex-direction: column; gap: 8px; }
 .home-alert { margin: 0; font-size: 0.8125rem; font-weight: 700; color: var(--late-ink); text-align: center; }
 
+/* In stacked homes, growing controls must not squeeze the pet or overlap chores. */
+@media (max-width: 639px) {
+  .home-stage { flex: 1 0 auto; height: max-content; }
+  .home .home-scene { min-height: min-content; }
+  .home .home-scene-viewport { min-height: 250px; }
+}
 
 /* Wide screens: the rail on the left, the room big on the left of the view, chores in a panel on the right. */
 @media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {

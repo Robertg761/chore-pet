@@ -1,0 +1,27 @@
+✔ portrait room keeps the resident readable and preserves content flow at100%text (1313.21458ms)
+ℹ Chromium152.0.7977.82;4narrowstackedlayouts;actualcharacter/canvas/childflow and Showroomfocus;unchanged savedtables.
+✖ portrait room keeps the resident readable and preserves content flow at200%text (635.376615ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2346.07407
+
+✖ failing tests:
+
+test at scripts/browser/scene-readability.test.mjs:17:32
+✖ portrait room keeps the resident readable and preserves content flow at200%text (635.376615ms)
+  AssertionError [ERR_ASSERTION]: portrait scene keeps at least250px of canvas after text and controls grow
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/scene-readability.test.mjs:28:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

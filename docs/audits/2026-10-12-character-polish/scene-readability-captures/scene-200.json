@@ -1,0 +1,233 @@
+{
+  "samples": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 640
+      },
+      "textPercent": 200,
+      "stage": {
+        "x": 16,
+        "y": 224.78125,
+        "width": 288,
+        "height": 510,
+        "bottom": 734.78125
+      },
+      "scene": {
+        "x": 16,
+        "y": 344.78125,
+        "width": 288,
+        "height": 390,
+        "bottom": 734.78125
+      },
+      "canvas": {
+        "x": 16,
+        "y": 444.78125,
+        "width": 288,
+        "height": 250,
+        "bottom": 694.78125
+      },
+      "tools": {
+        "x": 16,
+        "y": 344.78125,
+        "width": 288,
+        "height": 100,
+        "bottom": 444.78125
+      },
+      "status": {
+        "x": 16,
+        "y": 694.78125,
+        "width": 288,
+        "height": 40,
+        "bottom": 734.78125
+      },
+      "body": {
+        "x": 146.4486541748047,
+        "y": 586.7772827148438,
+        "width": 28.186477661132812,
+        "height": 25.07464599609375,
+        "bottom": 611.8519287109375
+      },
+      "chores": {
+        "x": 16,
+        "y": 744.78125,
+        "width": 288,
+        "height": 527,
+        "bottom": 1271.78125
+      },
+      "scrollWidth": 320
+    },
+    {
+      "viewport": {
+        "width": 375,
+        "height": 664
+      },
+      "textPercent": 200,
+      "stage": {
+        "x": 16,
+        "y": -299.21875,
+        "width": 343,
+        "height": 451,
+        "bottom": 151.78125
+      },
+      "scene": {
+        "x": 16,
+        "y": -214.21875,
+        "width": 343,
+        "height": 366,
+        "bottom": 151.78125
+      },
+      "canvas": {
+        "x": 16,
+        "y": -138.21875,
+        "width": 343,
+        "height": 250,
+        "bottom": 111.78125
+      },
+      "tools": {
+        "x": 16,
+        "y": -214.21875,
+        "width": 343,
+        "height": 76,
+        "bottom": -138.21875
+      },
+      "status": {
+        "x": 16,
+        "y": 111.78125,
+        "width": 343,
+        "height": 40,
+        "bottom": 151.78125
+      },
+      "body": {
+        "x": 173.9486541748047,
+        "y": 3.7772674560546875,
+        "width": 28.186477661132812,
+        "height": 25.074691772460938,
+        "bottom": 28.851959228515625
+      },
+      "chores": {
+        "x": 16,
+        "y": 161.78125,
+        "width": 343,
+        "height": 447,
+        "bottom": 608.78125
+      },
+      "scrollWidth": 375
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 664
+      },
+      "textPercent": 200,
+      "stage": {
+        "x": 16,
+        "y": -299.21875,
+        "width": 358,
+        "height": 451,
+        "bottom": 151.78125
+      },
+      "scene": {
+        "x": 16,
+        "y": -214.21875,
+        "width": 358,
+        "height": 366,
+        "bottom": 151.78125
+      },
+      "canvas": {
+        "x": 16,
+        "y": -138.21875,
+        "width": 358,
+        "height": 250,
+        "bottom": 111.78125
+      },
+      "tools": {
+        "x": 16,
+        "y": -214.21875,
+        "width": 358,
+        "height": 76,
+        "bottom": -138.21875
+      },
+      "status": {
+        "x": 16,
+        "y": 111.78125,
+        "width": 358,
+        "height": 40,
+        "bottom": 151.78125
+      },
+      "body": {
+        "x": 181.4486541748047,
+        "y": 3.7772674560546875,
+        "width": 28.186477661132812,
+        "height": 25.074691772460938,
+        "bottom": 28.851959228515625
+      },
+      "chores": {
+        "x": 16,
+        "y": 161.78125,
+        "width": 358,
+        "height": 447,
+        "bottom": 608.78125
+      },
+      "scrollWidth": 390
+    },
+    {
+      "viewport": {
+        "width": 600,
+        "height": 800
+      },
+      "textPercent": 200,
+      "stage": {
+        "x": 56,
+        "y": -77.40625,
+        "width": 488,
+        "height": 423,
+        "bottom": 345.59375
+      },
+      "scene": {
+        "x": 56,
+        "y": 7.59375,
+        "width": 488,
+        "height": 338,
+        "bottom": 345.59375
+      },
+      "canvas": {
+        "x": 56,
+        "y": 55.59375,
+        "width": 488,
+        "height": 250,
+        "bottom": 305.59375
+      },
+      "tools": {
+        "x": 56,
+        "y": 7.59375,
+        "width": 488,
+        "height": 48,
+        "bottom": 55.59375
+      },
+      "status": {
+        "x": 56,
+        "y": 305.59375,
+        "width": 488,
+        "height": 40,
+        "bottom": 345.59375
+      },
+      "body": {
+        "x": 286.44866943359375,
+        "y": 197.5897674560547,
+        "width": 28.18646240234375,
+        "height": 25.074691772460938,
+        "bottom": 222.66445922851562
+      },
+      "chores": {
+        "x": 56,
+        "y": 355.59375,
+        "width": 488,
+        "height": 347,
+        "bottom": 702.59375
+      },
+      "scrollWidth": 600
+    }
+  ],
+  "scope": "Native resting-character/body/canvas/parent-flow geometry and Showroom keyboard visibility, default/200%root text; unchanged savedtables. No whole-app enlarged-text acceptance."
+}

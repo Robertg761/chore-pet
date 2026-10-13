@@ -1,0 +1,111 @@
+diff --git i/docs/ART.md w/docs/ART.md
+index 5821f95..090970e 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -193,3 +193,5 @@ Dust reactions use smaller, slower right-hand sweeps. Mochi and Sprout make one
+ For valid furnishing invitations, condition and chore-specific dialogue keep priority. Optional decor with light neglect may have neither kind of copy; fall back to its existing calm observation, then the existing content-mood line, so an arrival still has an observation. Stronger condition copy stays intact. Normal motion announces once at arrival; reduced motion answers from the current position. Reuse the existing speech lifetime and resident clock.
+ 
+ Navigation rails grow with root text size while retaining their default widths. Keep visible tab labels on one line, reward progress inside its own badge, and keyboard targets and the active-icon highlight aligned. In narrow landscape views the reward note sits below its icon. Short rails may scroll vertically; the existing narrow-phone icon-only policy retains full accessible names. Enlarged-text checks cover the navigation itself, not whole-app zoom or assistive-technology acceptance.
++
++In stacked home views below640px, keep at least250px of room canvas after enlarged text increases the picker, tools and travel status. Let the scene and its stage grow with their contents, so the resident stays readable and following chores remain below the complete scene. Preserve the default geometry, existing420px stage floor, camera and animation lifetime. Native checks cover four narrow widths at default/200% root text and real offscreen/finite response deadlines; this is a scene-specific check, not whole-app enlarged-text acceptance.
+diff --git i/src/index.css w/src/index.css
+index 84d6d7d..6467277 100644
+--- i/src/index.css
++++ w/src/index.css
+@@ -295,6 +295,12 @@ h1[tabindex='-1']:focus { outline: none; }
+ .home-chores { flex: none; display: flex; flex-direction: column; gap: 8px; }
+ .home-alert { margin: 0; font-size: 0.8125rem; font-weight: 700; color: var(--late-ink); text-align: center; }
+ 
++/* In stacked homes, growing controls must not squeeze the pet or overlap chores. */
++@media (max-width: 639px) {
++  .home-stage { flex: 1 0 auto; height: max-content; }
++  .home .home-scene { min-height: min-content; }
++  .home .home-scene-viewport { min-height: 250px; }
++}
+ 
+ /* Wide screens: the rail on the left, the room big on the left of the view, chores in a panel on the right. */
+ @media (min-width: 900px), (orientation: landscape) and (max-height: 500px) and (min-width: 640px) {
+diff --git 1/scripts/browser/scene-readability.test.mjs 2/scripts/browser/scene-readability.test.mjs
+new file mode 100644
+index 0000000..6b26d99
+--- /dev/null
++++ 2/scripts/browser/scene-readability.test.mjs
+@@ -0,0 +1,78 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, snapshot } from './helpers.mjs'
++
++function visibleFraction(node) {
++  const box=node.getBoundingClientRect();let left=0,top=0,right=innerWidth,bottom=innerHeight
++  for(let parent=node.parentElement;parent;parent=parent.parentElement){
++    const style=getComputedStyle(parent),clip=parent.getBoundingClientRect()
++    if(/(auto|scroll|hidden|clip)/.test(style.overflowX)){left=Math.max(left,clip.left+parent.clientLeft);right=Math.min(right,clip.left+parent.clientLeft+parent.clientWidth)}
++    if(/(auto|scroll|hidden|clip)/.test(style.overflowY)){top=Math.max(top,clip.top+parent.clientTop);bottom=Math.min(bottom,clip.top+parent.clientTop+parent.clientHeight)}
++  }
++  return Math.max(0,Math.min(right,box.right)-Math.max(left,box.left))*Math.max(0,Math.min(bottom,box.bottom)-Math.max(top,box.top))/(box.width*box.height)
++}
++
++for(const percent of [100,200])test(`portrait room keeps the resident readable and preserves content flow at${percent}%text`,async t=>{
++  const page=await browserApp(t,{viewport:{width:320,height:640}})
++  const saved=(await snapshot(page)).tables,samples=[]
++  await page.evaluate(percent=>{document.documentElement.style.fontSize=`${percent}%`},percent)
++  for(const viewport of [{width:320,height:640},{width:375,height:664},{width:390,height:664},{width:600,height:800}]){
++    await page.setViewportSize(viewport)
++    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))))
++    const geometry=await page.evaluate(()=>{
++      const rect=selector=>{const r=document.querySelector(selector).getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}}
++      return{stage:rect('.home-stage'),scene:rect('.home-scene'),canvas:rect('.home-scene-viewport'),tools:rect('.home-scene-tools'),status:rect('.home-scene-travel-status'),body:rect('.room-pet [data-character-body]'),chores:rect('.home-chores'),scrollWidth:document.documentElement.scrollWidth}
++    })
++    assert.ok(geometry.canvas.height>=250,'portrait scene keeps at least250px of canvas after text and controls grow')
++    assert.ok(geometry.body.width>=25&&geometry.body.height>=22,`the actual resting character stays readable:${JSON.stringify(geometry.body)}`)
++    for(const name of ['scene','canvas','tools','status'])assert.ok(geometry[name].bottom<=geometry.stage.bottom+.5,`${name} remains inside its stage instead of overflowing following content`)
++    assert.ok(geometry.chores.y>=Math.max(geometry.canvas.bottom,geometry.status.bottom,geometry.scene.bottom)+8,'following chores stay below all scene contents')
++    assert.ok(geometry.scrollWidth<=viewport.width,'portrait home has no horizontal overflow')
++    await page.getByRole('button',{name:'Spend time together',exact:true}).click()
++    const show=page.getByRole('button',{name:'Show room with Mochi',exact:true})
++    await show.focus();await page.keyboard.press('Enter')
++    const resident=page.locator('.room-pet')
++    assert.equal(await resident.evaluate(node=>node===document.activeElement),true)
++    assert.ok(await resident.locator('[data-character-body]').evaluate(visibleFraction)>=.95,'Show room reveals the readable resident through actual clipping ancestors')
++    samples.push({viewport,textPercent:percent,...geometry})
++    const out=process.env.CHORE_SCENE_READABILITY_CAPTURE_DIR
++    if(out&&viewport.width!==600){await mkdir(out,{recursive:true});await page.screenshot({path:join(out,`scene-${viewport.width}-${percent}.png`)})}
++    await page.getByRole('button',{name:'Spend time together',exact:true}).click()
++  }
++  assert.deepEqual((await snapshot(page)).tables,saved)
++  const out=process.env.CHORE_SCENE_READABILITY_CAPTURE_DIR
++  if(out)await writeFile(join(out,`scene-${percent}.json`),JSON.stringify({samples,scope:'Native resting-character/body/canvas/parent-flow geometry and Showroom keyboard visibility, default/200%root text; unchanged savedtables. No whole-app enlarged-text acceptance.'},null,2)+'\n')
++  t.diagnostic(`Chromium${page.context().browser().version()};4narrowstackedlayouts;actualcharacter/canvas/childflow and Showroomfocus;unchanged savedtables.`)
++})
++
++test('enlarged portrait scene retains0offscreen/1finite-visible/0deadline resident frames',{timeout:15000},async t=>{
++  const page=await browserApp(t,{viewport:{width:320,height:640}})
++  await page.addInitScript(()=>{
++    const request=requestAnimationFrame,cancel=cancelAnimationFrame;window.__sceneFrames=new Set()
++    window.requestAnimationFrame=callback=>{const id=request(now=>{window.__sceneFrames.delete(id);callback(now)});window.__sceneFrames.add(id);return id}
++    window.cancelAnimationFrame=id=>{window.__sceneFrames.delete(id);cancel(id)}
++  })
++  await page.reload();await page.locator('.room-pet').waitFor()
++  await page.evaluate(()=>{document.documentElement.style.fontSize='200%'})
++  const saved=(await snapshot(page)).tables
++  await page.getByRole('button',{name:'Explore together',exact:true}).click()
++  await page.getByRole('button',{name:'Spend time together',exact:true}).click()
++  const stretch=page.getByRole('button',{name:'Stretch together',exact:true})
++  await stretch.scrollIntoViewIfNeeded()
++  await page.waitForFunction(()=>document.querySelector('.room-pet').getBoundingClientRect().bottom<0)
++  await page.waitForFunction(()=>window.__sceneFrames.size===0)
++  await stretch.click()
++  const line=await page.locator('.living-room [aria-live="polite"]').textContent();assert.match(line,/stretch/i)
++  assert.equal(await page.evaluate(()=>window.__sceneFrames.size),0)
++  const show=page.getByRole('button',{name:'Show room with Mochi',exact:true});await show.focus();await page.keyboard.press('Enter')
++  await page.waitForFunction(()=>window.__sceneFrames.size===1)
++  assert.equal(await page.locator('.room-pet').evaluate(node=>node===document.activeElement),true)
++  assert.ok(await page.locator('.room-pet [data-character-body]').evaluate(visibleFraction)>=.95)
++  assert.equal(await page.locator('.living-room [aria-live="polite"]').textContent(),line)
++  await page.waitForFunction(()=>window.__sceneFrames.size===0,null,{timeout:3500})
++  assert.equal(await page.locator('.room-pet [data-expression]').getAttribute('data-expression'),'content')
++  assert.deepEqual((await snapshot(page)).tables,saved)
++  t.diagnostic('Real native observation/deadline, enlarged-text scene:0offscreen→1visible finite response→0originaldeadline;unchanged savedtables.')
++})

@@ -1,0 +1,14 @@
+✔ portrait room keeps the resident readable and preserves content flow at100%text (1503.288754ms)
+ℹ Chromium152.0.7977.82;4narrowstackedlayouts;actualcharacter/canvas/childflow and Showroomfocus;unchanged savedtables.
+✔ portrait room keeps the resident readable and preserves content flow at200%text (1352.688761ms)
+ℹ Chromium152.0.7977.82;4narrowstackedlayouts;actualcharacter/canvas/childflow and Showroomfocus;unchanged savedtables.
+✔ enlarged portrait scene retains0offscreen/1finite-visible/0deadline resident frames (3374.317436ms)
+ℹ Real native observation/deadline, enlarged-text scene:0offscreen→1visible finite response→0originaldeadline;unchanged savedtables.
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6629.346982
