@@ -107,7 +107,7 @@ it('starts collapsed and sends only explicit choices without creating scheduling
 it.each(['travel', 'away', 'sick'] as const)('explains and blocks play while %s', blocked => {
   const ui = mount({ blocked })
   click(button(ui.container, 'Spend time together'))
-  for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together']) {
+  for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together']) {
     expect((button(ui.container, label) as HTMLButtonElement).disabled).toBe(true)
     click(button(ui.container, label))
   }
@@ -127,4 +127,21 @@ it('announces busy/unavailable feedback once and clears it after an accepted cho
   expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('arrive')
   click(wave)
   expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
+})
+
+
+it('offers a quiet rest without starting a panel clock or duplicating successful speech', () => {
+  vi.stubGlobal('requestAnimationFrame', vi.fn())
+  const respond = vi.fn().mockReturnValueOnce('busy').mockReturnValue('started')
+  const ui = mount({ onReact: respond })
+  click(button(ui.container, 'Spend time together'))
+  const rest = button(ui.container, 'Rest together')
+  expect(rest).toBeDefined()
+  click(rest)
+  expect(respond).toHaveBeenLastCalledWith('rest')
+  expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('moment')
+  click(rest)
+  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
+  expect(requestAnimationFrame).not.toHaveBeenCalled()
+  expect([...ui.container.querySelectorAll('.pet-play-actions button')].map(node => node.textContent)).toEqual(['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together'])
 })

@@ -1,0 +1,217 @@
+{
+  "final": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-accepted-captures/panel-100.json",
+      "sha256": "25f7f578c59619c9cc43bc5f9a92c70a58365109c7898d8738c47390a605c5f8",
+      "bytes": 11462
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-accepted-captures/panel-1280-100.png",
+      "sha256": "29247ecec4da5602bbb24753ba501b155e7aac325f89d80b1d4b688e919a72cf",
+      "bytes": 180631
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-accepted-captures/panel-1280-200.png",
+      "sha256": "2bcafb4d6a10a232c4bce6db21d872c4501269a036aaf4b51557ca292e6a029a",
+      "bytes": 176301
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-accepted-captures/panel-200.json",
+      "sha256": "a63591f9a6a3ee2bb69da574aa362d830fcd4cd97139daa62273834d0b3ea5d5",
+      "bytes": 5176
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-accepted-captures/panel-320-100.png",
+      "sha256": "1ae2339b5e6d40cbc17a1e85d2e512d71b40c0c4fc7575b67cf60ae099940455",
+      "bytes": 41998
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-accepted-captures/panel-320-200.png",
+      "sha256": "ed666c5be87ae4ac627ba0d50f449b98475e450fc88fa6be346be7f6192f846e",
+      "bytes": 40978
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-accepted-captures/panel-375-100.png",
+      "sha256": "2544a856ec82d9141ed089e021f6f44d9fd9bc78d8d15425ebd7388ed5d5c1b8",
+      "bytes": 49492
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-accepted-captures/panel-844-100.png",
+      "sha256": "420d5237c4c2e030927d124bd87f4e69d71ec56866fb5b5bd495f62152e409bd",
+      "bytes": 66200
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-accepted-captures/panel-844-200.png",
+      "sha256": "7cbd529900981eeb2652176e04db4dd36d1eab3b3fc2c4ee7116d518c618a67f",
+      "bytes": 65038
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-accepted-captures/rest-held.json",
+      "sha256": "d5186a6c6167c09a04233692bec03e5fdb048d75a27d6ef839d14235b101b5bb",
+      "bytes": 513
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-accepted-captures/rest-held.png",
+      "sha256": "2e4f28ba413c8520deb643ac5c1b312408a51f3c9370a734cbccf6c254f43e4c",
+      "bytes": 184071
+    }
+  ],
+  "historical": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-captures/panel-100.json",
+      "sha256": "9308ffc548c876f5f2d29f1f6d765828ce7392a82cd9d4ce925ce0cf3d2dfb9c",
+      "bytes": 9845
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-captures/panel-1280-100.png",
+      "sha256": "800232d5894f17c0e934b93dc6a23e95bc88b4383d07069dd9368f7871bf16a5",
+      "bytes": 181211
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-captures/panel-1280-200.png",
+      "sha256": "8e57133d8d1dc65c97c875c3f9435edeae33a311dc50704d9f325aa2c3747301",
+      "bytes": 173233
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-captures/panel-200.json",
+      "sha256": "16904365fbb4ab00514a5e16ab9730f85564c4f6271c38b96ba0573d8f58e0d4",
+      "bytes": 5176
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-captures/panel-320-100.png",
+      "sha256": "34e52eb78ccf9f4f91c7dd16de247cf4e0dca04ad1021c1db8e68a0015131bf9",
+      "bytes": 38186
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-captures/panel-320-200.png",
+      "sha256": "d523933c67321866b84a6438051535c7f8f3982704e139a2767172d44d72b322",
+      "bytes": 39135
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-captures/panel-375-100.png",
+      "sha256": "9ef3f477327d59e391daa04c0abbe8a7b94d99f047a14ce57bfb550cf25f47b1",
+      "bytes": 40031
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-captures/panel-844-100.png",
+      "sha256": "c3ea251bbfa2aefb7421d7f24e436e95b7bbfe193f388deb77701d98549bc6f8",
+      "bytes": 65268
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-captures/panel-844-200.png",
+      "sha256": "c43d808ef9b2d994c0a1e0faf5d0b9fdb19caa4691609a66b4c0ad06dd9a8caa",
+      "bytes": 64112
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-captures/rest-held.json",
+      "sha256": "d5186a6c6167c09a04233692bec03e5fdb048d75a27d6ef839d14235b101b5bb",
+      "bytes": 513
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-captures/rest-held.png",
+      "sha256": "f6f2f88498d5b915ff598fcd9ac5f09da22ba18ac6d7adb624deed0e1d532b40",
+      "bytes": 184292
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-final-captures/panel-1280-200.png",
+      "sha256": "8e57133d8d1dc65c97c875c3f9435edeae33a311dc50704d9f325aa2c3747301",
+      "bytes": 173233
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-final-captures/panel-200.json",
+      "sha256": "16904365fbb4ab00514a5e16ab9730f85564c4f6271c38b96ba0573d8f58e0d4",
+      "bytes": 5176
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-final-captures/panel-320-100.png",
+      "sha256": "375edf1c5eb75b746548916c5f8e5985348883d84bb31d8cf06ba57e1acdfd51",
+      "bytes": 40703
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-final-captures/panel-320-200.png",
+      "sha256": "d523933c67321866b84a6438051535c7f8f3982704e139a2767172d44d72b322",
+      "bytes": 39135
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-final-captures/panel-375-100.png",
+      "sha256": "2544a856ec82d9141ed089e021f6f44d9fd9bc78d8d15425ebd7388ed5d5c1b8",
+      "bytes": 49492
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-final-captures/panel-844-100.png",
+      "sha256": "c1abe1c356235639ba6d74033e8804e1fbdd3f127e749c737613b22bd6246ac0",
+      "bytes": 65076
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-final-captures/panel-844-200.png",
+      "sha256": "c43d808ef9b2d994c0a1e0faf5d0b9fdb19caa4691609a66b4c0ad06dd9a8caa",
+      "bytes": 64112
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-final-captures/rest-held.json",
+      "sha256": "d5186a6c6167c09a04233692bec03e5fdb048d75a27d6ef839d14235b101b5bb",
+      "bytes": 513
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-final-captures/rest-held.png",
+      "sha256": "e93dcb358ef9e0f7fa925e40a2aa2275de6f2c975f50c306a0a6983634ecd1ef",
+      "bytes": 183251
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-revised-captures/panel-100.json",
+      "sha256": "b25bd4703cc816b5ed0f3f9f849b19607d6f3e9c004cf41748c001a185f52c93",
+      "bytes": 9874
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-revised-captures/panel-1280-100.png",
+      "sha256": "c327935e6d2fb34aca8f7ec678ed6da12ee96dd01cfe8dcef2e37c55926186b1",
+      "bytes": 180644
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-revised-captures/panel-1280-200.png",
+      "sha256": "2bcafb4d6a10a232c4bce6db21d872c4501269a036aaf4b51557ca292e6a029a",
+      "bytes": 176301
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-revised-captures/panel-200.json",
+      "sha256": "a63591f9a6a3ee2bb69da574aa362d830fcd4cd97139daa62273834d0b3ea5d5",
+      "bytes": 5176
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-revised-captures/panel-320-100.png",
+      "sha256": "1ae2339b5e6d40cbc17a1e85d2e512d71b40c0c4fc7575b67cf60ae099940455",
+      "bytes": 41998
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-revised-captures/panel-320-200.png",
+      "sha256": "97c9c2f7309d045454fc03b904df057f7906450f59fa6b24003af01aeb6a3ca2",
+      "bytes": 40974
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-revised-captures/panel-375-100.png",
+      "sha256": "c7539d007d348390bfdb54825792bbf71eeed19189556ce3e6e8ceed5cf6fe9a",
+      "bytes": 49518
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-revised-captures/panel-844-100.png",
+      "sha256": "2dfc234835b1f9941af113d87ebc1fa3c02e0c0724554efa84410ce81acc0eea",
+      "bytes": 67018
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-revised-captures/panel-844-200.png",
+      "sha256": "7cbd529900981eeb2652176e04db4dd36d1eab3b3fc2c4ee7116d518c618a67f",
+      "bytes": 65038
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-revised-captures/rest-held.json",
+      "sha256": "d5186a6c6167c09a04233692bec03e5fdb048d75a27d6ef839d14235b101b5bb",
+      "bytes": 513
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/quiet-rest-revised-captures/rest-held.png",
+      "sha256": "0fca0a57a28145a2000afd49d254e649d6e67a5e42690479a5529557c2ac328a",
+      "bytes": 184057
+    }
+  ],
+  "scope": "Final accepted captures:7playerlayoutPNG+1heldrestPNG/3JSON,root inspectedall8PNG. Earlier11initial,9partialsecond and11third artifacts retained/hashchecked as history, not final visual acceptance."
+}

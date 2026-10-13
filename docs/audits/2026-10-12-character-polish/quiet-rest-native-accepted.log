@@ -1,0 +1,66 @@
+✔ a scrolled-away resident pauses, lets an offscreen response expire, and resumes when partly visible (2712.642527ms)
+ℹ Offscreen pending frames before pause:0
+ℹ Chromium 152.0.7977.82; real native scroll;0offscreen/1visible pending resident frame
+✔ missing native observation retains the existing resident clock (833.045548ms)
+✔ native default observer emits edge contact without a second positive-area entry (819.606918ms)
+ℹ Native default threshold contract matches the hook notification-filtering regression.
+✔ native ancestor clipping pauses a resident still inside the viewport (758.790801ms)
+ℹ Native ancestor entries:[{"inside":false,"ratio":0,"bottom":434.37969970703125,"height":0}]
+✔ player rows stay balanced and readable with default text in narrow panels (1533.030162ms)
+ℹ Chromium 152.0.7977.82; 7layouts; compact3+2/wide4+1/large-text1column, readable targets and focus, unchanged saved tables.
+✔ player rows stay balanced and readable with 200% text in narrow panels (1142.054142ms)
+ℹ Chromium 152.0.7977.82; 3layouts; compact3+2/wide4+1/large-text1column, readable targets and focus, unchanged saved tables.
+✔ native player choices stay still and fit 320px (2707.775585ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 361px (2626.189776ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 375px (2616.827256ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2585.096779ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2621.704049ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2598.610572ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2592.697245ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (847.536073ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2316.267673ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1691.326656ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ Show room resumes an offscreen reaction only while its deadline remains active (3559.904642ms)
+ℹ Native offscreen 0 → live visible 1 → offscreen 0 → expired visible 0; no replay or saved changes.
+✔ Show room explains a blocked route while away and still views the resting resident's own room (887.659038ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room explains a blocked route while sick and still views the resting resident's own room (988.34157ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room preserves a live stretch and restores context at320x640 (1564.631756ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.238;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at361x664 (1448.914512ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.371;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at390x664 (1470.36119ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.520;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at640x360 (1733.481913ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at844x390 (1747.438669ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at1280x800 (1768.419111ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ a keyboard rest stays grounded and finishes at its original deadline after a busy retry (1545.669169ms)
+✔ an enlarged-text offscreen rest is still, resumes only while active, and expires without replay (3513.744288ms)
+ℹ Real native observer/deadline at200%root text:0offscreen→1finitevisible→0offscreen/expired, no replay or saved changes.
+✔ portrait room keeps the resident readable and preserves content flow at100%text (1203.943024ms)
+ℹ Chromium152.0.7977.82;4narrowstackedlayouts;actualcharacter/canvas/childflow and Showroomfocus;unchanged savedtables.
+✔ portrait room keeps the resident readable and preserves content flow at200%text (1191.86386ms)
+ℹ Chromium152.0.7977.82;4narrowstackedlayouts;actualcharacter/canvas/childflow and Showroomfocus;unchanged savedtables.
+✔ enlarged portrait scene retains0offscreen/1finite-visible/0deadline resident frames (3445.072847ms)
+ℹ Real native observation/deadline, enlarged-text scene:0offscreen→1visible finite response→0originaldeadline;unchanged savedtables.
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 59244.358082

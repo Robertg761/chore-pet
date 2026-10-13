@@ -1,0 +1,25 @@
+{
+  "before": [
+    {
+      "x": 453.3166304907329,
+      "y": 592.9072888747169
+    },
+    {
+      "x": 478.656529590687,
+      "y": 592.9072889189023
+    }
+  ],
+  "peak": [
+    {
+      "x": 453.3166303534982,
+      "y": 592.9072888161077
+    },
+    {
+      "x": 478.6565297330472,
+      "y": 592.9072888158727
+    }
+  ],
+  "leftArm": "rotate(-10.332 44 144)",
+  "pendingFrames": 1,
+  "scope": "Actual screen-space contacts during normal-motion rest; deterministic paused native clock, unchanged savedtables."
+}

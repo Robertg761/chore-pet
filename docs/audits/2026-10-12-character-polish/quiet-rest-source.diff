@@ -1,0 +1,471 @@
+diff --git i/docs/ART.md w/docs/ART.md
+index 090970e..0bb7078 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -195,3 +195,5 @@ For valid furnishing invitations, condition and chore-specific dialogue keep pri
+ Navigation rails grow with root text size while retaining their default widths. Keep visible tab labels on one line, reward progress inside its own badge, and keyboard targets and the active-icon highlight aligned. In narrow landscape views the reward note sits below its icon. Short rails may scroll vertically; the existing narrow-phone icon-only policy retains full accessible names. Enlarged-text checks cover the navigation itself, not whole-app zoom or assistive-technology acceptance.
+ 
+ In stacked home views below640px, keep at least250px of room canvas after enlarged text increases the picker, tools and travel status. Let the scene and its stage grow with their contents, so the resident stays readable and following chores remain below the complete scene. Preserve the default geometry, existing420px stage floor, camera and animation lifetime. Native checks cover four narrow widths at default/200% root text and real offscreen/finite response deadlines; this is a scene-specific check, not whole-app enlarged-text acceptance.
++
++Rest together offers a quiet player response alongside the four existing choices. It uses the existing2400ms grounded environmental rest sampler, restrained appendage sway and mood face; it does not imply sitting on furniture or completing chores. Use two balanced rows in narrow default-text panels (three choices above two), a full-width rest row after four choices in wide panels, and one column when enlarged text needs it. Preserve the busy/resting rules, allow chore cheers to preempt it, and reuse the resident speech and clock. Reduced motion keeps the existing still mood. No replay after a hidden deadline. The enlarged-text scene regression also protects the recorded default dimensions and spends1400ms of Stretch offscreen before requiring completion within1600ms after return, which rules out restarting its2400ms lifetime.
+diff --git i/scripts/browser/pet-play-layout.test.mjs w/scripts/browser/pet-play-layout.test.mjs
+index 092dc9a..f2b4fab 100644
+--- i/scripts/browser/pet-play-layout.test.mjs
++++ w/scripts/browser/pet-play-layout.test.mjs
+@@ -11,7 +11,7 @@ for (const large of [false, true]) test(`player rows stay balanced and readable
+   if (large) await page.evaluate(() => { document.documentElement.style.fontSize = '200%' })
+   const saved = (await snapshot(page)).tables, samples = []
+   const viewports = large ? [{ width: 320, height: 640 }, { width: 844, height: 390 }, { width: 1280, height: 800 }]
+-    : [{ width: 320, height: 640 }, { width: 375, height: 664 }, { width: 844, height: 390 }, { width: 900, height: 800 }, { width: 1024, height: 800 }, { width: 1280, height: 800 }]
++    : [{ width: 320, height: 640 }, { width: 375, height: 664 }, { width: 640, height: 360 }, { width: 844, height: 390 }, { width: 900, height: 800 }, { width: 1024, height: 800 }, { width: 1280, height: 800 }]
+   for (const viewport of viewports) {
+     await page.setViewportSize(viewport)
+     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+@@ -26,14 +26,19 @@ for (const large of [false, true]) test(`player rows stay balanced and readable
+           textFits: text.left >= box.left && text.right <= box.right && text.top >= box.top && text.bottom <= box.bottom }
+       })
+       const panel = node.getBoundingClientRect(), heading = node.querySelector('.pet-play-heading').getBoundingClientRect()
+-      return { boxes, width: panel.width, heading: { x: heading.x, right: heading.right }, scrollWidth: node.scrollWidth, clientWidth: node.clientWidth }
++      return { boxes, width: panel.width, actionsWidth: node.querySelector('.pet-play-actions').getBoundingClientRect().width, heading: { x: heading.x, right: heading.right }, scrollWidth: node.scrollWidth, clientWidth: node.clientWidth }
+     })
+     const actions = layout.boxes.slice(2), rows = []
+     for (const box of actions) {
+       const row = rows.find(row => Math.abs(row.y - box.y) < .5)
+       if (row) row.count++; else rows.push({ y: box.y, count: 1 })
+     }
+-    assert.ok(['1,1,1,1', '2,2', '4'].includes(rows.map(row => row.count).join(',')), `balanced rows at${viewport.width}px/${large ? 200 : 100}%: ${rows.map(row => row.count)}`)
++    assert.ok(['1,1,1,1,1', '3,2', '4,1'].includes(rows.map(row => row.count).join(',')), `balanced rows at${viewport.width}px/${large ? 200 : 100}%: ${rows.map(row => row.count)}`)
++    if(rows.length===2&&rows[0].count===4)assert.ok(Math.abs(actions.at(-1).width-layout.actionsWidth)<1,'wide Rest together spans the complete action row')
++    if(rows.length===2&&rows[0].count===3){
++      assert.ok(Math.abs(actions[3].width-actions[4].width)<.5,'the two quiet choices share the second row evenly')
++      assert.ok(Math.abs(actions[3].width+actions[4].width+10-layout.actionsWidth)<1,'the quiet row fills the panel')
++    }
+     for (const box of layout.boxes) {
+       assert.ok(box.width >= 44 && box.height >= 44, `${box.label} retains a44px target`)
+       assert.ok(box.textFits, `${box.label} text fits at${viewport.width}px/${large ? 200 : 100}%`)
+@@ -41,7 +46,7 @@ for (const large of [false, true]) test(`player rows stay balanced and readable
+     }
+     assert.ok(layout.scrollWidth <= layout.clientWidth + 1, 'the player panel has no horizontal overflow')
+     if (!large) assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
+-    for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together']) {
++    for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together']) {
+       const control = page.getByRole('button', { name: label, exact: true })
+       await page.keyboard.press('Tab')
+       assert.equal(await control.evaluate(node => node === document.activeElement && node.matches(':focus-visible')), true, 'native tab order retains a visible focus ring')
+@@ -65,5 +70,5 @@ for (const large of [false, true]) test(`player rows stay balanced and readable
+   }
+   assert.deepEqual((await snapshot(page)).tables, saved)
+   if (process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR) await writeFile(join(process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR, `panel-${large ? 200 : 100}.json`), JSON.stringify({ samples, scope: 'Native player panel rows, actual label rectangles, target and focus bounds; large text changes root font size, not browser zoom or whole-app accessibility certification.' }, null, 2) + '\n')
+-  t.diagnostic(`Chromium ${page.context().browser().version()}; ${samples.length}layouts; rows1/2/4, readable targets and focus, unchanged saved tables.`)
++  t.diagnostic(`Chromium ${page.context().browser().version()}; ${samples.length}layouts; compact3+2/wide4+1/large-text1column, readable targets and focus, unchanged saved tables.`)
+ })
+diff --git i/scripts/browser/pet-play.test.mjs w/scripts/browser/pet-play.test.mjs
+index 48d935d..110e767 100644
+--- i/scripts/browser/pet-play.test.mjs
++++ w/scripts/browser/pet-play.test.mjs
+@@ -103,11 +103,12 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 361, height: 664 }
+       assert.equal(textFits, true, 'all labels must fit their targets')
+     }
+     if (viewport.width <= 390 || viewport.width === 640 || viewport.width === 844) {
+-      const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
+-      assert.ok(Math.abs(boxes[0].y - boxes[1].y) < .5)
+-      assert.ok(Math.abs(boxes[2].y - boxes[3].y) < .5)
+-      assert.ok(boxes[2].y >= boxes[0].y + boxes[0].height + 8, 'narrow player panels use two balanced control rows')
+-      assert.ok(Math.abs(boxes[0].width - boxes[2].width) < .5)
++      const rest = page.getByRole('button', { name: 'Rest together', exact: true })
++      const boxes = await Promise.all([wave, pats, hop, stretch, rest].map(control => control.boundingBox()))
++      assert.ok(boxes.slice(0, 3).every(box => Math.abs(box.y - boxes[0].y) < .5))
++      assert.ok(Math.abs(boxes[3].y - boxes[4].y) < .5)
++      assert.ok(boxes[3].y >= boxes[0].y + boxes[0].height + 8, 'narrow player panels retain two rows with three choices above two')
++      assert.ok(Math.abs(boxes[3].width - boxes[4].width) < .5)
+     }
+     if (viewport.width === 1280) {
+       const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
+diff --git i/scripts/browser/scene-readability.test.mjs w/scripts/browser/scene-readability.test.mjs
+index 6b26d99..5a9063d 100644
+--- i/scripts/browser/scene-readability.test.mjs
++++ w/scripts/browser/scene-readability.test.mjs
+@@ -25,6 +25,11 @@ for(const percent of [100,200])test(`portrait room keeps the resident readable a
+       const rect=selector=>{const r=document.querySelector(selector).getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}}
+       return{stage:rect('.home-stage'),scene:rect('.home-scene'),canvas:rect('.home-scene-viewport'),tools:rect('.home-scene-tools'),status:rect('.home-scene-travel-status'),body:rect('.room-pet [data-character-body]'),chores:rect('.home-chores'),scrollWidth:document.documentElement.scrollWidth}
+     })
++    if(percent===100){
++      assert.ok(Math.abs(geometry.stage.height-420)<.5,'default scene preserves its recorded420px stage')
++      assert.ok(Math.abs(geometry.canvas.height-282)<.5,'default canvas preserves its recorded282px height')
++      assert.ok(Math.abs(geometry.body.width-32.56494)<.1&&Math.abs(geometry.body.height-28.96980)<.1,'default actual character preserves its recorded size')
++    }
+     assert.ok(geometry.canvas.height>=250,'portrait scene keeps at least250px of canvas after text and controls grow')
+     assert.ok(geometry.body.width>=25&&geometry.body.height>=22,`the actual resting character stays readable:${JSON.stringify(geometry.body)}`)
+     for(const name of ['scene','canvas','tools','status'])assert.ok(geometry[name].bottom<=geometry.stage.bottom+.5,`${name} remains inside its stage instead of overflowing following content`)
+@@ -66,12 +71,15 @@ test('enlarged portrait scene retains0offscreen/1finite-visible/0deadline reside
+   await stretch.click()
+   const line=await page.locator('.living-room [aria-live="polite"]').textContent();assert.match(line,/stretch/i)
+   assert.equal(await page.evaluate(()=>window.__sceneFrames.size),0)
++  // Spend1400ms of the2400ms lifetime offscreen. A restarted response cannot
++  // finish within the1600ms return window below. Keep real native timing.
++  await page.waitForTimeout(1400)
+   const show=page.getByRole('button',{name:'Show room with Mochi',exact:true});await show.focus();await page.keyboard.press('Enter')
+   await page.waitForFunction(()=>window.__sceneFrames.size===1)
+   assert.equal(await page.locator('.room-pet').evaluate(node=>node===document.activeElement),true)
+   assert.ok(await page.locator('.room-pet [data-character-body]').evaluate(visibleFraction)>=.95)
+   assert.equal(await page.locator('.living-room [aria-live="polite"]').textContent(),line)
+-  await page.waitForFunction(()=>window.__sceneFrames.size===0,null,{timeout:3500})
++  await page.waitForFunction(()=>window.__sceneFrames.size===0,null,{timeout:1600})
+   assert.equal(await page.locator('.room-pet [data-expression]').getAttribute('data-expression'),'content')
+   assert.deepEqual((await snapshot(page)).tables,saved)
+   t.diagnostic('Real native observation/deadline, enlarged-text scene:0offscreen→1visible finite response→0originaldeadline;unchanged savedtables.')
+diff --git i/src/content/petLines.test.ts w/src/content/petLines.test.ts
+index 0cc715c..83db5f0 100644
+--- i/src/content/petLines.test.ts
++++ w/src/content/petLines.test.ts
+@@ -5,6 +5,7 @@ import {
+   GREETING_LINES,
+   AFFECTION_LINES,
+   HOP_LINES,
++  REST_LINES,
+   CALM_OBJECT_LINES,
+   calmObjectLine,
+   doneLine,
+@@ -44,6 +45,7 @@ const ALL_LISTS: Record<string, string[]> = {
+   GREETING_LINES,
+   AFFECTION_LINES,
+   HOP_LINES,
++  REST_LINES,
+   DONE_LINES,
+   VACATION_LINES,
+   WELCOME_LINES,
+@@ -67,7 +69,7 @@ describe('line lists', () => {
+       expect(lines.length).toBeGreaterThanOrEqual(2)
+       expect(lines.length).toBeLessThanOrEqual(3)
+     }
+-    for (const lines of [GREETING_LINES, AFFECTION_LINES, HOP_LINES]) {
++    for (const lines of [GREETING_LINES, AFFECTION_LINES, HOP_LINES, REST_LINES]) {
+       expect(lines.length).toBeGreaterThanOrEqual(3)
+       expect(lines.length).toBeLessThanOrEqual(4)
+     }
+@@ -350,3 +352,8 @@ it('keeps chosen-hop dialogue separate from chore and reward claims', () => {
+   expect(HOP_LINES.length).toBeGreaterThanOrEqual(3)
+   for (const line of HOP_LINES) expect(line).not.toMatch(/\b(done|reward|xp|clean|streak|chore)\b/i)
+ })
++
++
++it('keeps quiet rest dialogue separate from completion and reward claims', () => {
++  for (const line of REST_LINES) expect(line).not.toMatch(/\b(done|reward|xp|clean|streak|chore|sleep)\b/i)
++})
+diff --git i/src/content/petLines.ts w/src/content/petLines.ts
+index 7101773..19ab4d4 100644
+--- i/src/content/petLines.ts
++++ w/src/content/petLines.ts
+@@ -210,6 +210,11 @@ export const HOP_LINES: string[] = [
+   'A little hop for you.',
+   'Ta-da! That was fun.',
+ ]
++export const REST_LINES: string[] = [
++  'A quiet moment together.',
++  'Happy to rest here with you.',
++  'We can take it slow for a moment.',
++]
+ export const STRETCH_LINES: string[] = [
+   "Let's stretch together.",
+   'A slow stretch feels lovely.',
+diff --git i/src/pet/LivingRoom.tsx w/src/pet/LivingRoom.tsx
+index f438f90..bd0e787 100644
+--- i/src/pet/LivingRoom.tsx
++++ w/src/pet/LivingRoom.tsx
+@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
+ import { catalogEntry } from '../catalog/objects'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+ import { ACTION_MS } from '../character/motion'
+-import { AFFECTION_LINES, CAUGHT_UP_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, STRETCH_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
++import { AFFECTION_LINES, CAUGHT_UP_LINES, GREETING_LINES, HOP_LINES, MOOD_LINES, REST_LINES, STRETCH_LINES, TAP_LINES, VACATION_LINES, calmObjectLine, doneLine, messLine, objectLine, pickLine } from '../content/petLines'
+ import { messiestObject } from '../domain/mess'
+ import type { NeglectLevel } from '../domain/neglect'
+ import type { ChoreStatus } from '../domain/schedule'
+@@ -73,7 +73,7 @@ export interface LivingRoomControl {
+   preview: (objectId: string | null) => void
+ }
+ 
+-const PLAYER_LINES: Record<PlayerGesture, string[]> = { greet: GREETING_LINES, affection: AFFECTION_LINES, hop: HOP_LINES, stretch: STRETCH_LINES }
++const PLAYER_LINES: Record<PlayerGesture, string[]> = { greet: GREETING_LINES, affection: AFFECTION_LINES, hop: HOP_LINES, stretch: STRETCH_LINES, rest: REST_LINES }
+ 
+ function objectDialogue({ objects, stages, neglect, chores }: Pick<LivingRoomProps, 'objects' | 'stages' | 'neglect' | 'chores'>, objectId: string, seed: number): string | null {
+   const target = objects.find(object => object.id === objectId)
+diff --git i/src/pet/PetIntegration.test.tsx w/src/pet/PetIntegration.test.tsx
+index 8276407..2fc78ef 100644
+--- i/src/pet/PetIntegration.test.tsx
++++ w/src/pet/PetIntegration.test.tsx
+@@ -1217,3 +1217,55 @@ it('keeps preview selection decorative, ignores unknown IDs, and removes unavail
+   expect(ui.container.querySelector('.room-selection-floor')).toBeNull()
+   expect(frames.size).toBe(0)
+ })
++
++
++it.each(['mochi', 'bun', 'sprout'] as const)('rests a moving %s at its drawn position with one finite clock and chore priority', species => {
++  const control = createRef<LivingRoomControl>()
++  const rest = 'rest' as Parameters<LivingRoomControl['respond']>[0]
++  const scene = { ...props, pet: { ...pet, species }, mood: 'happy' as const, objects: [plant], control, initialTile: { tx: 7, ty: 7 } }
++  const ui = mount(<StrictMode><LivingRoom {...scene} /></StrictMode>)
++  act(() => { expect(control.current!.lookAt('plant')).toBe('started') })
++  frame(137)
++  const resident = ui.container.querySelector('.room-pet')!, node = art(ui.container), position = resident.getAttribute('transform')
++  act(() => { expect(control.current!.respond(rest)).toBe('started') })
++  expect(resident.getAttribute('transform')).toBe(position)
++  const heard = ui.container.querySelector('[aria-live]')!.textContent
++  expect(heard).toMatch(/rest|quiet|slow/i)
++  frame(1200)
++  expect(resident.getAttribute('transform')).toBe(position)
++  const expected = motionFor({ ...initialPet(scene.initialTile, 137), activity: { kind: 'react', action: rest, start: 137, until: 2537 } }, 1200, species, 'happy', false).frame
++  const left = Number(node.querySelector('[data-arm="left"]')!.getAttribute('transform')!.match(/rotate\(([^ ]+)/)![1])
++  expect(left).toBeCloseTo(expected.leftArm, 8)
++  expect(left).toBeLessThan(-7)
++  for (let n = 0; n < 10; n++) act(() => { expect(control.current!.respond(rest)).toBe('busy') })
++  expect(ui.container.querySelector('[aria-live]')!.textContent).toBe(heard)
++  expect(frames.size).toBe(1)
++  ui.rerender(<StrictMode><LivingRoom {...scene} celebrate={{ key: 501, choreName: 'Water plant' }} /></StrictMode>)
++  expect(ui.container.querySelector('[aria-live]')!.textContent).not.toBe(heard)
++  act(() => { expect(control.current!.respond(rest)).toBe('busy') })
++  expect(art(ui.container)).toBe(node)
++})
++
++it('keeps reduced rest grounded through its deadline and expires an offscreen rest without replay', () => {
++  const visibility = observeResident()
++  Object.defineProperty(media, 'matches', { value: true, configurable: true })
++  const control = createRef<LivingRoomControl>()
++  const rest = 'rest' as Parameters<LivingRoomControl['respond']>[0]
++  const ui = mount(<LivingRoom {...props} mood="content" control={control} />)
++  act(() => { expect(control.current!.respond(rest)).toBe('started') })
++  frame(100)
++  const still = art(ui.container).innerHTML
++  expect(ui.container.querySelector('[data-expression="content"]')).not.toBeNull()
++  frame(2399)
++  expect(art(ui.container).innerHTML).toBe(still)
++  expect(frames.size).toBe(1)
++  frame(2400)
++  expect(frames.size).toBe(0)
++  visibility.show(false)
++  act(() => { expect(control.current!.respond(rest)).toBe('started') })
++  expect(frames.size).toBe(0)
++  now = 4900
++  visibility.show(true)
++  expect(frames.size).toBe(0)
++  expect(art(ui.container).innerHTML).toBe(still)
++})
+diff --git i/src/pet/PetPlay.css w/src/pet/PetPlay.css
+index 8e830ef..bcba041 100644
+--- i/src/pet/PetPlay.css
++++ w/src/pet/PetPlay.css
+@@ -6,7 +6,8 @@
+ .pet-play-panel { margin-top: 8px; padding: 12px; border: var(--outline); border-radius: var(--radius); background: var(--card); }
+ .pet-play-panel[hidden] { display: none; }
+ .pet-play-actions { display: flex; flex-wrap: wrap; gap: 10px; min-width: 0; }
+-.pet-play-actions .btn { flex: 1 1 5em; min-height: 48px; padding: 6px; font-size: 0.875rem; }
++.pet-play-actions .btn { flex: 1 1 5em; min-height: 48px; padding: 3px 6px; font-size: 0.875rem; }
++.pet-play-actions .pet-play-rest { flex-basis: 100%; grid-column: 1 / -1; }
+ .pet-play-note, .pet-play-feedback { margin: 8px 0 0; font-size: 0.875rem; font-weight: 700; overflow-wrap: anywhere; }
+ .pet-play-note { color: var(--ink-soft); }
+ .pet-play-feedback:empty { margin: 0; }
+@@ -18,10 +19,15 @@
+ @supports (container-type: inline-size) {
+   .pet-play { container: pet-play / inline-size; }
+   .pet-play-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
+-  @container pet-play (min-width: 14rem) {
+-    .pet-play-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
++  .pet-play-actions .btn { grid-column: auto; }
++  @container pet-play (min-width: 15rem) {
++    .pet-play-actions { grid-template-columns: repeat(6, minmax(0, 1fr)); }
++    .pet-play-actions .btn { grid-column: span 2; }
++    .pet-play-actions .btn:nth-child(n + 4) { grid-column: span 3; }
+   }
+   @container pet-play (min-width: 24rem) {
+     .pet-play-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
++    .pet-play-actions .btn, .pet-play-actions .btn:nth-child(n + 4) { grid-column: auto; }
++    .pet-play-actions .btn.pet-play-rest { grid-column: 1 / -1; }
+   }
+ }
+diff --git i/src/pet/PetPlay.test.tsx w/src/pet/PetPlay.test.tsx
+index 8e27ff7..e3b338b 100644
+--- i/src/pet/PetPlay.test.tsx
++++ w/src/pet/PetPlay.test.tsx
+@@ -107,7 +107,7 @@ it('starts collapsed and sends only explicit choices without creating scheduling
+ it.each(['travel', 'away', 'sick'] as const)('explains and blocks play while %s', blocked => {
+   const ui = mount({ blocked })
+   click(button(ui.container, 'Spend time together'))
+-  for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together']) {
++  for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together']) {
+     expect((button(ui.container, label) as HTMLButtonElement).disabled).toBe(true)
+     click(button(ui.container, label))
+   }
+@@ -128,3 +128,20 @@ it('announces busy/unavailable feedback once and clears it after an accepted cho
+   click(wave)
+   expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
+ })
++
++
++it('offers a quiet rest without starting a panel clock or duplicating successful speech', () => {
++  vi.stubGlobal('requestAnimationFrame', vi.fn())
++  const respond = vi.fn().mockReturnValueOnce('busy').mockReturnValue('started')
++  const ui = mount({ onReact: respond })
++  click(button(ui.container, 'Spend time together'))
++  const rest = button(ui.container, 'Rest together')
++  expect(rest).toBeDefined()
++  click(rest)
++  expect(respond).toHaveBeenLastCalledWith('rest')
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toContain('moment')
++  click(rest)
++  expect(ui.container.querySelector('[role="status"]')!.textContent).toBe('')
++  expect(requestAnimationFrame).not.toHaveBeenCalled()
++  expect([...ui.container.querySelectorAll('.pet-play-actions button')].map(node => node.textContent)).toEqual(['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together'])
++})
+diff --git i/src/pet/PetPlay.tsx w/src/pet/PetPlay.tsx
+index 5a8bfcd..38c84d8 100644
+--- i/src/pet/PetPlay.tsx
++++ w/src/pet/PetPlay.tsx
+@@ -48,6 +48,8 @@ export function PetPlay({ petName, blocked, onReact, onShowRoom, showRoomUnavail
+           onClick={() => choose('hop')}>Happy hop</button>
+         <button type="button" className="btn" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
+           onClick={() => choose('stretch')}>Stretch together</button>
++        <button type="button" className="btn pet-play-rest" disabled={Boolean(blocked)} aria-describedby={note ? `${id}-note` : undefined}
++          onClick={() => choose('rest')}>Rest together</button>
+       </div>
+       {note && <p id={`${id}-note`} className="pet-play-note">{note}</p>}
+       {viewNote && viewNote !== note && <p id={viewNoteId} className="pet-play-note">{viewNote}</p>}
+diff --git i/src/pet/behaviour.ts w/src/pet/behaviour.ts
+index 3ccce6f..2dc7822 100644
+--- i/src/pet/behaviour.ts
++++ w/src/pet/behaviour.ts
+@@ -8,7 +8,7 @@ import { besideTiles, findPath, type Tile } from './pathfinding'
+ 
+ // Keep the old public pathfinding imports valid without a behaviour/interaction cycle.
+ export { besideTiles, findPath, type Tile } from './pathfinding'
+-export type PlayerGesture = 'greet' | 'affection' | 'hop' | 'stretch'
++export type PlayerGesture = 'greet' | 'affection' | 'hop' | 'stretch' | 'rest'
+ export type ReactionKind = 'tap' | PlayerGesture | 'celebrate' | 'celebrate-big'
+ type ReactionAction = PlayerGesture | 'celebrate' | 'celebrate-big'
+ export type Walk = {
+diff --git 1/scripts/browser/player-rest.test.mjs 2/scripts/browser/player-rest.test.mjs
+new file mode 100644
+index 0000000..3411b9c
+--- /dev/null
++++ 2/scripts/browser/player-rest.test.mjs
+@@ -0,0 +1,81 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, snapshot } from './helpers.mjs'
++
++const contacts = resident => resident.evaluate(node => [...node.querySelectorAll('[data-foot] ellipse')].map(foot => {
++  const point = new DOMPoint(Number(foot.getAttribute('cx')), Number(foot.getAttribute('cy'))).matrixTransform(foot.getScreenCTM())
++  return { x: point.x, y: point.y }
++}))
++
++async function instrument(page, freeze) {
++  if (freeze) { await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000) }
++  await page.addInitScript(() => {
++    Math.random = () => .99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__restFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__restFrames.delete(id); callback(now) })
++      window.__restFrames.add(id); return id
++    }
++    window.cancelAnimationFrame = id => { window.__restFrames.delete(id); cancel(id) }
++  })
++  await page.reload(); await page.locator('.room-pet').waitFor()
++}
++
++test('a keyboard rest stays grounded and finishes at its original deadline after a busy retry', async t => {
++  const page = await browserApp(t, { viewport: { width: 1280, height: 800 }, reducedMotion: 'no-preference' })
++  await instrument(page, true)
++  const saved = (await snapshot(page)).tables
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  const rest = page.getByRole('button', { name: 'Rest together', exact: true })
++  const resident = page.locator('.room-pet'), before = await contacts(resident)
++  await rest.focus(); await page.keyboard.press('Enter')
++  assert.equal(await rest.evaluate(node => node === document.activeElement && node.matches(':focus-visible')), true)
++  const heard = await page.locator('.living-room [aria-live="polite"]').textContent()
++  assert.match(heard, /rest|quiet|slow/i)
++  await page.clock.runFor(1200)
++  const peak = await contacts(resident)
++  for (let i = 0; i < before.length; i++) assert.ok(Math.hypot(peak[i].x - before[i].x, peak[i].y - before[i].y) < .005, 'both actual feet keep their screen-space ground contacts')
++  assert.equal(await page.evaluate(() => window.__restFrames.size), 1)
++  const angle = await resident.locator('[data-arm="left"]').getAttribute('transform')
++  assert.ok(Number(angle.match(/rotate\(([^ ]+)/)[1]) < -9, 'the existing rest raises the hand softly at its held pose')
++  const out = process.env.CHORE_REST_CAPTURE_DIR
++  if (out) { await mkdir(out, { recursive: true }); await page.screenshot({ path: join(out, 'rest-held.png') }); await writeFile(join(out, 'rest-held.json'), JSON.stringify({ before, peak, leftArm: angle, pendingFrames: 1, scope: 'Actual screen-space contacts during normal-motion rest; deterministic paused native clock, unchanged savedtables.' }, null, 2) + '\n') }
++  await page.keyboard.press('Enter')
++  assert.match(await page.locator('.pet-play-feedback').textContent(), /busy/i)
++  assert.equal(await page.locator('.living-room [aria-live="polite"]').textContent(), heard)
++  await page.clock.runFor(1201)
++  assert.match(await resident.locator('[data-arm="left"]').getAttribute('transform'), /^rotate\(0 /, 'busy retry does not extend2400ms deadline')
++  assert.equal(await page.evaluate(() => window.__restFrames.size), 1, 'normal idle reuses the same single resident clock')
++  assert.deepEqual((await snapshot(page)).tables, saved)
++})
++
++test('an enlarged-text offscreen rest is still, resumes only while active, and expires without replay', { timeout: 15000 }, async t => {
++  const page = await browserApp(t, { viewport: { width: 320, height: 640 } })
++  await instrument(page, false)
++  await page.evaluate(() => { document.documentElement.style.fontSize = '200%' })
++  const saved = (await snapshot(page)).tables
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++  const rest = page.getByRole('button', { name: 'Rest together', exact: true }), show = page.getByRole('button', { name: 'Show room with Mochi', exact: true })
++  const scrollAway = async () => { await rest.scrollIntoViewIfNeeded(); await page.waitForFunction(() => document.querySelector('.room-pet').getBoundingClientRect().bottom < 0); await page.waitForFunction(() => window.__restFrames.size === 0) }
++  await scrollAway(); await rest.click()
++  const heard = await page.locator('.living-room [aria-live="polite"]').textContent()
++  assert.match(heard, /rest|quiet|slow/i)
++  assert.equal(await page.evaluate(() => window.__restFrames.size), 0)
++  await show.focus(); await page.keyboard.press('Enter')
++  await page.waitForFunction(() => window.__restFrames.size === 1)
++  const resident = page.locator('.room-pet'), still = await resident.locator('.ch-animated').innerHTML()
++  assert.equal(await resident.evaluate(node => node === document.activeElement), true)
++  assert.equal(await resident.locator('[data-expression]').getAttribute('data-expression'), 'content')
++  await scrollAway(); await page.waitForTimeout(2500)
++  assert.equal(await page.evaluate(() => window.__restFrames.size), 0)
++  await show.focus(); await page.keyboard.press('Enter')
++  await page.waitForFunction(() => window.__restFrames.size === 0)
++  assert.equal(await resident.locator('.ch-animated').innerHTML(), still, 'reduced rest retains the same still mood, including after expiry')
++  assert.equal(await page.locator('.living-room [aria-live="polite"]').textContent(), heard)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  t.diagnostic('Real native observer/deadline at200%root text:0offscreen→1finitevisible→0offscreen/expired, no replay or saved changes.')
++})
+diff --git 1/src/pet/behaviour.rest.test.ts 2/src/pet/behaviour.rest.test.ts
+new file mode 100644
+index 0000000..d93ded9
+--- /dev/null
++++ 2/src/pet/behaviour.rest.test.ts
+@@ -0,0 +1,34 @@
++import { expect, it } from 'vitest'
++import { initialPet, positionAt, react, step, tap, type PetState, type ReactionKind, type World } from './behaviour'
++import { motionFor } from './activityMotion'
++const rest = 'rest' as ReactionKind
++const world: World = { free: () => true, mood: 'happy', away: false, mess: null }
++
++it('uses the existing grounded rest sampler for2400ms without moving a fractional invitation', () => {
++  const moving: PetState = { ...initialPet({ tx: 2, ty: 2 }, 0), reactions: 3, activity: { kind: 'walk', path: [{ tx: 3, ty: 2 }], stepStart: 0, then: 'idle' } }
++  const started = react(moving, 137, rest)
++  expect(started.activity).toMatchObject({ kind: 'react', action: 'rest', start: 137, until: 2537 })
++  expect(positionAt(started, 137)).toEqual(positionAt(moving, 137))
++  expect(started.reactions).toBe(3)
++  for (const species of ['mochi', 'bun', 'sprout'] as const) {
++    expect(motionFor(started, 137, species, 'happy', false).frame).toEqual(motionFor(moving, 137, species, 'happy', false).frame)
++    expect(motionFor(started, 1200, species, 'happy', false)).toMatchObject({ action: 'rest', durationMs: 2400, frame: { bodyX: 0, bodyY: 0, leftFoot: 0, rightFoot: 0, accentOpacity: 0, shadowScale: 1, shadowOpacity: 1 } })
++  }
++  expect(step(started, world, 2536, () => .99)).toBe(started)
++  const settled = step(started, world, 2537, () => .99)
++  expect(settled.activity.kind).toBe('walk')
++  expect(positionAt(settled, 2537)).toEqual(positionAt(started, 2537))
++  expect(tap(settled, 2600).activity).toMatchObject({ kind: 'react', action: 'affection' })
++})
++
++it('coalesces rest and other player choices without extending a deadline or queueing a response', () => {
++  const started = react(initialPet({ tx: 2, ty: 2 }, 0), 100, rest)
++  for (let n = 1; n <= 20; n++) for (const action of [rest, 'greet', 'stretch'] as const) expect(react(started, 100 + n * 10, action)).toBe(started)
++  expect(started.pendingTap).toBe(false)
++  const cheer = react(started, 400, 'celebrate')
++  expect(cheer.activity).toMatchObject({ kind: 'react', action: 'celebrate', until: 2200 })
++  expect(react(cheer, 500, rest)).toBe(cheer)
++  const expired = step(started, world, 10000, () => .99)
++  expect(expired.activity.kind).toBe('idle')
++  expect(expired.pendingTap).toBe(false)
++})

@@ -1,0 +1,87 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/pet/behaviour.rest.test.ts src/pet/PetPlay.test.tsx src/pet/PetIntegration.test.tsx
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/pet/PetIntegration.test.tsx (106 tests | 4 failed) 2156ms
+   × rests a moving mochi at its drawn position with one finite clock and chore priority 20ms
+   × rests a moving bun at its drawn position with one finite clock and chore priority 12ms
+   × rests a moving sprout at its drawn position with one finite clock and chore priority 15ms
+   × keeps reduced rest grounded through its deadline and expires an offscreen rest without replay 7ms
+ ❯ src/pet/PetPlay.test.tsx (16 tests | 4 failed) 87ms
+   × explains and blocks play while travel 4ms
+   × explains and blocks play while away 2ms
+   × explains and blocks play while sick 2ms
+   × offers a quiet rest without starting a panel clock or duplicating successful speech 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > rests a moving mochi at its drawn position with one finite clock and chore priority
+ FAIL  src/pet/PetIntegration.test.tsx > rests a moving bun at its drawn position with one finite clock and chore priority
+ FAIL  src/pet/PetIntegration.test.tsx > rests a moving sprout at its drawn position with one finite clock and chore priority
+TypeError: Cannot read properties of undefined (reading 'filter')
+ ❯ pickLine src/content/petLines.ts:347:40
+    345|   const raw = vars.chore?.trim()
+    346|   const chore = raw && raw.length > 1 && raw[1] === raw[1].toLowerCase…
+    347|   const usable = chore ? lines : lines.filter((line) => !line.includes…
+       |                                        ^
+    348|   if (usable.length === 0) return ''
+    349|
+ ❯ Object.respond src/pet/LivingRoom.tsx:265:21
+ ❯ src/pet/PetIntegration.test.tsx:1230:39
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/react/cjs/react.development.js:890:22
+ ❯ src/pet/PetIntegration.test.tsx:1230:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/pet/PetIntegration.test.tsx > keeps reduced rest grounded through its deadline and expires an offscreen rest without replay
+TypeError: Cannot read properties of undefined (reading 'filter')
+ ❯ pickLine src/content/petLines.ts:347:40
+    345|   const raw = vars.chore?.trim()
+    346|   const chore = raw && raw.length > 1 && raw[1] === raw[1].toLowerCase…
+    347|   const usable = chore ? lines : lines.filter((line) => !line.includes…
+       |                                        ^
+    348|   if (usable.length === 0) return ''
+    349|
+ ❯ Object.respond src/pet/LivingRoom.tsx:265:21
+ ❯ src/pet/PetIntegration.test.tsx:1255:39
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/react/cjs/react.development.js:890:22
+ ❯ src/pet/PetIntegration.test.tsx:1255:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > explains and blocks play while travel
+ FAIL  src/pet/PetPlay.test.tsx > explains and blocks play while away
+ FAIL  src/pet/PetPlay.test.tsx > explains and blocks play while sick
+TypeError: Cannot read properties of undefined (reading 'disabled')
+ ❯ src/pet/PetPlay.test.tsx:111:40
+    109|   click(button(ui.container, 'Spend time together'))
+    110|   for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch to…
+    111|     expect((button(ui.container, label) as HTMLButtonElement).disabled…
+       |                                        ^
+    112|     click(button(ui.container, label))
+    113|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/pet/PetPlay.test.tsx > offers a quiet rest without starting a panel clock or duplicating successful speech
+AssertionError: expected undefined to be defined
+ ❯ src/pet/PetPlay.test.tsx:139:16
+    137|   click(button(ui.container, 'Spend time together'))
+    138|   const rest = button(ui.container, 'Rest together')
+    139|   expect(rest).toBeDefined()
+       |                ^
+    140|   click(rest)
+    141|   expect(respond).toHaveBeenLastCalledWith('rest')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  8 failed | 116 passed (124)
+   Start at  21:47:14
+   Duration  4.00s (tests 61%, transform 20%, environment 14%, import 5%)
+
+    Isolate  3 workers spawned · ~259ms startup each (spawn + environment, per file)
+             at least ~518ms faster with isolate: false — reuses workers across files instead of one per file
+

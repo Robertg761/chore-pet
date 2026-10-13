@@ -5,6 +5,7 @@ import {
   GREETING_LINES,
   AFFECTION_LINES,
   HOP_LINES,
+  REST_LINES,
   CALM_OBJECT_LINES,
   calmObjectLine,
   doneLine,
@@ -44,6 +45,7 @@ const ALL_LISTS: Record<string, string[]> = {
   GREETING_LINES,
   AFFECTION_LINES,
   HOP_LINES,
+  REST_LINES,
   DONE_LINES,
   VACATION_LINES,
   WELCOME_LINES,
@@ -67,7 +69,7 @@ describe('line lists', () => {
       expect(lines.length).toBeGreaterThanOrEqual(2)
       expect(lines.length).toBeLessThanOrEqual(3)
     }
-    for (const lines of [GREETING_LINES, AFFECTION_LINES, HOP_LINES]) {
+    for (const lines of [GREETING_LINES, AFFECTION_LINES, HOP_LINES, REST_LINES]) {
       expect(lines.length).toBeGreaterThanOrEqual(3)
       expect(lines.length).toBeLessThanOrEqual(4)
     }
@@ -349,4 +351,9 @@ describe('doneLine', () => {
 it('keeps chosen-hop dialogue separate from chore and reward claims', () => {
   expect(HOP_LINES.length).toBeGreaterThanOrEqual(3)
   for (const line of HOP_LINES) expect(line).not.toMatch(/\b(done|reward|xp|clean|streak|chore)\b/i)
+})
+
+
+it('keeps quiet rest dialogue separate from completion and reward claims', () => {
+  for (const line of REST_LINES) expect(line).not.toMatch(/\b(done|reward|xp|clean|streak|chore|sleep)\b/i)
 })

@@ -103,11 +103,12 @@ for (const viewport of [{ width: 320, height: 640 }, { width: 361, height: 664 }
       assert.equal(textFits, true, 'all labels must fit their targets')
     }
     if (viewport.width <= 390 || viewport.width === 640 || viewport.width === 844) {
-      const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))
-      assert.ok(Math.abs(boxes[0].y - boxes[1].y) < .5)
-      assert.ok(Math.abs(boxes[2].y - boxes[3].y) < .5)
-      assert.ok(boxes[2].y >= boxes[0].y + boxes[0].height + 8, 'narrow player panels use two balanced control rows')
-      assert.ok(Math.abs(boxes[0].width - boxes[2].width) < .5)
+      const rest = page.getByRole('button', { name: 'Rest together', exact: true })
+      const boxes = await Promise.all([wave, pats, hop, stretch, rest].map(control => control.boundingBox()))
+      assert.ok(boxes.slice(0, 3).every(box => Math.abs(box.y - boxes[0].y) < .5))
+      assert.ok(Math.abs(boxes[3].y - boxes[4].y) < .5)
+      assert.ok(boxes[3].y >= boxes[0].y + boxes[0].height + 8, 'narrow player panels retain two rows with three choices above two')
+      assert.ok(Math.abs(boxes[3].width - boxes[4].width) < .5)
     }
     if (viewport.width === 1280) {
       const boxes = await Promise.all([wave, pats, hop, stretch].map(control => control.boundingBox()))

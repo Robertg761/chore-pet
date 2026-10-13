@@ -1,0 +1,111 @@
+✔ a scrolled-away resident pauses, lets an offscreen response expire, and resumes when partly visible (2805.989575ms)
+ℹ Offscreen pending frames before pause:0
+ℹ Chromium 152.0.7977.82; real native scroll;0offscreen/1visible pending resident frame
+✔ missing native observation retains the existing resident clock (874.221947ms)
+✔ native default observer emits edge contact without a second positive-area entry (879.060755ms)
+ℹ Native default threshold contract matches the hook notification-filtering regression.
+✔ native ancestor clipping pauses a resident still inside the viewport (801.836514ms)
+ℹ Native ancestor entries:[{"inside":false,"ratio":0,"bottom":434.37969970703125,"height":0}]
+✖ native player choices stay still and fit 320px (863.391893ms)
+✖ native player choices stay still and fit 361px (812.209065ms)
+✖ native player choices stay still and fit 375px (825.188748ms)
+✔ native player choices stay still and fit 390px (2663.135021ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2640.9926ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2746.044213ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2671.078771ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (957.334586ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2461.505163ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✖ a chosen hop takes off and lands on the existing resident clock without changing progress (1042.27752ms)
+✔ Show room resumes an offscreen reaction only while its deadline remains active (3616.832276ms)
+ℹ Native offscreen 0 → live visible 1 → offscreen 0 → expired visible 0; no replay or saved changes.
+✔ Show room explains a blocked route while away and still views the resting resident's own room (1694.299352ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room explains a blocked route while sick and still views the resting resident's own room (1205.988045ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room preserves a live stretch and restores context at320x640 (1506.658768ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at361x664 (1488.428402ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.089;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at390x664 (1521.485615ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.228;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at640x360 (1914.947849ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at844x390 (1824.502477ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at1280x800 (1838.857008ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+ℹ tests 23
+ℹ suites 0
+ℹ pass 19
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 40830.242482
+
+✖ failing tests:
+
+test at scripts/browser/pet-play.test.mjs:53:3
+✖ native player choices stay still and fit 320px (863.391893ms)
+  AssertionError [ERR_ASSERTION]: the character must stay visible while choosing a response: 0
+      at assertPetVisible (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:49:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:79:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-play.test.mjs:53:3
+✖ native player choices stay still and fit 361px (812.209065ms)
+  AssertionError [ERR_ASSERTION]: the character must stay visible while choosing a response: 0.08009417639111645
+      at assertPetVisible (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:49:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:79:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-play.test.mjs:53:3
+✖ native player choices stay still and fit 375px (825.188748ms)
+  AssertionError [ERR_ASSERTION]: the character must stay visible while choosing a response: 0.06283482524959641
+      at assertPetVisible (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:49:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:79:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-play.test.mjs:298:1
+✖ a chosen hop takes off and lands on the existing resident clock without changing progress (1042.27752ms)
+  AssertionError [ERR_ASSERTION]: the character must stay visible while choosing a response: 0.9069338149603717
+      at assertPetVisible (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:49:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:317:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

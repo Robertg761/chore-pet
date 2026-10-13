@@ -1,0 +1,95 @@
+✔ a scrolled-away resident pauses, lets an offscreen response expire, and resumes when partly visible (3160.826761ms)
+ℹ Offscreen pending frames before pause:0
+ℹ Chromium 152.0.7977.82; real native scroll;0offscreen/1visible pending resident frame
+✔ missing native observation retains the existing resident clock (1518.234495ms)
+✔ native default observer emits edge contact without a second positive-area entry (1068.925252ms)
+ℹ Native default threshold contract matches the hook notification-filtering regression.
+✔ native ancestor clipping pauses a resident still inside the viewport (937.63107ms)
+ℹ Native ancestor entries:[{"inside":false,"ratio":0,"bottom":434.37969970703125,"height":0}]
+✖ player rows stay balanced and readable with default text in narrow panels (1199.850208ms)
+✔ player rows stay balanced and readable with 200% text in narrow panels (1617.843653ms)
+ℹ Chromium 152.0.7977.82; 3layouts; compact3+2/wide4+1/large-text1column, readable targets and focus, unchanged saved tables.
+✖ native player choices stay still and fit 320px (1242.275496ms)
+✔ native player choices stay still and fit 361px (2846.04626ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 375px (2644.871994ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2894.335291ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (3454.576159ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (3366.083893ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (3012.202868ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (1200.681583ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2921.828341ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1697.003763ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ Show room resumes an offscreen reaction only while its deadline remains active (3627.310325ms)
+ℹ Native offscreen 0 → live visible 1 → offscreen 0 → expired visible 0; no replay or saved changes.
+✔ Show room explains a blocked route while away and still views the resting resident's own room (1017.620676ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room explains a blocked route while sick and still views the resting resident's own room (1008.879368ms)
+ℹ Real blocked doorway, resting resident in source room; disabled explanation at destination, own room still viewable, no clock or saved changes.
+✔ Show room preserves a live stretch and restores context at320x640 (1448.73843ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.177;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at361x664 (1462.597475ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.341;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at390x664 (1456.382921ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before0.520;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at640x360 (1761.433676ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at844x390 (1867.745334ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ Show room preserves a live stretch and restores context at1280x800 (1927.956115ms)
+ℹ Chromium 152.0.7977.82; roomvisibility before1.000;after>=.95;keyboardpetfocus;unchanged livegesture/camera/position/node/announcement/savedtables;existingclock
+✔ a keyboard rest stays grounded and finishes at its original deadline after a busy retry (1635.356762ms)
+✔ an enlarged-text offscreen rest is still, resumes only while active, and expires without replay (3556.184617ms)
+ℹ Real native observer/deadline at200%root text:0offscreen→1finitevisible→0offscreen/expired, no replay or saved changes.
+✔ portrait room keeps the resident readable and preserves content flow at100%text (1223.137262ms)
+ℹ Chromium152.0.7977.82;4narrowstackedlayouts;actualcharacter/canvas/childflow and Showroomfocus;unchanged savedtables.
+✔ portrait room keeps the resident readable and preserves content flow at200%text (1224.731116ms)
+ℹ Chromium152.0.7977.82;4narrowstackedlayouts;actualcharacter/canvas/childflow and Showroomfocus;unchanged savedtables.
+✔ enlarged portrait scene retains0offscreen/1finite-visible/0deadline resident frames (3394.049044ms)
+ℹ Real native observation/deadline, enlarged-text scene:0offscreen→1visible finite response→0originaldeadline;unchanged savedtables.
+ℹ tests 30
+ℹ suites 0
+ℹ pass 28
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 64041.315435
+
+✖ failing tests:
+
+test at scripts/browser/pet-play-layout.test.mjs:7:36
+✖ player rows stay balanced and readable with default text in narrow panels (1199.850208ms)
+  AssertionError [ERR_ASSERTION]: wide Rest together spans the complete action row
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play-layout.test.mjs:37:50)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-play.test.mjs:53:3
+✖ native player choices stay still and fit 320px (1242.275496ms)
+  AssertionError [ERR_ASSERTION]: the character must stay visible while choosing a response: 0.6841714663443179
+      at assertPetVisible (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:49:10)
+      at async TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-play.test.mjs:79:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

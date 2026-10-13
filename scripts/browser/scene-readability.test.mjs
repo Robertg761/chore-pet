@@ -25,6 +25,11 @@ for(const percent of [100,200])test(`portrait room keeps the resident readable a
       const rect=selector=>{const r=document.querySelector(selector).getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}}
       return{stage:rect('.home-stage'),scene:rect('.home-scene'),canvas:rect('.home-scene-viewport'),tools:rect('.home-scene-tools'),status:rect('.home-scene-travel-status'),body:rect('.room-pet [data-character-body]'),chores:rect('.home-chores'),scrollWidth:document.documentElement.scrollWidth}
     })
+    if(percent===100){
+      assert.ok(Math.abs(geometry.stage.height-420)<.5,'default scene preserves its recorded420px stage')
+      assert.ok(Math.abs(geometry.canvas.height-282)<.5,'default canvas preserves its recorded282px height')
+      assert.ok(Math.abs(geometry.body.width-32.56494)<.1&&Math.abs(geometry.body.height-28.96980)<.1,'default actual character preserves its recorded size')
+    }
     assert.ok(geometry.canvas.height>=250,'portrait scene keeps at least250px of canvas after text and controls grow')
     assert.ok(geometry.body.width>=25&&geometry.body.height>=22,`the actual resting character stays readable:${JSON.stringify(geometry.body)}`)
     for(const name of ['scene','canvas','tools','status'])assert.ok(geometry[name].bottom<=geometry.stage.bottom+.5,`${name} remains inside its stage instead of overflowing following content`)
@@ -66,12 +71,15 @@ test('enlarged portrait scene retains0offscreen/1finite-visible/0deadline reside
   await stretch.click()
   const line=await page.locator('.living-room [aria-live="polite"]').textContent();assert.match(line,/stretch/i)
   assert.equal(await page.evaluate(()=>window.__sceneFrames.size),0)
+  // Spend1400ms of the2400ms lifetime offscreen. A restarted response cannot
+  // finish within the1600ms return window below. Keep real native timing.
+  await page.waitForTimeout(1400)
   const show=page.getByRole('button',{name:'Show room with Mochi',exact:true});await show.focus();await page.keyboard.press('Enter')
   await page.waitForFunction(()=>window.__sceneFrames.size===1)
   assert.equal(await page.locator('.room-pet').evaluate(node=>node===document.activeElement),true)
   assert.ok(await page.locator('.room-pet [data-character-body]').evaluate(visibleFraction)>=.95)
   assert.equal(await page.locator('.living-room [aria-live="polite"]').textContent(),line)
-  await page.waitForFunction(()=>window.__sceneFrames.size===0,null,{timeout:3500})
+  await page.waitForFunction(()=>window.__sceneFrames.size===0,null,{timeout:1600})
   assert.equal(await page.locator('.room-pet [data-expression]').getAttribute('data-expression'),'content')
   assert.deepEqual((await snapshot(page)).tables,saved)
   t.diagnostic('Real native observation/deadline, enlarged-text scene:0offscreen→1visible finite response→0originaldeadline;unchanged savedtables.')

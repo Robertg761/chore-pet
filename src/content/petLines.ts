@@ -210,6 +210,11 @@ export const HOP_LINES: string[] = [
   'A little hop for you.',
   'Ta-da! That was fun.',
 ]
+export const REST_LINES: string[] = [
+  'A quiet moment together.',
+  'Happy to rest here with you.',
+  'We can take it slow for a moment.',
+]
 export const STRETCH_LINES: string[] = [
   "Let's stretch together.",
   'A slow stretch feels lovely.',

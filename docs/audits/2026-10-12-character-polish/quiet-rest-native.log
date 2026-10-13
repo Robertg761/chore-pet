@@ -1,0 +1,21 @@
+✔ player rows stay balanced and readable with default text in narrow panels (1665.880379ms)
+ℹ Chromium 152.0.7977.82; 6layouts; four actions plus a full rest row, readable targets and focus, unchanged saved tables.
+✔ player rows stay balanced and readable with 200% text in narrow panels (1325.578671ms)
+ℹ Chromium 152.0.7977.82; 3layouts; four actions plus a full rest row, readable targets and focus, unchanged saved tables.
+✔ a keyboard rest stays grounded and finishes at its original deadline after a busy retry (1745.632213ms)
+✔ an enlarged-text offscreen rest is still, resumes only while active, and expires without replay (3567.66338ms)
+ℹ Real native observer/deadline at200%root text:0offscreen→1finitevisible→0offscreen/expired, no replay or saved changes.
+✔ portrait room keeps the resident readable and preserves content flow at100%text (1621.182518ms)
+ℹ Chromium152.0.7977.82;4narrowstackedlayouts;actualcharacter/canvas/childflow and Showroomfocus;unchanged savedtables.
+✔ portrait room keeps the resident readable and preserves content flow at200%text (1228.753743ms)
+ℹ Chromium152.0.7977.82;4narrowstackedlayouts;actualcharacter/canvas/childflow and Showroomfocus;unchanged savedtables.
+✔ enlarged portrait scene retains0offscreen/1finite-visible/0deadline resident frames (3315.494416ms)
+ℹ Real native observation/deadline, enlarged-text scene:0offscreen→1visible finite response→0originaldeadline;unchanged savedtables.
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15659.244839

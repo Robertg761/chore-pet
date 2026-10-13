@@ -11,7 +11,7 @@ for (const large of [false, true]) test(`player rows stay balanced and readable 
   if (large) await page.evaluate(() => { document.documentElement.style.fontSize = '200%' })
   const saved = (await snapshot(page)).tables, samples = []
   const viewports = large ? [{ width: 320, height: 640 }, { width: 844, height: 390 }, { width: 1280, height: 800 }]
-    : [{ width: 320, height: 640 }, { width: 375, height: 664 }, { width: 844, height: 390 }, { width: 900, height: 800 }, { width: 1024, height: 800 }, { width: 1280, height: 800 }]
+    : [{ width: 320, height: 640 }, { width: 375, height: 664 }, { width: 640, height: 360 }, { width: 844, height: 390 }, { width: 900, height: 800 }, { width: 1024, height: 800 }, { width: 1280, height: 800 }]
   for (const viewport of viewports) {
     await page.setViewportSize(viewport)
     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
@@ -26,14 +26,19 @@ for (const large of [false, true]) test(`player rows stay balanced and readable 
           textFits: text.left >= box.left && text.right <= box.right && text.top >= box.top && text.bottom <= box.bottom }
       })
       const panel = node.getBoundingClientRect(), heading = node.querySelector('.pet-play-heading').getBoundingClientRect()
-      return { boxes, width: panel.width, heading: { x: heading.x, right: heading.right }, scrollWidth: node.scrollWidth, clientWidth: node.clientWidth }
+      return { boxes, width: panel.width, actionsWidth: node.querySelector('.pet-play-actions').getBoundingClientRect().width, heading: { x: heading.x, right: heading.right }, scrollWidth: node.scrollWidth, clientWidth: node.clientWidth }
     })
     const actions = layout.boxes.slice(2), rows = []
     for (const box of actions) {
       const row = rows.find(row => Math.abs(row.y - box.y) < .5)
       if (row) row.count++; else rows.push({ y: box.y, count: 1 })
     }
-    assert.ok(['1,1,1,1', '2,2', '4'].includes(rows.map(row => row.count).join(',')), `balanced rows at${viewport.width}px/${large ? 200 : 100}%: ${rows.map(row => row.count)}`)
+    assert.ok(['1,1,1,1,1', '3,2', '4,1'].includes(rows.map(row => row.count).join(',')), `balanced rows at${viewport.width}px/${large ? 200 : 100}%: ${rows.map(row => row.count)}`)
+    if(rows.length===2&&rows[0].count===4)assert.ok(Math.abs(actions.at(-1).width-layout.actionsWidth)<1,'wide Rest together spans the complete action row')
+    if(rows.length===2&&rows[0].count===3){
+      assert.ok(Math.abs(actions[3].width-actions[4].width)<.5,'the two quiet choices share the second row evenly')
+      assert.ok(Math.abs(actions[3].width+actions[4].width+10-layout.actionsWidth)<1,'the quiet row fills the panel')
+    }
     for (const box of layout.boxes) {
       assert.ok(box.width >= 44 && box.height >= 44, `${box.label} retains a44px target`)
       assert.ok(box.textFits, `${box.label} text fits at${viewport.width}px/${large ? 200 : 100}%`)
@@ -41,7 +46,7 @@ for (const large of [false, true]) test(`player rows stay balanced and readable 
     }
     assert.ok(layout.scrollWidth <= layout.clientWidth + 1, 'the player panel has no horizontal overflow')
     if (!large) assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
-    for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together']) {
+    for (const label of ['Wave', 'Gentle pats', 'Happy hop', 'Stretch together', 'Rest together']) {
       const control = page.getByRole('button', { name: label, exact: true })
       await page.keyboard.press('Tab')
       assert.equal(await control.evaluate(node => node === document.activeElement && node.matches(':focus-visible')), true, 'native tab order retains a visible focus ring')
@@ -65,5 +70,5 @@ for (const large of [false, true]) test(`player rows stay balanced and readable 
   }
   assert.deepEqual((await snapshot(page)).tables, saved)
   if (process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR) await writeFile(join(process.env.CHORE_PANEL_LAYOUT_CAPTURE_DIR, `panel-${large ? 200 : 100}.json`), JSON.stringify({ samples, scope: 'Native player panel rows, actual label rectangles, target and focus bounds; large text changes root font size, not browser zoom or whole-app accessibility certification.' }, null, 2) + '\n')
-  t.diagnostic(`Chromium ${page.context().browser().version()}; ${samples.length}layouts; rows1/2/4, readable targets and focus, unchanged saved tables.`)
+  t.diagnostic(`Chromium ${page.context().browser().version()}; ${samples.length}layouts; compact3+2/wide4+1/large-text1column, readable targets and focus, unchanged saved tables.`)
 })
