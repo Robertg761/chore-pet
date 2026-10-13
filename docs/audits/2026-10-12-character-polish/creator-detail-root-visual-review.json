@@ -1,0 +1,226 @@
+{
+  "directFinalPngs": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-active-cheer.png",
+      "sha256": "2491575000db0611adfc9a86be808931cb3b735ca9e5ca48f982cc16ed03f344",
+      "headerWidth": 348,
+      "headerHeight": 189,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-bun-happy-close.png",
+      "sha256": "efe1484ae6b897e1a57802d82e66df5d569d0f73bb1a8ddeb7ef0728d4b6dda1",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-bun-happy-full.png",
+      "sha256": "708b633b10fac2cb8332176c1181ee1a63533473a6d9e06295be29b4e788acc6",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-bun-scruffy-close.png",
+      "sha256": "9e86e45ce0fc34eed1daae102c0b00e5111838f8f72eaecfb1ce9d5358c87198",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-bun-scruffy-full.png",
+      "sha256": "0e8d6976e8e51b343a8160e9b7c46445cc222c7e87bb1b428e65358f710edf22",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-bun-sick-close.png",
+      "sha256": "f312e7cdcdf198f115d4bf3e0016e38fe31efa2aa8d370d1481067fc2c31e221",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-bun-sick-full.png",
+      "sha256": "7e34d1419b413e49404273c94b3beeb80331a114b17dcea6d8e559f99a3f4593",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-layout-1280-controls.png",
+      "sha256": "c63d1d053b4d6a9f37b1cac3bffd8531127ace1756c3be95a59b3f2fb8499dc7",
+      "headerWidth": 1280,
+      "headerHeight": 800,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-layout-1280-preview.png",
+      "sha256": "0d41e32201c87109c4443e9d1c931351fd5ed3f1776e3f81645bbe3ce9eecf4a",
+      "headerWidth": 1280,
+      "headerHeight": 800,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-layout-320-controls.png",
+      "sha256": "45afcc04207fabfc248063501f4211a455bdfdcca9ec054a13c9d23d1555f6f7",
+      "headerWidth": 320,
+      "headerHeight": 568,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-layout-320-preview.png",
+      "sha256": "e0ae6bd43b37073b1ece4f7e177db697b409780532b9b422997058cbef6d0b68",
+      "headerWidth": 320,
+      "headerHeight": 568,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-layout-390-controls.png",
+      "sha256": "3afde5d91cfd147292e6cbde7c1f370adecac950235e33f46f18789be6b23959",
+      "headerWidth": 390,
+      "headerHeight": 664,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-layout-390-preview.png",
+      "sha256": "15b99c2622e369468f923dfbe0aed9ccadbe8608cc4f55b2fc556a3713f94702",
+      "headerWidth": 390,
+      "headerHeight": 664,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-layout-640-controls.png",
+      "sha256": "fa208cf522d1926930b6de1082ee35baad04f83d37cf6d0fdb0cc36a83e1f451",
+      "headerWidth": 640,
+      "headerHeight": 360,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-layout-640-preview.png",
+      "sha256": "b5de5042837f4f352784e3ab7de87c722060d67131d921a4fc621bebe472fd61",
+      "headerWidth": 640,
+      "headerHeight": 360,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-layout-844-controls.png",
+      "sha256": "52a181d0bda85d1c1f1bc3833532eeb79a4b1dd0a1c235141cd26bf0f90b9911",
+      "headerWidth": 844,
+      "headerHeight": 390,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-layout-844-preview.png",
+      "sha256": "f48f4f7d8fbbfa65549575fc7474710a9ef44305d9a78cc6c46b1b3fe8d971f7",
+      "headerWidth": 844,
+      "headerHeight": 390,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-mochi-happy-close.png",
+      "sha256": "ebaec9faf97e615026a1fb57c0bb5f9f0e26588191de6a115756ff9dba446471",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-mochi-happy-full.png",
+      "sha256": "9a8b1f7aa9f87e85c909e75cec3bc94bf6febf370d75daeccc66e3adad65d379",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-mochi-scruffy-close.png",
+      "sha256": "9a60885b89dfc5f567a9c4c495673e7d02919f5d899c69cd2501b52ad1a5d9ff",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-mochi-scruffy-full.png",
+      "sha256": "24bbeeb24052efc2af04372a3b3f671815061e053cea6e5a9dc0fd6690ebfb22",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-mochi-sick-close.png",
+      "sha256": "d49164f338f805ece81ec63628dd3979c9c136046841a4ae24ae8b9c348354e0",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-mochi-sick-full.png",
+      "sha256": "b94897c65660808583c5a8eef5877bb7dea2538519e693a545b7bfdcb43adbfe",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-sprout-happy-close.png",
+      "sha256": "9c0ac272595c8ad769baffd552ebb5973fe51ce27e00ba964e8c855be5a77e68",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-sprout-happy-full.png",
+      "sha256": "7d6621f984c1f645e5fdf6f7be1d59486593171e4f3605c503e65f1414dbecd4",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-sprout-scruffy-close.png",
+      "sha256": "734ccecefe613048694b980b4827445e2e6373744a7babbd4ccbf3045428d70e",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-sprout-scruffy-full.png",
+      "sha256": "d5558a1e4cc832968b1819a73eb84fb1b9f0c363aabe95b7c7e7430effcb90ad",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-sprout-sick-close.png",
+      "sha256": "a5eae300ee853e643fc0d325fce20d6a1d102e44ece7737369b5ccabc11eabc5",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2/detail-sprout-sick-full.png",
+      "sha256": "af49d7f4e638d4fe2d7c54ac0a41472198921b7dbdc78ebde90bccf78981685d",
+      "headerWidth": 402,
+      "headerHeight": 624,
+      "viewed": "direct"
+    }
+  ],
+  "count": 29,
+  "speciesMoodSamples": 15,
+  "bodyGroundPointPairs": 120,
+  "maximumReflectionOrYErrorCssPx": 1.1368683772161603e-13,
+  "minimumConservativeFaceStrokeMarginCssPx": 8.61917274646596,
+  "minimumObservedMagnification": 1.5625000000000002,
+  "maximumObservedMagnification": 1.5625000000000002,
+  "enlargedControls": 15,
+  "focusedRevealedPreviews": 5,
+  "deadline": {
+    "beforeDeadline": 2848,
+    "advancedMs": 16,
+    "eventStart": 1049,
+    "deliveredTime": 2864,
+    "now": 2864,
+    "pendingFrames": 0
+  },
+  "observations": "All29final PNGs viewed directly. Paired full/detail stills cover happy, scruffy and unwell across all3species; faces and glasses remain visible and original shapes/outfits intact. Narrow view was widened after conservative Bun-scruffy edge failure. Cropping peripheral ears, feet or clothing is intentional. All5enlarged layouts offer fitting readable controls and focused visible face preview through page scrolling. Phone/landscape view does not promise all form controls simultaneously visible. The active cheerful sample preserves the same pose with larger face.",
+  "limits": "Root recomputes recorded matrix points and conservative group-corner/stroke margins, not independently recaptured raw CTMs or exact all-path painted geometry. PNGdimensions from headers; images directly decoded/viewed by view_image. Static native stills and deterministic clock samples do not establish human temporal comfort, browser zoom, physical-device/AT behavior, CPU/battery savings or peak process usage."
+}

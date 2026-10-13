@@ -1,0 +1,65 @@
+✔ face detail enlarges dressed mochi in every mood and mirrors once without saving (3015.393614ms)
+✖ face detail enlarges dressed bun in every mood and mirrors once without saving (2658.223994ms)
+✔ face detail enlarges dressed sprout in every mood and mirrors once without saving (2914.281115ms)
+✔ detail preserves the delivered cheer frame, Show preview focus and original deadline (2865.357198ms)
+✔ all three preview tools fit and reveal face detail at 320x568 enlarged text (2223.548585ms)
+✔ all three preview tools fit and reveal face detail at 390x664 enlarged text (2264.621829ms)
+✔ all three preview tools fit and reveal face detail at 640x360 enlarged text (2239.543511ms)
+✔ all three preview tools fit and reveal face detail at 844x390 enlarged text (2230.23706ms)
+✔ all three preview tools fit and reveal face detail at 1280x800 enlarged text (2333.438454ms)
+✔ detail stays usable through live system reduction without replay or save (2597.849452ms)
+✔ detail stays usable through live device reduction without replay or save (2645.330275ms)
+✔ detail survives mood, draft, tabs and resize while Save stores only the look and remount resets (4332.115092ms)
+✔ initial system reduction leaves detail available and creates no preview clock (986.662227ms)
+✔ initial device reduction leaves detail available and creates no preview clock (2260.24887ms)
+✔ look editor keeps its character and controls readable at 320x568 text100 (1331.719431ms)
+✔ look editor keeps its character and controls readable at 320x568 text200 (1290.817912ms)
+✔ look editor keeps its character and controls readable at 390x664 text100 (1313.071569ms)
+✔ look editor keeps its character and controls readable at 390x664 text200 (1266.15289ms)
+✔ look editor keeps its character and controls readable at 640x360 text100 (1138.758664ms)
+✔ look editor keeps its character and controls readable at 640x360 text200 (1157.592666ms)
+✔ look editor keeps its character and controls readable at 844x390 text100 (1151.216576ms)
+✔ look editor keeps its character and controls readable at 844x390 text200 (1354.007557ms)
+✔ look editor keeps its character and controls readable at 1280x800 text100 (1192.419244ms)
+✔ look editor keeps its character and controls readable at 1280x800 text200 (1164.49953ms)
+✔ look draft name and caret survive resizing and stay reachable at enlarged text (972.107745ms)
+✔ creator previews the actual character while keeping face choices visible at 320x568 (3795.704957ms)
+✔ creator previews the actual character while keeping face choices visible at 844x390 (3217.120239ms)
+✔ creator previews the actual character while keeping face choices visible at 1280x800 (3294.610018ms)
+✔ creator settles live reduction and initial reduction keeps look choices available (3192.7544ms)
+✔ preview tools reflect layered mochi in every mood without saving (2448.582344ms)
+✔ preview tools reflect layered bun in every mood without saving (2397.890513ms)
+✔ preview tools reflect layered sprout in every mood without saving (2420.629427ms)
+✔ keyboard preview tools preserve the running cheer, draft and original deadline (2819.146975ms)
+✔ preview tools are reachable and reveal focused art at 320x568 enlarged text (2209.875462ms)
+✔ preview tools are reachable and reveal focused art at 390x664 enlarged text (2195.889191ms)
+✔ preview tools are reachable and reveal focused art at 640x360 enlarged text (2159.553345ms)
+✔ preview tools are reachable and reveal focused art at 844x390 enlarged text (2222.567024ms)
+✔ preview tools are reachable and reveal focused art at 1280x800 enlarged text (2353.495836ms)
+✔ reduced preview tools never start motion or save a facing preference (1162.959141ms)
+✔ mirrored mood survives edits and resizing while Save keeps only the look (2579.830669ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 39
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 88893.857498
+
+✖ failing tests:
+
+test at scripts/browser/creator-detail.test.mjs:109:3
+✖ face detail enlarges dressed bun in every mood and mirrors once without saving (2658.223994ms)
+  AssertionError [ERR_ASSERTION]: face x inside preview: {"viewBox":"40 75 120 110","label":"Mochi, Bun, Scruffy preview, face detail","scale":3.35,"box":{"x":207,"y":89,"right":609,"bottom":713,"width":402,"height":624},"points":[{"x":329.12260120234686,"y":362.9795608425052,"stroke":8.234674099777646,"part":"expression"},{"x":604.9715416373253,"y":387.11321597620366,"stroke":8.234674099777646,"part":"expression"},{"x":318.428406053051,"y":485.2147707348935,"stroke":8.234674099777646,"part":"expression"},{"x":594.2773464880295,"y":509.3484258685919,"stroke":8.234674099777646,"part":"expression"},{"x":285.3423503450961,"y":369.8597922264777,"stroke":8.234674099777646,"part":"face"},{"x":563.8694358328413,"y":394.2277546915713,"stroke":8.234674099777646,"part":"face"},{"x":277.6372159518146,"y":457.9298813414904,"stroke":8.234674099777646,"part":"face"},{"x":556.1643014395598,"y":482.297843806584,"stroke":8.234674099777646,"part":"face"}]}
+      at expectFaceVisible (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-detail.test.mjs:103:12)
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-detail.test.mjs:125:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

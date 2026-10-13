@@ -1,0 +1,36 @@
+{
+  "geometry": {
+    "viewBox": "40 75 120 110",
+    "label": "Mochi, Bun, Happy preview, mirrored, face detail",
+    "scale": 1.7181818181818183,
+    "box": {
+      "x": 21,
+      "y": 65,
+      "right": 369,
+      "bottom": 254,
+      "width": 348,
+      "height": 189
+    },
+    "points": [
+      {
+        "x": 239.65816930776296,
+        "y": 112.87498512159696
+      },
+      {
+        "x": 150.34182495718656,
+        "y": 112.87498512159696
+      },
+      {
+        "x": 239.65816930776296,
+        "y": 161.26689372291764
+      },
+      {
+        "x": 150.34182495718656,
+        "y": 161.26689372291764
+      }
+    ]
+  },
+  "pendingFrames": 1,
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

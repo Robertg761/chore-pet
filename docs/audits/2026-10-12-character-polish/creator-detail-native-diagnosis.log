@@ -1,0 +1,31 @@
+deadline diagnosis {"start":1049,"elapsed":756,"now":2865,"pendingFrames":0}
+✔ detail preserves the delivered cheer frame, Show preview focus and original deadline (2870.742619ms)
+control diagnosis {"label":"Mirror preview","x":14,"y":456.375,"right":306,"bottom":505.375,"width":292,"height":49,"focused":true,"focusVisible":false,"textFits":true}
+✖ all three preview tools fit and reveal face detail at 320x568 enlarged text (2178.671209ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5433.364502
+
+✖ failing tests:
+
+test at scripts/browser/creator-detail.test.mjs:162:3
+✖ all three preview tools fit and reveal face detail at 320x568 enlarged text (2178.671209ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(r.width >= 44 && r.height >= 44 && r.focused && r.focusVisible && r.textFits)
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-detail.test.mjs:171:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

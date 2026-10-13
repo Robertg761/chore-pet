@@ -1,0 +1,310 @@
+{
+  "species": "sprout",
+  "mood": "happy",
+  "full": {
+    "viewBox": "0 0 200 200",
+    "label": "Mochi, Sprout, Happy preview",
+    "scale": 2.01,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 350.715,
+        "y": 432.155,
+        "stroke": 4.974496205647362,
+        "part": "expression"
+      },
+      {
+        "x": 465.28499999999997,
+        "y": 432.155,
+        "stroke": 4.974496205647362,
+        "part": "expression"
+      },
+      {
+        "x": 350.715,
+        "y": 490.8470245361328,
+        "stroke": 4.974496205647362,
+        "part": "expression"
+      },
+      {
+        "x": 465.28499999999997,
+        "y": 490.8470245361328,
+        "stroke": 4.974496205647362,
+        "part": "expression"
+      },
+      {
+        "x": 329.61,
+        "y": 424.115,
+        "stroke": 4.974496205647362,
+        "part": "face"
+      },
+      {
+        "x": 486.39,
+        "y": 424.115,
+        "stroke": 4.974496205647362,
+        "part": "face"
+      },
+      {
+        "x": 329.61,
+        "y": 482.405,
+        "stroke": 4.974496205647362,
+        "part": "face"
+      },
+      {
+        "x": 486.39,
+        "y": 482.405,
+        "stroke": 4.974496205647362,
+        "part": "face"
+      }
+    ]
+  },
+  "close": {
+    "viewBox": "40 75 120 110",
+    "label": "Mochi, Sprout, Happy preview, face detail",
+    "scale": 3.35,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 312.525,
+        "y": 352.425,
+        "stroke": 8.29082700941227,
+        "part": "expression"
+      },
+      {
+        "x": 503.475,
+        "y": 352.425,
+        "stroke": 8.29082700941227,
+        "part": "expression"
+      },
+      {
+        "x": 312.525,
+        "y": 450.2450408935547,
+        "stroke": 8.29082700941227,
+        "part": "expression"
+      },
+      {
+        "x": 503.475,
+        "y": 450.2450408935547,
+        "stroke": 8.29082700941227,
+        "part": "expression"
+      },
+      {
+        "x": 277.35,
+        "y": 339.02500000000003,
+        "stroke": 8.29082700941227,
+        "part": "face"
+      },
+      {
+        "x": 538.6500000000001,
+        "y": 339.02500000000003,
+        "stroke": 8.29082700941227,
+        "part": "face"
+      },
+      {
+        "x": 277.35,
+        "y": 436.175,
+        "stroke": 8.29082700941227,
+        "part": "face"
+      },
+      {
+        "x": 538.6500000000001,
+        "y": 436.175,
+        "stroke": 8.29082700941227,
+        "part": "face"
+      }
+    ]
+  },
+  "normal": {
+    "centerX": 408,
+    "body": [
+      {
+        "x": 284.05,
+        "y": 270.35
+      },
+      {
+        "x": 531.95,
+        "y": 270.35
+      },
+      {
+        "x": 284.05,
+        "y": 571.85
+      },
+      {
+        "x": 531.95,
+        "y": 571.85
+      }
+    ],
+    "ground": [
+      {
+        "x": 284.05,
+        "y": 270.35
+      },
+      {
+        "x": 531.95,
+        "y": 270.35
+      },
+      {
+        "x": 284.05,
+        "y": 571.85
+      },
+      {
+        "x": 531.95,
+        "y": 571.85
+      }
+    ],
+    "facing": "normal",
+    "slots": [
+      "back",
+      "face",
+      "head",
+      "neck",
+      "outfit"
+    ],
+    "focused": false,
+    "focusVisible": false,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624,
+      "bottom": 713,
+      "right": 609
+    }
+  },
+  "reflected": {
+    "centerX": 408,
+    "body": [
+      {
+        "x": 531.95,
+        "y": 270.35
+      },
+      {
+        "x": 284.05,
+        "y": 270.35
+      },
+      {
+        "x": 531.95,
+        "y": 571.85
+      },
+      {
+        "x": 284.05,
+        "y": 571.85
+      }
+    ],
+    "ground": [
+      {
+        "x": 531.95,
+        "y": 270.35
+      },
+      {
+        "x": 284.05,
+        "y": 270.35
+      },
+      {
+        "x": 531.95,
+        "y": 571.85
+      },
+      {
+        "x": 284.05,
+        "y": 571.85
+      }
+    ],
+    "facing": "mirrored",
+    "slots": [
+      "back",
+      "face",
+      "head",
+      "neck",
+      "outfit"
+    ],
+    "focused": false,
+    "focusVisible": false,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624,
+      "bottom": 713,
+      "right": 609
+    }
+  },
+  "reflectedFace": {
+    "viewBox": "40 75 120 110",
+    "label": "Mochi, Sprout, Happy preview, mirrored, face detail",
+    "scale": 3.35,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 503.475,
+        "y": 352.425,
+        "stroke": 8.29082700941227,
+        "part": "expression"
+      },
+      {
+        "x": 312.525,
+        "y": 352.425,
+        "stroke": 8.29082700941227,
+        "part": "expression"
+      },
+      {
+        "x": 503.475,
+        "y": 450.2450408935547,
+        "stroke": 8.29082700941227,
+        "part": "expression"
+      },
+      {
+        "x": 312.525,
+        "y": 450.2450408935547,
+        "stroke": 8.29082700941227,
+        "part": "expression"
+      },
+      {
+        "x": 538.65,
+        "y": 339.02500000000003,
+        "stroke": 8.29082700941227,
+        "part": "face"
+      },
+      {
+        "x": 277.34999999999997,
+        "y": 339.02500000000003,
+        "stroke": 8.29082700941227,
+        "part": "face"
+      },
+      {
+        "x": 538.65,
+        "y": 436.175,
+        "stroke": 8.29082700941227,
+        "part": "face"
+      },
+      {
+        "x": 277.34999999999997,
+        "y": 436.175,
+        "stroke": 8.29082700941227,
+        "part": "face"
+      }
+    ]
+  },
+  "pendingFrames": 0,
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

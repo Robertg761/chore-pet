@@ -1,0 +1,125 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/screens/CharacterCreator.detail.test.tsx (18 tests | 18 failed) 1217ms
+   × inspects the mochi happy face without changing art, saving or starting a clock 195ms
+   × inspects the mochi content face without changing art, saving or starting a clock 145ms
+   × inspects the mochi meh face without changing art, saving or starting a clock 68ms
+   × inspects the mochi scruffy face without changing art, saving or starting a clock 64ms
+   × inspects the mochi sick face without changing art, saving or starting a clock 62ms
+   × inspects the bun happy face without changing art, saving or starting a clock 52ms
+   × inspects the bun content face without changing art, saving or starting a clock 59ms
+   × inspects the bun meh face without changing art, saving or starting a clock 58ms
+   × inspects the bun scruffy face without changing art, saving or starting a clock 60ms
+   × inspects the bun sick face without changing art, saving or starting a clock 69ms
+   × inspects the sprout happy face without changing art, saving or starting a clock 48ms
+   × inspects the sprout content face without changing art, saving or starting a clock 58ms
+   × inspects the sprout meh face without changing art, saving or starting a clock 51ms
+   × inspects the sprout scruffy face without changing art, saving or starting a clock 55ms
+   × inspects the sprout sick face without changing art, saving or starting a clock 56ms
+   × changes detail and reveals a running cheer without changing its sampled frame or original deadline 44ms
+   × keeps detail local through mood, tab, resize and draft edits, then resets on reopening 35ms
+   × keeps detail available under live system reduction without replaying the cheer 38ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 18 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the mochi happy face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the mochi content face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the mochi meh face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the mochi scruffy face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the mochi sick face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the bun happy face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the bun content face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the bun meh face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the bun scruffy face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the bun sick face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the sprout happy face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the sprout content face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the sprout meh face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the sprout scruffy face without changing art, saving or starting a clock
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > inspects the sprout sick face without changing art, saving or starting a clock
+AssertionError: button Face detail: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/CharacterCreator.detail.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy(); return node!
+       |                                  ^
+     32| }
+     33| const art = () => ui.container.querySelector('.cc-preview .ch-animated…
+ ❯ src/screens/CharacterCreator.detail.test.tsx:53:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/18]⎯
+
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > changes detail and reveals a running cheer without changing its sampled frame or original deadline
+AssertionError: button Face detail: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/CharacterCreator.detail.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy(); return node!
+       |                                  ^
+     32| }
+     33| const art = () => ui.container.querySelector('.cc-preview .ch-animated…
+ ❯ src/screens/CharacterCreator.detail.test.tsx:76:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/18]⎯
+
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > keeps detail local through mood, tab, resize and draft edits, then resets on reopening
+AssertionError: button Face detail: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/CharacterCreator.detail.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy(); return node!
+       |                                  ^
+     32| }
+     33| const art = () => ui.container.querySelector('.cc-preview .ch-animated…
+ ❯ src/screens/CharacterCreator.detail.test.tsx:91:32
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/18]⎯
+
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > keeps detail available under live system reduction without replaying the cheer
+AssertionError: button Face detail: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/CharacterCreator.detail.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy(); return node!
+       |                                  ^
+     32| }
+     33| const art = () => ui.container.querySelector('.cc-preview .ch-animated…
+ ❯ src/screens/CharacterCreator.detail.test.tsx:106:65
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/18]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  18 failed (18)
+   Start at  05:18:23
+   Duration  2.04s (tests 63%, transform 20%, environment 13%, import 3%)
+

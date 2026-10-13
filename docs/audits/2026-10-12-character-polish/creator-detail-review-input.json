@@ -1,0 +1,265 @@
+{
+  "freeze": {
+    "baseCommit": "d05e1ab2cd58a1d4c95dd8c58924d84cce21a848",
+    "sources": {
+      "src/screens/CharacterCreator.tsx": "b0a9e5829b5eeb4c2bd92c4987857d52b345fbdf521873c598fd3b40f81cd233",
+      "src/screens/CreatorPreview.tsx": "64a5509adc18d658cfa29cd72c5d24e56f495b304da70dc454280d80dc9a1bb9",
+      "src/screens/CharacterCreator.detail.test.tsx": "9b52bb2b34194e77e1affa2ebcb8b27e2cb68ba5cba0f610f8347070630a8462",
+      "scripts/browser/creator-detail.test.mjs": "d2c4ee3679e0e4a1cb365fb2b9ea432c89c220a4d757871e85e48d006e26a2d2",
+      "docs/ART.md": "bbf13976da7bae8270119b9961f45f00acaf220e4f2de0a7fa071e788de4d9e8",
+      "docs/audits/2026-10-12-character-polish/creator-detail-design.md": "bc031bf1f4548f7df5cfb5e22cd1a9a7e48e944670230946e98d6c81435563c0"
+    },
+    "unchangedSources": {
+      "src/screens/CharacterCreator.test.tsx": "26f82b2fa3c8eb31945af149684fa1ce9f32018cbf93925651b31575aaa20832",
+      "src/screens/creatorModel.test.ts": "0bd1b3445e719c73f91916be25465639f107fee2e3a47941284e04a997d2bb7e",
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/character/Character.css": "b30c9ffd119371268a744563e054b5e7d41ae0abf1d1e6120caff9bbfa0afccf",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/motion.ts": "07679d0a1f861d3bd327a5eb05b1d3b0edda9fc3b1633da53a4965a5b601173a",
+      "src/character/items.tsx": "f06572844f4a349fef05caa7a45068f5935815f14d79daf0a76d71dc3d412c6a",
+      "src/character/items/extras.tsx": "2ebe7ed7be300b2a5a207fb67037ec28146ae96a1bbba00d6c8627fce3b8d173",
+      "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+      "src/pet/usePetMotion.test.tsx": "07474f35781bb9b3442939d6eba0da4753211092a0d423d69c88236c782de93b",
+      "src/pet/usePetMotion.preference.test.tsx": "39d4767c5b54d38a0a4335b4f1bd8553ebffdf5aa78f0103e98c77655da70f68",
+      "src/shell/useViewport.ts": "889d9cc64d950e9f0f8473326e5b821cc0f485a60b7011003e12536ba54515ef",
+      "src/shell/ScreenHeader.tsx": "4cb84f6ce0d9ba56f1e60297e79fa0fab7ed22f8ae4d7b4147b3b7b9a8c7b7f8",
+      "src/shell/ScreenHeader.css": "6f080e585b434cef33665cd58c627389010b3ec0e3c9a0b3fd15cfb56ded1e65",
+      "src/shell/SegThumb.tsx": "9c35f972813c2270237ca025a0bf07250eaf1b2f5b79cf49c1de7e79c3134eea",
+      "src/shell/controls.css": "a0d257f01716ffb9aeecc89d5903b4d92a00a5b035caba72b02c5090c1889dce",
+      "src/index.css": "28b09b668da92e49c2a13554af34e56408dcc677d21e954fbc8145262b592418",
+      "src/App.tsx": "c8c59ac9cf30d66d7daaf1a8316b23c64beb0554784a59665e3057c39303e81a",
+      "src/data/store.ts": "3a02f895c6688efb8257eec7f8ef083d6257a1e2c37cdd5b378cbe1807092733",
+      "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+      "scripts/browser/creator-motion.test.mjs": "564d3d001515720921a0f507b4e157523171370ed474b1c3825b712b06a37987",
+      "scripts/browser/creator-layout.test.mjs": "3c730821d0b14103993feec4c1461539a1ce6434c887671bed30ceb44df7aed9",
+      "src/character/poses.ts": "5a7cf52f0dc3c8efbb9f4478fbbbbf660f345f5cfb12a6e1e078487acf7a1fcc",
+      "src/screens/creatorModel.ts": "65596944161f450b7d87c3b3782698bc8cb3b0694e270cdb64280d8355ca1b8b",
+      "src/screens/CharacterCreator.mood.test.tsx": "ddfdbf32456a8e5d4581c6feda54f5b2ce4c804af0335ed25a7dbbecc6323cf9",
+      "scripts/browser/creator-mood.test.mjs": "f0ab948abbb22859a8773bd80a75c4d1ac55ce6289e153c684949698fc5aa74f",
+      "scripts/browser/creator-thumbnail.test.mjs": "fc9f8c82ce0199d86bbdc96b394e5094c18c542c3af1bfd2cdb8830e452d9fb0",
+      "src/screens/WardrobePreview.tsx": "5f0fe2293a7e5f055a3576a9eed5191d35a13a5279975c347e18dd12c62666e9",
+      "src/screens/Wardrobe.css": "c846b9a19d589ca75b889373bc509d9109197ce2c1057fe3c83a2009ed7a299d",
+      "src/screens/CharacterCreator.css": "695c8f39072d6d6057881da1ad2747335d005b3524dc1fca21faddad198c5d4e",
+      "src/screens/CharacterCreator.tools.test.tsx": "1c793a65d5feb16a05a07efdae01499c0e40c2141a797a00ae6bd22c21441e1f",
+      "scripts/browser/creator-tools.test.mjs": "31a211b56bb6d234c7316266de4961af076afaf9dd1b59c1443f7c85b8972eaf",
+      "src/character/species/mochi.tsx": "bcf0efd767116d9ecb7e00f6cd5d8539b4d5b7e8e5616471bcc961ae27da2dbc",
+      "src/character/species/mochi-poses.tsx": "97cd70836237fa87d07b3b5511bd10970e1cdc38288c6eab7859075acfc7250c",
+      "src/character/species/bun.tsx": "3da44577ba175a087cdb61b0b3962df343d730f9694c3d3cdc33c6207cd05ac3",
+      "src/character/species/bun-poses.tsx": "75d43d09f1b9f7f753b0889f95b92b12ae6dfaddb5263d934abab69df78fde5a",
+      "src/character/species/sprout.tsx": "1cb3bce8cb289487be9197791d196b5cb7f8985d341a118d24856caf27d933c5",
+      "src/character/species/sprout-poses.tsx": "170f9ee84d3a0358b8c2909d1f95d212c60641bb14aa01c7cfa61d84de7b7ad0"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/creator-detail-source.diff",
+      "sha256": "19c53df7d67107a57b625fd4e9586e2afbef7f90dcf396a2c545acafe2560b36"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/creator-detail-artifacts.json",
+    "sha256": "9705c021db190154913e8219328e3ef46570cd921ce0dc545674a544b67d8c1a"
+  },
+  "checks": [
+    {
+      "name": "creator-detail-build",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-build.log",
+      "logSha256": "2b33a7692b32c789c9f22262d0072a4b9c493bcb732dff805a28de6ce6319f69",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-detail-final-build",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-final-build.log",
+      "logSha256": "5777bc7862a769e9cfbc37d527c35f14cc333629c12155f570f0a76aaeea236b",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-final-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-detail-final-diff",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-final-diff.log",
+      "logSha256": "7f8fe1c69e7cf4e98cbc975b80159e132f20fd7c650320ec74f22547cc976be6",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-final-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-detail-final-focused-v2",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-final-focused-v2.log",
+      "logSha256": "af6aac727364d3a404099a50a299a92962dfa94b8843381f8912c6b7f9cb077d",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-final-focused-v2.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-detail-final-focused",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-final-focused.log",
+      "logSha256": "4f1f2a56cee5f5c0756d3656c52cdf2df65cb84c345bacfb122e79f47dad3662",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-final-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-detail-final-full",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-final-full.log",
+      "logSha256": "18ec17b956bbfc0842b3a29800521319c4e3fe0acc0ee4f3d7b46835d1f8c646",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-final-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-detail-final-lint",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-final-lint.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-final-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-detail-focused-v2",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-focused-v2.log",
+      "logSha256": "622e9b918fb8d7ebbe8bccf7d64259ad6e46a95c931d8d755fea377142d63e38",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-focused-v2.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-detail-focused",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-focused.log",
+      "logSha256": "ebe7b79e38e406fa7f40f882ec2ab82a95c3273d9e1803c672f4407c36b0bd7f",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-focused.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "creator-detail-native-clock",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-native-clock.log",
+      "logSha256": "5b35e319c95ad732e4d7c682539c38392bbb58756f06a5eaf9f618bcb1120ece",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-clock.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-detail-native-diagnosis",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-native-diagnosis.log",
+      "logSha256": "9f53764cfac0734750e5ba67a2a640dd7d4a1a53c97c5e441aa80794fd71c9ae",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-diagnosis.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "creator-detail-native-final-v2",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2.log",
+      "logSha256": "24a4edf094b7a2a299a1196fcecc2c13b0a1c5d57fb16bc7810a6d96aee961f3",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-detail-native-final",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-native-final.log",
+      "logSha256": "d8163cdb29a76adf8ea39316a7018270b82e9b16aef1d8346dd377684662acb1",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-final.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "creator-detail-native-initial",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-native-initial.log",
+      "logSha256": "45e5e03b910f678facd0479e7ae2180315a4f3829d4b4a84ffc2a8ab1c65b4bd",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-native-initial.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "creator-detail-red",
+      "log": "docs/audits/2026-10-12-character-polish/creator-detail-red.log",
+      "logSha256": "adc970ae0777ebab4dd1b5ba2529801128f3c5b656cffd3f11e02fc03c24939a",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-detail-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "results": {
+    "summary": "Face detail:69focused/4files,2558full/137files and40nativepass. Final production typecheck/build/PWA,4pathstrictlint/6authoredwhitespacepass. All29final PNGs directly reviewed.15species/mood geometry cases retain face/accessory stroke padding and reflect120body/groundpoints once. Detail preserves character identity/frame, draft/save boundary, mood, finitecheerdeadline and reduced-motion behavior.",
+    "focused": {
+      "tests": 69,
+      "files": 4,
+      "durationSeconds": 7.93,
+      "check": "creator-detail-final-focused-v2"
+    },
+    "full": {
+      "tests": 2558,
+      "files": 137,
+      "check": "creator-detail-final-full",
+      "durationSeconds": 95.43
+    },
+    "native": {
+      "tests": 40,
+      "pass": 40,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationSeconds": 91.395900715,
+      "check": "creator-detail-native-final-v2",
+      "captureDirectory": "docs/audits/2026-10-12-character-polish/creator-detail-native-final-v2"
+    },
+    "visual": {
+      "finalPngs": 29,
+      "directFinalRoot": 29,
+      "speciesMoodSamples": 15,
+      "bodyGroundPointPairs": 120,
+      "maximumReflectionOrYErrorCssPx": 1.1368683772161603e-13,
+      "minimumConservativeFaceStrokeMarginCssPx": 8.61917274646596,
+      "enlargedControls": 15,
+      "focusedRevealedPreviews": 5,
+      "manifest": "docs/audits/2026-10-12-character-polish/creator-detail-root-visual-review.json"
+    }
+  },
+  "scope": "Two production files add one local Face detail boolean/pressed control and symmetric viewBox/image-label change. No new CSS, clock, listener, timer, saved field or look-model change.21new unit cases,14native plus26existingcases. Native matrices and conservative group-box/stroke margins, same node/frame and deadline, system/device initial/live and real cross-tab reduction, draft/Save/reset and5enlarged layouts. All29stills independently reviewable; limitations explicit.",
+  "history": "18unitred missing-control failures. Initial focused65pass1fail narrow-onlytabafterwide fixture, correctedtestonly; final69pass. Initialnative31pass6fail,5mouse-vskeyboard modality assumptions and1preclickfixedclock sample. Distinctdiagnosis1pass1fail retains focusfalse geometry, clock2casepass correctssetup/recordsactualnativeclickandfirstRAFcrossingoriginaldeadline, unchangedstrict1800unit. Strongerexpression/glassesconservativestrokecheck39pass1fail scruffyBun narrowedge; productcropwidened4unitseachside, samegeometrytolerance. Narrowprod/unit/harness archived. Final40native/69focused/build/full/lint/whitechecks bind widenedcrop. Allhistoricalruns retained; no nonzero result promoted to PASS.",
+  "resources": {
+    "runs": 15,
+    "sampleRows": 464,
+    "minimumObservedAvailableMiB": 3525.83984375,
+    "minimumObservedTmpFreeMiB": 4005.22265625,
+    "reserveStops": 0,
+    "launchRejections": 0,
+    "limits": "Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor."
+  },
+  "status": "Scoped checks complete; awaiting bounded independent review."
+}

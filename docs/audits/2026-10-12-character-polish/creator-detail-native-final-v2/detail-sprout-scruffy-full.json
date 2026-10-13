@@ -1,0 +1,69 @@
+{
+  "species": "sprout",
+  "mood": "scruffy",
+  "full": {
+    "viewBox": "0 0 200 200",
+    "label": "Mochi, Sprout, Scruffy preview",
+    "scale": 2.01,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 340.00868297017814,
+        "y": 434.25122101841475,
+        "stroke": 4.884134503493839,
+        "part": "expression"
+      },
+      {
+        "x": 500.87758397937034,
+        "y": 420.17701586623633,
+        "stroke": 4.884134503493839,
+        "part": "expression"
+      },
+      {
+        "x": 345.85103755763674,
+        "y": 501.0296395243446,
+        "stroke": 4.884134503493839,
+        "part": "expression"
+      },
+      {
+        "x": 506.719938566829,
+        "y": 486.9554343721662,
+        "stroke": 4.884134503493839,
+        "part": "expression"
+      },
+      {
+        "x": 315.5834285325343,
+        "y": 442.8850767558506,
+        "stroke": 4.884134503493839,
+        "part": "face"
+      },
+      {
+        "x": 478.014163532107,
+        "y": 428.6742288352044,
+        "stroke": 4.884134503493839,
+        "part": "face"
+      },
+      {
+        "x": 320.2573122025012,
+        "y": 496.3078115605945,
+        "stroke": 4.884134503493839,
+        "part": "face"
+      },
+      {
+        "x": 482.6880472020739,
+        "y": 482.0969636399483,
+        "stroke": 4.884134503493839,
+        "part": "face"
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

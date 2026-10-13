@@ -1,0 +1,69 @@
+{
+  "species": "bun",
+  "mood": "scruffy",
+  "full": {
+    "viewBox": "0 0 200 200",
+    "label": "Mochi, Bun, Scruffy preview",
+    "scale": 2.01,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 360.6735607214081,
+        "y": 438.48773650550305,
+        "stroke": 4.940804459866587,
+        "part": "expression"
+      },
+      {
+        "x": 526.1829249823951,
+        "y": 452.9679295857221,
+        "stroke": 4.940804459866587,
+        "part": "expression"
+      },
+      {
+        "x": 354.2570436318306,
+        "y": 511.82886244093606,
+        "stroke": 4.940804459866587,
+        "part": "expression"
+      },
+      {
+        "x": 519.7664078928176,
+        "y": 526.3090555211551,
+        "stroke": 4.940804459866587,
+        "part": "expression"
+      },
+      {
+        "x": 334.4054102070576,
+        "y": 442.6158753358866,
+        "stroke": 4.940804459866587,
+        "part": "face"
+      },
+      {
+        "x": 501.5216614997047,
+        "y": 457.2366528149428,
+        "stroke": 4.940804459866587,
+        "part": "face"
+      },
+      {
+        "x": 329.7823295710888,
+        "y": 495.4579288048942,
+        "stroke": 4.940804459866587,
+        "part": "face"
+      },
+      {
+        "x": 496.89858086373584,
+        "y": 510.0787062839504,
+        "stroke": 4.940804459866587,
+        "part": "face"
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

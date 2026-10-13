@@ -1,0 +1,37 @@
+{
+  "species": "sprout",
+  "mood": "sick",
+  "full": {
+    "viewBox": "0 0 200 200",
+    "label": "Mochi, Sprout, Unwell preview",
+    "scale": 2.01,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 353.73,
+        "y": 405.02
+      },
+      {
+        "x": 516.54,
+        "y": 405.02
+      },
+      {
+        "x": 353.73,
+        "y": 470.2444938659668
+      },
+      {
+        "x": 516.54,
+        "y": 470.2444938659668
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

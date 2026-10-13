@@ -1,0 +1,37 @@
+{
+  "species": "mochi",
+  "mood": "sick",
+  "full": {
+    "viewBox": "0 0 200 200",
+    "label": "Mochi, Mochi, Unwell preview",
+    "scale": 2.01,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 351.38488389175797,
+        "y": 421.9936289536006
+      },
+      {
+        "x": 513.97175844515,
+        "y": 413.4728119176869
+      },
+      {
+        "x": 354.8826266873645,
+        "y": 488.73453733508563
+      },
+      {
+        "x": 517.4695012407566,
+        "y": 480.2137202991719
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

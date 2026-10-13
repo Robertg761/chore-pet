@@ -1,0 +1,69 @@
+{
+  "species": "mochi",
+  "mood": "sick",
+  "full": {
+    "viewBox": "0 0 200 200",
+    "label": "Mochi, Mochi, Unwell preview",
+    "scale": 2.01,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 351.38488389175797,
+        "y": 421.9936289536006,
+        "stroke": 4.974496205647361,
+        "part": "expression"
+      },
+      {
+        "x": 513.97175844515,
+        "y": 413.4728119176869,
+        "stroke": 4.974496205647361,
+        "part": "expression"
+      },
+      {
+        "x": 354.8826266873645,
+        "y": 488.73453733508563,
+        "stroke": 4.974496205647361,
+        "part": "expression"
+      },
+      {
+        "x": 517.4695012407566,
+        "y": 480.2137202991719,
+        "stroke": 4.974496205647361,
+        "part": "expression"
+      },
+      {
+        "x": 322.96610595703123,
+        "y": 420.05232246398924,
+        "stroke": 4.974496205647361,
+        "part": "face"
+      },
+      {
+        "x": 482.5819001770019,
+        "y": 420.05232246398924,
+        "stroke": 4.974496205647361,
+        "part": "face"
+      },
+      {
+        "x": 322.96610595703123,
+        "y": 486.4676622009277,
+        "stroke": 4.974496205647361,
+        "part": "face"
+      },
+      {
+        "x": 482.5819001770019,
+        "y": 486.4676622009277,
+        "stroke": 4.974496205647361,
+        "part": "face"
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

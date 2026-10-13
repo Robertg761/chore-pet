@@ -1,0 +1,37 @@
+{
+  "species": "bun",
+  "mood": "sick",
+  "full": {
+    "viewBox": "0 0 200 200",
+    "label": "Mochi, Bun, Unwell preview",
+    "scale": 2.01,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 353.73,
+        "y": 408.43699386596677
+      },
+      {
+        "x": 516.54,
+        "y": 408.43699386596677
+      },
+      {
+        "x": 353.73,
+        "y": 483.99288650512693
+      },
+      {
+        "x": 516.54,
+        "y": 483.99288650512693
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

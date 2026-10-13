@@ -1,0 +1,214 @@
+{
+  "species": "bun",
+  "mood": "happy",
+  "full": {
+    "viewBox": "0 0 200 200",
+    "label": "Mochi, Bun, Happy preview",
+    "scale": 2.01,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 350.715,
+        "y": 432.155
+      },
+      {
+        "x": 465.28499999999997,
+        "y": 432.155
+      },
+      {
+        "x": 350.715,
+        "y": 500.8970245361328
+      },
+      {
+        "x": 465.28499999999997,
+        "y": 500.8970245361328
+      }
+    ]
+  },
+  "close": {
+    "viewBox": "40 75 120 110",
+    "label": "Mochi, Bun, Happy preview, face detail",
+    "scale": 3.35,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 312.525,
+        "y": 352.425
+      },
+      {
+        "x": 503.475,
+        "y": 352.425
+      },
+      {
+        "x": 312.525,
+        "y": 466.9950408935547
+      },
+      {
+        "x": 503.475,
+        "y": 466.9950408935547
+      }
+    ]
+  },
+  "normal": {
+    "centerX": 408,
+    "body": [
+      {
+        "x": 284.05,
+        "y": 270.35
+      },
+      {
+        "x": 531.95,
+        "y": 270.35
+      },
+      {
+        "x": 284.05,
+        "y": 571.85
+      },
+      {
+        "x": 531.95,
+        "y": 571.85
+      }
+    ],
+    "ground": [
+      {
+        "x": 284.05,
+        "y": 270.35
+      },
+      {
+        "x": 531.95,
+        "y": 270.35
+      },
+      {
+        "x": 284.05,
+        "y": 571.85
+      },
+      {
+        "x": 531.95,
+        "y": 571.85
+      }
+    ],
+    "facing": "normal",
+    "slots": [
+      "back",
+      "face",
+      "head",
+      "neck",
+      "outfit"
+    ],
+    "focused": false,
+    "focusVisible": false,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624,
+      "bottom": 713,
+      "right": 609
+    }
+  },
+  "reflected": {
+    "centerX": 408,
+    "body": [
+      {
+        "x": 531.95,
+        "y": 270.35
+      },
+      {
+        "x": 284.05,
+        "y": 270.35
+      },
+      {
+        "x": 531.95,
+        "y": 571.85
+      },
+      {
+        "x": 284.05,
+        "y": 571.85
+      }
+    ],
+    "ground": [
+      {
+        "x": 531.95,
+        "y": 270.35
+      },
+      {
+        "x": 284.05,
+        "y": 270.35
+      },
+      {
+        "x": 531.95,
+        "y": 571.85
+      },
+      {
+        "x": 284.05,
+        "y": 571.85
+      }
+    ],
+    "facing": "mirrored",
+    "slots": [
+      "back",
+      "face",
+      "head",
+      "neck",
+      "outfit"
+    ],
+    "focused": false,
+    "focusVisible": false,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624,
+      "bottom": 713,
+      "right": 609
+    }
+  },
+  "reflectedFace": {
+    "viewBox": "40 75 120 110",
+    "label": "Mochi, Bun, Happy preview, mirrored, face detail",
+    "scale": 3.35,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 503.475,
+        "y": 352.425
+      },
+      {
+        "x": 312.525,
+        "y": 352.425
+      },
+      {
+        "x": 503.475,
+        "y": 466.9950408935547
+      },
+      {
+        "x": 312.525,
+        "y": 466.9950408935547
+      }
+    ]
+  },
+  "pendingFrames": 0,
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

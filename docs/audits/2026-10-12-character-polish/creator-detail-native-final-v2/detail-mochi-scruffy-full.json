@@ -1,0 +1,69 @@
+{
+  "species": "mochi",
+  "mood": "scruffy",
+  "full": {
+    "viewBox": "0 0 200 200",
+    "label": "Mochi, Mochi, Scruffy preview",
+    "scale": 2.01,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 340.22944233827883,
+        "y": 442.6575144409296,
+        "stroke": 4.927639704980455,
+        "part": "expression"
+      },
+      {
+        "x": 509.06419526185834,
+        "y": 430.85143842371343,
+        "stroke": 4.927639704980455,
+        "part": "expression"
+      },
+      {
+        "x": 344.70215765404254,
+        "y": 506.62032343295016,
+        "stroke": 4.927639704980455,
+        "part": "expression"
+      },
+      {
+        "x": 513.536910577622,
+        "y": 494.814247415734,
+        "stroke": 4.927639704980455,
+        "part": "expression"
+      },
+      {
+        "x": 314.4345329778923,
+        "y": 450.66718748588676,
+        "stroke": 4.927639704980455,
+        "part": "face"
+      },
+      {
+        "x": 484.9084582599532,
+        "y": 438.74648937141603,
+        "stroke": 4.927639704980455,
+        "part": "face"
+      },
+      {
+        "x": 318.01270523050323,
+        "y": 501.8374346795032,
+        "stroke": 4.927639704980455,
+        "part": "face"
+      },
+      {
+        "x": 488.48663051256415,
+        "y": 489.91673656503247,
+        "stroke": 4.927639704980455,
+        "part": "face"
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

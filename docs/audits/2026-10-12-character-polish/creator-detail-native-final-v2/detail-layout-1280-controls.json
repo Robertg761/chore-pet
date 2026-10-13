@@ -1,0 +1,45 @@
+{
+  "width": 1280,
+  "height": 800,
+  "text": 200,
+  "controls": [
+    {
+      "label": "Mirror preview",
+      "x": 696,
+      "y": 645.78125,
+      "right": 963,
+      "bottom": 694.78125,
+      "width": 267,
+      "height": 49,
+      "focused": true,
+      "focusVisible": true,
+      "textFits": true
+    },
+    {
+      "label": "Face detail",
+      "x": 969,
+      "y": 645.78125,
+      "right": 1236,
+      "bottom": 694.78125,
+      "width": 267,
+      "height": 49,
+      "focused": true,
+      "focusVisible": true,
+      "textFits": true
+    },
+    {
+      "label": "Show preview",
+      "x": 696,
+      "y": 645.78125,
+      "right": 1236,
+      "bottom": 694.78125,
+      "width": 540,
+      "height": 49,
+      "focused": true,
+      "focusVisible": true,
+      "textFits": true
+    }
+  ],
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

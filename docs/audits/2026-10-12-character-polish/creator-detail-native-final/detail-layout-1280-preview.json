@@ -1,0 +1,125 @@
+{
+  "width": 1280,
+  "height": 800,
+  "text": 200,
+  "revealed": {
+    "centerX": 460,
+    "body": [
+      {
+        "x": 336.05,
+        "y": 278.85
+      },
+      {
+        "x": 583.95,
+        "y": 278.85
+      },
+      {
+        "x": 336.05,
+        "y": 580.35
+      },
+      {
+        "x": 583.95,
+        "y": 580.35
+      }
+    ],
+    "ground": [
+      {
+        "x": 336.05,
+        "y": 278.85
+      },
+      {
+        "x": 583.95,
+        "y": 278.85
+      },
+      {
+        "x": 336.05,
+        "y": 580.35
+      },
+      {
+        "x": 583.95,
+        "y": 580.35
+      }
+    ],
+    "facing": "normal",
+    "slots": [
+      "face",
+      "head"
+    ],
+    "focused": true,
+    "focusVisible": true,
+    "box": {
+      "x": 259,
+      "y": 111,
+      "width": 402,
+      "height": 597,
+      "bottom": 708,
+      "right": 661
+    }
+  },
+  "face": {
+    "viewBox": "40 75 120 110",
+    "label": "Mochi, Mochi, Unwell preview, face detail",
+    "scale": 3.35,
+    "box": {
+      "x": 259,
+      "y": 111,
+      "right": 661,
+      "bottom": 708,
+      "width": 402,
+      "height": 597
+    },
+    "points": [
+      {
+        "x": 365.64147315292996,
+        "y": 343.98938158933436,
+        "stroke": 8.290827009412268,
+        "part": "expression"
+      },
+      {
+        "x": 636.6195974085836,
+        "y": 329.78801986281155,
+        "stroke": 8.290827009412268,
+        "part": "expression"
+      },
+      {
+        "x": 371.4710444789409,
+        "y": 455.2242288918094,
+        "stroke": 8.290827009412268,
+        "part": "expression"
+      },
+      {
+        "x": 642.4491687345945,
+        "y": 441.0228671652866,
+        "stroke": 8.290827009412268,
+        "part": "expression"
+      },
+      {
+        "x": 318.2768432617188,
+        "y": 340.75387077331544,
+        "stroke": 8.290827009412268,
+        "part": "face"
+      },
+      {
+        "x": 584.30316696167,
+        "y": 340.75387077331544,
+        "stroke": 8.290827009412268,
+        "part": "face"
+      },
+      {
+        "x": 318.2768432617188,
+        "y": 451.4461036682129,
+        "stroke": 8.290827009412268,
+        "part": "face"
+      },
+      {
+        "x": 584.30316696167,
+        "y": 451.4461036682129,
+        "stroke": 8.290827009412268,
+        "part": "face"
+      }
+    ]
+  },
+  "pendingFrames": 0,
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}

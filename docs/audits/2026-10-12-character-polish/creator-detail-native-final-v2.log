@@ -1,0 +1,48 @@
+✔ face detail enlarges dressed mochi in every mood and mirrors once without saving (3035.026662ms)
+✔ face detail enlarges dressed bun in every mood and mirrors once without saving (3000.974597ms)
+✔ face detail enlarges dressed sprout in every mood and mirrors once without saving (3014.931145ms)
+✔ detail preserves the delivered cheer frame, Show preview focus and original deadline (2859.987585ms)
+✔ all three preview tools fit and reveal face detail at 320x568 enlarged text (2248.090347ms)
+✔ all three preview tools fit and reveal face detail at 390x664 enlarged text (2271.502986ms)
+✔ all three preview tools fit and reveal face detail at 640x360 enlarged text (2291.540978ms)
+✔ all three preview tools fit and reveal face detail at 844x390 enlarged text (2433.559385ms)
+✔ all three preview tools fit and reveal face detail at 1280x800 enlarged text (2359.169742ms)
+✔ detail stays usable through live system reduction without replay or save (2848.37701ms)
+✔ detail stays usable through live device reduction without replay or save (2982.24317ms)
+✔ detail survives mood, draft, tabs and resize while Save stores only the look and remount resets (4549.058933ms)
+✔ initial system reduction leaves detail available and creates no preview clock (1025.269893ms)
+✔ initial device reduction leaves detail available and creates no preview clock (2366.30049ms)
+✔ look editor keeps its character and controls readable at 320x568 text100 (1426.671724ms)
+✔ look editor keeps its character and controls readable at 320x568 text200 (1229.266013ms)
+✔ look editor keeps its character and controls readable at 390x664 text100 (1236.872578ms)
+✔ look editor keeps its character and controls readable at 390x664 text200 (1282.848403ms)
+✔ look editor keeps its character and controls readable at 640x360 text100 (1216.85276ms)
+✔ look editor keeps its character and controls readable at 640x360 text200 (1199.984278ms)
+✔ look editor keeps its character and controls readable at 844x390 text100 (1276.131257ms)
+✔ look editor keeps its character and controls readable at 844x390 text200 (1399.497624ms)
+✔ look editor keeps its character and controls readable at 1280x800 text100 (1178.910036ms)
+✔ look editor keeps its character and controls readable at 1280x800 text200 (1167.79312ms)
+✔ look draft name and caret survive resizing and stay reachable at enlarged text (1000.919104ms)
+✔ creator previews the actual character while keeping face choices visible at 320x568 (4046.098566ms)
+✔ creator previews the actual character while keeping face choices visible at 844x390 (3255.145346ms)
+✔ creator previews the actual character while keeping face choices visible at 1280x800 (3241.634438ms)
+✔ creator settles live reduction and initial reduction keeps look choices available (3244.309492ms)
+✔ preview tools reflect layered mochi in every mood without saving (2494.590016ms)
+✔ preview tools reflect layered bun in every mood without saving (2459.594082ms)
+✔ preview tools reflect layered sprout in every mood without saving (2422.567955ms)
+✔ keyboard preview tools preserve the running cheer, draft and original deadline (2816.553268ms)
+✔ preview tools are reachable and reveal focused art at 320x568 enlarged text (2232.037321ms)
+✔ preview tools are reachable and reveal focused art at 390x664 enlarged text (2235.454045ms)
+✔ preview tools are reachable and reveal focused art at 640x360 enlarged text (2230.724624ms)
+✔ preview tools are reachable and reveal focused art at 844x390 enlarged text (2173.315002ms)
+✔ preview tools are reachable and reveal focused art at 1280x800 enlarged text (2226.777621ms)
+✔ reduced preview tools never start motion or save a facing preference (1138.957572ms)
+✔ mirrored mood survives edits and resizing while Save keeps only the look (2637.834408ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 91395.900715

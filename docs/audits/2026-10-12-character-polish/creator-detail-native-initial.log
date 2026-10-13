@@ -1,0 +1,149 @@
+✔ face detail enlarges dressed mochi in every mood and mirrors once without saving (3152.596313ms)
+✔ face detail enlarges dressed bun in every mood and mirrors once without saving (2931.105607ms)
+✔ face detail enlarges dressed sprout in every mood and mirrors once without saving (2933.624611ms)
+✖ detail preserves the delivered cheer frame, Show preview focus and original deadline (2816.040297ms)
+✖ all three preview tools fit and reveal face detail at 320x568 enlarged text (2190.198937ms)
+✖ all three preview tools fit and reveal face detail at 390x664 enlarged text (2171.594002ms)
+✖ all three preview tools fit and reveal face detail at 640x360 enlarged text (2183.728899ms)
+✖ all three preview tools fit and reveal face detail at 844x390 enlarged text (2168.133928ms)
+✖ all three preview tools fit and reveal face detail at 1280x800 enlarged text (2188.439466ms)
+✔ detail stays usable through live system reduction without replay or save (2703.197891ms)
+✔ detail survives mood, draft, tabs and resize while Save stores only the look and remount resets (4364.866462ms)
+✔ look editor keeps its character and controls readable at 320x568 text100 (1402.584884ms)
+✔ look editor keeps its character and controls readable at 320x568 text200 (1296.379547ms)
+✔ look editor keeps its character and controls readable at 390x664 text100 (1235.877762ms)
+✔ look editor keeps its character and controls readable at 390x664 text200 (1281.127501ms)
+✔ look editor keeps its character and controls readable at 640x360 text100 (1186.830425ms)
+✔ look editor keeps its character and controls readable at 640x360 text200 (1155.046952ms)
+✔ look editor keeps its character and controls readable at 844x390 text100 (1175.994251ms)
+✔ look editor keeps its character and controls readable at 844x390 text200 (1180.303005ms)
+✔ look editor keeps its character and controls readable at 1280x800 text100 (1219.640872ms)
+✔ look editor keeps its character and controls readable at 1280x800 text200 (1177.738498ms)
+✔ look draft name and caret survive resizing and stay reachable at enlarged text (981.231803ms)
+✔ creator previews the actual character while keeping face choices visible at 320x568 (3406.732351ms)
+✔ creator previews the actual character while keeping face choices visible at 844x390 (3243.131551ms)
+✔ creator previews the actual character while keeping face choices visible at 1280x800 (3283.35317ms)
+✔ creator settles live reduction and initial reduction keeps look choices available (3191.000202ms)
+✔ preview tools reflect layered mochi in every mood without saving (2479.938812ms)
+✔ preview tools reflect layered bun in every mood without saving (2472.230987ms)
+✔ preview tools reflect layered sprout in every mood without saving (2428.879115ms)
+✔ keyboard preview tools preserve the running cheer, draft and original deadline (2919.035465ms)
+✔ preview tools are reachable and reveal focused art at 320x568 enlarged text (2260.63712ms)
+✔ preview tools are reachable and reveal focused art at 390x664 enlarged text (2227.892105ms)
+✔ preview tools are reachable and reveal focused art at 640x360 enlarged text (2181.889551ms)
+✔ preview tools are reachable and reveal focused art at 844x390 enlarged text (2212.849796ms)
+✔ preview tools are reachable and reveal focused art at 1280x800 enlarged text (2223.93169ms)
+✔ reduced preview tools never start motion or save a facing preference (1130.606594ms)
+✔ mirrored mood survives edits and resizing while Save keeps only the look (2573.43931ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 31
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 82887.13837
+
+✖ failing tests:
+
+test at scripts/browser/creator-detail.test.mjs:138:1
+✖ detail preserves the delivered cheer frame, Show preview focus and original deadline (2816.040297ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-detail.test.mjs:155:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-detail.test.mjs:161:3
+✖ all three preview tools fit and reveal face detail at 320x568 enlarged text (2190.198937ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(r.width >= 44 && r.height >= 44 && r.focused && r.focusVisible && r.textFits)
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-detail.test.mjs:169:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-detail.test.mjs:161:3
+✖ all three preview tools fit and reveal face detail at 390x664 enlarged text (2171.594002ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(r.width >= 44 && r.height >= 44 && r.focused && r.focusVisible && r.textFits)
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-detail.test.mjs:169:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-detail.test.mjs:161:3
+✖ all three preview tools fit and reveal face detail at 640x360 enlarged text (2183.728899ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(r.width >= 44 && r.height >= 44 && r.focused && r.focusVisible && r.textFits)
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-detail.test.mjs:169:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-detail.test.mjs:161:3
+✖ all three preview tools fit and reveal face detail at 844x390 enlarged text (2168.133928ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(r.width >= 44 && r.height >= 44 && r.focused && r.focusVisible && r.textFits)
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-detail.test.mjs:169:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/creator-detail.test.mjs:161:3
+✖ all three preview tools fit and reveal face detail at 1280x800 enlarged text (2188.439466ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(r.width >= 44 && r.height >= 44 && r.focused && r.focusVisible && r.textFits)
+  
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/creator-detail.test.mjs:169:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

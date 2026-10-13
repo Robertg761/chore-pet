@@ -1,0 +1,37 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/screens/CharacterCreator.detail.test.tsx (18 tests | 1 failed) 1968ms
+   × keeps detail local through mood, tab, resize and draft edits, then resets on reopening 254ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/CharacterCreator.detail.test.tsx > keeps detail local through mood, tab, resize and draft edits, then resets on reopening
+AssertionError: button Face: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ button src/screens/CharacterCreator.detail.test.tsx:31:34
+     29| function button(name: string) {
+     30|   const node = [...ui.container.querySelectorAll('button')].find(node …
+     31|   expect(node, `button ${name}`).toBeTruthy(); return node!
+       |                                  ^
+     32| }
+     33| const art = () => ui.container.querySelector('.cc-preview .ch-animated…
+ ❯ src/screens/CharacterCreator.detail.test.tsx:100:47
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 65 passed (66)
+   Start at  05:18:51
+   Duration  7.68s (tests 80%, environment 13%, transform 4%, import 3%)
+
+    Isolate  4 workers spawned · ~326ms startup each (spawn + environment, per file)
+             at least ~979ms faster with isolate: false — reuses workers across files instead of one per file
+

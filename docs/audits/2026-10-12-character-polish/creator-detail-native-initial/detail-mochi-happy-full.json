@@ -1,0 +1,37 @@
+{
+  "species": "mochi",
+  "mood": "happy",
+  "full": {
+    "viewBox": "0 0 200 200",
+    "label": "Mochi, Mochi, Happy preview",
+    "scale": 2.01,
+    "box": {
+      "x": 207,
+      "y": 89,
+      "right": 609,
+      "bottom": 713,
+      "width": 402,
+      "height": 624
+    },
+    "points": [
+      {
+        "x": 350.715,
+        "y": 428.135
+      },
+      {
+        "x": 465.28499999999997,
+        "y": 428.135
+      },
+      {
+        "x": 350.715,
+        "y": 486.8270245361328
+      },
+      {
+        "x": 465.28499999999997,
+        "y": 486.8270245361328
+      }
+    ]
+  },
+  "browser": "152.0.7977.82",
+  "method": "Actual offline production creator; native keyboard and matrix/focus geometry asserted. Finite CSS transitions settled for screenshot only; not temporal/AT/physical-device certification."
+}
