@@ -1,0 +1,516 @@
+diff --git i/src/screens/creatorModel.ts w/src/screens/creatorModel.ts
+index 3d5b806..ceef1b7 100644
+--- i/src/screens/creatorModel.ts
++++ w/src/screens/creatorModel.ts
+@@ -1,6 +1,6 @@
+ import { mix } from '../art/color'
+ import { PALETTE, SPECIES_COLOUR } from '../art/palette'
+-import type { CheekStyle, EyeStyle, Pet, Species } from '../domain/types'
++import type { CheekStyle, EyeStyle, Mood, Pet, Species } from '../domain/types'
+ 
+ // Pure helpers for the character creator, so the UI never decides what "changed" means.
+ 
+@@ -38,6 +38,14 @@ export const CHEEK_OPTIONS: readonly { value: CheekStyle; label: string }[] = [
+   { value: 'none', label: 'None' },
+ ]
+ 
++export const PREVIEW_MOOD_OPTIONS: readonly { value: Mood; label: string }[] = [
++  { value: 'happy', label: 'Happy' },
++  { value: 'content', label: 'Content' },
++  { value: 'meh', label: 'Tired' },
++  { value: 'scruffy', label: 'Scruffy' },
++  { value: 'sick', label: 'Unwell' },
++]
++
+ export const sameColour = (a: string, b: string) => a.toLowerCase() === b.toLowerCase()
+ 
+ /** The swatch list, plus the pet's current colour when it is not one of ours (older saves). */
+diff --git i/src/screens/CharacterCreator.tsx w/src/screens/CharacterCreator.tsx
+index aa09571..a1b399d 100644
+--- i/src/screens/CharacterCreator.tsx
++++ w/src/screens/CharacterCreator.tsx
+@@ -1,9 +1,10 @@
+-import { useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react'
++import { useId, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react'
+ import { Character, CharacterArt } from '../character/Character'
+-import { SPECIES, type CheekStyle, type EyeStyle, type Pet, type Species } from '../domain/types'
++import { SPECIES, type CheekStyle, type EyeStyle, type Mood, type Pet, type Species } from '../domain/types'
+ import {
+   CHEEK_OPTIONS,
+   EYE_OPTIONS,
++  PREVIEW_MOOD_OPTIONS,
+   changesFrom,
+   colourAfterSpeciesChange,
+   colourName,
+@@ -97,6 +98,8 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
+   const [nameError, setNameError] = useState(false)
+   const wide = useWide()
+   const [part, setPart] = useState<Part>('who')
++  const [previewMood, setPreviewMood] = useState<Mood>('happy')
++  const previewMoodId = useId()
+   const tabsRef = useRef<HTMLDivElement>(null)
+   const preview = useRef<CreatorPreviewControl | null>(null)
+   const nameRef = useRef<HTMLInputElement>(null)
+@@ -188,6 +191,15 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
+ 
+   const face = (
+     <>
++      <section className="cc-section cc-mood">
++        <label htmlFor={previewMoodId}>Preview mood</label>
++        <select id={previewMoodId} className="field" value={previewMood}
++          aria-describedby={`${previewMoodId}-note`}
++          onChange={event => { preview.current?.settle(); setPreviewMood(event.target.value as Mood) }}>
++          {PREVIEW_MOOD_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
++        </select>
++        <p id={`${previewMoodId}-note`} className="cc-hint">See how your look appears in each mood.</p>
++      </section>
+       <section className="cc-section" aria-labelledby="cc-eyes-h">
+         <h2 id="cc-eyes-h">Eyes</h2>
+         <ChoiceGroup
+@@ -252,7 +264,7 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
+ 
+       <div className="cc-body">
+         <div className="cc-stage">
+-          <CreatorPreview draft={draft} equipped={pet.equipped} control={preview}
++          <CreatorPreview draft={draft} equipped={pet.equipped} control={preview} mood={previewMood}
+             label={`${draft.name.trim() || 'Your pet'}, ${SPECIES_LABEL[species]}`} />
+ 
+           <div className="cc-field">
+diff --git i/src/screens/CreatorPreview.tsx w/src/screens/CreatorPreview.tsx
+index 972a7f2..5cc8bd3 100644
+--- i/src/screens/CreatorPreview.tsx
++++ w/src/screens/CreatorPreview.tsx
+@@ -1,15 +1,15 @@
+ import { useImperativeHandle, useState, type RefObject } from 'react'
+ import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
+ import { ACTION_MS, sampleMotion } from '../character/motion'
+-import type { Pet } from '../domain/types'
++import type { Mood, Pet } from '../domain/types'
+ import { usePetMotion } from '../pet/usePetMotion'
+-import type { CreatorDraft } from './creatorModel'
++import { PREVIEW_MOOD_OPTIONS, type CreatorDraft } from './creatorModel'
+ 
+ export interface CreatorPreviewControl { cheer: () => void; settle: () => void }
+ 
+ /** Keep finite character frames out of the creator's choice grids and form. */
+-export function CreatorPreview({ draft, equipped, label, control }: {
+-  draft: CreatorDraft; equipped: Pet['equipped']; label: string
++export function CreatorPreview({ draft, equipped, label, control, mood = 'happy' }: {
++  draft: CreatorDraft; equipped: Pet['equipped']; label: string; mood?: Mood
+   control: RefObject<CreatorPreviewControl | null>
+ }) {
+   const [start, setStart] = useState<number | null>(null)
+@@ -19,22 +19,23 @@ export function CreatorPreview({ draft, equipped, label, control }: {
+     const time = Math.max(0, now - start)
+     if (reduced || time >= ACTION_MS.celebrate) setStart(null)
+     else setElapsed(time)
+-  }, start !== null, reduced => { if (reduced) setStart(null) })
++  }, start !== null && mood === 'happy', reduced => { if (reduced) setStart(null) })
+   useImperativeHandle(control, () => ({
+     cheer: () => {
+-      if (reducedMotion || start !== null) return
++      if (reducedMotion || mood !== 'happy' || start !== null) return
+       setElapsed(0)
+       setStart(performance.now())
+     },
+     settle: () => setStart(null),
+-  }), [reducedMotion, start])
+-  const active = start !== null && !reducedMotion
+-  const frame = sampleMotion({ species: draft.species, mood: 'happy', action: active ? 'celebrate' : 'idle',
++  }), [reducedMotion, start, mood])
++  const active = start !== null && !reducedMotion && mood === 'happy'
++  const moodLabel = PREVIEW_MOOD_OPTIONS.find(option => option.value === mood)!.label
++  const frame = sampleMotion({ species: draft.species, mood, action: active ? 'celebrate' : 'idle',
+     elapsedMs: active ? elapsed : 0, durationMs: active ? ACTION_MS.celebrate : ACTION_MS.idle,
+     distance: 0, reducedMotion: reducedMotion || !active })
+   return <div className="cc-preview">
+-    <svg width={170} height={170} viewBox="0 0 200 200" role="img" aria-label={label}>
+-      <AnimatedCharacterArt species={draft.species} mood="happy" bodyColour={draft.bodyColour} equipped={equipped}
++    <svg width={170} height={170} viewBox="0 0 200 200" role="img" aria-label={`${label}, ${moodLabel} preview`}>
++      <AnimatedCharacterArt species={draft.species} mood={mood} bodyColour={draft.bodyColour} equipped={equipped}
+         look={{ eyes: draft.eyes, cheeks: draft.cheeks }} frame={frame} />
+     </svg>
+   </div>
+diff --git i/src/screens/CharacterCreator.css w/src/screens/CharacterCreator.css
+index 332c8d7..b0f0141 100644
+--- i/src/screens/CharacterCreator.css
++++ w/src/screens/CharacterCreator.css
+@@ -1,7 +1,7 @@
+ /* Change look: fits one view. Phones stack the pet, the name and a tabbed panel;
+    wide screens (and phones on their side) go two columns. Header and screen frame: shell/ScreenHeader.css. */
+ .cc { gap: 6px; }
+-.cc button, .cc input { scroll-margin: 8px; }
++.cc button, .cc input, .cc select { scroll-margin: 8px; }
+ 
+ .cc-body { flex: 1 1 0; min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+ 
+@@ -34,6 +34,8 @@
+ .cc-current { font-size: 0.875rem; font-weight: 700; color: var(--ink-soft); }
+ .cc-hint { margin: 0; font-size: 0.8125rem; font-weight: 700; color: var(--ink-soft); }
+ .cc-note { text-align: center; }
++.cc-mood label { font-weight: 800; }
++.cc-mood select { min-width: 0; min-height: 44px; max-width: 100%; }
+ 
+ /* Every option is a radio button; the selected one gets the accent ring. */
+ .cc-choice {
+diff --git 1/src/screens/CharacterCreator.mood.test.tsx 2/src/screens/CharacterCreator.mood.test.tsx
+new file mode 100644
+index 0000000..76353e7
+--- /dev/null
++++ 2/src/screens/CharacterCreator.mood.test.tsx
+@@ -0,0 +1,129 @@
++// @vitest-environment jsdom
++import { act, StrictMode } from 'react'
++import { afterEach, beforeEach, expect, it, vi } from 'vitest'
++import type { Mood, Pet, Species } from '../domain/types'
++import { click, render } from '../test/react'
++import { CharacterCreator, type PetLookPatch } from './CharacterCreator'
++
++const pet: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#FFCFDA', eyes: 'classic', cheeks: 'round', equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } }
++let ui: ReturnType<typeof render>
++let now: number, serial: number, hidden: boolean
++let frames: Map<number, FrameRequestCallback>
++let media: MediaQueryList
++let saved: ReturnType<typeof vi.fn<(patch: PetLookPatch) => void>>
++let closed: ReturnType<typeof vi.fn<() => void>>
++const content = () => <StrictMode><CharacterCreator pet={pet} onSave={saved} onClose={closed} /></StrictMode>
++const moods: Mood[] = ['happy', 'content', 'meh', 'scruffy', 'sick']
++const labels = ['Happy', 'Content', 'Tired', 'Scruffy', 'Unwell']
++
++beforeEach(() => {
++  now = 0; serial = 0; hidden = false; frames = new Map(); saved = vi.fn(); closed = vi.fn()
++  vi.spyOn(performance, 'now').mockImplementation(() => now)
++  vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden)
++  media = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  const narrow = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
++  vi.stubGlobal('matchMedia', (query: string) => query.includes('prefers-reduced-motion') ? media : narrow)
++  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
++  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
++  ui = render(content())
++})
++afterEach(() => { ui.unmount(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
++function button(name: string) {
++  const node = [...ui.container.querySelectorAll('button')].find(node => node.textContent === name)
++  expect(node, `button ${name}`).toBeTruthy(); return node!
++}
++function radio(name: string) {
++  const node = ui.container.querySelector(`[role="radio"][aria-label="${name}"]`)
++  expect(node, `radio ${name}`).not.toBeNull(); return node!
++}
++function select() {
++  const label = [...ui.container.querySelectorAll('label')].find(node => node.textContent === 'Preview mood')
++  expect(label, 'Preview mood has a native label').toBeTruthy()
++  const node = document.getElementById(label!.htmlFor) as HTMLSelectElement | null
++  expect(node).not.toBeNull(); return node!
++}
++function choose(mood: Mood) {
++  const node = select()
++  act(() => { node.value = mood; node.dispatchEvent(new Event('change', { bubbles: true })) })
++}
++function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
++function visibility(value: boolean) { act(() => { hidden = value; document.dispatchEvent(new Event('visibilitychange')) }) }
++function art() { return ui.container.querySelector('.cc-preview .ch-animated')! }
++function expectMood(mood: Mood) {
++  expect(art().querySelector(`[data-expression="${mood}"]`)).not.toBeNull()
++  expect(art().getAttribute('data-character-pose')).toBe(mood === 'happy' ? 'idle' : mood)
++  expect(art().closest('svg')!.getAttribute('aria-label')).toContain(labels[moods.indexOf(mood)])
++}
++
++it.each((['mochi', 'bun', 'sprout'] as Species[]).flatMap(species => moods.map(mood => [species, mood] as const)))('previews %s in %s without saving or starting a clock', (species, mood) => {
++  click(radio({ mochi: 'Mochi', bun: 'Bun', sprout: 'Sprout' }[species]))
++  if (mood === 'happy') frame(1800)
++  click(button('Face'))
++  expect([...select().options].map(o => [o.value, o.textContent])).toEqual(moods.map((m, i) => [m, labels[i]]))
++  const image = art()
++  choose(mood)
++  expectMood(mood)
++  expect(art()).toBe(image)
++  expect(frames.size).toBe(0)
++  expect(saved).not.toHaveBeenCalled()
++  for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) {
++    const item = art().querySelector(`[data-slot="${slot}"]`)
++    if (mood === 'sick' && ['neck', 'outfit', 'back'].includes(slot)) expect(item).toBeNull()
++    else expect(item).not.toBeNull()
++  }
++})
++
++it.each(moods.slice(1))('cancels an active cheer before showing %s and does not replay it', mood => {
++  click(radio('Bun')); frame(756)
++  expect(art().querySelector('[data-expression="cheering"]')).not.toBeNull()
++  const stale = [...frames.values()][0]
++  click(button('Face')); choose(mood)
++  const still = art().innerHTML
++  expectMood(mood); expect(frames.size).toBe(0)
++  act(() => stale(3000))
++  frame(3000)
++  expect(art().innerHTML).toBe(still)
++  expect(saved).not.toHaveBeenCalled()
++})
++
++it('keeps the selected expression through look edits and saves only the look patch', () => {
++  click(button('Face')); choose('meh')
++  click(button('Who')); click(radio('Bun'))
++  click(button('Colour')); click(radio('Sky'))
++  click(button('Face')); click(radio('Sparkly')); click(radio('Hearts'))
++  expect(select().value).toBe('meh'); expectMood('meh'); expect(frames.size).toBe(0)
++  click(button('Save'))
++  expect(saved).toHaveBeenCalledExactlyOnceWith({ species: 'bun', bodyColour: '#9ED8F5', eyes: 'sparkly', cheeks: 'hearts' })
++  expect(closed).toHaveBeenCalledOnce()
++})
++
++it('returns to happy without replay and permits the next finite cheer to expire while hidden', () => {
++  click(radio('Bun')); frame(756)
++  click(button('Face')); choose('content'); choose('happy')
++  expectMood('happy'); expect(frames.size).toBe(0)
++  click(button('Who')); click(radio('Sprout'))
++  expect(frames.size).toBe(1)
++  frame(1512)
++  expect(art().querySelector('[data-expression="cheering"]')).not.toBeNull()
++  visibility(true); expect(frames.size).toBe(0)
++  now = 3000; visibility(false); frame(now)
++  expectMood('happy'); expect(frames.size).toBe(0)
++  expect(saved).not.toHaveBeenCalled()
++})
++
++it('supports every static expression under reduced motion and resets on remount', () => {
++  act(() => { Object.defineProperty(media, 'matches', { value: true, configurable: true }); media.dispatchEvent(new Event('change')) })
++  click(button('Face'))
++  for (const mood of moods) { choose(mood); expectMood(mood); expect(frames.size).toBe(0) }
++  click(button('Cancel')); expect(closed).toHaveBeenCalledOnce(); expect(saved).not.toHaveBeenCalled()
++  ui.unmount(); ui = render(content())
++  click(button('Face')); expect(select().value).toBe('happy'); expectMood('happy'); expect(frames.size).toBe(0)
++})
++
++it('keeps a mood-only preview through tab changes without creating a saved edit', () => {
++  click(button('Face')); choose('scruffy')
++  click(button('Who')); click(button('Colour')); click(button('Face'))
++  expect(select().value).toBe('scruffy'); expectMood('scruffy')
++  click(button('Save')); expect(saved).not.toHaveBeenCalled(); expect(closed).toHaveBeenCalledOnce()
++  expect(frames.size).toBe(0)
++})
+diff --git 1/scripts/browser/creator-mood.test.mjs 2/scripts/browser/creator-mood.test.mjs
+new file mode 100644
+index 0000000..1a56de7
+--- /dev/null
++++ 2/scripts/browser/creator-mood.test.mjs
+@@ -0,0 +1,195 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
++
++const out = process.env.CHORE_PET_MOOD_CAPTURE_DIR
++const moods = [['happy', 'Happy'], ['content', 'Content'], ['meh', 'Tired'], ['scruffy', 'Scruffy'], ['sick', 'Unwell']]
++async function creator(t, { species = 'mochi', width = 1280, height = 800, text = 100, clock = true } = {}) {
++  const page = await browserApp(t, { viewport: { width, height }, reducedMotion: 'no-preference' })
++  // Isolated local fixture: all worn slots and the actual species default colour.
++  await page.evaluate(species => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
++      const read = store.get('snapshot')
++      read.onsuccess = () => {
++        const saved = read.result, pet = Object.values(saved.tables.pets)[0]
++        pet.species = species
++        pet.bodyColour = { mochi: '#FFCFDA', bun: '#FFFFFF', sprout: '#FFD65C' }[species]
++        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++        saved.outbox = {}
++        store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), species)
++  await page.reload()
++  await page.getByRole('button', { name: 'More', exact: true }).click()
++  await page.getByRole('button', { name: 'Change look', exact: true }).click()
++  await page.getByRole('heading', { name: 'Change look', exact: true }).waitFor()
++  await page.waitForFunction(() => !document.documentElement.dataset.vt)
++  await page.evaluate(text => { document.documentElement.style.fontSize = `${text}%` }, text)
++  if (clock) {
++    await page.clock.install()
++    await page.clock.pauseAt(Date.now() + 1000)
++  }
++  await page.evaluate(() => {
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__moodFrames = new Set()
++    window.requestAnimationFrame = callback => {
++      const id = request(time => { window.__moodFrames.delete(id); callback(time) })
++      window.__moodFrames.add(id)
++      return id
++    }
++    window.cancelAnimationFrame = id => { window.__moodFrames.delete(id); cancel(id) }
++  })
++  if (clock) await page.clock.runFor(48)
++  else await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
++  return page
++}
++async function face(page) {
++  const tab = page.getByRole('tab', { name: 'Face', exact: true })
++  if (await tab.count()) await tab.click()
++  return page.getByRole('combobox', { name: 'Preview mood', exact: true })
++}
++const art = page => page.locator('.cc-preview .ch-animated')
++const frames = page => page.evaluate(() => window.__moodFrames.size)
++async function expectMood(page, mood, label) {
++  assert.equal(await art(page).getAttribute('data-character-pose'), mood === 'happy' ? 'idle' : mood)
++  assert.equal(await art(page).locator(`[data-expression="${mood}"]`).count(), 1)
++  assert.ok((await page.locator('.cc-preview svg').getAttribute('aria-label')).includes(label))
++  assert.equal(await frames(page), 0, 'Static preview owns no pending frames')
++}
++async function capture(page, name, data, clip) {
++  if (!out) return
++  await mkdir(out, { recursive: true })
++  await page.screenshot({ path: join(out, `${name}.png`), animations: 'disabled', ...(clip ? { clip } : {}) })
++  await writeFile(join(out, `${name}.json`), JSON.stringify({ ...data, capturePolicy: 'Finite CSS transitions fast-forwarded for settled visual inspection; infinite CSS animations cancelled during screenshot. Not temporal evidence. Static character geometry and state are independently checked.', browser: page.context().browser().version() }, null, 2) + '\n')
++}
++async function revealArt(page) {
++  await page.locator('.cc-preview svg').evaluate(node => node.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' }))
++  return page.locator('.cc-preview svg').boundingBox()
++}
++
++for (const species of ['mochi', 'bun', 'sprout']) {
++  test(`look editor previews all five expressions on dressed ${species} with no saved change or clock`, { timeout: 25000 }, async t => {
++    const page = await creator(t, { species })
++    const before = (await snapshot(page)).tables
++    const picker = await face(page)
++    assert.deepEqual(await picker.locator('option').evaluateAll(nodes => nodes.map(node => [node.value, node.textContent])), moods)
++    await picker.focus(); await page.keyboard.press('End'); await expectMood(page, 'sick', 'Unwell')
++    await page.keyboard.press('Home'); await expectMood(page, 'happy', 'Happy')
++    const samples = []
++    for (const [mood, label] of moods) {
++      await picker.selectOption(mood)
++      await expectMood(page, mood, label)
++      const slots = await art(page).locator('[data-slot]').evaluateAll(nodes => nodes.map(node => node.getAttribute('data-slot')).filter(slot => slot !== 'body').sort())
++      assert.deepEqual(slots, (mood === 'sick' ? ['head', 'face'] : ['head', 'face', 'neck', 'outfit', 'back']).sort())
++      const clip = await revealArt(page)
++      assert.ok(clip.height >= 120)
++      const data = { species, mood, label, slots, clip, frames: await frames(page), accessibleName: await page.locator('.cc-preview svg').getAttribute('aria-label'),
++        method: 'Actual offline production creator, native mood selection, species default colour and layered outfit. Preview SVG clip; still frame only, not temporal/AT/device certification.' }
++      samples.push(data)
++      await capture(page, `expression-${species}-${mood}`, data, clip)
++    }
++    assert.deepEqual((await snapshot(page)).tables, before)
++    if (out) await writeFile(join(out, `expressions-${species}.json`), JSON.stringify(samples, null, 2) + '\n')
++    if (species === 'mochi') {
++      await picker.focus()
++      await capture(page, 'expression-desktop-controls', { method: 'Desktop mood control focused with Unwell preview, layered outfit uses existing sick clothing occlusion.', frames: await frames(page) })
++    }
++  })
++}
++
++test('choosing a mood cancels the current cheer and reduction never replays it', { timeout: 25000 }, async t => {
++  const page = await creator(t)
++  const before = (await snapshot(page)).tables
++  await page.getByRole('radio', { name: 'Bun', exact: true }).click()
++  await page.clock.runFor(756)
++  assert.equal(await art(page).locator('[data-expression="cheering"]').count(), 1)
++  assert.equal(await frames(page), 1)
++  const picker = await face(page)
++  await picker.selectOption('content'); await expectMood(page, 'content', 'Content')
++  const still = await art(page).innerHTML()
++  await page.clock.runFor(2000)
++  assert.equal(await art(page).innerHTML(), still)
++  await changeReducedMotion(page, 'reduce')
++  await picker.selectOption('happy'); await expectMood(page, 'happy', 'Happy')
++  await page.getByRole('radio', { name: 'Sprout', exact: true }).click()
++  await page.clock.runFor(756); await expectMood(page, 'happy', 'Happy')
++  await picker.selectOption('sick'); await expectMood(page, 'sick', 'Unwell')
++  await changeReducedMotion(page, 'no-preference')
++  await page.clock.runFor(2000); await expectMood(page, 'sick', 'Unwell')
++  await picker.selectOption('happy'); await expectMood(page, 'happy', 'Happy')
++  await page.getByRole('radio', { name: 'Bun', exact: true }).click()
++  await page.clock.runFor(756)
++  assert.equal(await art(page).locator('[data-expression="cheering"]').count(), 1)
++  await picker.selectOption('meh'); await expectMood(page, 'meh', 'Tired')
++  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
++  assert.deepEqual((await snapshot(page)).tables, before)
++})
++
++test('mood-only Save changes no saved tables and reopening begins with Happy', { timeout: 25000 }, async t => {
++  const page = await creator(t)
++  const before = (await snapshot(page)).tables
++  const picker = await face(page)
++  await picker.selectOption('scruffy'); await expectMood(page, 'scruffy', 'Scruffy')
++  await page.getByRole('button', { name: 'Save', exact: true }).click()
++  await page.getByRole('heading', { name: 'Mochi', exact: true }).waitFor()
++  assert.deepEqual((await snapshot(page)).tables, before)
++  await page.clock.resume()
++  await page.getByRole('button', { name: 'More', exact: true }).click()
++  await page.getByRole('button', { name: 'Change look', exact: true }).click()
++  await page.getByRole('heading', { name: 'Change look', exact: true }).waitFor()
++  await page.waitForFunction(() => !document.documentElement.dataset.vt)
++  assert.equal(await (await face(page)).inputValue(), 'happy')
++  await expectMood(page, 'happy', 'Happy')
++})
++
++for (const [width, height] of [[320, 568], [390, 664], [640, 360], [1280, 800]]) {
++  test(`mood selector and character remain readable at ${width}x${height} text200`, { timeout: 25000 }, async t => {
++    const page = await creator(t, { width, height, text: 200 })
++    const before = (await snapshot(page)).tables
++    const picker = await face(page)
++    await picker.focus(); await page.keyboard.press('End')
++    await expectMood(page, 'sick', 'Unwell')
++    const geometry = await picker.evaluate(node => {
++      const r = node.getBoundingClientRect(), svg = document.querySelector('.cc-preview svg').getBoundingClientRect()
++      return { x: r.x, y: r.y, width: r.width, height: r.height, right: r.right, bottom: r.bottom,
++        textFits: node.scrollWidth <= node.clientWidth + 1, focused: node === document.activeElement, focusVisible: node.matches(':focus-visible'),
++        artHeight: svg.height, viewport: { width: innerWidth, height: innerHeight }, horizontalOverflow: document.documentElement.scrollWidth - innerWidth }
++    })
++    assert.ok(geometry.width >= 44 && geometry.height >= 44 && geometry.textFits)
++    assert.ok(geometry.x >= 0 && geometry.right <= width && geometry.y >= 0 && geometry.bottom <= height)
++    assert.ok(geometry.focused && geometry.focusVisible)
++    assert.ok(geometry.artHeight >= 120 && geometry.horizontalOverflow <= 0)
++    await capture(page, `expression-layout-${width}-control`, { geometry, method: 'Native focused mood selector at200% root text with End keyboard selection. Control bounds, text fit, focus-visible and120px art floor asserted.' })
++    const clip = await revealArt(page)
++    await capture(page, `expression-layout-${width}-preview`, { geometry, clip, method: 'Same selected Unwell expression, preview scrolled into view with native instant scrolling; no saved or motion change.' })
++    assert.deepEqual((await snapshot(page)).tables, before)
++  })
++}
++
++
++test('wrapped look tabs settle on the selected control with the real browser clock', { timeout: 25000 }, async t => {
++  const page = await creator(t, { width: 320, height: 568, text: 200, clock: false })
++  const before = (await snapshot(page)).tables
++  for (const name of ['Face', 'Colour', 'Who']) {
++    await page.getByRole('tab', { name, exact: true }).click()
++    await page.waitForFunction(() => !document.getAnimations().some(animation => animation.playState === 'running' && animation.effect?.target?.closest?.('.cc-tabs')))
++    const geometry = await page.evaluate(() => {
++      const selected = document.querySelector('.cc-tabs [aria-selected="true"]'), thumb = document.querySelector('.cc-tabs .seg-thumb')
++      const box = node => { const r = node.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height } }
++      return { selected: box(selected), thumb: box(thumb), selectedLabel: selected.textContent, colour: getComputedStyle(selected).color, pendingFrames: window.__moodFrames.size }
++    })
++    assert.equal(geometry.selectedLabel, name)
++    for (const key of ['x', 'y', 'width', 'height']) assert.ok(Math.abs(geometry.selected[key] - geometry.thumb[key]) < .01, `Settled tab thumb ${key}: ${JSON.stringify(geometry)}`)
++    assert.equal(geometry.pendingFrames, 0)
++    await capture(page, `expression-tabs-${name.toLowerCase()}`, { geometry, method: 'Actual native CSS tab transitions completed on real browser clock, not fake clock. Wrapped320x568/200%root text. Highlight rectangle matches selected tab; no perpetual character frames or saved writes.' })
++  }
++  assert.deepEqual((await snapshot(page)).tables, before)
++})
+diff --git i/docs/ART.md w/docs/ART.md
+index d8cef85..866b5bd 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -233,3 +233,5 @@ Saved-outfit name drafts keep their native input/control and caret when the ward
+ Dance together is a finite 2800ms player invitation with two grounded sways, lightly raised hands and small delayed appendage follow-through. Both foot contacts and the shadow remain fixed while the torso moves at most2.5SVGunits and leans at most4.5degrees before species/mood scaling. No reward marks appear. A quarter-duration ease raises and lowers the hands smoothly; the existing pleased-face blend and blink remain on the shared clock. Repeated invitations stay busy without extending or queueing the response; chores keep priority. Resting residents keep Check in. The wardrobe Dance preview shares Stop, Pause/Resume, Mirror, hidden-deadline and live-reduction behavior without saving or redrawing the item grid.
+ 
+ Change look retains a readable character and full input targets as root text grows. The stage/name field can shrink within landscape columns; cramped app-shell widths use page scrolling, a160px character area and a full-line title below Cancel/Save. Narrow option panels use horizontal species rows, two face columns, fitting swatches and wrapped tabs. Native focus gets8px scroll margin. This preserves draft/save behavior and the existing finite preview clock; no additional state, listener, timer or frame owner is introduced. Native checks cover five viewports at100%/200% root text, all choice groups, draft name/caret preservation across resizing and existing animation/reduction behavior.
++
++Change look offers a native Preview mood selector in Face: Happy, Content, Tired, Scruffy and Unwell. It samples the existing mood pose and clothing rules without putting mood into the look draft or saved patch. The character image names the selected expression. Choosing a mood cancels an active cheer before paint; other moods remain still while editing. Returning to Happy does not replay the old cheer, and the next eligible look change can start the existing finite cheer. Eye/cheek thumbnails retain their recognizable happy crops. Tab/resize changes preserve the preview selection; reopening resets Happy. Reduction and hidden expiry retain the existing owner. A44px field with8px scroll margin follows the editor reflow. Native checks cover all15species/mood combinations, keyboard selection, no saved-table changes, zero static pending frames, live reduction and four enlarged-text layouts; stills do not certify temporal comfort, whole-app zoom or physical devices.
+diff --git 1/docs/audits/2026-10-12-character-polish/creator-mood-design.md 2/docs/audits/2026-10-12-character-polish/creator-mood-design.md
+new file mode 100644
+index 0000000..02d1b44
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/creator-mood-design.md
+@@ -0,0 +1,9 @@
++# Preview expressions while changing a look
++
++Add one native Preview mood selector at the start of the existing Face options. Values are the current five moods, with visible labels Happy, Content, Tired, Scruffy and Unwell. The default is Happy. This is local preview state, outside the pet draft/save model; saved health, pet mood and worn clothing stay intact. The helper reads See how your look appears in each mood. The actual character image includes the selected expression in its accessible name. Eye/cheek option thumbnails retain their existing happy-face crops so each style remains recognizable.
++
++The existing CreatorPreview receives the selected mood and uses the same production sampler/renderer at rest. Changing mood cancels an active cheer before paint. Non-happy previews remain static while species, colour, eyes and cheeks change; returning to Happy alone does not replay a cheer, while the next eligible species/colour change can run its existing finite1800ms cheer. No extra animation owner, listener, timer, save field or queue. Live/system reduction and hidden-tab expiry retain the existing policy. Closing/reopening resets the selector; resizing and tab changes preserve it during this draft.
++
++Use the current responsive Face panel and native44px field target. Cramped layouts already have normal page scrolling; the preview must remain readable and selector/choices keyboard reachable at default and200% root text. Build meaningful red tests for all15species/mood combinations, cancellation and stale callbacks, unchanged saved patches, restoring Happy, hidden expiry, reduced motion, tab persistence and remount reset. Then verify real keyboard selection, layered art across allspecies/moods, saved tables and pendingframes in one offline native browser at a time. Inspect representative desktop/phone/enlarged-text art and controls before independent review. Stills do not certify human temporal comfort or physical devices.
++
++The broad continuing user authorization covers this bounded extension. The preceding CSS reflow was frozen while the new design/red-test paths were prepared, then independently approved and saved as89a99c0 before implementation changed its dependencies. Heavy jobs remain sequential/capped with2GiB reserve.

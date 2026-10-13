@@ -1,0 +1,129 @@
+// @vitest-environment jsdom
+import { act, StrictMode } from 'react'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import type { Mood, Pet, Species } from '../domain/types'
+import { click, render } from '../test/react'
+import { CharacterCreator, type PetLookPatch } from './CharacterCreator'
+
+const pet: Pet = { id: 'pet', homeId: 'home', name: 'Mochi', species: 'mochi', bodyColour: '#FFCFDA', eyes: 'classic', cheeks: 'round', equipped: { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' } }
+let ui: ReturnType<typeof render>
+let now: number, serial: number, hidden: boolean
+let frames: Map<number, FrameRequestCallback>
+let media: MediaQueryList
+let saved: ReturnType<typeof vi.fn<(patch: PetLookPatch) => void>>
+let closed: ReturnType<typeof vi.fn<() => void>>
+const content = () => <StrictMode><CharacterCreator pet={pet} onSave={saved} onClose={closed} /></StrictMode>
+const moods: Mood[] = ['happy', 'content', 'meh', 'scruffy', 'sick']
+const labels = ['Happy', 'Content', 'Tired', 'Scruffy', 'Unwell']
+
+beforeEach(() => {
+  now = 0; serial = 0; hidden = false; frames = new Map(); saved = vi.fn(); closed = vi.fn()
+  vi.spyOn(performance, 'now').mockImplementation(() => now)
+  vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden)
+  media = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
+  const narrow = Object.assign(new EventTarget(), { matches: false }) as MediaQueryList
+  vi.stubGlobal('matchMedia', (query: string) => query.includes('prefers-reduced-motion') ? media : narrow)
+  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => { frames.set(++serial, callback); return serial })
+  vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
+  ui = render(content())
+})
+afterEach(() => { ui.unmount(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
+function button(name: string) {
+  const node = [...ui.container.querySelectorAll('button')].find(node => node.textContent === name)
+  expect(node, `button ${name}`).toBeTruthy(); return node!
+}
+function radio(name: string) {
+  const node = ui.container.querySelector(`[role="radio"][aria-label="${name}"]`)
+  expect(node, `radio ${name}`).not.toBeNull(); return node!
+}
+function select() {
+  const label = [...ui.container.querySelectorAll('label')].find(node => node.textContent === 'Preview mood')
+  expect(label, 'Preview mood has a native label').toBeTruthy()
+  const node = document.getElementById(label!.htmlFor) as HTMLSelectElement | null
+  expect(node).not.toBeNull(); return node!
+}
+function choose(mood: Mood) {
+  const node = select()
+  act(() => { node.value = mood; node.dispatchEvent(new Event('change', { bubbles: true })) })
+}
+function frame(at: number) { now = at; const pending = [...frames.values()]; frames.clear(); act(() => pending.forEach(fn => fn(at))) }
+function visibility(value: boolean) { act(() => { hidden = value; document.dispatchEvent(new Event('visibilitychange')) }) }
+function art() { return ui.container.querySelector('.cc-preview .ch-animated')! }
+function expectMood(mood: Mood) {
+  expect(art().querySelector(`[data-expression="${mood}"]`)).not.toBeNull()
+  expect(art().getAttribute('data-character-pose')).toBe(mood === 'happy' ? 'idle' : mood)
+  expect(art().closest('svg')!.getAttribute('aria-label')).toContain(labels[moods.indexOf(mood)])
+}
+
+it.each((['mochi', 'bun', 'sprout'] as Species[]).flatMap(species => moods.map(mood => [species, mood] as const)))('previews %s in %s without saving or starting a clock', (species, mood) => {
+  click(radio({ mochi: 'Mochi', bun: 'Bun', sprout: 'Sprout' }[species]))
+  if (mood === 'happy') frame(1800)
+  click(button('Face'))
+  expect([...select().options].map(o => [o.value, o.textContent])).toEqual(moods.map((m, i) => [m, labels[i]]))
+  const image = art()
+  choose(mood)
+  expectMood(mood)
+  expect(art()).toBe(image)
+  expect(frames.size).toBe(0)
+  expect(saved).not.toHaveBeenCalled()
+  for (const slot of ['head', 'face', 'neck', 'outfit', 'back']) {
+    const item = art().querySelector(`[data-slot="${slot}"]`)
+    if (mood === 'sick' && ['neck', 'outfit', 'back'].includes(slot)) expect(item).toBeNull()
+    else expect(item).not.toBeNull()
+  }
+})
+
+it.each(moods.slice(1))('cancels an active cheer before showing %s and does not replay it', mood => {
+  click(radio('Bun')); frame(756)
+  expect(art().querySelector('[data-expression="cheering"]')).not.toBeNull()
+  const stale = [...frames.values()][0]
+  click(button('Face')); choose(mood)
+  const still = art().innerHTML
+  expectMood(mood); expect(frames.size).toBe(0)
+  act(() => stale(3000))
+  frame(3000)
+  expect(art().innerHTML).toBe(still)
+  expect(saved).not.toHaveBeenCalled()
+})
+
+it('keeps the selected expression through look edits and saves only the look patch', () => {
+  click(button('Face')); choose('meh')
+  click(button('Who')); click(radio('Bun'))
+  click(button('Colour')); click(radio('Sky'))
+  click(button('Face')); click(radio('Sparkly')); click(radio('Hearts'))
+  expect(select().value).toBe('meh'); expectMood('meh'); expect(frames.size).toBe(0)
+  click(button('Save'))
+  expect(saved).toHaveBeenCalledExactlyOnceWith({ species: 'bun', bodyColour: '#9ED8F5', eyes: 'sparkly', cheeks: 'hearts' })
+  expect(closed).toHaveBeenCalledOnce()
+})
+
+it('returns to happy without replay and permits the next finite cheer to expire while hidden', () => {
+  click(radio('Bun')); frame(756)
+  click(button('Face')); choose('content'); choose('happy')
+  expectMood('happy'); expect(frames.size).toBe(0)
+  click(button('Who')); click(radio('Sprout'))
+  expect(frames.size).toBe(1)
+  frame(1512)
+  expect(art().querySelector('[data-expression="cheering"]')).not.toBeNull()
+  visibility(true); expect(frames.size).toBe(0)
+  now = 3000; visibility(false); frame(now)
+  expectMood('happy'); expect(frames.size).toBe(0)
+  expect(saved).not.toHaveBeenCalled()
+})
+
+it('supports every static expression under reduced motion and resets on remount', () => {
+  act(() => { Object.defineProperty(media, 'matches', { value: true, configurable: true }); media.dispatchEvent(new Event('change')) })
+  click(button('Face'))
+  for (const mood of moods) { choose(mood); expectMood(mood); expect(frames.size).toBe(0) }
+  click(button('Cancel')); expect(closed).toHaveBeenCalledOnce(); expect(saved).not.toHaveBeenCalled()
+  ui.unmount(); ui = render(content())
+  click(button('Face')); expect(select().value).toBe('happy'); expectMood('happy'); expect(frames.size).toBe(0)
+})
+
+it('keeps a mood-only preview through tab changes without creating a saved edit', () => {
+  click(button('Face')); choose('scruffy')
+  click(button('Who')); click(button('Colour')); click(button('Face'))
+  expect(select().value).toBe('scruffy'); expectMood('scruffy')
+  click(button('Save')); expect(saved).not.toHaveBeenCalled(); expect(closed).toHaveBeenCalledOnce()
+  expect(frames.size).toBe(0)
+})

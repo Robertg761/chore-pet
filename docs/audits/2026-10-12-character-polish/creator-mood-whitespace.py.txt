@@ -1,0 +1,8 @@
+from pathlib import Path
+import subprocess
+sources=['src/screens/CharacterCreator.tsx','src/screens/CharacterCreator.css','src/screens/CreatorPreview.tsx','src/screens/creatorModel.ts','src/screens/CharacterCreator.mood.test.tsx','scripts/browser/creator-mood.test.mjs','docs/ART.md','docs/audits/2026-10-12-character-polish/creator-mood-design.md']
+for p in sources:
+ tracked=subprocess.run(['git','ls-files','--error-unmatch',p],capture_output=True).returncode==0
+ r=subprocess.run(['git','diff','--check','--',p] if tracked else ['git','diff','--no-index','--check','--','/dev/null',p],capture_output=True,text=True)
+ assert r.returncode==(0 if tracked else 1) and not(r.stdout+r.stderr).strip(),(p,r)
+ print(p,'whitespace pass')

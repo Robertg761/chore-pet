@@ -1,0 +1,22 @@
+{
+  "species": "mochi",
+  "mood": "meh",
+  "label": "Tired",
+  "slots": [
+    "back",
+    "face",
+    "head",
+    "neck",
+    "outfit"
+  ],
+  "clip": {
+    "x": 207,
+    "y": 89,
+    "width": 402,
+    "height": 624
+  },
+  "frames": 0,
+  "accessibleName": "Mochi, Mochi, Tired preview",
+  "method": "Actual offline production creator, native mood selection, species default colour and layered outfit. Preview SVG clip; still frame only, not temporal/AT/device certification.",
+  "browser": "152.0.7977.82"
+}

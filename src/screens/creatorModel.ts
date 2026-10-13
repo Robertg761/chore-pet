@@ -1,6 +1,6 @@
 import { mix } from '../art/color'
 import { PALETTE, SPECIES_COLOUR } from '../art/palette'
-import type { CheekStyle, EyeStyle, Pet, Species } from '../domain/types'
+import type { CheekStyle, EyeStyle, Mood, Pet, Species } from '../domain/types'
 
 // Pure helpers for the character creator, so the UI never decides what "changed" means.
 
@@ -36,6 +36,14 @@ export const CHEEK_OPTIONS: readonly { value: CheekStyle; label: string }[] = [
   { value: 'hearts', label: 'Hearts' },
   { value: 'freckles', label: 'Freckles' },
   { value: 'none', label: 'None' },
+]
+
+export const PREVIEW_MOOD_OPTIONS: readonly { value: Mood; label: string }[] = [
+  { value: 'happy', label: 'Happy' },
+  { value: 'content', label: 'Content' },
+  { value: 'meh', label: 'Tired' },
+  { value: 'scruffy', label: 'Scruffy' },
+  { value: 'sick', label: 'Unwell' },
 ]
 
 export const sameColour = (a: string, b: string) => a.toLowerCase() === b.toLowerCase()

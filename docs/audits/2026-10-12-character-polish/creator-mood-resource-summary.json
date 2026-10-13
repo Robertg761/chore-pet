@@ -1,0 +1,109 @@
+{
+  "runs": 14,
+  "sampleRows": 409,
+  "minimumObservedAvailableMiB": 2666.67578125,
+  "minimumObservedTmpFreeMiB": 3997.80859375,
+  "reserveStops": 0,
+  "launchRejections": 0,
+  "rows": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-build-resources.json",
+      "samples": 12,
+      "minimumAvailableMiB": 3759.6484375,
+      "minimumTmpMiB": 4090.65625,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-build-resources.json",
+      "samples": 13,
+      "minimumAvailableMiB": 3550.85546875,
+      "minimumTmpMiB": 4090.640625,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-diff-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 3901.23828125,
+      "minimumTmpMiB": 4090.63671875,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-focused-resources.json",
+      "samples": 7,
+      "minimumAvailableMiB": 3811.4296875,
+      "minimumTmpMiB": 4089.8046875,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-full-resources.json",
+      "samples": 90,
+      "minimumAvailableMiB": 2666.67578125,
+      "minimumTmpMiB": 4078.5859375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-lint-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4126.9453125,
+      "minimumTmpMiB": 4090.65234375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-native-v2-resources.json",
+      "samples": 58,
+      "minimumAvailableMiB": 3230.6015625,
+      "minimumTmpMiB": 4002.34765625,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-native-resources.json",
+      "samples": 58,
+      "minimumAvailableMiB": 3650.2265625,
+      "minimumTmpMiB": 3998.51953125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-focused-resources.json",
+      "samples": 7,
+      "minimumAvailableMiB": 4089.359375,
+      "minimumTmpMiB": 4089.8203125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-full-resources.json",
+      "samples": 90,
+      "minimumAvailableMiB": 2718.46875,
+      "minimumTmpMiB": 4078.67578125,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-lint-resources.json",
+      "samples": 3,
+      "minimumAvailableMiB": 4092.19921875,
+      "minimumTmpMiB": 4090.65234375,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-native-resources.json",
+      "samples": 55,
+      "minimumAvailableMiB": 3754.69140625,
+      "minimumTmpMiB": 3997.80859375,
+      "exitCode": 0
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-red-v2-resources.json",
+      "samples": 5,
+      "minimumAvailableMiB": 4000.46484375,
+      "minimumTmpMiB": 4089.92578125,
+      "exitCode": 1
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-red-resources.json",
+      "samples": 5,
+      "minimumAvailableMiB": 4094.875,
+      "minimumTmpMiB": 4089.92578125,
+      "exitCode": 1
+    }
+  ],
+  "limits": "Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor."
+}

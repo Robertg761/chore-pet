@@ -1,0 +1,22 @@
+{
+  "geometry": {
+    "x": 696,
+    "y": 579.78125,
+    "width": 540,
+    "height": 51,
+    "right": 1236,
+    "bottom": 630.78125,
+    "textFits": true,
+    "focused": true,
+    "focusVisible": true,
+    "artHeight": 597,
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "horizontalOverflow": 0
+  },
+  "method": "Native focused mood selector at200% root text with End keyboard selection. Control bounds, text fit, focus-visible and120px art floor asserted.",
+  "capturePolicy": "Finite CSS transitions fast-forwarded for settled visual inspection; infinite CSS animations cancelled during screenshot. Not temporal evidence. Static character geometry and state are independently checked.",
+  "browser": "152.0.7977.82"
+}

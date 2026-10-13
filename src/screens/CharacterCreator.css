@@ -1,7 +1,7 @@
 /* Change look: fits one view. Phones stack the pet, the name and a tabbed panel;
    wide screens (and phones on their side) go two columns. Header and screen frame: shell/ScreenHeader.css. */
 .cc { gap: 6px; }
-.cc button, .cc input { scroll-margin: 8px; }
+.cc button, .cc input, .cc select { scroll-margin: 8px; }
 
 .cc-body { flex: 1 1 0; min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
 
@@ -34,6 +34,8 @@
 .cc-current { font-size: 0.875rem; font-weight: 700; color: var(--ink-soft); }
 .cc-hint { margin: 0; font-size: 0.8125rem; font-weight: 700; color: var(--ink-soft); }
 .cc-note { text-align: center; }
+.cc-mood label { font-weight: 800; }
+.cc-mood select { min-width: 0; min-height: 44px; max-width: 100%; }
 
 /* Every option is a radio button; the selected one gets the accent ring. */
 .cc-choice {

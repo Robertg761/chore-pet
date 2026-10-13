@@ -1,0 +1,104 @@
+[
+  {
+    "species": "bun",
+    "mood": "happy",
+    "label": "Happy",
+    "slots": [
+      "back",
+      "face",
+      "head",
+      "neck",
+      "outfit"
+    ],
+    "clip": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624
+    },
+    "frames": 0,
+    "accessibleName": "Mochi, Bun, Happy preview",
+    "method": "Actual offline production creator, native mood selection, species default colour and layered outfit. Preview SVG clip; still frame only, not temporal/AT/device certification."
+  },
+  {
+    "species": "bun",
+    "mood": "content",
+    "label": "Content",
+    "slots": [
+      "back",
+      "face",
+      "head",
+      "neck",
+      "outfit"
+    ],
+    "clip": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624
+    },
+    "frames": 0,
+    "accessibleName": "Mochi, Bun, Content preview",
+    "method": "Actual offline production creator, native mood selection, species default colour and layered outfit. Preview SVG clip; still frame only, not temporal/AT/device certification."
+  },
+  {
+    "species": "bun",
+    "mood": "meh",
+    "label": "Tired",
+    "slots": [
+      "back",
+      "face",
+      "head",
+      "neck",
+      "outfit"
+    ],
+    "clip": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624
+    },
+    "frames": 0,
+    "accessibleName": "Mochi, Bun, Tired preview",
+    "method": "Actual offline production creator, native mood selection, species default colour and layered outfit. Preview SVG clip; still frame only, not temporal/AT/device certification."
+  },
+  {
+    "species": "bun",
+    "mood": "scruffy",
+    "label": "Scruffy",
+    "slots": [
+      "back",
+      "face",
+      "head",
+      "neck",
+      "outfit"
+    ],
+    "clip": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624
+    },
+    "frames": 0,
+    "accessibleName": "Mochi, Bun, Scruffy preview",
+    "method": "Actual offline production creator, native mood selection, species default colour and layered outfit. Preview SVG clip; still frame only, not temporal/AT/device certification."
+  },
+  {
+    "species": "bun",
+    "mood": "sick",
+    "label": "Unwell",
+    "slots": [
+      "face",
+      "head"
+    ],
+    "clip": {
+      "x": 207,
+      "y": 89,
+      "width": 402,
+      "height": 624
+    },
+    "frames": 0,
+    "accessibleName": "Mochi, Bun, Unwell preview",
+    "method": "Actual offline production creator, native mood selection, species default colour and layered outfit. Preview SVG clip; still frame only, not temporal/AT/device certification."
+  }
+]

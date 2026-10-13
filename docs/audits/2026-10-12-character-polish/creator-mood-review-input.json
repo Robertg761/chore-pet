@@ -1,0 +1,239 @@
+{
+  "freeze": {
+    "baseCommit": "89a99c09fe4b483ba959fff9b47fb37211f5b21b",
+    "sources": {
+      "src/screens/creatorModel.ts": "65596944161f450b7d87c3b3782698bc8cb3b0694e270cdb64280d8355ca1b8b",
+      "src/screens/CharacterCreator.tsx": "a9b21bce7fbc51b1ef7a4571c1a426e63c503eff8e66aeb57aaee55a7bb48bda",
+      "src/screens/CreatorPreview.tsx": "73206db2add0dd31753261cea0084511f30d54325c1c1db40dc66da4e9305657",
+      "src/screens/CharacterCreator.css": "d62758c7aee75e161ae302f81e257c217f9f1b561189d1de097b04b216ba690a",
+      "src/screens/CharacterCreator.mood.test.tsx": "ddfdbf32456a8e5d4581c6feda54f5b2ce4c804af0335ed25a7dbbecc6323cf9",
+      "scripts/browser/creator-mood.test.mjs": "f0ab948abbb22859a8773bd80a75c4d1ac55ce6289e153c684949698fc5aa74f",
+      "docs/ART.md": "869682193d1f779a84fbed319872b008e084b1035f58287d4359b56b00a70804",
+      "docs/audits/2026-10-12-character-polish/creator-mood-design.md": "0a7698f7ad8f5908d9e784becdc1e65c1a868d7b947b7478c991f2b9d3c153b3"
+    },
+    "unchangedSources": {
+      "src/screens/CharacterCreator.test.tsx": "26f82b2fa3c8eb31945af149684fa1ce9f32018cbf93925651b31575aaa20832",
+      "src/screens/creatorModel.test.ts": "0bd1b3445e719c73f91916be25465639f107fee2e3a47941284e04a997d2bb7e",
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/character/Character.css": "b30c9ffd119371268a744563e054b5e7d41ae0abf1d1e6120caff9bbfa0afccf",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/motion.ts": "07679d0a1f861d3bd327a5eb05b1d3b0edda9fc3b1633da53a4965a5b601173a",
+      "src/character/items.tsx": "f06572844f4a349fef05caa7a45068f5935815f14d79daf0a76d71dc3d412c6a",
+      "src/character/items/extras.tsx": "2ebe7ed7be300b2a5a207fb67037ec28146ae96a1bbba00d6c8627fce3b8d173",
+      "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+      "src/pet/usePetMotion.test.tsx": "07474f35781bb9b3442939d6eba0da4753211092a0d423d69c88236c782de93b",
+      "src/pet/usePetMotion.preference.test.tsx": "39d4767c5b54d38a0a4335b4f1bd8553ebffdf5aa78f0103e98c77655da70f68",
+      "src/shell/useViewport.ts": "889d9cc64d950e9f0f8473326e5b821cc0f485a60b7011003e12536ba54515ef",
+      "src/shell/ScreenHeader.tsx": "4cb84f6ce0d9ba56f1e60297e79fa0fab7ed22f8ae4d7b4147b3b7b9a8c7b7f8",
+      "src/shell/ScreenHeader.css": "6f080e585b434cef33665cd58c627389010b3ec0e3c9a0b3fd15cfb56ded1e65",
+      "src/shell/SegThumb.tsx": "9c35f972813c2270237ca025a0bf07250eaf1b2f5b79cf49c1de7e79c3134eea",
+      "src/shell/controls.css": "a0d257f01716ffb9aeecc89d5903b4d92a00a5b035caba72b02c5090c1889dce",
+      "src/index.css": "28b09b668da92e49c2a13554af34e56408dcc677d21e954fbc8145262b592418",
+      "src/App.tsx": "c8c59ac9cf30d66d7daaf1a8316b23c64beb0554784a59665e3057c39303e81a",
+      "src/data/store.ts": "3a02f895c6688efb8257eec7f8ef083d6257a1e2c37cdd5b378cbe1807092733",
+      "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+      "scripts/browser/creator-motion.test.mjs": "564d3d001515720921a0f507b4e157523171370ed474b1c3825b712b06a37987",
+      "scripts/browser/creator-layout.test.mjs": "3c730821d0b14103993feec4c1461539a1ce6434c887671bed30ceb44df7aed9",
+      "src/character/poses.ts": "5a7cf52f0dc3c8efbb9f4478fbbbbf660f345f5cfb12a6e1e078487acf7a1fcc"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/creator-mood-source.diff",
+      "sha256": "f3f9345e98824dcdd59099cd6a6b5990c6ae5b7794a0dce93b77b59cb5eef8aa"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/creator-mood-artifacts.json",
+    "sha256": "7724d18434e6297ebc7b29992be0555e8e459bf1dd083fd968cb3a47f9b1d9ec"
+  },
+  "checks": [
+    {
+      "name": "creator-mood-build",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-build.log",
+      "logSha256": "1b1b10b466233c219aa73aaab41fcf76cbf3046a88db38ad672d50bd5d39bd30",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-mood-final-build",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-final-build.log",
+      "logSha256": "11d85f40f170810789460d7fdb0f3bcff2bfb92b90d6ee318870bbca12a0005e",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-mood-final-diff",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-final-diff.log",
+      "logSha256": "145c82944da2be55fada71201bbd049fe5da0972d50aea6242ab0df14b0f5ee6",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-mood-final-focused",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-final-focused.log",
+      "logSha256": "eb52414c2b4c2cd327b0bb270b247ea01d4b5a4c101ea9bb3685bcfcf05ab924",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-mood-final-full",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-final-full.log",
+      "logSha256": "804eacbd8aa951b4683e05c3dc7246c5e9f6d54ba9c908a7e85aa22190eb9c90",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-mood-final-lint",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-final-lint.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-mood-final-native-v2",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-final-native-v2.log",
+      "logSha256": "cea6fb5cb160d3c9224da6d4536d0ea5d323e14468414980f9e97b9f35bfe6ac",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-native-v2.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-mood-final-native",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-final-native.log",
+      "logSha256": "c49571ac942d039e333e91f3bdd7bf74c3376141faa8fe91b3f2ec1e6accad29",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-final-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-mood-focused",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-focused.log",
+      "logSha256": "a47c264bd3815ece463c8b489dcaf2757d9848117098c64d89421d06d4c8baeb",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-mood-full",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-full.log",
+      "logSha256": "40a3cf38f3b4b47977fe2a598428fdbbaec792f071ba62a398e7aa675a38121a",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-mood-lint",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-lint.log",
+      "logSha256": "a8569a0bc9cad800383421c368d13c15f3d2a16a63991ed4474947313edf4a89",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-lint.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "creator-mood-native",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-native.log",
+      "logSha256": "c31f27941b5850b27da9d31dfe15226fea5a63cf2c4ce7bb108c22b8df534b99",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "creator-mood-red-v2",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-red-v2.log",
+      "logSha256": "c6587a7ad7d4582881cd67999ea0c4b8588b0b031f0eb9abfadb2cdb6dc39198",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-red-v2.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "creator-mood-red",
+      "log": "docs/audits/2026-10-12-character-polish/creator-mood-red.log",
+      "logSha256": "448ed889072387e96d2fb2a2900dafebb681be591eab964a42a44562805d3a41",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/creator-mood-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "results": {
+    "summary": "Preview mood: final63focused/5files,2485full/131files,25nativepass; productiontypecheck/build/PWA, zero-warning5pathlint,8authoredwhitespacepass. Final27PNGreview3direct+24exactpriorreviewidentities,15art samples,4enlarged controls,3real-clock settled tabs recomputed. Mood never enters saved look or pet health; no new animation owner.",
+    "focused": {
+      "tests": 63,
+      "files": 5,
+      "durationSeconds": 4.2,
+      "check": "creator-mood-final-focused"
+    },
+    "full": {
+      "tests": 2485,
+      "files": 131,
+      "durationSeconds": 86.76,
+      "check": "creator-mood-final-full"
+    },
+    "native": {
+      "tests": 25,
+      "pass": 25,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "durationSeconds": 55.268328539,
+      "check": "creator-mood-final-native-v2"
+    },
+    "visual": {
+      "finalPngs": 27,
+      "directFinalRoot": 3,
+      "exactPriorReviewed": 24,
+      "speciesMoodArtSamples": 15,
+      "enlargedControlSamples": 4,
+      "realClockSettledTabs": 3,
+      "manifest": "docs/audits/2026-10-12-character-polish/creator-mood-root-visual-review.json"
+    }
+  },
+  "scope": "Four production files add one native Face-panel mood selector and optional preview mood with friendly image name, static nonhappy production poses, synchronous event cancellation and Happy restore without replay. No save model/health/equipment mutation; existing sick clothing occlusion retained. One unit file23cases, one native file10newcases plus15existingcases, ART and design. Main preview0JSRAF is not a claim about thumbnail CSS animation. Offline native Chromium only; still/root-text geometry not physical device, AT, temporalcomfort or full-browserzoom certification.",
+  "history": "Original23redfail missing selector; red-v2 same23fail after replacing CSS.escape test helper and waiting initial finite cheer. Exact initial/v2 red tests archived. Sick expectation corrected to existing bed clothing occlusion. Initialeffectimplementation passes63focused,build,24native,2485full; first24capture found transient tab highlight during native CSS transition, then settled-capture policy and added real-clock completion test confirmed exact selected rectangles without global SegThumb changes. First settled25nativepass. Strict lint then rejects new useLayoutEffect setState; replaced with existing imperative settle in mood change event (no new effect). Final currentproduction reruns zero-warning lint,63focused,build,2485full,25native and8pathwhitespace; current27captures bind final source, oldbytes/logs preserved. All failed checks and pre-refactor passes remain historical; final claims use final-prefixed runs.",
+  "resources": {
+    "runs": 14,
+    "sampleRows": 409,
+    "minimumObservedAvailableMiB": 2666.67578125,
+    "minimumObservedTmpFreeMiB": 3997.80859375,
+    "reserveStops": 0,
+    "launchRejections": 0,
+    "limits": "Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor."
+  },
+  "status": "Scoped checks complete; awaiting bounded independent review."
+}

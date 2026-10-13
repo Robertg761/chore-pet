@@ -1,0 +1,27 @@
+{
+  "geometry": {
+    "x": 696,
+    "y": 579.78125,
+    "width": 540,
+    "height": 51,
+    "right": 1236,
+    "bottom": 630.78125,
+    "textFits": true,
+    "focused": true,
+    "focusVisible": true,
+    "artHeight": 597,
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "horizontalOverflow": 0
+  },
+  "clip": {
+    "x": 259,
+    "y": 111,
+    "width": 402,
+    "height": 597
+  },
+  "method": "Same selected Unwell expression, preview scrolled into view with native instant scrolling; no saved or motion change.",
+  "browser": "152.0.7977.82"
+}

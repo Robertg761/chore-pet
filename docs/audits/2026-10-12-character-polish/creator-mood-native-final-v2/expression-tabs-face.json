@@ -1,0 +1,22 @@
+{
+  "geometry": {
+    "selected": {
+      "x": 20,
+      "y": 234.375,
+      "width": 280,
+      "height": 44
+    },
+    "thumb": {
+      "x": 20,
+      "y": 234.375,
+      "width": 280,
+      "height": 44
+    },
+    "selectedLabel": "Face",
+    "colour": "rgb(255, 255, 255)",
+    "pendingFrames": 0
+  },
+  "method": "Actual native CSS tab transitions completed on real browser clock, not fake clock. Wrapped320x568/200%root text. Highlight rectangle matches selected tab; no perpetual character frames or saved writes.",
+  "capturePolicy": "Finite CSS transitions fast-forwarded for settled visual inspection; infinite CSS animations cancelled during screenshot. Not temporal evidence. Static character geometry and state are independently checked.",
+  "browser": "152.0.7977.82"
+}

@@ -1,0 +1,28 @@
+{
+  "geometry": {
+    "x": 14,
+    "y": 339.375,
+    "width": 292,
+    "height": 51,
+    "right": 306,
+    "bottom": 390.375,
+    "textFits": true,
+    "focused": true,
+    "focusVisible": true,
+    "artHeight": 160,
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "horizontalOverflow": 0
+  },
+  "clip": {
+    "x": 21,
+    "y": 176.375,
+    "width": 278,
+    "height": 160
+  },
+  "method": "Same selected Unwell expression, preview scrolled into view with native instant scrolling; no saved or motion change.",
+  "capturePolicy": "Finite CSS transitions fast-forwarded for settled visual inspection; infinite CSS animations cancelled during screenshot. Not temporal evidence. Static character geometry and state are independently checked.",
+  "browser": "152.0.7977.82"
+}

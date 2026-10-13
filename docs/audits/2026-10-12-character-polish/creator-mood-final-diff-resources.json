@@ -1,0 +1,38 @@
+{
+  "utc": "2026-10-13T06:08:45.291888+00:00",
+  "command": [
+    "python3",
+    "/tmp/creator-mood-whitespace.py"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": null,
+  "cleanup": {
+    "processGroup": 3,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 0
+  },
+  "minimumObservedAvailableBytes": 4090744832,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4157747200,
+      "tmpFreeBytes": 4289343488
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4157747200,
+      "tmpFreeBytes": 4289343488
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4090744832,
+      "tmpFreeBytes": 4289343488
+    }
+  ]
+}

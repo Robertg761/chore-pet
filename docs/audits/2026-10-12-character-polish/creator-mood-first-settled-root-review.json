@@ -1,0 +1,113 @@
+{
+  "directSettledPngs": {
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-desktop-controls.png": "40156c50b9aef0fd4d119af6ed013ada9da440e9da2e8ecdc2d0a232dd53d6c2",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-layout-320-control.png": "193e69bb09928b4d6b39399cb7a8bde121a8dd8dca83160acb17b832015ca7c6",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-layout-390-control.png": "5c86ef29070028eff47f57e376a80b028bc59efab2400d271257cbb22ded49f6",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-layout-640-control.png": "372384f5bc8054d6846d75390f646c28d5577b9b604661517903d415b5921d98",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-layout-1280-control.png": "59f9cb0c5575796320c88a97808b9b49bd03667b8f37524d8a03dcb4d547c5b9",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-layout-320-preview.png": "fa5d6e62a16e178489ecc526a53a261288f8f7267ea7403d47ae0c4df091bc90",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-layout-390-preview.png": "5c86ef29070028eff47f57e376a80b028bc59efab2400d271257cbb22ded49f6",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-layout-640-preview.png": "a14342975446cae48774eea9596e2c3fa4ef9e366d0f95ebbb078f4a399424e9",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-layout-1280-preview.png": "59f9cb0c5575796320c88a97808b9b49bd03667b8f37524d8a03dcb4d547c5b9",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-tabs-face.png": "625442fda36f988b950ae7fd0e73a15a9048eb9c00b9caafc044746f9a2e15a8",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-tabs-colour.png": "7b1895627c2d004cdff9dd6d2410e0463aee3903efd07e5670fa956e257d90c9",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-tabs-who.png": "b2bd3b86047d7245a17478e9393b94fa659089e01197cd5e6ebf7dc03c12eca2",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-bun-meh.png": "b9ffa5ddc6fea9685227dbd7fe16461c31623d4cdb2f91a7d7b9b670dadf5ca9"
+  },
+  "exactInitialDirectCarry": {
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-mochi-happy.png": {
+      "sha256": "9a8b1f7aa9f87e85c909e75cec3bc94bf6febf370d75daeccc66e3adad65d379",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-mochi-happy.png",
+      "priorSha256": "9a8b1f7aa9f87e85c909e75cec3bc94bf6febf370d75daeccc66e3adad65d379"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-mochi-content.png": {
+      "sha256": "4dfe62feacf7e3c87dbbda16c8985acec1376ca19e6644a9b853230363629b70",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-mochi-content.png",
+      "priorSha256": "4dfe62feacf7e3c87dbbda16c8985acec1376ca19e6644a9b853230363629b70"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-mochi-meh.png": {
+      "sha256": "11d0da54de800cde60b0fe8b1088dd8df83bf703fb7f6749006d3894df3afca1",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-mochi-meh.png",
+      "priorSha256": "11d0da54de800cde60b0fe8b1088dd8df83bf703fb7f6749006d3894df3afca1"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-mochi-scruffy.png": {
+      "sha256": "24bbeeb24052efc2af04372a3b3f671815061e053cea6e5a9dc0fd6690ebfb22",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-mochi-scruffy.png",
+      "priorSha256": "24bbeeb24052efc2af04372a3b3f671815061e053cea6e5a9dc0fd6690ebfb22"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-mochi-sick.png": {
+      "sha256": "b94897c65660808583c5a8eef5877bb7dea2538519e693a545b7bfdcb43adbfe",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-mochi-sick.png",
+      "priorSha256": "b94897c65660808583c5a8eef5877bb7dea2538519e693a545b7bfdcb43adbfe"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-bun-happy.png": {
+      "sha256": "708b633b10fac2cb8332176c1181ee1a63533473a6d9e06295be29b4e788acc6",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-bun-happy.png",
+      "priorSha256": "708b633b10fac2cb8332176c1181ee1a63533473a6d9e06295be29b4e788acc6"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-bun-content.png": {
+      "sha256": "7fa856a2891896e08df41f244a864c051fd15bee243ab4ac521748b4e1f49fdf",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-bun-content.png",
+      "priorSha256": "7fa856a2891896e08df41f244a864c051fd15bee243ab4ac521748b4e1f49fdf"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-bun-scruffy.png": {
+      "sha256": "0e8d6976e8e51b343a8160e9b7c46445cc222c7e87bb1b428e65358f710edf22",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-bun-scruffy.png",
+      "priorSha256": "0e8d6976e8e51b343a8160e9b7c46445cc222c7e87bb1b428e65358f710edf22"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-bun-sick.png": {
+      "sha256": "7e34d1419b413e49404273c94b3beeb80331a114b17dcea6d8e559f99a3f4593",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-bun-sick.png",
+      "priorSha256": "7e34d1419b413e49404273c94b3beeb80331a114b17dcea6d8e559f99a3f4593"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-sprout-happy.png": {
+      "sha256": "7d6621f984c1f645e5fdf6f7be1d59486593171e4f3605c503e65f1414dbecd4",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-sprout-happy.png",
+      "priorSha256": "7d6621f984c1f645e5fdf6f7be1d59486593171e4f3605c503e65f1414dbecd4"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-sprout-content.png": {
+      "sha256": "756ee42693e55372e61feb52081c04f1c0f081f5ba67c246ed1d3b5fc4be5cb1",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-sprout-content.png",
+      "priorSha256": "756ee42693e55372e61feb52081c04f1c0f081f5ba67c246ed1d3b5fc4be5cb1"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-sprout-meh.png": {
+      "sha256": "65ff685ca095e67e313b56079a51c367da85066585133971de6477a9255da049",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-sprout-meh.png",
+      "priorSha256": "65ff685ca095e67e313b56079a51c367da85066585133971de6477a9255da049"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-sprout-scruffy.png": {
+      "sha256": "d5558a1e4cc832968b1819a73eb84fb1b9f0c363aabe95b7c7e7430effcb90ad",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-sprout-scruffy.png",
+      "priorSha256": "d5558a1e4cc832968b1819a73eb84fb1b9f0c363aabe95b7c7e7430effcb90ad"
+    },
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-final/expression-sprout-sick.png": {
+      "sha256": "af49d7f4e638d4fe2d7c54ac0a41472198921b7dbdc78ebde90bccf78981685d",
+      "directPrior": "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-sprout-sick.png",
+      "priorSha256": "af49d7f4e638d4fe2d7c54ac0a41472198921b7dbdc78ebde90bccf78981685d"
+    }
+  },
+  "initialDirectPngs": {
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-mochi-happy.png": "9a8b1f7aa9f87e85c909e75cec3bc94bf6febf370d75daeccc66e3adad65d379",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-mochi-content.png": "4dfe62feacf7e3c87dbbda16c8985acec1376ca19e6644a9b853230363629b70",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-mochi-meh.png": "11d0da54de800cde60b0fe8b1088dd8df83bf703fb7f6749006d3894df3afca1",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-mochi-scruffy.png": "24bbeeb24052efc2af04372a3b3f671815061e053cea6e5a9dc0fd6690ebfb22",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-mochi-sick.png": "b94897c65660808583c5a8eef5877bb7dea2538519e693a545b7bfdcb43adbfe",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-bun-happy.png": "708b633b10fac2cb8332176c1181ee1a63533473a6d9e06295be29b4e788acc6",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-bun-content.png": "7fa856a2891896e08df41f244a864c051fd15bee243ab4ac521748b4e1f49fdf",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-bun-meh.png": "9caf596d5d94de7bdbfeebeb6d6c11a3f910912cb7dbe82921520d9c6731d47a",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-bun-scruffy.png": "0e8d6976e8e51b343a8160e9b7c46445cc222c7e87bb1b428e65358f710edf22",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-bun-sick.png": "7e34d1419b413e49404273c94b3beeb80331a114b17dcea6d8e559f99a3f4593",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-sprout-happy.png": "7d6621f984c1f645e5fdf6f7be1d59486593171e4f3605c503e65f1414dbecd4",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-sprout-content.png": "756ee42693e55372e61feb52081c04f1c0f081f5ba67c246ed1d3b5fc4be5cb1",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-sprout-meh.png": "65ff685ca095e67e313b56079a51c367da85066585133971de6477a9255da049",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-sprout-scruffy.png": "d5558a1e4cc832968b1819a73eb84fb1b9f0c363aabe95b7c7e7430effcb90ad",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-sprout-sick.png": "af49d7f4e638d4fe2d7c54ac0a41472198921b7dbdc78ebde90bccf78981685d",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-desktop-controls.png": "7bbb522bfab34a40ecae19323c1c967d9ba2c0cd2a632cb0171f3c444fe9d002",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-layout-320-control.png": "153de38e978bf25e16ecfe43800ae7f7a1f366136c84c654bfac321fa97b8f27",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-layout-390-control.png": "91573149119108049e788423f671ef6e9562994a232bf52475c40a0e956680d8",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-layout-640-control.png": "504fa364eef10620dd1b1e36df3df57008429e98031fa793726bd592acb74e62",
+    "docs/audits/2026-10-12-character-polish/creator-mood-native-initial/expression-layout-1280-control.png": "f375507f607628fbcffb2f2a80e720b3ba488075e65d7d4ccc12b5d9d0eb545d"
+  },
+  "count": 27,
+  "scope": "Pre-lint-cancellation-refactor settled captures:27PNG complete;13direct settled,14exactinitialdirect. Fifteen layered species/moodSVGclips,1desktopcontrol,8enlargedlayoutcontrol/previewstills,3actualnativeclockcompletedtabs. Native25passed. Initial20direct include5mid-transitionUIshots, not settled-highlight acceptance. Final screenshot policy settles finiteCSStransitions and cancelsinfiniteCSSanimations forstillreview; no temporalcertification."
+}

@@ -1,0 +1,21 @@
+{
+  "geometry": {
+    "x": 164,
+    "y": 154.78125,
+    "width": 456,
+    "height": 51,
+    "right": 620,
+    "bottom": 205.78125,
+    "textFits": true,
+    "focused": true,
+    "focusVisible": true,
+    "artHeight": 160,
+    "viewport": {
+      "width": 640,
+      "height": 360
+    },
+    "horizontalOverflow": 0
+  },
+  "method": "Native focused mood selector at200% root text with End keyboard selection. Control bounds, text fit, focus-visible and120px art floor asserted.",
+  "browser": "152.0.7977.82"
+}

@@ -1,0 +1,195 @@
+import assert from 'node:assert/strict'
+import { test } from 'node:test'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
+
+const out = process.env.CHORE_PET_MOOD_CAPTURE_DIR
+const moods = [['happy', 'Happy'], ['content', 'Content'], ['meh', 'Tired'], ['scruffy', 'Scruffy'], ['sick', 'Unwell']]
+async function creator(t, { species = 'mochi', width = 1280, height = 800, text = 100, clock = true } = {}) {
+  const page = await browserApp(t, { viewport: { width, height }, reducedMotion: 'no-preference' })
+  // Isolated local fixture: all worn slots and the actual species default colour.
+  await page.evaluate(species => new Promise((resolve, reject) => {
+    const request = indexedDB.open('chore-pet', 1)
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
+      const read = store.get('snapshot')
+      read.onsuccess = () => {
+        const saved = read.result, pet = Object.values(saved.tables.pets)[0]
+        pet.species = species
+        pet.bodyColour = { mochi: '#FFCFDA', bun: '#FFFFFF', sprout: '#FFD65C' }[species]
+        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
+        saved.outbox = {}
+        store.put(saved, 'snapshot')
+      }
+      tx.oncomplete = () => { db.close(); resolve() }
+      tx.onerror = () => { db.close(); reject(tx.error) }
+    }
+  }), species)
+  await page.reload()
+  await page.getByRole('button', { name: 'More', exact: true }).click()
+  await page.getByRole('button', { name: 'Change look', exact: true }).click()
+  await page.getByRole('heading', { name: 'Change look', exact: true }).waitFor()
+  await page.waitForFunction(() => !document.documentElement.dataset.vt)
+  await page.evaluate(text => { document.documentElement.style.fontSize = `${text}%` }, text)
+  if (clock) {
+    await page.clock.install()
+    await page.clock.pauseAt(Date.now() + 1000)
+  }
+  await page.evaluate(() => {
+    const request = requestAnimationFrame, cancel = cancelAnimationFrame
+    window.__moodFrames = new Set()
+    window.requestAnimationFrame = callback => {
+      const id = request(time => { window.__moodFrames.delete(id); callback(time) })
+      window.__moodFrames.add(id)
+      return id
+    }
+    window.cancelAnimationFrame = id => { window.__moodFrames.delete(id); cancel(id) }
+  })
+  if (clock) await page.clock.runFor(48)
+  else await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+  return page
+}
+async function face(page) {
+  const tab = page.getByRole('tab', { name: 'Face', exact: true })
+  if (await tab.count()) await tab.click()
+  return page.getByRole('combobox', { name: 'Preview mood', exact: true })
+}
+const art = page => page.locator('.cc-preview .ch-animated')
+const frames = page => page.evaluate(() => window.__moodFrames.size)
+async function expectMood(page, mood, label) {
+  assert.equal(await art(page).getAttribute('data-character-pose'), mood === 'happy' ? 'idle' : mood)
+  assert.equal(await art(page).locator(`[data-expression="${mood}"]`).count(), 1)
+  assert.ok((await page.locator('.cc-preview svg').getAttribute('aria-label')).includes(label))
+  assert.equal(await frames(page), 0, 'Static preview owns no pending frames')
+}
+async function capture(page, name, data, clip) {
+  if (!out) return
+  await mkdir(out, { recursive: true })
+  await page.screenshot({ path: join(out, `${name}.png`), animations: 'disabled', ...(clip ? { clip } : {}) })
+  await writeFile(join(out, `${name}.json`), JSON.stringify({ ...data, capturePolicy: 'Finite CSS transitions fast-forwarded for settled visual inspection; infinite CSS animations cancelled during screenshot. Not temporal evidence. Static character geometry and state are independently checked.', browser: page.context().browser().version() }, null, 2) + '\n')
+}
+async function revealArt(page) {
+  await page.locator('.cc-preview svg').evaluate(node => node.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'nearest' }))
+  return page.locator('.cc-preview svg').boundingBox()
+}
+
+for (const species of ['mochi', 'bun', 'sprout']) {
+  test(`look editor previews all five expressions on dressed ${species} with no saved change or clock`, { timeout: 25000 }, async t => {
+    const page = await creator(t, { species })
+    const before = (await snapshot(page)).tables
+    const picker = await face(page)
+    assert.deepEqual(await picker.locator('option').evaluateAll(nodes => nodes.map(node => [node.value, node.textContent])), moods)
+    await picker.focus(); await page.keyboard.press('End'); await expectMood(page, 'sick', 'Unwell')
+    await page.keyboard.press('Home'); await expectMood(page, 'happy', 'Happy')
+    const samples = []
+    for (const [mood, label] of moods) {
+      await picker.selectOption(mood)
+      await expectMood(page, mood, label)
+      const slots = await art(page).locator('[data-slot]').evaluateAll(nodes => nodes.map(node => node.getAttribute('data-slot')).filter(slot => slot !== 'body').sort())
+      assert.deepEqual(slots, (mood === 'sick' ? ['head', 'face'] : ['head', 'face', 'neck', 'outfit', 'back']).sort())
+      const clip = await revealArt(page)
+      assert.ok(clip.height >= 120)
+      const data = { species, mood, label, slots, clip, frames: await frames(page), accessibleName: await page.locator('.cc-preview svg').getAttribute('aria-label'),
+        method: 'Actual offline production creator, native mood selection, species default colour and layered outfit. Preview SVG clip; still frame only, not temporal/AT/device certification.' }
+      samples.push(data)
+      await capture(page, `expression-${species}-${mood}`, data, clip)
+    }
+    assert.deepEqual((await snapshot(page)).tables, before)
+    if (out) await writeFile(join(out, `expressions-${species}.json`), JSON.stringify(samples, null, 2) + '\n')
+    if (species === 'mochi') {
+      await picker.focus()
+      await capture(page, 'expression-desktop-controls', { method: 'Desktop mood control focused with Unwell preview, layered outfit uses existing sick clothing occlusion.', frames: await frames(page) })
+    }
+  })
+}
+
+test('choosing a mood cancels the current cheer and reduction never replays it', { timeout: 25000 }, async t => {
+  const page = await creator(t)
+  const before = (await snapshot(page)).tables
+  await page.getByRole('radio', { name: 'Bun', exact: true }).click()
+  await page.clock.runFor(756)
+  assert.equal(await art(page).locator('[data-expression="cheering"]').count(), 1)
+  assert.equal(await frames(page), 1)
+  const picker = await face(page)
+  await picker.selectOption('content'); await expectMood(page, 'content', 'Content')
+  const still = await art(page).innerHTML()
+  await page.clock.runFor(2000)
+  assert.equal(await art(page).innerHTML(), still)
+  await changeReducedMotion(page, 'reduce')
+  await picker.selectOption('happy'); await expectMood(page, 'happy', 'Happy')
+  await page.getByRole('radio', { name: 'Sprout', exact: true }).click()
+  await page.clock.runFor(756); await expectMood(page, 'happy', 'Happy')
+  await picker.selectOption('sick'); await expectMood(page, 'sick', 'Unwell')
+  await changeReducedMotion(page, 'no-preference')
+  await page.clock.runFor(2000); await expectMood(page, 'sick', 'Unwell')
+  await picker.selectOption('happy'); await expectMood(page, 'happy', 'Happy')
+  await page.getByRole('radio', { name: 'Bun', exact: true }).click()
+  await page.clock.runFor(756)
+  assert.equal(await art(page).locator('[data-expression="cheering"]').count(), 1)
+  await picker.selectOption('meh'); await expectMood(page, 'meh', 'Tired')
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+  assert.deepEqual((await snapshot(page)).tables, before)
+})
+
+test('mood-only Save changes no saved tables and reopening begins with Happy', { timeout: 25000 }, async t => {
+  const page = await creator(t)
+  const before = (await snapshot(page)).tables
+  const picker = await face(page)
+  await picker.selectOption('scruffy'); await expectMood(page, 'scruffy', 'Scruffy')
+  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  await page.getByRole('heading', { name: 'Mochi', exact: true }).waitFor()
+  assert.deepEqual((await snapshot(page)).tables, before)
+  await page.clock.resume()
+  await page.getByRole('button', { name: 'More', exact: true }).click()
+  await page.getByRole('button', { name: 'Change look', exact: true }).click()
+  await page.getByRole('heading', { name: 'Change look', exact: true }).waitFor()
+  await page.waitForFunction(() => !document.documentElement.dataset.vt)
+  assert.equal(await (await face(page)).inputValue(), 'happy')
+  await expectMood(page, 'happy', 'Happy')
+})
+
+for (const [width, height] of [[320, 568], [390, 664], [640, 360], [1280, 800]]) {
+  test(`mood selector and character remain readable at ${width}x${height} text200`, { timeout: 25000 }, async t => {
+    const page = await creator(t, { width, height, text: 200 })
+    const before = (await snapshot(page)).tables
+    const picker = await face(page)
+    await picker.focus(); await page.keyboard.press('End')
+    await expectMood(page, 'sick', 'Unwell')
+    const geometry = await picker.evaluate(node => {
+      const r = node.getBoundingClientRect(), svg = document.querySelector('.cc-preview svg').getBoundingClientRect()
+      return { x: r.x, y: r.y, width: r.width, height: r.height, right: r.right, bottom: r.bottom,
+        textFits: node.scrollWidth <= node.clientWidth + 1, focused: node === document.activeElement, focusVisible: node.matches(':focus-visible'),
+        artHeight: svg.height, viewport: { width: innerWidth, height: innerHeight }, horizontalOverflow: document.documentElement.scrollWidth - innerWidth }
+    })
+    assert.ok(geometry.width >= 44 && geometry.height >= 44 && geometry.textFits)
+    assert.ok(geometry.x >= 0 && geometry.right <= width && geometry.y >= 0 && geometry.bottom <= height)
+    assert.ok(geometry.focused && geometry.focusVisible)
+    assert.ok(geometry.artHeight >= 120 && geometry.horizontalOverflow <= 0)
+    await capture(page, `expression-layout-${width}-control`, { geometry, method: 'Native focused mood selector at200% root text with End keyboard selection. Control bounds, text fit, focus-visible and120px art floor asserted.' })
+    const clip = await revealArt(page)
+    await capture(page, `expression-layout-${width}-preview`, { geometry, clip, method: 'Same selected Unwell expression, preview scrolled into view with native instant scrolling; no saved or motion change.' })
+    assert.deepEqual((await snapshot(page)).tables, before)
+  })
+}
+
+
+test('wrapped look tabs settle on the selected control with the real browser clock', { timeout: 25000 }, async t => {
+  const page = await creator(t, { width: 320, height: 568, text: 200, clock: false })
+  const before = (await snapshot(page)).tables
+  for (const name of ['Face', 'Colour', 'Who']) {
+    await page.getByRole('tab', { name, exact: true }).click()
+    await page.waitForFunction(() => !document.getAnimations().some(animation => animation.playState === 'running' && animation.effect?.target?.closest?.('.cc-tabs')))
+    const geometry = await page.evaluate(() => {
+      const selected = document.querySelector('.cc-tabs [aria-selected="true"]'), thumb = document.querySelector('.cc-tabs .seg-thumb')
+      const box = node => { const r = node.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height } }
+      return { selected: box(selected), thumb: box(thumb), selectedLabel: selected.textContent, colour: getComputedStyle(selected).color, pendingFrames: window.__moodFrames.size }
+    })
+    assert.equal(geometry.selectedLabel, name)
+    for (const key of ['x', 'y', 'width', 'height']) assert.ok(Math.abs(geometry.selected[key] - geometry.thumb[key]) < .01, `Settled tab thumb ${key}: ${JSON.stringify(geometry)}`)
+    assert.equal(geometry.pendingFrames, 0)
+    await capture(page, `expression-tabs-${name.toLowerCase()}`, { geometry, method: 'Actual native CSS tab transitions completed on real browser clock, not fake clock. Wrapped320x568/200%root text. Highlight rectangle matches selected tab; no perpetual character frames or saved writes.' })
+  }
+  assert.deepEqual((await snapshot(page)).tables, before)
+})

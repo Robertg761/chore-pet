@@ -1,9 +1,10 @@
-import { useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react'
+import { useId, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react'
 import { Character, CharacterArt } from '../character/Character'
-import { SPECIES, type CheekStyle, type EyeStyle, type Pet, type Species } from '../domain/types'
+import { SPECIES, type CheekStyle, type EyeStyle, type Mood, type Pet, type Species } from '../domain/types'
 import {
   CHEEK_OPTIONS,
   EYE_OPTIONS,
+  PREVIEW_MOOD_OPTIONS,
   changesFrom,
   colourAfterSpeciesChange,
   colourName,
@@ -97,6 +98,8 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
   const [nameError, setNameError] = useState(false)
   const wide = useWide()
   const [part, setPart] = useState<Part>('who')
+  const [previewMood, setPreviewMood] = useState<Mood>('happy')
+  const previewMoodId = useId()
   const tabsRef = useRef<HTMLDivElement>(null)
   const preview = useRef<CreatorPreviewControl | null>(null)
   const nameRef = useRef<HTMLInputElement>(null)
@@ -188,6 +191,15 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
 
   const face = (
     <>
+      <section className="cc-section cc-mood">
+        <label htmlFor={previewMoodId}>Preview mood</label>
+        <select id={previewMoodId} className="field" value={previewMood}
+          aria-describedby={`${previewMoodId}-note`}
+          onChange={event => { preview.current?.settle(); setPreviewMood(event.target.value as Mood) }}>
+          {PREVIEW_MOOD_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+        </select>
+        <p id={`${previewMoodId}-note`} className="cc-hint">See how your look appears in each mood.</p>
+      </section>
       <section className="cc-section" aria-labelledby="cc-eyes-h">
         <h2 id="cc-eyes-h">Eyes</h2>
         <ChoiceGroup
@@ -252,7 +264,7 @@ export function CharacterCreator({ pet, onSave, onClose }: CharacterCreatorProps
 
       <div className="cc-body">
         <div className="cc-stage">
-          <CreatorPreview draft={draft} equipped={pet.equipped} control={preview}
+          <CreatorPreview draft={draft} equipped={pet.equipped} control={preview} mood={previewMood}
             label={`${draft.name.trim() || 'Your pet'}, ${SPECIES_LABEL[species]}`} />
 
           <div className="cc-field">

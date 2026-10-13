@@ -1,0 +1,33 @@
+✔ look editor keeps its character and controls readable at 320x568 text100 (1469.077339ms)
+✔ look editor keeps its character and controls readable at 320x568 text200 (1432.837043ms)
+✔ look editor keeps its character and controls readable at 390x664 text100 (1246.99162ms)
+✔ look editor keeps its character and controls readable at 390x664 text200 (1213.495385ms)
+✔ look editor keeps its character and controls readable at 640x360 text100 (1149.151359ms)
+✔ look editor keeps its character and controls readable at 640x360 text200 (1166.575169ms)
+✔ look editor keeps its character and controls readable at 844x390 text100 (1150.906471ms)
+✔ look editor keeps its character and controls readable at 844x390 text200 (1153.604904ms)
+✔ look editor keeps its character and controls readable at 1280x800 text100 (1153.047639ms)
+✔ look editor keeps its character and controls readable at 1280x800 text200 (1149.873963ms)
+✔ look draft name and caret survive resizing and stay reachable at enlarged text (969.104706ms)
+✔ look editor previews all five expressions on dressed mochi with no saved change or clock (2624.040521ms)
+✔ look editor previews all five expressions on dressed bun with no saved change or clock (2532.0079ms)
+✔ look editor previews all five expressions on dressed sprout with no saved change or clock (2532.667054ms)
+✔ choosing a mood cancels the current cheer and reduction never replays it (2872.373972ms)
+✔ mood-only Save changes no saved tables and reopening begins with Happy (4041.889425ms)
+✔ mood selector and character remain readable at 320x568 text200 (2243.450798ms)
+✔ mood selector and character remain readable at 390x664 text200 (2284.574765ms)
+✔ mood selector and character remain readable at 640x360 text200 (2201.919808ms)
+✔ mood selector and character remain readable at 1280x800 text200 (2309.503839ms)
+✔ wrapped look tabs settle on the selected control with the real browser clock (3139.223105ms)
+✔ creator previews the actual character while keeping face choices visible at 320x568 (3877.330047ms)
+✔ creator previews the actual character while keeping face choices visible at 844x390 (3204.603083ms)
+✔ creator previews the actual character while keeping face choices visible at 1280x800 (3285.040435ms)
+✔ creator settles live reduction and initial reduction keeps look choices available (3707.701959ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 55268.328539

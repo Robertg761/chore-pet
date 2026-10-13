@@ -1,0 +1,12 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+
+ Test Files  131 passed (131)
+      Tests  2485 passed (2485)
+   Start at  03:23:35
+   Duration  87.55s (tests 79%, environment 12%, import 4%, transform 4%, worker 1%)
+
+    Isolate  131 workers spawned · ~151ms startup each (spawn + environment, per file)
+             at least ~19.62s faster with isolate: false — reuses workers across files instead of one per file
+

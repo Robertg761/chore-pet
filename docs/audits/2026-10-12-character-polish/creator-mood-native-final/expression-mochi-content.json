@@ -1,0 +1,23 @@
+{
+  "species": "mochi",
+  "mood": "content",
+  "label": "Content",
+  "slots": [
+    "back",
+    "face",
+    "head",
+    "neck",
+    "outfit"
+  ],
+  "clip": {
+    "x": 207,
+    "y": 89,
+    "width": 402,
+    "height": 624
+  },
+  "frames": 0,
+  "accessibleName": "Mochi, Mochi, Content preview",
+  "method": "Actual offline production creator, native mood selection, species default colour and layered outfit. Preview SVG clip; still frame only, not temporal/AT/device certification.",
+  "capturePolicy": "Finite CSS transitions fast-forwarded for settled visual inspection; infinite CSS animations cancelled during screenshot. Not temporal evidence. Static character geometry and state are independently checked.",
+  "browser": "152.0.7977.82"
+}

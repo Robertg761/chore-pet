@@ -1,15 +1,15 @@
 import { useImperativeHandle, useState, type RefObject } from 'react'
 import { AnimatedCharacterArt } from '../character/AnimatedCharacter'
 import { ACTION_MS, sampleMotion } from '../character/motion'
-import type { Pet } from '../domain/types'
+import type { Mood, Pet } from '../domain/types'
 import { usePetMotion } from '../pet/usePetMotion'
-import type { CreatorDraft } from './creatorModel'
+import { PREVIEW_MOOD_OPTIONS, type CreatorDraft } from './creatorModel'
 
 export interface CreatorPreviewControl { cheer: () => void; settle: () => void }
 
 /** Keep finite character frames out of the creator's choice grids and form. */
-export function CreatorPreview({ draft, equipped, label, control }: {
-  draft: CreatorDraft; equipped: Pet['equipped']; label: string
+export function CreatorPreview({ draft, equipped, label, control, mood = 'happy' }: {
+  draft: CreatorDraft; equipped: Pet['equipped']; label: string; mood?: Mood
   control: RefObject<CreatorPreviewControl | null>
 }) {
   const [start, setStart] = useState<number | null>(null)
@@ -19,22 +19,23 @@ export function CreatorPreview({ draft, equipped, label, control }: {
     const time = Math.max(0, now - start)
     if (reduced || time >= ACTION_MS.celebrate) setStart(null)
     else setElapsed(time)
-  }, start !== null, reduced => { if (reduced) setStart(null) })
+  }, start !== null && mood === 'happy', reduced => { if (reduced) setStart(null) })
   useImperativeHandle(control, () => ({
     cheer: () => {
-      if (reducedMotion || start !== null) return
+      if (reducedMotion || mood !== 'happy' || start !== null) return
       setElapsed(0)
       setStart(performance.now())
     },
     settle: () => setStart(null),
-  }), [reducedMotion, start])
-  const active = start !== null && !reducedMotion
-  const frame = sampleMotion({ species: draft.species, mood: 'happy', action: active ? 'celebrate' : 'idle',
+  }), [reducedMotion, start, mood])
+  const active = start !== null && !reducedMotion && mood === 'happy'
+  const moodLabel = PREVIEW_MOOD_OPTIONS.find(option => option.value === mood)!.label
+  const frame = sampleMotion({ species: draft.species, mood, action: active ? 'celebrate' : 'idle',
     elapsedMs: active ? elapsed : 0, durationMs: active ? ACTION_MS.celebrate : ACTION_MS.idle,
     distance: 0, reducedMotion: reducedMotion || !active })
   return <div className="cc-preview">
-    <svg width={170} height={170} viewBox="0 0 200 200" role="img" aria-label={label}>
-      <AnimatedCharacterArt species={draft.species} mood="happy" bodyColour={draft.bodyColour} equipped={equipped}
+    <svg width={170} height={170} viewBox="0 0 200 200" role="img" aria-label={`${label}, ${moodLabel} preview`}>
+      <AnimatedCharacterArt species={draft.species} mood={mood} bodyColour={draft.bodyColour} equipped={equipped}
         look={{ eyes: draft.eyes, cheeks: draft.cheeks }} frame={frame} />
     </svg>
   </div>

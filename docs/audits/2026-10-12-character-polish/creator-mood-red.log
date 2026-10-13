@@ -1,0 +1,178 @@
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/screens/CharacterCreator.mood.test.tsx (23 tests | 23 failed) 1090ms
+   × previews mochi in happy without saving or starting a clock 156ms
+   × previews mochi in content without saving or starting a clock 80ms
+   × previews mochi in meh without saving or starting a clock 66ms
+   × previews mochi in scruffy without saving or starting a clock 53ms
+   × previews mochi in sick without saving or starting a clock 46ms
+   × previews bun in happy without saving or starting a clock 48ms
+   × previews bun in content without saving or starting a clock 41ms
+   × previews bun in meh without saving or starting a clock 36ms
+   × previews bun in scruffy without saving or starting a clock 39ms
+   × previews bun in sick without saving or starting a clock 40ms
+   × previews sprout in happy without saving or starting a clock 35ms
+   × previews sprout in content without saving or starting a clock 39ms
+   × previews sprout in meh without saving or starting a clock 39ms
+   × previews sprout in scruffy without saving or starting a clock 44ms
+   × previews sprout in sick without saving or starting a clock 40ms
+   × cancels an active cheer before showing content and does not replay it 43ms
+   × cancels an active cheer before showing meh and does not replay it 40ms
+   × cancels an active cheer before showing scruffy and does not replay it 38ms
+   × cancels an active cheer before showing sick and does not replay it 38ms
+   × keeps the selected expression through look edits and saves only the look patch 29ms
+   × returns to happy without replay and permits the next finite cheer to expire while hidden 40ms
+   × supports every static expression under reduced motion and resets on remount 30ms
+   × keeps a mood-only preview through tab changes without creating a saved edit 31ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 23 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews mochi in happy without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews mochi in content without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews mochi in meh without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews mochi in scruffy without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews mochi in sick without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews bun in happy without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews bun in content without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews bun in meh without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews bun in scruffy without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews bun in sick without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews sprout in happy without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews sprout in content without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews sprout in meh without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews sprout in scruffy without saving or starting a clock
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > previews sprout in sick without saving or starting a clock
+AssertionError: Preview mood has a native label: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ select src/screens/CharacterCreator.mood.test.tsx:41:52
+     39| function select() {
+     40|   const label = [...ui.container.querySelectorAll('label')].find(node …
+     41|   expect(label, 'Preview mood has a native label').toBeTruthy()
+       |                                                    ^
+     42|   const node = ui.container.querySelector<HTMLSelectElement>(`#${CSS.e…
+     43|   expect(node).not.toBeNull(); return node!
+ ❯ src/screens/CharacterCreator.mood.test.tsx:61:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/23]⎯
+
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > cancels an active cheer before showing content and does not replay it
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > cancels an active cheer before showing meh and does not replay it
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > cancels an active cheer before showing scruffy and does not replay it
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > cancels an active cheer before showing sick and does not replay it
+AssertionError: Preview mood has a native label: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ select src/screens/CharacterCreator.mood.test.tsx:41:52
+     39| function select() {
+     40|   const label = [...ui.container.querySelectorAll('label')].find(node …
+     41|   expect(label, 'Preview mood has a native label').toBeTruthy()
+       |                                                    ^
+     42|   const node = ui.container.querySelector<HTMLSelectElement>(`#${CSS.e…
+     43|   expect(node).not.toBeNull(); return node!
+ ❯ choose src/screens/CharacterCreator.mood.test.tsx:46:16
+ ❯ src/screens/CharacterCreator.mood.test.tsx:75:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/23]⎯
+
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > keeps the selected expression through look edits and saves only the look patch
+AssertionError: Preview mood has a native label: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ select src/screens/CharacterCreator.mood.test.tsx:41:52
+     39| function select() {
+     40|   const label = [...ui.container.querySelectorAll('label')].find(node …
+     41|   expect(label, 'Preview mood has a native label').toBeTruthy()
+       |                                                    ^
+     42|   const node = ui.container.querySelector<HTMLSelectElement>(`#${CSS.e…
+     43|   expect(node).not.toBeNull(); return node!
+ ❯ choose src/screens/CharacterCreator.mood.test.tsx:46:16
+ ❯ src/screens/CharacterCreator.mood.test.tsx:84:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/23]⎯
+
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > returns to happy without replay and permits the next finite cheer to expire while hidden
+AssertionError: Preview mood has a native label: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ select src/screens/CharacterCreator.mood.test.tsx:41:52
+     39| function select() {
+     40|   const label = [...ui.container.querySelectorAll('label')].find(node …
+     41|   expect(label, 'Preview mood has a native label').toBeTruthy()
+       |                                                    ^
+     42|   const node = ui.container.querySelector<HTMLSelectElement>(`#${CSS.e…
+     43|   expect(node).not.toBeNull(); return node!
+ ❯ choose src/screens/CharacterCreator.mood.test.tsx:46:16
+ ❯ src/screens/CharacterCreator.mood.test.tsx:96:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/23]⎯
+
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > supports every static expression under reduced motion and resets on remount
+AssertionError: Preview mood has a native label: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ select src/screens/CharacterCreator.mood.test.tsx:41:52
+     39| function select() {
+     40|   const label = [...ui.container.querySelectorAll('label')].find(node …
+     41|   expect(label, 'Preview mood has a native label').toBeTruthy()
+       |                                                    ^
+     42|   const node = ui.container.querySelector<HTMLSelectElement>(`#${CSS.e…
+     43|   expect(node).not.toBeNull(); return node!
+ ❯ choose src/screens/CharacterCreator.mood.test.tsx:46:16
+ ❯ src/screens/CharacterCreator.mood.test.tsx:111:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/23]⎯
+
+ FAIL  src/screens/CharacterCreator.mood.test.tsx > keeps a mood-only preview through tab changes without creating a saved edit
+AssertionError: Preview mood has a native label: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ select src/screens/CharacterCreator.mood.test.tsx:41:52
+     39| function select() {
+     40|   const label = [...ui.container.querySelectorAll('label')].find(node …
+     41|   expect(label, 'Preview mood has a native label').toBeTruthy()
+       |                                                    ^
+     42|   const node = ui.container.querySelector<HTMLSelectElement>(`#${CSS.e…
+     43|   expect(node).not.toBeNull(); return node!
+ ❯ choose src/screens/CharacterCreator.mood.test.tsx:46:16
+ ❯ src/screens/CharacterCreator.mood.test.tsx:118:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/23]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  23 failed (23)
+   Start at  03:13:52
+   Duration  1.89s (tests 61%, transform 19%, environment 16%, import 4%)
+

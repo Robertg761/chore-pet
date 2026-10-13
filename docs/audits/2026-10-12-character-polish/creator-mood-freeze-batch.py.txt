@@ -1,0 +1,38 @@
+from pathlib import Path
+import hashlib,json,subprocess,sys,datetime
+cfg=json.loads(Path(sys.argv[1]).read_text());out=Path('docs/audits/2026-10-12-character-polish');prefix=cfg['prefix']
+def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+def put(p,v):Path(p).write_text(json.dumps(v,indent=2)+'\n')
+base=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+sources=cfg['sources'];unchanged=cfg['unchangedSources']
+for p in unchanged:assert Path(p).read_bytes()==subprocess.check_output(['git','show',f'{base}:{p}']),p
+checks=[];resources=[]
+for p in sorted(out.glob(f'{prefix}-*.exit')):
+ code=int(p.read_text());assert code==cfg.get('expectedFailures',{}).get(p.stem,0),(p,code)
+ log=p.with_suffix('.log');checks.append({'name':p.stem,'log':str(log),'logSha256':sha(log),'exitCode':code,'exitEvidence':{'path':str(p),'sha256':sha(p)}})
+ sidecar=p.with_name(p.stem+'-resources.json');j=json.loads(sidecar.read_text());assert j['exitCode']==code
+ if code==125:assert j['resourceStopReason']=='Insufficient launch headroom; no child started.' and j['cleanup']['processGroup']is None
+ else:assert j['resourceStopReason']is None
+ minimum=min(x['memAvailableBytes']for x in j['samples']);tmp=min(x['tmpFreeBytes']for x in j['samples']);assert minimum==j['minimumObservedAvailableBytes'] and min(minimum,tmp)>=2*1024**3
+ assert not j['cleanup']['remainingLiveMembers']
+ resources.append({'path':str(sidecar),'samples':len(j['samples']),'minimumAvailableMiB':minimum/1024**2,'minimumTmpMiB':tmp/1024**2,'exitCode':code})
+assert len(checks)==cfg['expectedCheckCount'],len(checks)
+summary={'runs':len(resources),'sampleRows':sum(x['samples']for x in resources),'minimumObservedAvailableMiB':min(x['minimumAvailableMiB']for x in resources),'minimumObservedTmpFreeMiB':min(x['minimumTmpMiB']for x in resources),'reserveStops':0,'launchRejections':sum(x['exitCode']==125 for x in resources),'rows':resources,'limits':'Approximately one-second host snapshots, not peak process RSS/CPU or device certification. One heavy job/worker/browser at a time, nice10, capped Node heaps and reviewed resource supervisor.'};put(out/f'{prefix}-resource-summary.json',summary)
+patch=b''
+for p in sources:
+ tracked=subprocess.run(['git','ls-files','--error-unmatch',p],capture_output=True).returncode==0
+ if tracked:patch+=subprocess.check_output(['git','diff','--',p])
+ else:
+  r=subprocess.run(['git','diff','--no-index','--','/dev/null',p],capture_output=True);assert r.returncode in[0,1];patch+=r.stdout
+patchpath=out/f'{prefix}-source.diff';patchpath.write_bytes(patch)
+exclude=set(sources)|{str(out/f'{prefix}-{n}')for n in ['artifacts.json','review-input.json','verification.json','source.diff','independent-review.md']}
+files=[]
+for p in sorted(out.glob(f'{prefix}-*')):
+ for f in sorted(p.rglob('*'))if p.is_dir()else[p]:
+  if f.is_file()and str(f)not in exclude and f.suffix not in ['.log','.exit']:files.append(f)
+manifest=out/f'{prefix}-artifacts.json';put(manifest,{'files':{str(p):sha(p)for p in files}})
+j={'freeze':{'baseCommit':base,'sources':{p:sha(p)for p in sources},'unchangedSources':{p:sha(p)for p in unchanged},'patch':{'path':str(patchpath),'sha256':sha(patchpath)}},'artifactsManifest':{'path':str(manifest),'sha256':sha(manifest)},'checks':checks,'results':cfg['results'],'scope':cfg['scope'],'history':cfg.get('history',''),'resources':{k:v for k,v in summary.items()if k!='rows'},'status':'Scoped checks complete; awaiting bounded independent review.'}
+inputpath=out/f'{prefix}-review-input.json';assert not inputpath.exists();put(inputpath,j)
+j['reviewInput']={'path':str(inputpath),'sha256':sha(inputpath)};put(out/f'{prefix}-verification.json',j)
+with(out/'PROGRESS.md').open('a')as f:f.write('\n'+datetime.datetime.now(datetime.timezone.utc).isoformat()+f': {prefix} frozen: {len(sources)} sources, {len(unchanged)} unchanged dependencies, {len(files)} artifacts, {len(checks)} raw log/exit pairs. Awaiting bounded independent review. '+cfg['results']['summary']+'\n')
+print(prefix,sha(inputpath),len(files),'artifacts',len(checks),'pairs',summary['minimumObservedAvailableMiB'],'MiB minimum')
