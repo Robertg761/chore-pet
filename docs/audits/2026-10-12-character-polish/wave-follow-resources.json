@@ -1,0 +1,140 @@
+{
+  "method": "Sequential nice10 single worker/browser. Approximately1s host availableRAM/tmp snapshots, not continuous/peakCPU/RSS/device certification. Heap caps supplied by environment are not independently recorded. Stop only owned job groups.",
+  "runs": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-build-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 12,
+      "minimumObservedAvailableMiB": 3737.046875,
+      "minimumObservedTmpFreeMiB": 4101.52734375,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-capture-after-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 5,
+      "minimumObservedAvailableMiB": 4158.83984375,
+      "minimumObservedTmpFreeMiB": 4101.52734375,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-capture-before-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 6,
+      "minimumObservedAvailableMiB": 3706.2421875,
+      "minimumObservedTmpFreeMiB": 4101.5703125,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-capture-prototype-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 5,
+      "minimumObservedAvailableMiB": 3976.0546875,
+      "minimumObservedTmpFreeMiB": 4101.56640625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-compare-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 3,
+      "minimumObservedAvailableMiB": 4160.81640625,
+      "minimumObservedTmpFreeMiB": 4101.52734375,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-focused-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 10,
+      "minimumObservedAvailableMiB": 4042.8125,
+      "minimumObservedTmpFreeMiB": 4098.50390625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-full-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 4096,
+      "samples": 84,
+      "minimumObservedAvailableMiB": 2869.546875,
+      "minimumObservedTmpFreeMiB": 4089.76171875,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-lint-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 3,
+      "minimumObservedAvailableMiB": 4570.02734375,
+      "minimumObservedTmpFreeMiB": 4101.50390625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-native-red-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 9,
+      "minimumObservedAvailableMiB": 3587.7578125,
+      "minimumObservedTmpFreeMiB": 4029.86328125,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-native-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 35,
+      "minimumObservedAvailableMiB": 3752.99609375,
+      "minimumObservedTmpFreeMiB": 4030.83984375,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-build-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 5,
+      "minimumObservedAvailableMiB": 3448.203125,
+      "minimumObservedTmpFreeMiB": 4101.546875,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-compare-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 3,
+      "minimumObservedAvailableMiB": 4067.9453125,
+      "minimumObservedTmpFreeMiB": 4101.56640625,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-native-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 9,
+      "minimumObservedAvailableMiB": 3435.26171875,
+      "minimumObservedTmpFreeMiB": 4028.734375,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-unit-resources.json",
+      "exitCode": 0,
+      "launchMinimumMiB": 3200,
+      "samples": 4,
+      "minimumObservedAvailableMiB": 3996.31640625,
+      "minimumObservedTmpFreeMiB": 4101.4921875,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-red-resources.json",
+      "exitCode": 1,
+      "launchMinimumMiB": 3200,
+      "samples": 3,
+      "minimumObservedAvailableMiB": 3971.66796875,
+      "minimumObservedTmpFreeMiB": 4101.5703125,
+      "resourceStopReason": null
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "method": "Exact sampled frames across3species/5moods/16actions/3durations/2motionpolicies/2facings/15phases. Only normal healthy wave appendages may differ; allotherfields/actions/sick/reduced/durations exact. Static numeric checks,not temporal acceptance.",
+  "label": "after",
+  "currentPath": "src/character/motion.ts",
+  "samples": 43200,
+  "unchanged": 42408,
+  "changed": 792,
+  "changes": {
+    "mochi/wave": 264,
+    "bun/wave": 264,
+    "sprout/wave": 264
+  },
+  "sourceSha256": {
+    "baseline": "f32b2c67dd237fb0d07dbefabe90f7c14e861644e027803f42342d94823d36e8",
+    "current": "316c7fce00a9cc638b85f7e2eb13c5980f5721b6226e424678f0575acceb21b5",
+    "runner": "4e9d8b41f996b39c396f9f7a9817028828e462e1d49435e0451f8fcf7976818b"
+  }
+}

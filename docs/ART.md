@@ -219,3 +219,5 @@ While the resident is sleeping or unwell, Spend time together offers one Check i
 Healthy furniture inspection uses one restrained ear, knot or leaf sway within its existing timing. The pointing arm, height-aware torso lean, gaze and planted feet retain their original motion. Sick and reduced-motion sampling remain exact.
 
 Wardrobe Mirror preview flips one enclosing SVG group immediately, preserving the sampled art, chosen pose, finite deadline and outfit. Its local toggle remains available under reduced motion. Short-phone Head grids retain a readable preview; category tabs stay visible in their scroll panel, and narrow item panels use wrapped categories and two gift columns for enlarged text.
+
+Healthy waves toward plants and fish tanks use one smaller appendage sway with species gains .4/.45/.35. The waving hand, lean, gaze, planted feet and 1400ms lifetime remain exact, alongside sick/reduced output and every other action. Numeric and actual invited-plant regressions cover the change.

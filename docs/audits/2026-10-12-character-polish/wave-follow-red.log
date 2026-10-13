@@ -1,0 +1,79 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run src/character/motion.wave.test.ts --maxWorkers=1
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/motion.wave.test.ts (7 tests | 6 failed) 23ms
+   ❯ quiet wave toward furnishingsion (7)
+     × keeps mochi appendages restrained while the resident waves toward leaves or glass 8ms
+     × keeps bun appendages restrained while the resident waves toward leaves or glass 4ms
+     × keeps sprout appendages restrained while the resident waves toward leaves or glass 1ms
+     × mochi makes one calm sway at short, normal, long and legacy durations 5ms
+     × bun makes one calm sway at short, normal, long and legacy durations 1ms
+     × sprout makes one calm sway at short, normal, long and legacy durations 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/motion.wave.test.ts > quiet wave toward furnishingsion > keeps mochi appendages restrained while the resident waves toward leaves or glass
+AssertionError: expected 4.999965226904681 to be less than or equal to 2.000000001
+ ❯ src/character/motion.wave.test.ts:19:51
+     17|       for (const side of ['leftAppendage', 'rightAppendage'] as const)…
+     18|         const values = frames.map(frame => frame[side])
+     19|         expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(…
+       |                                                   ^
+     20|         expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visi…
+     21|         const velocity = values.slice(1).map((value, i) => Math.abs(va…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/character/motion.wave.test.ts > quiet wave toward furnishingsion > keeps bun appendages restrained while the resident waves toward leaves or glass
+AssertionError: expected 11.999965379539752 to be less than or equal to 5.400000001
+ ❯ src/character/motion.wave.test.ts:19:51
+     17|       for (const side of ['leftAppendage', 'rightAppendage'] as const)…
+     18|         const values = frames.map(frame => frame[side])
+     19|         expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(…
+       |                                                   ^
+     20|         expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visi…
+     21|         const velocity = values.slice(1).map((value, i) => Math.abs(va…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/character/motion.wave.test.ts > quiet wave toward furnishingsion > keeps sprout appendages restrained while the resident waves toward leaves or glass
+AssertionError: expected 8.999926355760335 to be less than or equal to 3.150000001
+ ❯ src/character/motion.wave.test.ts:19:51
+     17|       for (const side of ['leftAppendage', 'rightAppendage'] as const)…
+     18|         const values = frames.map(frame => frame[side])
+     19|         expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(…
+       |                                                   ^
+     20|         expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visi…
+     21|         const velocity = values.slice(1).map((value, i) => Math.abs(va…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/character/motion.wave.test.ts > quiet wave toward furnishingsion > mochi makes one calm sway at short, normal, long and legacy durations
+ FAIL  src/character/motion.wave.test.ts > quiet wave toward furnishingsion > bun makes one calm sway at short, normal, long and legacy durations
+ FAIL  src/character/motion.wave.test.ts > quiet wave toward furnishingsion > sprout makes one calm sway at short, normal, long and legacy durations
+AssertionError: expected [ -1, 1, -1 ] to have a length of 1 but got 3
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/character/motion.wave.test.ts:48:73
+     46|       const values = Array.from({ length: 1001 }, (_, phase) => at(spe…
+     47|       const signs = values.filter(value => Math.abs(value) > 1e-6).map…
+     48|       expect(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1])…
+       |                                                                         ^
+     49|       expect(values[0]).toBe(0)
+     50|       expect(values.at(-1)).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  00:23:44
+   Duration  181ms (transform 49%, tests 32%, import 14%, worker 4%)
+

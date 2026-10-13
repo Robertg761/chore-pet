@@ -1,0 +1,11 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run --config /tmp/wave-follow-prototype.config.mjs src/character/motion.wave.test.ts --maxWorkers=1
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  00:24:25
+   Duration  701ms (tests 82%, transform 16%, import 2%, worker 1%)
+

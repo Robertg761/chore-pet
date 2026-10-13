@@ -1,0 +1,14 @@
+git diff --check -- src/character/motion.ts
+
+git diff --no-index --check -- /dev/null src/character/motion.wave.test.ts
+
+git diff --no-index --check -- /dev/null scripts/browser/pet-wave-follow.test.mjs
+
+git diff --check -- docs/ART.md
+
+git diff --no-index --check -- /dev/null docs/audits/2026-10-12-character-polish/capture-wave-follow.mjs
+
+git diff --no-index --check -- /dev/null docs/audits/2026-10-12-character-polish/compare-wave-follow.mjs
+
+git diff --no-index --check -- /dev/null docs/audits/2026-10-12-character-polish/wave-follow-design.md
+

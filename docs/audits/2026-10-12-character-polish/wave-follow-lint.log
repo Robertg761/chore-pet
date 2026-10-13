@@ -1,0 +1,2 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'oxlint' --max-warnings=0 src/character/motion.ts src/character/motion.wave.test.ts

@@ -1,0 +1,44 @@
+{
+  "utc": "2026-10-13T02:54:36.784986+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "docs/audits/2026-10-12-character-polish/capture-wave-follow.mjs",
+    "prototype"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "minimumObservedAvailableBytes": 4169195520,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4212793344,
+      "tmpFreeBytes": 4300804096
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4212793344,
+      "tmpFreeBytes": 4300804096
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4235194368,
+      "tmpFreeBytes": 4300804096
+    },
+    {
+      "elapsedSeconds": 2.002,
+      "memAvailableBytes": 4169195520,
+      "tmpFreeBytes": 4300804096
+    },
+    {
+      "elapsedSeconds": 3.002,
+      "memAvailableBytes": 4290576384,
+      "tmpFreeBytes": 4300804096
+    }
+  ]
+}

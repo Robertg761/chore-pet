@@ -1,0 +1,50 @@
+{
+  "method": "219 actual paired native samples preserve primary lean/arms/feet/world/RAF counts and normalized actual times; candidate appendage angles equal final exactly. Numeric/stills only, not temporal acceptance.",
+  "species": [
+    {
+      "species": "mochi",
+      "pairedSamples": 73,
+      "beforePeak": 4.998654842376709,
+      "finalPeak": 1.9997640848159783,
+      "beforeSpeed": 44.80611812323332,
+      "finalSpeed": 11.661995202302926,
+      "maxFootDrift": 4.103011029017258e-06,
+      "primaryFieldsExact": true,
+      "prototypeAnglesExact": true,
+      "relativeFrameTimesExact": true,
+      "beforeHash": "cbe9752b43eb2ad4c6781ce47eeb9c7b4fe3deb2a76cf15871e90431fdc7dba1",
+      "finalHash": "937070579338e3694f5a0e319b67bde957572b12f74e4286f15bda237bedb6b3",
+      "prototypeHash": "b96e7ae0118648b6989835575846a4c47945d004a30db740f3c9491659f87f17"
+    },
+    {
+      "species": "bun",
+      "pairedSamples": 73,
+      "beforePeak": 11.978096008300781,
+      "finalPeak": 5.380311965942383,
+      "beforeSpeed": 107.61889442801476,
+      "finalSpeed": 31.725451350212097,
+      "maxFootDrift": 5.79812955970592e-06,
+      "primaryFieldsExact": true,
+      "prototypeAnglesExact": true,
+      "relativeFrameTimesExact": true,
+      "beforeHash": "e3984ec3f6c15bf48cc0396d24b1fd08c695a4167cb97351496aa3b3b374ddd8",
+      "finalHash": "aeccff39e9835907db887e0d545e4d416149eca2e23016df5cab1e28d182e792",
+      "prototypeHash": "5fc271d42a36e74f54e79458deb3ab46cef487852e7f5373deff02d47ee32235"
+    },
+    {
+      "species": "sprout",
+      "pairedSamples": 73,
+      "beforePeak": 3.599970579147339,
+      "finalPeak": 1.2179164886474612,
+      "beforeSpeed": 32.229989068582654,
+      "finalSpeed": 7.319550961256027,
+      "maxFootDrift": 5.080440166144962e-06,
+      "primaryFieldsExact": true,
+      "prototypeAnglesExact": true,
+      "relativeFrameTimesExact": true,
+      "beforeHash": "bcdb09401e7b73de5baedadd1312b5fb57b0ff8b77c23c2bde59132aff5f70b1",
+      "finalHash": "356e14124ce17b8cd256a856186867fc709aec8f1f385b73a0588df30bde1e93",
+      "prototypeHash": "356e14124ce17b8cd256a856186867fc709aec8f1f385b73a0588df30bde1e93"
+    }
+  ]
+}

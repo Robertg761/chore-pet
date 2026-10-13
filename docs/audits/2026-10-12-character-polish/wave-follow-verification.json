@@ -1,0 +1,248 @@
+{
+  "freeze": {
+    "baseCommit": "93d3a8a50323d3c3dedfad9fb6b1b2e41ae407b3",
+    "sources": {
+      "src/character/motion.ts": "316c7fce00a9cc638b85f7e2eb13c5980f5721b6226e424678f0575acceb21b5",
+      "src/character/motion.wave.test.ts": "83e82e8fc2f3c7f1cba2f3075ebdc978f87be66cd8ea5fdd684ec42ec11a1281",
+      "scripts/browser/pet-wave-follow.test.mjs": "60134c5940bd345863c139a4835fd799a2f470e6c7c6518f4f719c445758686a",
+      "docs/ART.md": "6999641dd8dbe916316155515ea6dd30bb1adb57fc8a37d2cb60a657f0dda7e1",
+      "docs/audits/2026-10-12-character-polish/capture-wave-follow.mjs": "cdc3f52f58bccd9eb23090c78c2c709fe28670adf1def7076d6e19d7361d101c",
+      "docs/audits/2026-10-12-character-polish/compare-wave-follow.mjs": "4e9d8b41f996b39c396f9f7a9817028828e462e1d49435e0451f8fcf7976818b",
+      "docs/audits/2026-10-12-character-polish/wave-follow-design.md": "e61136698ea9c50e3c8ee50b24dd3a9d278db06c74389083dacdd3ace23d02e4"
+    },
+    "unchangedSources": {
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/room/shell/geometry.ts": "967f73de056add3298520e580aa172a720132b49b11dd5bcab4a8f1a4b4fd027",
+      "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+      "src/pet/LivingRoom.tsx": "2511988fd34e30be0b696a5c4f378af88b28a45f7b9d905b06e04c66cdd99408",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/usePetVisibility.ts": "d322342a8b624b9a534e268299f26c539a171e9511854c7cc45582f166729134",
+      "src/pet/behaviour.ts": "7e4b850de2aa14c42cbd6bafac23420e428b5564350aa1c8a7b17db9b2a915af",
+      "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7",
+      "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+      "src/pet/playerAttention.ts": "06b7d8559968218fb3770743c7cc0d007af021bc60ded0da9088cfde673c5536",
+      "src/screens/WardrobePreview.tsx": "4f80f8e079d401fc174fbd4ea3f8388940cdd467cf0217e9045cfd034612f05f",
+      "src/dev/MotionReview.tsx": "4a22a5c5401427337d1a2e08d0609958ad5b7267fdd2f8ac9e3eda898cafffd1",
+      "scripts/browser/pet-turn-follow.test.mjs": "c85c2414c58d6d1764dc829c1b8f642a11a026b6bcff66a6615ae029e35be591",
+      "scripts/browser/pet-idle-clock.test.mjs": "367d4b77c6395e5bd4eaab3e481db40312500209b2f774440b91d6324fddf6a5",
+      "scripts/browser/pet-environment-attention.test.mjs": "82c65ebfae72229e2ce2aa3626ea877587b02f48d6209bfc8aee7fddde8e17ee",
+      "scripts/browser/pet-explore.test.mjs": "760ea164e885fcdeaf2fdd86062b0af1cb6e14323d81e7cf1822545c2181a827",
+      "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+      "src/pet/PetIntegration.test.tsx": "63dfc043cc158dbf94b3f9b1ba7701811f6abe8c25a56ce3c3f6a781c513fa9c",
+      "src/pet/activityMotion.test.ts": "1efdab93c7bc2909a03a806cd4390d2c69ddfe57cdb459bf92aad32ecc4797ab",
+      "src/pet/interactions.test.ts": "14c60a908f3cc24a51ae06a2061065be3c5ebc8e469e5a0069ac3f965605c516",
+      "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a",
+      "src/character/motion.inspect.test.ts": "3ef7b843e446a1b89a7de913eef2155c6ab0f0ef6abdb30932767c31256adae7",
+      "src/character/motion.notice.test.ts": "8b58a2dc145c91d4d0f9151e566e4415e1d6e7f7d17ad4cd03a66f685ba1026f",
+      "src/character/motion.turn.test.ts": "834d9690242c5deedc1f8fc662d34e7b391ac4502246130016024e5afb4f8d07",
+      "src/character/motion.smell.test.ts": "071aa1c4e10e9a78568cabb1b8a1ee519cde84f4c8e02dea7a45047e51bd2a56"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/wave-follow-source.diff",
+      "sha256": "542f24d32d25fbc7a9c0a4fefc06e86936b6873a815cbdc9036692dbfa01c4af"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/wave-follow-artifacts.json",
+    "sha256": "62cf3809841e208c2c5da18ec29427f0b90338632d58e6ae6b3ed658890b27fd"
+  },
+  "checks": [
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-build.log",
+      "logSha256": "533894dbec42b51a9af4b6b71af8d68ea1a3f1727cffc85f965275d3e87bb8af",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-capture-after.log",
+      "logSha256": "01dfc17d039231e775a397845db899169e952fd10ff97d1877be4809e12304a1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-capture-after.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-capture-before.log",
+      "logSha256": "c3b3c8a2eeb25e378050ee6f8610ac5015836891f9faf8f469629e65658a573c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-capture-before.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-prototype",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-capture-prototype.log",
+      "logSha256": "0395356fcc408787d802170b5718b42f94f6fc7c14d68a615928eb5d9a3eb03f",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-capture-prototype.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "compare",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-compare.log",
+      "logSha256": "d5e5fa35503a640833e7ac8159f497796d9682459d81f6b0e696859951509527",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-compare.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-diff.log",
+      "logSha256": "568a6738db00cfc31e31af9027f67058bb1b5a9b9ee0cfec194b785301d6057e",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-focused.log",
+      "logSha256": "4bbbfc70d867390db310b70342eb9ca601b9b4431e7ca0cc4d904e2a21724a4e",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-full.log",
+      "logSha256": "ec52efd84681267258a37d415895ecf409915d96afe1723075ed3ec240bd770b",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-lint.log",
+      "logSha256": "aba5afd5ee73011e3fc5bf13dd2f1d2c0ff75132ff2750431dc058ff5b5444b4",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-red",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-native-red.log",
+      "logSha256": "f41cf5862f18640c1050208a077a6cc52a338554eeac556ee7095676cf938af7",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-native-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-native.log",
+      "logSha256": "7c92f66cb58b9d2ede434e6429bb3add30baf23e19ff53df2d8c917d4616e8bd",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-build",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-build.log",
+      "logSha256": "57e1fdcaee5ba71244ac88bfbf19560af9485b7fef00f83a5a80c0922679f505",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-compare",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-compare.log",
+      "logSha256": "d5e5fa35503a640833e7ac8159f497796d9682459d81f6b0e696859951509527",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-compare.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-native",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-native.log",
+      "logSha256": "f2598cd70b83f80bd61ab2ec53334318ba01700e1073321cfe4715518d7ffb2d",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-unit",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-unit.log",
+      "logSha256": "0929baf8e2cde8d51500d821ef1a52d9b212610c9e8da83374ea8ae742407701",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-unit.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/wave-follow-red.log",
+      "logSha256": "f11105f35dab24c8324af70e0099d31d593797bdf5c92e31bfe0adfc44d7859d",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/wave-follow-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "status": "Completed scoped checks and independent static/source/still review; bound files reverified before local checkpoint.",
+  "results": {
+    "full": "2367 tests /123 files passed,81.53s",
+    "focused": "355 tests /14 files,7.23s",
+    "native": "21passed/0failed/0skipped/0cancelled,32.158152711s",
+    "build": "Production tsc -b && vite build pass, existing chunk-size advisory retained",
+    "lint": "Scoped oxlint with max-warnings0 pass",
+    "whitespace": "7 authored source paths pass"
+  },
+  "visualReview": {
+    "direct": "All six before/prototype static light/dark size sheets and curves; all nine baseline/prototype/final native plant-wave PNGs directly opened. Final three static PNGs byte-exact inspected candidate, bound in static-comparison.",
+    "native": "73 actual SVG/RAF-time samples per species, action-relative approximately136..168 through1288..1320ms after120ms join, before1400ms expiry. 219 pairs primary lean/arms/feet/world/RAF counts and relative times exact, candidate/final angles exact. Sprout measures stem at .4 of sampler angle.",
+    "limits": "Still/numeric and sampled native Chromium152 evidence only; no human temporal comfort certification, full native action/transition sweep, all furnishing/outfit combinations, other browser/device or peak-resource claim."
+  },
+  "differential": "Both43200-frame comparisons:42408exact,792healthy-wave appendage-only. All other fields/actions, sick/reduced and durations exact at sampled inputs.",
+  "history": "Six of seven initial unit cases fail on oversized/multi-sway follow; all three native baseline cases fail on oversize. Label typo corrected before candidate unit run, assertions unchanged. Final native fixture strengthens primary lean to observed baseline3.28/4/2.88 degrees; archived red fixture retains prior finite/forward-only guard. Virtual prototype tests/build preceded source edit; virtual bundle did not typecheck, final production build did. Baseline sampler captured at f5b26cf and equals Batch50 checkpoint93d3a8a Git bytes.",
+  "resources": {
+    "runs": 15,
+    "minimumObservedAvailableMiB": 2869.546875,
+    "minimumObservedTmpFreeMiB": 4028.734375,
+    "guardStops": 0,
+    "launchRejections": 0,
+    "fullSuite": "Single worker, Node512MB supplied cap, launch4096MiB/run2048MiB reserve. Approximate1s observations, not continuous or peak certification."
+  },
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/wave-follow-review-input.json",
+    "sha256": "922cc4563635ff063b7c0185a3bef31af2049d67bcafa7b785d89f6e21d711c0"
+  },
+  "independentReview": {
+    "path": "docs/audits/2026-10-12-character-polish/wave-follow-independent-review.md",
+    "sha256": "ced5b3012ef1831ffeab2bb9da64b45cdbd575e4ed073e4254ac4d73028789a5",
+    "verdict": "PASS; no scoped findings"
+  }
+}

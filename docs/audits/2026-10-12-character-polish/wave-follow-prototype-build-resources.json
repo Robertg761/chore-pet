@@ -1,0 +1,46 @@
+{
+  "utc": "2026-10-13T02:55:11.101091+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "npx",
+    "vite",
+    "build",
+    "--config",
+    "/tmp/wave-follow-build.config.mjs"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "minimumObservedAvailableBytes": 3615703040,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 3879428096,
+      "tmpFreeBytes": 4300800000
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 3881578496,
+      "tmpFreeBytes": 4300800000
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 3804037120,
+      "tmpFreeBytes": 4300800000
+    },
+    {
+      "elapsedSeconds": 2.002,
+      "memAvailableBytes": 3615703040,
+      "tmpFreeBytes": 4300795904
+    },
+    {
+      "elapsedSeconds": 3.002,
+      "memAvailableBytes": 3902550016,
+      "tmpFreeBytes": 4300783616
+    }
+  ]
+}

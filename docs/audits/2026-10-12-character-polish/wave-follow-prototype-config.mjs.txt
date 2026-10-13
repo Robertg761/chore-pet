@@ -1,0 +1,7 @@
+import { readFileSync } from 'node:fs'
+export default {
+  plugins: [{ name: 'isolated-wave-follow-candidate', enforce: 'pre', transform(code, id) {
+    if (id.split('?')[0] === process.cwd() + '/src/character/motion.ts') return { code: readFileSync('docs/audits/2026-10-12-character-polish/wave-follow-prototype.ts.txt', 'utf8'), map: null }
+  } }],
+  test: { environment: 'node', include: ['src/**/*.test.{ts,tsx}', 'supabase/**/*.test.ts'] },
+}

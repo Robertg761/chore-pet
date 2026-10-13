@@ -1,0 +1,17 @@
+✔ mochi waves toward a plant with one restrained appendage sway (2068.335747ms)
+ℹ mochi: peak 2.000deg, speed 11.662deg/s; 73 actual SVG/RAF-time samples within actual plant wave
+ℹ lean range 0..3.28; waving -31.115390087778447
+✔ bun waves toward a plant with one restrained appendage sway (1900.068962ms)
+ℹ bun: peak 5.380deg, speed 31.725deg/s; 73 actual SVG/RAF-time samples within actual plant wave
+ℹ lean range 0..4; waving -40
+✔ sprout waves toward a plant with one restrained appendage sway (1847.426661ms)
+ℹ sprout: peak 1.218deg, speed 7.320deg/s; 73 actual SVG/RAF-time samples within actual plant wave
+ℹ lean range 0..2.88; waving -23.022608950059432
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6214.603138

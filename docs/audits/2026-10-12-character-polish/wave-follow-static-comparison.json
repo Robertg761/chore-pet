@@ -1,0 +1,23 @@
+{
+  "method": "Exact PNG bytes only; prototype images directly opened before applying. Not a perceptual comparison or human temporal acceptance.",
+  "pairs": [
+    {
+      "prototype": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-light-sizes.png",
+      "final": "docs/audits/2026-10-12-character-polish/wave-follow-after-light-sizes.png",
+      "sha256": "69b541bd38026a41d2e941f5f871c289d0284077ad9d6a914179a4facfd19011",
+      "byteExact": true
+    },
+    {
+      "prototype": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-dark-sizes.png",
+      "final": "docs/audits/2026-10-12-character-polish/wave-follow-after-dark-sizes.png",
+      "sha256": "6110309adeaca17bb140feb97b64e48cc26ce0f07f995b9ffc1b4026e3294138",
+      "byteExact": true
+    },
+    {
+      "prototype": "docs/audits/2026-10-12-character-polish/wave-follow-prototype-curves.png",
+      "final": "docs/audits/2026-10-12-character-polish/wave-follow-after-curves.png",
+      "sha256": "2a3cc053df7e9d77933921ddfbd84a1216317100ad7cd202462851ca7fb85d4c",
+      "byteExact": true
+    }
+  ]
+}

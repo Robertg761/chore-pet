@@ -1,0 +1,36 @@
+{
+  "utc": "2026-10-13T03:03:10.433675+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "npx",
+    "oxlint",
+    "--max-warnings=0",
+    "src/character/motion.ts",
+    "src/character/motion.wave.test.ts"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "minimumObservedAvailableBytes": 4792020992,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4792020992,
+      "tmpFreeBytes": 4300738560
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4792020992,
+      "tmpFreeBytes": 4300738560
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4901883904,
+      "tmpFreeBytes": 4300738560
+    }
+  ]
+}
