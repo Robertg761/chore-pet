@@ -1,0 +1,177 @@
+{
+  "freeze": {
+    "baseCommit": "3602bf3b0a93341268aee94dad4cdf473ae437b4",
+    "sources": {
+      "src/character/motion.ts": "6bbf647a8391e103951474c70438138dd3599cc28f56aeacbaa2ea1dc686284f",
+      "src/character/motion.smell.test.ts": "071aa1c4e10e9a78568cabb1b8a1ee519cde84f4c8e02dea7a45047e51bd2a56",
+      "scripts/browser/pet-smell-follow.test.mjs": "05cffa0e6f80e3d28b004f9c6506300c490f7ec17bce84943b599d6338bf84d5",
+      "docs/ART.md": "932596613e7cfc34a3afb0ff166603c091ff1108ed2e8cb80a33730d3782b1ac",
+      "docs/audits/2026-10-12-character-polish/capture-smell-follow.mjs": "1cbc401ec01550ffb7b41259492d0d811c9b0f58ee39aba744c4837583759f10",
+      "docs/audits/2026-10-12-character-polish/compare-smell-follow.mjs": "886a4ab1f13380c954ddbfbb29a724244b73f086ece0584b30a649c8d030bd88"
+    },
+    "unchangedSources": {
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+      "src/pet/LivingRoom.tsx": "ef72fe47fe14dd67bb78e512dd237f046730d68ebd3209ebc4c16060a380294f",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/behaviour.ts": "7e4b850de2aa14c42cbd6bafac23420e428b5564350aa1c8a7b17db9b2a915af",
+      "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/smell-follow-source.diff",
+      "sha256": "c1b6ca8839ef7a5a48453217cf4ef03f882411c1cf6287810fb01c7f3ee71642"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/smell-follow-artifacts.json",
+    "sha256": "190f153fca7da2a2f941f950194a3eff2b2ceafa7e894877a869ca572a0500f7"
+  },
+  "checks": [
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-build.log",
+      "logSha256": "c8fd3e763c707c490a00ef19a17d6ec11564d9bffc5c9da4b5c647467c1fce65",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-capture-after.log",
+      "logSha256": "01dfc17d039231e775a397845db899169e952fd10ff97d1877be4809e12304a1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-capture-after.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-capture-before.log",
+      "logSha256": "940a98b1ee851594177e6fea55137e4bd3e8877ad7baad9586bec1a0a1c08736",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-capture-before.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff-initial-wrapper",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-diff-initial-wrapper.log",
+      "logSha256": "1579f878459677a48adfbcf7161659ea4d2c4a77d9aacf658915aa893209acdc",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-diff-initial-wrapper.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-diff.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "differential",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-differential.log",
+      "logSha256": "168d79b8aa47581a11ca5352d81ef4cc734c5cb0deb61501aff8973e1b4de43c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-differential.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-focused.log",
+      "logSha256": "5462a2ba18d4321ae436c37fb75ac10898313b68d5ca9c9364fe847d71cb0fbf",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-full.log",
+      "logSha256": "3d93f5c37ec0c5c49cc49ca3b7194d765c40ae11818a60aaf35bbedf548b66eb",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-lint.log",
+      "logSha256": "7568e933113f36eafac388fc93fe6b8a426352caab529479f6baf94d26446fff",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-grounding-red",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-native-grounding-red.log",
+      "logSha256": "77a8ffd0909eabcd10c9843c96703c50d7c5cfd71799e51d91a96674909c8870",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-native-grounding-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native-red",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-native-red.log",
+      "logSha256": "4d1b18bd0a9b5c208613979c37dfbe6b30a4a7febe5714cfce4f9a4018d1cc6e",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-native-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-native.log",
+      "logSha256": "1cfcd76ae8d828dcc55055b4810b6a706baeafaa2976cb5d91c5e939fe18b479",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red-grounding",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-red-grounding.log",
+      "logSha256": "fcda08c2b213bacba236c59cb56ac310c763fde86f6ac21da710460dc2b30b8e",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-red-grounding.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/smell-follow-red.log",
+      "logSha256": "3e26e7133bfc1d066cd9e0a9f8d78e5200979f220f2e1240e6a73a6ee6500286",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/smell-follow-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    }
+  ],
+  "status": "Completed scoped checks; awaiting independent static/source/still review.",
+  "result": "2295 tests / 114 files pass; 390 focused checks / 11 files; 17 native cases; production type build, zero-warning lint and authored whitespace pass. Native healthy dressed species: 83 actual SVG angle/timestamp samples each, two displacement zero crossings, foot drift below .000015 local SVG units (floating-point precision), one resident clock, same world position/node/announcement/saved tables. Peak/speed: Mochi 1.613 degrees / 10.434 degrees/s; Bun 4.169 / 28.053; Sprout stem .976 / 6.756. Reduced visible sniff has zero resident frames, still body and existing 3600ms speech lifetime. Nearby concern, attention and rest native checks pass. The 43,200-frame differential preserves 42,408 exact frames; 792 differ only in healthy sniff appendages and horizontal foot offsets. Lean, arms, gaze, expression, blink, shadow and durations remain exact.",
+  "history": "Original seven unit checks: six excursion/reversal failures and one reduced pass (211ms). Three stance checks added after actual rendered feet revealed a preexisting recoil drift: nine failures / one pass (227ms). First native baseline: three foot-drift failures / one reduced pass (4.598s), before speed assertion. Corrected diagnostic baseline repeats three foot failures / one reduced pass, measuring Mochi 1.64, Bun 2.000003 and Sprout 1.440010 local SVG unit drift. This batch preserves healthy torso recoil and cancels only its two horizontal foot offsets. Historical native test wording and diagnostics changed before final run; exact raw failures remain. Initial whitespace wrapper treated the expected no-index new-file status 1 as an error despite empty diagnostics; preserved and corrected to accept clean status 0/1, with no source change.",
+  "limits": "Frozen-clock native Chromium 152 and static SVG/numeric acceptance; no human temporal, physical-device, assistive-technology, CPU or battery certification. Native angle for Sprout measures stem (0.4 * leftAppendage), not the leaf transform. Static sheets cover 48 dressed species/mirror/phase/light-happy-or-dark-scruffy samples and 144 views at 200/60/25px per stage. Root inspected all six before/after sheets/curves and three native stills. No controller, route, contact, saved-data or clock implementation changes. One heavy job at a time; one worker or Chromium; 768MB Node cap and nice 10. Available RAM remained above 5GiB and /tmp free about 4.1GB."
+}

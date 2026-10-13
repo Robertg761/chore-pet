@@ -1,0 +1,63 @@
+✖ mochi reacts to an actually stinky trash can with a grounded deliberate appendage gesture (1545.421877ms)
+ℹ Actual mochi appendage peak4.999deg;speed39.235deg/s
+ℹ Actual maximum foot drift1.640000 local SVG units
+✖ bun reacts to an actually stinky trash can with a grounded deliberate appendage gesture (1434.873363ms)
+ℹ Actual bun appendage peak11.998deg;speed94.166deg/s
+ℹ Actual maximum foot drift2.000003 local SVG units
+✖ sprout reacts to an actually stinky trash can with a grounded deliberate appendage gesture (1387.810277ms)
+ℹ Actual sprout appendage peak3.598deg;speed28.242deg/s
+ℹ Actual maximum foot drift1.440010 local SVG units
+✔ mochi reacts to an actually stinky trash can without moving in reduced motion (854.10877ms)
+ℹ Visible reduced-motion stinky invitation: same position/body,existing3600ms speech lifetime,0resident frames,unchanged saved tables.
+ℹ tests 4
+ℹ suites 0
+ℹ pass 1
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5606.796788
+
+✖ failing tests:
+
+test at scripts/browser/pet-smell-follow.test.mjs:32:4
+✖ mochi reacts to an actually stinky trash can with a grounded deliberate appendage gesture (1545.421877ms)
+  AssertionError [ERR_ASSERTION]: actual smell reaction feet stay planted
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-smell-follow.test.mjs:122:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-smell-follow.test.mjs:32:4
+✖ bun reacts to an actually stinky trash can with a grounded deliberate appendage gesture (1434.873363ms)
+  AssertionError [ERR_ASSERTION]: actual smell reaction feet stay planted
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-smell-follow.test.mjs:122:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at scripts/browser/pet-smell-follow.test.mjs:32:4
+✖ sprout reacts to an actually stinky trash can with a grounded deliberate appendage gesture (1387.810277ms)
+  AssertionError [ERR_ASSERTION]: actual smell reaction feet stay planted
+      at TestContext.<anonymous> (file:///home/robert/.codex/worktrees/4511/chore-pet/scripts/browser/pet-smell-follow.test.mjs:122:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

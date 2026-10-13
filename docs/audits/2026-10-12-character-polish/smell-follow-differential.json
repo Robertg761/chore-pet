@@ -1,0 +1,16 @@
+{
+  "method": "Exact sampled frames across 3 species, 5 moods, 16 actions, 3 durations, 2 motion policies, 2 facings, and 15 phases. Only normal healthy smell appendages and horizontal ground contacts may differ; all other fields, actions, sick/reduced frames and durations are exact. Static numeric checks, not temporal acceptance.",
+  "samples": 43200,
+  "unchanged": 42408,
+  "changed": 792,
+  "changes": {
+    "mochi/smell": 264,
+    "bun/smell": 264,
+    "sprout/smell": 264
+  },
+  "sourceSha256": {
+    "baseline": "a912e37fb61319129245da227a7dc1e9cda10390596c68089440f307a7762b15",
+    "current": "6bbf647a8391e103951474c70438138dd3599cc28f56aeacbaa2ea1dc686284f",
+    "runner": "886a4ab1f13380c954ddbfbb29a724244b73f086ece0584b30a649c8d030bd88"
+  }
+}

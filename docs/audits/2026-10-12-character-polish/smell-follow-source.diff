@@ -1,0 +1,369 @@
+diff --git i/src/character/motion.ts w/src/character/motion.ts
+index 286b0e7..2d106f4 100644
+--- i/src/character/motion.ts
++++ w/src/character/motion.ts
+@@ -75,6 +75,8 @@ const PERSONALITY: Record<Species, { amplitude: number; squash: number; stride:
+ const AFFECTION_FOLLOW: Record<Species, number> = { mochi: 0.45, bun: 0.55, sprout: 0.5 }
+ // Environmental rest settles the same appendages with an even quieter sway.
+ const REST_FOLLOW: Record<Species, number> = { mochi: 0.25, bun: 0.3, sprout: 0.25 }
++// A brief sniff recoils, then settles with smaller damped appendage movement.
++const SMELL_FOLLOW: Record<Species, number> = { mochi: 0.45, bun: 0.5, sprout: 0.4 }
+ // Concern settles in one smaller sway while the resident studies wilting leaves.
+ const CONCERN_FOLLOW: Record<Species, number> = { mochi: 0.35, bun: 0.4, sprout: 0.35 }
+ 
+@@ -376,6 +378,8 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+ 
+     frame.bodyX *= amplitude
+     frame.bodyY *= amplitude
++    // Recoil moves the torso while both ground contacts stay fixed.
++    if (action === 'smell' && mood !== 'sick') frame.leftGroundX = frame.rightGroundX = -frame.bodyX
+     frame.lean *= amplitude
+     frame.leftArm *= amplitude
+     frame.rightArm *= amplitude
+@@ -391,7 +395,9 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+     const followStrength = action === 'stretch' ? STRETCH[species].follow
+       : action === 'rest' ? REST_FOLLOW[species]
+       : calmConcern ? CONCERN_FOLLOW[species] : AFFECTION_FOLLOW[species]
+-    const sway = action === 'affection' || action === 'stretch' || action === 'rest' || calmConcern
++    const sway = action === 'smell' && mood !== 'sick'
++      ? Math.sin(t * Math.PI * 3 - personality.lag + 0.5) * follow * personality.follow * SMELL_FOLLOW[species] * (1 - 0.55 * ease(t)) * energy
++      : action === 'affection' || action === 'stretch' || action === 'rest' || calmConcern
+       ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * followStrength * energy
+       : Math.sin(t * Math.PI * 4 - personality.lag) * follow * personality.follow * energy
+     frame.leftAppendage = sway
+diff --git 1/src/character/motion.smell.test.ts 2/src/character/motion.smell.test.ts
+new file mode 100644
+index 0000000..6322862
+--- /dev/null
++++ 2/src/character/motion.smell.test.ts
+@@ -0,0 +1,71 @@
++import { describe, expect, it } from 'vitest'
++import { ACTION_MS, sampleMotion } from './motion'
++import type { Mood, Species } from '../domain/types'
++
++const at = (species: Species, elapsedMs: number, durationMs = ACTION_MS.smell, reducedMotion = false, mood: Mood = 'happy') =>
++  sampleMotion({ species, mood, action: 'smell', elapsedMs, durationMs, reducedMotion, distance: 0 })
++
++describe('restrained environmental sniff', () => {
++  it.each([
++    { species: 'mochi', excursion: 1.65, speed: 11, visible: 1, amplitude: .82 },
++    { species: 'bun', excursion: 4.25, speed: 29, visible: 3, amplitude: 1 },
++    { species: 'sprout', excursion: 2.5, speed: 18, visible: 2, amplitude: .72 },
++  ] as const)('keeps $species follow-through small while retaining the lean-back and hand gesture', ({ species, excursion, speed, visible, amplitude }) => {
++    const frames = Array.from({ length: 1601 }, (_, ms) => at(species, ms))
++    for (const side of ['leftAppendage', 'rightAppendage'] as const) {
++      const values = frames.map(frame => frame[side])
++      expect(Math.max(...values.map(Math.abs))).toBeLessThan(excursion)
++      expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visible * .7)
++      const velocity = values.slice(1).map((value, i) => Math.abs(value - values[i]) * 1000)
++      expect(Math.max(...velocity)).toBeLessThan(speed)
++      expect(values[0]).toBe(0)
++      expect(values.at(-1)).toBe(0)
++      expect(velocity.at(-1)).toBeLessThan(.1)
++    }
++    const held = at(species, 640)
++    expect(held.lean).toBeCloseTo(-10 * amplitude, 9)
++    expect(held.bodyX).toBeCloseTo(-2 * amplitude, 9)
++    expect(held.rightArm).toBeCloseTo(-16 * amplitude, 9)
++    for (const frame of frames) {
++      expect(frame.bodyY).toBe(0)
++      expect(frame.leftFoot).toBe(0)
++      expect(frame.rightFoot).toBe(0)
++      expect(frame.accentOpacity).toBe(0)
++      expect(frame.shadowScale).toBe(1)
++      expect(frame.shadowOpacity).toBe(1)
++    }
++  })
++
++  it.each(['mochi', 'bun', 'sprout'] as const)('%s settles with two displacement zero crossings at different durations', species => {
++    for (const duration of [800, 1600, 3200]) for (const side of ['leftAppendage', 'rightAppendage'] as const) {
++      const values = Array.from({ length: 1001 }, (_, phase) => at(species, phase / 1000 * duration, duration)[side])
++      const signs = values.filter(value => Math.abs(value) > 1e-6).map(Math.sign)
++      expect(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1])).toHaveLength(2)
++      expect(values[0]).toBe(0)
++      expect(values.at(-1)).toBe(0)
++    }
++  })
++
++  it.each(['mochi', 'bun', 'sprout'] as const)('%s keeps both feet fixed under its lateral torso recoil', species => {
++    for (const mood of ['happy', 'content', 'meh', 'scruffy'] as const) for (const duration of [800, 1600, 3200]) {
++      for (let phase = 0; phase <= 100; phase++) {
++        const frame = at(species, duration * phase / 100, duration, false, mood)
++        expect(frame.bodyX + (frame.leftGroundX ?? 0)).toBe(0)
++        expect(frame.bodyX + (frame.rightGroundX ?? 0)).toBe(0)
++        expect(frame.leftGroundY).toBe(0)
++        expect(frame.rightGroundY).toBe(0)
++      }
++    }
++  })
++
++  it('keeps reduced-motion appendages still for the existing1600ms reaction', () => {
++    expect(ACTION_MS.smell).toBe(1600)
++    for (const species of ['mochi', 'bun', 'sprout'] as const) for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick'] as const) {
++      for (const ms of [0, 160, 600, 800, 1400, 1599, 1600]) {
++        const frame = at(species, ms, 1600, true, mood)
++        expect(frame.leftAppendage).toBe(0)
++        expect(frame.rightAppendage).toBe(0)
++      }
++    }
++  })
++})
+diff --git 1/scripts/browser/pet-smell-follow.test.mjs 2/scripts/browser/pet-smell-follow.test.mjs
+new file mode 100644
+index 0000000..9e05cb7
+--- /dev/null
++++ 2/scripts/browser/pet-smell-follow.test.mjs
+@@ -0,0 +1,133 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++import { browserApp, snapshot } from './helpers.mjs'
++
++function read(node) {
++  const target = node.querySelector('[data-appendage="left-ear"]')
++    ?? node.querySelector('[data-appendage="stem"]')
++    ?? node.querySelector('[data-appendage="knot"] > g')
++  const matrix = target.transform.baseVal.consolidate().matrix
++  return {
++    time: window.__smellTime,
++    angle: Math.atan2(matrix.b, matrix.a) * 180 / Math.PI,
++    position: node.getAttribute('transform'),
++    pose: node.querySelector('.ch-animated').getAttribute('data-character-pose'),
++    frames: window.__smellFrames.size,
++    feet: ['left', 'right'].map(side => {
++      const foot = node.querySelector(`[data-foot="${side}"] ellipse`)
++      const point = new DOMPoint(+foot.getAttribute('cx'), +foot.getAttribute('cy'))
++        .matrixTransform(foot.getScreenCTM()).matrixTransform(node.getScreenCTM().inverse())
++      return { x: point.x, y: point.y }
++    }),
++  }
++}
++
++for (const { species, speed, peak, minimum, crossings, reduced = false } of [
++  { species: 'mochi', speed: 12, peak: 1.7, minimum: 1, crossings: 2 },
++  { species: 'bun', speed: 30, peak: 4.3, minimum: 3, crossings: 2 },
++  { species: 'sprout', speed: 7.5, peak: 1.05, minimum: .7, crossings: 2 },
++  { species: 'mochi', reduced: true },
++]) test(`${species} reacts to an actually stinky trash can${reduced ? ' without moving in reduced motion' : ' with a grounded deliberate appendage gesture'}`, async t => {
++  const page = await browserApp(t, { reducedMotion: reduced ? 'reduce' : 'no-preference', viewport: { width: 1280, height: 800 } })
++  await page.evaluate(species => new Promise((resolve, reject) => {
++    const request = indexedDB.open('chore-pet', 1)
++    request.onerror = () => reject(request.error)
++    request.onsuccess = () => {
++      const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv'), load = store.get('snapshot')
++      load.onsuccess = () => {
++        const saved = load.result, pet = Object.values(saved.tables.pets)[0], room = Object.values(saved.tables.rooms)[0]
++        // A first occurrence has one grace day. Three days back makes this
++        // daily task two days late, producing actual condition-level2 stink.
++        const created = new Date(); created.setDate(created.getDate() - 3)
++        const date = `${created.getFullYear()}-${String(created.getMonth() + 1).padStart(2, '0')}-${String(created.getDate()).padStart(2, '0')}`
++        pet.species = species
++        pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++        saved.tables.placed_objects = { 'smell-trash': { id: 'smell-trash', roomId: room.id, catalogId: 'trash', tileX: 5, tileY: 5, rotation: 0 } }
++        saved.tables.chores = { 'smell-task': { id: 'smell-task', homeId: room.homeId, objectId: 'smell-trash', name: 'Take out the trash', schedule: { kind: 'daily' }, createdOn: date, photoProof: false } }
++        saved.tables.completions = {}; saved.outbox = {}
++        store.put(saved, 'snapshot')
++      }
++      tx.oncomplete = () => { db.close(); resolve() }
++      tx.onerror = () => { db.close(); reject(tx.error) }
++    }
++  }), species)
++  await page.clock.install(); await page.clock.pauseAt(Date.now() + 1000)
++  await page.addInitScript(() => {
++    Math.random = () => .99
++    const request = requestAnimationFrame, cancel = cancelAnimationFrame
++    window.__smellFrames = new Set(); window.__smellTime = 0
++    window.requestAnimationFrame = callback => {
++      const id = request(now => { window.__smellFrames.delete(id); window.__smellTime = now; callback(now) })
++      window.__smellFrames.add(id); return id
++    }
++    window.cancelAnimationFrame = id => { window.__smellFrames.delete(id); cancel(id) }
++  })
++  await page.reload()
++  const resident = page.locator('.room-pet'); await resident.waitFor()
++  await page.getByText('2 days late', { exact: true }).waitFor()
++  await page.getByText('Feeling happy', { exact: true }).waitFor()
++  const saved = (await snapshot(page)).tables
++  const initial = await resident.evaluate(read), body = await resident.locator('[data-character-body]').innerHTML()
++  await resident.evaluate(node => { window.__smellPet = node })
++  await page.getByRole('button', { name: 'Explore together', exact: true }).click()
++  await page.getByRole('combobox', { name: /^Show / }).selectOption('smell-trash')
++  await page.getByRole('button', { name: 'Look together', exact: true }).click()
++  const live = page.locator('.living-room [aria-live="polite"]')
++  const observations = ['Sniff sniff. Something is getting whiffy.', 'A fly just did a lap of the room. Show-off.', 'I smell an adventure. A smelly one.']
++  if (reduced) {
++    const heard = (await live.textContent()).trim()
++    assert.ok(observations.includes(heard), 'stinky trash retains its existing condition observation')
++    const box = await resident.locator('[data-character-body]').boundingBox()
++    assert.ok(box.x >= 0 && box.y >= 0 && box.x + box.width <= 1280 && box.y + box.height <= 800)
++    assert.equal(await page.evaluate(() => document.hidden), false)
++    assert.equal((await resident.evaluate(read)).frames, 0)
++    await page.clock.runFor(2000)
++    assert.equal((await resident.evaluate(read)).position, initial.position)
++    assert.equal(await resident.locator('[data-character-body]').innerHTML(), body)
++    assert.equal((await live.textContent()).trim(), heard)
++    await page.clock.runFor(1600)
++    assert.equal((await live.textContent()).trim(), '')
++    assert.equal((await resident.evaluate(read)).frames, 0)
++    assert.deepEqual((await snapshot(page)).tables, saved)
++    t.diagnostic('Visible reduced-motion stinky invitation: same position/body,existing3600ms speech lifetime,0resident frames,unchanged saved tables.')
++    return
++  }
++  let heard = ''
++  for (let i = 0; i < 150 && !heard; i++) { await page.clock.runFor(100); heard = (await live.textContent()).trim() }
++  assert.ok(observations.includes(heard), 'the selected stinky furnishing must receive its invited observation')
++  // Arrival polling overshoots by at most100ms. Sample after orientation and
++  // its blend, before recovery can blend back to the next activity.
++  await page.clock.runFor(360 + 120)
++  const first = await resident.evaluate(read), samples = []
++  let maxFootDrift = 0
++  for (let elapsed = 120; elapsed <= 1440; elapsed += 16) {
++    const sample = await resident.evaluate(read)
++    if (!samples.length || sample.time !== samples.at(-1).time) samples.push(sample)
++    assert.equal(sample.frames, 1)
++    assert.equal(sample.pose, 'idle', 'the fixture keeps the neutral appendage baseline')
++    assert.equal(sample.position, first.position)
++    for (let i = 0; i < 2; i++) maxFootDrift = Math.max(maxFootDrift, Math.hypot(sample.feet[i].x - first.feet[i].x, sample.feet[i].y - first.feet[i].y))
++    if (elapsed === 600 && process.env.CHORE_SMELL_FOLLOW_CAPTURE_DIR) {
++      await mkdir(process.env.CHORE_SMELL_FOLLOW_CAPTURE_DIR, { recursive: true })
++      await page.screenshot({ path: join(process.env.CHORE_SMELL_FOLLOW_CAPTURE_DIR, `smell-follow-room-${species}.png`), fullPage: false })
++    }
++    await page.clock.runFor(16)
++  }
++  const angles = samples.map(sample => sample.angle), changes = samples.slice(1).map((sample, i) => ({ delta: sample.angle - angles[i], ms: sample.time - samples[i].time }))
++  const observedSpeed = Math.max(...changes.map(({ delta, ms }) => Math.abs(delta) / ms * 1000)), observedPeak = Math.max(...angles.map(Math.abs))
++  t.diagnostic(`Actual ${species} appendage peak${observedPeak.toFixed(3)}deg;speed${observedSpeed.toFixed(3)}deg/s`)
++  t.diagnostic(`Actual maximum foot drift${maxFootDrift.toFixed(6)} local SVG units`)
++  assert.ok(maxFootDrift < .01, 'actual smell reaction feet stay planted')
++  assert.ok(observedSpeed < speed, 'the actual appendage must not flutter rapidly')
++  assert.ok(observedPeak < peak)
++  assert.ok(observedPeak > minimum, 'a stinky response must retain its recognizable appendage lift rather than a disabled still')
++  const signs = angles.filter(angle => Math.abs(angle)>1e-5).map(Math.sign)
++  assert.equal(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1]).length, crossings)
++  assert.equal(await resident.evaluate(node => node === window.__smellPet), true)
++  assert.equal((await live.textContent()).trim(), heard)
++  assert.deepEqual((await snapshot(page)).tables, saved)
++  if(process.env.CHORE_SMELL_FOLLOW_CAPTURE_DIR)await writeFile(join(process.env.CHORE_SMELL_FOLLOW_CAPTURE_DIR,`smell-follow-room-${species}.json`),JSON.stringify({species,samples,observedSpeed,observedPeak,maxFootDrift,zeroCrossings:crossings,scope:'Actual dressed happy species appendage DOM transforms, native RAF timestamps, grounded local foot contacts, one clock and unchanged savedtables. Sprout angle is stem rotation, not full leaf angle. Native clock is deterministic/frozen.'},null,2)+'\n')
++  t.diagnostic(`Chromium ${page.context().browser().version()}; ${samples.length} actual SVG appendage/timestamp samples; stinky linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables`)
++})
+diff --git i/docs/ART.md w/docs/ART.md
+index 1c91907..2753d69 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -203,3 +203,5 @@ Healthy environmental concern settles appendages in one restrained sway as the r
+ Explore together also offers Show room while expanded. Reuse the player view action: explicitly scroll the scene into view and focus the resident without restarting an invitation, changing the chosen furnishing or clearing successful feedback. A resting resident remains viewable in its own room; travel and a different focused room have linked explanations. Keep the heading wrapping,44px targets and a distinct accessible name when both panels are open. Look together itself does not scroll the scene.
+ 
+ Home speech belongs in the canvas layer below the actual view and compact door controls. Share the existing canvas grid area with a4px top gap, keep the grid column within its stage, and preserve empty/default geometry. In wide/landscape homes, a34rem app-shell container threshold follows root text size: cramped enlarged-text views reuse the established stacked home flow and250px canvas floor. Default landscape arrangements remain unchanged. Speech keeps the resident ink clear and does not change camera, placement, invitation or saved state.
++
++Healthy smell reactions retain their1600ms lean-back and hand gesture while smaller appendage arcs recoil and settle. Use damped follow-through with Bun largest, Mochi soft and Sprout restrained. Cancel lateral torso translation at both horizontal ground contacts so the feet stay planted. Preserve primary torso/arms/gaze/expression/blinks/shadow and all other actions, sick/reduced frames, routing and dialogue.
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-smell-follow.mjs 2/docs/audits/2026-10-12-character-polish/capture-smell-follow.mjs
+new file mode 100644
+index 0000000..0ba0842
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-smell-follow.mjs
+@@ -0,0 +1,58 @@
++// Bounded static production art and numeric appendage curves; no live motion clock.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const label = process.argv[2], out = 'docs/audits/2026-10-12-character-polish'
++if (!['before', 'after'].includes(label)) throw new Error('Expected before or after')
++const baseline = await readFile(`${out}/smell-follow-baseline.ts.txt`, 'utf8')
++const server = await createServer({ plugins: [{ name: 'smell-follow-baseline', enforce: 'pre', transform(code, id) {
++  if (label === 'before' && id.split('?')[0] === `${process.cwd()}/src/character/motion.ts`) return { code: baseline, map: null }
++} }], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++  const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++  const { sampleMotion, ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts')
++  const { SPECIES_COLOUR, PALETTE } = await server.ssrLoadModule('/src/art/palette.ts')
++  const { PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++  const h = React.createElement, speciesList = ['mochi', 'bun', 'sprout'], samples = [], files = []
++  const equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++  const at = (species, elapsedMs, mood = 'happy') => sampleMotion({ species, action: 'smell', mood, elapsedMs, blinkMs: elapsedMs, distance: 0, durationMs: ACTION_MS.smell, reducedMotion: false })
++  async function png(name, width, height, children) {
++    const markup = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width, height }, h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), children))
++    await writeFile(`${out}/${name}`, new Resvg(markup).render().asPng()); files.push(name)
++  }
++  for (const variant of ['light', 'dark']) {
++    const cells = [], mood = variant === 'light' ? 'happy' : 'scruffy'
++    for (const species of speciesList) for (const facing of [1, -1]) for (const phase of [.24, .42, .6, .76]) {
++      const frame = at(species, ACTION_MS.smell * phase, mood)
++      const draw = size => h('g', { transform: facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined }, h(AnimatedCharacterArt,
++        { species, mood, frame, equipped, bodyColour: variant === 'dark' ? PALETTE.ink : SPECIES_COLOUR[species], strokeScale: size === 25 ? PET_STROKE_SCALE : 1 }))
++      const views = [200, 60, 25].map((size, i) => h('g', { key: size, transform: `translate(${[0, 205, 280][i]} ${100 - size / 2}) scale(${size / 200})` }, draw(size)))
++      cells.push(h('g', { key: cells.length, transform: `translate(${cells.length % 4 * 330} ${Math.floor(cells.length / 4) * 230})` }, views,
++        h('text', { x: 8, y: 220, fontSize: 11, fill: PALETTE.ink }, `${species} smell f${facing} ${phase * 100}%;200/60/25px`)))
++      samples.push({ variant, mood, species, facing, phase, frame })
++    }
++    await png(`smell-follow-${label}-${variant}-sizes.png`, 1320, 1380, cells)
++  }
++  const colours = { mochi: '#ca6080', bun: '#397dbb', sprout: '#568747' }, curveSamples = []
++  const x0 = 54, y0 = 50, width = 430, height = 200, duration = ACTION_MS.smell
++  const curves = speciesList.map(species => {
++    const points = Array.from({ length: 701 }, (_, n) => { const ms = duration * n / 700; return { ms, angle: at(species, ms).leftAppendage } })
++    curveSamples.push({ species, points })
++    return h('path', { key: species, d: points.map((p, n) => `${n ? 'L' : 'M'}${(x0 + p.ms / duration * width).toFixed(3)} ${(y0 + (14 - p.angle) / 28 * height).toFixed(3)}`).join(' '), fill: 'none', stroke: colours[species], strokeWidth: 1.8 })
++  })
++  await png(`smell-follow-${label}-curves.png`, 520, 290, h('g', null,
++    h('text', { x: x0, y: 20, fontSize: 14, fill: PALETTE.ink }, `smell:left appendage angle over ${duration}ms`),
++    speciesList.map((species, n) => h('text', { key: species, x: x0 + n * 130, y: 39, fontSize: 12, fill: colours[species] }, species)),
++    [-12, -6, 0, 6, 12].map(angle => h('g', { key: angle }, h('path', { d: `M${x0} ${y0 + (14 - angle) / 28 * height} h${width}`, stroke: '#d8d0c4', fill: 'none' }),
++      h('text', { x: 12, y: y0 + (14 - angle) / 28 * height + 4, fontSize: 11, fill: PALETTE.ink }, `${angle}°`))), curves,
++    [0, duration / 2, duration].map(ms => h('text', { key: ms, x: x0 + ms / duration * width, y: 275, textAnchor: 'middle', fontSize: 11, fill: PALETTE.ink }, `${ms}ms`))))
++  const hash = bytes => createHash('sha256').update(bytes).digest('hex')
++  const sources = ['src/character/motion.ts', 'src/character/AnimatedCharacter.tsx', 'src/character/species/animatedBody.tsx', 'src/character/parts.tsx', 'src/character/Character.tsx', 'src/art/palette.ts', 'src/room/shell/geometry.ts', `${out}/capture-smell-follow.mjs`]
++  await writeFile(`${out}/smell-follow-${label}.json`, JSON.stringify({ method: '48dressed species/mirror/phase/light-happy-or-dark-scruffy samples,144views at200/60/25px,and three appendage angle/time curves. Static/numeric only;no human temporal playback. Actual production sampler/art;exact3602bf3 sampler baseline.', samples, curveSamples,
++    sourceSha256: Object.fromEntries(await Promise.all(sources.map(async path => [path, hash(label === 'before' && path === 'src/character/motion.ts' ? baseline : await readFile(path))]))),
++    captureSha256: Object.fromEntries(await Promise.all(files.map(async file => [file, hash(await readFile(`${out}/${file}`))]))) }, null, 2) + '\n')
++  console.log(`Wrote ${label}:144sizeviews and3appendage curves`)
++} finally { await server.close() }
+diff --git 1/docs/audits/2026-10-12-character-polish/compare-smell-follow.mjs 2/docs/audits/2026-10-12-character-polish/compare-smell-follow.mjs
+new file mode 100644
+index 0000000..9b6d97b
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/compare-smell-follow.mjs
+@@ -0,0 +1,40 @@
++// Exact sampler differential, isolated from live playback and browser clocks.
++import assert from 'node:assert/strict'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++import ts from 'typescript'
++const out = 'docs/audits/2026-10-12-character-polish'
++const baseline = await readFile(`${out}/smell-follow-baseline.ts.txt`, 'utf8')
++const current = await readFile('src/character/motion.ts', 'utf8')
++async function load(source) {
++  const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText
++  return import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`)
++}
++const before = await load(baseline), after = await load(current)
++assert.deepEqual(after.ACTION_MS, before.ACTION_MS)
++const phases = [0, .1, .18, .3, .35, .4, .48, .5, .56, .64, .75, .9, .92, 1, 2]
++let samples = 0, unchanged = 0, changed = 0
++const changes = {}
++for (const species of ['mochi', 'bun', 'sprout']) for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick']) {
++  for (const action of Object.keys(before.ACTION_MS)) for (const factor of [.5, 1, 2]) for (const reducedMotion of [false, true]) for (const facing of [1, -1]) for (const phase of phases) {
++    const durationMs = before.ACTION_MS[action] * factor
++    const input = { species, mood, action, durationMs, elapsedMs: phase * durationMs, blinkMs: 9250 + phase * durationMs, distance: phase * 3, facing, reducedMotion }
++    const a = before.sampleMotion(input), b = after.sampleMotion(input)
++    const allowed = !reducedMotion && action === 'smell' && mood !== 'sick'
++    if (allowed) {
++      const { leftAppendage: oldLeft, rightAppendage: oldRight, leftGroundX: oldGroundLeft, rightGroundX: oldGroundRight, ...oldRest } = a, { leftAppendage: newLeft, rightAppendage: newRight, leftGroundX: newGroundLeft, rightGroundX: newGroundRight, ...newRest } = b
++      assert.deepEqual(newRest, oldRest, `${species}/${mood}/${action}/${factor}/${phase}: only appendages and horizontal ground contacts may change`)
++      assert.equal(b.bodyX + (newGroundLeft ?? 0), 0)
++      assert.equal(b.bodyX + (newGroundRight ?? 0), 0)
++      if (oldLeft !== newLeft || oldRight !== newRight || oldGroundLeft !== newGroundLeft || oldGroundRight !== newGroundRight) {
++        changed++; const key = `${species}/${action}`; changes[key] = (changes[key] ?? 0) + 1
++      } else unchanged++
++    } else { assert.deepEqual(b, a, `${species}/${mood}/${action}/${factor}/${phase}/${reducedMotion}: exact preservation`); unchanged++ }
++    samples++
++  }
++}
++assert.deepEqual(Object.keys(changes).sort(), ['bun/smell', 'mochi/smell', 'sprout/smell'])
++assert.ok(changed > 0)
++const sha256 = text => createHash('sha256').update(text).digest('hex')
++await writeFile(`${out}/smell-follow-differential.json`, JSON.stringify({ method: 'Exact sampled frames across 3 species, 5 moods, 16 actions, 3 durations, 2 motion policies, 2 facings, and 15 phases. Only normal healthy smell appendages and horizontal ground contacts may differ; all other fields, actions, sick/reduced frames and durations are exact. Static numeric checks, not temporal acceptance.', samples, unchanged, changed, changes, sourceSha256: { baseline: sha256(baseline), current: sha256(current), runner: sha256(await readFile(new URL(import.meta.url))) } }, null, 2) + '\n')
++console.log(`Compared ${samples} frames;${unchanged} exact;${changed} appendage/ground-contact-only differences`)

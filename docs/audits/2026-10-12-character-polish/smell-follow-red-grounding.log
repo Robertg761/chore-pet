@@ -1,0 +1,139 @@
+npm notice run chore-pet@0.0.0 test
+npm notice run vitest run --maxWorkers=1 src/character/motion.smell.test.ts
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/motion.smell.test.ts (10 tests | 9 failed) 26ms
+   ❯ restrained environmental sniff (10)
+     × keeps mochi follow-through small while retaining the lean-back and hand gesture 8ms
+     × keeps bun follow-through small while retaining the lean-back and hand gesture 4ms
+     × keeps sprout follow-through small while retaining the lean-back and hand gesture 1ms
+     × mochi settles with two displacement zero crossings at different durations 5ms
+     × bun settles with two displacement zero crossings at different durations 1ms
+     × sprout settles with two displacement zero crossings at different durations 1ms
+     × mochi keeps both feet fixed under its lateral torso recoil 2ms
+     × bun keeps both feet fixed under its lateral torso recoil 1ms
+     × sprout keeps both feet fixed under its lateral torso recoil 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/motion.smell.test.ts > restrained environmental sniff > keeps mochi follow-through small while retaining the lean-back and hand gesture
+AssertionError: expected 4.999991159531213 to be less than 1.65
+ ❯ src/character/motion.smell.test.ts:17:49
+     15|     for (const side of ['leftAppendage', 'rightAppendage'] as const) {
+     16|       const values = frames.map(frame => frame[side])
+     17|       expect(Math.max(...values.map(Math.abs))).toBeLessThan(excursion)
+       |                                                 ^
+     18|       expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visibl…
+     19|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  src/character/motion.smell.test.ts > restrained environmental sniff > keeps bun follow-through small while retaining the lean-back and hand gesture
+AssertionError: expected 11.999938256784002 to be less than 4.25
+ ❯ src/character/motion.smell.test.ts:17:49
+     15|     for (const side of ['leftAppendage', 'rightAppendage'] as const) {
+     16|       const values = frames.map(frame => frame[side])
+     17|       expect(Math.max(...values.map(Math.abs))).toBeLessThan(excursion)
+       |                                                 ^
+     18|       expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visibl…
+     19|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  src/character/motion.smell.test.ts > restrained environmental sniff > keeps sprout follow-through small while retaining the lean-back and hand gesture
+AssertionError: expected 8.99999911858814 to be less than 2.5
+ ❯ src/character/motion.smell.test.ts:17:49
+     15|     for (const side of ['leftAppendage', 'rightAppendage'] as const) {
+     16|       const values = frames.map(frame => frame[side])
+     17|       expect(Math.max(...values.map(Math.abs))).toBeLessThan(excursion)
+       |                                                 ^
+     18|       expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visibl…
+     19|       const velocity = values.slice(1).map((value, i) => Math.abs(valu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  src/character/motion.smell.test.ts > restrained environmental sniff > mochi settles with two displacement zero crossings at different durations
+ FAIL  src/character/motion.smell.test.ts > restrained environmental sniff > bun settles with two displacement zero crossings at different durations
+ FAIL  src/character/motion.smell.test.ts > restrained environmental sniff > sprout settles with two displacement zero crossings at different durations
+AssertionError: expected [ -1, 1, -1 ] to have a length of 2 but got 3
+
+- Expected
++ Received
+
+- 2
++ 3
+
+ ❯ src/character/motion.smell.test.ts:43:73
+     41|       const values = Array.from({ length: 1001 }, (_, phase) => at(spe…
+     42|       const signs = values.filter(value => Math.abs(value) > 1e-6).map…
+     43|       expect(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1])…
+       |                                                                         ^
+     44|       expect(values[0]).toBe(0)
+     45|       expect(values.at(-1)).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  src/character/motion.smell.test.ts > restrained environmental sniff > mochi keeps both feet fixed under its lateral torso recoil
+AssertionError: expected -0.016356604925707337 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ -0.016356604925707337
+
+ ❯ src/character/motion.smell.test.ts:53:56
+     51|       for (let phase = 0; phase <= 100; phase++) {
+     52|         const frame = at(species, duration * phase / 100, duration, fa…
+     53|         expect(frame.bodyX + (frame.leftGroundX ?? 0)).toBe(0)
+       |                                                        ^
+     54|         expect(frame.bodyX + (frame.rightGroundX ?? 0)).toBe(0)
+     55|         expect(frame.leftGroundY).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  src/character/motion.smell.test.ts > restrained environmental sniff > bun keeps both feet fixed under its lateral torso recoil
+AssertionError: expected -0.019947079177691875 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ -0.019947079177691875
+
+ ❯ src/character/motion.smell.test.ts:53:56
+     51|       for (let phase = 0; phase <= 100; phase++) {
+     52|         const frame = at(species, duration * phase / 100, duration, fa…
+     53|         expect(frame.bodyX + (frame.leftGroundX ?? 0)).toBe(0)
+       |                                                        ^
+     54|         expect(frame.bodyX + (frame.rightGroundX ?? 0)).toBe(0)
+     55|         expect(frame.leftGroundY).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  src/character/motion.smell.test.ts > restrained environmental sniff > sprout keeps both feet fixed under its lateral torso recoil
+AssertionError: expected -0.014361897007938149 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ -0.014361897007938149
+
+ ❯ src/character/motion.smell.test.ts:53:56
+     51|       for (let phase = 0; phase <= 100; phase++) {
+     52|         const frame = at(species, duration * phase / 100, duration, fa…
+     53|         expect(frame.bodyX + (frame.leftGroundX ?? 0)).toBe(0)
+       |                                                        ^
+     54|         expect(frame.bodyX + (frame.rightGroundX ?? 0)).toBe(0)
+     55|         expect(frame.leftGroundY).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 1 passed (10)
+   Start at  22:28:05
+   Duration  227ms (transform 44%, tests 37%, import 14%, worker 5%)
+

@@ -1,0 +1,51 @@
+✔ mochi reacts to an actually wilting plant with a grounded deliberate appendage gesture (1863.165564ms)
+ℹ Actual mochi appendage peak1.749deg;speed7.957deg/s
+ℹ Chromium 152.0.7977.82; 96 actual SVG appendage/timestamp samples; wilting linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ bun reacts to an actually wilting plant with a grounded deliberate appendage gesture (1730.849203ms)
+ℹ Actual bun appendage peak4.785deg;speed22.014deg/s
+ℹ Chromium 152.0.7977.82; 96 actual SVG appendage/timestamp samples; wilting linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ sprout reacts to an actually wilting plant with a grounded deliberate appendage gesture (1754.605412ms)
+ℹ Actual sprout appendage peak1.219deg;speed5.695deg/s
+ℹ Chromium 152.0.7977.82; 96 actual SVG appendage/timestamp samples; wilting linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ mochi reacts to an actually wilting plant without moving in reduced motion (1161.107014ms)
+ℹ Visible reduced-motion wilting invitation: same position/body,existing3600ms speech lifetime,0resident frames,unchanged saved tables.
+✔ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1658.233179ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ mochi aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1544.41642ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1606.004951ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ bun aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1568.220446ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 0 (1591.074282ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ sprout aims at low and high furnishings through actual mirrored SVG transforms, rotation 1 (1608.083202ms)
+ℹ Chromium 152.0.7977.82; actual eye ink/native SVG matrices; low and high; no saved changes
+✔ mochi settles into one quiet environmental rest sway on the resident clock (1676.709217ms)
+ℹ Chromium 152.0.7977.82; 53 actual SVG-angle samples; selected rug/rest; actual foot contacts<.01local SVGunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ bun settles into one quiet environmental rest sway on the resident clock (1576.343868ms)
+ℹ Chromium 152.0.7977.82; 53 actual SVG-angle samples; selected rug/rest; actual foot contacts<.01local SVGunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ sprout settles into one quiet environmental rest sway on the resident clock (1571.653097ms)
+ℹ Chromium 152.0.7977.82; 53 actual SVG-angle samples; selected rug/rest; actual foot contacts<.01local SVGunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ mochi reacts to an actually stinky trash can with a grounded deliberate appendage gesture (1595.88781ms)
+ℹ Actual mochi appendage peak1.613deg;speed10.434deg/s
+ℹ Actual maximum foot drift0.000010 local SVG units
+ℹ Chromium 152.0.7977.82; 83 actual SVG appendage/timestamp samples; stinky linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ bun reacts to an actually stinky trash can with a grounded deliberate appendage gesture (1653.955263ms)
+ℹ Actual bun appendage peak4.169deg;speed28.053deg/s
+ℹ Actual maximum foot drift0.000010 local SVG units
+ℹ Chromium 152.0.7977.82; 83 actual SVG appendage/timestamp samples; stinky linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ sprout reacts to an actually stinky trash can with a grounded deliberate appendage gesture (1459.067313ms)
+ℹ Actual sprout appendage peak0.976deg;speed6.756deg/s
+ℹ Actual maximum foot drift0.000014 local SVG units
+ℹ Chromium 152.0.7977.82; 83 actual SVG appendage/timestamp samples; stinky linked chore; planted feet<.01localunits; one resident clock; unchanged position/node/announcement/saved tables
+✔ mochi reacts to an actually stinky trash can without moving in reduced motion (846.913675ms)
+ℹ Visible reduced-motion stinky invitation: same position/body,existing3600ms speech lifetime,0resident frames,unchanged saved tables.
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 28033.99928

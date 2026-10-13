@@ -1,0 +1,20 @@
+{
+  "files": {
+    "docs/audits/2026-10-12-character-polish/smell-follow-baseline.ts.txt": "a912e37fb61319129245da227a7dc1e9cda10390596c68089440f307a7762b15",
+    "docs/audits/2026-10-12-character-polish/smell-follow-differential.json": "a2555cb4e848e82bee44bf086e0197b206c79d31398fbba7c99319d8831d2054",
+    "docs/audits/2026-10-12-character-polish/smell-follow-before.json": "8ee666e5a48d3d297ce5d5e6b8186fa8f7a53f7fdcedecd04c437009f94a1bba",
+    "docs/audits/2026-10-12-character-polish/smell-follow-before-light-sizes.png": "eedd8e89d8d2140013fe50ff54982a41214900d54c4549f1cb57ae3f870428ba",
+    "docs/audits/2026-10-12-character-polish/smell-follow-before-dark-sizes.png": "c9fca9df23289976306ad25a08e6898b46b3f33f1369dcbb7d37e787ae01e579",
+    "docs/audits/2026-10-12-character-polish/smell-follow-before-curves.png": "c7408def39f969c312bfe1c9ed58636c389894e38f3abbfa35227deeec2e0b39",
+    "docs/audits/2026-10-12-character-polish/smell-follow-after.json": "a88ab6db463165f4d69b8bed76424b3df50a5c0f6fa08db2dba934473e803917",
+    "docs/audits/2026-10-12-character-polish/smell-follow-after-light-sizes.png": "95d704aa66672e5eed732cfad80554d8fae446da35288bbaf14c8261269d26d0",
+    "docs/audits/2026-10-12-character-polish/smell-follow-after-dark-sizes.png": "b76a9f266ec3e3a8d3cc25ce61f8c20ec203e04f658a681d2b2cb56d13db558a",
+    "docs/audits/2026-10-12-character-polish/smell-follow-after-curves.png": "a4a1f1a0634bef67b78f07764a54acc426cc7383933a4f09fe746bb2c5d13e3c",
+    "docs/audits/2026-10-12-character-polish/smell-follow-native/smell-follow-room-bun.json": "526e0c98a4411495aaab9f924ad0b6169e3313d2f7c93cd7d8be29fbe20d121b",
+    "docs/audits/2026-10-12-character-polish/smell-follow-native/smell-follow-room-bun.png": "00332dd8d6e95d9f0ce449d136e24d048e4fc49f5e73d3bc8618caf830325eee",
+    "docs/audits/2026-10-12-character-polish/smell-follow-native/smell-follow-room-mochi.json": "db7cd0d82ddacdd62fa1fd06bff00cafe33d71e6026281972d24f120b68df03d",
+    "docs/audits/2026-10-12-character-polish/smell-follow-native/smell-follow-room-mochi.png": "46a7b9a50ead458858766870a43f5b7e26aeac35dbc0528a553b0d1027ca03fa",
+    "docs/audits/2026-10-12-character-polish/smell-follow-native/smell-follow-room-sprout.json": "b63f7b5600a5235e32fc155a6d4e811dc980404cb1c9ebed3f20b11f01dcfc33",
+    "docs/audits/2026-10-12-character-polish/smell-follow-native/smell-follow-room-sprout.png": "eec9c4f7661247742304256e8b676627550d8936e0fa196f0a07ed36e942f36f"
+  }
+}
