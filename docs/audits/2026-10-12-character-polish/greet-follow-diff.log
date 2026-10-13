@@ -1,0 +1,14 @@
+git diff --check -- src/character/motion.ts
+
+git diff --no-index --check -- /dev/null src/character/motion.greet.test.ts
+
+git diff --no-index --check -- /dev/null scripts/browser/pet-greet-follow.test.mjs
+
+git diff --check -- docs/ART.md
+
+git diff --no-index --check -- /dev/null docs/audits/2026-10-12-character-polish/capture-greet-follow.mjs
+
+git diff --no-index --check -- /dev/null docs/audits/2026-10-12-character-polish/compare-greet-follow.mjs
+
+git diff --no-index --check -- /dev/null docs/audits/2026-10-12-character-polish/greet-follow-design.md
+

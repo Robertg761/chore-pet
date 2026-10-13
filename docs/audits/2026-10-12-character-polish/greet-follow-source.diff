@@ -1,0 +1,362 @@
+diff --git i/src/character/motion.ts w/src/character/motion.ts
+index dcd42e2..2b1bd27 100644
+--- i/src/character/motion.ts
++++ w/src/character/motion.ts
+@@ -83,6 +83,8 @@ const NOTICE_FOLLOW: Record<Species, number> = { mochi: 0.15, bun: 0.20, sprout:
+ const TURN_FOLLOW: Record<Species, number> = { mochi: 0.10, bun: 0.12, sprout: 0.10 }
+ // Inspection follows one calm sway without changing its pointing gesture.
+ const INSPECT_FOLLOW: Record<Species, number> = { mochi: 0.35, bun: 0.4, sprout: 0.35 }
++// A player greeting keeps a lively hand wave and one softer appendage sway.
++const GREET_FOLLOW: Record<Species, number> = { mochi: 0.55, bun: 0.6, sprout: 0.5 }
+ // A wave toward leaves or glass keeps the hand lively and the appendages quiet.
+ const WAVE_FOLLOW: Record<Species, number> = { mochi: 0.4, bun: 0.45, sprout: 0.35 }
+ // Concern settles in one smaller sway while the resident studies wilting leaves.
+@@ -402,8 +404,10 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+     const calmConcern = action === 'concern' && mood !== 'sick'
+     const calmInspect = action === 'inspect' && mood !== 'sick'
+     const calmWave = action === 'wave' && mood !== 'sick'
++    const calmGreet = action === 'greet' && mood !== 'sick'
+     const followStrength = action === 'stretch' ? STRETCH[species].follow
+       : action === 'rest' ? REST_FOLLOW[species]
++      : calmGreet ? GREET_FOLLOW[species]
+       : calmWave ? WAVE_FOLLOW[species]
+       : calmInspect ? INSPECT_FOLLOW[species]
+       : calmConcern ? CONCERN_FOLLOW[species] : AFFECTION_FOLLOW[species]
+@@ -413,7 +417,7 @@ export function sampleMotion(input: MotionInput): MotionFrame {
+       ? Math.sin(t * Math.PI) * follow * personality.follow * TURN_FOLLOW[species] * energy
+       : action === 'smell' && mood !== 'sick'
+       ? Math.sin(t * Math.PI * 3 - personality.lag + 0.5) * follow * personality.follow * SMELL_FOLLOW[species] * (1 - 0.55 * ease(t)) * energy
+-      : action === 'affection' || action === 'stretch' || action === 'rest' || calmConcern || calmInspect || calmWave
++      : action === 'affection' || action === 'stretch' || action === 'rest' || calmConcern || calmInspect || calmWave || calmGreet
+       ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * followStrength * energy
+       : Math.sin(t * Math.PI * 4 - personality.lag) * follow * personality.follow * energy
+     frame.leftAppendage = sway
+diff --git 1/src/character/motion.greet.test.ts 2/src/character/motion.greet.test.ts
+new file mode 100644
+index 0000000..4f8c876
+--- /dev/null
++++ 2/src/character/motion.greet.test.ts
+@@ -0,0 +1,64 @@
++import { describe, expect, it } from 'vitest'
++import { ACTION_MS, sampleMotion } from './motion'
++import type { Mood, Species } from '../domain/types'
++
++const at = (species: Species, elapsedMs: number, durationMs = ACTION_MS.greet, reducedMotion = false, mood: Mood = 'happy') =>
++  sampleMotion({ species, mood, action: 'greet', elapsedMs, durationMs, reducedMotion, distance: 0 })
++
++describe('player greeting follow-through', () => {
++  it.each([
++    { species: 'mochi', excursion: 2.75, speed: 19.5, visible: 1.5 },
++    { species: 'bun', excursion: 7.2, speed: 50, visible: 4.8 },
++    { species: 'sprout', excursion: 4.5, speed: 32, visible: 3 },
++  ] as const)('keeps $species appendages restrained while the resident greets the player', ({ species, excursion, speed, visible }) => {
++    for (const mood of ['happy', 'content', 'meh', 'scruffy'] as const) {
++      const energy = { happy: 1, content: .9, meh: .8, scruffy: .65 }[mood]
++      const frames = Array.from({ length: 1201 }, (_, ms) => at(species, ms, 1200, false, mood))
++      for (const side of ['leftAppendage', 'rightAppendage'] as const) {
++        const values = frames.map(frame => frame[side])
++        expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(excursion * energy + 1e-9)
++        expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visible * .7 * energy)
++        const velocity = values.slice(1).map((value, i) => Math.abs(value - values[i]) * 1000)
++        expect(Math.max(...velocity)).toBeLessThan(speed * energy)
++        expect(values[0]).toBe(0)
++        expect(values.at(-1)).toBe(0)
++        expect(velocity.at(-1)).toBeLessThan(.2)
++      }
++      const held = at(species, 480, 1200, false, mood)
++      expect(held.lean).toBeCloseTo(-3 * ({ mochi: .82, bun: 1, sprout: .72 }[species]) * energy, 9)
++      expect(held.gazeY).toBe(-2 * energy)
++      expect(held.leftArm).toBeCloseTo(5 * ({ mochi: .82, bun: 1, sprout: .72 }[species]) * energy, 9)
++      expect(Math.abs(held.rightArm)).toBeGreaterThan(10 * energy)
++      for (const frame of frames) {
++        expect(frame.bodyX).toBe(0)
++        expect(frame.bodyY).toBe(0)
++        expect(frame.leftFoot).toBe(0)
++        expect(frame.rightFoot).toBe(0)
++        expect(frame.accentOpacity).toBe(0)
++        expect(frame.shadowScale).toBe(1)
++        expect(frame.shadowOpacity).toBe(1)
++      }
++    }
++  })
++
++  it.each(['mochi', 'bun', 'sprout'] as const)('%s makes one calm sway at short, normal, long and legacy durations', species => {
++    for (const mood of ['happy', 'content', 'meh', 'scruffy'] as const) for (const duration of [600, 1200, 2400, 4200]) for (const side of ['leftAppendage', 'rightAppendage'] as const) {
++      const values = Array.from({ length: 1001 }, (_, phase) => at(species, phase / 1000 * duration, duration, false, mood)[side])
++      const signs = values.filter(value => Math.abs(value) > 1e-6).map(Math.sign)
++      expect(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1])).toHaveLength(1)
++      expect(values[0]).toBe(0)
++      expect(values.at(-1)).toBe(0)
++    }
++  })
++
++  it('retains a still reduced reaction throughout the existing 1200ms lifetime', () => {
++    expect(ACTION_MS.greet).toBe(1200)
++    for (const species of ['mochi', 'bun', 'sprout'] as const) for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick'] as const) {
++      for (const ms of [0, 180, 480, 600, 900, 1199, 1200]) {
++        const frame = at(species, ms, 1200, true, mood)
++        expect(frame.leftAppendage).toBe(0)
++        expect(frame.rightAppendage).toBe(0)
++      }
++    }
++  })
++})
+diff --git 1/scripts/browser/pet-greet-follow.test.mjs 2/scripts/browser/pet-greet-follow.test.mjs
+new file mode 100644
+index 0000000..6db408a
+--- /dev/null
++++ 2/scripts/browser/pet-greet-follow.test.mjs
+@@ -0,0 +1,120 @@
++import assert from 'node:assert/strict'
++import { test } from 'node:test'
++import { mkdir, writeFile } from 'node:fs/promises'
++import { join } from 'node:path'
++const out = process.env.CHORE_GREET_FOLLOW_CAPTURE_DIR
++import { browserApp, changeReducedMotion, snapshot } from './helpers.mjs'
++
++const readFeet = node => ['left', 'right'].map(side => {
++  const foot = node.querySelector(`[data-foot="${side}"] ellipse`)
++  const point = new DOMPoint(+foot.getAttribute('cx'), +foot.getAttribute('cy'))
++    .matrixTransform(foot.getScreenCTM()).matrixTransform(node.getScreenCTM().inverse())
++  return { x: point.x, y: point.y }
++})
++
++for (const { species, selector, limit, speed, visible, lean } of [
++  { species: 'mochi', selector: '[data-appendage="knot"] > g', limit: 2.76, speed: 20, visible: 1.4, lean: -2.46 },
++  { species: 'bun', selector: '[data-appendage="left-ear"]', limit: 7.21, speed: 51, visible: 4.8, lean: -3 },
++  { species: 'sprout', selector: '[data-appendage="stem"]', limit: 1.805, speed: 13, visible: 1, lean: -2.16 },
++]) {
++  test(`${species} greets the player with one restrained appendage sway`, async t => {
++    const page = await browserApp(t, { reducedMotion: 'no-preference', viewport: { width: 1280, height: 800 } })
++    await page.evaluate(species => new Promise((resolve, reject) => {
++      const request = indexedDB.open('chore-pet', 1)
++      request.onerror = () => reject(request.error)
++      request.onsuccess = () => {
++        const db = request.result, tx = db.transaction('kv', 'readwrite'), store = tx.objectStore('kv')
++        const read = store.get('snapshot')
++        read.onsuccess = () => {
++          const saved = read.result, pet = Object.values(saved.tables.pets)[0]
++          pet.species = species
++          saved.tables.placed_objects = {}
++          saved.tables.chores = {}
++          saved.tables.completions = {}
++          pet.equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++          saved.outbox = {}
++          store.put(saved, 'snapshot')
++        }
++        tx.oncomplete = () => { db.close(); resolve() }
++        tx.onerror = () => { db.close(); reject(tx.error) }
++      }
++    }), species)
++    await page.clock.install()
++    await page.clock.pauseAt(Date.now() + 1000)
++    await page.addInitScript(() => {
++      Math.random = () => .99
++      const request = requestAnimationFrame, cancel = cancelAnimationFrame
++      window.__greetFrames = new Set()
++      window.requestAnimationFrame = callback => {
++        const id = request(now => { window.__greetFrames.delete(id); window.__greetLastFrame = now; callback(now) })
++        window.__greetFrames.add(id)
++        return id
++      }
++      window.cancelAnimationFrame = id => { window.__greetFrames.delete(id); cancel(id) }
++    })
++    await page.reload()
++    const resident = page.locator('.room-pet')
++    await resident.waitFor()
++    const saved = (await snapshot(page)).tables
++    await resident.evaluate(node => { window.__greetPet = node })
++    await page.getByRole('button', { name: 'Spend time together', exact: true }).click()
++    const wave = page.getByRole('button', { name: 'Wave', exact: true })
++    await wave.focus(); await page.keyboard.press('Enter')
++    const live = page.locator('.living-room [aria-live="polite"]'), heard = (await live.textContent()).trim()
++    assert.ok(heard, 'native player Wave starts the resident greeting announcement')
++    // Past the existing120ms join;61 delivered SVG samples over960ms end
++    // before the1200ms greeting expiry. No furniture orientation is involved.
++    await page.clock.runFor(160)
++    const position = await resident.getAttribute('transform'), feet = await resident.evaluate(readFeet), samples = []
++    for (let elapsed = 160; elapsed <= 1120; elapsed += 16) {
++      const sample = await resident.evaluate((node, selector) => {
++        const part = node.querySelector(selector), matrix = part.transform.baseVal.consolidate().matrix
++        return { time: window.__greetLastFrame, angle: Math.atan2(matrix.b, matrix.a) * 180 / Math.PI,
++          lean: Number(node.querySelector('[data-character-body]').getAttribute('transform').match(/rotate\(([-\d.]+)/)[1]),
++          arms: [...node.querySelectorAll('[data-arm]')].map(n => Number(n.getAttribute('transform').match(/rotate\(([-\d.]+)/)[1])),
++          frames: window.__greetFrames.size }
++      }, selector)
++      samples.push(sample)
++      assert.equal(sample.frames, 1)
++      assert.ok(sample.arms[0] >= 0 && sample.arms[0] <= 5.00001, 'the original low arm gesture remains within its range')
++      sample.position = await resident.getAttribute('transform')
++      assert.equal(sample.position, position)
++      const current = await resident.evaluate(readFeet)
++      sample.feet = current
++      current.forEach((p,i) => assert.ok(Math.hypot(p.x - feet[i].x, p.y - feet[i].y) < .01, 'player greeting keeps actual foot contacts fixed'))
++      if (out && elapsed === 480) {
++        await mkdir(out, { recursive: true })
++        await page.screenshot({ path: join(out, `greet-follow-${species}.png`) })
++      }
++      if (elapsed < 1120) await page.clock.runFor(16)
++    }
++    const peak = Math.max(...samples.map(x => Math.abs(x.angle)))
++    const maxFootDrift = Math.max(...samples.flatMap(sample => sample.feet.map((p,i) => Math.hypot(p.x-feet[i].x,p.y-feet[i].y))))
++    const observedSpeed = Math.max(...samples.slice(1).map((x,i) => x.time > samples[i].time ? Math.abs(x.angle - samples[i].angle) / (x.time - samples[i].time) * 1000 : 0))
++    t.diagnostic(`${species}: peak ${peak.toFixed(3)}deg, speed ${observedSpeed.toFixed(3)}deg/s; ${samples.length} actual SVG/RAF-time samples within actual player greeting`)
++    if (out) {
++      await mkdir(out, { recursive: true })
++      await writeFile(join(out, `greet-follow-${species}.json`), JSON.stringify({ species, samples, peak, observedSpeed, maxFootDrift, position, feet,
++        method: 'Actual keyboard player Wave; wait160ms past120ms join, then61 SVG/RAF-time samples at16ms over960ms through approximately1120ms before1200ms expiry. PNG near480ms waving pose. Sprout measures actual stem angle, not full leaf transform.' }, null, 2)+'\n')
++    }
++    t.diagnostic(`lean range ${Math.min(...samples.map(x => x.lean))}..${Math.max(...samples.map(x => x.lean))}; waving ${Math.min(...samples.map(x => x.arms[1]))}`)
++    assert.ok(Math.abs(Math.min(...samples.map(x => x.lean)) - lean) < .00001, 'player-greeting primary lean matches the measured existing baseline')
++    assert.ok(samples.some(x => x.arms[1] < -8), 'the original waving arm remains visible')
++    assert.ok(peak <= limit && peak > visible, 'actual appendage retains one small visible greeting sway')
++    assert.ok(observedSpeed < speed, 'actual player greeting follow-through stays within speed budget')
++    const signs = samples.filter(x => Math.abs(x.angle) > 1e-6).map(x => Math.sign(x.angle))
++    assert.equal(signs.filter((sign,i) => i > 0 && sign !== signs[i-1]).length, 1)
++    assert.equal(await resident.evaluate(node => node === window.__greetPet), true)
++    assert.equal((await live.textContent()).trim(), heard)
++    assert.deepEqual((await snapshot(page)).tables, saved)
++    await page.clock.runFor(320)
++    assert.equal(await page.evaluate(() => window.__greetFrames.size), 1, 'healthy idle retains its existing single clock after the finite greeting')
++    const arms = await resident.locator('[data-arm]').evaluateAll(nodes => nodes.map(n => Number(n.getAttribute('transform').match(/rotate\(([-\d.]+)/)[1])))
++    assert.ok(arms.every(value => Math.abs(value) < .00001), 'finite player greeting hands off to the unchanged quiet idle')
++    assert.deepEqual((await snapshot(page)).tables, saved)
++    await changeReducedMotion(page, 'reduce')
++    await page.clock.runFor(160)
++    assert.equal(await page.evaluate(() => window.__greetFrames.size), 0, 'reduced idle stops the existing clock after greeting and attention settle')
++    assert.deepEqual((await snapshot(page)).tables, saved)
++  })
++}
+diff --git i/docs/ART.md w/docs/ART.md
+index 9e74f5b..5cb47ef 100644
+--- i/docs/ART.md
++++ w/docs/ART.md
+@@ -223,3 +223,5 @@ Wardrobe Mirror preview flips one enclosing SVG group immediately, preserving th
+ Healthy waves toward plants and fish tanks use one smaller appendage sway with species gains .4/.45/.35. The waving hand, lean, gaze, planted feet and 1400ms lifetime remain exact, alongside sick/reduced output and every other action. Numeric and actual invited-plant regressions cover the change.
+ 
+ Wardrobe movement previews can pause on the delivered pose with no running RAF, remain inspectable through Mirror and outfit updates, and resume for their remaining active duration. Stop, pose changes and live reduced motion cancel paused runs; restoring motion does not replay them. Hidden unpaused previews keep their existing absolute expiry, while manual pauses stay held until resumed. The 48px Pause/Resume button sits opposite Mirror without consuming a control row.
++
++Healthy player Wave greetings retain their existing species hand arcs, cycles, gaze, lean, grounded feet, pleased face and 1200ms duration. Their delayed appendage follow-through uses one restrained sway at gains Mochi .55, Bun .6 and Sprout .5, slightly more expressive than an environment wave. Sick and reduced output and other actions retain their existing samples. Healthy idle keeps its single resident clock after the finite greeting; reduced idle stops it.
+diff --git 1/docs/audits/2026-10-12-character-polish/capture-greet-follow.mjs 2/docs/audits/2026-10-12-character-polish/capture-greet-follow.mjs
+new file mode 100644
+index 0000000..2cc8712
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/capture-greet-follow.mjs
+@@ -0,0 +1,59 @@
++// Bounded static production art and numeric appendage curves; no live motion clock.
++import { createServer } from 'vite'
++import React from 'react'
++import { renderToStaticMarkup } from 'react-dom/server'
++import { Resvg } from '@resvg/resvg-js'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++const label = process.argv[2], out = 'docs/audits/2026-10-12-character-polish'
++if (!['before', 'after', 'prototype'].includes(label)) throw new Error('Expected before or after')
++const baseline = await readFile(`${out}/greet-follow-baseline.ts.txt`, 'utf8')
++const prototype = label === 'prototype' ? await readFile(`${out}/greet-follow-prototype.ts.txt`, 'utf8') : null
++const server = await createServer({ plugins: [{ name: 'greet-follow-baseline', enforce: 'pre', transform(code, id) {
++  if (label !== 'after' && id.split('?')[0] === `${process.cwd()}/src/character/motion.ts`) return { code: prototype ?? baseline, map: null }
++} }], server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' })
++try {
++  const { AnimatedCharacterArt } = await server.ssrLoadModule('/src/character/AnimatedCharacter.tsx')
++  const { sampleMotion, ACTION_MS } = await server.ssrLoadModule('/src/character/motion.ts')
++  const { SPECIES_COLOUR, PALETTE } = await server.ssrLoadModule('/src/art/palette.ts')
++  const { PET_STROKE_SCALE } = await server.ssrLoadModule('/src/room/shell/geometry.ts')
++  const h = React.createElement, speciesList = ['mochi', 'bun', 'sprout'], samples = [], files = []
++  const equipped = { head: 'beanie-red', face: 'glasses', neck: 'scarf', outfit: 'overalls', back: 'backpack' }
++  const at = (species, elapsedMs, mood = 'happy') => sampleMotion({ species, action: 'greet', mood, elapsedMs, blinkMs: elapsedMs, distance: 0, durationMs: ACTION_MS.greet, reducedMotion: false })
++  async function png(name, width, height, children) {
++    const markup = renderToStaticMarkup(h('svg', { xmlns: 'http://www.w3.org/2000/svg', width, height }, h('rect', { width: '100%', height: '100%', fill: PALETTE.cream }), children))
++    await writeFile(`${out}/${name}`, new Resvg(markup).render().asPng()); files.push(name)
++  }
++  for (const variant of ['light', 'dark']) {
++    const cells = [], mood = variant === 'light' ? 'happy' : 'scruffy'
++    for (const species of speciesList) for (const facing of [1, -1]) for (const phase of [.24, .42, .6, .76]) {
++      const frame = at(species, ACTION_MS.greet * phase, mood)
++      const draw = size => h('g', { transform: facing === -1 ? 'translate(200 0) scale(-1 1)' : undefined }, h(AnimatedCharacterArt,
++        { species, mood, frame, equipped, bodyColour: variant === 'dark' ? PALETTE.ink : SPECIES_COLOUR[species], strokeScale: size === 25 ? PET_STROKE_SCALE : 1 }))
++      const views = [200, 60, 25].map((size, i) => h('g', { key: size, transform: `translate(${[0, 205, 280][i]} ${100 - size / 2}) scale(${size / 200})` }, draw(size)))
++      cells.push(h('g', { key: cells.length, transform: `translate(${cells.length % 4 * 330} ${Math.floor(cells.length / 4) * 230})` }, views,
++        h('text', { x: 8, y: 220, fontSize: 11, fill: PALETTE.ink }, `${species} greet f${facing} ${phase * 100}%;200/60/25px`)))
++      samples.push({ variant, mood, species, facing, phase, frame })
++    }
++    await png(`greet-follow-${label}-${variant}-sizes.png`, 1320, 1380, cells)
++  }
++  const colours = { mochi: '#ca6080', bun: '#397dbb', sprout: '#568747' }, curveSamples = []
++  const x0 = 54, y0 = 50, width = 430, height = 200, duration = ACTION_MS.greet
++  const curves = speciesList.map(species => {
++    const points = Array.from({ length: 701 }, (_, n) => { const ms = duration * n / 700; return { ms, angle: at(species, ms).leftAppendage } })
++    curveSamples.push({ species, points })
++    return h('path', { key: species, d: points.map((p, n) => `${n ? 'L' : 'M'}${(x0 + p.ms / duration * width).toFixed(3)} ${(y0 + (14 - p.angle) / 28 * height).toFixed(3)}`).join(' '), fill: 'none', stroke: colours[species], strokeWidth: 1.8 })
++  })
++  await png(`greet-follow-${label}-curves.png`, 520, 290, h('g', null,
++    h('text', { x: x0, y: 20, fontSize: 14, fill: PALETTE.ink }, `greet:left appendage angle over ${duration}ms`),
++    speciesList.map((species, n) => h('text', { key: species, x: x0 + n * 130, y: 39, fontSize: 12, fill: colours[species] }, species)),
++    [-12, -6, 0, 6, 12].map(angle => h('g', { key: angle }, h('path', { d: `M${x0} ${y0 + (14 - angle) / 28 * height} h${width}`, stroke: '#d8d0c4', fill: 'none' }),
++      h('text', { x: 12, y: y0 + (14 - angle) / 28 * height + 4, fontSize: 11, fill: PALETTE.ink }, `${angle}°`))), curves,
++    [0, duration / 2, duration].map(ms => h('text', { key: ms, x: x0 + ms / duration * width, y: 275, textAnchor: 'middle', fontSize: 11, fill: PALETTE.ink }, `${ms}ms`))))
++  const hash = bytes => createHash('sha256').update(bytes).digest('hex')
++  const sources = ['src/character/motion.ts', 'src/character/AnimatedCharacter.tsx', 'src/character/species/animatedBody.tsx', 'src/character/parts.tsx', 'src/character/Character.tsx', 'src/art/palette.ts', 'src/room/shell/geometry.ts', `${out}/capture-greet-follow.mjs`]
++  await writeFile(`${out}/greet-follow-${label}.json`, JSON.stringify({ method: '48dressed species/mirror/phase/light-happy-or-dark-scruffy samples,144views at200/60/25px,and three appendage angle/time curves. Static/numeric only;no human temporal playback. Production art with archived 43a88eb sampler baseline for before, archived candidate for prototype and production sampler for after. No human temporal playback.', samples, curveSamples,
++    sourceSha256: Object.fromEntries(await Promise.all(sources.map(async path => [path, hash(label !== 'after' && path === 'src/character/motion.ts' ? prototype ?? baseline : await readFile(path))]))),
++    captureSha256: Object.fromEntries(await Promise.all(files.map(async file => [file, hash(await readFile(`${out}/${file}`))]))) }, null, 2) + '\n')
++  console.log(`Wrote ${label}:144sizeviews and3appendage curves`)
++} finally { await server.close() }
+diff --git 1/docs/audits/2026-10-12-character-polish/compare-greet-follow.mjs 2/docs/audits/2026-10-12-character-polish/compare-greet-follow.mjs
+new file mode 100644
+index 0000000..551e53e
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/compare-greet-follow.mjs
+@@ -0,0 +1,41 @@
++// Exact sampler differential, isolated from live playback and browser clocks.
++import assert from 'node:assert/strict'
++import { readFile, writeFile } from 'node:fs/promises'
++import { createHash } from 'node:crypto'
++import ts from 'typescript'
++const out = 'docs/audits/2026-10-12-character-polish'
++const baseline = await readFile(`${out}/greet-follow-baseline.ts.txt`, 'utf8')
++const label = process.argv[2] ?? 'after'
++if (!['after', 'prototype'].includes(label)) throw new Error('Expected after or prototype')
++const currentPath = label === 'prototype' ? `${out}/greet-follow-prototype.ts.txt` : 'src/character/motion.ts'
++const current = await readFile(currentPath, 'utf8')
++async function load(source) {
++  const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText
++  return import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`)
++}
++const before = await load(baseline), after = await load(current)
++assert.deepEqual(after.ACTION_MS, before.ACTION_MS)
++const phases = [0, .1, .18, .3, .35, .4, .48, .5, .56, .64, .75, .9, .92, 1, 2]
++let samples = 0, unchanged = 0, changed = 0
++const changes = {}
++for (const species of ['mochi', 'bun', 'sprout']) for (const mood of ['happy', 'content', 'meh', 'scruffy', 'sick']) {
++  for (const action of Object.keys(before.ACTION_MS)) for (const factor of [.5, 1, 2]) for (const reducedMotion of [false, true]) for (const facing of [1, -1]) for (const phase of phases) {
++    const durationMs = before.ACTION_MS[action] * factor
++    const input = { species, mood, action, durationMs, elapsedMs: phase * durationMs, blinkMs: 9250 + phase * durationMs, distance: phase * 3, facing, reducedMotion }
++    const a = before.sampleMotion(input), b = after.sampleMotion(input)
++    const allowed = !reducedMotion && action === 'greet' && mood !== 'sick'
++    if (allowed) {
++      const { leftAppendage: oldLeft, rightAppendage: oldRight, ...oldRest } = a, { leftAppendage: newLeft, rightAppendage: newRight, ...newRest } = b
++      assert.deepEqual(newRest, oldRest, `${species}/${mood}/${action}/${factor}/${phase}: only appendages may change`)
++      if (oldLeft !== newLeft || oldRight !== newRight) {
++        changed++; const key = `${species}/${action}`; changes[key] = (changes[key] ?? 0) + 1
++      } else unchanged++
++    } else { assert.deepEqual(b, a, `${species}/${mood}/${action}/${factor}/${phase}/${reducedMotion}: exact preservation`); unchanged++ }
++    samples++
++  }
++}
++assert.deepEqual(Object.keys(changes).sort(), ['bun/greet', 'mochi/greet', 'sprout/greet'])
++assert.ok(changed > 0)
++const sha256 = text => createHash('sha256').update(text).digest('hex')
++await writeFile(`${out}/greet-follow-${label === 'prototype' ? 'prototype-' : ''}differential.json`, JSON.stringify({ method: 'Exact sampled frames across3species/5moods/16actions/3durations/2motionpolicies/2facings/15phases. Only normal healthy greet appendages may differ; allotherfields/actions/sick/reduced/durations exact. Static numeric checks,not temporal acceptance.', label, currentPath, samples, unchanged, changed, changes, sourceSha256: { baseline: sha256(baseline), current: sha256(current), runner: sha256(await readFile(new URL(import.meta.url))) } }, null, 2) + '\n')
++console.log(`Compared ${samples} frames;${unchanged} exact;${changed} appendage-only differences`)
+diff --git 1/docs/audits/2026-10-12-character-polish/greet-follow-design.md 2/docs/audits/2026-10-12-character-polish/greet-follow-design.md
+new file mode 100644
+index 0000000..de6f21e
+--- /dev/null
++++ 2/docs/audits/2026-10-12-character-polish/greet-follow-design.md
+@@ -0,0 +1,5 @@
++Refine the healthy player Wave greeting with one softer appendage sway. Retain the existing species hand-wave arcs and cycles, gaze, lean, grounded feet, pleased expression, 1200ms lifetime and one resident clock. Gains Mochi .55, Bun .6 and Sprout .5 preserve a more expressive greeting than the quieter furnishing wave. Use the existing delayed envelope and 2pi phase with a +.5 advance. Sick/reduced output and all other actions remain exact.
++
++Retain numerical/native baseline failures. Compare 43200 frames and review dressed light/dark/mirrored art at 200/60/25px before applying the isolated candidate. A native regression triggers actual keyboard Wave with no furnishing orientation, then records 61 delivered SVG/RAF samples after the 120ms join and before expiry. Preserve primary movement, foot contacts, resident identity, speech and saved data. Numeric/still/sample Chromium evidence does not certify human temporal comfort or other devices. One sequential low-priority guarded worker/browser, no external publication.
++
++The first candidate browser run passed appendage, primary-movement, identity and persistence assertions, then failed an incorrect zero-RAF expectation after greeting. The unchanged healthy resident intentionally keeps one idle clock. The corrected fixture checks one healthy idle RAF, neutral arms and zero RAF after native reduced-motion delivery. The candidate sampler bytes were unchanged. Native keyboard-start timing varies slightly between page loads, so native evidence reports observed ranges, speed, fixed contacts and clock policy; exact field preservation is established by the separate sampler differential, not inferred from nominally paired native frames. Retain the initial fixture and failure logs.

@@ -1,0 +1,341 @@
+{
+  "freeze": {
+    "baseCommit": "d4e6f2098939d86945dbc424d615bf829315df35",
+    "sources": {
+      "src/character/motion.ts": "155194546e3c9e68df5f7e4ccb129e27627998361aa503d9c7035439a2015e3b",
+      "src/character/motion.greet.test.ts": "3736d66386f3ad6933759364a040e2ae1fc8435968f9d5fd0fafc48ab7529a8b",
+      "scripts/browser/pet-greet-follow.test.mjs": "011d8c1c62570b244e642b4232c2b70d61e69b2d8afc5bd4097603ae783c4b61",
+      "docs/ART.md": "ae9049551b6782b5d5eb3a570ec9d332755b10c131c59bb7216e5266e6c370c9",
+      "docs/audits/2026-10-12-character-polish/capture-greet-follow.mjs": "aa9143f97a7013265bc7ca0b71064034369403387dcb23b6e0baaa3175099f9a",
+      "docs/audits/2026-10-12-character-polish/compare-greet-follow.mjs": "29fc41d59aa312718b8e2e81f5dde552098c1547fb0ed9bea06508b411303ac6",
+      "docs/audits/2026-10-12-character-polish/greet-follow-design.md": "87968899583eb060986775fb4a61f3c56a795bc8e0b00f82ebec4cede9508311"
+    },
+    "unchangedSources": {
+      "src/character/AnimatedCharacter.tsx": "aaa5f8b8691b461a0a8074825dd2806b9d86a87e8b0fe2a69f83bde1badff0a2",
+      "src/character/species/animatedBody.tsx": "21615edf42cce64642daf4fd2fe3932e7ed106a12c9f215815fe8baae8717d48",
+      "src/character/parts.tsx": "ddf741cbf57d6045d7b6abc5d3963560b67beb45807cc699614e46d5806f09dc",
+      "src/character/Character.tsx": "c68132c611f0fd59cc147f048365de229cb4d12431993c83cf67c888ab686dca",
+      "src/art/palette.ts": "ffce4f626bdd81b1641a711233b1c959d2704828cc6fb9bd13a995fd739a2a47",
+      "src/room/shell/geometry.ts": "967f73de056add3298520e580aa172a720132b49b11dd5bcab4a8f1a4b4fd027",
+      "src/pet/activityMotion.ts": "2cb998b662674f18da251afa5562a44cf7092305c3e06c7e6f9a9bce4b2b97e7",
+      "src/pet/LivingRoom.tsx": "2511988fd34e30be0b696a5c4f378af88b28a45f7b9d905b06e04c66cdd99408",
+      "src/pet/usePetMotion.ts": "db30f455d66d10671032f8ebd0017c7a95c3bed5542a0094e8a6abb3b5b19267",
+      "src/pet/usePetVisibility.ts": "d322342a8b624b9a534e268299f26c539a171e9511854c7cc45582f166729134",
+      "src/pet/behaviour.ts": "7e4b850de2aa14c42cbd6bafac23420e428b5564350aa1c8a7b17db9b2a915af",
+      "src/pet/interactions.ts": "39b14d894763531a1cc058f65ddac70bb0118c818bd6ede82c1143fe02e059f7",
+      "src/pet/motionPreference.ts": "3534b30a71d00023552a6c6e8180af1f6c6a188e421def9fa44495210f52ed59",
+      "src/pet/playerAttention.ts": "06b7d8559968218fb3770743c7cc0d007af021bc60ded0da9088cfde673c5536",
+      "src/screens/WardrobePreview.tsx": "de2ff2e4ee668b93fa58a87625d53ae1053145801d861e877931237295d86bea",
+      "src/dev/MotionReview.tsx": "4a22a5c5401427337d1a2e08d0609958ad5b7267fdd2f8ac9e3eda898cafffd1",
+      "scripts/browser/pet-turn-follow.test.mjs": "c85c2414c58d6d1764dc829c1b8f642a11a026b6bcff66a6615ae029e35be591",
+      "scripts/browser/pet-idle-clock.test.mjs": "367d4b77c6395e5bd4eaab3e481db40312500209b2f774440b91d6324fddf6a5",
+      "scripts/browser/pet-environment-attention.test.mjs": "82c65ebfae72229e2ce2aa3626ea877587b02f48d6209bfc8aee7fddde8e17ee",
+      "scripts/browser/pet-explore.test.mjs": "760ea164e885fcdeaf2fdd86062b0af1cb6e14323d81e7cf1822545c2181a827",
+      "scripts/browser/helpers.mjs": "6e89c93655e1125167c47dc38ee1ea1522667ac0881bffa7551b8b9e293ad334",
+      "src/pet/PetIntegration.test.tsx": "63dfc043cc158dbf94b3f9b1ba7701811f6abe8c25a56ce3c3f6a781c513fa9c",
+      "src/pet/activityMotion.test.ts": "1efdab93c7bc2909a03a806cd4390d2c69ddfe57cdb459bf92aad32ecc4797ab",
+      "src/pet/interactions.test.ts": "14c60a908f3cc24a51ae06a2061065be3c5ebc8e469e5a0069ac3f965605c516",
+      "src/domain/types.ts": "7640af2706630f72d3685f6a097e533622e1f2341aedfba2d41868d2db3f026a",
+      "src/character/motion.inspect.test.ts": "3ef7b843e446a1b89a7de913eef2155c6ab0f0ef6abdb30932767c31256adae7",
+      "src/character/motion.notice.test.ts": "8b58a2dc145c91d4d0f9151e566e4415e1d6e7f7d17ad4cd03a66f685ba1026f",
+      "src/character/motion.turn.test.ts": "834d9690242c5deedc1f8fc662d34e7b391ac4502246130016024e5afb4f8d07",
+      "src/character/motion.smell.test.ts": "071aa1c4e10e9a78568cabb1b8a1ee519cde84f4c8e02dea7a45047e51bd2a56",
+      "src/character/motion.wave.test.ts": "83e82e8fc2f3c7f1cba2f3075ebdc978f87be66cd8ea5fdd684ec42ec11a1281",
+      "scripts/browser/pet-wave-follow.test.mjs": "60134c5940bd345863c139a4835fd799a2f470e6c7c6518f4f719c445758686a",
+      "src/screens/Wardrobe.css": "41776dd90ee9202675f34116bd2c6670e45f2307677f48d30864961cc26bdeba",
+      "src/screens/Wardrobe.pause.test.tsx": "251d620b5e8cdf7789a20b44417d2db7da757c32e5f89ae68aa1702be75836df",
+      "scripts/browser/wardrobe-pause.test.mjs": "9e18de58447605b310b611e5ea7c1d20671b0666a1fb0daf5860b38f2582f4c5",
+      "src/screens/Wardrobe.tsx": "97a3e3da1d1f3451f937a74aed619f67c9703f0895d46494fc73809ab274ed5c",
+      "src/screens/wardrobeModel.ts": "54a214a753fd87347ae0b4b2089ff5829be5c4f24b369ed6b0d52560ead86ddd"
+    },
+    "patch": {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-source.diff",
+      "sha256": "5e22c78d22a6f581da3ca890e1f89ff6238ffbcef2841b0bf1fa1c9c73f1f4e3"
+    }
+  },
+  "artifactsManifest": {
+    "path": "docs/audits/2026-10-12-character-polish/greet-follow-v2-artifacts.json",
+    "sha256": "964f10815cfeb60b41cf2fcd706c6b1d77a63f7d6f51e7d97c151dedad65d90a"
+  },
+  "checks": [
+    {
+      "name": "build",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-build.log",
+      "logSha256": "26c06ccc348aebe0d49fac941b35e501234c65374216c45788c3a7abdfc0fe5c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-after",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-capture-after.log",
+      "logSha256": "01dfc17d039231e775a397845db899169e952fd10ff97d1877be4809e12304a1",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-capture-after.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-before",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-capture-before.log",
+      "logSha256": "cd0700900ad414f6d9b7bace02d1c42e2180b5f3c70b2f837866583dcdd48144",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-capture-before.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "capture-prototype",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-capture-prototype.log",
+      "logSha256": "0395356fcc408787d802170b5718b42f94f6fc7c14d68a615928eb5d9a3eb03f",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-capture-prototype.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "compare",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-compare.log",
+      "logSha256": "d5e5fa35503a640833e7ac8159f497796d9682459d81f6b0e696859951509527",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-compare.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "diff",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-diff.log",
+      "logSha256": "90e6e00a7d9ec0cc176db87a4ab40f7960eeb74600ea9dac7358fc1283ab3b66",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-diff.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "focused",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-focused.log",
+      "logSha256": "3b2f533dec68b6d4f33222610829fdc98bc1e7b8788bcf37eb79d2f93ae1ed42",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-focused.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "full-interrupted",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-full-interrupted.log",
+      "logSha256": "82c562c76e16d04730f6902764bd421c6fca06f1fa7e6e23c1b0b5f780a6b695",
+      "exitCode": 143,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-full-interrupted.exit",
+        "sha256": "9d9b18720961e9b4689fd763b85e7b6f36160ccd3a8a1c9ddc5103bb0f66c396"
+      }
+    },
+    {
+      "name": "full",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-full.log",
+      "logSha256": "17ff7b0427d27546323e2b0a9d188a78903646ca6200c0d7dedd9f96059429d2",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-full.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-lint.log",
+      "logSha256": "59fa130ba568d665c604b8ef2353f1ed4be6b83790aaff030223780412e2083c",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-lint.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "native-red",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-native-red.log",
+      "logSha256": "9b9843f8287202d45587eed4c363c6c52b03b94412e6266df59ad9f3593acebd",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-native-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "native",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-native.log",
+      "logSha256": "324ee33ff342ccffdc8a96ac5c8e014d29c2e482f28c29c3162e6d6b4a52adbc",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-native.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-build",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-build.log",
+      "logSha256": "1dcf93f2d5ca909d1b51b05dcb9a682261a0818928de9633b726fcf01cad5aa8",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-build.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-compare",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-compare.log",
+      "logSha256": "d5e5fa35503a640833e7ac8159f497796d9682459d81f6b0e696859951509527",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-compare.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-native-revised",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-native-revised.log",
+      "logSha256": "e075586dc2f3b14e677dabcba3059d154a93a531dc951a881166b68e03da8662",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-native-revised.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "prototype-native",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-native.log",
+      "logSha256": "f4cbcdd83b3004e0fa09c84fc18b747bcfa77dc43be9774f7b866a22e9cd9d9f",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-native.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "prototype-unit",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-unit.log",
+      "logSha256": "ea227f75fe6f5ecc22c5f627f1a3a823019ed6b887eb313a8da169b475e70a9a",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-unit.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "red",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-red.log",
+      "logSha256": "4583dc5bca80533a3d1606cf00274da1040730d589b5b742f841d6dc8cdaf86d",
+      "exitCode": 1,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-red.exit",
+        "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+      }
+    },
+    {
+      "name": "supervisor-probe",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-supervisor-probe.log",
+      "logSha256": "8019e08a80333a05b120374373305b456510fe037bb6124c1a3040860455b375",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-supervisor-probe.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    },
+    {
+      "name": "supervisor-stop-probe",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-supervisor-stop-probe.log",
+      "logSha256": "a93265738364f377622d49c4586e4d9e4a9b8fc8dda734e0bc10d54d53a1c69d",
+      "exitCode": 143,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-supervisor-stop-probe.exit",
+        "sha256": "9d9b18720961e9b4689fd763b85e7b6f36160ccd3a8a1c9ddc5103bb0f66c396"
+      }
+    },
+    {
+      "name": "v2-tree-term",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-v2-tree-term.log",
+      "logSha256": "a93265738364f377622d49c4586e4d9e4a9b8fc8dda734e0bc10d54d53a1c69d",
+      "exitCode": 143,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-v2-tree-term.exit",
+        "sha256": "9d9b18720961e9b4689fd763b85e7b6f36160ccd3a8a1c9ddc5103bb0f66c396"
+      }
+    },
+    {
+      "name": "v2-tree-exit",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-v2-tree-exit.log",
+      "logSha256": "e0bd770297fa05d7eac67afbb119615aff75331dc361bb79c9a767c551df99b2",
+      "exitCode": 126,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-v2-tree-exit.exit",
+        "sha256": "703d2c10fa601276a4dd96193faed68902a642a44eb5b01b40d6fc8499e12822"
+      }
+    },
+    {
+      "name": "v2-tree-driver",
+      "log": "docs/audits/2026-10-12-character-polish/greet-follow-v2-tree-driver.log",
+      "logSha256": "d502e47af54f93a15714ebbff938b6b71b51e61976cd499b075d5b30c71d29f7",
+      "exitCode": 0,
+      "exitEvidence": {
+        "path": "docs/audits/2026-10-12-character-polish/greet-follow-v2-tree-driver.exit",
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    }
+  ],
+  "status": "Completed scoped checks and independent static/source/still review; bound files reverified before local checkpoint.",
+  "results": {
+    "full": "2395 tests/125files passed,82.95s; incomplete original full run retained separately",
+    "focused": "335tests/15files passed,8.02s",
+    "native": "32passed/0failed/skipped/cancelled,89.042814619s",
+    "build": "Production tsc -b && vite build pass; existing chunk-size advisory retained",
+    "lint": "Scoped max-warnings0 pass",
+    "whitespace": "7 authored sources pass",
+    "supervisor": "Disposable SIGTERM cleanup probe pass; nested expected143 and outer0"
+  },
+  "visualReview": {
+    "direct": "All six before/prototype static PNGs and twelve baseline/initial-candidate/revised-candidate/final native PNGs directly opened. Final static three byte-exact inspected prototype, bound separately.",
+    "native": "61 actual SVG/RAF-time samples per species per run,160..1120ms labels. One live RAF; same world transform and primary lean/low-arm ranges. Foot drift under .00001 SVG unit. Actual request timing varies slightly per load, so no exact native phase-pair claim. Final healthy idle1clock, reduced idle0.",
+    "limits": "Stills/numeric/sampled Chromium152 evidence, no human temporal comfort, full phase/transition sweep, arbitrary outfit/browser/device or peak-resource certification."
+  },
+  "differential": "Both43200-frame comparisons:42408exact/792healthy-greet appendage-only; primary, sick/reduced and other actions exact at sampled inputs.",
+  "history": "Six unit baseline failures/one reduced pass; three native baseline oversize failures. Initial candidate native3fail only incorrect healthy idle0RAF expectation after all other assertions; revised3pass. Original full supervisor returned143 without sidecars; only its verified owned orphan test group was stopped. Incomplete log/tool-observed exit retained, cause/minima unknown. New signal-aware supervisor restart full passes. Virtual prototype bundle did not typecheck; final production build did. Baseline43a88eb sampler equals d4e6f20 Git bytes. Next wardrobe-rename tests added after final full suite and excluded from this batch.",
+  "resources": {
+    "runs": 19,
+    "minimumObservedAvailableMiB": 3079.08984375,
+    "minimumObservedTmpFreeMiB": 4007.99609375,
+    "reserveStops": 0,
+    "launchRejections": 0,
+    "intentionalSignalProbes": 1,
+    "unobservedInterruptedRun": 1
+  },
+  "revision": {
+    "originalInput": {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-review-input.json",
+      "sha256": "de59ff1573495ca1e9e7a98311f176202dff16577b9534388e43a2682840f6e3"
+    },
+    "originalReview": {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-independent-review.md",
+      "sha256": "325f1d6d6dd65fd9d6850c9f991f242c30d3a0d83a67af6ba9ca18866069133a",
+      "verdict": "Changes requested: P2 owned process group cleanup only; greeting/source/art evidence accepted."
+    },
+    "change": "Supervision now enumerates live members of the launched session/process group independently of leader status, signals only that group, checks members for3s before SIGKILL if needed, waits2s for live members to stop and reaps the direct child separately. Cleanup runs even after normal leader exit; unexpected remaining descendants yield126 rather than success. Signals during bounded cleanup are ignored. Zombies are excluded from live work.",
+    "evidence": "Two disposable leader+SIGTERM-ignoring worker cases pass: explicit supervisorSIGTERM gives143, normal leader exit with surviving worker gives126, each escalates the stubborn worker and records zero live owned members; outerdriver0. No heavy workload. Product sources, all previous artifacts and recorded product checks are unchanged.",
+    "limits": "Same-group/session cleanup only, observed cases and bounded static control flow; not every process-detachment/signal/resource path or continuous host safety. First interrupted-run observation hash is the875-byte snapshot taken while orphan writer was still appending; frozen full partial log is8920bytes and separately bound. No termination cause or minima inferred."
+  },
+  "reviewInput": {
+    "path": "docs/audits/2026-10-12-character-polish/greet-follow-v2-review-input.json",
+    "sha256": "b352d714e3155c20e0d0a923868eb867ebee2e8cb48edcff323fdd759f4d5144"
+  },
+  "independentReview": {
+    "path": "docs/audits/2026-10-12-character-polish/greet-follow-v2-independent-review.md",
+    "sha256": "9b8663dd19d7cdeb2d9ba26e0bf0fcea8f8ccd72867e4512f79af9d0d5c733b1",
+    "verdict": "PASS; no scoped findings"
+  }
+}

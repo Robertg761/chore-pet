@@ -1,0 +1,2 @@
+greet-follow-supervisor-stop-probe exit 143 minimum observed available MiB 4735.2 Supervisor received signal 15; stopped only this job process group.
+PASS: SIGTERM stopped only the owned sleeper group and preserved sidecars; no heavy workload was used.

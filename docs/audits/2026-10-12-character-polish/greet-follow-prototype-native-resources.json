@@ -1,0 +1,63 @@
+{
+  "utc": "2026-10-13T03:30:50.171437+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "env",
+    "CHROME=/usr/bin/chromium",
+    "CHORE_GREET_FOLLOW_CAPTURE_DIR=docs/audits/2026-10-12-character-polish/greet-follow-prototype-native",
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "scripts/browser/pet-greet-follow.test.mjs"
+  ],
+  "exitCode": 1,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "minimumObservedAvailableBytes": 4442439680,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4825034752,
+      "tmpFreeBytes": 4300529664
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4825034752,
+      "tmpFreeBytes": 4300529664
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4705902592,
+      "tmpFreeBytes": 4246302720
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "memAvailableBytes": 4587372544,
+      "tmpFreeBytes": 4234735616
+    },
+    {
+      "elapsedSeconds": 3.001,
+      "memAvailableBytes": 4516511744,
+      "tmpFreeBytes": 4227723264
+    },
+    {
+      "elapsedSeconds": 4.002,
+      "memAvailableBytes": 4598743040,
+      "tmpFreeBytes": 4260999168
+    },
+    {
+      "elapsedSeconds": 5.002,
+      "memAvailableBytes": 4442439680,
+      "tmpFreeBytes": 4227854336
+    },
+    {
+      "elapsedSeconds": 6.002,
+      "memAvailableBytes": 4811534336,
+      "tmpFreeBytes": 4300529664
+    }
+  ]
+}

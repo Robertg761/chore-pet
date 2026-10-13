@@ -1,0 +1,26 @@
+{
+  "rootVisualReview": "All six before/prototype static light/dark sheets and curves directly opened. All twelve before/initial-prototype/revised-prototype/final native greeting PNGs directly opened. The three final static PNGs are byte-identical to the directly inspected prototype, as bound here. Still/numeric evidence only.",
+  "files": [
+    {
+      "final": "docs/audits/2026-10-12-character-polish/greet-follow-after-light-sizes.png",
+      "finalSha256": "fe789d410b2132844fb2977ad6edc040f7a7b763303c38f80ab3fb02797ce499",
+      "inspectedPrototype": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-light-sizes.png",
+      "prototypeSha256": "fe789d410b2132844fb2977ad6edc040f7a7b763303c38f80ab3fb02797ce499",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/greet-follow-after-dark-sizes.png",
+      "finalSha256": "0aa881508dccedbcbd88585a8281633d538ae9e0dccb9dd44ace4dc5ceb275e0",
+      "inspectedPrototype": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-dark-sizes.png",
+      "prototypeSha256": "0aa881508dccedbcbd88585a8281633d538ae9e0dccb9dd44ace4dc5ceb275e0",
+      "byteExact": true
+    },
+    {
+      "final": "docs/audits/2026-10-12-character-polish/greet-follow-after-curves.png",
+      "finalSha256": "aae55b92699a625fa0b991adf00bcc9da3c0bc00cb15c269f02fdc5a492cacc2",
+      "inspectedPrototype": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-curves.png",
+      "prototypeSha256": "aae55b92699a625fa0b991adf00bcc9da3c0bc00cb15c269f02fdc5a492cacc2",
+      "byteExact": true
+    }
+  ]
+}

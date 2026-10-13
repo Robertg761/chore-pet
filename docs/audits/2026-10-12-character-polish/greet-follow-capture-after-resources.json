@@ -1,0 +1,45 @@
+{
+  "utc": "2026-10-13T03:38:07.379529+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "docs/audits/2026-10-12-character-polish/capture-greet-follow.mjs",
+    "after"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": "--max-old-space-size=384",
+  "minimumObservedAvailableBytes": 4831043584,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT stop the owned child group and preserve final sidecars.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 5019746304,
+      "tmpFreeBytes": 4290187264
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 5019746304,
+      "tmpFreeBytes": 4290187264
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4952973312,
+      "tmpFreeBytes": 4290187264
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "memAvailableBytes": 4831043584,
+      "tmpFreeBytes": 4290187264
+    },
+    {
+      "elapsedSeconds": 3.001,
+      "memAvailableBytes": 5047070720,
+      "tmpFreeBytes": 4290187264
+    }
+  ]
+}

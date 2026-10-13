@@ -1,0 +1,36 @@
+from pathlib import Path
+import subprocess,time,os,signal,json,hashlib,uuid
+out=Path('docs/audits/2026-10-12-character-polish');rows=[]
+for mode,expected in [('term',143),('exit',126)]:
+ label=f'greet-follow-v2-tree-{mode}';pidpath=Path('/tmp')/('chore-pet-tree-'+uuid.uuid4().hex+'.pid')
+ process=subprocess.Popen(['python3','/tmp/chore-pet-resource-check.py',label,'--','nice','-n','10','python3','/tmp/chore-pet-tree-leader.py',mode,str(pidpath)],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,start_new_session=True)
+ worker=None
+ try:
+  deadline=time.monotonic()+5
+  while not pidpath.exists() and time.monotonic()<deadline:time.sleep(.02)
+  assert pidpath.exists(),'Worker did not become ready'
+  worker=int(pidpath.read_text())
+  if mode=='term':os.kill(process.pid,signal.SIGTERM)
+  output=process.communicate(timeout=10)[0];print(output,end='')
+  assert process.returncode==expected,(mode,process.returncode)
+  j=json.loads((out/f'{label}-resources.json').read_text());assert j['exitCode']==expected
+  assert worker in j['cleanup']['killMembers'],'Stubborn worker was not independently escalated'
+  assert not j['cleanup']['remainingLiveMembers']
+  path=Path('/proc')/str(worker)
+  assert not path.exists() or (path/'stat').read_text().rsplit(')',1)[1].split()[0] in ('Z','X'),'Owned worker still live'
+  rows.append({'mode':mode,'expectedExit':expected,'worker':worker,'cleanup':j['cleanup'],'sidecarSha256':hashlib.sha256((out/f'{label}-resources.json').read_bytes()).hexdigest()})
+ finally:
+  if process.poll() is None:
+   process.terminate()
+   try:process.wait(timeout=8)
+   except subprocess.TimeoutExpired:process.kill();process.wait()
+  if worker:
+   path=Path('/proc')/str(worker)
+   if path.exists():
+    cmd=(path/'cmdline').read_bytes()
+    if str(pidpath).encode() in cmd:
+     try:os.kill(worker,signal.SIGKILL)
+     except ProcessLookupError:pass
+  pidpath.unlink(missing_ok=True)
+(out/'greet-follow-v2-tree-probe.json').write_text(json.dumps({'method':'Disposable leader and SIGTERM-ignoring descendant, signal-interrupted leader and normal leader-exit cases. No heavy workload. Only owned PID/session groups touched; bounded cleanup excludes zombies from live work.','cases':rows},indent=2)+'\n')
+print('PASS: both leader-exit paths escalate the stubborn descendant and leave zero live owned members.')

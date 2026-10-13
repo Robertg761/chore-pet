@@ -1,0 +1,24 @@
+from pathlib import Path
+import subprocess,time,os,signal,json,hashlib
+out=Path('docs/audits/2026-10-12-character-polish')
+label='greet-follow-supervisor-stop-probe'
+process=subprocess.Popen(['python3','/tmp/chore-pet-resource-check.py',label,'--','nice','-n','10','/usr/bin/sleep','30'],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+child=None
+for _ in range(100):
+ path=Path('/proc')/str(process.pid)/'task'/str(process.pid)/'children'
+ ids=path.read_text().split() if path.exists() else []
+ if ids:child=int(ids[0]);break
+ time.sleep(.02)
+assert child is not None
+assert os.getpgid(child)==child
+os.kill(process.pid,signal.SIGTERM)
+output=process.communicate(timeout=8)[0];print(output,end='')
+assert process.returncode==143,process.returncode
+for _ in range(100):
+ path=Path('/proc')/str(child)
+ if not path.exists() or (path/'stat').read_text().split(')')[1].split()[0]=='Z':break
+ time.sleep(.02)
+else:raise AssertionError('Owned child remains running')
+j=json.loads((out/f'{label}-resources.json').read_text());assert j['exitCode']==143 and 'signal 15' in j['resourceStopReason']
+assert int((out/f'{label}.exit').read_text())==143
+print('PASS: SIGTERM stopped only the owned sleeper group and preserved sidecars; no heavy workload was used.')

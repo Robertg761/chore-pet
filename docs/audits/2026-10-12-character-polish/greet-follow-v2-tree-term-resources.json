@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-13T03:48:56.585415+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "python3",
+    "/tmp/chore-pet-tree-leader.py",
+    "term",
+    "/tmp/chore-pet-tree-df317c6ca79f4dc2965e49576f47b72d.pid"
+  ],
+  "exitCode": 143,
+  "resourceStopReason": "Supervisor received signal 15; stopped only this job process group.",
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": "--max-old-space-size=192",
+  "cleanup": {
+    "processGroup": 5047,
+    "termMembers": [
+      5047,
+      5048
+    ],
+    "killMembers": [
+      5048
+    ],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": -15
+  },
+  "minimumObservedAvailableBytes": 5326598144,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 5343297536,
+      "tmpFreeBytes": 4290088960
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 5343297536,
+      "tmpFreeBytes": 4290088960
+    },
+    {
+      "elapsedSeconds": 3.154,
+      "memAvailableBytes": 5326598144,
+      "tmpFreeBytes": 4290084864
+    }
+  ]
+}

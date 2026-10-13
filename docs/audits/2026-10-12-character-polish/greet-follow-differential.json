@@ -1,0 +1,18 @@
+{
+  "method": "Exact sampled frames across3species/5moods/16actions/3durations/2motionpolicies/2facings/15phases. Only normal healthy greet appendages may differ; allotherfields/actions/sick/reduced/durations exact. Static numeric checks,not temporal acceptance.",
+  "label": "after",
+  "currentPath": "src/character/motion.ts",
+  "samples": 43200,
+  "unchanged": 42408,
+  "changed": 792,
+  "changes": {
+    "mochi/greet": 264,
+    "bun/greet": 264,
+    "sprout/greet": 264
+  },
+  "sourceSha256": {
+    "baseline": "316c7fce00a9cc638b85f7e2eb13c5980f5721b6226e424678f0575acceb21b5",
+    "current": "155194546e3c9e68df5f7e4ccb129e27627998361aa503d9c7035439a2015e3b",
+    "runner": "29fc41d59aa312718b8e2e81f5dde552098c1547fb0ed9bea06508b411303ac6"
+  }
+}

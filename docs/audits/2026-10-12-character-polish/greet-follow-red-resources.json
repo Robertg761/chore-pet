@@ -1,0 +1,36 @@
+{
+  "utc": "2026-10-13T03:23:31.667534+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "npx",
+    "vitest",
+    "run",
+    "src/character/motion.greet.test.ts",
+    "--maxWorkers=1"
+  ],
+  "exitCode": 1,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "minimumObservedAvailableBytes": 5291986944,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 5291986944,
+      "tmpFreeBytes": 4300652544
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 5291986944,
+      "tmpFreeBytes": 4300652544
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 5358411776,
+      "tmpFreeBytes": 4300652544
+    }
+  ]
+}

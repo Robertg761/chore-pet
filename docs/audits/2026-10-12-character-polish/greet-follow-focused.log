@@ -1,0 +1,15 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run src/character/motion.test.ts src/character/motion.affection.test.ts src/character/motion.stretch.test.ts src/character/motion.rest.test.ts src/character/motion.concern.test.ts src/character/motion.smell.test.ts src/character/motion.turn.test.ts src/character/motion.notice.test.ts src/character/motion.inspect.test.ts src/character/motion.wave.test.ts src/character/motion.greet.test.ts src/pet/activityMotion.test.ts src/pet/behaviour.test.ts src/pet/playerChoices.test.ts src/pet/PetIntegration.test.tsx --maxWorkers=1 --reporter=dot
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+···············································································································································································································································································································································
+
+ Test Files  15 passed (15)
+      Tests  335 passed (335)
+   Start at  01:02:15
+   Duration  8.02s (tests 78%, transform 12%, import 5%, environment 4%, worker 1%)
+
+    Isolate  15 workers spawned · ~101ms startup each (spawn + environment, per file)
+             at least ~1.41s faster with isolate: false — reuses workers across files instead of one per file
+

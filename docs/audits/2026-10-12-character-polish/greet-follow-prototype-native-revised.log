@@ -1,0 +1,17 @@
+✔ mochi greets the player with one restrained appendage sway (1621.916525ms)
+ℹ mochi: peak 2.749deg, speed 18.705deg/s; 61 actual SVG/RAF-time samples within actual player greeting
+ℹ lean range -2.46..0; waving -42.623819173111826
+✔ bun greets the player with one restrained appendage sway (1844.682809ms)
+ℹ bun: peak 7.170deg, speed 49.536deg/s; 61 actual SVG/RAF-time samples within actual player greeting
+ℹ lean range -3..0; waving -54
+✔ sprout greets the player with one restrained appendage sway (2233.350438ms)
+ℹ sprout: peak 1.742deg, speed 12.208deg/s; 61 actual SVG/RAF-time samples within actual player greeting
+ℹ lean range -2.16..0; waving -30.23968417554535
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6079.747731

@@ -1,0 +1,79 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run src/character/motion.greet.test.ts --maxWorkers=1
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+ ❯ src/character/motion.greet.test.ts (7 tests | 6 failed) 24ms
+   ❯ player greeting follow-through (7)
+     × keeps mochi appendages restrained while the resident greets the player 8ms
+     × keeps bun appendages restrained while the resident greets the player 4ms
+     × keeps sprout appendages restrained while the resident greets the player 1ms
+     × mochi makes one calm sway at short, normal, long and legacy durations 5ms
+     × bun makes one calm sway at short, normal, long and legacy durations 1ms
+     × sprout makes one calm sway at short, normal, long and legacy durations 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/character/motion.greet.test.ts > player greeting follow-through > keeps mochi appendages restrained while the resident greets the player
+AssertionError: expected 4.999998640167109 to be less than or equal to 2.750000001
+ ❯ src/character/motion.greet.test.ts:19:51
+     17|       for (const side of ['leftAppendage', 'rightAppendage'] as const)…
+     18|         const values = frames.map(frame => frame[side])
+     19|         expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(…
+       |                                                   ^
+     20|         expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visi…
+     21|         const velocity = values.slice(1).map((value, i) => Math.abs(va…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/character/motion.greet.test.ts > player greeting follow-through > keeps bun appendages restrained while the resident greets the player
+AssertionError: expected 11.999997912150267 to be less than or equal to 7.200000001
+ ❯ src/character/motion.greet.test.ts:19:51
+     17|       for (const side of ['leftAppendage', 'rightAppendage'] as const)…
+     18|         const values = frames.map(frame => frame[side])
+     19|         expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(…
+       |                                                   ^
+     20|         expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visi…
+     21|         const velocity = values.slice(1).map((value, i) => Math.abs(va…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/character/motion.greet.test.ts > player greeting follow-through > keeps sprout appendages restrained while the resident greets the player
+AssertionError: expected 8.99999911858814 to be less than or equal to 4.500000001
+ ❯ src/character/motion.greet.test.ts:19:51
+     17|       for (const side of ['leftAppendage', 'rightAppendage'] as const)…
+     18|         const values = frames.map(frame => frame[side])
+     19|         expect(Math.max(...values.map(Math.abs))).toBeLessThanOrEqual(…
+       |                                                   ^
+     20|         expect(Math.max(...values.map(Math.abs))).toBeGreaterThan(visi…
+     21|         const velocity = values.slice(1).map((value, i) => Math.abs(va…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/character/motion.greet.test.ts > player greeting follow-through > mochi makes one calm sway at short, normal, long and legacy durations
+ FAIL  src/character/motion.greet.test.ts > player greeting follow-through > bun makes one calm sway at short, normal, long and legacy durations
+ FAIL  src/character/motion.greet.test.ts > player greeting follow-through > sprout makes one calm sway at short, normal, long and legacy durations
+AssertionError: expected [ -1, 1, -1 ] to have a length of 1 but got 3
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/character/motion.greet.test.ts:48:73
+     46|       const values = Array.from({ length: 1001 }, (_, phase) => at(spe…
+     47|       const signs = values.filter(value => Math.abs(value) > 1e-6).map…
+     48|       expect(signs.filter((sign, i) => i > 0 && sign !== signs[i - 1])…
+       |                                                                         ^
+     49|       expect(values[0]).toBe(0)
+     50|       expect(values.at(-1)).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  00:53:31
+   Duration  190ms (transform 51%, tests 31%, import 14%, worker 4%)
+

@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-13T03:27:29.293372+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "node",
+    "docs/audits/2026-10-12-character-polish/compare-greet-follow.mjs",
+    "prototype"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "minimumObservedAvailableBytes": 4683575296,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4766085120,
+      "tmpFreeBytes": 4300644352
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4766085120,
+      "tmpFreeBytes": 4300644352
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 4683575296,
+      "tmpFreeBytes": 4300644352
+    }
+  ]
+}

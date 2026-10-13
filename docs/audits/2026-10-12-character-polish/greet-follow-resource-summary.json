@@ -1,0 +1,182 @@
+{
+  "runs": 19,
+  "minimumObservedAvailableMiB": 3079.08984375,
+  "minimumObservedTmpFreeMiB": 4007.99609375,
+  "reserveStops": 0,
+  "launchRejections": 0,
+  "intentionalSignalProbes": 1,
+  "unobservedInterruptedRun": 1,
+  "records": [
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-build-resources.json",
+      "sha256": "34c26d7fc7470a8e883e89c48f8da631227f7316ed49ddab4581c98cf1b4b8f2",
+      "minimumObservedAvailableMiB": 4332.0546875,
+      "minimumObservedTmpFreeMiB": 4101.234375,
+      "samples": 12,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-capture-after-resources.json",
+      "sha256": "21684c9950b0fd1533e3c05502af53cb638115c8e5845f0fe96e901b681c09d6",
+      "minimumObservedAvailableMiB": 4607.2421875,
+      "minimumObservedTmpFreeMiB": 4091.44140625,
+      "samples": 5,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-capture-before-resources.json",
+      "sha256": "4ed7f80c8222f2553648afaa4a795dba70cd6ec6cf769cc2a399e1746ec47dc3",
+      "minimumObservedAvailableMiB": 4637.65234375,
+      "minimumObservedTmpFreeMiB": 4101.4140625,
+      "samples": 6,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-capture-prototype-resources.json",
+      "sha256": "5f2e1278af95850e65235df33023761041c05920b9dcdc859892e06fab34b86b",
+      "minimumObservedAvailableMiB": 4533.7421875,
+      "minimumObservedTmpFreeMiB": 4101.4140625,
+      "samples": 5,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-compare-resources.json",
+      "sha256": "a7244641646aabae746edb23c6b7de11baac836e66d042fe176753651c0092a9",
+      "minimumObservedAvailableMiB": 4721.26953125,
+      "minimumObservedTmpFreeMiB": 4091.44140625,
+      "samples": 3,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-diff-resources.json",
+      "sha256": "94ad891440f06f8ab88164e86ef72854f4528dded0d668a567c1e67c5c4d0c48",
+      "minimumObservedAvailableMiB": 4804.0703125,
+      "minimumObservedTmpFreeMiB": 4091.39453125,
+      "samples": 3,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-focused-resources.json",
+      "sha256": "19846cb49cfaabcace268dc0ea27e08d6767da37b7b4a49a4c5f3bb3c339ebbb",
+      "minimumObservedAvailableMiB": 4802.41796875,
+      "minimumObservedTmpFreeMiB": 4097.87890625,
+      "samples": 11,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-full-resources.json",
+      "sha256": "8f81d72025c4d1955729422815b544af204e0589b8f6485c6b6538f2e1fa7736",
+      "minimumObservedAvailableMiB": 3079.08984375,
+      "minimumObservedTmpFreeMiB": 4079.59375,
+      "samples": 86,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-lint-resources.json",
+      "sha256": "78915d942a285e2d97d58b388c80ee3d6d248811856dff584553433cef9bfb11",
+      "minimumObservedAvailableMiB": 4694.37109375,
+      "minimumObservedTmpFreeMiB": 4091.39453125,
+      "samples": 3,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-native-red-resources.json",
+      "sha256": "e58f6650fdc371a56a0ebed8269efe82f053cb8c923b8b91f5a472064b644f0f",
+      "minimumObservedAvailableMiB": 4388.03515625,
+      "minimumObservedTmpFreeMiB": 4030.3671875,
+      "samples": 7,
+      "exitCode": 1,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-native-resources.json",
+      "sha256": "b4087193e4f6b70513f2fff8edc4656de75da8a55e24edbe5a0368a35b268dc3",
+      "minimumObservedAvailableMiB": 4210.35546875,
+      "minimumObservedTmpFreeMiB": 4007.99609375,
+      "samples": 92,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-build-resources.json",
+      "sha256": "bd0f22724633b93709514d9a468ac259ae80811ecfa9db19dadad40b2a915940",
+      "minimumObservedAvailableMiB": 4235.37109375,
+      "minimumObservedTmpFreeMiB": 4101.3984375,
+      "samples": 5,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-compare-resources.json",
+      "sha256": "3fb7f36e17565167c1298fec2c26247632f3e2f119c93dc807fda807b9afbf09",
+      "minimumObservedAvailableMiB": 4466.60546875,
+      "minimumObservedTmpFreeMiB": 4101.4140625,
+      "samples": 3,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-native-resources.json",
+      "sha256": "52b02a6dab78f2fa80ab46415decd1c3c5cecb8c1099ed3b3d5a280d00a94572",
+      "minimumObservedAvailableMiB": 4236.640625,
+      "minimumObservedTmpFreeMiB": 4031.87109375,
+      "samples": 8,
+      "exitCode": 1,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-native-revised-resources.json",
+      "sha256": "5ab5c0568fcda5b55e809fa7a0bcde722ad2d17820441d8ec1d24319dcf0cb58",
+      "minimumObservedAvailableMiB": 3817.23828125,
+      "minimumObservedTmpFreeMiB": 4032.07421875,
+      "samples": 9,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-prototype-unit-resources.json",
+      "sha256": "0f43712400875b53357e97f972b5c9081d11089755379ea48424963086540d20",
+      "minimumObservedAvailableMiB": 4747.546875,
+      "minimumObservedTmpFreeMiB": 4101.33984375,
+      "samples": 4,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-red-resources.json",
+      "sha256": "1a9e2004d80638139cd3bad3e925e2f4a1e613aa3764e374dd8f6a7e46114aec",
+      "minimumObservedAvailableMiB": 5046.83203125,
+      "minimumObservedTmpFreeMiB": 4101.421875,
+      "samples": 3,
+      "exitCode": 1,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-supervisor-probe-resources.json",
+      "sha256": "46dcdc33f1ede753353a09a539afdf46c73112ddfb9ccff6d00b36e604d0d5bd",
+      "minimumObservedAvailableMiB": 4734.75,
+      "minimumObservedTmpFreeMiB": 4091.4375,
+      "samples": 3,
+      "exitCode": 0,
+      "resourceStopReason": null
+    },
+    {
+      "path": "docs/audits/2026-10-12-character-polish/greet-follow-supervisor-stop-probe-resources.json",
+      "sha256": "4a85def5bb704b26c2df52caae17a0e46f0288872a3a888496b422700ff2dfc7",
+      "minimumObservedAvailableMiB": 4735.2265625,
+      "minimumObservedTmpFreeMiB": 4091.4375,
+      "samples": 3,
+      "exitCode": 143,
+      "resourceStopReason": "Supervisor received signal 15; stopped only this job process group."
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+greet-follow-v2-tree-term exit 143 minimum observed available MiB 5079.8 Supervisor received signal 15; stopped only this job process group.
+greet-follow-v2-tree-exit exit 126 minimum observed available MiB 5056.5 Direct child exited while owned descendants remained; stopped only this job process group.
+PASS: both leader-exit paths escalate the stubborn descendant and leave zero live owned members.

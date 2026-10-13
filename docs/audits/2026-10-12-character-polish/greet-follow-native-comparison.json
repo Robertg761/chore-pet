@@ -1,0 +1,167 @@
+{
+  "method": "61 native SVG/RAF-time samples per species in each recorded run. Exact world transform and primary lean/low-arm ranges; appendage peak/speed and fixed foot contacts quantified separately. Keyboard request performance.now varies slightly between page loads, so these are not exact-phase paired frame comparisons. Sampler differential independently verifies primary field identity. Initial prototype failed only its healthy-idle zero-RAF expectation; revised/final retain one healthy idle clock and stop after reduction.",
+  "species": [
+    {
+      "species": "mochi",
+      "samplesPerRun": 61,
+      "before": {
+        "lean": [
+          -2.46,
+          0
+        ],
+        "lowArm": [
+          0,
+          4.1
+        ],
+        "wavingArmMinimum": -42.59047983473247,
+        "peak": 4.999685764312744,
+        "speed": 52.29617655277253,
+        "maxFootDrift": 4.388506886815254e-06
+      },
+      "prototype": {
+        "lean": [
+          -2.46,
+          0
+        ],
+        "lowArm": [
+          0,
+          4.1
+        ],
+        "wavingArmMinimum": -42.623819173111826,
+        "peak": 2.7491855621337886,
+        "speed": 18.7048837542534,
+        "maxFootDrift": 4.987087351296046e-06
+      },
+      "final": {
+        "lean": [
+          -2.46,
+          0
+        ],
+        "lowArm": [
+          0,
+          4.1
+        ],
+        "wavingArmMinimum": -42.60360810974525,
+        "peak": 2.749735832214355,
+        "speed": 18.742024898529053,
+        "maxFootDrift": 5.866931801793441e-06
+      },
+      "worldTransformExact": true,
+      "leanAndLowArmRangesExact": true,
+      "primaryFrameEqualityClaimed": false,
+      "hashes": {
+        "before": "27cc79b2f62708ac3cbebeb37d50d9ace3ee8253ca5437af88421707e5564b06",
+        "prototype": "68c61038a666cb4a3a9dbca3cfe6e13828bdb5a999568db013fe6838b515b0c8",
+        "final": "311674f353ed50a0e905a3d787e592faedcffd27a5228bef1aa1e57f684c874c"
+      }
+    },
+    {
+      "species": "bun",
+      "samplesPerRun": 61,
+      "before": {
+        "lean": [
+          -3,
+          0
+        ],
+        "lowArm": [
+          0,
+          5
+        ],
+        "wavingArmMinimum": -53.9894739611863,
+        "peak": 11.983181953430174,
+        "speed": 125.17424440011382,
+        "maxFootDrift": 5.32577562289614e-06
+      },
+      "prototype": {
+        "lean": [
+          -3,
+          0
+        ],
+        "lowArm": [
+          0,
+          5
+        ],
+        "wavingArmMinimum": -54,
+        "peak": 7.170158863067626,
+        "speed": 49.535512924194336,
+        "maxFootDrift": 4.844174195997286e-06
+      },
+      "final": {
+        "lean": [
+          -3,
+          0
+        ],
+        "lowArm": [
+          0,
+          5
+        ],
+        "wavingArmMinimum": -54,
+        "peak": 7.170158863067626,
+        "speed": 49.535512924194336,
+        "maxFootDrift": 4.844174195997286e-06
+      },
+      "worldTransformExact": true,
+      "leanAndLowArmRangesExact": true,
+      "primaryFrameEqualityClaimed": false,
+      "hashes": {
+        "before": "364e7a08696e85f4729e4525c6a889c6f91d5196bb16a5e050b3098c11b71506",
+        "prototype": "50c78b9d613717f62882da922525bacf440b2bd6f7a6cc073ea0911613028cd5",
+        "final": "50c78b9d613717f62882da922525bacf440b2bd6f7a6cc073ea0911613028cd5"
+      }
+    },
+    {
+      "species": "sprout",
+      "samplesPerRun": 61,
+      "before": {
+        "lean": [
+          -2.16,
+          0
+        ],
+        "lowArm": [
+          0,
+          3.5999999999999996
+        ],
+        "wavingArmMinimum": -30.232106120186344,
+        "peak": 3.596908569335937,
+        "speed": 37.58176881819964,
+        "maxFootDrift": 5.449530046121988e-06
+      },
+      "prototype": {
+        "lean": [
+          -2.16,
+          0
+        ],
+        "lowArm": [
+          0,
+          3.5999999999999996
+        ],
+        "wavingArmMinimum": -30.23968417554535,
+        "peak": 1.7417619228363037,
+        "speed": 12.208029627799974,
+        "maxFootDrift": 5.194175756295853e-06
+      },
+      "final": {
+        "lean": [
+          -2.16,
+          0
+        ],
+        "lowArm": [
+          0,
+          3.5999999999999996
+        ],
+        "wavingArmMinimum": -30.232106120186344,
+        "peak": 1.7416799068450926,
+        "speed": 12.168746441602714,
+        "maxFootDrift": 5.449530046121988e-06
+      },
+      "worldTransformExact": true,
+      "leanAndLowArmRangesExact": true,
+      "primaryFrameEqualityClaimed": false,
+      "hashes": {
+        "before": "437077ee818ea110b5fd87700b205d7bd7bcb8764ab0d036fd5c2900722010f9",
+        "prototype": "f27e83479015830c03734ccbdec029a84c77d78f784dd284d14b4057f0502111",
+        "final": "9e851283e0dd0d9a0f8ed5aab41e0e5d123512ce5aec55fc3f9afa6099ea877c"
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-13T03:39:01.062194+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "/usr/bin/sleep",
+    "30"
+  ],
+  "exitCode": 143,
+  "resourceStopReason": "Supervisor received signal 15; stopped only this job process group.",
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": "--max-old-space-size=192",
+  "minimumObservedAvailableBytes": 4965244928,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT stop the owned child group and preserve final sidecars.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 4965244928,
+      "tmpFreeBytes": 4290183168
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 4965244928,
+      "tmpFreeBytes": 4290183168
+    },
+    {
+      "elapsedSeconds": 0.023,
+      "memAvailableBytes": 4965244928,
+      "tmpFreeBytes": 4290183168
+    }
+  ]
+}

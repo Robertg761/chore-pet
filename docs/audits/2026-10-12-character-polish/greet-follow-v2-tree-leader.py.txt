@@ -1,0 +1,8 @@
+import subprocess,sys,time
+from pathlib import Path
+mode,path=sys.argv[1:]
+worker="import os,signal,time;from pathlib import Path;signal.signal(signal.SIGTERM,signal.SIG_IGN);Path("+repr(path)+").write_text(str(os.getpid()));time.sleep(60)"
+subprocess.Popen([sys.executable,'-c',worker])
+while not Path(path).exists():time.sleep(.01)
+if mode=='exit':raise SystemExit(0)
+time.sleep(60)

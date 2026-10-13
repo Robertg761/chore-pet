@@ -1,0 +1,76 @@
+{
+  "utc": "2026-10-13T03:49:01.369419+00:00",
+  "command": [
+    "nice",
+    "-n",
+    "10",
+    "python3",
+    "/tmp/chore-pet-tree-probe.py"
+  ],
+  "exitCode": 0,
+  "resourceStopReason": null,
+  "launchMinimumMiB": 3200,
+  "runReserveMiB": 2048,
+  "nodeOptions": "--max-old-space-size=192",
+  "cleanup": {
+    "processGroup": 5042,
+    "termMembers": [],
+    "killMembers": [],
+    "remainingLiveMembers": [],
+    "leaderReturnCode": 0
+  },
+  "minimumObservedAvailableBytes": 5298176000,
+  "method": "Host available RAM and /tmp sampled about once per second; not a peak CPU/RSS or physical-device certification. Only this job process group may be stopped. SIGTERM/SIGINT or leader exit clean live owned session/group members independently of the leader, escalate after3s and preserve final sidecars. Zombies are excluded from live work.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "memAvailableBytes": 5343182848,
+      "tmpFreeBytes": 4290088960
+    },
+    {
+      "elapsedSeconds": 0.001,
+      "memAvailableBytes": 5343182848,
+      "tmpFreeBytes": 4290088960
+    },
+    {
+      "elapsedSeconds": 1.001,
+      "memAvailableBytes": 5348691968,
+      "tmpFreeBytes": 4290084864
+    },
+    {
+      "elapsedSeconds": 2.001,
+      "memAvailableBytes": 5326540800,
+      "tmpFreeBytes": 4290084864
+    },
+    {
+      "elapsedSeconds": 3.001,
+      "memAvailableBytes": 5334777856,
+      "tmpFreeBytes": 4290084864
+    },
+    {
+      "elapsedSeconds": 4.002,
+      "memAvailableBytes": 5308866560,
+      "tmpFreeBytes": 4290084864
+    },
+    {
+      "elapsedSeconds": 5.002,
+      "memAvailableBytes": 5299544064,
+      "tmpFreeBytes": 4290084864
+    },
+    {
+      "elapsedSeconds": 6.002,
+      "memAvailableBytes": 5298176000,
+      "tmpFreeBytes": 4290084864
+    },
+    {
+      "elapsedSeconds": 7.002,
+      "memAvailableBytes": 5302116352,
+      "tmpFreeBytes": 4290084864
+    },
+    {
+      "elapsedSeconds": 8.021,
+      "memAvailableBytes": 5313150976,
+      "tmpFreeBytes": 4290088960
+    }
+  ]
+}

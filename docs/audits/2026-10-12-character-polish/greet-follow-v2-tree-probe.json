@@ -1,0 +1,40 @@
+{
+  "method": "Disposable leader and SIGTERM-ignoring descendant, signal-interrupted leader and normal leader-exit cases. No heavy workload. Only owned PID/session groups touched; bounded cleanup excludes zombies from live work.",
+  "cases": [
+    {
+      "mode": "term",
+      "expectedExit": 143,
+      "worker": 5048,
+      "cleanup": {
+        "processGroup": 5047,
+        "termMembers": [
+          5047,
+          5048
+        ],
+        "killMembers": [
+          5048
+        ],
+        "remainingLiveMembers": [],
+        "leaderReturnCode": -15
+      },
+      "sidecarSha256": "228c560c02b0425b2d65b98577cce2aa13f09d1d20f6762edf8557c7fc824dc2"
+    },
+    {
+      "mode": "exit",
+      "expectedExit": 126,
+      "worker": 5159,
+      "cleanup": {
+        "processGroup": 5158,
+        "termMembers": [
+          5159
+        ],
+        "killMembers": [
+          5159
+        ],
+        "remainingLiveMembers": [],
+        "leaderReturnCode": 0
+      },
+      "sidecarSha256": "46cff88cbd3dd11a63681848b77652026ca81262d4c876cc5e0ecf1b8b00d63b"
+    }
+  ]
+}

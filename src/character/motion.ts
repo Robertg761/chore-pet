@@ -83,6 +83,8 @@ const NOTICE_FOLLOW: Record<Species, number> = { mochi: 0.15, bun: 0.20, sprout:
 const TURN_FOLLOW: Record<Species, number> = { mochi: 0.10, bun: 0.12, sprout: 0.10 }
 // Inspection follows one calm sway without changing its pointing gesture.
 const INSPECT_FOLLOW: Record<Species, number> = { mochi: 0.35, bun: 0.4, sprout: 0.35 }
+// A player greeting keeps a lively hand wave and one softer appendage sway.
+const GREET_FOLLOW: Record<Species, number> = { mochi: 0.55, bun: 0.6, sprout: 0.5 }
 // A wave toward leaves or glass keeps the hand lively and the appendages quiet.
 const WAVE_FOLLOW: Record<Species, number> = { mochi: 0.4, bun: 0.45, sprout: 0.35 }
 // Concern settles in one smaller sway while the resident studies wilting leaves.
@@ -402,8 +404,10 @@ export function sampleMotion(input: MotionInput): MotionFrame {
     const calmConcern = action === 'concern' && mood !== 'sick'
     const calmInspect = action === 'inspect' && mood !== 'sick'
     const calmWave = action === 'wave' && mood !== 'sick'
+    const calmGreet = action === 'greet' && mood !== 'sick'
     const followStrength = action === 'stretch' ? STRETCH[species].follow
       : action === 'rest' ? REST_FOLLOW[species]
+      : calmGreet ? GREET_FOLLOW[species]
       : calmWave ? WAVE_FOLLOW[species]
       : calmInspect ? INSPECT_FOLLOW[species]
       : calmConcern ? CONCERN_FOLLOW[species] : AFFECTION_FOLLOW[species]
@@ -413,7 +417,7 @@ export function sampleMotion(input: MotionInput): MotionFrame {
       ? Math.sin(t * Math.PI) * follow * personality.follow * TURN_FOLLOW[species] * energy
       : action === 'smell' && mood !== 'sick'
       ? Math.sin(t * Math.PI * 3 - personality.lag + 0.5) * follow * personality.follow * SMELL_FOLLOW[species] * (1 - 0.55 * ease(t)) * energy
-      : action === 'affection' || action === 'stretch' || action === 'rest' || calmConcern || calmInspect || calmWave
+      : action === 'affection' || action === 'stretch' || action === 'rest' || calmConcern || calmInspect || calmWave || calmGreet
       ? Math.sin(t * Math.PI * 2 - personality.lag + 0.5) * follow * personality.follow * followStrength * energy
       : Math.sin(t * Math.PI * 4 - personality.lag) * follow * personality.follow * energy
     frame.leftAppendage = sway

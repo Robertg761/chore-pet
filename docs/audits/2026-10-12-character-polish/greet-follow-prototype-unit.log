@@ -1,0 +1,11 @@
+npm notice run chore-pet@0.0.0 npx
+npm notice run 'vitest' run --config /tmp/greet-follow-prototype.config.mjs src/character/motion.greet.test.ts --maxWorkers=1
+
+ RUN  v5.0.3 /home/robert/.codex/worktrees/4511/chore-pet
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  00:55:53
+   Duration  581ms (tests 90%, transform 7%, import 2%, worker 1%)
+

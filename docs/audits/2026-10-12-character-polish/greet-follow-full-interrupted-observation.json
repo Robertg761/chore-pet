@@ -1,0 +1,8 @@
+{
+  "recordedAt": "2026-10-13T03:35:23.599161+00:00",
+  "executionSession": 24190,
+  "toolReportedExitCode": 143,
+  "logSha256": "929cc863607ae0010e3de7884e3a3e12466e2d043131bf691404467235599602",
+  "wrapperExitAndResourcesWritten": false,
+  "assessment": "Interrupted incomplete run, not a test result. The supervising process did not write its final sidecars, so resource minima and the cause of termination are unavailable. Preserve partial log and tool-observed exit; no pass or resource-stop inference."
+}

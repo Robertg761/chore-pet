@@ -1,0 +1,58 @@
+✔ mochi greets the player with one restrained appendage sway (1697.140986ms)
+ℹ mochi: peak 2.750deg, speed 18.742deg/s; 61 actual SVG/RAF-time samples within actual player greeting
+ℹ lean range -2.46..0; waving -42.60360810974525
+✔ bun greets the player with one restrained appendage sway (1580.902364ms)
+ℹ bun: peak 7.170deg, speed 49.536deg/s; 61 actual SVG/RAF-time samples within actual player greeting
+ℹ lean range -3..0; waving -54
+✔ sprout greets the player with one restrained appendage sway (1527.036105ms)
+ℹ sprout: peak 1.742deg, speed 12.169deg/s; 61 actual SVG/RAF-time samples within actual player greeting
+ℹ lean range -2.16..0; waving -30.232106120186344
+✔ the reduced resident stops idle frames but completes an explicit response (1431.588375ms)
+ℹ Chromium 152.0.7977.82; reduced:0 idle frames,1 finite clock,0 after response
+✔ the sick resident stops idle frames but completes an explicit response (889.208198ms)
+ℹ Chromium 152.0.7977.82; sick:0 idle frames,1 finite clock,0 after response
+✔ the away resident stops idle frames but completes an explicit response (872.428057ms)
+ℹ Chromium 152.0.7977.82; away:0 idle frames,1 finite clock,0 after response
+✔ native player choices stay still and fit 320px (2695.6981ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 361px (2735.097812ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 375px (2656.760639ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 390px (2617.019287ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 1280px (2638.053605ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 640px (2749.255424ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ native player choices stay still and fit 844px (2729.064976ms)
+ℹ Chromium 152.0.7977.82; native keyboard,reduced still,finite single clock,44px,unchanged saved tables
+✔ room changes remove the previous furnishing choices and reset player-time controls (954.476567ms)
+✔ chosen affection joins a live step, ignores rapid busy choices, and honors live motion reduction (2211.691779ms)
+ℹ Chromium 152.0.7977.82; join0.0000roomSVGunits;20busychoices;oneframeclock;live reduction
+✔ a chosen hop takes off and lands on the existing resident clock without changing progress (1703.181044ms)
+ℹ Chromium 152.0.7977.82;existing1800ms hop;10busyrequests;groundedlanding;unchanged saved tables
+✔ initial pause control is disabled without starting a clock or shrinking short-phone art (1341.242866ms)
+✔ dressed mochi pauses all five previews in both facings and resumes the remaining duration (10114.338583ms)
+✔ dressed bun pauses all five previews in both facings and resumes the remaining duration (10314.449459ms)
+✔ dressed sprout pauses all five previews in both facings and resumes the remaining duration (10254.220387ms)
+✔ pause control stays clear and keyboard visible at 320x568/100% (1954.632792ms)
+✔ pause control stays clear and keyboard visible at 320x568/200% (2139.068034ms)
+✔ pause control stays clear and keyboard visible at 390x664/100% (2030.606595ms)
+✔ pause control stays clear and keyboard visible at 390x664/200% (2000.22069ms)
+✔ pause control stays clear and keyboard visible at 640x360/100% (2029.696973ms)
+✔ pause control stays clear and keyboard visible at 640x360/200% (1962.28223ms)
+✔ pause control stays clear and keyboard visible at 844x390/100% (1958.211981ms)
+✔ pause control stays clear and keyboard visible at 844x390/200% (1975.01978ms)
+✔ pause control stays clear and keyboard visible at 1280x800/100% (1988.960049ms)
+✔ pause control stays clear and keyboard visible at 1280x800/200% (2182.089994ms)
+✔ live system reduction cancels a paused preview without replay (1751.691508ms)
+✔ live device reduction cancels a paused preview without replay (1750.128883ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 89042.814619
